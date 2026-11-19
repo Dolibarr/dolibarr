@@ -1623,6 +1623,13 @@ $(document).ready(function() {
 			, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
 			, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
 		});
+
+		// Close all notifications (messages, warnings and errors) when the ESC key is pressed
+		$(document).on('keydown', function(e) {
+			if (e.key === 'Escape' || e.keyCode === 27) {
+				$('.jnotify-container .jnotify-notification').remove();
+			}
+		});
 	}
 });
 	<?php

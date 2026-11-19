@@ -3698,15 +3698,19 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 					});
 				</script>';
 			} else {
-				// For error and warning messages, close immediately on click without fade
+				// For error and warning messages, close immediately on click anywhere on the message (except when text is selected) without fade
 				$return = '<script nonce="' . getNonce() . '">
 					$(document).ready(function() {
 						$.jnotify(\'' . dol_escape_js($out) . '\', {
 							delay: 3000,
 							type: \'' . dol_escape_js($style) . '\',
 							sticky: true,
+							showClose: false,
 							create: function($note) {
-								$note.find("a.jnotify-close").click(function(e) {
+								$note.css("cursor", "pointer").click(function(e) {
+									if (window.getSelection && window.getSelection().toString() !== "") {
+										return;
+									}
 									e.stopPropagation();
 									$note.remove();
 								});
