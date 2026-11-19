@@ -531,6 +531,48 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 			dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 		}
 	} else {
+		// If the session check failed (e.g. page reloaded after session expiry, or accessed
+		// from another browser), but the request points to a valid order with a valid
+		// securekey, redirect to the payment page instead of showing an error.
+		$tmpsource = GETPOST('s', 'aZ09');
+		if (empty($tmpsource)) {
+			$tmpsource = GETPOST('source', 'aZ09');
+		}
+		$tmpref = GETPOST('ref', 'alpha');
+		$tmpsecurekey = GETPOST('securekey', 'alpha');
+
+		if ($tmpsource == 'order') {
+			if ($tmpref !== '' && $tmpsecurekey !== '') {
+				// Compute the expected securekey the same way payments.lib.php does,
+				// supporting both PAYMENT_SECURITY_TOKEN_UNIQUE modes
+				if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+					$expectedkey = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'order'.$tmpref, 'sha1md5');
+				} else {
+					$expectedkey = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 'sha1md5');
+				}
+
+				if (hash_equals($expectedkey, $tmpsecurekey)) {
+					// Check the order exists
+					include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+					$tmporder = new Commande($db);
+					if ($tmporder->fetch(null, $tmpref) > 0) {
+						$url = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php'
+							.'?source=order'
+							.'&ref='.urlencode($tmpref)
+							.'&securekey='.urlencode($tmpsecurekey)
+							.'&e='.GETPOSTINT('e');
+						if (headers_sent()) {
+							print '<script>window.location.replace("'.dol_escape_js($url).'");</script>'."\n";
+							print '<a href="'.dol_escape_htmltag($url).'">Continue</a>'."\n";
+						} else {
+							header("Location: ".$url);
+							exit;
+						}
+					}
+				}
+			}
+		}
+
 		$error++;
 		$errmsg = 'Stripe payment verification failed: TRANSACTIONID is not set or session key does not match.';
 		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
