@@ -495,6 +495,23 @@ li.liinputsearch input[type="text"] {
 	border-bottom: 0 !important;
 }
 
+/* Picto to delete the personalization of the position of the fields: the picto of move of the
+ * fields, crossed with a thin rising diagonal bar */
+li.liinputsearch span.deletepositionfields_dropdownselectedfields {
+	position: relative;
+}
+li.liinputsearch span.deletepositionfields_dropdownselectedfields::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	background-image:
+		linear-gradient(160deg, transparent calc(50% - 0.5px), currentColor calc(50% - 0.5px), currentColor calc(50% + 0.5px), transparent calc(50% + 0.5px));
+}
+
 /* Column selector: the label of each field fills the row and the picto of
  * drag and drop is at the end of the row */
 .dropdown dd ul.sortable li {

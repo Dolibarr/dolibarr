@@ -2081,12 +2081,14 @@ $(function() {
 		activateBlock($(this).parent());
 	});
 
-	/* Click on the arrow of an expanded block collapses its sub entries instead of following the title link */
+	/* Click on the arrow expands a collapsed block or collapses an expanded one, instead of following the title link */
 	$('.blockvmenuexpandonhover .menuexpandarrow').on('click', function (e) {
 		let block = $(this).closest('.blockvmenuexpandonhover');
+		e.preventDefault();
 		if (block.hasClass('blockvmenuexpanded')) {
-			e.preventDefault();
 			collapseBlocks();
+		} else {
+			expandBlock(block);
 		}
 	});
 });
