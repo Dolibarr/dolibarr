@@ -138,6 +138,13 @@ $permissiontoeditgroup = $permissiontoedit;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read")) && (empty($user->socid) || $user->socid == $object->socid);
 	$permissiontoeditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write")) && (empty($user->socid) || $user->socid == $object->socid);
+	if ($user->hasRight("user", "user_advance", "write") && !empty($object->socid)) {
+		// user_advance write: create/read/edit external users (linked to a thirdparty) only
+		$canadvancedexternal = (empty($user->socid) || $user->socid == $object->socid);
+		$permissiontoadd = $permissiontoadd || $canadvancedexternal;
+		$permissiontoread = $permissiontoread || $canadvancedexternal;
+		$permissiontoedit = $permissiontoedit || $canadvancedexternal;
+	}
 }
 
 $permissiontoclonesuperadmin = ($permissiontoadd && empty($user->entity));
@@ -162,7 +169,7 @@ $permissiontoeditpasswordandsee = false;
 $permissiontoeditpasswordandsend = false;
 if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
-	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"))) && (empty($user->socid) || $user->socid == $object->socid);
+	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")) || (($user->id != $id) && getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("user", "user_advance", "write") && !empty($object->socid))) && (empty($user->socid) || $user->socid == $object->socid);
 	$permissiontoeditpasswordandsee = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password") && $user->admin))&& (empty($user->socid) || $user->socid == $object->socid);
 	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")))&& (empty($user->socid) || $user->socid == $object->socid);
 }
