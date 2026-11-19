@@ -892,7 +892,7 @@ class FormCompany extends Form
 	 * @param 	string 		$htmlname 		Html component name and id
 	 * @param 	Contact 	$contact 		Contact Object
 	 * @param 	string 		$rendermode 	view, edit
-	 * @param 	array<array{id:int}>	$selected 	$key=>$val $val is selected Roles for input mode
+	 * @param 	array<array{id:int}>|array<int|string>	$selected 	Selected roles for input mode: array of roles (with key 'id') or array of role ids
 	 * @param	string		$morecss		More css
 	 * @param	string		$placeholder	Placeholder text (used when $rendermode is 'edit')
 	 * @return 	string   					String with contacts roles
@@ -912,10 +912,10 @@ class FormCompany extends Form
 			if (count($selected) > 0) {
 				$newselected = array();
 				foreach ($selected as $key => $val) {
-					if (is_array($val) && array_key_exists('id', $val) && in_array($val['id'], array_keys($contactType))) {
-						$newselected[] = $val['id'];
-					} else {
-						break;
+					// $val may be a role array (from $contact->roles) or a role id (from a GETPOST array)
+					$roleid = (is_array($val) ? (array_key_exists('id', $val) ? $val['id'] : '') : $val);
+					if ($roleid !== '' && in_array($roleid, array_keys($contactType))) {
+						$newselected[] = $roleid;
 					}
 				}
 				if (count($newselected) > 0) {

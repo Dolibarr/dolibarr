@@ -652,6 +652,11 @@ while ($i < $imaxinloop) {
 		}
 	}
 
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
 	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if (/* $massactionbutton || */ $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

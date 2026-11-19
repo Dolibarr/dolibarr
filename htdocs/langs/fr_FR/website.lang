@@ -115,6 +115,7 @@ ExternalURLMustStartWithHttp=l'URL externe doit commencer par http:// ou https:/
 ZipOfWebsitePackageToImport=Téléverser le fichier Zip du package de modèles de site Web
 ZipOfWebsitePackageToLoad=ou Choisissez un modèle de site Web fourni disponible
 ShowSubcontainers=Inclure contenu dynamique
+ShowSubcontainersShort=Contenu dynamique
 InternalURLOfPage=URL interne de la page
 ThisPageIsTranslationOf=Cette page/container est la traduction de
 ThisPageHasTranslationPages=Cette page / container a une traduction
@@ -123,6 +124,7 @@ GoTo=Aller à
 DynamicPHPCodeContainsAForbiddenInstruction=Vous ajoutez du code PHP dynamique contenant l'instruction PHP '<strong>%s</strong> ' qui est interdite par défaut en tant que contenu dynamique (voir les options masquées WEBSITE_PHP_ALLOW_xxx pour augmenter la liste des commandes autorisées).
 NotAllowedToAddDynamicContent=Vous n'êtes pas autorisé à ajouter ou à modifier du contenu PHP dynamique sur les sites web. Veuillez demander l'autorisation ou laisser le code PHP intact.
 NotAllowedToAddDynamicContentDisabledGlobaly=Vous ne pouvez actuellement pas ajouter ni modifier de contenu PHP dynamique sur ce site web (même si vous y êtes autorisé), car cette fonctionnalité doit d'abord être activée globalement en définissant le paramètre TXPROTECT=1 dans le fichier conf.php. Modifiez votre fichier conf.php pour ajouter ce paramètre, ou demandez à votre administrateur ou à votre équipe de support de le faire pour vous.
+NotAllowedToEditHtaccess=Vous n'êtes pas autorisé à modifier le fichier .htaccess fichier des sites web. Cela nécessite l'autorisation de modifier le contenu PHP dynamique.
 ReplaceWebsiteContent=Rechercher ou remplacer un contenu du site
 DeleteAlsoJs=Supprimer également tous les fichiers JavaScript spécifiques à ce site ?
 DeleteAlsoMedias=Supprimer également tous les fichiers médias spécifiques à ce site ?
@@ -150,6 +152,8 @@ RSSFeedDesc=Vous pouvez obtenir un flux RSS des derniers articles de type « bl
 PagesRegenerated=%s page(s)/conteneur(s) régénéré(s)
 RegenerateWebsiteContent=Régénérer les fichiers de cache du site Web
 AllowedInFrames=Autorisé dans les Frames
+NumberOfVersionsToKeepInHistory=Nombre de versions à conserver dans l'historique
+NumberOfVersionsToKeepInHistoryHelp=0 = conserver toutes les versions de la page, n = conserver uniquement les n dernières versions de la page dans l'historique
 DefineListOfAltLanguagesInWebsiteProperties=Définir la liste des langues disponibles dans les propriétés du site web.
 GenerateSitemaps=Générer le fichier sitemap.xml du site Web
 ConfirmGenerateSitemaps=Si vous confirmez, vous effacerez le fichier de plan du site existant...
@@ -274,6 +278,7 @@ WebPortalErrorNoFetchMethod=Erreur : aucune méthode de récupération trouvée
 WebPortalErrorNoThirdPartyScope=Aucun tiers associé au compte connecté : accès refusé
 DownloadZip=Téléchargez le zip
 ExportIntoGIT=Exporter dans le répertoire du serveur
+ExportIntoThisDirectory=Exporter dans ce répertoire
 WebPortalMember=Adhésion
 WebPortalOrder=Commande client
 WebPortalPartnership=Partenariat
@@ -523,3 +528,6 @@ ErrorEditInlineElementWithPhp=L'élément avec l'identifiant %s contient du code
 ErrorEditInlineElementNotAllowedHtml=L'élément avec l'identifiant %s contient du HTML qui ne peut pas être modifié en ligne (image, formulaire, script, commentaire, autre tags/catégories ou attributs...), il ne peut donc être modifié que dans la source HTML.
 ErrorEditInlineElementNotPlainText=L'élément avec l'identifiant %s contient du HTML dans la source de la page et ne peut être modifié qu'en ligne comme du texte brut, il ne peut donc être modifié que dans la source HTML.
 ErrorEditInlineContentNotAllowed=Le nouveau contenu de l'élément avec l'identifiant %s contient du HTML tags/catégories ou des attributs qui ne sont pas autorisés, il n'a donc pas été enregistré.
+DeleteWebsiteTemplate=supprimer le modèle
+WarningWebsiteTemplateHas4BytesCharsButDatabaseNotUtf8mb4=Le modèle de site web contient des caractères encodés sur 4 octets (comme les émojis), mais la table %s de votre base de données utilise un classement qui ne les prend pas en charge. Les pages contenant ces caractères risquent de ne pas être importées ou d'être altérées. Vous devez convertir votre base de données en UTF-8MB4 (définissez `$dolibarr_main_db_character_set='utf8mb4'` et `$dolibarr_main_db_collation='utf8mb4_unicode_ci'` dans le fichier conf.php, puis exécutez l'outil de réparation avec l'option `force_utf8mb4_on_tables`) avant de réimporter le modèle.
+WarningWebsiteTemplateHas4BytesCharsButConnectionNotUtf8mb4=Le modèle de site web contient des caractères encodés sur 4 octets (comme les émojis), mais la connexion à votre base de données utilise le jeu de caractères %s qui ne les prend pas en charge. Les pages contenant ces caractères risquent de ne pas être importées ou d'être altérées. Vous devez définir les variables suivantes dans le fichier conf.php avant de réimporter le modèle : `$dolibarr_main_db_character_set='utf8mb4' et $dolibarr_main_db_collation='utf8mb4_unicode_ci'`.

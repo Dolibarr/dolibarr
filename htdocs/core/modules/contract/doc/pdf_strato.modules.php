@@ -663,7 +663,7 @@ class pdf_strato extends ModelePDFContract
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "dict", "contract", "companies"));
+		$outputlangs->loadLangs(array("main", "dict", "contracts", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
