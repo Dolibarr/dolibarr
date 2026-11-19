@@ -1844,7 +1844,7 @@ if ($source == 'donation') {
 	dol_syslog("newpayment.php source=donation", LOG_DEBUG);
 
 	$found = true;
-	$langs->load("don");
+	$langs->load("donations");
 
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
@@ -1897,7 +1897,7 @@ if ($source == 'donation') {
 	print '</td></tr>'."\n";
 
 	// Object
-	$text = '<b>'.$langs->trans("PaymentDonation").'</b>';
+	$text = '<b>'.$langs->trans("DonationPayment").'</b>';
 	if (GETPOST('desc', 'alpha')) {
 		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
 	}

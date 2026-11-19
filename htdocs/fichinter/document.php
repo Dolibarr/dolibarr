@@ -50,7 +50,7 @@ if (isModEnabled('project')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('other', 'fichinter', 'companies', 'interventions'));
+$langs->loadLangs(array('other', 'companies', 'interventions'));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');

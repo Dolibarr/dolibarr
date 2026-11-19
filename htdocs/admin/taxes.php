@@ -45,7 +45,7 @@ if (isModEnabled('accounting')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'objects', 'companies', 'products'));
+$langs->loadLangs(array('admin', 'companies', 'products'));
 
 if (!$user->admin) {
 	accessforbidden();
