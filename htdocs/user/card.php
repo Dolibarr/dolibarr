@@ -2181,13 +2181,41 @@ if ($action == 'create' || $action == 'adduserldap') {
 					if (!is_array($totpenrollment)) {
 						print ' '.img_warning($langs->trans("TOTPUnreadableEnrollment"));
 					}
+					if (dolTotpIsDisabledByConf()) {
+						print ' '.img_warning($langs->trans("TOTPDisabledByConf"));
+					}
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("Disabled").'</span>';
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+					if (dolTotpIsRequired($db, $object) && !passkeyUserHasPasskey($db, $object->id)) {	// A passkey fulfills the requirement too
+						print ' '.img_warning($langs->trans("TOTPRequiredNotSetUp"));
+					}
 				}
 				print '<div class="left inline-block">';
-				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
-				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?id='.$object->id.'&token='.newToken());
+				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP -->'.img_edit('');
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?id='.$object->id.'&token='.newToken(), '', 'editfielda marginleftonly');
 				print '</div></div>';
+				print '</td></tr>';
+			}
+
+			// Passkeys
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+			if (passkeyIsEnabled() && $permissiontoeditpasswordandsee) {
+				require_once DOL_DOCUMENT_ROOT.'/user/class/userpasskey.class.php';
+				$passkeystatic = new UserPasskey($db);
+				$listofpasskeys = $passkeystatic->fetchAllForUser($object->id);
+
+				print '<tr class="nooddeven"><td>'.$langs->trans("Passkeys").'</td>';
+				print '<td>';
+				print '<div class="centpercent display-flex">';
+				print '<span class="badge badge-info marginleftonly marginrightonly">'.(is_array($listofpasskeys) ? count($listofpasskeys) : 0).'</span>';
+				print '<div class="left inline-block">';
+				// Not opened into a dialog popup: some password manager extensions (e.g. Bitwarden) fail to create a passkey from an iframe
+				print '<a class="classlink button bordertransp" href="'.DOL_URL_ROOT.'/user/passkeys.php?id='.$object->id.'" title="'.dolPrintHTMLForAttribute($langs->trans("Passkeys")).'">';
+				print '<span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
+				print '</a>';
+				print '</div>';
+				print '</div>';
 				print '</td></tr>';
 			}
 
@@ -2234,8 +2262,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print $langs->trans("APIKeys");
 					print '</a>';*/
 					print '<div class="left inline-block">';
-					$s = '<!-- API_IN_TOKEN_TABLE --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
-					print dolButtonToOpenUrlInDialogPopup('openpopuptoaddapitoken', $langs->transnoentitiesnoconv("APIKeys"), $s, '/user/api_token/list.php?id='.$object->id.'&token='.newToken());
+					$s = '<!-- API_IN_TOKEN_TABLE -->'.img_edit('');
+					print dolButtonToOpenUrlInDialogPopup('openpopuptoaddapitoken', $langs->transnoentitiesnoconv("APIKeys"), $s, '/user/api_token/list.php?id='.$object->id.'&token='.newToken(), '', 'editfielda marginleftonly');
 					print '</div>';
 					print '</div>';
 				} else {

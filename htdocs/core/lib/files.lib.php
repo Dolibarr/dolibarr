@@ -1729,6 +1729,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 						if (empty($nolog)) {
 							dol_syslog("Removed file ".$filename, LOG_DEBUG);
 						}
+						dolDeleteFileVersions($filename);
 
 						// Delete entry into ecm database
 						$rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filename);
@@ -1786,6 +1787,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 				if (empty($nolog)) {
 					dol_syslog("Removed file ".$filename, LOG_DEBUG);
 				}
+				dolDeleteFileVersions($filename);
 
 				// Delete entry into ecm database
 				$rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filename);
@@ -1814,6 +1816,32 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 
 		return $ok;
 	}
+}
+
+/**
+ *  Remove the previous versions of a file, kept into the hidden sub directory .versions of its directory when the file
+ *  was replaced by an upload (see MAIN_DOCUMENT_KEEP_VERSIONS). The directory .versions is removed too once empty, so
+ *  it does not prevent the deletion of its parent directory.
+ *
+ *  @param	string	$file	Full path of the file that was deleted (filesystem encoded)
+ *  @return	void
+ *  @see archiveOrBackupFile()
+ */
+function dolDeleteFileVersions($file)
+{
+	$versionsdir = dirname($file).'/.versions';
+	if (basename(dirname($file)) == '.versions' || !is_dir($versionsdir)) {
+		return;
+	}
+	$listofversions = glob(str_replace(array('[', ']'), array('\[', '\]'), $versionsdir.'/'.basename($file)).'.v*');
+	if (is_array($listofversions)) {
+		foreach ($listofversions as $versionfile) {
+			if (preg_match('/\.v\d+$/', $versionfile)) {
+				@unlink($versionfile);
+			}
+		}
+	}
+	@rmdir($versionsdir);	// Fails, as expected, if other files still have versions
 }
 
 /**
@@ -2037,8 +2065,9 @@ function dol_meta_create($object)
 				$nblines = 0;
 			}
 			$client = $object->thirdparty->name." ".$object->thirdparty->address." ".$object->thirdparty->zip." ".$object->thirdparty->town;
+			$objectdate = (property_exists($object, 'date') ? $object->date : '');	// @phan-suppress-current-line PhanUndeclaredProperty
 			$meta = "REFERENCE=\"".$object->ref."\"
-			DATE=\"" . dol_print_date(property_exists($object, 'date') ? $object->date : '', '')."\"  // @phan-suppress-current-line PhanUndeclaredProperty
+			DATE=\"" . dol_print_date($objectdate, '')."\"
 			NB_ITEMS=\"" . $nblines."\"
 			CLIENT=\"" . $client."\"
 			AMOUNT_EXCL_TAX=\"" . $object->total_ht."\"
@@ -2213,6 +2242,13 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 						setEventMessages($langs->trans("ErrorFilenameReserved", $destfile), null, 'errors');
 						return -1;
 					}
+				}
+
+				// The file is replaced by the upload: keep a copy of the current one as a previous version, into the hidden
+				// sub directory .versions (named file.ext.v<timestamp>), if the option is on. A copy, so the current file
+				// is kept if the upload fails.
+				if ($allowoverwrite && getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS') > 0 && dol_is_file($destfull)) {
+					archiveOrBackupFile($destfull, getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS'), dirname($destfull).'/.versions', 'v', 'copy');
 				}
 
 				// Move file from source directory to final destination. Check for virus is also embedded and a .noexe may also be appended on file name.
@@ -3066,11 +3102,12 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
 
 /**
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
+ * In read mode, a document not found into the session entity is searched into the entity of its object, if shared with the session entity.
  * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
  * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string		$original_file		Relative path with filename, relative to modulepart.
- * @param	int 		$entity				Restrict objects stored into entity (0=no restriction). Note that permissions tested are the one the user is logged in, so permissions for $conf->entity that may be different than $entity.
+ * @param	int 		$entity				Restrict objects stored into entity (0=no restriction). Note that permissions tested are the one the user is logged in, so permissions for $conf->entity that may be different than $entity. An entity not visible from $conf->entity is replaced with $conf->entity.
  * @param  	User|null	$fuser				User object (forced)
  * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
  * @param   string  	$mode               Check permission for 'read' or 'write' or 'delete'
@@ -3093,16 +3130,25 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 
 	$originalmodulepart = $modulepart;
 
+	// Parameters received, used to search the document into the entity of its object if it is not found into the session entity
+	$modulepartparam = $modulepart;
+	$originalfileparam = $original_file;
+	$refnameparam = $refname;
+
 	if (empty($entity)) {
 		if (!isModEnabled('multicompany')) {
 			$entity = 1;
 		} else {
 			$entity = 0;
 		}
-	} else {
-		// TODO Test that the user in session of conf->entity can see objects of the target $entity like restrictedArea() does, however
-		// it is better to limit the scope of this function to check "per module" permission only, and to do the test on "per object" permission
-		// by calling restrictedArea()by the caller.
+	} elseif ((int) $entity != (int) $conf->entity) {
+		// Permissions tested are the ones of the user into the session entity $conf->entity, so the target $entity is kept only if
+		// objects of the modulepart into $entity are visible from $conf->entity (shared entities). If not, we use $conf->entity.
+		$elementpropforentity = getElementProperties(preg_replace('/^apercu/', '', $modulepart));
+		if (!in_array((int) $entity, array_map('intval', explode(',', getEntity($elementpropforentity['element']))), true)) {
+			dol_syslog("dol_check_secure_access_document entity ".$entity." is not visible from entity ".$conf->entity." for modulepart=".$modulepart.", so we use entity ".$conf->entity, LOG_WARNING);
+			$entity = (int) $conf->entity;
+		}
 	}
 
 	// Fix modulepart for backward compatibility
@@ -3140,10 +3186,21 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	$ret = array();
 	$checksecureaccesshook = false;
 
+	// Security: Remove '.', '..' and empty segments ('/' -> '//') from $original_file. Without this, the reference
+	// of the object extracted from the subdirectory can be faked with a path like 'REF/./file' or 'REF//file':
+	// the reference resolved is '.' or '', the fetch of the object fails and some checks of permission are skipped.
+	$pathsegments = explode('/', $original_file);
+	foreach ($pathsegments as $key => $pathsegment) {
+		if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+			unset($pathsegments[$key]);
+		}
+	}
+	$original_file = implode('/', $pathsegments);
+
 	// Find the subdirectory name as the reference. For example original_file='10/myfile.pdf' -> refname='10'
 	if (empty($refname)) {
 		$refname = basename(dirname($original_file)."/");
-		if ($refname == 'thumbs' || $refname == 'temp') {
+		if ($refname == 'thumbs' || $refname == 'temp' || $refname == '.versions') {	// .versions: previous versions of the files of the object
 			// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
 			$refname = basename(dirname(dirname($original_file))."/");
 		}
@@ -3327,8 +3384,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !$fuser->hasRight('holiday', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 				$tmpholiday = new Holiday($db);
-				$tmpholiday->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '');
+				$resultfetch = $tmpholiday->fetch(0, $refname);
+				// If the object of the document can not be resolved, we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->holiday->dir_output.'/'.$original_file;
@@ -3359,8 +3417,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !$fuser->hasRight('expensereport', 'readall') && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$tmpexpensereport = new ExpenseReport($db);
-				$tmpexpensereport->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '');
+				$resultfetch = $tmpexpensereport->fetch(0, $refname);
+				// If the object of the document can not be resolved, we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
@@ -3443,10 +3502,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 				$tmpobject = new ActionComm($db);
-				$tmpobject->fetch((int) $refname);
-				$accessallowed = checkUserAccessToObject($user, array('agenda'), $tmpobject->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id', '');
-				if ($user->socid && $tmpobject->socid) {
-					$accessallowed = checkUserAccessToObject($user, array('societe'), $tmpobject->socid);
+				$resultfetch = $tmpobject->fetch((int) $refname);
+				if ($resultfetch > 0) {
+					$accessallowed = checkUserAccessToObject($user, array('agenda'), $tmpobject->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id', '');
+					if ($user->socid && $tmpobject->socid) {
+						$accessallowed = checkUserAccessToObject($user, array('societe'), $tmpobject->socid);
+					}
+				} else {
+					// If the event of the document can not be resolved, we refuse the access
+					$accessallowed = 0;
 				}
 			}
 		}
@@ -3624,8 +3688,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$tmpproject = new Project($db);
-				$tmpproject->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
+				$resultfetch = $tmpproject->fetch(0, $refname);
+				// If the project of the document can not be resolved, checkUserAccessToObject is skipped so we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
@@ -3637,8 +3702,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
-				$tmptask->fetch(0, $refname);
-				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');
+				$resultfetch = $tmptask->fetch(0, $refname);
+				// If the task of the document can not be resolved, checkUserAccessToObject is skipped so we refuse the access
+				$accessallowed = ($resultfetch > 0) ? checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '') : 0;
 			}
 		}
 		$original_file = $conf->project->multidir_output[$entity].'/'.$original_file;
@@ -4029,6 +4095,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 	}
 
+	// A document not found into the session entity may be the one of an object of another entity shared with the session entity. We then
+	// use the entity of this object (never an entity provided by the user). It is the same object than in checkUserAccessToDocumentObject().
+	if ($mode == 'read' && (int) $entity == (int) $conf->entity && isModEnabled('multicompany') && !empty($fuser->id)
+		&& !empty($original_file) && !file_exists(dol_osencode($original_file))) {
+		$documentobject = fetchObjectOfDocument($modulepartparam, $originalfileparam);
+		if (is_object($documentobject['object']) && $documentobject['object']->id > 0 && (int) $documentobject['object']->entity > 0 && (int) $documentobject['object']->entity != (int) $conf->entity) {
+			dol_syslog("dol_check_secure_access_document file not found into entity ".$conf->entity.", we use entity ".$documentobject['object']->entity." of the object of the document");
+			return dol_check_secure_access_document($modulepartparam, $originalfileparam, (int) $documentobject['object']->entity, $fuser, $refnameparam, $mode);
+		}
+	}
+
 	$ret = array(
 		'accessallowed' => ($accessallowed ? 1 : 0),
 		'sqlprotectagainstexternals' => $sqlprotectagainstexternals,
@@ -4318,7 +4395,10 @@ JS;
 function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suffix = "v", $moveorcopy = 'move')
 {
 	$base_file_pattern = ($archivedir ? $archivedir : dirname($srcfile)).'/'.basename($srcfile).".".$suffix;
-	$files_in_directory = glob($base_file_pattern . "*");
+	$files_in_directory = glob(str_replace(array('[', ']'), array('\[', '\]'), $base_file_pattern) . "*");
+	if (!is_array($files_in_directory)) {
+		$files_in_directory = array();
+	}
 
 	// Extract the modification timestamps for each file
 	$files_with_timestamps = [];
@@ -4337,7 +4417,9 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 
 		// Find the latest file by timestamp
 		foreach ($files_with_timestamps as $index => $file_info) {
-			if ($latest_file === null || (is_array($latest_file) && $file_info['timestamp'] > $latest_file['timestamp'])) {
+			// For backups made during the same second, the name (with a higher timestamp, see below) gives the latest
+			if ($latest_file === null || (is_array($latest_file) && ($file_info['timestamp'] > $latest_file['timestamp']
+				|| ($file_info['timestamp'] == $latest_file['timestamp'] && strnatcmp($file_info['file'], $latest_file['file']) > 0)))) {
 				$latest_file = $file_info;
 				$latest_index = $index;
 			}
@@ -4356,8 +4438,16 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 		}
 	}
 
+	// The backup is saved into $archivedir (if defined) with the suffix $suffix, as the files searched above
+	if ($archivedir && !dol_is_dir($archivedir)) {
+		dol_mkdir($archivedir);
+	}
 	$timestamp = dol_now('gmt');
-	$new_backup = $srcfile . ".v" . $timestamp;
+	// A backup made during the same second as the previous one must not replace it
+	while (file_exists(dol_osencode($base_file_pattern . $timestamp))) {
+		$timestamp++;
+	}
+	$new_backup = $base_file_pattern . $timestamp;
 
 	// Move or copy the original file to the new backup with the timestamp
 	if ($moveorcopy == 'move') {

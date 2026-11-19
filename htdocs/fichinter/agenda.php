@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("fichinter", "other"));
+$langs->loadLangs(array("interventions", "other"));
 
 // Get parameters
 $id = GETPOSTINT('id');

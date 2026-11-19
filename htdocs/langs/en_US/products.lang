@@ -507,6 +507,7 @@ PriceByCustomeAndMultiPricesAbility=Different prices for each customer + Multipl
 WhenProductVirtualOnOptionAreForced=When the option 'Enable Kits' (Product module) is on, some modes for automatic stock decrease or increase may be not available. The other options have no restriction.
 UpdatedRecently=Updated recently
 ProductType=Type of product
+TypeProductOrService=Type (Product vs Service)
 UseBarCodeForProducts=Use barcode for products
 UseBarCodeForThirdParties=Use barcode for third parties
 NotSupportedOnKits=Not supported on kits

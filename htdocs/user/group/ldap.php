@@ -60,16 +60,23 @@ if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MUL
 }
 
 $permissiontoread = true;
+$permissiontoedit = (!empty($user->admin) || $user->hasRight('user', 'user', 'write'));
+$feature2 = 'user';
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoread = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
+	$permissiontoedit = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'write'));
+	$feature2 = 'group_advance';
 }
+
+// Security check (same as user/group/card.php)
+$result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
 
 
 /*
  * Actions
  */
 
-if ($action == 'dolibarr2ldap') {
+if ($action == 'dolibarr2ldap' && $permissiontoedit) {
 	$ldap = new Ldap();
 	$result = $ldap->connectBind();
 
@@ -159,7 +166,7 @@ print dol_get_fiche_end();
 print '<div class="tabsAction">';
 
 if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap&amp;token='.newToken().'">'.$langs->trans("ForceSynchronize").'</a>';
+	print dolGetButtonAction('', $langs->trans("ForceSynchronize"), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dolibarr2ldap&token='.newToken(), '', $permissiontoedit);
 }
 
 print "</div>\n";

@@ -241,6 +241,7 @@ $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 // $dolibarr_main_authentication='twofactor';      // To use Google Authenticator. This need the non official external module "Two Factor" available on www.dolistore.com
 // $dolibarr_main_authentication='openid_connect'; // See https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL
 // $dolibarr_main_authentication='googleoauth';    // See https://wiki.dolibarr.org/index.php?title=Authentication,_SSO_and_SSL
+// $dolibarr_main_authentication='dolibarr,passkey'; // Allow also to log in with a passkey (WebAuthn) without password. Users add their passkeys from their user card. Need HTTPS and the full URL into $dolibarr_main_url_root.
 //
 $dolibarr_main_authentication='dolibarr';
 
@@ -377,6 +378,17 @@ $dolibarr_main_restrict_ip='';
 //
 $dolibarr_nocsrfcheck='0';
 
+// dolibarr_main_disable_totp
+// ==========================
+// Rescue option to disable the two-factor authentication (TOTP) for all users, for example if an administrator
+// has lost the device with the authenticator application. A password is then enough to log in (web, API, DAV, web services).
+// Remove this parameter (or set it to 0) as soon as the problem is solved.
+// Default value: 0
+// Possible values: 0 or 1
+// Examples:
+// $dolibarr_main_disable_totp='1';
+//
+
 // dolibarr_api_count_always_enabled
 // =================================
 // Set this value to 1 so disabling the count of each API call will not be possible from the admin setup pages.
@@ -452,9 +464,12 @@ $dolibarr_cron_allow_cli='0';
 // to edit PHP content in website page, you must first allow this globally, by setting this parameter to 1 or 2.
 // 0 will disallow use of dynamic PHP inside the website features. Only HTML and js will be possible.
 // 1 will allow custom PHP inside website features, but only if all RCE PHP functions in the "exec" family are disabled (using the PHP disable_functions parameter)
+//   Adding or modifying PHP code remains forbidden through the REST API and the MCP server.
 // 2 will allow custom PHP inside website features, even if RCE PHP functions in the "exec" family are enabled (this may be dangerous if you don't have a RCE protection like SELinux or Apparmor).
+//   Adding or modifying PHP code remains forbidden through the REST API and the MCP server.
+// 3 same as 2, but adding or modifying PHP code is also allowed through the REST API and the MCP server (for users with the permission to edit PHP content in website pages).
 // Default value: '0'
-// Examples: '0', '1' or '2'
+// Examples: '0', '1', '2' or '3'
 //
 // $dolibarr_website_allow_custom_php='0';
 

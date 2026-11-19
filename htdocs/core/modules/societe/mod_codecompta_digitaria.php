@@ -5,6 +5,7 @@
  * Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Open-DSI                <support@opendsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,6 +162,13 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte .= '</textarea>';
 		$texte .= '</tr></table>';
 
+		// Warn if the generated code length (prefix + number of characters) does not match the auxiliary
+		// account length: the general ledger would then pad the code with trailing zeros (length_accounta()).
+		if ($this->codeLengthDiffersFromAuxiliaryLength($this->prefixcustomeraccountancycode, (int) $this->customeraccountancycodecharacternumber)
+			|| $this->codeLengthDiffersFromAuxiliaryLength($this->prefixsupplieraccountancycode, (int) $this->supplieraccountancycodecharacternumber)) {
+			$texte .= '<br><div class="warning">'.img_warning().' '.$langs->trans("WarningDigitariaCodeLengthNotMatchingAccountLength", getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')).'</div>';
+		}
+
 		$texte .= '</form>';
 
 		return $texte;
@@ -201,6 +209,14 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
+	 *  The generated code has a fixed length (length of the prefix + configured width). A fixed
+	 *  length keeps the auxiliary account unique once the general ledger pads it with trailing
+	 *  zeros (length_accounta()) up to ACCOUNTING_LENGTH_AACCOUNT. The counter uses the whole
+	 *  width (the root is shortened by one more character each time a depth is full) so the
+	 *  capacity is about 10^(width-1) codes per root instead of ~1000. At least the first
+	 *  character of the root is always kept, except when the name is emptied by the cleaning
+	 *  rules (the code is purely numeric only for such an empty root, or for a numeric name).
+	 *
 	 *  @param	DoliDB		$db				Database handler
 	 *  @param  ?Societe	$societe		Third party object
 	 *  @param  'customer'|'supplier'|''	$type	'customer' or 'supplier'
@@ -209,78 +225,244 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	public function get_code($db, $societe, $type = '')
 	{
 		// phpcs:enable
-		global $conf;
-		$i = 0;
+		global $conf, $langs;
+
 		$this->code = '';
 
-		$disponibility = 0;
-
-		if (is_object($societe)) {
-			dol_syslog("mod_codecompta_digitaria::get_code search code for type=".$type." & company=".(!empty($societe->name) ? $societe->name : ''));
-
-			if ($type == 'supplier') {
-				$codetouse = (string) $societe->name;
-				$prefix = $this->prefixsupplieraccountancycode;
-				$width = $this->supplieraccountancycodecharacternumber;
-			} elseif ($type == 'customer') {
-				$codetouse = (string) $societe->name;
-				$prefix = $this->prefixcustomeraccountancycode;
-				$width = $this->customeraccountancycodecharacternumber;
-			} else {
-				$this->error = 'Bad value for parameter type';
-				return -1;
-			}
-
-			// Clean declared words
-			if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS')) {
-				$cleanWords = explode(";", getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS'));
-				$codetouse = str_replace($cleanWords, "", $codetouse);
-			}
-			// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
-			if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_DIGITARIA_REMOVE_SPECIAL')) {
-				$codetouse = (string) preg_replace('/([^a-z0-9])/i', '', $codetouse);
-			}
-			// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
-			if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')) {	// Example: $conf->global->COMPANY_DIGITARIA_CLEAN_REGEX='^..(..)..';
-				$codetouse = (string) preg_replace('/' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX').'/', '\1\2\3', $codetouse);
-			}
-
-			$this->code = $prefix.strtoupper(substr($codetouse, 0, (int) $width));
-			dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
-
-			// Unique index on code if COMPANY_DIGITARIA_UNIQUE_CODE is set to 1 or not set (default)
-			if (getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE', '1')) {
-				$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
-
-				while ($disponibility != 0 && $i < 1000) {
-					$widthsupplier = $this->supplieraccountancycodecharacternumber;
-					$widthcustomer = $this->customeraccountancycodecharacternumber;
-
-					if ($i <= 9) {
-						$a = 1;
-					} elseif ($i <= 99) {  // Also >= 10
-						$a = 2;
-					} else {  // ($i >= 100 && $i <= 999) {
-						$a = 3;
-					}
-
-					if ($type == 'supplier') {
-						$this->code = $prefix.strtoupper(substr($codetouse, 0, (int) $widthsupplier - $a)).$i;
-					} elseif ($type == 'customer') {
-						$this->code = $prefix.strtoupper(substr($codetouse, 0, (int) $widthcustomer - $a)).$i;
-					}
-					$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
-
-					$i++;
-				}
-			} // else { $disponibility = 0; /* Already set */ }
+		if (!is_object($societe)) {
+			return 0;
 		}
 
-		if ($disponibility == 0) {
-			return 0; // return ok
+		dol_syslog("mod_codecompta_digitaria::get_code search code for type=".$type." & company=".(!empty($societe->name) ? $societe->name : ''));
+
+		if ($type == 'supplier') {
+			$codetouse = (string) $societe->name;
+			$prefix = $this->prefixsupplieraccountancycode;
+			$width = (int) $this->supplieraccountancycodecharacternumber;
+		} elseif ($type == 'customer') {
+			$codetouse = (string) $societe->name;
+			$prefix = $this->prefixcustomeraccountancycode;
+			$width = (int) $this->customeraccountancycodecharacternumber;
 		} else {
-			return -1; // return ko
+			$this->error = 'Bad value for parameter type';
+			return -1;
 		}
+
+		// Clean declared words
+		if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS')) {
+			$cleanWords = explode(";", getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS'));
+			$codetouse = str_replace($cleanWords, "", $codetouse);
+		}
+		// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
+		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_DIGITARIA_REMOVE_SPECIAL')) {
+			$codetouse = (string) preg_replace('/([^a-z0-9])/i', '', $codetouse);
+		}
+		// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
+		if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX')) {	// Example: $conf->global->COMPANY_DIGITARIA_CLEAN_REGEX='^..(..)..';
+			$codetouse = (string) preg_replace('/' . getDolGlobalString('COMPANY_DIGITARIA_CLEAN_REGEX').'/', '\1\2\3', $codetouse);
+		}
+
+		$root = strtoupper(substr($codetouse, 0, $width));
+		$rootlen = strlen($root);
+		$targetlen = strlen($prefix) + $width;
+
+		// A fixed code length avoids collisions when the ledger pads the code to ACCOUNTING_LENGTH_AACCOUNT.
+		// Warn if the width is not set so that "prefix length + width = ACCOUNTING_LENGTH_AACCOUNT".
+		if ($this->codeLengthDiffersFromAuxiliaryLength($prefix, $width)) {
+			dol_syslog("mod_codecompta_digitaria::get_code fixed code length (".$targetlen.") differs from ACCOUNTING_LENGTH_AACCOUNT (".getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')."). Set the Digitaria width so that prefix length + width equals it to avoid trailing zeros in the ledger.", LOG_WARNING);
+		}
+
+		// If uniqueness is not required, return the bare code padded to the fixed length.
+		if (!getDolGlobalString('COMPANY_DIGITARIA_UNIQUE_CODE', '1')) {
+			$this->code = str_pad($prefix.$root, $targetlen, '0', STR_PAD_RIGHT);
+			dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
+			return 0;
+		}
+
+		if ($rootlen >= $width) {
+			// Long root (name fills the whole width): keep the historical sequence (bare code, then a
+			// counter shortening the root) and only extend the counter beyond 3 digits, keeping >= 1 root character.
+			$candidate = $prefix.$root;
+			$availability = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $candidate, $type);
+			if ($availability < -1) {
+				return -1; // SQL error, $this->error already set (do not treat it as "not available")
+			}
+			if ($availability == 0) {
+				$this->code = $candidate;
+				dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
+				return 0;
+			}
+			for ($a = 1; $a <= $width - 1; $a++) {
+				$familyprefix = $prefix.substr($root, 0, $width - $a);
+				$minval = ($a == 1) ? 0 : (int) pow(10, $a - 1);
+				$maxval = (int) pow(10, $a) - 1;
+				$next = $this->findNextFreeCounter($db, $type, $familyprefix, $a, $minval, $maxval);
+				if ($next === false) {
+					return -1; // SQL error, $this->error already set
+				}
+				if ($next !== null) {
+					if ($a == $width - 1) {
+						dol_syslog("mod_codecompta_digitaria::get_code last root character reached for ".$familyprefix, LOG_WARNING);
+					}
+					$this->code = $familyprefix.((string) $next); // counter not zero-padded (historical sequence)
+					dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
+					return 0;
+				}
+			}
+		} elseif ($rootlen >= 1) {
+			// Short root (name shorter than the width): fixed-length code = prefix + kept root characters +
+			// zero-padded counter. Keep at least 1 character of the root (so the code is purely numeric
+			// only for a numeric name, not for an alphabetic one).
+			for ($keep = $rootlen; $keep >= 1; $keep--) {
+				$familyprefix = $prefix.substr($root, 0, $keep);
+				$counterlen = $targetlen - strlen($familyprefix); // = width - keep
+				$maxval = (int) pow(10, $counterlen) - 1;
+				$next = $this->findNextFreeCounter($db, $type, $familyprefix, $counterlen, 0, $maxval);
+				if ($next === false) {
+					return -1; // SQL error, $this->error already set
+				}
+				if ($next !== null) {
+					if ($keep == 1) {
+						dol_syslog("mod_codecompta_digitaria::get_code last root character reached for ".$familyprefix, LOG_WARNING);
+					}
+					$this->code = $familyprefix.str_pad((string) $next, $counterlen, '0', STR_PAD_LEFT);
+					dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
+					return 0;
+				}
+			}
+		} else {
+			// Empty root (name entirely emptied by the cleaning rules): no letter can be kept.
+			// Fall back to a purely numeric fixed-length code and warn.
+			$counterlen = $width;
+			$maxval = (int) pow(10, $counterlen) - 1;
+			$next = $this->findNextFreeCounter($db, $type, $prefix, $counterlen, 0, $maxval);
+			if ($next === false) {
+				return -1; // SQL error, $this->error already set
+			}
+			if ($next !== null) {
+				dol_syslog("mod_codecompta_digitaria::get_code empty root, using a purely numeric code for prefix ".$prefix, LOG_WARNING);
+				$this->code = $prefix.str_pad((string) $next, $counterlen, '0', STR_PAD_LEFT);
+				dol_syslog("mod_codecompta_digitaria::get_code search code proposed=".$this->code, LOG_DEBUG);
+				return 0;
+			}
+		}
+
+		// No free code found: the root family is exhausted.
+		$langs->load("companies");
+		$this->error = $langs->trans("ErrorDigitariaAccountancyCodeExhausted", $prefix.$root);
+		dol_syslog("mod_codecompta_digitaria::get_code ".$this->error, LOG_ERR);
+		return -1;
+	}
+
+	/**
+	 *  Return the smallest free counter value for a family of codes sharing a prefix.
+	 *
+	 *  One query per depth (O(width) queries) replaces the historical ~1000 unitary SELECT.
+	 *
+	 *  @param	DoliDB	$db				Database handler
+	 *  @param	string	$type			'customer' or 'supplier'
+	 *  @param	string	$familyprefix	Prefix shared by the codes of the family (prefix + kept root letters)
+	 *  @param	int		$counterlen		Exact number of digits of the counter part
+	 *  @param	int		$minval			Lowest counter value allowed
+	 *  @param	int		$maxval			Highest counter value allowed
+	 *  @return	int|null|false			Smallest free value, null if the family is full, false on SQL error
+	 */
+	protected function findNextFreeCounter($db, $type, $familyprefix, $counterlen, $minval, $maxval)
+	{
+		$codelen = strlen($familyprefix) + (int) $counterlen;
+		$used = $this->fetchUsedAccountancyCodes($db, $type, $familyprefix, $codelen);
+		if ($used === false) {
+			return false; // SQL error, $this->error already set
+		}
+
+		$taken = array();
+		foreach ($used as $code) {
+			$suffix = substr($code, strlen($familyprefix));
+			if (strlen($suffix) !== (int) $counterlen || !ctype_digit($suffix)) {
+				continue;
+			}
+			$val = (int) $suffix;
+			if ($val >= $minval && $val <= $maxval) {
+				$taken[$val] = true;
+			}
+		}
+
+		for ($val = $minval; $val <= $maxval; $val++) {
+			if (!isset($taken[$val])) {
+				return $val; // smallest free value (fills holes, like the historical loop)
+			}
+		}
+
+		return null; // family full
+	}
+
+	/**
+	 *  Fetch the already used accountancy codes of a given length starting with a prefix.
+	 *
+	 *  @param	DoliDB	$db				Database handler
+	 *  @param	string	$type			'customer' or 'supplier'
+	 *  @param	string	$familyprefix	Prefix the codes must start with
+	 *  @param	int		$codelen		Exact length of the codes to return
+	 *  @return	string[]|false			Array of codes, or false on SQL error / bad type
+	 */
+	protected function fetchUsedAccountancyCodes($db, $type, $familyprefix, $codelen)
+	{
+		$storage = $this->getAccountancyCodeStorage($type);
+		if (!is_array($storage)) {
+			return false; // bad type, $this->error already set
+		}
+		list($table, $column) = $storage;
+
+		$sql = "SELECT ".$db->sanitize($column)." as code";
+		$sql .= " FROM ".$db->prefix().$db->sanitize($table);
+		$sql .= " WHERE ".$db->sanitize($column)." LIKE '".$db->escape($db->escapeforlike($familyprefix))."%'";
+		$sql .= " AND LENGTH(".$db->sanitize($column).") = ".((int) $codelen); // LENGTH is portable (mysql, pgsql, sqlite), unlike CHAR_LENGTH
+		$sql .= " AND entity IN (".getEntity('societe').")";
+
+		$resql = $db->query($sql);
+		if (!$resql) {
+			$this->error = $db->error()." sql=".$sql;
+			return false;
+		}
+		$codes = array();
+		while ($obj = $db->fetch_object($resql)) {
+			$codes[] = $obj->code;
+		}
+		$db->free($resql);
+
+		return $codes;
+	}
+
+	/**
+	 *  Resolve the storage table (without prefix) and column holding the accountancy code of a type.
+	 *
+	 *  @param	string	$type	'customer' or 'supplier'
+	 *  @return	string[]|int	array(table, column) or -1 if the type is invalid
+	 */
+	protected function getAccountancyCodeStorage($type)
+	{
+		$shared = getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED');
+		if ($type == 'supplier') {
+			return $shared ? array('societe_perentity', 'accountancy_code_supplier') : array('societe', 'code_compta_fournisseur');
+		} elseif ($type == 'customer') {
+			return $shared ? array('societe_perentity', 'accountancy_code_customer') : array('societe', 'code_compta');
+		}
+		$this->error = 'Bad value for parameter type';
+		return -1;
+	}
+
+	/**
+	 *  Whether the fixed code length (prefix + width) differs from the auxiliary account length,
+	 *  which would make the general ledger pad the code with trailing zeros (length_accounta()).
+	 *
+	 *  @param	string	$prefix	Accountancy code prefix
+	 *  @param	int		$width	Number of characters generated after the prefix
+	 *  @return	bool			True if ACCOUNTING_LENGTH_AACCOUNT is set and differs from prefix+width
+	 */
+	protected function codeLengthDiffersFromAuxiliaryLength($prefix, $width)
+	{
+		$aaccountlen = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
+		return $aaccountlen > 0 && (strlen($prefix) + (int) $width) != $aaccountlen;
 	}
 
 	/**
@@ -293,30 +475,14 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 */
 	public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')
 	{
-		if ($type == 'supplier') {
-			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-				$typethirdparty = 'accountancy_code_supplier';
-			} else {
-				$typethirdparty = 'code_compta_fournisseur';
-			}
-		} elseif ($type == 'customer') {
-			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-				$typethirdparty = 'accountancy_code_customer';
-			} else {
-				$typethirdparty = 'code_compta';
-			}
-		} else {
-			$this->error = 'Bad value for parameter type';
-			return -1;
+		$storage = $this->getAccountancyCodeStorage($type);
+		if (!is_array($storage)) {
+			return -1; // bad type, $this->error already set
 		}
+		list($table, $typethirdparty) = $storage;
 
-		if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-			$sql = "SELECT " . $db->sanitize($typethirdparty) . " FROM " . MAIN_DB_PREFIX . "societe_perentity";
-			$sql .= " WHERE " . $db->sanitize($typethirdparty) . " = '" . $db->escape($code) . "'";
-		} else {
-			$sql = "SELECT " . $db->sanitize($typethirdparty) . " FROM " . MAIN_DB_PREFIX . "societe";
-			$sql .= " WHERE " . $db->sanitize($typethirdparty) . " = '" . $db->escape($code) . "'";
-		}
+		$sql = "SELECT " . $db->sanitize($typethirdparty) . " FROM " . $db->prefix() . $db->sanitize($table);
+		$sql .= " WHERE " . $db->sanitize($typethirdparty) . " = '" . $db->escape($code) . "'";
 		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		$resql = $db->query($sql);

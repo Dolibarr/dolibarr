@@ -88,7 +88,7 @@ class PartnershipUtils
 		$partnership = new Partnership($this->db);
 		$MAXPERCALL = getDolGlobalInt('PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL', 25); // Limit to 25 per call
 
-		$langs->loadLangs(array("partnership", "member"));
+		$langs->loadLangs(array("partnership", "members"));
 
 		$error = 0;
 		$erroremail = '';
@@ -184,7 +184,7 @@ class PartnershipUtils
 							if (!empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
-								$outputlangs->loadLangs(array('main', 'member', 'partnership'));
+								$outputlangs->loadLangs(array('main', 'members', 'partnership'));
 							}
 
 							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
@@ -300,7 +300,7 @@ class PartnershipUtils
 			$maxpercall = getDolGlobalInt('PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL', 10);
 		}
 
-		$langs->loadLangs(array("partnership", "member"));
+		$langs->loadLangs(array("partnership", "members"));
 
 		$error = 0;
 		$erroremail = '';
@@ -410,7 +410,7 @@ class PartnershipUtils
 									if (!empty($newlang)) {
 										$outputlangs = new Translate("", $conf);
 										$outputlangs->setDefaultLang($newlang);
-										$outputlangs->loadLangs(array('main', 'member', 'partnership'));
+										$outputlangs->loadLangs(array('main', 'members', 'partnership'));
 									}
 
 									$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
