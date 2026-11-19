@@ -556,11 +556,10 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 					include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 					$tmporder = new Commande($db);
 					if ($tmporder->fetch(null, $tmpref) > 0) {
-						$url = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php'
-							.'?source=order'
-							.'&ref='.urlencode($tmpref)
-							.'&securekey='.urlencode($tmpsecurekey)
-							.'&e='.GETPOSTINT('e');
+						$url = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=order';
+						$url .= '&ref='.urlencode($tmpref);
+						$url .= '&securekey='.urlencode($tmpsecurekey);
+						$url .= '&e='.GETPOSTINT('e');
 						if (headers_sent()) {
 							print '<script>window.location.replace("'.dol_escape_js($url).'");</script>'."\n";
 							print '<a href="'.dol_escape_htmltag($url).'">Continue</a>'."\n";
