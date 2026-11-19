@@ -3801,7 +3801,7 @@ div.menu_titre {
 	padding-bottom: 4px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: <?php echo $leftmenuwidth - 2; ?>px;				/* required to have overflow working. must be same than menu_contenu */
+	width: <?php echo $leftmenuwidth - 10; ?>px;				/* required to have overflow working. must be same than menu_contenu */
 }
 .mainmenuaspan
 {
@@ -4413,7 +4413,9 @@ input.vmenusearchselectcombo[type=text] {
 	text-align: center;
 	font-size: 0.75em;
 	opacity: 0.6;
-	margin-<?php print $right; ?>: 8px;
+	position: absolute;			/* top is not set so the arrow stays on the line of the title, right is relative to div.vmenu */
+	<?php print $right; ?>: 6px;
+	margin-top: 6px;
 	transform: rotate(<?php print($left == 'left' ? '0' : '180'); ?>deg);
 	transition: transform 0.25s;
 }

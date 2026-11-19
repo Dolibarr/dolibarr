@@ -1133,9 +1133,6 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					} else {
 						print '<span class="vmenu">';
 					}
-					if ($expandonhover) {	// Arrow before the picto, rotated down when the block is expanded. Kept invisible when there is no sub entries, for alignment.
-						print img_picto('', 'fa-chevron-right', '', 0, 0, 0, '', 'menuexpandarrow'.(isset($blockswithsubentries[$i]) ? '' : ' menuexpandarrowempty'));
-					}
 					if (!empty($menu_array[$i]['prefix'])) {
 						$reg = array();
 						if (preg_match('/^(fa[rsb]? )?fa-/', $menu_array[$i]['prefix'], $reg)) {
@@ -1145,6 +1142,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						}
 					}
 					print ucfirst($menu_array[$i]['titre']);
+					if ($expandonhover && isset($blockswithsubentries[$i])) {	// Arrow shown at the end of line on the right of the left menu, rotated down when the block is expanded
+						print img_picto('', 'fa-chevron-right', '', 0, 0, 0, '', 'menuexpandarrow');
+					}
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -1155,9 +1155,6 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
 					print '<div class="menu_titre">'.$tabstring;
 					print '<span class="vmenudisabled" title="'.dolPrintHTMLForAttribute($menu_array[$i]['titre']).'">';
-					if ($expandonhover) {
-						print img_picto('', 'fa-chevron-right', '', 0, 0, 0, '', 'menuexpandarrow menuexpandarrowempty');
-					}
 					if (!empty($menu_array[$i]['prefix'])) {
 						$reg = array();
 						if (preg_match('/^(fa[rsb]? )?fa-/', $menu_array[$i]['prefix'], $reg)) {
