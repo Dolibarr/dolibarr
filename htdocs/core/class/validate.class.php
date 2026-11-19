@@ -65,7 +65,7 @@ class Validate
 			return;
 		}
 
-		$this->outputLang->loadLangs(array('validate', 'errors'));
+		$this->outputLang->loadLangs(array('errors'));
 
 		$this->db = $db;
 	}
@@ -146,7 +146,7 @@ class Validate
 	public function isPhone($phone)
 	{
 		if (!preg_match('/^[+0-9. ()-]*$/ui', $phone)) {
-			$this->error = $this->outputLang->trans('RequireValidPhone');
+			$this->error = $this->outputLang->trans('ErrorRequireValidPhone');
 			return false;
 		}
 		return true;
@@ -277,7 +277,7 @@ class Validate
 		}
 
 		if (!count($value_arr)) {
-			$this->error = $this->outputLang->trans('RequireValue');
+			$this->error = $this->outputLang->trans('ErrorRequireValue');
 			return false;
 		}
 

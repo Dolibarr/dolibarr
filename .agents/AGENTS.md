@@ -257,6 +257,15 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
 
 ---
 
+## Documents produced for the user
+
+- Files produced as deliverables for the user, that are not code changes of the project (reports, slides, graphs, exports, test artifacts, ...), must be written into `/tmp/agents_documents/` (directory shared between the host and all the AI agent containers, see `dev/build/docker-vibe/vibes.sh` and `dev/build/docker-claude/claudes.sh`).
+- That directory is shared by several agents: write into the subdirectory named after the agent (`/tmp/agents_documents/vibe/` for Vibe, `/tmp/agents_documents/claude/` for Claude Code), never directly at its root, and never into the subdirectory of another agent.
+- Inside a git repository, never place such documents into the git working directory: keep the code changes and the documents for the user separated.
+- `/tmp` is purged at reboot: warn the user that the documents must be taken out of the directory before a reboot of the host.
+
+---
+
 ## What the Agent MUST Do
 
 - Read this file before any modification

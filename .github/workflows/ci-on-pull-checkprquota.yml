@@ -10,10 +10,10 @@
 # against the quota of the original author of the commits.
 # Commits with no GitHub account linked to the email of their author can not be attributed
 # to a user, so they are ignored.
-# The Dolibarr maintainers (the accounts listed in the MAINTENERS file) are not counted,
+# The Dolibarr maintainers (the accounts listed in the MAINTAINERS file) are not counted,
 # so they can pull the branch of a contributor and create the PR with their own login,
 # or add merge or fix commits on the PR of a contributor, without being blocked by this control.
-# If the author of the last commit of the PR is a maintainer listed into the MAINTENERS file
+# If the author of the last commit of the PR is a maintainer listed into the MAINTAINERS file
 # (read from the target branch), the check is bypassed.
 # If the quota is exceeded, the CI fails, so the PR is refused.
 # The check does not run at all on the PR targeting the branch 18.0 (end of life version).
@@ -62,16 +62,16 @@ jobs:
           echo "Author of the PR #${PR_NUMBER}: ${PR_AUTHOR}"
 
           # If the author of the last commit of the PR is a maintainer (a github login found on a line
-          # "M: Name <email> / login" of the MAINTENERS file of the target branch, never read from the PR),
+          # "M: Name <email> / login" of the MAINTAINERS file of the target branch, never read from the PR),
           # the quota is bypassed: the maintainer has taken over the PR.
-          MAINTAINERS=$(gh api -H "Accept: application/vnd.github.raw" "repos/${REPO}/contents/MAINTENERS?ref=${PR_TARGET_BRANCH}" \
+          MAINTAINERS=$(gh api -H "Accept: application/vnd.github.raw" "repos/${REPO}/contents/MAINTAINERS?ref=${PR_TARGET_BRANCH}" \
             | grep -E '^[[:space:]]*M:.*<[^>]*@[^>]*>[[:space:]]*/[[:space:]]*[A-Za-z0-9-]+[[:space:]]*$' \
             | sed -E 's|.*/[[:space:]]*([A-Za-z0-9-]+)[[:space:]]*$|\1|' | sort -u || true)
           LAST_COMMIT_AUTHOR=$(gh api "repos/${REPO}/pulls/${PR_NUMBER}/commits" --paginate \
             -q '.[] | (.author.login // "")' | tail -n 1)
           echo "Author of the last commit of the PR: ${LAST_COMMIT_AUTHOR:-unknown}"
           if [ -n "${LAST_COMMIT_AUTHOR}" ] && printf '%s\n' "${MAINTAINERS}" | grep -qixF -- "${LAST_COMMIT_AUTHOR}"; then
-            echo "The author of the last commit, ${LAST_COMMIT_AUTHOR}, is a maintainer found into the MAINTENERS file. Check of the quota skipped. OK."
+            echo "The author of the last commit, ${LAST_COMMIT_AUTHOR}, is a maintainer found into the MAINTAINERS file. Check of the quota skipped. OK."
             exit 0
           fi
 
@@ -84,7 +84,7 @@ jobs:
             -q '.[].author.login | select(. != null)' | sort -u)
 
           # The quota is checked for the author of the PR and for each author of its commits,
-          # except the Dolibarr maintainers (from the MAINTENERS file) who are excluded from the quota.
+          # except the Dolibarr maintainers (from the MAINTAINERS file) who are excluded from the quota.
           USERS_TO_CHECK=$(printf '%s\n' "${PR_AUTHOR}" "${COMMIT_AUTHORS}" | sed '/^$/d' | sort -u \
             | grep -vixF -f <(printf '%s\n' "${MAINTAINERS}") || true)
           echo "Users the quota is checked for: $(echo "${USERS_TO_CHECK}" | tr '\n' ' ')"

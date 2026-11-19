@@ -580,6 +580,11 @@ if (!defined('NOLOGIN')) {
 		// It is not already authenticated and it requests the login / password
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
+		// Link "Cancel" shown when a two-factor authentication code is asked, or 2FA disabled in conf.php: back to the login and password form
+		if (GETPOST('actionlogin', 'aZ09') == 'canceltotp' || dolTotpIsDisabledByConf()) {
+			unset($_SESSION['dol_totp_pending']);
+		}
+
 		$dol_dst_observed = GETPOSTINT("dst_observed", 3);
 		$dol_dst_first = GETPOSTINT("dst_first", 3);
 		$dol_dst_second = GETPOSTINT("dst_second", 3);
@@ -627,7 +632,8 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// Verification security graphic code
-		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
+		// Not done for the return of a passkey login: only the mode 'passkey' is then tested (see later), with a login already validated by the passkey.
+		if ($test && GETPOST('actionlogin', 'aZ09') == 'login' && GETPOST("username", "alpha", 2) && !(GETPOSTINT('afterpasskeyloginreturn') && in_array('passkey', $authmode)) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
 			$ok = false;
 
 			// Use the captcha handler to validate
@@ -739,6 +745,9 @@ if (!defined('NOLOGIN')) {
 		if (GETPOST('beforeoauthloginredirect') || GETPOST('afteroauthloginreturn')) {	// For oauth login
 			$goontestloop = true;
 		}
+		if (GETPOSTINT('afterpasskeyloginreturn')) {	// For passkey login
+			$goontestloop = true;
+		}
 		if (!empty($_COOKIE['login_dolibarr'])) {	// TODO For ? Remove this ?
 			$goontestloop = true;
 		}
@@ -792,6 +801,16 @@ if (!defined('NOLOGIN')) {
 							break;
 						}
 					}
+				}
+			}
+
+			// The mode 'passkey' is tested alone, and only when the login page submits a login validated by a passkey.
+			// A passkey is a two-factor authentication on its own: no TOTP code is asked after it (see dolTotpStartSecondFactor() below).
+			if (in_array('passkey', $authmode)) {
+				if (GETPOSTINT('afterpasskeyloginreturn')) {
+					$authmode = array('passkey');
+				} else {
+					$authmode = array_values(array_diff($authmode, array('passkey')));
 				}
 			}
 
@@ -1112,6 +1131,11 @@ if (!defined('NOLOGIN')) {
 		// New session for this login has started.
 		$error = 0;
 
+		// The authentication has just succeeded: a fresh session id, so an id known before the login (session fixation) is worth nothing
+		if (session_status() === PHP_SESSION_ACTIVE && !session_regenerate_id(true)) {
+			dol_syslog("Session id could not be regenerated after the login", LOG_WARNING);
+		}
+
 		// Store value into session (values always stored)
 		$_SESSION["dol_login"] = $user->login;
 		$_SESSION["dol_logindate"] = dol_now('gmt');
@@ -1216,6 +1240,25 @@ if (!defined('NOLOGIN')) {
 		if (!$isallowed) {
 			header('Location: '.DOL_URL_ROOT.'/user/changepassword.php');
 			exit;
+		}
+	}
+
+	// Check if user must set up a two-factor authentication before going further: when the security setup requires one and it is not done yet,
+	// only the setup page of the user, the logout and the page of a password to change (asked for first) can be reached. Checked on every page.
+	if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && (getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_INTERNAL') || getDolGlobalInt('MAIN_SECURITY_TOTP_REQUIRED_FOR_EXTERNAL') || getDolGlobalString('MAIN_SECURITY_TOTP_REQUIRED_FOR_GROUPS'))) {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		if (dolTotpMustEnroll($db, $user)) {
+			// SCRIPT_NAME and not PHP_SELF, which ends with the path info anybody can add to the URL (/societe/list.php/user/logout.php)
+			$isallowed = ((preg_match('/\/user\/credentials\.php$/', $_SERVER['SCRIPT_NAME']) && GETPOSTINT('id') == $user->id) || preg_match('/\/user\/(logout|changepassword)\.php$/', $_SERVER['SCRIPT_NAME']));
+			// A passkey fulfills the requirement too: the page to add one and its ajax component can also be reached
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+			if (!$isallowed && passkeyIsEnabled()) {
+				$isallowed = ((preg_match('/\/user\/passkeys\.php$/', $_SERVER['SCRIPT_NAME']) && (!GETPOSTINT('id') || GETPOSTINT('id') == $user->id)) || preg_match('/\/core\/ajax\/passkeyregister\.php$/', $_SERVER['SCRIPT_NAME']));
+			}
+			if (!$isallowed) {
+				header('Location: '.DOL_URL_ROOT.'/user/credentials.php?id='.((int) $user->id));
+				exit;
+			}
 		}
 	}
 
@@ -1794,7 +1837,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		$hookmanager->initHooks(array("main"));
 
-		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.(empty($conf->browser->layout) ? '' : $conf->browser->layout).'&version='.urlencode(getDolVersionForUrl());
 
 		print "<head>\n";
 
@@ -1817,6 +1860,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		$appletouchicon = DOL_URL_ROOT.'/theme/apple-touch-icon.png';
 		if (!empty($mysoc->logo_squarred_mini)) {
 			$favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+		}
+		if (!empty($mysoc->logo_squarred)) {
+			$appletouchicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo_squarred);
 		}
 		if (getDolGlobalString('MAIN_FAVICON_URL')) {
 			$favicon = getDolGlobalString('MAIN_FAVICON_URL');
@@ -1929,7 +1975,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		 * see Documentation at admin/tools/ui/dolibarr-context/index.php
 		 */
 		$jsContextVars = [
-			'DOL_VERSION' => DOL_VERSION,
+			'DOL_VERSION' => getDolVersionForUrl(),
 			'DOL_URL_ROOT' => DOL_URL_ROOT,
 		];
 
@@ -2469,8 +2515,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		// Link to Dolibarr wiki pages
 		if (!getDolGlobalString('MAIN_HELP_DISABLELINK') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			$langs->load("help");
-
 			$helpbaseurl = '';
 			$helppage = '';
 			$mode = '';
@@ -3111,7 +3155,7 @@ function top_menu_quickadd()
  */
 function top_menu_importfile()
 {
-	global $conf, $langs;
+	global $conf, $langs, $user;
 
 	// Button disabled on text browser
 	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
@@ -3121,21 +3165,60 @@ function top_menu_importfile()
 	$html = '';
 
 	if (!empty($conf->use_javascript_ajax)) {
+		$aimodulenotenabled = false;
 		$urlforuploadpage = DOL_URL_ROOT.'/core/upload_page.php';
 		if (!is_numeric(getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE'))) {
 			$urlforuploadpage = getDolGlobalString('MAIN_USE_TOP_MENU_IMPORT_FILE');
-		} elseif (!isModEnabled('ai')) {
-			// The native upload page uses the AI module to parse the files, so the button is hidden when the module is not enabled
-			return '';
 		} elseif (!isModEnabled('supplier_invoice') && !isModEnabled('salaries') && !isModEnabled('expensereport') && !isModEnabled('tax')) {
 			// The native upload page can only create supplier invoices, salaries, expense reports or social/fiscal taxes
 			return '';
+		} elseif (!isModEnabled('ai')) {
+			// The native upload page uses the AI module to parse the files, so a click on the button shows a popup to explain how to enable it
+			$aimodulenotenabled = true;
 		}
 
 		$html .= '<!-- div for link to upload file -->
     <div id="topmenu-uploadfile-dropdown" class="atoplogin dropdown inline-block">
-        <a accesskey="i" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.$urlforuploadpage.'" title="'.$langs->trans('UploadFile').' ('.$conf->browser->stringforfirstkey.' i)"><i class="fa fa-upload"></i></a>
+        <a accesskey="i" id="topmenu-uploadfile-link" class="dropdown-togglex login-dropdown-a nofocusvisible" data-toggle="dropdown" href="'.$urlforuploadpage.'" title="'.$langs->trans('UploadFile').' ('.$conf->browser->stringforfirstkey.' i)"><i class="fa fa-upload"></i></a>
     </div>';
+
+		if ($aimodulenotenabled) {
+			// Content of the popup. The link to the setup of modules is shown to admin users only.
+			$urltoenablemodule = DOL_URL_ROOT.'/admin/modules.php?mainmenu=home&search_keyword='.urlencode('Intelligence Artificial');
+			$html .= '<!-- div for popup shown on click on the upload file link when the AI module is not enabled -->
+    <div id="topmenu-uploadfile-dialog" class="hideobject">';
+			$html .= '<p>'.$langs->trans('FeatureNeedAIModuleEnabledAndConfigured').'</p>';
+			if ($user->admin) {
+				$html .= '<p><a href="'.dolPrintHTMLForAttributeUrl($urltoenablemodule).'">'.img_picto('', 'setup', 'class="pictofixedwidth"').$langs->trans('GoToModulesSetupPage').'</a></p>';
+			} else {
+				$html .= '<p>'.$langs->trans('AskYourAdministratorToEnableIt').'</p>';
+			}
+			$html .= '</div>';
+			$html .= '
+        <script nonce="'.getNonce().'">
+        jQuery(document).ready(function() {
+            jQuery("#topmenu-uploadfile-link").on("click", function(event) {
+                if (typeof jQuery.fn.dialog !== "function") {
+                    // No jQuery UI: we follow the link, the upload page shows the error message
+                    return true;
+                }
+                event.preventDefault();
+                console.log("Click on #topmenu-uploadfile-link while the AI module is not enabled, we show a popup");
+                jQuery("#topmenu-uploadfile-dialog").dialog({
+                    title: "'.dol_escape_js($langs->transnoentitiesnoconv('UploadFile')).'",
+                    modal: true,
+                    resizable: false,
+                    width: Math.min(500, jQuery(window).width() - 20),
+                    buttons: [{
+                        text: "'.dol_escape_js($langs->transnoentitiesnoconv('Close')).'",
+                        click: function() { jQuery(this).dialog("close"); }
+                    }]
+                });
+            });
+        });
+        </script>
+        ';
+		}
 	}
 
 	return $html;
@@ -3357,7 +3440,6 @@ function top_menu_bookmark()
 
 	if (!defined('JS_JQUERY_DISABLE_DROPDOWN') && !empty($conf->use_javascript_ajax)) {	    // This may be set by some pages that use different jquery version to avoid errors
 		include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
-		$langs->load("bookmarks");
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$html .= '<div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">';
@@ -4010,7 +4092,7 @@ if (!function_exists("llxFooter")) {
 		global $contextpage, $page, $limit, $mode;
 		global $dolibarr_distrib;
 
-		$ext = 'layout='.urlencode($conf->browser->layout).'&version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.urlencode($conf->browser->layout).'&version='.urlencode(getDolVersionForUrl());
 
 		// Hook to add more things on all pages within fiche DIV
 		$llxfooter = '';

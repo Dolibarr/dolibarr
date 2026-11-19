@@ -62,9 +62,6 @@ $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 if (isModEnabled('category')) {
 	$langs->load("categories");
 }
-if (isModEnabled('incoterm')) {
-	$langs->load("incoterm");
-}
 if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
