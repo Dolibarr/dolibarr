@@ -2210,6 +2210,21 @@ if ($action != 'dopayment') {
 
 		if ($source == 'order' && $object->billed) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("OrderBilled").'</div>';
+
+			// If order is billed, we show a link to the online payment page of the
+			// invoice(s) generated from this order, so the customer can continue
+			// to the corresponding invoice (feature request #40052)
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$object->fetchObjectLinked();
+			$linkedinvoices = (empty($object->linkedObjects['facture']) ? array() : $object->linkedObjects['facture']);
+			foreach ($linkedinvoices as $linkedinvoice) {
+				$paymenturl = getOnlinePaymentUrl(0, 'invoice', $linkedinvoice->ref, 0, '', 0);
+				if ($paymenturl) {
+					print '<br><div class="margintoponly wrapimp">';
+					print '<a href="'.dol_escape_htmltag($paymenturl).'" rel="nofollow noopener">'.$langs->trans("ViewOrPayCorrespondingInvoice", $linkedinvoice->ref).'</a>';
+					print '</div>'."\n";
+				}
+			}
 		} elseif ($source == 'invoice' && $object->paye) {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("InvoicePaid").'</div>';
 		} elseif ($source == 'invoice' && $object->status == Facture::STATUS_ABANDONED && ($object->close_code == Facture::CLOSECODE_REPLACED || getDolGlobalString('INVOICE_ONLINE_PAYMENT_REFUSED_WHATEVER_IS_ABANDON_REASON'))) {
