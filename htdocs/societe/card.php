@@ -1437,7 +1437,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 									$box.addClass("hideobject");
 									return;
 								}
-								$box.append($("<div>").text("'.dol_escape_js($langs->transnoentitiesnoconv("ThirdPartyWithSimilarNameExists")).'"));
+								$box.append($("<div>").text(\''.dol_escape_js($langs->transnoentitiesnoconv("ThirdPartyWithSimilarNameExists")).'\'));
 								var $ul = $("<ul>").appendTo($box);
 								$.each(data.slice(0, 5), function (i, soc) {
 									var details = [soc.name_alias, [soc.zip, soc.town].join(" ").trim(), soc.code_client, soc.code_fournisseur].filter(function (v) { return v; });
