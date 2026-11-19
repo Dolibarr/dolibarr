@@ -73,6 +73,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var array<string,float> Local tax 1 amount per local tax 1 rate
+	 */
+	public $localtax1;
+
+	/**
+	 * @var array<string,float> Local tax 2 amount per local tax 2 rate
+	 */
+	public $localtax2;
+
 
 	/**
 	 *	Constructor
