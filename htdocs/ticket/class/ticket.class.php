@@ -3071,7 +3071,9 @@ class Ticket extends CommonObject
 					if ((int) $send_email > 0) {
 						$sent_to = array();
 						$sent_tocc = array();
-						$sent_header = array();
+						$sent_subject = '';
+						$sent_from = '';
+						$sent_replyto = '';
 
 						// Retrieve internal contact datas
 						$internal_contacts = $object->getInfosTicketInternalContact(1);
@@ -3157,7 +3159,9 @@ class Ticket extends CommonObject
 								if ($result) {
 									$sent_to = $this->mergeEmailRecipients($sent_to, $sendto);
 									$sent_tocc = $this->mergeEmailRecipients($sent_tocc, $sendtocc);
-									$sent_header = array('subject' => $subject, 'from' => $email_from, 'replyto' => $replyto);
+									$sent_subject = $subject;
+									$sent_from = $email_from;
+									$sent_replyto = $replyto;
 								}
 							}
 						}
@@ -3370,7 +3374,9 @@ class Ticket extends CommonObject
 
 										$sent_to = $this->mergeEmailRecipients($sent_to, $sendto);
 										$sent_tocc = $this->mergeEmailRecipients($sent_tocc, $sendtocc);
-										$sent_header = array('subject' => $subject, 'from' => $email_from, 'replyto' => $replyto);
+										$sent_subject = $subject;
+										$sent_from = $email_from;
+										$sent_replyto = $replyto;
 									}
 								}
 							}
@@ -3379,11 +3385,11 @@ class Ticket extends CommonObject
 						if (!empty($sent_to)) {
 							$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
 							$sql .= " SET email_msgid = '".$this->db->escape($this->email_msgid)."',";
-							$sql .= " email_subject = '".$this->db->escape($sent_header['subject'])."',";
-							$sql .= " email_from = '".$this->db->escape($sent_header['from'])."',";
+							$sql .= " email_subject = '".$this->db->escape($sent_subject)."',";
+							$sql .= " email_from = '".$this->db->escape($sent_from)."',";
 							$sql .= " email_to = '".$this->db->escape(implode(',', $sent_to))."',";
 							$sql .= " email_tocc = '".$this->db->escape(implode(',', $sent_tocc))."',";
-							$sql .= " reply_to = '".$this->db->escape($sent_header['replyto'])."'";
+							$sql .= " reply_to = '".$this->db->escape($sent_replyto)."'";
 							$sql .= " WHERE id = ".((int) $id);
 
 							$resql = $this->db->query($sql);
