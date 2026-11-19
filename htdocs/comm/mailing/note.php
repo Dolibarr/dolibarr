@@ -65,7 +65,7 @@ $permissiontoadd = $user->hasRight('mailing', 'write'); // Used by the include o
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, $object->module, $object->id, $object->table_element, '', '', 'rowid', $isdraft);
+restrictedArea($user, 'mailing', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 
 /*
