@@ -3069,6 +3069,10 @@ class Ticket extends CommonObject
 					 * Send emails to internal users (linked contacts) then, if private is not set, to external users (linked contacts or thirdparty email if no contact set)
 					 */
 					if ((int) $send_email > 0) {
+						$sent_to = array();
+						$sent_tocc = array();
+						$sent_header = array();
+
 						// Retrieve internal contact datas
 						$internal_contacts = $object->getInfosTicketInternalContact(1);
 
@@ -3149,7 +3153,12 @@ class Ticket extends CommonObject
 
 							// don't try to send email if no recipient
 							if (!empty($sendto)) {
-								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $email_from, $replyto);
+								$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $email_from, $replyto);
+								if ($result) {
+									$sent_to = $this->mergeEmailRecipients($sent_to, $sendto);
+									$sent_tocc = $this->mergeEmailRecipients($sent_tocc, $sendtocc);
+									$sent_header = array('subject' => $subject, 'from' => $email_from, 'replyto' => $replyto);
+								}
 							}
 						}
 
@@ -3359,20 +3368,27 @@ class Ticket extends CommonObject
 										$this->date_last_msg_sent = dol_now();
 										$this->update($user, 1);	// disable trigger when updating date_last_msg_sent. sendTicketMessageByEmail already create an event in actioncomm table.
 
-										// update event actioncomm $id
-										//print 'update actioncomm id='.$id.' with sendto='.json_encode($sendto)." sendtocc=".json_encode($sendtocc)." email_msgid=".json_encode($this->email_msgid);
-										$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
-										$sql .= " SET email_msgid = '".$this->db->escape($this->email_msgid)."',";
-										$sql .= " email_subject = '".$this->db->escape($subject)."',";
-										$sql .= " email_from = '".$this->db->escape($email_from)."',";
-										$sql .= " email_to = '".$this->db->escape(implode(',', $sendto))."',";
-										$sql .= " email_tocc = '".$this->db->escape(implode(',', $sendtocc))."',";
-										$sql .= " reply_to = '".$this->db->escape($replyto)."'";
-										$sql .= " WHERE id = ".((int) $id);
-
-										$resql = $this->db->query($sql);
+										$sent_to = $this->mergeEmailRecipients($sent_to, $sendto);
+										$sent_tocc = $this->mergeEmailRecipients($sent_tocc, $sendtocc);
+										$sent_header = array('subject' => $subject, 'from' => $email_from, 'replyto' => $replyto);
 									}
 								}
+							}
+						}
+
+						if (!empty($sent_to)) {
+							$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
+							$sql .= " SET email_msgid = '".$this->db->escape($this->email_msgid)."',";
+							$sql .= " email_subject = '".$this->db->escape($sent_header['subject'])."',";
+							$sql .= " email_from = '".$this->db->escape($sent_header['from'])."',";
+							$sql .= " email_to = '".$this->db->escape(implode(',', $sent_to))."',";
+							$sql .= " email_tocc = '".$this->db->escape(implode(',', $sent_tocc))."',";
+							$sql .= " reply_to = '".$this->db->escape($sent_header['replyto'])."'";
+							$sql .= " WHERE id = ".((int) $id);
+
+							$resql = $this->db->query($sql);
+							if (!$resql) {
+								dol_syslog(get_class($this)."::newMessage failed to record the recipients on event id=".((int) $id).": ".$this->db->lasterror(), LOG_ERR);
 							}
 						}
 					}
@@ -3402,6 +3418,30 @@ class Ticket extends CommonObject
 		}
 	}
 
+
+	/**
+	 * Merge two lists of email recipients, keeping each email address once (case-insensitive)
+	 *
+	 * @param	string[]	$list	Recipients already kept, as "email" or "Name <email>"
+	 * @param	string[]	$add	Recipients to add, same format
+	 * @return	string[]			Merged list
+	 */
+	private function mergeEmailRecipients(array $list, array $add): array
+	{
+		$merged = array();
+		$seen = array();
+		foreach (array_merge(array_values($list), array_values($add)) as $recipient) {
+			$recipient = (string) $recipient;
+			$email = strtolower(trim(preg_match('/<\s*([^>]+)\s*>/', $recipient, $reg) ? $reg[1] : $recipient));
+			if ($email === '' || isset($seen[$email])) {
+				continue;
+			}
+			$seen[$email] = 1;
+			$merged[] = $recipient;
+		}
+
+		return $merged;
+	}
 
 	/**
 	 * Send ticket by email to linked contacts
