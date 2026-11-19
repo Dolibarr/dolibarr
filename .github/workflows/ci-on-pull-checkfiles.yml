@@ -21,8 +21,14 @@ permissions:
 jobs:
   check-files:
     runs-on: ubuntu-latest
+    env:
+      # The Dolibarr maintainers are excluded from all the checks of this workflow,
+      # so they can, for example, publish a PR with more than 10 files.
+      MAINTAINERS_BYPASS: '["eldy", "rycks", "lvessiller-opendsi"]'
     steps:
       - name: Check that no translation files outside htdocs/langs/en_US are modified
+        # The checks are bypassed if the user that pushed is a Dolibarr maintainer.
+        if: ${{ !contains(fromJSON(env.MAINTAINERS_BYPASS), github.actor) }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -62,6 +68,7 @@ jobs:
           #fi
 
       - name: Check that no files into htdocs/includes are modified, except for PR on develop
+        if: ${{ !contains(fromJSON(env.MAINTAINERS_BYPASS), github.actor) }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
@@ -89,6 +96,7 @@ jobs:
           echo "No files into htdocs/includes were modified. OK."
 
       - name: Check the number of modified files is not higher than 10, except for QUAL PR
+        if: ${{ !contains(fromJSON(env.MAINTAINERS_BYPASS), github.actor) }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_TITLE: ${{ github.event.pull_request.title }}
