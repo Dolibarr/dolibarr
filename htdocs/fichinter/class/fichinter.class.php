@@ -252,6 +252,8 @@ class Fichinter extends CommonObject
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 		if ($this->id <= 0 || $this->entity <= 0 || empty($conf->ficheinter->multidir_output[$this->entity])
 			|| empty($this->last_main_doc) || !preg_match('/\.pdf$/iD', $this->last_main_doc)) {
 			return '';
