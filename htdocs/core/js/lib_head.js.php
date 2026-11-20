@@ -1623,6 +1623,13 @@ $(document).ready(function() {
 			, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
 			, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
 		});
+
+		// Close all notifications (messages, warnings and errors) when the ESC key is pressed
+		$(document).on('keydown', function(e) {
+			if (e.key === 'Escape' || e.keyCode === 27) {
+				$('.jnotify-container .jnotify-notification').remove();
+			}
+		});
 	}
 });
 	<?php
@@ -2072,6 +2079,17 @@ $(function() {
 		hoverTimer = null;
 	}).on('focusin', function () {
 		activateBlock($(this).parent());
+	});
+
+	/* Click on the arrow expands a collapsed block or collapses an expanded one, instead of following the title link */
+	$('.blockvmenuexpandonhover .menuexpandarrow').on('click', function (e) {
+		let block = $(this).closest('.blockvmenuexpandonhover');
+		e.preventDefault();
+		if (block.hasClass('blockvmenuexpanded')) {
+			collapseBlocks();
+		} else {
+			expandBlock(block);
+		}
 	});
 });
 
