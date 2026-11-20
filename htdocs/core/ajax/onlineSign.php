@@ -777,8 +777,8 @@ if ($action == "importSignature") {
 
 							//$pdf->Open();
 							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
-							// The last page of a technician-signed PDF is reserved for the technician.
-							$lastCustomerPage = $hasTechnicianSignature ? $pagecount - 1 : $pagecount;
+							// Older technician-signed PDFs have a dedicated last page.
+							$lastCustomerPage = $object->hasTechnicianSignedPdf(true) ? $pagecount - 1 : $pagecount;
 							$lastCustomerPageSize = array();
 							$onAllPages = getDolGlobalInt('FICHINTER_SIGNATURE_ON_ALL_PAGES');
 
@@ -835,6 +835,16 @@ if ($action == "importSignature") {
 								$param['xforimgstart'] = round($lastCustomerPageSize['w'] * 0.53);
 								$param['yforimgstart'] = $lastCustomerPageSize['h'] - 60;
 								$param['wforimg'] = $lastCustomerPageSize['w'] - ($param['xforimgstart'] + 16);
+								if ($object->model_pdf === 'soleil') {
+									require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/doc/pdf_soleil.modules.php';
+									$box = pdf_soleil::getSignatureBox(false);
+									if ($box['x'] + $box['width'] <= $lastCustomerPageSize['w'] && $box['y'] + $box['height'] <= $lastCustomerPageSize['h']) {
+										$param['xforimgstart'] = $box['x'] + 2;
+										$param['yforimgstart'] = $box['y'] + 4;
+										$param['wforimg'] = $box['width'] - 16;
+										$param['fitlabel'] = 1;
+									}
+								}
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
 
@@ -1238,32 +1248,3 @@ if ($error) {
 }
 
 echo $response;
-
-
-/**
- * Output the signature file into the PDF object.
- *
- * @param 	TCPDF 		$pdf		PDF handler
- * @param	Translate	$langs		Language
- * @param	array<string,int|float|string|mixed[]>		$params		Array of params
- * @return	void
- */
-function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)
-{
-	$default_font_size = pdf_getPDFFontSize($langs);	// Must be after pdf_getInstance
-	$default_font = pdf_getPDFFont($langs);	// Must be
-	$xforimgstart = $params['xforimgstart'];
-	$yforimgstart = $params['yforimgstart'];
-	$wforimg = $params['wforimg'];
-
-	$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
-	$pdf->SetFont($default_font, '', $default_font_size - 1);
-	$pdf->SetTextColor(80, 80, 80);
-	$pdf->MultiCell($wforimg, 4, $langs->transnoentities("Signature") . ': ' . dol_print_date(dol_now(), "day", false, $langs, true). ' - '.$params['online_sign_name'], 0, 'L');
-	//$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
-	//$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname") . ': ' . $online_sign_name, 0, 'L');
-
-	$pdf->Image($params['pathtoimage'], $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
-
-	return;
-}

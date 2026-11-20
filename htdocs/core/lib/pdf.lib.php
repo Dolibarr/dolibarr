@@ -3554,3 +3554,38 @@ function pdf_truncate_text($pdf, $text, $max_width, $ellipsis_pos = 1, $ellipsis
 		return dol_substr($text, 0, $best, 'UTF-8') . $ellipsis;
 	}
 }
+
+/**
+ * Output the signature file into the PDF object.
+ *
+ * @param 	TCPDF 		$pdf		PDF handler
+ * @param	Translate	$langs		Language
+ * @param	array<string,int|float|string|mixed[]>		$params		Array of params
+ * @return	void
+ */
+function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)
+{
+	$default_font_size = pdf_getPDFFontSize($langs);	// Must be after pdf_getInstance
+	$default_font = pdf_getPDFFont($langs);	// Must be
+	$xforimgstart = $params['xforimgstart'];
+	$yforimgstart = $params['yforimgstart'];
+	$wforimg = $params['wforimg'];
+
+	$hforimg = round($wforimg / 4);
+	$labelY = $yforimgstart + $hforimg - (empty($params['fitlabel']) ? 4 : 0);
+	$pdf->SetXY($xforimgstart, $labelY);
+	$pdf->SetFont($default_font, '', $default_font_size - 1);
+	$pdf->SetTextColor(80, 80, 80);
+	$label = $langs->transnoentities('Signature').': '.dol_print_date(dol_now(), 'day', false, $langs, true).' - '.$params['online_sign_name'];
+	if (!empty($params['fitlabel'])) {
+		$pdf->Cell($wforimg, 4, $label, 0, 0, 'L', false, '', 1);
+	} else {
+		$pdf->MultiCell($wforimg, 4, $label, 0, 'L');
+	}
+	//$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
+	//$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname") . ': ' . $online_sign_name, 0, 'L');
+
+	$pdf->Image($params['pathtoimage'], $xforimgstart, $yforimgstart, $wforimg, $hforimg);
+
+	return;
+}

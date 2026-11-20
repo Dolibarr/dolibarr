@@ -49,11 +49,11 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class FichinterTest extends CommonClassTest
 {
 	/**
-	 * A technician signature page remains detectable after the customer's signature.
+	 * Both technician signature layouts remain detectable after the customer's signature.
 	 *
 	 * @return void
 	 */
-	public function testTechnicianSignaturePageIsRecognized()
+	public function testTechnicianSignedPdfIsRecognized()
 	{
 		$intervention = new Fichinter($this->savdb);
 		$intervention->last_main_doc = 'ficheinter/IN2601-0001/IN2601-0001_signed-20261120130000.pdf';
@@ -64,6 +64,11 @@ class FichinterTest extends CommonClassTest
 
 		$intervention->last_main_doc = 'ficheinter/IN2601-0001/IN2601-0001_technician-signed-0123456789abcdef01234567_signed-20261120130000.pdf';
 		$this->assertTrue($intervention->hasTechnicianSignedPdf());
+		$this->assertTrue($intervention->hasTechnicianSignedPdf(true));
+
+		$intervention->last_main_doc = 'ficheinter/IN2601-0001/IN2601-0001_technician-signed-box-0123456789abcdef01234567_signed-20261120130000.pdf';
+		$this->assertTrue($intervention->hasTechnicianSignedPdf());
+		$this->assertFalse($intervention->hasTechnicianSignedPdf(true));
 	}
 
 	/**

@@ -280,13 +280,15 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 * Check whether the current PDF contains the technician's signature page.
+	 * Check whether the current PDF contains the technician's signature.
 	 *
+	 * @param bool $separatePageOnly Match documents signed before the in-box layout
 	 * @return bool
 	 */
-	public function hasTechnicianSignedPdf()
+	public function hasTechnicianSignedPdf(bool $separatePageOnly = false)
 	{
-		return preg_match('/_technician-signed-[a-f0-9]{24}(?:_signed-[0-9]{14})*\.pdf$/D', (string) $this->last_main_doc) === 1;
+		$marker = $separatePageOnly ? '' : '(?:box-)?';
+		return preg_match('/_technician-signed-'.$marker.'[a-f0-9]{24}(?:_signed-[0-9]{14})*\.pdf$/D', (string) $this->last_main_doc) === 1;
 	}
 
 	/**
@@ -296,7 +298,7 @@ class Fichinter extends CommonObject
 	 */
 	public function lockSignatureDocument()
 	{
-		$sql = 'SELECT last_main_doc, signed_status, fk_statut FROM '.$this->db->prefix().$this->table_element;
+		$sql = 'SELECT last_main_doc, signed_status, fk_statut, model_pdf FROM '.$this->db->prefix().$this->table_element;
 		$sql .= ' WHERE rowid = '.((int) $this->id).' AND entity = '.((int) $this->entity);
 		$sql .= ' FOR UPDATE';
 		$resql = $this->db->query($sql);
@@ -310,6 +312,7 @@ class Fichinter extends CommonObject
 		}
 
 		$this->last_main_doc = $row->last_main_doc;
+		$this->model_pdf = $row->model_pdf;
 		$this->signed_status = (int) $row->signed_status;
 		$this->status = (int) $row->fk_statut;
 		$this->statut = $this->status; // deprecated
@@ -317,7 +320,7 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 * Add a dated technician signature page to the PDF the user reviewed.
+	 * Sign the technician's box on the Soleil PDF the user reviewed.
 	 *
 	 * @param User      $user           Signing user
 	 * @param Translate $outputlangs    PDF language
@@ -346,7 +349,7 @@ class Fichinter extends CommonObject
 		}
 		$destination = '';
 		try {
-			if (!$this->lockSignatureDocument() || !$this->isAssignedTechnicianForSignature($user) || $this->hasTechnicianSignedPdf()) {
+			if (!$this->lockSignatureDocument() || !$this->isAssignedTechnicianForSignature($user) || $this->model_pdf !== 'soleil' || $this->hasTechnicianSignedPdf()) {
 				$this->db->rollback();
 				return -1;
 			}
@@ -357,7 +360,7 @@ class Fichinter extends CommonObject
 				return -1;
 			}
 
-			$destination = dirname($source).'/'.dol_sanitizeFileName($this->ref).'_technician-signed-'.bin2hex(random_bytes(12)).'.pdf';
+			$destination = dirname($source).'/'.dol_sanitizeFileName($this->ref).'_technician-signed-box-'.bin2hex(random_bytes(12)).'.pdf';
 			$pdf = pdf_getInstance();
 			if (!$pdf instanceof TCPDI) {
 				$this->db->rollback();
@@ -377,14 +380,22 @@ class Fichinter extends CommonObject
 				$pdf->useTemplate($template);
 			}
 
-			// Use a separate page so the signature cannot obscure content in custom PDF models.
-			$pdf->AddPage('P', 'A4');
-			$pdf->SetFont(pdf_getPDFFont($outputlangs), 'B', pdf_getPDFFontSize($outputlangs));
-			$pdf->MultiCell(0, 8, $outputlangs->transnoentities('SignInterventionAsTechnician'), 0, 'L');
-			$pdf->SetFont(pdf_getPDFFont($outputlangs), '', pdf_getPDFFontSize($outputlangs));
-			$pdf->MultiCell(0, 6, $this->ref.' - '.$user->getFullName($outputlangs), 0, 'L');
-			$pdf->MultiCell(0, 6, dol_print_date(dol_now(), 'dayhour', false, $outputlangs, true), 0, 'L');
-			$pdf->Image('@'.$image, 15, $pdf->GetY() + 5, 80, 0, 'PNG');
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/doc/pdf_soleil.modules.php';
+			$box = pdf_soleil::getSignatureBox(true);
+			if ($box['x'] + $box['width'] > $pdf->getPageWidth() || $box['y'] + $box['height'] > $pdf->getPageHeight()) {
+				$this->db->rollback();
+				return -1;
+			}
+			$outputlangs->load('main');
+			$pdf->SetAutoPageBreak(false);
+			dolPrintSignatureImage($pdf, $outputlangs, array(
+				'online_sign_name' => $user->getFullName($outputlangs),
+				'pathtoimage' => '@'.$image,
+				'xforimgstart' => $box['x'] + 2,
+				'yforimgstart' => $box['y'] + 4,
+				'wforimg' => $box['width'] - 16,
+				'fitlabel' => 1,
+			));
 			if (hash_file('sha256', $source) !== $digest) {
 				$this->db->rollback();
 				return -1;

@@ -2137,7 +2137,7 @@ if ($action == 'create') {
 				}
 
 				if ($permissiontoadd && (int) $object->entity === (int) $conf->entity && $object->isAssignedTechnicianForSignature($user)
-					&& !$object->hasTechnicianSignedPdf() && $object->getPdfForTechnicianSignature() !== '') {
+					&& $object->model_pdf === 'soleil' && !$object->hasTechnicianSignedPdf() && $object->getPdfForTechnicianSignature() !== '') {
 					print dolGetButtonAction('', $langs->trans('SignInterventionAsTechnician'), 'default', DOL_URL_ROOT.'/fichinter/techniciansignature.php?id='.$object->id);
 				}
 

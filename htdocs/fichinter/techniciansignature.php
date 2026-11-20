@@ -38,7 +38,7 @@ if (!isModEnabled('ficheinter') || !$user->hasRight('ficheinter', 'lire') || !$u
 	accessforbidden();
 }
 restrictedArea($user, 'ficheinter', $object->id, 'fichinter');
-if (!$object->isAssignedTechnicianForSignature($user)) {
+if (!$object->isAssignedTechnicianForSignature($user) || $object->model_pdf !== 'soleil') {
 	accessforbidden();
 }
 
