@@ -367,6 +367,12 @@ if [ "$(cat /sys/module/apparmor/parameters/enabled 2>/dev/null)" = "Y" ]; then
     SECURITY_ARGS+=(--security-opt apparmor=unconfined)
 fi
 
+# The cgroup path of the container must be seen the same way from inside the container
+# and by the kernel, so docker-entrypoint.sh can install an iptables rule scoped to the
+# only container instead of blocking the SMTP ports of the whole machine (see smtpblock.sh).
+# --cgroupns=host is required for that: with the private cgroup namespace of docker, the
+# path read from /proc/self/cgroup into the container is not the one known by the kernel.
+
 sudo docker run --rm -it \
   -e HOST_UID="$(id -u)" \
   -e HOST_GID="$(id -g)" \
@@ -380,6 +386,7 @@ sudo docker run --rm -it \
   "${TX_ARGS[@]}" \
   "${SECURITY_ARGS[@]}" \
   --network=host \
+  --cgroupns=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \
   --mount "type=bind,src=$WORK_DIR,dst=$WORK_DIR" \
