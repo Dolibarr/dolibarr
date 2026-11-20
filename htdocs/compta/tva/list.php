@@ -482,7 +482,7 @@ if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 // Filter: Bank Account
 if (!empty($arrayfields['t.fk_account']['checked'])) {
 	print '<td class="liste_titre left">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth200');
 	print '</td>';
 }
 

@@ -61,9 +61,6 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'orders', 'sendings'));
 
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');

@@ -1108,7 +1108,7 @@ class BOM extends CommonObject
 	{
 		global $langs;
 
-		$langs->loadLangs(['product', 'mrp']);
+		$langs->loadLangs(['products', 'mrp']);
 
 		$datas = [];
 

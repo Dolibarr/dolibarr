@@ -62,7 +62,7 @@ if (isModEnabled('category')) {
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
+$langs->loadLangs(array("companies", "commercial", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');

@@ -319,7 +319,7 @@ class modBookCal extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
 			'mainmenu' => 'agenda',
 			'leftmenu' => 'bookcal',
-			'url' => '/bookcal/bookcalindex.php',
+			'url' => '/bookcal/bookcalindex.php?leftmenu=bookcal',
 			'langs' => 'bookcal',
 			'position' => 1100 + $r,
 			'enabled' => '1',
@@ -335,7 +335,7 @@ class modBookCal extends DolibarrModules
 			'titre' => 'Calendar',
 			'mainmenu' => 'agenda',
 			'leftmenu' => 'bookcal_calendar_list',
-			'url' => '/bookcal/calendar_list.php',
+			'url' => '/bookcal/calendar_list.php?leftmenu=bookcal',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'langs' => 'bookcal',
 			'position' => 1100 + $r,
@@ -355,7 +355,7 @@ class modBookCal extends DolibarrModules
 			'titre' => 'NewCalendar',
 			'mainmenu' => 'agenda',
 			'leftmenu' => 'bookcal_new',
-			'url' => '/bookcal/calendar_card.php?action=create',
+			'url' => '/bookcal/calendar_card.php?action=create&leftmenu=bookcal',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'langs' => 'bookcal',
 			'position' => 1100 + $r,
@@ -379,7 +379,7 @@ class modBookCal extends DolibarrModules
 			'titre' => 'Availabilities',
 			'mainmenu' => 'agenda',
 			'leftmenu' => 'bookcal_availabilities',
-			'url' => '/bookcal/availabilities_list.php',
+			'url' => '/bookcal/availabilities_list.php?leftmenu=bookcal',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'langs' => 'bookcal',
 			'position' => 1200 + $r,
@@ -399,7 +399,7 @@ class modBookCal extends DolibarrModules
 			'titre' => 'NewAvailabilities',
 			'mainmenu' => 'agenda',
 			'leftmenu' => 'bookcal_availabilities',
-			'url' => '/bookcal/availabilities_card.php?action=create',
+			'url' => '/bookcal/availabilities_card.php?action=create&leftmenu=bookcal',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'langs' => 'bookcal',
 			'position' => 1200 + $r,
