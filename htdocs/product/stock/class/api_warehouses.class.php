@@ -187,7 +187,7 @@ class Warehouses extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -311,7 +311,7 @@ class Warehouses extends DolibarrApi
 		if ($updateresult > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->warehouse->error);
+			throw new RestException(500, $this->warehouse->errorsToString());
 		}
 	}
 
@@ -453,7 +453,7 @@ class Warehouses extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}

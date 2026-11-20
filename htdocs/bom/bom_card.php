@@ -185,14 +185,21 @@ if (empty($reshook)) {
 		$fk_unit = GETPOSTINT('fk_unit');
 
 		$fk_default_workstation = 0;
-		if (!empty($idprod) && isModEnabled('workstation')) {
+		if (!empty($idprod)) {
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
 			if ($res > 0 && $product->type == Product::TYPE_SERVICE) {
-				if ($fk_workstation > 0) {
-					$fk_default_workstation = $fk_workstation;
-				} else {
-					$fk_default_workstation = $product->fk_default_workstation;
+				if (isModEnabled('workstation')) {
+					if ($fk_workstation > 0) {
+						$fk_default_workstation = $fk_workstation;
+					} else {
+						$fk_default_workstation = $product->fk_default_workstation;
+					}
+				}
+				if (empty($fk_unit) && !empty($product->duration_unit)) {
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$cUnit = new CUnits($db);
+					$fk_unit = (int) $cUnit->getUnitFromCode((string) $product->duration_unit, 'short_label', 'time');
 				}
 			}
 			if (empty($fk_unit)) {
@@ -309,6 +316,15 @@ if (empty($reshook)) {
 
 			$object->calculateCosts();
 		}
+	}
+
+	// Update duration from service lines
+	if ($action == 'updatedurationfromlines' && $permissiontoadd) {
+		$result = $object->updateDuration($user, true);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		$action = '';
 	}
 }
 
@@ -780,7 +796,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction($langs->trans("ToClone"), '', 'clone', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone', 'object' => 'bom'], true), 'clone', $permissiontoadd);
+				print dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'clone', 'object' => 'bom'], true), 'clone', $permissiontoadd, array('attr' => array('class' => 'reposition')))."\n";
 			}
 
 			// Close / Cancel
@@ -799,7 +815,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			*/
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $permissiontodelete);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>'."\n";
 	}

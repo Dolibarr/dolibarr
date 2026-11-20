@@ -173,6 +173,7 @@ $conf->file->mailing_limit_sendbyday = empty($dolibarr_mailing_limit_sendbyday) 
 $conf->file->main_authentication = empty($dolibarr_main_authentication) ? 'dolibarr' : $dolibarr_main_authentication; // Identification mode
 $conf->file->main_force_https = empty($dolibarr_main_force_https) ? '' : $dolibarr_main_force_https; // Force https
 $conf->file->strict_mode = empty($dolibarr_strict_mode) ? '' : $dolibarr_strict_mode; // Force php strict mode (for debug)
+$conf->file->restrict_password_generation_none = empty($dolibarr_main_restrict_password_generation_none) ? 0 : $dolibarr_main_restrict_password_generation_none; // Forbid the 'none' password generation model (can only be changed by editing conf.php on the server)
 $conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id; // Unique id of instance
 $conf->file->dol_main_url_root = $dolibarr_main_url_root;	// Define url inside the config file
 $conf->file->dol_document_root = array('main' => (string) DOL_DOCUMENT_ROOT); // Define an array of document root directories ('/home/htdocs')
@@ -320,7 +321,8 @@ if ($db !== null) {
 
 // Set default language (must be after the setValues setting global conf 'MAIN_LANG_DEFAULT'. Page main.inc.php will overwrite langs->defaultlang with user value later)
 if (!defined('NOREQUIRETRAN')) {
-	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
+	// On a public page, the visitor has no user setup: the language of his browser wins over the default language of the backoffice
+	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : ((defined('NOLOGIN') && !empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) ? 'auto' : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto')));
 	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL
 		$langcode = constant('MAIN_LANG_DEFAULT');
 	}

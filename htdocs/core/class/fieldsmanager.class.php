@@ -217,7 +217,7 @@ class FieldsManager
 	 */
 	public function errorsToString($separator = ', ')
 	{
-		return $this->error . (is_array($this->errors) ? (!empty($this->error) ? $separator : '') . implode($separator, $this->errors) : '');
+		return $this->error.(is_array($this->errors) && count($this->errors) > 0 ? (($this->error != '' ? ', ' : '').implode(', ', $this->errors)) : '');
 	}
 
 	/**
@@ -464,7 +464,7 @@ class FieldsManager
 			$fieldKey = $matches[1];
 			$fieldInfos = $this->getFieldInfosFromExtraField($object, $extrafields, $fieldKey, $mode, $params);
 		} elseif (preg_match('/^' . $patternObjectPrefix . '(.*)/i', $key, $matches)) {
-			$fieldKey = $matches[2];
+			$fieldKey = $matches[1];
 			$fieldInfos = $this->getFieldInfosFromObjectField($object, $fieldKey, $mode, $params);
 		}
 

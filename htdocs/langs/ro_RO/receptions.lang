@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Validată
 StatusReceptionProcessedShort=Procesate
 ReceptionSheet=Notă de recepție
 ValidateReception=Validare recepție
+DeleteReception=Delete reception
 ConfirmDeleteReception=Sigur doriți să ștergeți această recepție?
 ConfirmValidateReception=Ești sigur că vrei să validezi această recepție cu referința <b>%s</b>?
 ConfirmCancelReception=Sigur doriți să anulați această recepție?

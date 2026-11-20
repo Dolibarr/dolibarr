@@ -165,9 +165,6 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			$tmpuser = new User($db);
 			$tmpuser->fetch($object->fk_user_author);
 			$thirdparty = $tmpuser;
-			if ($object->socid > 0) {
-				$sendtosocid = $object->socid;
-			}
 		} elseif ($object->element == 'societe') {
 			'@phan-var-force Societe $object';
 			$thirdparty = $object;

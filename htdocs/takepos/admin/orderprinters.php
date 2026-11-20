@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->loadLangs(array("main", "categories", "takepos", "printing"));
+$langs->loadLangs(array("main", "categories", "cashdesk", "printing"));
 
 $id = GETPOSTINT('id');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
@@ -57,7 +57,8 @@ if (is_numeric($type)) {
 	$type = array_search($type, $categstatic->MAP_ID);	// For backward compatibility
 }
 
-if (!$user->hasRight('categorie', 'lire')) {
+// Security check
+if (!$user->admin) {
 	accessforbidden();
 }
 

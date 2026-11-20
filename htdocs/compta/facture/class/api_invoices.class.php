@@ -227,9 +227,11 @@ class Invoices extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -248,6 +250,10 @@ class Invoices extends DolibarrApi
 			} elseif ($search_sale > 0) {
 				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
+		}
+		// An unknown value used to be ignored, so the whole list came back as if it were the filtered one
+		if ((string) $status !== '' && !in_array($status, array('draft', 'unpaid', 'paid', 'cancelled'), true)) {
+			throw new RestException(400, "Bad value for parameter status. Expected one of: draft, unpaid, paid, cancelled");
 		}
 		// Filter by status
 		if ($status == 'draft') {
@@ -341,7 +347,7 @@ class Invoices extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -464,7 +470,7 @@ class Invoices extends DolibarrApi
 
 		$result = $this->invoice->createFromOrder($order, DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(405, $this->invoice->error);
+			throw new RestException(405, $this->invoice->errorsToString());
 		}
 		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
@@ -510,7 +516,7 @@ class Invoices extends DolibarrApi
 
 		$result = $this->invoice->createFromContract($contract, DolibarrApiAccess::$user);
 		if ($result < 0) {
-			throw new RestException(405, $this->invoice->error);
+			throw new RestException(405, $this->invoice->errorsToString());
 		}
 		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
@@ -632,7 +638,7 @@ class Invoices extends DolibarrApi
 			unset($result->line);
 			return $this->_cleanObjectDatas($result);
 		} else {
-			throw new RestException(304, $this->invoice->error);
+			throw new RestException(304, $this->invoice->errorsToString());
 		}
 	}
 
@@ -889,7 +895,7 @@ class Invoices extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(405, $this->invoice->error);
+			throw new RestException(405, $this->invoice->errorsToString());
 		}
 	}
 
@@ -948,14 +954,14 @@ class Invoices extends DolibarrApi
 		// update bank account
 		if (!empty($this->invoice->fk_account)) {
 			if ($this->invoice->setBankAccount((int) $this->invoice->fk_account) == 0) {
-				throw new RestException(400, $this->invoice->error);
+				throw new RestException(400, $this->invoice->errorsToString());
 			}
 		}
 
 		if ($this->invoice->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->invoice->error);
+			throw new RestException(500, $this->invoice->errorsToString());
 		}
 	}
 
@@ -1091,7 +1097,7 @@ class Invoices extends DolibarrApi
 		);
 
 		if ($updateRes < 0) {
-			throw new RestException(400, 'Unable to insert the new line. Check your inputs. '.$this->invoice->error);
+			throw new RestException(400, 'Unable to insert the new line. Check your inputs. '.$this->invoice->errorsToString());
 		}
 
 		return $updateRes;
@@ -1133,7 +1139,7 @@ class Invoices extends DolibarrApi
 
 		$result = $this->invoice->add_contact($fk_socpeople, $type_contact, $source, $notrigger);
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->invoice->error);
+			throw new RestException(500, 'Error : '.$this->invoice->errorsToString());
 		}
 
 		$result = $this->invoice->fetch($id);
@@ -1186,7 +1192,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(304, 'Nothing done.');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->invoice->error);
+			throw new RestException(500, 'Error : '.$this->invoice->errorsToString());
 		}
 
 		$result = $this->invoice->fetch($id);
@@ -1236,7 +1242,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Invoice: '.$this->invoice->error);
+			throw new RestException(500, 'Error when validating Invoice: '.$this->invoice->errorsToString());
 		}
 
 		$result = $this->invoice->fetch($id);
@@ -1292,7 +1298,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->invoice->error);
+			throw new RestException(500, 'Error : '.$this->invoice->errorsToString());
 		}
 
 
@@ -1344,7 +1350,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(304, 'Nothing done');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->invoice->error);
+			throw new RestException(500, 'Error : '.$this->invoice->errorsToString());
 		}
 
 
@@ -1395,7 +1401,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Discount not found');
 		}
 		if ($result < 0) {
-			throw new RestException(500, $discountcheck->error);
+			throw new RestException(500, $discountcheck->errorsToString());
 		}
 
 		return parent::_cleanObjectDatas($discountcheck);
@@ -1638,7 +1644,7 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Discount not found');
 		}
 		if ($result < 0) {
-			throw new RestException(500, $discountcheck->error);
+			throw new RestException(500, $discountcheck->errorsToString());
 		}
 
 		if (!empty($discountcheck->fk_facture) || !empty($discountcheck->fk_facture_line)) {
@@ -1707,7 +1713,7 @@ class Invoices extends DolibarrApi
 
 		$result = $this->invoice->insert_discount($discountid);
 		if ($result < 0) {
-			throw new RestException(405, $this->invoice->error);
+			throw new RestException(405, $this->invoice->errorsToString());
 		}
 
 		return $result;
@@ -1756,7 +1762,7 @@ class Invoices extends DolibarrApi
 
 		$result = $discount->link_to_invoice(0, $id);
 		if ($result < 0) {
-			throw new RestException(405, $discount->error);
+			throw new RestException(405, $discount->errorsToString());
 		}
 
 		return $result;
@@ -1769,8 +1775,8 @@ class Invoices extends DolibarrApi
 	 *
 	 * @param	int   $id             Id of invoice
 	 * @return	array
-	 * @phan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
-	 * @phpstan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
+	 * @phan-return array<array{amount:int|float,date:string,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string,typeline:'payment'|'discount'}>
+	 * @phpstan-return array<array{amount:int|float,date:string,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string,typeline:'payment'|'discount'}>
 	 *
 	 * @url     GET {id}/payments
 	 *
@@ -1798,8 +1804,8 @@ class Invoices extends DolibarrApi
 		}
 
 		$result = $this->invoice->getListOfPayments();
-		if (!is_array($result) && $result < 0) {
-			throw new RestException(405, $this->invoice->error);
+		if ($this->invoice->errorsToString() !== '') {
+			throw new RestException(405, $this->invoice->errorsToString());
 		}
 
 		return $result;
@@ -1902,7 +1908,7 @@ class Invoices extends DolibarrApi
 		$payment_id = $paymentobj->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
 		if ($payment_id < 0) {
 			$this->db->rollback();
-			throw new RestException(400, 'Payment error : '.$paymentobj->error);
+			throw new RestException(400, 'Payment error : '.$paymentobj->errorsToString());
 		}
 
 		if (isModEnabled("bank")) {
@@ -1917,7 +1923,7 @@ class Invoices extends DolibarrApi
 			$result = $paymentobj->addPaymentToBank(DolibarrApiAccess::$user, 'payment', $label, $accountid, $chqemetteur, $chqbank);
 			if ($result < 0) {
 				$this->db->rollback();
-				throw new RestException(400, 'Add payment to bank error : '.$paymentobj->error);
+				throw new RestException(400, 'Add payment to bank error : '.$paymentobj->errorsToString());
 			}
 		}
 
@@ -2059,7 +2065,7 @@ class Invoices extends DolibarrApi
 		$payment_id = $paymentobj->create(DolibarrApiAccess::$user, ($closepaidinvoices == 'yes' ? 1 : 0)); // This include closing invoices
 		if ($payment_id < 0) {
 			$this->db->rollback();
-			throw new RestException(400, 'Payment error : '.$paymentobj->error);
+			throw new RestException(400, 'Payment error : '.$paymentobj->errorsToString());
 		}
 		if (isModEnabled("bank")) {
 			$label = '(CustomerInvoicePayment)';
@@ -2072,7 +2078,7 @@ class Invoices extends DolibarrApi
 			$result = $paymentobj->addPaymentToBank(DolibarrApiAccess::$user, 'payment', $label, $accountid, $chqemetteur, $chqbank);
 			if ($result < 0) {
 				$this->db->rollback();
-				throw new RestException(400, 'Add payment to bank error : '.$paymentobj->error);
+				throw new RestException(400, 'Add payment to bank error : '.$paymentobj->errorsToString());
 			}
 		}
 
@@ -2250,9 +2256,11 @@ class Invoices extends DolibarrApi
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -2274,6 +2282,10 @@ class Invoices extends DolibarrApi
 			}
 		}
 
+		// An unknown value used to be ignored, so the whole list came back as if it were the filtered one
+		if ((string) $status !== '' && !in_array($status, array('draft', 'active', 'suspended'), true)) {
+			throw new RestException(400, "Bad value for parameter status. Expected one of: draft, active, suspended");
+		}
 		// Filter by status
 		if ($status == 'active') {
 			$sql .= " AND t.suspended = 0 AND t.frequency IS NOT NULL";
@@ -2344,7 +2356,7 @@ class Invoices extends DolibarrApi
 			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page,
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			);
 		}

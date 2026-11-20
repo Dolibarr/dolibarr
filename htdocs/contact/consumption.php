@@ -138,7 +138,7 @@ print dol_get_fiche_head($head, 'consumption', $langs->trans("ContactsAddresses"
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid" tabindex="-1">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
@@ -230,7 +230,7 @@ if ($type_element == 'fichinter') { 	// Customer : show products from invoices
 	$tables_from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinter as f ON d.fk_fichinter=f.rowid';
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople = '.((int) $object->id);
 	$tables_from .= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='fichinter' and tc.source='external' and tc.active=1)";
-	$where = ' WHERE f.entity IN ('.getEntity('intervention').')';
+	$where = ' WHERE f.entity IN ('.getEntity($documentstatic->element).')';
 	$dateprint = 'f.datec';
 	$doc_number = 'f.ref';
 } elseif ($type_element == 'invoice') { 	// Customer : show products from invoices

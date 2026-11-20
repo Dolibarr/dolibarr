@@ -1,5 +1,6 @@
 <?php
-/*
+/* Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -16,7 +17,7 @@
 
 /**
  *       \file       htdocs/core/ajax/changepositionfields.php
- *       \brief      File for we change position of fields on a list page
+ *       \brief      File to change the position of columns in a list page
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -67,8 +68,12 @@ if ($userid != $user->id) {
  * Actions
  */
 
+$result = 0;
+
 // Registering the new value of constant
 if (!empty($action) && !empty($contextpage)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 	if ($action == "listafterchangingpositionfields") { // Test on permission not required here. Done in security check
 		dol_syslog("Ajax changepositionfields contextpage=".$contextpage." postitionfields=".$postitionfields." userid=".$userid, LOG_DEBUG);
 		$tabparam = array();
@@ -81,8 +86,11 @@ if (!empty($action) && !empty($contextpage)) {
 		} else {
 			$tabparam["MAIN_POSITIONFIELDS_".$contextpage] = '';
 		}
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
+		$result = dol_set_user_param($db, $conf, $user, $tabparam);
+	} elseif ($action == "deletepositionfields") { // Delete the personalization of the position of fields of the user. Test on permission not required here. Done in security check
+		dol_syslog("Ajax deletepositionfields contextpage=".$contextpage." userid=".$userid, LOG_DEBUG);
+		// The empty value deletes the parameter, so the default position of the page is used
+		$tabparam = array("MAIN_POSITIONFIELDS_".$contextpage => '');
 		$result = dol_set_user_param($db, $conf, $user, $tabparam);
 	}
 } else {
@@ -94,4 +102,10 @@ if (!empty($action) && !empty($contextpage)) {
  * View
  */
 
+if ($result < 0) {
+	http_response_code(500);
+}
+
 top_httphead();
+
+// No output

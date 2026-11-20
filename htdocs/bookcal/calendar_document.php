@@ -130,7 +130,7 @@ if ($object->id && $upload_dir !== null) {
 	// Show tabs
 	$head = calendarPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("Calendar"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("Calendar"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list

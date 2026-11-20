@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Quentin Vial-Gouteyron      <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -148,14 +148,14 @@ class doc_generic_reception_odt extends ModelePdfReception
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if (!empty($odtPath)) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
+			$texte .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b><br>';
+			$texte .= '</b></span><br>';
 		}
 		if ($nbofiles) {
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx opacitylow">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
 				$texte .= '- '.$file['name'];
@@ -167,6 +167,9 @@ class doc_generic_reception_odt extends ModelePdfReception
 		}
 
 		$texte .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$texte .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
@@ -177,7 +180,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$texte .= '<br></div></div>';
 
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$texte .= '<div>';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
@@ -186,6 +189,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="RECEPTION_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
 		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 		$texte .= '</div>';
 
 		$texte .= '</td>';
@@ -385,7 +389,9 @@ class doc_generic_reception_odt extends ModelePdfReception
 					$array_thirdparty_contact = $this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
 				}
 
-				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other, $array_thirdparty_contact);
+				$array_reception = $this->getSubstitutionarrayReception($object, $outputlangs);
+
+				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other, $array_thirdparty_contact, $array_reception);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				// Call the ODTSubstitution hook
@@ -499,5 +505,75 @@ class doc_generic_reception_odt extends ModelePdfReception
 		}
 
 		return -1;
+	}
+
+	/**
+	 * Values a reception document needs that the generic object substitutions do not give:
+	 * its dates as text, the warehouses its lines went to, and its weight with its unit.
+	 *
+	 * @param	Reception	$object			Reception
+	 * @param	Translate	$outputlangs	Language object for output
+	 * @return	array<string,string>		Array of substitution key -> value
+	 */
+	public function getSubstitutionarrayReception($object, $outputlangs)
+	{
+		$warehouses = array();
+		$ids = array();
+		foreach ($object->lines as $line) {
+			if (!empty($line->fk_entrepot) && $line->fk_entrepot > 0) {
+				$ids[(int) $line->fk_entrepot] = (int) $line->fk_entrepot;
+			}
+		}
+		if (!empty($ids)) {
+			// One query for every line, rather than one query per line
+			$sql = "SELECT rowid, ref, lieu FROM ".MAIN_DB_PREFIX."entrepot";
+			$sanitizedids = implode(',', array_map('intval', $ids));
+			$sql .= " WHERE rowid IN (".$sanitizedids.")";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$warehouses[] = $obj->lieu ? $obj->ref.' ('.$obj->lieu.')' : $obj->ref;
+				}
+				$this->db->free($resql);
+			}
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
+		$weight = '';
+		if ($object->trueWeight !== '' && $object->trueWeight !== null) {
+			$weight = $object->trueWeight.' '.measuringUnitString(0, "weight", (int) $object->weight_units, 1, $outputlangs);
+		}
+
+		// The supplier orders the goods were received against. A fetched reception
+		// carries no origin of its own, but each of its lines names the order it
+		// dispatches, so the refs are read from there, in one query for every line.
+		$originrefs = array();
+		$orderids = array();
+		foreach ($object->lines as $line) {
+			if (!empty($line->fk_commande) && $line->fk_commande > 0) {
+				$orderids[(int) $line->fk_commande] = (int) $line->fk_commande;
+			}
+		}
+		if (!empty($orderids)) {
+			$sanitizedorderids = implode(',', array_map('intval', $orderids));
+			$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql .= " WHERE rowid IN (".$sanitizedorderids.")";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$originrefs[] = $obj->ref;
+				}
+				$this->db->free($resql);
+			}
+		}
+
+		return array(
+			'object_origin_ref' => implode(', ', $originrefs),
+			'object_date_delivery_locale' => dol_print_date($object->date_delivery, 'day', 'tzuser', $outputlangs),
+			'object_date_valid_locale' => dol_print_date($object->date_valid, 'day', 'tzuser', $outputlangs),
+			'object_warehouse' => implode(', ', $warehouses),
+			'object_weight' => $weight,
+		);
 	}
 }

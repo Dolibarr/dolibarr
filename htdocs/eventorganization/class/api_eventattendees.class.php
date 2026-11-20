@@ -97,8 +97,14 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(404, 'Event attendee with id '.$id.' not found');
 		}
 
+		// we can now check for access to the project of the attendee before deleting it
+		$allowaccess = $this->_checkAccessRights('delete', $this->event_attendees->fk_project);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to the project of Event attendee');
+		}
+
 		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->errorsToString());
 		}
 
 		return array(
@@ -135,8 +141,14 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(404, "Event attendee with ref ".$ref." not found");
 		}
 
+		// we can now check for access to the project of the attendee before deleting it
+		$allowaccess = $this->_checkAccessRights('delete', $this->event_attendees->fk_project);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to the project of Event attendee');
+		}
+
 		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->errorsToString());
 		}
 
 		return array(
@@ -211,11 +223,11 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
-		// $allowaccess = $this->_checkAccessRights('read', 0);
-		// if (!$allowaccess) {
-		//		throw new RestException(403, 'denied read access to Event attendees');
-		// }
-		// access check delayed until we can do it for each row checking each fk_project
+		$allowaccess = $this->_checkAccessRights('read', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
+		}
+		// Fine-grained access is still checked later for each row on its fk_project
 		// entity stolen from api_setup.class.php
 		$entity = (int) DolibarrApiAccess::$user->entity;
 		$obj_ret = array();
@@ -227,6 +239,15 @@ class EventAttendees extends DolibarrApi
 			$sql .= ' WHERE p.entity = '.((int) $entity);
 		} else {
 			$sql .= ' WHERE 1 = 1';
+		}
+		// If user has no permission to see all projects, we restrict the list to projects he is allowed to see
+		// (public projects or projects he is a contact of), like api_projects::index() does,
+		// so unauthorized rows can't be probed with the sqlfilters parameter
+		if (!DolibarrApiAccess::$user->hasRight('project', 'all', 'read')) {
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$projectstatic = new Project($this->db);
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser(DolibarrApiAccess::$user, 0, 1, 0);
+			$sql .= ' AND t.fk_project IN ('.$this->db->sanitize($projectsListId).')';
 		}
 
 
@@ -259,25 +280,25 @@ class EventAttendees extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
-			$onerowaccessgranted = false;
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$event_attendees_static = new ConferenceOrBoothAttendee($this->db);
 				if ($event_attendees_static->fetch($obj->rowid) > 0) {
-					$rowallowaccess = $this->_checkAccessRights('read', $event_attendees_static->fk_project);
+					try {
+						$rowallowaccess = $this->_checkAccessRights('read', $event_attendees_static->fk_project);
+					} catch (RestException $e) {
+						// No access to this row, we skip it so the response does not depend on rows we are not allowed to see
+						$rowallowaccess = false;
+					}
 					if ($rowallowaccess) {
 						if ($loadlinkedobjects) {
 							// retrieve linked objects
 								$event_attendees_static->fetchObjectLinked();
 						}
 						$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($event_attendees_static), $properties);
-						$onerowaccessgranted = $rowallowaccess;
 					}
 				}
 				$i++;
-			}
-			if (($num > 0) && !$onerowaccessgranted) {
-				throw new RestException(403, 'No access granted for even a single of the rows found');
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve event attendee list : '.$this->db->lasterror());
@@ -295,7 +316,7 @@ class EventAttendees extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -341,6 +362,12 @@ class EventAttendees extends DolibarrApi
 			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
 		}
 
+		// we can now check for access to the project the attendee is attached to
+		$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to the project of Event attendee');
+		}
+
 		if ($this->event_attendees->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating event attendee", array_merge(array($this->event_attendees->error), $this->event_attendees->errors));
 		}
@@ -382,6 +409,13 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(404, 'event attendee not found');
 		}
 
+		// we can now check for access to the project of the attendee before updating it
+		$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to the project of Event attendee');
+		}
+		$previous_project_id = $this->event_attendees->fk_project;
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -393,6 +427,14 @@ class EventAttendees extends DolibarrApi
 			}
 
 			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
+		}
+
+		// Check access also to the new project when it was changed
+		if ($this->event_attendees->fk_project != $previous_project_id) {
+			$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
+			if (!$allowaccess) {
+				throw new RestException(403, 'denied access to the project of Event attendee');
+			}
 		}
 
 		if ($this->event_attendees->update(DolibarrApiAccess::$user) > 0) {
@@ -433,6 +475,13 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(404, 'event attendee not found');
 		}
 
+		// we can now check for access to the project of the attendee before updating it
+		$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to the project of Event attendee');
+		}
+		$previous_project_id = $this->event_attendees->fk_project;
+
 		$newref = $ref;
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -448,6 +497,14 @@ class EventAttendees extends DolibarrApi
 			}
 
 			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
+		}
+
+		// Check access also to the new project when it was changed
+		if ($this->event_attendees->fk_project != $previous_project_id) {
+			$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
+			if (!$allowaccess) {
+				throw new RestException(403, 'denied access to the project of Event attendee');
+			}
 		}
 
 		if ($this->event_attendees->update(DolibarrApiAccess::$user) > 0) {
@@ -478,6 +535,10 @@ class EventAttendees extends DolibarrApi
 		}
 		if (empty($id) && empty($ref)) {
 			throw new RestException(400, 'No eventattendee can be found with no criteria');
+		}
+		$allowaccess = $this->_checkAccessRights('read', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
 		}
 		// we first need to fetch the object so we can get the fk_project id and then check for access
 		$result = $this->event_attendees->fetch($id, $ref);

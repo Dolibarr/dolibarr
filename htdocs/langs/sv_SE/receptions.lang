@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Bekräftade
 StatusReceptionProcessedShort=Bearbetad
 ReceptionSheet=Mottagningsblad
 ValidateReception=Validera mottagning
+DeleteReception=Delete reception
 ConfirmDeleteReception=Är du säker på att du vill ta bort denna mottagning?
 ConfirmValidateReception=Är du säker på att du vill validera denna mottagning med referensen <b>%s</b>?
 ConfirmCancelReception=Är du säker på att du vill avbryta mottagningen?

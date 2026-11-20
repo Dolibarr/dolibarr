@@ -235,7 +235,7 @@ class KnowledgeManagement extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -337,7 +337,7 @@ class KnowledgeManagement extends DolibarrApi
 		if ($this->knowledgerecord->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->knowledgerecord->error);
+			throw new RestException(500, $this->knowledgerecord->errorsToString());
 		}
 	}
 
@@ -368,7 +368,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 		if (!$this->knowledgerecord->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting KnowledgeRecord : '.$this->knowledgerecord->error);
+			throw new RestException(500, 'Error when deleting KnowledgeRecord : '.$this->knowledgerecord->errorsToString());
 		}
 
 		return array(
@@ -471,12 +471,16 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 
+		if (!DolibarrApi::_checkAccessToResource('knowledgerecord', $this->knowledgerecord->id, 'knowledgemanagement_knowledgerecord')) {
+			throw new RestException(403, 'Access to instance id='.$this->knowledgerecord->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->knowledgerecord->validate(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->error);
+			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->knowledgerecord);
@@ -508,12 +512,16 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 
+		if (!DolibarrApi::_checkAccessToResource('knowledgerecord', $this->knowledgerecord->id, 'knowledgemanagement_knowledgerecord')) {
+			throw new RestException(403, 'Access to instance id='.$this->knowledgerecord->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->knowledgerecord->cancel(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->error);
+			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->knowledgerecord);

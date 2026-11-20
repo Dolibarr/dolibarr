@@ -177,7 +177,7 @@ class StockMovements extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -239,11 +239,7 @@ class StockMovements extends DolibarrApi
 
 		$this->stockmovement->setOrigin($origin_type, $origin_id);
 		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, (float) $price, $label, $movementcode, $dateMvt, $dluo, $dlc, $batch) <= 0) {
-			$errormessage = $this->stockmovement->error;
-			if (empty($errormessage)) {
-				$errormessage = implode(',', $this->stockmovement->errors);
-			}
-			throw new RestException(503, 'Error when create stock movement : '.$errormessage);
+			throw new RestException(503, 'Error when create stock movement : '.$this->stockmovement->errorsToString());
 		}
 
 		return $this->stockmovement->id;

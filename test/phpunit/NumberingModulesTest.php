@@ -25,12 +25,11 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/admin.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -114,6 +113,18 @@ class NumberingModulesTest extends CommonClassTest
 		$result = $localobject->is_erasable();
 		print __METHOD__." is_erasable=".$result."\n";
 		$this->assertGreaterThanOrEqual(-6, $result, 'Test for is_erasable, 1st invoice already printed');			// Can be deleted
+
+		$localobject->email_sent_counter = 1;
+		$conf->global->INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED = 1;
+		$result = $localobject->is_erasable();
+		print __METHOD__." is_erasable=".$result."\n";
+		$this->assertGreaterThanOrEqual(1, $result, 'Test for is_erasable, 1st invoice already printed and sent, with option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED');
+		$result = $localobject->isEditable();
+		print __METHOD__." isEditable=".$result."\n";
+		$this->assertGreaterThanOrEqual(1, $result, 'Test for isEditable, 1st invoice already printed and sent, with option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED');
+		$conf->global->INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED = 0;
+		$this->assertEquals(-5, $localobject->isEditable(), 'Test for isEditable, 1st invoice already sent, without option INVOICE_CAN_BE_EDITED_OR_REMOVED_EVEN_IF_SENT_OR_PRINTED');
+		$localobject->email_sent_counter = 0;
 
 		$localobject2 = new Facture($db);
 		$localobject2->initAsSpecimen();

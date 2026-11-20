@@ -46,7 +46,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 /** @var Task[] $linkedObjectBlock */
 
 // Load translation files required by the page
-$langs->load("tasks");
+$langs->load("projects");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
 /** @var Task[] $linkedObjectBlock */
@@ -61,14 +61,15 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
-		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Task"); ?>
+		<td class="linkedcol-element tdoverflowmax125">
 		<?php if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines&amp;token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&action=selectlines&token='.newToken().'"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a>';
 		} ?>
+		<?php echo $langs->trans("Task"); ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
 		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_start, 'day'); ?></td>
-		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_stop, 'day'); ?></td>
+		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_end, 'day'); ?></td>
 		<td class="linkedcol-amount right"><?php
 		$total += $objectlink->budget_amount;
 		echo price($objectlink->budget_amount);

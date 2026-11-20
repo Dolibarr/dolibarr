@@ -297,7 +297,7 @@ function getExtrafieldsAdminMap()
 			'tabid'        => 'bank_various_payment_extrafields',
 			'headlabel'    => 'BankSetupModule',
 			'textobject'   => 'VariousPayments',
-			'headpicto'    => '',
+			'headpicto'    => 'account',
 			'title'        => 'BankSetupModule',
 			'helpurl'      => '',
 			'langs'        => array('admin', 'banks', 'other'),

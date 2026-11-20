@@ -213,7 +213,7 @@ if (empty($reshook)) {
 
 	// Execute jobs
 	if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
-		if (getDolGlobalString('CRON_KEY') && getDolGlobalString('CRON_KEY') != $securitykey) {
+		if (getDolGlobalString('CRON_KEY') && !hash_equals(getDolGlobalString('CRON_KEY'), (string) $securitykey)) {
 			setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 			$action = '';
 		} else {
@@ -664,7 +664,8 @@ if ($num > 0) {
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);
-		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzserver'));
+		// Same timezone as the next run date (dolOutputDates() outputs in user timezone by default)
+		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzuserrel')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzuserrel'));
 
 
 		print '<tr class="oddeven row-with-select">';
@@ -806,7 +807,7 @@ if ($num > 0) {
 		// Date start last run
 		print '<td class="center celldateheight" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastrun)) {
-			print dolOutputDates($datelastrun, null, 0, 1, '', 'tzserver');
+			print dolOutputDates($datelastrun, null, 0, 1);
 		}
 		print '</td>';
 		if (!$i) {

@@ -149,4 +149,34 @@ final class NamingContract
 
 		return str_replace($search, $replace, $filename);
 	}
+
+	/**
+	 * Scan a generated file content for residual myobject/mymodule tokens after substitution.
+	 *
+	 * Lines holding a MODULEBUILDER structural marker (BEGIN/END MODULEBUILDER ...) are skipped: those
+	 * markers are template anchors that must stay as-is (e.g. BEGIN MODULEBUILDER API MYOBJECT).
+	 *
+	 * @param string $content  Full file content to validate
+	 * @param string $filePath Used in error messages only
+	 * @return string[]        List of human-readable errors, empty array means valid
+	 */
+	public static function validateContent(string $content, string $filePath): array
+	{
+		$errors = [];
+		$lines  = explode("\n", $content);
+
+		foreach ($lines as $lineIndex => $line) {
+			if (strpos($line, '/* BEGIN MODULEBUILDER ') !== false || strpos($line, '/* END MODULEBUILDER ') !== false) {
+				continue;
+			}
+			if (preg_match('/\bmyobject\b/i', $line)) {
+				$errors[] = $filePath . ':' . ($lineIndex + 1) . " — residual 'myobject' token detected";
+			}
+			if (preg_match('/\bmymodule\b/i', $line)) {
+				$errors[] = $filePath . ':' . ($lineIndex + 1) . " — residual 'mymodule' token detected";
+			}
+		}
+
+		return $errors;
+	}
 }

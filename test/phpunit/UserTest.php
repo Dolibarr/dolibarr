@@ -3,6 +3,7 @@
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +27,11 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/user/class/user.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/user/class/user.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -176,6 +176,46 @@ class UserTest extends CommonClassTest
 			),
 			array()
 		);
+		return $localobject;
+	}
+
+	/**
+	 * testUserUpdateEmptyGeneralAccount
+	 *
+	 * The empty option of the select of accounting accounts posts '-1'. It must be stored as an empty general account.
+	 *
+	 * @param   User  $localobject     User
+	 * @return  User
+	 * @depends testUserUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testUserUpdateEmptyGeneralAccount($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject->accountancy_code_user_general = '421';
+		$result = $localobject->update($user);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
+
+		$newlocalobject = new User($db);
+		$newlocalobject->fetch($localobject->id);
+		$this->assertEquals('421', $newlocalobject->accountancy_code_user_general, 'A real general account must be stored');
+
+		$localobject->accountancy_code_user_general = '-1';
+		$result = $localobject->update($user);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
+		$this->assertEquals('', $localobject->accountancy_code_user_general, 'The value -1 of the empty option must be normalised');
+
+		$newlocalobject = new User($db);
+		$newlocalobject->fetch($localobject->id);
+		$this->assertEmpty($newlocalobject->accountancy_code_user_general, 'The value -1 of the empty option must not be stored');
+
 		return $localobject;
 	}
 

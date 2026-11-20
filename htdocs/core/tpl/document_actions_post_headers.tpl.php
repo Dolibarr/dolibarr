@@ -80,7 +80,7 @@ if (empty($langs) || !is_object($langs)) {
 ';
 
 
-$langs->load("link");
+$langs->load("companies");
 if (empty($relativepathwithnofile)) {
 	$relativepathwithnofile = '';
 }
@@ -148,6 +148,7 @@ if (!isset($savingdocmask) || getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PR
 			'project',
 			'project_task',
 			'expensereport',
+			'salaries',
 			'tax',
 			'tax-vat',
 			'produit',

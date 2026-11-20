@@ -144,6 +144,37 @@ class ViewImageController extends Controller
 			header('Expires: ' . gmdate('D, d M Y H:i:s', time() + (int) $delaycache) . ' GMT');    // This is to avoid to have Expires set by proxy or web server
 		}
 
+		// If we have a hash public (hashp), we guess the original_file from the shared file record (never trust param file).
+		if (!empty($hashp) && $hashp != 'shared') {
+			include_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
+			$ecmfile = new EcmFiles($this->db);
+			$result = $ecmfile->fetch(0, '', '', '', $hashp);
+			if ($result > 0) {
+				$tmp = explode('/', $ecmfile->filepath, 2); // $ecmfile->filepath is relative to document directory
+				// filepath can be 'users/X' or 'X/propale/PR11111'
+				if (is_numeric($tmp[0])) { // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
+					$tmp = explode('/', $tmp[1], 2);
+				}
+				$moduleparttocheck = $tmp[0]; // moduleparttocheck is first part of path
+
+				if ($modulepart) {	// Not required, so often not defined, for link using public hashp parameter.
+					if ($moduleparttocheck != $modulepart) {
+						httponly_accessforbidden('Bad link. File is from another module part.', 403);
+					}
+				} else {
+					$modulepart = $moduleparttocheck;
+				}
+				$original_file = ((!empty($tmp[1]) ? $tmp[1] . '/' : '') . $ecmfile->filename); // this is relative to module dir
+
+				if ($extname) {
+					$original_file = getImageFileNameForSize($original_file, $extname);
+				}
+			} else {
+				httponly_accessforbidden("ErrorFileNotFoundWithSharedLink", 403, 1);
+			}
+		}
+
 		// Define mime type
 		$type = 'application/octet-stream';
 		if (GETPOST('type', 'alpha')) {
@@ -165,6 +196,17 @@ class ViewImageController extends Controller
 		$original_file = preg_replace('/\.\.+/', '..', $original_file);    // Replace '... or more' with '..'
 		$original_file = str_replace('../', '/', $original_file);
 		$original_file = str_replace('..\\', '/', $original_file);
+
+		// Security: Remove remaining '.', '..' and empty ('//' -> '/') segments, so the reference of the object
+		// extracted from the subdirectory can not be faked with a path like 'REF/./file' or 'REF//file'.
+		// The reference must also stay the same than the one resolved into dol_check_secure_access_document().
+		$pathsegments = explode('/', $original_file);
+		foreach ($pathsegments as $key => $pathsegment) {
+			if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+				unset($pathsegments[$key]);
+			}
+		}
+		$original_file = implode('/', $pathsegments);
 
 		// Find the subdirectory name as the reference
 		$refname = basename(dirname($original_file) . "/");
@@ -389,7 +431,7 @@ class ViewImageController extends Controller
 					// we must check the securekey that protet against forging url
 					if ($reg[1] == 'user' && (int) $reg[2] > 0) {
 						$encodedsecurekey = dol_hash($conf->file->instance_unique_id . 'uservirtualcard' . $id . '-' . $login, 'md5');
-						if ($encodedsecurekey != GETPOST('securekey')) {
+						if (!hash_equals($encodedsecurekey, (string) GETPOST('securekey'))) {
 							$code = 'badvalueforsecurekey';
 						}
 					}

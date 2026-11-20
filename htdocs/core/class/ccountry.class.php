@@ -79,6 +79,7 @@ class Ccountry extends CommonDict
 	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>
 	 */
 	public $fields = array(
+		'code' => array('type' => 'varchar(2)', 'label' => 'CountryCode', 'enabled' => 1, 'visible' => 1, 'position' => 10, 'notnull' => 1),
 		'label' => array('type' => 'varchar(250)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 15, 'notnull' => -1, 'showoncombobox' => 1)
 	);
 
@@ -148,9 +149,7 @@ class Ccountry extends CommonDict
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error) {
-			$this->id = $this->db->last_insert_id($this->db->prefix()."c_country");
-		}
+		// Note: the rowid of c_country is not auto incremented, $this->id is the id given
 
 		// Commit or rollback
 		if ($error) {

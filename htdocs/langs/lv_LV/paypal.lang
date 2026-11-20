@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal moduļa iestatīšana
-PaypalDesc=Šis modulis ļauj klientiem veikt maksājumus, izmantojot <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a>. To var izmantot ad hoc maksājumam vai maksājumam, kas saistīts ar Dolibarr objektu (rēķins, pasūtījums, ...)
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Maksājiet ar PayPal (karti vai PayPal)
 PaypalDoPayment=Maksāt ar PayPal
 PAYPAL_API_SANDBOX=Režīma pārbaude/smilšu kaste
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Jauns tiešsaistes maksājums tika izmēģināts, bet nei
 ONLINE_PAYMENT_SENDEMAIL=E-pasta adrese paziņojumiem pēc katra maksājuma mēģinājuma (lai gūtu panākumus un neizdotos)
 ReturnURLAfterPayment=Return URL after payment
 ValidationOfOnlinePaymentFailed=Neveiksmīgs tiešsaistes maksājumu apstiprinājums
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Maksājuma apstiprinājuma lapa tika izsaukta ar maksājumu sistēmu, atgriezās kļūda
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API call failed.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API call failed.
 DetailedErrorMessage=Detalizēta kļūdu ziņa

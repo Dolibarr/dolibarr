@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2012  Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,7 +99,9 @@ class DolGeoIP
 			dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
 			return;
 		}
-		if (!file_exists($datfile) || !is_readable($datfile)) {
+		// Use dol_is_file() and not file_exists() so a directory (when no datafile is set) is rejected before the GeoIP2 reader leaks memory on it
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if (!dol_is_file($datfile) || !is_readable($datfile)) {
 			$this->error = 'ErrorGeoIPClassNotInitialized';
 			$this->errorlabel = "Datafile ".$datfile." not found";
 			dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
@@ -153,6 +155,55 @@ class DolGeoIP
 			//return $e->getMessage();
 			return '';
 		}
+	}
+
+	/**
+	 * Return the city name for an IP or a host name using the embedded GeoIP2 reader.
+	 * Only returns something when the configured datafile is a City-type database
+	 * (a Country-type database has no city record at all).
+	 *
+	 * @param	string	$ipOrName	IP address or host name to look up
+	 * @return	string				City name (best available locale) or '' if not found or not a City database
+	 */
+	private function getGeoIp2CityName($ipOrName)
+	{
+		try {
+			$databasetype = '';
+			if (is_object($this->gi) && method_exists($this->gi, 'metadata')) {
+				// @phan-suppress-next-line PhanUndeclaredClassProperty  MaxMind\Db\Reader\Metadata is provided by geoip2.phar and has no stub
+				$databasetype = (string) $this->gi->metadata()->databaseType;
+			}
+			if (strpos($databasetype, 'City') === false) {
+				return ''; // Country-type database has no city() method / no city record
+			}
+			$record = $this->gi->city($ipOrName);
+			return (string) $record->city->name;
+		} catch (Exception $e) {
+			return '';
+		}
+	}
+
+	/**
+	 * Return the city name from an ip. Only works if the configured datafile is a City database.
+	 *
+	 * @param	string	$ip		IP to scan
+	 * @return	string			City name, or '' if not found or if the datafile is a Country-only database
+	 */
+	public function getCityNameFromIP($ip)
+	{
+		$geoipversion = '2'; // 'php', or '2'
+		if (getDolGlobalString('GEOIP_VERSION')) {
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
+		}
+
+		if (empty($this->gi) || $this->gi == 'NOGI') {
+			return '';
+		}
+		if ($geoipversion != '2') {
+			return ''; // City lookup is only implemented for the embedded GeoIP2 reader
+		}
+
+		return $this->getGeoIp2CityName($ip);
 	}
 
 	/**

@@ -172,7 +172,11 @@ if ($action == 'add' && $permissiontouploadfile) {
 // Remove directory
 if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 	$result = $ecmdir->delete($user);
-	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
+	if ($result > 0) {
+		setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
+	} else {
+		setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
+	}
 
 	clearstatcache();
 }

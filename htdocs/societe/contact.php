@@ -62,9 +62,6 @@ $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 if (isModEnabled('category')) {
 	$langs->load("categories");
 }
-if (isModEnabled('incoterm')) {
-	$langs->load("incoterm");
-}
 if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
@@ -205,7 +202,7 @@ print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'comp
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/societe/vcard.php?id='.$socid.'" class="refid">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/societe/vcard.php?id='.$socid.'" class="refid" tabindex="-1">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 

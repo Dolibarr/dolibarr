@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Zwischensummen
 SubTotalModuleDesc=Zwischensumme und Titelzeilen für bestimmte Dokumente
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Konfiguration für Modul Subtotal
 MaxSubtotalLevel=Maximale Anzahl Ebenen
 SubtotalLineBackColor=Hintergrundfarbe der Zeilen in Ebene  %s
 NotSupportedByAllPDF=Funktioniert mit neueren PDFs, aber nicht mit älteren %s
+SubtotalsPredefinedTitles=Vordefinierte Titel für Zwischensummen
+SubtotalsPredefinedTexts=Vordefinierte Texte für Zwischensummen
+SubtotalTextColumnTitle=Text
 
 #
 # Card
 #
 AddTitleLine=Titelzeile hinzufügen
 AddSubtotalLine=Zwischensummenzeile hinzufügen
+AddTextLine=Textzeile hinzufügen
+PredefinedTitle=Vordefinierter Titel
+PredefinedText=Vordefinierter Text
+SubtotalTextContent=Textinhalt
 TitleNeedDesc=Sie müssen eine gültige Beschreibung eingeben, um einen Titel zu erstellen.
 TitleAddedLevelTooHigh=Hinzugefügter Titel mit zu hoher Ebene (stattdessen hinzugefügt auf Ebene %s).
 TitleEditedLevelTooHigh=Bearbeiteter Titel mit zu hoher Ebene (stattdessen bearbeitet mit Ebene %s).

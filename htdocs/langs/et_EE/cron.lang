@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
 # Admin
 CronSetup=Plaanitavata programmide haldamise seadistamine
 URLToLaunchCronJobs=URL kvalifitseeritud cron-tööde kontrollimiseks ja käivitamiseks brauserist
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=Microsoft(tm) Windowsi keskkonnas saate ajastatud ülesannete tööriistu kasutada käsurea käivitamiseks iga 5 minuti järel.
 CronMethodDoesNotExists=Klass %s ei sisalda ühtegi meetodit %s
 CronMethodNotAllowed=Klassi %s meetod %s on keelatud meetodite mustas nimekirjas.
-CronJobDefDesc=Croni tööprofiilid on defineeritud mooduli deskriptorifailis. Kui moodul aktiveeritakse, laaditakse need ja need on saadaval, nii et saate töid hallata administraatori tööriistade menüüst %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Eelnevalt määratletud cron-tööprofiilide loend
 # Menu
 EnabledAndDisabled=Enabled and disabled
@@ -27,7 +22,7 @@ CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Käivita kohe
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
-CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Tegevus
 CronNone=Ajastatud ülesande järgmine käivitamine
 CronNotYetRan=Mitte kunagi hukatud
@@ -79,7 +74,7 @@ CronType_command=Käsurea käsk
 CronCannotLoadClass=Klassifaili %s laadimine ebaõnnestus (klassi %s kasutamiseks)
 CronModuleNotEnabledInThisEntity=Croni moodul pole selles üksuses lubatud (objekti %s meetodi %s kasutamiseks)
 CronCannotLoadObject=Klassifail %s laaditi, kuid objekti %s sellest ei leitud.
-UseMenuModuleToolsToAddCronJobs=Ajastatud tööde vaatamiseks ja muutmiseks minge menüüsse "<a href="%s">Avaleht - Administraatori tööriistad - Ajastatud tööd</a>".
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Loo lokaalse andmebaasi mälutõmmis. Parameetrid on: tihendus („gz”, „bz” või „none”), varundamise tüüp („mysql”, „pgsql”, „auto”), 1, „auto” või loodava faili nimi, säilitatavate varundusfailide arv.

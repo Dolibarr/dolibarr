@@ -257,6 +257,65 @@ class Fichinter extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Load intervention indicators for the home workboard.
+	 *
+	 * @param User $user User whose accessible interventions are counted
+	 * @param 'draft'|'validated' $mode Intervention state to count
+	 * @return WorkboardResponse|int<-1,-1> Indicators, or -1 on failure
+	 */
+	public function load_board($user, $mode)
+	{
+		// phpcs:enable
+		global $langs;
+
+		if ($user->socid || !$user->hasRight('ficheinter', 'lire') || !in_array($mode, array('draft', 'validated'), true)) {
+			return -1;
+		}
+
+		$status = ($mode == 'draft' ? self::STATUS_DRAFT : self::STATUS_VALIDATED);
+		$sql = "SELECT COUNT(f.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+		$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+		$sql .= " AND f.fk_statut = ".((int) $status);
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+			if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+				$userschilds = $user->getAllChildIds();
+				if ($userschilds) {
+					$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user IN (".$this->db->sanitize(implode(',', $userschilds))."))";
+				}
+			}
+			$sql .= ")";
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+		if (!$obj) {
+			return -1;
+		}
+
+		$langs->load('interventions');
+		$response = new WorkboardResponse();
+		$response->id = $this->element.'_'.$mode;
+		$response->label = $langs->trans($mode == 'draft' ? 'DraftInterventionsToValidate' : 'ValidatedInterventionsToProcess');
+		$response->labelShort = $langs->trans($mode == 'draft' ? 'ToValidate' : 'ToProcess');
+		$response->url = DOL_URL_ROOT.'/fichinter/list.php?search_status='.$status;
+		$response->img = img_object('', $this->picto);
+		$response->nbtodo = (int) $obj->nb;
+		$response->warning_delay = 0;
+		return $response;
 	}
 
 	/**
@@ -279,7 +338,7 @@ class Fichinter extends CommonObject
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
-		$sql .= " ".$clause." fi.entity IN (".getEntity('intervention').")";
+		$sql .= " ".$clause." fi.entity IN (".getEntity('fichinter').")";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -460,6 +519,9 @@ class Fichinter extends CommonObject
 		$sql .= "description  = '".$this->db->escape($this->description)."'";
 		$sql .= ", duree = ".((int) $this->duration);
 		$sql .= ", ref_client = ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
+		if ((int) $this->socid > 0) {
+			$sql .= ", fk_soc = ".((int) $this->socid);
+		}
 		if ((int) $this->fk_project > 0) {
 			$sql .= ", fk_projet = ".((int) $this->fk_project);
 		}
@@ -495,6 +557,11 @@ class Fichinter extends CommonObject
 				// End call triggers
 			}
 
+			if ($error) {
+				$this->db->rollback();
+				return -1;
+			}
+
 			$this->db->commit();
 			return 1;
 		} else {
@@ -521,7 +588,7 @@ class Fichinter extends CommonObject
 		$sql .= " f.fk_user_author, f.fk_user_modif,";
 		$sql .= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.last_main_doc, f.extraparams, fk_contrat, f.entity as entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-		$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+		$sql .= " WHERE f.entity IN (".getEntity('fichinter').")";
 		if ($ref) {
 			$sql .= " AND f.ref = '".$this->db->escape($ref)."'";
 		} elseif ($ref_ext) {
@@ -589,14 +656,17 @@ class Fichinter extends CommonObject
 	 *	Set status to draft
 	 *
 	 *	@param		User	$user	User that set draft
-	 *	@return		int			    Return integer <0 if KO, >0 if OK
+	 *	@return		int			    Return integer <0 if KO, 0 if nothing done (intervention not in validated status), >0 if OK
 	 */
 	public function setDraft($user)
 	{
 		$error = 0;
 
-		// Protection
-		if ($this->status <= self::STATUS_DRAFT) {
+		// Protection: only a validated intervention can go back to draft (same rule as the "Modify"
+		// button of the card). A billed, closed or canceled intervention must not be reset to draft.
+		if ($this->status != self::STATUS_VALIDATED) {
+			$this->error = 'ErrorObjectHasWrongStatus';
+			dol_syslog(get_class($this)."::setDraft action abandoned: intervention is not in validated status", LOG_WARNING);
 			return 0;
 		}
 
@@ -639,7 +709,7 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param		User		$user		User that validate
 	 *  @param		int			$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, 0 if nothing done (intervention not in draft status), >0 if OK
 	 */
 	public function setValid($user, $notrigger = 0)
 	{
@@ -648,13 +718,18 @@ class Fichinter extends CommonObject
 
 		$error = 0;
 
-		if ($this->status != self::STATUS_VALIDATED) {
+		// Only a draft intervention can be validated. Any other status would leave the database
+		// unchanged (UPDATE filtered on fk_statut = 0) while ref, files and triggers are processed.
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			$now = dol_now();
 
 			// Define new ref
 			if ((preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+				if (empty($this->thirdparty)) {	// Not loaded when validated by the API or on closing a ticket
+					$this->fetch_thirdparty();
+				}
 				$num = $this->getNextNumRef($this->thirdparty);
 			} else {
 				$num = (string) $this->ref;
@@ -667,7 +742,7 @@ class Fichinter extends CommonObject
 			$sql .= ", date_valid = '".$this->db->idate($now)."'";
 			$sql .= ", fk_user_valid = ".($user->id > 0 ? (int) $user->id : "null");
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity IN (".getEntity('intervention').")";
+			$sql .= " AND entity IN (".getEntity('fichinter').")";
 
 			$sql .= " AND fk_statut = 0";
 
@@ -748,6 +823,9 @@ class Fichinter extends CommonObject
 				return -1;
 			}
 		}
+
+		$this->error = 'ErrorObjectMustHaveStatusDraftToBeValidated';
+		dol_syslog(get_class($this)."::setValid action abandoned: intervention is not in draft status", LOG_WARNING);
 
 		return 0;
 	}
@@ -872,7 +950,7 @@ class Fichinter extends CommonObject
 	 *
 	 * 	@param      User	$user       Object user that close
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *	@return		int					Return integer <0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, 0 if nothing done (already closed or still draft), >0 if OK
 	 */
 	public function setClose($user, $notrigger = 0)
 	{
@@ -881,6 +959,12 @@ class Fichinter extends CommonObject
 		$error = 0;
 
 		if ($this->status == self::STATUS_CLOSED) {
+			return 0;
+		} elseif ($this->status == self::STATUS_DRAFT) {
+			// A draft intervention must be validated before being closed. The UPDATE below is filtered
+			// on fk_statut > 0, so going on would run the trigger without changing anything.
+			$this->error = 'ErrorObjectHasWrongStatus';
+			dol_syslog(get_class($this)."::setClose action abandoned: intervention is in draft status", LOG_WARNING);
 			return 0;
 		} else {
 			$this->db->begin();
@@ -893,7 +977,7 @@ class Fichinter extends CommonObject
 			$sql .= " fk_user_modif = " . ((int) $user->id);
 			$sql .= " WHERE rowid = " . ((int) $this->id);
 			$sql .= " AND fk_statut > " . self::STATUS_DRAFT;
-			$sql .= " AND entity IN (".getEntity('intervention').")";
+			$sql .= " AND entity IN (".getEntity('fichinter').")";
 
 			if ($this->db->query($sql)) {
 				if (!$notrigger) {

@@ -3,6 +3,7 @@
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // load module libraries
 include_once __DIR__.'/class/memo.class.php';
+include_once __DIR__.'/lib/quickmemo.lib.php';
 // for other modules
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
@@ -220,6 +222,22 @@ if (empty($reshook)) {
 	$objectlabel = 'Memo';
 	$uploaddir = $conf->quickmemo->dir_output;
 
+	// The generic mass delete does not know private memos: remove from selection those the user is not allowed to delete
+	if (($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete && !empty($toselect)) {
+		foreach ($toselect as $key => $idMemo) {
+			$tmpMemo = new Memo($db);
+			if ($tmpMemo->fetch($idMemo) <= 0) {
+				unset($toselect[$key]);
+				continue;
+			}
+			$isPrivate = ($tmpMemo->status == Memo::STATUS_TPL ? $tmpMemo->private_tpl : $tmpMemo->private);
+			if ($isPrivate && $user->id != $tmpMemo->fk_user_creat) {
+				setEventMessage($langs->trans($tmpMemo->status == Memo::STATUS_TPL ? 'QuickMemoCantDeleteThisPrivateModel' : 'QuickMemoCantDeleteThisPrivateNote').' : '.((int) $idMemo), 'errors');
+				unset($toselect[$key]);
+			}
+		}
+	}
+
 	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -232,7 +250,7 @@ if (empty($reshook)) {
 			foreach ($toselect as $idMemo) {
 				// TODO Recover the memo - be careful to not recover a model - models can not be recovered.
 				$selectdModel = new Memo($db);
-				if ($selectdModel->fetch($idMemo) <= 0) {
+				if ($selectdModel->fetch($idMemo) <= 0 || !$selectdModel->isInCurrentEntity()) {
 					$idMemo = (int) $idMemo; // sanitize
 					setEventMessage($langs->trans('QuickMemoLoadMemosError').' : '. (int) $idMemo, 'errors');
 					continue;
@@ -313,7 +331,9 @@ $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object
 $sql .= $hookmanager->resPrint;
 
 if (!empty($object->ismultientitymanaged) && (int) $object->ismultientitymanaged == 1) {
-	$sql .= " WHERE t.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
+	// Memos linked to an object follow the sharing of the object type (archives of an object card)
+	$entityElementKey = (!empty($search['element_type']) ? Memo::getEntityElementKey($search['element_type']) : $object->element);
+	$sql .= " WHERE t.entity IN (".getEntity($entityElementKey, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 } elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
 	$tmparray = explode('@', (string) $object->ismultientitymanaged);
 	$sql .= " LEFT JOIN ".$object->db->prefix().$db->sanitize($tmparray[1])." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
@@ -327,6 +347,9 @@ $sql .= ' AND ('.implode(' OR ', [
 		'( t.status = '.Memo::STATUS_VALIDATED.' AND t.private = 0 OR t.fk_user_creat = '.(int) $user->id.' )',
 		'( t.status = '.Memo::STATUS_TPL.' AND t.private_tpl = 0 OR t.fk_user_creat = '.(int) $user->id.' )',
 ]).') ';
+
+// Only memos current user can read (context of page, permission on module and object)
+$sql .= quickMemoGetMemoAccessSqlFilter();
 
 
 

@@ -5,7 +5,7 @@ StripeOrCBDoPayment=Betal med kreditkort eller stripe
 FollowingUrlAreAvailableToMakePayments=Følgende webadresser oprettet som tilbyde en side til en kunde, hvor til der kan foretage indbetalinger på Dolibarr objekter
 PaymentForm=Betalings formular
 WelcomeOnPaymentPage=Velkommen til vores online betalingstjeneste
-ThisScreenAllowsYouToPay=Dette skærmbillede giver dig mulighed for at foretage en online-betaling til %s.
+ThisScreenAllowsYouToPay=Denne skærm giver dig mulighed for at foretage en online betaling til %s.
 ThisIsInformationOnPayment=Dette er informationer om betaling for at gøre
 ToComplete=For at fuldføre
 YourEMail=E-mail til bekræftelse af betaling,
@@ -25,7 +25,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL til at tilbyde en %s online betalin
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL til at tilbyde en %s online betalingsside for et medlemsabonnement
 ToOfferALinkForOnlinePaymentOnDonation=URL til at tilbyde en %s online betalingsside til betaling af en donation
 YouCanAddTagOnUrl=Du kan også tilføje url-parameter <b>&tag=value</b> til enhver af disse URL-adresser (kun obligatorisk for betaling, der ikke er knyttet til et objekt ) for at tilføje dit eget betalingskommentartag.<br>For webadressen for betalinger uden eksisterende objekter kan du også tilføje parameteren <strong>&noidempotency=1</strong> så det samme link med samme tag kan bruges flere gange (nogle betalingstilstande kan begrænse betalingen til 1 for hvert andet link uden denne parameter)
-YouCanEmbedOnWebsite=Hvis du ønsker at integrere betalingssiden i en Dolibarr websted, kan du inkludere parameteren: <b>&ws=website_ref</b>.<br>Yderligere to sider med navnet <b>paymentok </b> og <b>paymentko</b> skal oprettes i websted for at modtage omdirigeringen efter en vellykket eller mislykket onlinebetaling.
+YouCanEmbedOnWebsite=Hvis du vil integrere betalingssiden i en Dolibarr websted, kan du inkludere parameteren: <b>&ws=website_ref</b>.<br>Derudover er der to sider med navnet <b>paymentok</b> og <b>betalingsko</b> skal oprettes i websted for at modtage omdirigeringen efter en vellykket eller mislykket online betaling.
 SetupStripeToHavePaymentCreatedAutomatically=Indstil din stripe med url <b> %s </ b> for at få betaling oprettet automatisk, når bekræftet af Stripe.
 AccountParameter=Kontoparametre
 UsageParameter=Anvendelsesparametre
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=Værdi for PBX-ring
 PAYBOX_PBX_IDENTIFIANT=Værdi for PBX-ID
 PAYBOX_HMAC_KEY=HMAC-nøgle
 FeatureNotUsedAccordingtoSetup=Funktionen bruges ikke i henhold til din %s opsætning.
+PaymentRecordedButPostPocessingKo=Din betaling blev registreret af betalingssystemet. Det ser dog ud til, at vores efterbetalingsbehandling ikke kunne gennemføres fuldt ud. Vi blev advaret og vil forsøge at løse dette snart. Vi anbefaler, at du ikke forsøger at betale igen, og sender os et skærmbillede af denne side via e-mail for at være sikker, så vi kan tage hensyn til problemet.

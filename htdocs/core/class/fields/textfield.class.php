@@ -168,7 +168,20 @@ class TextField extends CommonField
 			if (!empty($fieldInfos->getPostCheck)) {
 				$value = GETPOST($htmlName, $fieldInfos->getPostCheck);
 			} else {
-				$value = GETPOST($htmlName, 'nohtml');
+				// Default for label and main fields is 'alphanohtml'
+				if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
+					$security_check = 'nohtml';
+				} else {
+					$security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
+				}
+				//TODO Detect if type is for a full text instead of simple label, in this case we can use
+				/*
+					$security_check = 'nohtml';	// Default for text
+					if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+						$security_check = 'alphanohtml';
+					}
+				*/
+				$value = GETPOST($htmlName, $security_check);
 				if (!empty($fieldInfos->options) && !empty($fieldInfos->multiInput)) {
 					$tmpArrayMultiSelect = GETPOST($htmlName . '_multiselect', 'array');
 					foreach ($tmpArrayMultiSelect as $tmpValue) {

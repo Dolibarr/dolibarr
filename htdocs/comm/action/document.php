@@ -155,7 +155,7 @@ if ($object->id > 0) {
 
 	$head = actions_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Action"), -1, 'action', 0, '', '', 0, '', 1);
 
 	// Link to other agenda views
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
@@ -212,7 +212,7 @@ if ($object->id > 0) {
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

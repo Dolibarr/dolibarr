@@ -94,6 +94,10 @@ if ($user->socid) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('orderdocument', 'globalcard'));
 
+$object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
 $result = restrictedArea($user, 'commande', $id, '');
 
 
@@ -126,7 +130,7 @@ if ($id > 0 || !empty($ref)) {
 		$upload_dir = $conf->order->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = commande_prepare_head($object);
-		print dol_get_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), -1, $object->picto);
+		print dol_get_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), -1, $object->picto, 0, '', '', 0, '', 1);
 
 		// Build file list
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
@@ -159,7 +163,7 @@ if ($id > 0 || !empty($ref)) {
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($object->fk_project);
+					$proj->fetch((int) $object->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

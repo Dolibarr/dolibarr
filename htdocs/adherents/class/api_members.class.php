@@ -280,6 +280,8 @@ class Members extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
+		global $hookmanager;
+
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
@@ -299,6 +301,16 @@ class Members extends DolibarrApi
 		if ($category > 0) {
 			$sql .= " AND c.fk_categorie = ".((int) $category);
 			$sql .= " AND c.fk_member = t.rowid";
+		}
+		// Add where from hooks
+		$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'members', 'apimethod' => __METHOD__);
+		$object = new Adherent($this->db);
+		$action = 'list';
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			$sql = $hookmanager->resPrint;
+		} elseif ($reshook == 0) {
+			$sql .= $hookmanager->resPrint;
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -351,7 +363,7 @@ class Members extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -459,20 +471,24 @@ class Members extends DolibarrApi
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class Adherent.
 			if ($field == 'statut') {
+				// Resiliating or excluding a member requires the permission to delete members, like on the member card
+				if (in_array((string) $value, array('0', '-2'), true) && (string) $member->status !== (string) $value && !DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
+					throw new RestException(403, 'Resiliating or excluding a member requires the permission to delete members');
+				}
 				if ($value == '0') {
 					$result = $member->resiliate(DolibarrApiAccess::$user);
 					if ($result < 0) {
-						throw new RestException(500, 'Error when resiliating member: '.$member->error);
+						throw new RestException(500, 'Error when resiliating member: '.$member->errorsToString());
 					}
 				} elseif ($value == '1') {
 					$result = $member->validate(DolibarrApiAccess::$user);
 					if ($result < 0) {
-						throw new RestException(500, 'Error when validating member: '.$member->error);
+						throw new RestException(500, 'Error when validating member: '.$member->errorsToString());
 					}
 				} elseif ($value == '-2') {
 					$result = $member->exclude(DolibarrApiAccess::$user);
 					if ($result < 0) {
-						throw new RestException(500, 'Error when excluding member: '.$member->error);
+						throw new RestException(500, 'Error when excluding member: '.$member->errorsToString());
 					}
 				}
 			} else {
@@ -487,7 +503,7 @@ class Members extends DolibarrApi
 		if ($member->update(DolibarrApiAccess::$user, 0, $nosyncuser, $nosyncpassword) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating member: '.$member->error);
+			throw new RestException(500, 'Error when updating member: '.$member->errorsToString());
 		}
 	}
 
@@ -678,6 +694,10 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$obj_ret = array();
 		foreach ($member->subscriptions as $subscription) {
 			$obj_ret[] = $this->_cleanObjectDatas($subscription);
@@ -720,9 +740,13 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result =  $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
 		if ($result < 1) {
-			throw new RestException(500, $member->error);
+			throw new RestException(500, $member->errorsToString());
 		} else {
 			return $result;
 		}
@@ -757,12 +781,16 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'Member not found');
 		}
 
+		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$categories = new Categorie($this->db);
 
 		$result = $categories->getListForItem($id, 'member', $sortfield, $sortorder, $limit, $page);
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->errorsToString());
 		}
 
 		return $result;
@@ -888,7 +916,7 @@ class Members extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -989,7 +1017,7 @@ class Members extends DolibarrApi
 		if ($membertype->update(DolibarrApiAccess::$user) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating member type: '.$membertype->error);
+			throw new RestException(500, 'Error when updating member type: '.$membertype->errorsToString());
 		}
 	}
 
@@ -1096,6 +1124,25 @@ class Members extends DolibarrApi
 		}
 
 		return $this->memberstats->getAmountByMonth($year, $format);
+	}
+
+	/**
+	 *  Return the number, total amount and average amount of subscriptions by year
+	 *
+	 * @return array 				Array of statistics by year, most recent year first
+	 * @phan-return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>
+	 * @phpstan-return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>
+	 *
+	 * @url GET stats/amountbyyear
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getAmountByYear()
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getAllByYear();
 	}
 
 	/**

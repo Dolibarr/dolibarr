@@ -109,6 +109,8 @@ class CurlClient extends AbstractClient
         }
 
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
+        // @CHANGE DOL_LDR Add a short connect timeout (can be overwritten with setCurlParameters())
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $extraHeaders);

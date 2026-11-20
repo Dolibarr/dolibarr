@@ -79,9 +79,20 @@ $rowid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('rowid'));
 $search_label = GETPOST('search_label', 'alphanohtml'); // Must allow value like 'Abc Def' or '(MyTemplateName)'
 $search_type_template = GETPOST('search_type_template', 'alpha');
 $search_lang = GETPOST('search_lang', 'alpha');
+$defaulttemplatelang = $langs->defaultlang;
+if (!getDolGlobalInt('MAIN_MULTILANGS')) {
+	$search_lang = '';
+	$templatelangs = new Translate('', $conf);
+	$templatelangs->setDefaultLang(getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
+	$defaulttemplatelang = $templatelangs->defaultlang;
+}
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_topic = GETPOST('search_topic', 'alpha');
 $search_module = GETPOST('search_module', 'alpha');
+$search_private = GETPOSTISSET('search_private') ? GETPOSTINT('search_private') : -1;
+$search_position = GETPOST('search_position', 'int');
+$search_joinfiles = GETPOSTISSET('search_joinfiles') ? GETPOSTINT('search_joinfiles') : -1;
+$search_defaultfortype = GETPOSTISSET('search_defaultfortype') ? GETPOSTINT('search_defaultfortype') : -1;
 
 $acts = array();
 $actl = array();
@@ -128,6 +139,11 @@ foreach ($object->fields as $key => $val) {
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
+}
+
+$arrayfields['t.lang']['enabled'] = (string) getDolGlobalInt('MAIN_MULTILANGS');
+if (!getDolGlobalInt('MAIN_MULTILANGS')) {
+	$arrayfields['t.lang']['checked'] = '0';
 }
 
 // Security
@@ -379,6 +395,10 @@ if (empty($reshook)) {
 		$search_fk_user = '';
 		$search_topic = '';
 		$search_module = '';
+		$search_private = -1;
+		$search_position = '';
+		$search_joinfiles = -1;
+		$search_defaultfortype = -1;
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -479,11 +499,13 @@ if (empty($reshook)) {
 				if ($i) {
 					$sql .= ", ";
 				}
-				if ($keycode == 'datec') {
+				if ($keycode == 'langcode' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+					$sql .= "'".$db->escape($defaulttemplatelang)."'";
+				} elseif ($keycode == 'datec') {
 					$sql .= "'".$db->idate($now)."'";
 				} elseif (GETPOST($keycode) == '' && $keycode != 'langcode') {
 					$sql .= "null"; // langcode must be '' if not defined so the unique key that include lang will work
-				} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
+				} elseif ($keycode == 'langcode' && (GETPOST($keycode) == '0' || GETPOST($keycode) == '-1')) {
 					$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
 				} elseif ($keycode == 'fk_user') {
 					if (!$user->admin) {	// A non admin user can only edit its own template
@@ -584,7 +606,9 @@ if (empty($reshook)) {
 					}
 					$sql .= $field." = ";
 
-					if ((GETPOST($keycode) == '' && in_array($keycode, array('langcode'))) || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
+					if ($keycode == 'langcode' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+						$sql .= "'".$db->escape($defaulttemplatelang)."'";
+					} elseif ((GETPOST($keycode) == '' && in_array($keycode, array('langcode'))) || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
 						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
 					} elseif ($keycode == 'langcode' && (GETPOST($keycode) == '0' || GETPOST($keycode) == '-1')) {
 						$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
@@ -699,9 +723,6 @@ if (!$user->admin) {
 	$sql .= " AND (private = 0 OR (private = 1 AND fk_user = ".((int) $user->id)."))"; // Show only public and private to me
 	$sql .= " AND (active = 1 OR fk_user = ".((int) $user->id).")"; // Show only active or owned by me
 }
-if (!getDolGlobalInt('MAIN_MULTILANGS')) {
-	$sql .= " AND (lang = '".$db->escape($langs->defaultlang)."' OR lang IS NULL OR lang = '')";
-}
 if ($search_label) {
 	$sql .= natural_search('label', $search_label);
 }
@@ -722,6 +743,20 @@ $listofmodules = implode(",", array_keys($conf->modules));
 $sql .= "AND (".natural_search('module', $listofmodules, 3, 1)." OR module IS NULL)";
 if ($search_topic) {
 	$sql .= natural_search('topic', $search_topic);
+}
+if (in_array($search_private, array(0, 1), true)) {
+	$sql .= " AND private = ".((int) $search_private);
+}
+if ($search_position !== '') {
+	$sql .= " AND position = ".((int) $search_position);
+}
+if ($search_joinfiles === 1) {
+	$sql .= " AND (joinfiles IS NOT NULL AND joinfiles <> '' AND joinfiles <> '0')";
+} elseif ($search_joinfiles === 0) {
+	$sql .= " AND (joinfiles IS NULL OR joinfiles = '' OR joinfiles = '0')";
+}
+if (in_array($search_defaultfortype, array(0, 1), true)) {
+	$sql .= " AND COALESCE(defaultfortype, 0) = ".((int) $search_defaultfortype);
 }
 // If sort order is "country", we use country_code instead
 if ($sortfield == 'country') {
@@ -784,6 +819,19 @@ if ($search_module) {
 }
 if ($search_topic) {
 	$param .= '&search_topic='.urlencode($search_topic);
+}
+
+if (in_array($search_private, array(0, 1), true)) {
+	$param .= '&search_private='.((int) $search_private);
+}
+if ($search_position !== '') {
+	$param .= '&search_position='.((int) $search_position);
+}
+if (in_array($search_joinfiles, array(0, 1), true)) {
+	$param .= '&search_joinfiles='.((int) $search_joinfiles);
+}
+if (in_array($search_defaultfortype, array(0, 1), true)) {
+	$param .= '&search_defaultfortype='.((int) $search_defaultfortype);
 }
 
 $paramwithsearch = $param;
@@ -882,6 +930,9 @@ if ($action == 'create') {
 	// Line to enter new values (title)
 	print '<tr class="liste_titre">';
 	foreach ($fieldlist as $field => $value) {
+		if ($value == 'lang' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+			continue;
+		}
 		// Determine the field name based on the possible names
 		// in the data dictionaries.
 		$valuetoshow = ucfirst($fieldlist[$field]); // Par default
@@ -894,7 +945,7 @@ if ($action == 'create') {
 			$valuetoshow = $langs->trans("Owner");
 		}
 		if ($fieldlist[$field] == 'lang') {
-			$valuetoshow = (!getDolGlobalInt('MAIN_MULTILANGS') ? '&nbsp;' : $langs->trans("Language"));
+			$valuetoshow = $langs->trans("Language");
 		}
 		if ($fieldlist[$field] == 'type') {
 			$valuetoshow = $langs->trans("Type");
@@ -1100,6 +1151,9 @@ if ($action != 'create') {
 		print '</td>';
 	}
 	foreach ($fieldlist as $field => $value) {
+		if ($value == 'lang' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+			continue;
+		}
 		if ($value == 'module') {
 			print '<td class="liste_titre"><input type="text" name="search_module" class="maxwidth75" value="'.dol_escape_htmltag($search_module).'" spellcheck="false"></td>';
 		} elseif ($value == 'label') {
@@ -1119,6 +1173,13 @@ if ($action != 'create') {
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125', 1, '', 0, 1);
 			print '</td>';
+		} elseif (in_array($value, array('private', 'joinfiles', 'defaultfortype'))) {
+			print '<td class="liste_titre center">';
+			$searchvalue = ($value == 'private' ? $search_private : ($value == 'joinfiles' ? $search_joinfiles : $search_defaultfortype));
+			print $form->selectyesno('search_'.$value, $searchvalue, 1, false, 1, 1, 'maxwidth75');
+			print '</td>';
+		} elseif ($value == 'position') {
+			print '<td class="liste_titre center"><input type="text" class="width50 center" name="search_position" value="'.dol_escape_htmltag($search_position).'" spellcheck="false"></td>';
 		} elseif (!in_array($value, array('content', 'content_lines'))) {
 			print '<td class="liste_titre"></td>';
 		}
@@ -1126,16 +1187,16 @@ if ($action != 'create') {
 	/*if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 		print '<td class="liste_titre"></td>';
 	}*/
-	// Status
-	print '<td></td>';
-
 	// Have to expand the id="Title line with search boxes" with 2 extra fields because the line below id="Title of lines" are 2 fields longer
 	if (!empty($arrayfields['t.tms']['checked'])) {
-		print '<td></td>'; // tms / Modif. date
+		print '<td class="liste_titre"></td>'; // tms / Modif. date
 	}
 	if (!empty($arrayfields['t.datec']['checked'])) {
-		print '<td></td>'; // datec / Date creation
+		print '<td class="liste_titre"></td>'; // datec / Date creation
 	}
+	// Status
+	print '<td class="liste_titre center"></td>';
+
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center" width="64">';
@@ -1153,6 +1214,9 @@ if ($action != 'create') {
 	}
 	array_push($fieldlist, "tms", "datec");
 	foreach ($fieldlist as $field => $value) {
+		if ($value == 'lang' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+			continue;
+		}
 		$showfield = 1; // By default
 		$css = "left";
 		$sortable = 1;
@@ -1212,7 +1276,7 @@ if ($action != 'create') {
 			$valuetoshow = $langs->trans("ContentForLines");
 			$showfield = 0;
 		}
-		if ($value == 'tms' && empty($arrayfields['t'.$value]['checked'])) {
+		if ($value == 'tms' && empty($arrayfields['t.'.$value]['checked'])) {
 			$showfield = 0;
 		}
 		if ($value == 'datec' && empty($arrayfields['t.'.$value]['checked'])) {
@@ -1470,6 +1534,9 @@ if ($action != 'create') {
 
 					if (empty($reshook)) {
 						foreach ($fieldlist as $field => $value) {
+							if ($value == 'lang' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+								continue;
+							}
 							if (in_array($fieldlist[$field], array('content', 'content_lines'))) {
 								continue;
 							}
@@ -1536,7 +1603,7 @@ if ($action != 'create') {
 								$class .= ' '.$css;
 							}
 
-							if ($value == 'tms' && empty($arrayfields['t'.$value]['checked'])) {
+							if ($value == 'tms' && empty($arrayfields['t.'.$value]['checked'])) {
 								$showfield = 0;
 							}
 							if ($value == 'datec' && empty($arrayfields['t.'.$value]['checked'])) {
@@ -1628,6 +1695,9 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 	$nboffieldsprinted = 0;
 
 	foreach ($fieldlist as $value) {
+		if ($value == 'lang' && !getDolGlobalInt('MAIN_MULTILANGS')) {
+			continue;
+		}
 		//print $value;
 		if ($value == 'module') {
 			print '<td></td>';
@@ -1657,9 +1727,9 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			$nboffieldsprinted++;
 		} elseif ($value == 'lang') {
 			print '<td>';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && $context != 'preview') {
+			if ($context != 'preview') {
 				$selectedlang = GETPOSTISSET('langcode') ? GETPOST('langcode', 'aZ09') : $langs->defaultlang;
-				if ($context == 'edit') {
+				if ($context == 'edit' && !GETPOSTISSET('langcode')) {
 					$selectedlang = $obj->lang;
 				}
 				print $formadmin->select_language($selectedlang, 'langcode', 0, array(), $langs->trans("Language"), 0, 0, 'maxwidth100');

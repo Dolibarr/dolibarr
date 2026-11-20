@@ -203,6 +203,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		return 'Bad parameter file';
 	} elseif (!file_exists($file)) {
 		// Si le fichier passe en parameter n'existe pas
+		$langs->load("errors");
 		return $langs->trans("ErrorFileNotFound", $file);
 	} elseif (image_format_supported($file) < 0) {
 		return 'This filename '.$file.' does not seem to be an image filename.';
@@ -571,6 +572,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	if (!file_exists($filetoread)) {
 		// If the file passed in parameter does not exist
+		$langs->load("errors");
 		dol_syslog($langs->trans("ErrorFileNotFound", $filetoread), LOG_ERR);
 		return $langs->trans("ErrorFileNotFound", $filetoread);
 	}
@@ -810,6 +812,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$extImgTarget = '.webp';
 			$newquality = $quality;
 			break;
+		case 19:	// 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+			$extImgTarget = '.avif';
+			$newquality = $quality;
+			break;
 	}
 	if (function_exists("imagefill") && $trans_colour !== false) {
 		imagefill($imgThumb, 0, 0, $trans_colour);
@@ -850,7 +857,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			imagewebp($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
 			break;
 		case 19:    // 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
-			imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
+			if (function_exists('imageavif')) {    // If PHP < 8.1 or AVIF support not available into GD
+				imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
+			}
 			break;
 	}
 

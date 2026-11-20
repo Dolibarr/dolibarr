@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/core/ajax/selectsearchbox.php
  *      \ingroup    core
- *      \brief      This script returns json array of possible searches or just set the array if called by an include
+ *      \brief      This script returns json array of possible searches from the Search widget or just set the array if called by an include
  */
 
 // This script is called with a POST method or as an include.
@@ -224,7 +224,7 @@ if (getDolGlobalString('DEFAULT_SEARCH_INTO_MODULE')) {
 $arrayresult = dol_sort_array($arrayresult, 'position');
 
 // Print output if called by ajax or do nothing (var $arrayresult will be used) if called by an include
-if (!isset($usedbyinclude) || empty($usedbyinclude)) {
+if (empty($usedbyinclude)) {
 	print json_encode($arrayresult);
 	if (is_object($db)) {
 		$db->close();

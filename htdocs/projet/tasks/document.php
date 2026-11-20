@@ -299,7 +299,7 @@ if ($object->id > 0 && $upload_dir !== null) {
 	}
 
 	$head = task_prepare_head($object);
-	print dol_get_fiche_head($head, 'task_document', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
+	print dol_get_fiche_head($head, 'task_document', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition', 0, '', 1);
 
 	// Files list constructor
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);

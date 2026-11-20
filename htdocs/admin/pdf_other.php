@@ -7,7 +7,7 @@
  * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025  Nick Fragoulis
+ * Copyright (C) 2024-2026  Nick Fragoulis
  * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -134,6 +134,9 @@ if ($action == 'update') {
 		if (GETPOSTINT('INVOICE_ADD_ZATCA_QR_CODE') == 1) {
 			dolibarr_del_const($db, "INVOICE_ADD_SWISS_QR_CODE", $conf->entity);
 		}
+	}
+	if (GETPOSTISSET('INVOICE_ADD_FI_BARCODE')) {
+		dolibarr_set_const($db, "INVOICE_ADD_FI_BARCODE", GETPOSTINT("INVOICE_ADD_FI_BARCODE"), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_ADD_EPC_QR_CODE')) {
 		dolibarr_set_const($db, "INVOICE_ADD_EPC_QR_CODE", GETPOST("INVOICE_ADD_EPC_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
@@ -318,12 +321,8 @@ if (isModEnabled('propal')) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_PROPAL"), $tooltipconcatpdf);
 	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_PROPAL', array(), null, 0, 0, 1);
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_PROPAL", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_PROPAL'));
-	}
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("YesAddedByDefault"), '2' => $langs->trans("YesNotAddedByDefault"));
+	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_PROPAL", $arrval, getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_PROPAL'));
 
 	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_PROPAL")) {
 		$modulepart = 'propal';
@@ -397,12 +396,8 @@ if (isModEnabled('order')) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_ORDER"), '');
 	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_ORDER', array(), null, 0, 0, 1);
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_ORDER", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_ORDER'));
-	}
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("YesAddedByDefault"), '2' => $langs->trans("YesNotAddedByDefault"));
+	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_ORDER", $arrval, getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_ORDER'));
 
 	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_ORDER")) {
 		$modulepart = 'order';
@@ -441,12 +436,8 @@ if (isModEnabled('contract')) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT"), $tooltipconcatpdf);
 	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT', array(), null, 0, 0, 1);
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT'));
-	}
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("YesAddedByDefault"), '2' => $langs->trans("YesNotAddedByDefault"));
+	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT", $arrval, getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT'));
 
 	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_CONTRACT")) {
 		$modulepart = 'contrat';
@@ -519,12 +510,8 @@ if (isModEnabled('invoice')) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_INVOICE"), '');
 	print '</td><td>';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_INVOICE', array(), null, 0, 0, 1);
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_INVOICE", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_INVOICE'));
-	}
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("YesAddedByDefault"), '2' => $langs->trans("YesNotAddedByDefault"));
+	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_INVOICE", $arrval, getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE'));
 
 	if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_INVOICE")) {
 		$modulepart = 'invoice';
@@ -566,6 +553,20 @@ if (isModEnabled('invoice')) {
 		print $form->selectarray("INVOICE_ADD_EPC_QR_CODE", $arrval, getDolGlobalString('INVOICE_ADD_EPC_QR_CODE'));
 	}
 	print '</td></tr>';
+
+	// Finnish domestic payment barcode, only relevant to finnish companies
+	if ($mysoc->country_code == 'FI') {
+		print '<tr class="oddeven"><td>';
+		print $form->textwithpicto($langs->trans("INVOICE_ADD_FI_BARCODE"), $langs->trans("INVOICE_ADD_FI_BARCODEMore"));
+		print '</td><td>';
+		if ($conf->use_javascript_ajax) {
+			print ajax_constantonoff('INVOICE_ADD_FI_BARCODE');
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("INVOICE_ADD_FI_BARCODE", $arrval, getDolGlobalString('INVOICE_ADD_FI_BARCODE'));
+		}
+		print '</td></tr>';
+	}
 
 	print '<tr class="oddeven"><td>';
 	if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
@@ -688,7 +689,6 @@ if (isModEnabled('supplier_proposal')) {
 if (isModEnabled('supplier_order')) {
 	print '<div id="supplier_order"></div>';
 
-	$langs->load("supplier_order");
 	print load_fiche_titre($langs->trans("SupplierOrder"), '', 'supplier_proposal');
 
 	print '<div class="div-table-responsive-no-min">';

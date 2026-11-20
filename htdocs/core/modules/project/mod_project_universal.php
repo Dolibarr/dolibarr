@@ -49,11 +49,9 @@ class mod_project_universal extends ModeleNumRefProjects
 	public $error = '';
 
 	/**
-	 * @var string Name of model
-	 * @deprecated
-	 * @see $name
+	 * @var int		Position
 	 */
-	public $nom = 'Universal';
+	public $position = 20;
 
 	/**
 	 * @var string model name

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Nastavení modulu PayPal
-PaypalDesc=Tento modul umožňuje platby zákazníkům prostřednictvím <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Lze jej použít pro jednorázové platby nebo pro platby související s objektem Dolibarr (faktura, objednávka atd.).
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Plaťte s PayPal (kartou nebo PayPal)
 PaypalDoPayment=Zaplaťte službou PayPal
 PAYPAL_API_SANDBOX=Testovací/sandbox režim
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=Nová platba online se pokusila, ale selhala
 ONLINE_PAYMENT_SENDEMAIL=E-mailová adresa pro oznámení po každém pokusu o platbu (pro úspěch a neúspěch)
 ReturnURLAfterPayment=Návratová URL po platbě
 ValidationOfOnlinePaymentFailed=Ověření online platby se nezdařilo
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Stránka s potvrzením platby byla volána platebním systémem a vrátila se chyba
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=Volání API SetExpressCheckout se nezdařilo.
 DoExpressCheckoutPaymentAPICallFailed=Volání API DoExpressCheckoutPayment se nezdařilo.
 DetailedErrorMessage=Podrobná chybová zpráva

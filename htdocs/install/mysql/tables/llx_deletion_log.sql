@@ -35,7 +35,7 @@ CREATE TABLE llx_deletion_log(
 	-- of the "deleted since" index and of the retention purge filter.
 	entity			integer NOT NULL DEFAULT 1,
 	fk_actioncomm	integer NOT NULL,
-	uid				char(36) NULL,					-- copy of llx_actioncomm.uid (UUID) at deletion time (kept for consumers that only know the uid). Not unique here: this is an append-only log, not the source of truth for uid uniqueness (that constraint lives on llx_actioncomm.uid).
+	uid				varchar(36) NULL,				-- copy of llx_actioncomm.uid (UUID) at deletion time (kept for consumers that only know the uid). Not unique here: this is an append-only log, not the source of truth for uid uniqueness (that constraint lives on llx_actioncomm.uid).
 	fk_user_action	integer NULL,					-- copy of llx_actioncomm.fk_user_action (owner of the deleted event) at deletion time
 	assigned_users	varchar(255) NULL,				-- comma separated list of user ids assigned to the deleted event at deletion time (llx_actioncomm_resources, element_type='user')
 	date_deletion	datetime NOT NULL,

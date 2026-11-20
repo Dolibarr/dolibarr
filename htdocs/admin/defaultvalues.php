@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'errors'));
+$langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other'));
 
 if (!$user->admin) {
 	accessforbidden();

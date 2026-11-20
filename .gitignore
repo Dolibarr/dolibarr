@@ -73,6 +73,7 @@ doc/install.lock
 # Local phpstan configuration
 /phpstan.neon
 /phpstan-baseline.neon
+/phpstan_apstats.neon
 
 # Logs
 *.log
@@ -95,6 +96,10 @@ phpstan_custom.neon
 .htaccess
 /.run-phpstan
 
+# IA setup
+/AGENTS.md
+/CLAUDE.md
+
 # Mistral Vibe
 .vibe
 /.vibeignore
@@ -113,3 +118,9 @@ docs/superpowers/
 .worktrees/
 /cookies.txt
 /post_login.html
+/AGENTS.md
+
+.bash_history
+.zed_server/
+.ssh/
+.local/

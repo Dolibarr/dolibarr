@@ -380,7 +380,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" tabindex="-1" rel="noopener">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
@@ -1087,9 +1087,9 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 		print '<tr>';
 		print '<td'.($require ? ' class="fieldrequired" ' : '').'>';
 		if ($tooltip) {
-			print $form->textwithpicto($langs->trans($val), $tooltip, 4, 'help', '', 0, 3, $name);
+			print $form->textwithpicto($langs->trans($bankaccount->getBankFieldLabel($val)), $tooltip, 4, 'help', '', 0, 3, $name);
 		} else {
-			print $langs->trans($val);
+			print $langs->trans($bankaccount->getBankFieldLabel($val));
 		}
 		print '</td>';
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';

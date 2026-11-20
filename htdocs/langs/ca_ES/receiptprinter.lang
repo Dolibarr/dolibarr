@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Dia de la factura
 DOL_VALUE_DAY_LETTERS=Dia de factura en cartes
 DOL_LINE_FEED_REVERSE=Línia d'alimentació inversa
 InvoiceID=ID de factura
-InvoiceRef=Ref. factura
 DOL_PRINT_OBJECT_LINES=Línies de factura
 DOL_VALUE_CUSTOMER_FIRSTNAME=Nom del client
 DOL_VALUE_CUSTOMER_LASTNAME=Cognom del client

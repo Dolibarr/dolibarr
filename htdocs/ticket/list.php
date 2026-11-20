@@ -68,6 +68,7 @@ $contractid  = GETPOSTINT('contractid');
 $projectid  = GETPOSTINT('projectid');
 $project_ref = GETPOST('project_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
+$search_alias = GETPOST('search_alias', 'alpha');
 $search_fk_project = GETPOSTINT('search_fk_project') ? GETPOSTINT('search_fk_project') : GETPOSTINT('projectid');
 $search_fk_contract = GETPOSTINT('search_fk_contract') ? GETPOSTINT('search_fk_contract') : GETPOSTINT('contractid');
 
@@ -155,13 +156,15 @@ foreach ($object->fields as $key => $val) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
+// Alias name of third party, shown on the right of the third party column
+$arrayfields['s.name_alias'] = array('label' => 'AliasNameShort', 'checked' => '0', 'enabled' => (string) (int) isModEnabled('societe'), 'position' => 51);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
@@ -194,6 +197,8 @@ if ($project_ref) {
 $permissiontoread = $user->hasRight('ticket', 'read');
 $permissiontoadd = $user->hasRight('ticket', 'write');
 $permissiontodelete = $user->hasRight('ticket', 'delete');
+// Permission allowing the management of all ticket status modifications (Close/Resolve, Cancel, re-open), like the ticket card page
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage_advance')));
 
 $error = 0;
 
@@ -238,6 +243,7 @@ if (empty($reshook)) {
 		$toselect = array();
 		$search_array_options = array();
 		$search_societe = '';
+		$search_alias = '';
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_dateread_start = '';
@@ -266,6 +272,12 @@ if (empty($reshook)) {
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
+				// Check user has the permission to change the status of this ticket
+				// Permission is the same than the one required on the ticket card page.
+				if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $objecttmp->fk_user_assign != $user->id) && !$permissiontomanage) {
+					setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
+					continue;
+				}
 				$result = $objecttmp->close($user);
 				if ($result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -299,6 +311,12 @@ if (empty($reshook)) {
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
+				// Check user has the permission to change the status of this ticket
+				// Permission is the same than the one required on the ticket card page.
+				if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $objecttmp->fk_user_assign != $user->id) && !$permissiontomanage) {
+					setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
+					continue;
+				}
 				if ($objecttmp->status == Ticket::STATUS_CLOSED || $objecttmp->status == Ticket::STATUS_CANCELED) {
 					// Set status
 					$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
@@ -367,6 +385,7 @@ $morecss = array();
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
+$sql .= ", s.name_alias as thirdparty_alias";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -447,6 +466,9 @@ if ($search_all) {
 }
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
+}
+if ($search_alias) {
+	$sql .= natural_search('s.name_alias', $search_alias);
 }
 if ($search_fk_project > 0) {
 	$sql .= natural_search('t.fk_project', (string) $search_fk_project, 2);
@@ -702,6 +724,9 @@ if ($socid > 0) {
 }
 if ($search_societe) {
 	$param .= '&search_societe='.urlencode($search_societe);
+}
+if ($search_alias) {
+	$param .= '&search_alias='.urlencode($search_alias);
 }
 if ($projectid > 0) {
 	$param .= '&projectid='.urlencode((string) ($projectid));
@@ -968,6 +993,9 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		}
 	}
+	if ($key == 'fk_soc' && !empty($arrayfields['s.name_alias']['checked'])) {
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_alias" value="'.dolPrintHTMLForAttribute($search_alias).'"></td>';
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -1009,6 +1037,10 @@ foreach ($object->fields as $key => $val) {
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''), 0, (empty($val['helplist']) ? '' : $val['helplist']))."\n";
+		$totalarray['nbfield']++;
+	}
+	if ($key == 'fk_soc' && !empty($arrayfields['s.name_alias']['checked'])) {
+		print getTitleFieldOfList($arrayfields['s.name_alias']['label'], 0, $_SERVER['PHP_SELF'], 's.name_alias', '', $param, '', $sortfield, $sortorder)."\n";
 		$totalarray['nbfield']++;
 	}
 }
@@ -1221,6 +1253,14 @@ while ($i < $imaxinloop) {
 						$totalarray['val']['t.'.$key] = 0;
 					}
 					$totalarray['val']['t.'.$key] += $object->$key;
+				}
+			}
+			if ($key == 'fk_soc' && !empty($arrayfields['s.name_alias']['checked'])) {
+				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->thirdparty_alias).'">';
+				print '<span class="spantitle">'.dolPrintHTML($obj->thirdparty_alias).'</span>';
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
 				}
 			}
 		}

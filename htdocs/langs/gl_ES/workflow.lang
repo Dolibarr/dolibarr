@@ -24,7 +24,7 @@ descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Cando se valida unha recepción, 
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Cando se pecha unha recepción, clasifique os pedimentos a provedor de orixe ligados como recibidos (e se a cantidade recibida por todas as recepcións emitidas a partir do pedimento a provedor é a mesma que no pedimento a provedor para actualizar)
 # Autoclassify shipment
 descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Cando se valida unha factura a cliente, clasifique o envío de orixe ligado como pechado (e se o importe da factura é o mesmo que o importe total dos envíos ligados)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Cando se valida unha factura a cliente, clasifique o envío de orixe ligado como facturado (e se o importe da factura é o mesmo que o importe total dos envíos ligados)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Cando se valida unha factura a cliente, clasifique o envío de orixe ligado como facturado (e se o importe da factura é o mesmo que o importe total dos envíos ligados), agás un envío sen pedimento de cliente, que non ten importe)
 # Autoclassify receptions
 descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Cando se valida unha factura de provedor, clasifique as recepcións de orixe ligadas como pechadas (e se o importe da factura é o mesmo que o importe total das recepcións ligadas)
 descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Cando se valida unha factura de compra, clasifique as recepcións de orixe ligadas como facturadas (e se o importe da factura é o mesmo que o importe total das recepcións ligadas)

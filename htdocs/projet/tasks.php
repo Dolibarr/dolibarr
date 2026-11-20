@@ -132,7 +132,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch_optionals();
 }
 $extrafields->fetch_name_optionals_label($taskstatic->table_element);
-$search_array_options = $extrafields->getOptionalsFromPost($taskstatic->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($taskstatic->table_element, '', 'search_task_');
 
 // Default to no permission
 $permissiontoread = 0;
@@ -306,10 +306,18 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+// Load the user setup of visible columns into $arrayfields (needed to build the search filters)
+Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);
+
 $morewherefilterarray = array();
 
 if (!empty($search_taskref)) {
-	$morewherefilterarray[] = natural_search('t.ref', $search_taskref, 0, 1);
+	if (empty($arrayfields['t.label']['checked'])) {
+		// When task label column is not visible, search on task ref searches both ref and label
+		$morewherefilterarray[] = natural_search(array('t.ref', 't.label'), $search_taskref, 0, 1);
+	} else {
+		$morewherefilterarray[] = natural_search('t.ref', $search_taskref, 0, 1);
+	}
 }
 
 if (!empty($search_tasklabel)) {
@@ -632,6 +640,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 	// Add $param from extra fields
+	$search_options_pattern = 'search_task_options_';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	$arrayofmassactions = array();
@@ -1146,6 +1155,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		print '</td>';
 	}
 
+	$search_options_pattern = 'search_task_options_';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Fields from hook

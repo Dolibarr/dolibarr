@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022-2025	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -157,6 +157,7 @@ if (empty($reshook)) {
 		$object->label        = (string) GETPOST("libelle", "alpha");
 		$object->description  = (string) GETPOST("desc", "alpha");
 		$object->statut       = GETPOSTINT("statut");
+		$object->status       = $object->statut;
 		$object->lieu         = (string) GETPOST("lieu", "alpha");
 		$object->address      = (string) GETPOST("address", "alpha");
 		$object->zip          = (string) GETPOST("zipcode", "alpha");
@@ -202,6 +203,7 @@ if (empty($reshook)) {
 	// Delete warehouse
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('stock', 'supprimer')) {
 		$object->fetch(GETPOSTINT('id'));
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
@@ -221,6 +223,7 @@ if (empty($reshook)) {
 			$object->fk_project = GETPOSTINT('projectid');
 			$object->description = GETPOST("desc", 'restricthtml');
 			$object->statut = GETPOSTINT("statut");
+			$object->status = $object->statut;
 			$object->lieu = GETPOST("lieu");
 			$object->address = GETPOST("address");
 			$object->zip = GETPOST("zipcode");
@@ -335,7 +338,7 @@ if ($action == 'create') {
 	// Ref
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input class="width200" name="libelle" value=""></td></tr>';
 
-	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" size="40" value="'.(!empty($object->lieu) ? $object->lieu : '').'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="lieu" class="width300" value="'.dolPrintHTMLForAttribute(empty($object->lieu) ? '' : $object->lieu).'"></td></tr>';
 
 	// Parent entrepot
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
@@ -625,7 +628,7 @@ if ($action == 'create') {
 					}
 
 					if ($user->hasRight('stock', 'supprimer')) {
-						print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+						print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition')))."\n";
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete").'</a>';
 					}
@@ -940,7 +943,7 @@ if ($action == 'create') {
 			print '<table class="border centpercent">';
 
 			// Ref
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->label.'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" class="width200" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td><input name="lieu" class="minwidth300" value="'.$object->lieu.'"></td></tr>';
 

@@ -247,8 +247,16 @@ if (isset($current_fiscal_period)) {
 		$form_question = array();
 
 		$fiscal_period_arr = array();
-		foreach ($active_fiscal_periods as $info) {
-			$fiscal_period_arr[$info['id']] = $info['label'];
+		if (!empty($current_fiscal_period['date_end'])) {
+			foreach ($active_fiscal_periods as $info) {
+				if ($info['date_start'] > $current_fiscal_period['date_end']) {
+					$fiscal_period_arr[$info['id']] = $info['label'];
+				}
+			}
+		}
+		if (empty($fiscal_period_arr)) {
+			$langs->load('errors');
+			setEventMessages($langs->trans(empty($current_fiscal_period['date_end']) ? 'ErrorAccountancyClosureNoEndDate' : 'ErrorAccountancyClosureNoNextFiscalPeriod'), null, 'errors');
 		}
 		$form_question['new_fiscal_period_id'] = array(
 			'name' => 'new_fiscal_period_id',
@@ -270,7 +278,7 @@ if (isset($current_fiscal_period)) {
 			'value' => 0
 		);
 
-		$formconfirm = $form->formconfirm(
+		$formconfirm = empty($fiscal_period_arr) ? '' : $form->formconfirm(
 			$_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
 			$langs->trans('AccountancyClosureClose'),
 			$langs->trans('AccountancyClosureConfirmClose'),

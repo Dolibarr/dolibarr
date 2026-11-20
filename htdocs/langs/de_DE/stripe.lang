@@ -5,7 +5,7 @@ StripeOrCBDoPayment=Zahlen mit Kreditkarte oder über Stripe
 FollowingUrlAreAvailableToMakePayments=Die folgenden URLs sind verfügbar, um einem Kunden eine Seite anzubieten, auf der er eine Zahlung für Dolibarr-Objekte vornehmen kann
 PaymentForm=Zahlungsformular
 WelcomeOnPaymentPage=Willkommen auf unserer Online-Bezahlseite
-ThisScreenAllowsYouToPay=Über diese Seite können Sie Online-Zahlungen vornehmen an: %s
+ThisScreenAllowsYouToPay=Über diese Seite können Sie eine Online-Zahlung an %s vornehmen.
 ThisIsInformationOnPayment=Informationen zu der vorzunehmenden Zahlung
 ToComplete=Vervollständigen
 YourEMail=E-Mail-Adresse für die Zahlungsbestätigung
@@ -95,7 +95,7 @@ ExampleOnlyForATBEDEITNLESCustomers=Nur für Kunden aus Österreich, Belgien, De
 ListOfSupportedHooksToActivate=Liste der unterstützten Hooks zum Aktivieren
 # Paybox
 PayBoxSetup=PayBox-Moduleinstellungen
-PayBoxDesc=Dieses Modul bietet Online-Zahlungsseiten, um Kunden die Bezahlung mittels <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> zu ermöglichen. Dies kann sowohl für eine allgemeine Zahlung als auch für eine Zahlung bezogen auf ein bestimmtes Dolibarr-Objekt (Rechnung, Bestellung, ...) verwendet werden.
+PayBoxDesc=Dieses Modul bietet Online-Zahlungsseiten, um Kunden die Bezahlung mittels <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> zu ermöglichen. Dies kann sowohl für eine allgemeine Zahlung als auch für eine Zahlung bezogen auf ein bestimmtes Dolibarr-Objekt (Rechnung, Kundenauftrag, ...) verwendet werden.
 PayBoxDoPayment=Zahlen Sie mit Paybox
 YouWillBeRedirectedOnPayBox=Zur Eingabe Ihrer Kreditkartendaten werden Sie an eine sichere Bezahlseite weitergeleitet.
 SetupPayBoxToHavePaymentCreatedAutomatically=Richten Sie Ihre Paybox mit der URL <b> %s </b> ein, damit die Zahlung bei der Validierung durch Paybox automatisch erstellt wird.
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=Wert für PBX Rang
 PAYBOX_PBX_IDENTIFIANT=Wert für PBX ID
 PAYBOX_HMAC_KEY=HMAC-Schlüssel
 FeatureNotUsedAccordingtoSetup=Funktion wird gemäß Ihrer %s Konfiguration nicht verwendet.
+PaymentRecordedButPostPocessingKo=Ihre Zahlung wurde vom Zahlungssystem erfasst. Die anschließende Verarbeitung auf unserer Seite konnte jedoch offenbar nicht vollständig abgeschlossen werden. Wir wurden benachrichtigt und werden das Problem beheben. Bitte zahlen Sie kein zweites Mal und senden Sie uns zur Sicherheit einen Screenshot dieser Seite per E-Mail, damit wir das Problem berücksichtigen.

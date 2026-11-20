@@ -63,7 +63,7 @@ $contextpage        = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ'
 $backtopage         = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss          = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$search_id          = GETPOST('search_id', 'alphanohtml');
+$search_id          = trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_month       = GETPOSTINT('search_month');
 $search_year        = GETPOSTINT('search_year');
 $search_employee    = GETPOST('search_employee', "intcomma");
@@ -209,7 +209,7 @@ if (!empty($search_year) && $search_year > 0) {
 	$sqlwhere .= "AND date_action BETWEEN '".$db->idate($from_date)."' AND '".$db->idate($to_date)."'";
 }
 
-if (!empty($search_id) && $search_id > 0) {
+if ($search_id != '') {
 	$sqlwhere .= natural_search('rowid', $search_id, 1);
 }
 if (!empty($search_validator) && $search_validator > 0) {
@@ -259,7 +259,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-if (!empty($search_id)) {
+if ($search_id != '') {
 	$param .= '&search_id='.urlencode($search_id);
 }
 if (!empty($search_month) && $search_month > 0) {
@@ -343,7 +343,7 @@ if ($conf->main_checkbox_left_column) {
 
 // Filter Id
 if (!empty($arrayfields['cpl.rowid']['checked'])) {
-	print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
+	print '<td class="liste_titre center"><input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'"></td>';
 }
 
 // Filter: Date
@@ -430,7 +430,7 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 if (!empty($arrayfields['cpl.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'cpl.rowid', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'cpl.rowid', '', '', '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['cpl.date_action']['checked'])) {
 	print_liste_field_titre($arrayfields['cpl.date_action']['label'], $_SERVER["PHP_SELF"], 'date_action', '', '', '', $sortfield, $sortorder, 'center ');
@@ -495,7 +495,7 @@ while ($i < min($num, $limit)) {
 
 	// Id
 	if (!empty($arrayfields['cpl.rowid']['checked'])) {
-		print '<td>'.$holidaylogstatic->id.'</td>';
+		print '<td class="center">'.$holidaylogstatic->id.'</td>';
 	}
 
 	// Date

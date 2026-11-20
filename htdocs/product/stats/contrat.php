@@ -51,6 +51,7 @@ $search_year = GETPOSTINT('search_year');
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -75,8 +76,6 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "c.date_contrat";
 }
-
-$socid = 0;
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 

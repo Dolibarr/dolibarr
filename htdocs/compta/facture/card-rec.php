@@ -162,7 +162,7 @@ $result = restrictedArea($user, 'facture', $object->id, $objecttype);
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	if ($action != 'updateline') {
+	if ($action != 'updateline' && $action != 'setdate_when') {
 		$action = 'list';
 		$massaction = '';
 	} else {
@@ -342,10 +342,14 @@ if (empty($reshook)) {
 
 	// Delete
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'supprimer')) {
-		$object->delete($user);
-
-		header("Location: ".DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
-		exit;
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		$result = $object->delete($user);
+		if ($result > 0) {
+			header("Location: ".DOL_URL_ROOT.'/compta/facture/invoicetemplate_list.php');
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 
@@ -457,7 +461,13 @@ if (empty($reshook)) {
 		$object->fetch($object->id);	// Reload all.
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		if (!in_array(GETPOSTINT('calculation_mode'), array(1, 2))) {
+			$langs->load("compta");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CalculationMode")), null, 'errors');
+			$action = 'editmulticurrencyrate';
+		} else {
+			$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		}
 		$object->fetch($object->id);	// Reload all.
 	} elseif ($action == 'setruleforlinesdates' && $usercancreate) {
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("RuleForLinesDates"));
@@ -490,6 +500,18 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			setEventMessages($line->error, $line->errors, 'errors');
+		}
+	} elseif ($action == 'confirm_duplicate_subtotalblock' && $confirm == 'yes' && $usercancreate) {
+		// Duplicate a block of lines (the title line, the lines it contains and the subtotal line)
+		$langs->load('subtotals');
+
+		$result = $object->duplicateSubtotalBlock($langs, GETPOSTINT('lineid'), $user);
+		if ($result > 0) {
+			$object->fetch($object->id); // Reload lines
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+			exit();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
 		// Delete line
@@ -945,7 +967,7 @@ if (empty($reshook)) {
 		$pu_ttc = price2num(GETPOST('price_ttc'), '', 2);
 
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
-		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
+		$pu_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), '', 2);
 
 		$qty = (float) price2num(GETPOST('qty', 'alpha'), 'MS');
 
@@ -1036,6 +1058,14 @@ if (empty($reshook)) {
 		if (empty($pu) && !empty($pu_ttc)) {
 			$pu = $pu_ttc;
 			$price_base_type = 'TTC';
+		}
+
+		// Only the unit price incl. tax in currency was entered: it becomes the reference price of the line.
+		// updateline() reads the currency price in the price_base_type, so it receives the TTC currency amount.
+		if (GETPOST('price_ht') === '' && GETPOST('price_ttc') === '' && GETPOST('multicurrency_subprice') === '' && GETPOST('multicurrency_price_ttc') !== '') {
+			$pu = 0;
+			$price_base_type = 'TTC';
+			$pu_ht_devise = $pu_ttc_devise;
 		}
 
 		// Check minimum price
@@ -1613,6 +1643,12 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans($title), $langs->trans($question), 'confirm_delete_subtotalline', $formconfirm, 'no', 1);
 		}
 
+		// Confirmation of the duplication of a block of the subtotals module
+		if ($action == 'ask_duplicate_subtotalblock') {
+			$langs->load("subtotals");
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans("DuplicateBlock"), $langs->trans("ConfirmDuplicateBlock"), 'confirm_duplicate_subtotalblock', '', 'no', 1);
+		}
+
 		// Subtotal line form
 		if ($action == 'add_title_line') {
 			$langs->load('subtotals');
@@ -2016,7 +2052,7 @@ if ($action == 'create') {
 			} else {
 				print $form->textwithpicto($langs->trans("NextDateToExecution"), $langs->trans("NextDateToExecutionHelp"));
 			}
-			print '</td><td>';
+			print '</td><td'.(isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency) ? ' colspan="2"' : '').'>';
 			if ($action == 'date_when' || $object->frequency > 0) {
 				print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->hasRight('facture', 'creer'), 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
 			}
@@ -2029,9 +2065,6 @@ if ($action == 'create') {
 				print img_info($langs->trans("MaxNumberOfGenerationReached"));
 			}
 			print '</td>';
-			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-				print '<td></td>';
-			}
 			print '</tr>';
 
 			// Max period / Rest period
@@ -2192,6 +2225,9 @@ if ($action == 'create') {
 				include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
 			}
 		}
+		if (!empty($conf->use_javascript_ajax) && isModEnabled('subtotals')) {
+			include DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_collapse.tpl.php';
+		}
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder noshadow centpercent nomarginbottom">';
@@ -2297,7 +2333,7 @@ if ($action == 'create') {
 			}
 
 			// Delete
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $user->hasRight('facture', 'supprimer'));
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=delete&token=' . newToken(), 'delete', $user->hasRight('facture', 'supprimer'), array('attr' => array('class' => 'reposition')))."\n";
 		}
 		print '</div>';
 

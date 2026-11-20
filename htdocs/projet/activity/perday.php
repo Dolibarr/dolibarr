@@ -198,13 +198,24 @@ if (GETPOST('submitdateselect')) {
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
+// Entering time or assigning a task requires permission to enter time, and the user to process must be me or one of my subordinates
+if ($action == 'addtime' && GETPOST('formfilteraction') != 'listafterchangingselectedfields') {	// Test on permission done later
+	$childids = $user->getAllChildIds(1);
+	if (!$user->hasRight('projet', 'time') || (!in_array($usertoprocess->id, $childids) && !$user->hasRight('projet', 'all', 'creer'))) {
+		accessforbidden();
+	}
+}
+
 if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('assigntask') && GETPOST('formfilteraction') != 'listafterchangingselectedfields') {
 	$action = 'assigntask';
 
 	if ($taskid > 0) {
 		$result = $object->fetch($taskid);
-		if ($result < 0) {
+		if ($result <= 0) {
 			$error++;
+		} else {
+			// Check that I can read the project of the task
+			restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 		}
 	} else {
 		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), null, 'errors');
@@ -227,7 +238,7 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('assign
 				$obj = $db->fetch_object($resql);
 				if (!$obj) {	// User is not already linked to project, so we will create link to first type
 					$project = new Project($db);
-					$project->fetch($object->fk_project);
+					$project->fetch((int) $object->fk_project);
 					// Get type
 					$listofprojcontact = $project->liste_type_contact('internal');
 
@@ -293,7 +304,11 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 
 	if (count($timespent_duration) > 0) {
 		foreach ($timespent_duration as $key => $val) {
-			$object->fetch($key);
+			if ($object->fetch($key) <= 0) {
+				accessforbidden();
+			}
+			// Check that I can read the project of the task
+			restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 			$taskid = $object->id;
 
 			if (GETPOSTISSET($taskid.'progress')) {

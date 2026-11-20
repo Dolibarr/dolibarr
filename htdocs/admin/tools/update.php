@@ -95,7 +95,7 @@ llxHeader('', $langs->trans("Upgrade"), $wikihelp, '', 0, 0, '', '', '', 'mod-ad
 
 print load_fiche_titre($langs->trans("Upgrade"), '', 'title_setup');
 
-print '<br>';
+print '<div class="info">';
 
 print $langs->trans("CurrentVersion").' : <strong>'.DOL_VERSION.'</strong><br>';
 
@@ -107,6 +107,8 @@ if (function_exists('curl_init')) {
 			$langs->load("errors");
 			print $langs->trans("LastStableVersion").' : <b class="error">'.$langs->trans("ErrorFunctionNotAvailableInPHP", 'simplexml_load_string').'</b><br>';
 		} elseif ($sfurl) {
+			$currentversionarray = explode('.', DOL_VERSION);
+			$branchversion = '';	// Latest version of the branch currently running
 			$i = 0;
 			while (!empty($sfurl->channel[0]->item[$i]->title) && $i < 10000) {
 				$title = $sfurl->channel[0]->item[$i]->title;
@@ -118,8 +120,19 @@ if (function_exists('curl_init')) {
 					if (versioncompare($newversionarray, $versionarray) > 0) {
 						$version = $newversion;
 					}
+					if (count($newversionarray) >= 2 && $newversionarray[0] == $currentversionarray[0] && $newversionarray[1] == $currentversionarray[1]
+						&& ($branchversion == '' || versioncompare($newversionarray, explode('.', $branchversion)) > 0)) {
+						$branchversion = $newversion;
+					}
 				}
 				$i++;
+			}
+
+			// Show first the latest version of the running branch, when it is not the latest stable one
+			$currentbranch = $currentversionarray[0].'.'.(isset($currentversionarray[1]) ? $currentversionarray[1] : '');
+			$versionarray = explode('.', $version);
+			if (!preg_match('/[a-z]+/i', DOL_VERSION) && $currentbranch != $versionarray[0].'.'.(isset($versionarray[1]) ? $versionarray[1] : '')) {
+				print $langs->trans("LastVersionOfBranch", $currentbranch).' : <b>'.($branchversion != '' ? $branchversion : $langs->trans("Unknown")).'</b><br>';
 			}
 
 			// Show version
@@ -131,6 +144,7 @@ if (function_exists('curl_init')) {
 		print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion&token='.newToken().'" class="button smallpaddingimp">'.$langs->trans("Check").'</a><br>';
 	}
 }
+print '</div>';
 
 print '<br>';
 print '<br>';

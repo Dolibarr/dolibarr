@@ -191,6 +191,22 @@ declare module "ace-builds/src-noconflict/mode-c9search" {
     export const Mode: new () => import("ace-builds").Ace.SyntaxMode;
 }
 
+declare module "ace-builds/src-noconflict/mode-cedar_highlight_rules" {
+    export const CedarHighlightRules: new () => import("ace-builds").Ace.HighlightRules;
+}
+
+declare module "ace-builds/src-noconflict/mode-cedar" {
+    export const Mode: new () => import("ace-builds").Ace.SyntaxMode;
+}
+
+declare module "ace-builds/src-noconflict/mode-cedarschema_highlight_rules" {
+    export const CedarSchemaHighlightRules: new () => import("ace-builds").Ace.HighlightRules;
+}
+
+declare module "ace-builds/src-noconflict/mode-cedarschema" {
+    export const Mode: new () => import("ace-builds").Ace.SyntaxMode;
+}
+
 declare module "ace-builds/src-noconflict/mode-cirru_highlight_rules" {
     export const CirruHighlightRules: new () => import("ace-builds").Ace.HighlightRules;
 }
@@ -660,6 +676,14 @@ declare module "ace-builds/src-noconflict/mode-groovy" {
     export const Mode: new () => import("ace-builds").Ace.SyntaxMode;
 }
 
+declare module "ace-builds/src-noconflict/mode-groq_highlight_rules" {
+    export const GroqHighlightRules: new () => import("ace-builds").Ace.HighlightRules;
+}
+
+declare module "ace-builds/src-noconflict/mode-groq" {
+    export const Mode: new () => import("ace-builds").Ace.SyntaxMode;
+}
+
 declare module "ace-builds/src-noconflict/mode-haml_highlight_rules" {
     export const HamlHighlightRules: new () => import("ace-builds").Ace.HighlightRules;
 }
@@ -961,6 +985,14 @@ declare module "ace-builds/src-noconflict/mode-makefile_highlight_rules" {
 }
 
 declare module "ace-builds/src-noconflict/mode-makefile" {
+    export const Mode: new () => import("ace-builds").Ace.SyntaxMode;
+}
+
+declare module "ace-builds/src-noconflict/mode-mariadb_highlight_rules" {
+    export const MariadbHighlightRules: new () => import("ace-builds").Ace.HighlightRules;
+}
+
+declare module "ace-builds/src-noconflict/mode-mariadb" {
     export const Mode: new () => import("ace-builds").Ace.SyntaxMode;
 }
 

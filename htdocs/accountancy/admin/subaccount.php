@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("accountancy", "admin", "bills", "compta", "errors", "hrm", "salaries"));
+$langs->loadLangs(array("accountancy", "admin", "bills", "compta", "hrm", "salaries"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');

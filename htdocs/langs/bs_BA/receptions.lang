@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Potvrđeno
 StatusReceptionProcessedShort=Obrađeno
 ReceptionSheet=Prijemni list
 ValidateReception=Potvrdite prijem
+DeleteReception=Delete reception
 ConfirmDeleteReception=Jeste li sigurni da želite izbrisati ovaj prijem?
 ConfirmValidateReception=Jeste li sigurni da želite potvrditi ovaj prijem sa referencom <b>%s</b>?
 ConfirmCancelReception=Jeste li sigurni da želite otkazati ovaj prijem?

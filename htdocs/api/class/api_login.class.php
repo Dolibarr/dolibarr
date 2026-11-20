@@ -146,6 +146,12 @@ class Login
 			throw new RestException(500, 'Failed to load user');
 		}
 
+		// A password alone must not be enough for a user with a two-factor authentication, or who must set one up: such a user gets the API key from the backoffice
+		if (!dolTotpIsDisabledByConf() && (dolTotpGetEnrollment($this->db, $tmpuser->id) !== null || dolTotpIsRequired($this->db, $tmpuser))) {
+			dol_syslog("Login API refused for ".$login.": two-factor authentication is enabled or required, the API key must be used", LOG_WARNING);
+			throw new RestException(403, 'Two-factor authentication is enabled or required for this user, the login API with a password is not allowed. Use the API key generated from the backoffice.');
+		}
+
 		// Renew the hash
 		if (empty($tmpuser->api_key) || $reset) {
 			$tmpuser->loadRights();

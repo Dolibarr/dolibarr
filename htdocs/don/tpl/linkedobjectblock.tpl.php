@@ -38,6 +38,12 @@
  */
 '@phan-var-force Don[] $linkedObjectBlock';
 
+// Protection to avoid direct call of template
+if (empty($conf) || !is_object($conf)) {
+	print "Error, template page can't be called as URL";
+	exit(1);
+}
+
 print "<!-- BEGIN PHP TEMPLATE don/tpl/linkedobjectblock.tpl.php -->\n";
 
 $langs->load("donations");

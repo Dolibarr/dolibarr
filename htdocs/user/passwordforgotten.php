@@ -48,7 +48,7 @@ if (isModEnabled('ldap')) {
  */
 
 // Load translation files required by page
-$langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
+$langs->loadLangs(array('users', 'companies', 'ldap', 'other'));
 
 // Security check
 if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
@@ -134,6 +134,7 @@ if (empty($reshook)) {
 			$edituser = new User($db);
 			$result = $edituser->fetch(0, $username, '', 0, $conf->entity);
 			if ($result < 0) {
+				$langs->load('errors');
 				$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 			} else {
 				$resverify = dolVerifyPasswordResetHash($edituser->pass_temp, $edituser->id, $passworduidhash);
@@ -146,6 +147,7 @@ if (empty($reshook)) {
 				} else {
 					$res = $edituser->setPassword($user, $newpass1, 0);	// validates against the active password policy
 					if (is_int($res) && $res < 0) {
+						$langs->load('errors');
 						$message = '<div class="error">'.dol_escape_htmltag($edituser->error ? $edituser->error : $langs->trans("ErrorFailedToChangePassword")).'</div>';
 					} else {
 						unset($_SESSION['dol_login']);
@@ -207,11 +209,13 @@ if (empty($reshook)) {
 				dol_syslog('Error, the captcha handler '.$captcha.' has no class file found modCaptcha'.ucfirst($captcha), LOG_ERR);
 			}
 		}
+		unset($_SESSION['dol_antispam_value']);	// A code can be used only once. The page shows a new image, so a new code is set.
 
 		// Verify code
 		if (!$ok) {
 			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
 
+			$langs->load('errors');
 			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 		} else {
 			$isanemail = preg_match('/@/', $username);
@@ -252,6 +256,7 @@ if (empty($reshook)) {
 					$armed = $edituser->requestPasswordReset();
 					if (is_int($armed) && $armed < 0) {
 						// Technical failure
+						$langs->load('errors');
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
 						// Success to arm reset token, send link-only email

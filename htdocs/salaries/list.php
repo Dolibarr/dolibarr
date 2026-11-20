@@ -358,23 +358,27 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON (ps.fk_salary = s.rowid) ";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON (s.fk_typepayment = pst.id) ";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account ba ON (ba.rowid = s.fk_account), ";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account ba ON (ba.rowid = s.fk_account)";
 //$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as ps ON ps.fk_salary = s.rowid, ";
-$sql .= " ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE u.rowid = s.fk_user";
-$sql .= " AND s.entity IN (".getEntity('salaries').")";
-if (!$user->hasRight('salaries', 'readchild')) {
-	$sql .= " AND s.fk_user = ".(int) $user->id;
-}
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE s.entity IN (".getEntity('salary').")";
 if (!$user->hasRight('salaries', 'readall')) {
-	$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
+	if (!$user->hasRight('salaries', 'readchild')) {
+		$sql .= " AND s.fk_user = ".(int) $user->id;
+	} else {
+		$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
+	}
 }
 
 //print $sql;
 
 // Search criteria
-if ($search_ref) {
-	$sql .= " AND s.rowid=".((int) $search_ref);
+if ($search_ref != '') {
+	$sql .= natural_search('s.rowid', $search_ref, 1);
 }
 if ($search_user) {
 	$sql .= natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
@@ -409,6 +413,10 @@ if ($search_type_id) {
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname, u.login, u.email, u.admin, u.photo, u.salary, u.fk_soc, u.statut,";
 $sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment, s.fk_bank,";
 $sql .= " ba.rowid, ba.ref, ba.number, ba.account_number, ba.fk_accountancy_journal, ba.label, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos,";
@@ -613,7 +621,7 @@ if ($conf->main_checkbox_left_column) {
 // Ref
 if (!empty($arrayfields['s.ref']['checked'])) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat width50" type="text" name="search_ref" value="'.$db->escape($search_ref).'">';
+	print '<input class="flat width50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 
@@ -872,7 +880,7 @@ while ($i < $imaxinloop) {
 
 		// Label payment
 		if (!empty($arrayfields['s.label']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'"><span class="spantitle">'.dol_escape_htmltag($obj->label)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

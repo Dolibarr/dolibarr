@@ -23,10 +23,9 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/multicurrency/class/multicurrency.class.php';
+global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/multicurrency/class/multicurrency.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";

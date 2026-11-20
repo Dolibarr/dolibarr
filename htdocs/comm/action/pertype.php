@@ -386,7 +386,7 @@ $paramnoaction = preg_replace('/action=[a-z_]+/', '', $param);
 
 $head = calendars_prepare_head($paramnoaction);
 
-print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 
 $showextcals = $listofextcals;
 // Legend
@@ -538,10 +538,11 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
+$sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca';
+$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'actioncomm as a ON a.fk_action = ca.id';
 // We must filter on resource table
 if ($resourceid > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as r ON r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 // We must filter on assignment table
 if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
@@ -558,8 +559,12 @@ if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
 	}
 }
 
-$sql .= " WHERE a.fk_action = ca.id";
-$sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+$sql .= " WHERE a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
 
 // Condition on actioncode
 if (!empty($actioncode)) {
@@ -596,9 +601,6 @@ if (!empty($actioncode)) {
 			}
 		}
 	}
-}
-if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
 	$sql .= " AND a.fk_project = ".((int) $pid);
@@ -680,6 +682,11 @@ if (($filtert > 0 || $filtert == -3) || $usergroup > 0) {
 	}
 	$sql .= ")";
 }
+
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 // Sort on date
 $sql .= $db->order("fk_user_action, datep");
@@ -1033,6 +1040,9 @@ function show_day_events_pertype($typeofeventcode, $day, $month, $year, $monthsh
 	$numicals = array();
 	$ymd = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
+	if (!is_array($colorindexused)) {
+		$colorindexused = array(); // Not initialized by the page (unlike peruser.php): count(null) is a fatal error with PHP 8
+	}
 	$nextindextouse = count($colorindexused); // At first run, this is 0, so fist user has 0, next 1, ...
 	//if ($typeofeventcode && $day==1) {
 	//var_dump($eventarray);
@@ -1149,7 +1159,7 @@ function show_day_events_pertype($typeofeventcode, $day, $month, $year, $monthsh
 							if ($event->fk_project > 0) {
 								if (empty($cacheprojects[$event->fk_project])) {
 									$tmpproj = new Project($db);
-									$tmpproj->fetch($event->fk_project);
+									$tmpproj->fetch((int) $event->fk_project);
 									$cacheprojects[$event->fk_project] = $tmpproj;
 								}
 								$cases1[$h][$event->id]['string'] .= ', '.$langs->trans("Project").': '.$cacheprojects[$event->fk_project]->ref.' - '.$cacheprojects[$event->fk_project]->title;
@@ -1192,7 +1202,7 @@ function show_day_events_pertype($typeofeventcode, $day, $month, $year, $monthsh
 							if ($event->fk_project > 0) {
 								if (empty($cacheprojects[$event->fk_project])) {
 									$tmpproj = new Project($db);
-									$tmpproj->fetch($event->fk_project);
+									$tmpproj->fetch((int) $event->fk_project);
 									$cacheprojects[$event->fk_project] = $tmpproj;
 								}
 								$cases2[$h][$event->id]['string'] .= ', '.$langs->trans("Project").': '.$cacheprojects[$event->fk_project]->ref.' - '.$cacheprojects[$event->fk_project]->title;

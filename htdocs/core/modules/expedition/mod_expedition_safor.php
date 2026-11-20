@@ -47,16 +47,14 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	public $error = '';
 
 	/**
-	 * @var string Name of model
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Safor';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Safor';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 10;
 
 
 	/**

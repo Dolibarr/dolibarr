@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("mails", "admin"));
+$langs->loadLangs(array("mails", "admin", "companies"));
 
 $action = GETPOST('action', 'aZ09');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
@@ -231,6 +231,7 @@ if (GETPOSTINT('exportcsv') && $permissiontoread) {	// @phpstan-ignore-line
 if ($action == 'delete' && $permissiontocreate) {
 	// Ici, rowid indique le destinataire et id le mailing
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
+	$sql .= " AND fk_mailing = ".((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		if (!empty($id)) {
@@ -590,6 +591,11 @@ if ($object->fetch($id) >= 0) {
 				$classname = "mailing_".$modulename;
 				require_once $file;
 
+				if (!class_exists($classname)) {
+					dol_syslog("Emailing target selector class ".$classname." not found", LOG_WARNING);
+					continue;
+				}
+
 				$obj = new $classname($db);
 				'@phan-var-force MailingTargets $obj';
 
@@ -704,7 +710,7 @@ if ($object->fetch($id) >= 0) {
 	// List of selected targets
 	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut as status, mc.date_envoi, mc.tms,";
 	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text,";
-	$sql .= " COUNT(mu.rowid) as nb";
+	$sql .= " COUNT(mu.rowid) as nb, MAX(CASE WHEN mu.unsubscribegroup = '' AND mu.entity = ".((int) $conf->entity)." THEN 1 ELSE 0 END) as global_opt_out";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."mailing_unsubscribe as mu ON mu.email = mc.email";
 	$sql .= " WHERE mc.fk_mailing=".((int) $object->id);
@@ -898,6 +904,7 @@ if ($object->fetch($id) >= 0) {
 			$totalarray['nbfield']++;
 		}
 		print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "mc.email", '', $param, "", $sortfield, $sortorder);
+		print_liste_field_titre("No_Email", $_SERVER["PHP_SELF"], "global_opt_out", '', $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "mc.lastname", '', $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "mc.firstname", '', $param, "", $sortfield, $sortorder);
 		print_liste_field_titre("OtherInformations", $_SERVER["PHP_SELF"], '', "", $param, "", $sortfield, $sortorder);
@@ -964,6 +971,8 @@ if ($object->fetch($id) >= 0) {
 				}
 				print dolPrintHTML($obj->email);
 				print '</td>';
+
+				print '<td class="center">'.yn($obj->global_opt_out).'</td>';
 
 				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->lastname).'">'.dolPrintHTML($obj->lastname).'</td>';
 

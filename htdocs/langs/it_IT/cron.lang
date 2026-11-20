@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Leggi processo pianificato
-Permission23102 = Crea / Aggiornamento processo pianificato
-Permission23103 = Elimina processo pianificato
-Permission23104 = Esegui processo pianificato
 # Admin
 CronSetup=Impostazione delle azioni pianificate
 URLToLaunchCronJobs=URL per controllare e avviare cron jobs qualificati da un browser
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=In ambienti Unix per lanciare il comando ogni 5 minuti d
 CronExplainHowToRunWin=In ambienti Microsoft(tm) Windows per lanciare il comando ogni 5 minuti dovresti usare le operazioni pianificate
 CronMethodDoesNotExists=La classe %s non contiene alcun metodo %s
 CronMethodNotAllowed=Il metodo %s della classe %s è nella blocklist dei metodi vietati
-CronJobDefDesc=I profili cron sono definiti nel file di descrizione del modulo. Quando il modulo viene attivao, vengono caricati e resi disponivbili permettendoti di amministrare i processi dal menu strumenti amministrazione %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Elenco dei profili cron predefiniti
 # Menu
 EnabledAndDisabled=Attivato e disattivato
@@ -27,7 +22,7 @@ CronDelete=Cancella i processi pianificati
 CronConfirmDelete=Vuoi davvero eliminare questi processi pianificati?
 CronExecute=Avvia ora
 CronConfirmExecute=Vuoi davvero eseguire ora i processi pianificati?
-CronInfo=Il modulo di programmazione permette di pianificare l'esecuzione automatica dei processi. Essi possono anche essere lanciati manualmente.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Processo
 CronNone=Esecuzione successiva dell'attività pianificata
 CronNotYetRan=Mai eseguito
@@ -79,7 +74,7 @@ CronType_command=Comando da shell
 CronCannotLoadClass=Non posso caricare la classe %s (per usare la classe %s)
 CronModuleNotEnabledInThisEntity=Cron modulo non abilitato in questa entità (per utilizzare il metodo %s di %s oggetto)
 CronCannotLoadObject=Il file di classe %s è stato caricato, ma all'interno l'oggetto %s non è presente
-UseMenuModuleToolsToAddCronJobs=Vai nel menu "Home - Strumenti di amministrazione - Processi pianificati" per visualizzare e modificare i processi pianificati.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Processo disabilitato
 MakeLocalDatabaseDumpShort=Backup del database locale
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep

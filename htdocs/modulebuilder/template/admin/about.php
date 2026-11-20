@@ -70,7 +70,7 @@ require_once '../lib/mymodule.lib.php';
  */
 
 // Translations
-$langs->loadLangs(array("errors", "admin", "mymodule@mymodule"));
+$langs->loadLangs(array("admin", "mymodule@mymodule"));
 
 // Access control
 if (!$user->admin) {

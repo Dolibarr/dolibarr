@@ -249,7 +249,6 @@ class Link extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				setEventMessages('', $this->errors, 'errors');
 				$this->db->rollback();
 				return -1;
 			}

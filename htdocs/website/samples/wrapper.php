@@ -22,7 +22,7 @@ if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
 	die("Sample file for website module. Can't be called directly.");
 }
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
-	require_once './master.inc.php';
+	require_once './master.inc.php'; // @phpstan-ignore requireOnce.fileNotFound (exists only in the deployed website directory)
 } // Load master if not already loaded
 /**
  * @var Conf $conf
@@ -137,6 +137,17 @@ if (GETPOSTISSET('type')) {
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);
+
+// Security: Remove remaining '.', '..' and empty ('//' -> '/') segments, so the reference of the object
+// extracted from the subdirectory can not be faked with a path like 'REF/./file' or 'REF//file'.
+// The reference must also stay the same than the one resolved into dol_check_secure_access_document().
+$pathsegments = explode('/', $original_file);
+foreach ($pathsegments as $key => $pathsegment) {
+	if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+		unset($pathsegments[$key]);
+	}
+}
+$original_file = implode('/', $pathsegments);
 
 
 // Cache or not
@@ -280,7 +291,8 @@ if ($rss) {
 	$outputfile = $dir_temp.'/'.$filename;
 	$result = readfile($outputfile);
 	if (!$result) {
-		print 'File '.$outputfile.' was empty.';
+		dol_syslog("File ".$outputfile." was empty", LOG_WARNING);	// The path of the file is not shown on this public page
+		print 'File '.dol_escape_htmltag($filename).' was empty.';
 	}
 
 	// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
