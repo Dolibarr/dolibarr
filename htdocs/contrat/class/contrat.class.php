@@ -1943,6 +1943,25 @@ class Contrat extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Save a new position (field rang) for details lines.
+	 *  Contract lines have no parent line (no fk_parent_line field in table contratdet), so the
+	 *  search of parent and children lines is always disabled. Without this, moving a line up or
+	 *  down (core/actions_lineupdown.inc.php calls line_up()/line_down() with their default
+	 *  $fk_parent_line = true) fails with an SQL error as soon as a line has no position yet.
+	 *
+	 * 	@param		boolean		$renum			   True to renum all already ordered lines, false to renum only not already ordered lines.
+	 * 	@param		string		$rowidorder		   ASC or DESC
+	 * 	@param		boolean		$fk_parent_line    Not used: table contratdet has no fk_parent_line field
+	 * 	@return		int                            Return integer <0 if KO, >0 if OK
+	 */
+	public function line_order($renum = false, $rowidorder = 'ASC', $fk_parent_line = true)
+	{
+		// phpcs:enable
+		return parent::line_order($renum, $rowidorder, false);
+	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
