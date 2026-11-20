@@ -239,7 +239,7 @@ class Fichinter extends CommonObject
 	public function isAssignedTechnicianForSignature(User $user)
 	{
 		return $this->id > 0 && $user->id > 0 && !$user->isExternalUser()
-			&& in_array((int) $this->status, array(self::STATUS_VALIDATED, self::STATUS_BILLED, self::STATUS_CLOSED), true)
+			&& (int) $this->status === self::STATUS_VALIDATED
 			&& in_array((int) $user->id, array_map('intval', $this->getIdContact('internal', 'INTERVENING', 4) ?? array()), true);
 	}
 
@@ -310,6 +310,7 @@ class Fichinter extends CommonObject
 		$this->last_main_doc = $row->last_main_doc;
 		$this->signed_status = (int) $row->signed_status;
 		$this->status = (int) $row->fk_statut;
+		$this->statut = $this->status; // deprecated
 		return true;
 	}
 
