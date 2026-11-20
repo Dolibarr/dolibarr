@@ -1950,6 +1950,7 @@ function getImgPictoConv($mode = 'fa')
 			'reception' => 'dolly',
 			'recruitmentjobposition' => 'id-card-alt',
 			'recruitmentcandidature' => 'id-badge',
+			'recycle' => 'recycle',
 			'resize' => 'crop',
 			'supplier_order' => 'dol-order_supplier',
 			'supplier_proposal' => 'file-signature',
