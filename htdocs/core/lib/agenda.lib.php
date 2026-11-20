@@ -669,7 +669,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	// Line with td contains all div of each events
 	if ($hourlybuckets === null) {
 		print '<div class="tagtr">';
-		print '<div class="tagtd centpercent agendacell sortable">';
+		print '<div class="tagtd centpercent agendacell sortable nopaddingtopimp">';
 	}
 
 	//$curtime = dol_mktime (0, 0, 0, $month, $day, $year);

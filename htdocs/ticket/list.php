@@ -197,6 +197,8 @@ if ($project_ref) {
 $permissiontoread = $user->hasRight('ticket', 'read');
 $permissiontoadd = $user->hasRight('ticket', 'write');
 $permissiontodelete = $user->hasRight('ticket', 'delete');
+// Permission allowing the management of all ticket status modifications (Close/Resolve, Cancel, re-open), like the ticket card page
+$permissiontomanage = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ticket', 'manage_advance')));
 
 $error = 0;
 
@@ -270,6 +272,12 @@ if (empty($reshook)) {
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
+				// Check user has the permission to change the status of this ticket
+				// Permission is the same than the one required on the ticket card page.
+				if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $objecttmp->fk_user_assign != $user->id) && !$permissiontomanage) {
+					setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
+					continue;
+				}
 				$result = $objecttmp->close($user);
 				if ($result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -303,6 +311,12 @@ if (empty($reshook)) {
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
+				// Check user has the permission to change the status of this ticket
+				// Permission is the same than the one required on the ticket card page.
+				if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $objecttmp->fk_user_assign != $user->id) && !$permissiontomanage) {
+					setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
+					continue;
+				}
 				if ($objecttmp->status == Ticket::STATUS_CLOSED || $objecttmp->status == Ticket::STATUS_CANCELED) {
 					// Set status
 					$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');

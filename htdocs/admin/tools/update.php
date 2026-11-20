@@ -95,7 +95,7 @@ llxHeader('', $langs->trans("Upgrade"), $wikihelp, '', 0, 0, '', '', '', 'mod-ad
 
 print load_fiche_titre($langs->trans("Upgrade"), '', 'title_setup');
 
-print '<br>';
+print '<div class="info">';
 
 print $langs->trans("CurrentVersion").' : <strong>'.DOL_VERSION.'</strong><br>';
 
@@ -144,6 +144,7 @@ if (function_exists('curl_init')) {
 		print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion&token='.newToken().'" class="button smallpaddingimp">'.$langs->trans("Check").'</a><br>';
 	}
 }
+print '</div>';
 
 print '<br>';
 print '<br>';

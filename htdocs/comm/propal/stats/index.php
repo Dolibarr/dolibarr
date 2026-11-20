@@ -171,7 +171,7 @@ $h++;
 
 if ($showtabcustomreports) {
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/stats/index.php?tabfamily='.$tabfamilycustomreports;
-	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][1] = $langs->trans("CustomReport");
 	$head[$h][2] = 'customreports';
 	$h++;
 }

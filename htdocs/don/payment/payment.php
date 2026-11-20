@@ -56,6 +56,9 @@ $permissiontoread = $user->hasRight('don', 'lire');
 $permissiontoadd = $user->hasRight('don', 'creer');
 $permissiontodelete = $user->hasRight('don', 'supprimer');
 
+// Check module, read permission (and create permission on action=create) and entity of the donation
+$result = restrictedArea($user, 'don', $chid);
+
 
 /*
  * Actions
