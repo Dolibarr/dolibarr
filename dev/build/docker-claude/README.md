@@ -67,6 +67,8 @@ claudes --rc
 The sessions are then started with `--permission-mode auto`: the safe actions are approved automatically, the risky or
 outward-facing ones (push, pull request, ...) are still asked. Add `--yolo` to have all the permissions automatically
 accepted with `--permission-mode bypassPermissions`.
+The confirmation `Enable Remote Control? (y/n)` is answered at launch: `--rc` sets `remoteDialogSeen` into the state
+file of the container (`~/.claude/.claude.json`, copied from the host at each launch, so the answer was lost before).
 
 The other arguments are passed to claude, for example to resume the last conversation:
 ````
