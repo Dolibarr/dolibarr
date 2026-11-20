@@ -2931,6 +2931,8 @@ class Facture extends CommonInvoice
 			$facligne->total_tva = -(float) $remise->amount_tva;
 			$facligne->total_ttc = -(float) $remise->amount_ttc;
 
+			$facligne->fk_multicurrency = $this->fk_multicurrency;
+			$facligne->multicurrency_code = $this->multicurrency_code;
 			$facligne->multicurrency_subprice = -(float) $remise->multicurrency_subprice;
 			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_amount_ht;
 			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_amount_tva;
