@@ -463,7 +463,7 @@ if (empty($reshook)) {
 									$desc .= '<br>';
 									$unit_label = '';
 									if ($lines[$i]->fk_unit) {
-										$langs->load('measuring_units');
+										$langs->load('other');
 										$unit_label = $langs->trans($lines[$i]->getLabelOfUnit('short'));
 									}
 									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.($unit_label ? ' '.$unit_label : '').')';
@@ -1198,7 +1198,7 @@ if ($action == 'create') {
 	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
-		$langs->load("project");
+		$langs->load("projects");
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');

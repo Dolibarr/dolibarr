@@ -1762,7 +1762,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'myobject',
-			'url' => '/mymodule/myobject_list.php',
+			'url' => '/mymodule/myobject_list.php?leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',
 			'position' => 1000 + \$r,
 			'enabled' => 'isModEnabled(\"mymodule\")',
@@ -1777,7 +1777,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			'titre' => 'List MyObject',
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'mymodule_myobject_list',
-			'url' => '/mymodule/myobject_list.php',
+			'url' => '/mymodule/myobject_list.php?leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',
 			'position' => 1000 + \$r,
 			'enabled' => 'isModEnabled(\"mymodule\")',
@@ -1792,7 +1792,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			'titre' => 'New MyObject',
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'mymodule_myobject_new',
-			'url' => '/mymodule/myobject_card.php?action=create',
+			'url' => '/mymodule/myobject_card.php?action=create&leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',
 			'position' => 1000 + \$r,
 			'enabled' => 'isModEnabled(\"mymodule\")',
@@ -3371,6 +3371,11 @@ if ($dirins && $action == 'addmenu' && empty($cancel) /* && $user->hasRight("mod
 				$menuToAdd['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu', 'alpha');
 			} else {
 				$menuToAdd['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu', 'alpha').',fk_leftmenu='.GETPOST('fk_menu');
+			}
+			// Add leftmenu of parent block (or of entry itself if it is a block) into url, so the block stays expanded once link is clicked
+			$leftmenuforurl = (GETPOST('fk_menu', 'aZ09') ? GETPOST('fk_menu', 'aZ09') : GETPOST('leftmenu', 'aZ09'));
+			if ($leftmenuforurl && $menuToAdd['url'] && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuToAdd['url']) && !preg_match('/[?&]leftmenu=/', $menuToAdd['url'])) {
+				$menuToAdd['url'] .= (strpos($menuToAdd['url'], '?') === false ? '?' : '&').'leftmenu='.$leftmenuforurl;
 			}
 		}
 		if (GETPOST('enabled') == '1') {

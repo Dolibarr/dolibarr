@@ -89,9 +89,6 @@ if (isModEnabled('accounting')) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'compta', 'products', 'banks', 'main', 'withdrawals'));
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 if (isModEnabled('margin')) {
 	$langs->load('margins');
 }
@@ -3594,7 +3591,7 @@ if (empty($reshook)) {
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 		$pu_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), '', 2);
 
-		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 
 		// Define info_bits
 		$info_bits = 0;

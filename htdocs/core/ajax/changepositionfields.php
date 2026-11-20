@@ -72,6 +72,8 @@ $result = 0;
 
 // Registering the new value of constant
 if (!empty($action) && !empty($contextpage)) {
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 	if ($action == "listafterchangingpositionfields") { // Test on permission not required here. Done in security check
 		dol_syslog("Ajax changepositionfields contextpage=".$contextpage." postitionfields=".$postitionfields." userid=".$userid, LOG_DEBUG);
 		$tabparam = array();
@@ -84,8 +86,11 @@ if (!empty($action) && !empty($contextpage)) {
 		} else {
 			$tabparam["MAIN_POSITIONFIELDS_".$contextpage] = '';
 		}
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
+		$result = dol_set_user_param($db, $conf, $user, $tabparam);
+	} elseif ($action == "deletepositionfields") { // Delete the personalization of the position of fields of the user. Test on permission not required here. Done in security check
+		dol_syslog("Ajax deletepositionfields contextpage=".$contextpage." userid=".$userid, LOG_DEBUG);
+		// The empty value deletes the parameter, so the default position of the page is used
+		$tabparam = array("MAIN_POSITIONFIELDS_".$contextpage => '');
 		$result = dol_set_user_param($db, $conf, $user, $tabparam);
 	}
 } else {
