@@ -198,6 +198,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	$file = trim($file);
 
 	// Check parameters
+
 	if (!$file) {
 		// Si le fichier n'a pas ete indique
 		return 'Bad parameter file';
@@ -398,6 +399,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		case 'jpg':	// Jpg
 		case 'jpeg':	// Jpeg
 			$newquality = ($newquality ? $newquality : '100'); // % quality maximum
+
 			imagejpeg($imgTarget, $imgTargetName, $newquality);
 			break;
 		case 'png':	// Png
@@ -599,6 +601,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		$maxHeight = $infoImg[1]; // If size is -1, we keep unchanged
 	}
 
+
 	// If the image is smaller than the maximum width and height, no thumbnail is created.
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight) {
 		// we always create thumbnails
@@ -673,7 +676,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$extImg = '.webp';
 			break;
 		case 19:	// 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
-			$img = imagecreatefromavif($filetoread);
+			if (function_exists('imagecreatefromavif')) {    // If PHP < 8.1 or AVIF support not available into GD
+				$img = imagecreatefromavif($filetoread); // @phan-suppress-current-line PhanUndeclaredFunction
+			}
 			$extImg = '.avif';
 			break;
 	}
@@ -796,6 +801,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127); // Keep transparent channel
 			$extImgTarget = '.png';
 			$newquality = round(abs($quality - 100) * 9 / 100);
+
 			break;
 		case IMAGETYPE_BMP:	    // 6
 			// Not supported by PHP GD
@@ -858,7 +864,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 		case 19:    // 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
 			if (function_exists('imageavif')) {    // If PHP < 8.1 or AVIF support not available into GD
-				imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
+				imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable,PhanUndeclaredFunction
 			}
 			break;
 	}
