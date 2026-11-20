@@ -2782,10 +2782,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$nbcol = 2;
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			if (!in_array('prospectionstatus', $hiddenfields)) {
-				print_liste_field_titre("OpportunityStatus", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'center ');
+				print_liste_field_titre("OpportunityStatusShort", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'center ');
 				$nbcol++;
 			}
-			print_liste_field_titre($form->textwithpicto($langs->trans("Amount"), $langs->trans("OpportunityAmount").' ('.$langs->trans("Tooltip").' = '.$langs->trans("OpportunityWeightedAmount").')'), "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre($form->textwithpicto($langs->trans("Amount"), $langs->trans("OpportunityAmount").' ('.$langs->trans("Tooltip").' = '.$langs->trans("OpportunityWeightedAmount").')'), "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'nowraponall right ');
 			$nbcol++;
 			//print_liste_field_titre('OpportunityWeightedAmount', '', '', '', '', 'align="right"', $sortfield, $sortorder);
 		}
@@ -2797,7 +2797,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				$nbcol++;
 			}
 			if (!in_array('declaredprogress', $hiddenfields)) {
-				print_liste_field_titre("%", "", "", "", "", '', $sortfield, $sortorder, 'right ', $langs->trans("ProgressDeclared"));
+				print_liste_field_titre("%", "", "", "", "", '', $sortfield, $sortorder, 'nowraponall right ', $langs->trans("ProgressDeclared"));
 				$nbcol++;
 			}
 		}
@@ -2840,7 +2840,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 				print '<tr class="oddeven">';
 
-				print '<td class="tdoverflowmax150">';
+				print '<td class="tdlineheightsmall tdoverflowmax150">';
 				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0, -1, 'nowraponall');
 				if (!in_array('projectlabel', $hiddenfields)) {
 					print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->title).'</span>';

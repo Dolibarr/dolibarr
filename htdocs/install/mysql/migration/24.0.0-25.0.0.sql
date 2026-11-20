@@ -736,6 +736,21 @@ ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
 -- Remove index of llx_quickmemo_memo_user on fk_memo (duplicate of uk_memo_user). Mysql only: with pgsql, this name is the one of an index of llx_quickmemo_memo
 -- VMYSQL4.1 DROP INDEX idx_quickmemo_memo_rowid ON llx_quickmemo_memo_user;
 
+create table llx_categorie_skill
+(
+  fk_categorie integer NOT NULL,
+  fk_skill     integer NOT NULL,
+  import_key   varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_skill ADD PRIMARY KEY pk_categorie_skill (fk_categorie, fk_skill);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_skill ADD INDEX idx_categorie_skill_fk_skill (fk_skill);
+
+ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_fk_skill_rowid FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill (rowid);
+
 -- Optional second approval for leave requests and expense reports
 ALTER TABLE llx_holiday ADD COLUMN fk_validator_secondary integer DEFAULT NULL;
 ALTER TABLE llx_holiday ADD COLUMN fk_user_approve_secondary integer DEFAULT NULL;

@@ -261,7 +261,7 @@ class modRecruitment extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => 'hrm',
 			'leftmenu' => 'recruitmentjobposition',
-			'url' => '/recruitment/index.php',
+			'url' => '/recruitment/index.php?leftmenu=recruitmentjobposition',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled.
@@ -275,7 +275,7 @@ class modRecruitment extends DolibarrModules
 			'titre' => 'NewPositionToBeFilled',
 			'mainmenu' => 'hrm',
 			'leftmenu' => 'recruitment_recruitmentjobposition_new',
-			'url' => '/recruitment/recruitmentjobposition_card.php?action=create',
+			'url' => '/recruitment/recruitmentjobposition_card.php?action=create&leftmenu=recruitmentjobposition',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -289,7 +289,7 @@ class modRecruitment extends DolibarrModules
 			'titre' => 'ListOfPositionsToBeFilled',
 			'mainmenu' => 'hrm',
 			'leftmenu' => 'recruitment_recruitmentjobposition_list',
-			'url' => '/recruitment/recruitmentjobposition_list.php',
+			'url' => '/recruitment/recruitmentjobposition_list.php?leftmenu=recruitmentjobposition',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -303,7 +303,7 @@ class modRecruitment extends DolibarrModules
 			'titre' => 'NewCandidature',
 			'mainmenu' => 'hrm',
 			'leftmenu' => 'recruitment_recruitmentcandidature_new',
-			'url' => '/recruitment/recruitmentcandidature_card.php?action=create',
+			'url' => '/recruitment/recruitmentcandidature_card.php?action=create&leftmenu=recruitmentjobposition',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -317,7 +317,7 @@ class modRecruitment extends DolibarrModules
 			'titre' => 'ListOfCandidatures',
 			'mainmenu' => 'hrm',
 			'leftmenu' => 'recruitment_recruitmentcandidature_list',
-			'url' => '/recruitment/recruitmentcandidature_list.php',
+			'url' => '/recruitment/recruitmentcandidature_list.php?leftmenu=recruitmentjobposition',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

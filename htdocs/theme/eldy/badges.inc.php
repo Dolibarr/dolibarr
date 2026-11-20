@@ -63,6 +63,10 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	font-size: 0.95em;
 	padding: .19em .35em;			/* more than 0.19 generate a change into height of lines */
 }
+.badge-thirdpartytype {
+	border-width: 1px;
+	border-color: darkmagenta;
+}
 .tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
 	font-size: 1.1em;
 	padding: .4em .4em .3em .4em;

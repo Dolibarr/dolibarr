@@ -107,6 +107,13 @@ if ($action == 'update') {
 		}
 	}
 
+	if (GETPOSTISSET('AI_ATTACHMENT_CONVERT_TO_TEXT')) {
+		$res = dolibarr_set_const($db, "AI_ATTACHMENT_CONVERT_TO_TEXT", min(2, max(0, GETPOSTINT("AI_ATTACHMENT_CONVERT_TO_TEXT"))), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
 	if (GETPOSTISSET('AI_INTENT_PROMPT')) {
 		$res = dolibarr_set_const($db, "AI_INTENT_PROMPT", GETPOST("AI_INTENT_PROMPT"), 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
@@ -296,6 +303,33 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 		'2' => array('label' => $labelredaction2, 'data-html' => dolPrintHTML($langs->trans("RedactionSensitiveDataAndThirdparties")).' <span class="opacitymedium">('.$langs->trans("VersionExperimental").')</span>')
 	];
 	print $form->selectarray('AI_PRIVACY_REDACTION', $redaction_options, getDolGlobalInt('AI_PRIVACY_REDACTION', 0), 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
+	print '</td>';
+	print '</tr>';
+
+	// Conversion of the attachments into text, so the obfuscation applies on their content
+	print '<tr class="oddeven">';
+	// The conversion needs external JS libraries: only offered when AI_SUPPORT_PRIVACY_ON_ALL_TYPE_OF_UPLOADED_FILES is set
+	$supportprivacyonfiles = getDolGlobalInt('AI_SUPPORT_PRIVACY_ON_ALL_TYPE_OF_UPLOADED_FILES');
+	$converttotexthelp = $langs->trans("AIAttachmentConvertToTextHelp");
+	if (!$supportprivacyonfiles) {
+		$converttotexthelp .= ' ' . $langs->trans("AIAttachmentConvertToTextHelpPdfImages");
+	}
+	print '<td>' . $form->textwithpicto($langs->trans('AIAttachmentConvertToText'), $converttotexthelp);
+	if ($supportprivacyonfiles) {
+		print '<br><span class="warning">' . $langs->trans("AIAttachmentConvertToTextWarning") . '</span>';
+	}
+	print '</td>';
+	print '<td>';
+	if ($supportprivacyonfiles) {
+		$converttotext_options = [
+			'0' => $langs->trans("AIAttachmentConvertToTextNo"),
+			'1' => $langs->trans("AIAttachmentConvertToTextYes"),
+			'2' => $langs->trans("AIAttachmentConvertToTextAlways")
+		];
+		print $form->selectarray('AI_ATTACHMENT_CONVERT_TO_TEXT', $converttotext_options, ai_attachment_convert_to_text(), 0, 0, 0, '', 0, 0, 0, '', 'minwidth300');
+	} else {
+		print '<span class="opacitymedium">' . $langs->trans("AIAttachmentPrivacyNotSupported") . '</span>';
+	}
 	print '</td>';
 	print '</tr>';
 

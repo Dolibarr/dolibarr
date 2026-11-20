@@ -1911,7 +1911,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$titletoshow = dol_htmlentities($appli);
 		}
 
-		$parameters = array('title' => $titletoshow);
+		// Name of some modules are added into title of login and home pages only (used by native applications to detect them)
+		$showmodulesintitle = ((!empty($disableforlogin) || $_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') ? 1 : 0);
+
+		$parameters = array('title' => $titletoshow, 'showmodulesintitle' => $showmodulesintitle);
 		$result = $hookmanager->executeHooks('setHtmlTitle', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($result > 0) {
 			$titletoshow = $hookmanager->resPrint; // Replace Title to show
@@ -1919,8 +1922,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$titletoshow .= $hookmanager->resPrint; // Concat to Title to show
 		}
 
-		// Add ' + ai' to the title if the AI module is enabled (like multicompany module does with its own hook)
-		if (isModEnabled('ai')) {
+		// Add ' + ai' to the title of login and home pages if the AI module is enabled (like multicompany module does with its own hook)
+		if ($showmodulesintitle && isModEnabled('ai')) {
 			$titletoshow .= ' + ai';
 		}
 
@@ -3204,12 +3207,12 @@ function top_menu_importfile()
                 event.preventDefault();
                 console.log("Click on #topmenu-uploadfile-link while the AI module is not enabled, we show a popup");
                 jQuery("#topmenu-uploadfile-dialog").dialog({
-                    title: "'.dol_escape_js($langs->transnoentitiesnoconv('UploadFile')).'",
+                    title: \''.dol_escape_js($langs->transnoentitiesnoconv('UploadFile')).'\',
                     modal: true,
                     resizable: false,
                     width: Math.min(500, jQuery(window).width() - 20),
                     buttons: [{
-                        text: "'.dol_escape_js($langs->transnoentitiesnoconv('Close')).'",
+                        text: \''.dol_escape_js($langs->transnoentitiesnoconv('Close')).'\',
                         click: function() { jQuery(this).dialog("close"); }
                     }]
                 });
@@ -4107,8 +4110,8 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Global html output events ($mesgs, $errors, $warnings)
-		// A page loaded in background by an ajax tool (noflusheventmessages=1, ex: Dolibarr.tools.card) keeps them in session
-		// for the next page, its html is not displayed.
+		// A page loaded in background by an ajax tool (noflusheventmessages=1) keeps them in session:
+		// they are returned to the ajax tool by the next JsonResponse (JsonResponse::addSessionEventMessages()).
 		if (!GETPOSTINT('noflusheventmessages')) {
 			dol_htmloutput_events($disabledoutputofmessages);
 		}

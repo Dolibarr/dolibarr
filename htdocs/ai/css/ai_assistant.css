@@ -993,6 +993,11 @@ a.msg-action-btn.primary span {
     border-radius: 4px;
     font-size: 0.9em;
     margin: 10px 0;
+    /* Plain text of the tool arguments (may contain HTML code): keep its lines, wrap long ones */
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .voice-hint {
