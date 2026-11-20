@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=HT оплачивается
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Счет (из Плана счетов), используемый по умолчанию для «пользователей» на зарплаты
@@ -55,8 +56,6 @@ FillFieldFirst=Сначала заполните поле сотрудника
 UpdateAmountWithLastSalary=Установить сумму последней зарплаты
 MakeTransferRequest=Создать запрос на перевод
 VirementOrder=Запрос на кредитовый перевод
-WithdrawalReceipt=Поручение на кредитовый перевод
-OrderWaiting=Поручение в ожидании
 FillEndOfMonth=Конец месяца
 
 # Shortcuts

@@ -7,6 +7,7 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,21 +99,17 @@ $permissiontoadd = ($user->hasRight('product', 'read') || $user->hasRight('servi
 
 // Initialize technical object
 $object = new ProductFournisseurPrice($db);
-// Definition of array of fields for columns
-$arrayfields = array();
-foreach ($object->fields as $key => $val) {
-	// If $val['visible']==0, then we never show the field
-	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval((string) $val['visible'], 1);
-		$arrayfields['p.'.$key] = array(
-			'label' => $val['label'],
-			'checked' => (($visible < 0) ? '0' : '1'),
-			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
-			'position' => $val['position'],
-			'help' => isset($val['help']) ? $val['help'] : ''
-		);
-	}
-}
+// Definition of array of fields for columns. Keys are the real columns of the list, so that the selector of columns
+// (multiSelectArrayWithCheckbox) controls the columns that are really output below.
+$arrayfields = array(
+	'p.ref' => array('label' => 'Ref', 'checked' => '1', 'position' => 10),
+	'ppf.ref_fourn' => array('label' => 'RefSupplierShort', 'checked' => '1', 'position' => 20),
+	'p.label' => array('label' => 'Label', 'checked' => '1', 'position' => 30),
+	'ppf.fk_soc' => array('label' => 'Supplier', 'checked' => '1', 'position' => 40),
+	'ppf.price' => array('label' => 'BuyingPrice', 'checked' => '1', 'position' => 50),
+	'ppf.quantity' => array('label' => 'QtyMin', 'checked' => '1', 'position' => 60),
+	'ppf.unitprice' => array('label' => 'UnitPrice', 'checked' => '1', 'position' => 70),
+);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
@@ -194,6 +191,10 @@ if ($catid) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product AND ppf.entity IN (".getEntity('productsupplierprice').")";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid AND s.entity IN (".getEntity('societe').")";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
 if ($sRefSupplier) {
 	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
@@ -293,20 +294,32 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-$param = "&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type) ? "&amp;type=".$type : "").(empty($sRefSupplier) ? "" : "&amp;srefsupplier=".$sRefSupplier);
+if ($sref != '') {
+	$param .= '&sref='.urlencode($sref);
+}
+if ($sRefSupplier != '') {
+	$param .= '&srefsupplier='.urlencode($sRefSupplier);
+}
+if ($snom != '') {
+	$param .= '&snom='.urlencode($snom);
+}
+if ($fourn_id > 0) {
+	$param .= '&fourn_id='.((int) $fourn_id);
+}
+if ($type !== '') {
+	$param .= '&type='.urlencode($type);
+}
+if ($catid) {
+	$param .= '&catid='.((int) $catid);
+}
+
+// Add $param from hooks
+$parameters = array('param' => &$param);
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/list.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', (int) $permissiontoadd);
-
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton);
-
-if (!empty($catid)) {
-	print "<div id='ways'>";
-	$c = new Categorie($db);
-	$ways = $c->print_all_ways('auto', 'fourn/product/list.php');
-	print " &gt; ".$ways[0]."<br>\n";
-	print "</div><br>";
-}
 
 $arrayofmassactions = array(
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
@@ -326,13 +339,31 @@ if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 if ($fourn_id > 0) {
 	print '<input type="hidden" name="fourn_id" value="'.$fourn_id.'">';
 }
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
+//print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="page_y" value="">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
+if ($catid) {
+	print '<input type="hidden" name="catid" value="'.((int) $catid).'">';
+}
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'product', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+if (!empty($catid)) {
+	print "<div id='ways'>";
+	$c = new Categorie($db);
+	$ways = $c->print_all_ways('auto', 'fourn/product/list.php');
+	print " &gt; ".$ways[0]."<br>\n";
+	print "</div><br>";
+}
 
 $moreforfilter = '';
 $topicmail = "Information";
@@ -345,6 +376,10 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+
+$parameters = array('arrayfields' => $arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -360,25 +395,29 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
-print '<td class="liste_titre">';
-print '<input class="flat maxwidth100" type="text" name="sref" value="'.$sref.'">';
-print '</td>';
-print '<td class="liste_titre">';
-print '<input class="flat maxwidth100" type="text" name="srefsupplier" value="'.$sRefSupplier.'">';
-print '</td>';
-print '<td class="liste_titre">';
-print '<input class="flat maxwidth100" type="text" name="snom" value="'.$snom.'">';
-print '</td>';
-print '<td></td>';
-print '<td></td>';
-print '<td></td>';
-print '<td></td>';
-// add filters from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $productstatic, $action);
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if (!empty($arrayfields['p.ref']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth100" type="text" name="sref" value="'.$sref.'">';
+	print '</td>';
 }
+if (!empty($arrayfields['ppf.ref_fourn']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth100" type="text" name="srefsupplier" value="'.$sRefSupplier.'">';
+	print '</td>';
+}
+if (!empty($arrayfields['p.label']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth100" type="text" name="snom" value="'.$snom.'">';
+	print '</td>';
+}
+foreach (array('ppf.fk_soc', 'ppf.price', 'ppf.quantity', 'ppf.unitprice') as $keyofemptysearchcell) {
+	if (!empty($arrayfields[$keyofemptysearchcell]['checked'])) {
+		print '<td></td>';
+	}
+}
+// Fields from hook
+$parameters = array('arrayfields' => $arrayfields);
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
 if (!$conf->main_checkbox_left_column) {
@@ -401,16 +440,24 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("Supplier", $_SERVER["PHP_SELF"], "ppf.fk_soc", "", $param, "", $sortfield, $sortorder);
-print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", "", $param, "", $sortfield, $sortorder, 'right ');
-print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", "", $param, "", $sortfield, $sortorder, 'right ');
-print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", "", $param, "", $sortfield, $sortorder, 'right ');
-// add header cells from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $productstatic, $action);
+$listoftitles = array(
+	'p.ref' => array('Ref', ''),
+	'ppf.ref_fourn' => array('RefSupplierShort', ''),
+	'p.label' => array('Label', ''),
+	'ppf.fk_soc' => array('Supplier', ''),
+	'ppf.price' => array('BuyingPrice', 'right '),
+	'ppf.quantity' => array('QtyMin', 'right '),
+	'ppf.unitprice' => array('UnitPrice', 'right '),
+);
+foreach ($listoftitles as $key => $titledef) {
+	if (!empty($arrayfields[$key]['checked'])) {
+		print_liste_field_titre($titledef[0], $_SERVER["PHP_SELF"], $key, "", $param, "", $sortfield, $sortorder, $titledef[1]);
+		$totalarray['nbfield']++;
+	}
+}
+// Hook fields
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -462,31 +509,66 @@ while ($i < $imaxinloop) {
 		}
 	}
 
-	print '<td>';
-	print $productstatic->getNomUrl(1, 'supplier');
-	print '</td>';
-
-	print '<td>'.$objp->ref_fourn.'</td>';
-
-	print '<td>'.$objp->label.'</td>'."\n";
-
-	$companystatic->name = $objp->name;
-	$companystatic->id = $objp->socid;
-	print '<td>';
-	if ($companystatic->id > 0) {
-		print $companystatic->getNomUrl(1, 'supplier');
+	if (!empty($arrayfields['p.ref']['checked'])) {
+		print '<td>';
+		print $productstatic->getNomUrl(1, 'supplier');
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
-	print '</td>';
 
-	print '<td class="right">'.(isset($objp->price) ? price($objp->price) : '').'</td>';
+	if (!empty($arrayfields['ppf.ref_fourn']['checked'])) {
+		print '<td>'.$objp->ref_fourn.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
-	print '<td class="right">'.$objp->qty.'</td>';
+	if (!empty($arrayfields['p.label']['checked'])) {
+		print '<td>'.$objp->label.'</td>'."\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
-	print '<td class="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
+	if (!empty($arrayfields['ppf.fk_soc']['checked'])) {
+		$companystatic->name = $objp->name;
+		$companystatic->id = $objp->socid;
+		print '<td>';
+		if ($companystatic->id > 0) {
+			print $companystatic->getNomUrl(1, 'supplier');
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
-	// add additional columns from hooks
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action);
+	if (!empty($arrayfields['ppf.price']['checked'])) {
+		print '<td class="right">'.(isset($objp->price) ? price($objp->price) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.quantity']['checked'])) {
+		print '<td class="right">'.$objp->qty.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	if (!empty($arrayfields['ppf.unitprice']['checked'])) {
+		print '<td class="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
@@ -517,12 +599,12 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 // If no record found
 if ($num == 0) {
-	$colspan = 8;
-	/*foreach ($arrayfields as $key => $val) {
+	$colspan = 1; // The column of the selector of fields / mass actions
+	foreach ($arrayfields as $key => $val) {
 		if (!empty($val['checked'])) {
 			$colspan++;
 		}
-	}*/
+	}
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 

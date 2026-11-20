@@ -201,9 +201,11 @@ class Proposals extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 		$sql = "SELECT t.rowid";
@@ -289,7 +291,7 @@ class Proposals extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -345,15 +347,8 @@ class Proposals extends DolibarrApi
 
 			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
 		}
-		/*if (isset($request_data["lines"])) {
-		  $lines = array();
-		  foreach ($request_data["lines"] as $line) {
-			array_push($lines, (object) $line);
-		  }
-		  $this->propal->lines = $lines;
-		}*/
 		if ($this->propal->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, "Error creating order", array_merge(array($this->propal->error), $this->propal->errors));
+			throw new RestException(500, "Error creating proposal", array_merge(array($this->propal->error), $this->propal->errors));
 		}
 
 		return ((int) $this->propal->id);

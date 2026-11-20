@@ -190,6 +190,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			}
 			setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
 		} else {
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
 		}
 	} elseif ($linkid) {	// delete of external link
@@ -202,7 +203,6 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		}
 		$res = $link->delete($user);
 
-		$langs->load('link');
 		if ($res > 0) {
 			setEventMessages($langs->trans("LinkRemoved", $link->label), null, 'mesgs');
 		} else {
@@ -252,8 +252,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			$link->share = '';
 		}
 		$res = $link->update($user);
-		if (!$res) {
-			setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), null, 'mesgs');
+		if ($res <= 0) {
+			setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), $link->errors, 'errors');
 		}
 	} else {
 		//error fetching

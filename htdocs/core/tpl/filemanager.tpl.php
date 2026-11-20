@@ -106,6 +106,18 @@ if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->us
 <div id="ecm-layout-north" class="toolbar largebutton">
 <?php
 
+// Keep the popup mode (no menus) on links when the file manager is open into a dialog popup
+$paramspopuparray = array();
+foreach (array('dol_hide_topmenu', 'dol_hide_leftmenu') as $tmpparam) {
+	if (GETPOSTINT($tmpparam)) {
+		$paramspopuparray[$tmpparam] = GETPOSTINT($tmpparam);
+	}
+}
+if (GETPOST('dol_openinpopup', 'aZ09')) {
+	$paramspopuparray['dol_openinpopup'] = GETPOST('dol_openinpopup', 'aZ09');
+}
+$paramspopup = (empty($paramspopuparray) ? '' : '&'.http_build_query($paramspopuparray));
+
 // Start top panel, toolbar
 print '<div class="inline-block toolbarbutton centpercent">';
 
@@ -119,7 +131,8 @@ if ($permtoadd) {
 	if (!empty($pageid)) {
 		$paramscreatedir['pageid'] = $pageid;
 	}
-	$paramscreatedir['backtopage'] = $_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid;
+	$paramscreatedir = array_merge($paramscreatedir, $paramspopuparray);
+	$paramscreatedir['backtopage'] = $_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid.$paramspopup;
 	print '<a id="acreatedir" href="'.dolBuildUrl(DOL_URL_ROOT.'/ecm/dir_add_card.php', $paramscreatedir).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
 	print img_picto('', 'folder-plus', '', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
@@ -144,7 +157,7 @@ if ($module == 'ecm') {
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
 	// @phan-suppress-next-line PhanTypeExpectedObjectPropAccess
-	print '<a id="agenerateimgwebp" href="'.dolBuildUrl($_SERVER["PHP_SELF"], array('action' => 'confirmconvertimgwebp', 'website' => $website->ref), true).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print '<a id="agenerateimgwebp" href="'.dolBuildUrl($_SERVER["PHP_SELF"], array_merge(array('action' => 'confirmconvertimgwebp', 'website' => $website->ref), $paramspopuparray), true).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', 0, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 } elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
@@ -219,6 +232,60 @@ if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
 	print $formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section ? $section : -1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir, empty($formalreadyopen) ? 0 : $formalreadyopen, 0, 0, 1);
+
+	// Files can be dropped on the field to choose files (dotted border, highlighted while files are dragged over it).
+	// When files are chosen or dropped, before the click on Upload: a file larger than the maximum upload size is
+	// refused, and if files with the same names already exist in the directory, the user chooses to replace them or
+	// to leave them out. Not on smartphones, where files can't be dragged.
+	if ($permtoupload && getDolGlobalString('MAIN_UPLOAD_DOC') && !empty($conf->use_javascript_ajax) && empty($conf->dol_optimize_smallscreen)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxuploadsize = (int) $maxfilesizearray['maxmin'] * 1024;
+		print '<script>
+		jQuery(document).ready(function() {
+			var form = document.getElementById(\''.dol_escape_js($nameforformuserfile).'\');
+			var fileinput = form ? form.querySelector("input[type=file]") : null;
+			if (!fileinput || fileinput.disabled) {
+				return;
+			}
+			fileinput.classList.add("ecmfiledropinput");
+			fileinput.title = \''.dol_escape_js($langs->transnoentitiesnoconv("ECMDropFilesOnField")).'\';
+			fileinput.addEventListener("dragenter", function() { fileinput.classList.add("ecmfiledropinputover"); });
+			fileinput.addEventListener("dragleave", function() { fileinput.classList.remove("ecmfiledropinputover"); });
+			fileinput.addEventListener("drop", function() { fileinput.classList.remove("ecmfiledropinputover"); });
+			var maxsize = '.$maxuploadsize.';
+			fileinput.addEventListener("change", function() {
+				var files = fileinput.files;
+				if (!files || !files.length) { return; }
+				var kept = new DataTransfer();
+				var toobig = [];
+				Array.prototype.forEach.call(files, function(f) {
+					if (maxsize > 0 && f.size > maxsize) { toobig.push(f.name); } else { kept.items.add(f); }
+				});
+				if (toobig.length) {
+					alert(\''.dol_escape_js($langs->transnoentitiesnoconv("ECMFileTooBigForUpload", dol_print_size($maxuploadsize, 1, 1), '__FILES__')).'\'.replace("__FILES__", toobig.join(", ")));
+				}
+				/* Files with the name of a file already in the directory: replace them (OK) or leave them out (Cancel) */
+				var existing = {};
+				document.querySelectorAll("#ecmfileview tr[data-filename]").forEach(function(tr) { existing[tr.getAttribute("data-filename")] = 1; });
+				var duplicates = Array.prototype.filter.call(kept.files, function(f) { return existing[f.name]; }).map(function(f) { return f.name; });
+				if (duplicates.length) {
+					if (confirm(\''.dol_escape_js($langs->transnoentitiesnoconv("ECMFilesAlreadyExist", '__FILES__')).'\'.replace("__FILES__", duplicates.join(", ")))) {
+						var overwrite = form.querySelector("input[name=overwritefile]");
+						if (overwrite) { overwrite.checked = true; }
+					} else {
+						var notduplicates = new DataTransfer();
+						Array.prototype.forEach.call(kept.files, function(f) { if (!existing[f.name]) { notduplicates.items.add(f); } });
+						kept = notduplicates;
+					}
+				}
+				if (kept.files.length != files.length) {
+					fileinput.files = kept.files;	/* Does not fire a new change event */
+				}
+			});
+		});
+		</script>';
+	}
 } else {
 	print '&nbsp;';
 }
@@ -258,7 +325,7 @@ if ($action == 'confirmconvertimgwebp') {
 	if ($module == 'medias') {
 		$formquestion['website'] = array('type' => 'hidden', 'value' => $website->ref, 'name' => 'website');  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
 	}
-	$paramsconvertimgwebp = array();
+	$paramsconvertimgwebp = $paramspopuparray;
 	if (!empty($sortfield)) {
 		$paramsconvertimgwebp['sortfield'] = $sortfield;
 	}

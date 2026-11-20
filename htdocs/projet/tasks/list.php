@@ -62,6 +62,7 @@ $search_categ = GETPOST("search_categ", 'intcomma');
 $search_projectstatus = GETPOST('search_projectstatus', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref');
 $search_project_title = GETPOST('search_project_title');
+$search_id = GETPOST('search_id', 'alpha');
 $search_task_ref = GETPOST('search_task_ref');
 $search_task_label = GETPOST('search_task_label');
 $search_task_description = GETPOST('search_task_description');
@@ -165,10 +166,11 @@ if (empty($user->socid)) {
 }
 
 $arrayfields = array(
+	't.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	't.ref' => array('label' => "RefTask", 'checked' => '1', 'position' => 50),
-	't.fk_task_parent' => array('label' => "RefTaskParent", 'checked' => '0', 'position' => 70),
-	't.label' => array('label' => "LabelTask", 'checked' => '1', 'position' => 75),
+	't.label' => array('label' => "LabelTask", 'checked' => '0', 'position' => 75),
 	't.description' => array('label' => "Description", 'checked' => '0', 'position' => 80),
+	't.fk_task_parent' => array('label' => "RefTaskParent", 'checked' => '0', 'position' => 85),
 	't.dateo' => array('label' => "DateStart", 'checked' => '1', 'position' => 100),
 	't.datee' => array('label' => "Deadline", 'checked' => '1', 'position' => 101),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => '1', 'position' => 151),
@@ -238,6 +240,7 @@ if (empty($reshook)) {
 		$search_societe = "";
 		$search_societe_alias = "";
 		$search_project_title = "";
+		$search_id = '';
 		$search_task_ref = "";
 		$search_task_label = "";
 		$search_task_description = "";
@@ -383,7 +386,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t ON t.fk_projet = p.rowid";
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype = 'task')";
 }
@@ -391,13 +394,17 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 if ($search_project_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ecp ON ecp.element_id = p.rowid AND ecp.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttype))).") AND ecp.fk_socpeople = ".((int) $search_project_user);
 }
 if ($search_task_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ect";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ect ON ect.element_id = t.rowid AND ect.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listoftaskcontacttype))).") AND ect.fk_socpeople = ".((int) $search_task_user);
 }
-$sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND p.entity IN (".getEntity('project').')';
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+$sql .= " WHERE p.entity IN (".getEntity('project').')';
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
 }
@@ -414,8 +421,16 @@ if ($search_project_ref) {
 if ($search_project_title) {
 	$sql .= natural_search('p.title', $search_project_title);
 }
+if ($search_id != '') {
+	$sql .= natural_search('t.rowid', $search_id, 1);
+}
 if ($search_task_ref) {
-	$sql .= natural_search('t.ref', $search_task_ref);
+	// When the label column is not displayed, the label is shown under the ref, so we search into both
+	if (empty($arrayfields['t.label']['checked'])) {
+		$sql .= natural_search(array('t.ref', 't.label'), $search_task_ref);
+	} else {
+		$sql .= natural_search('t.ref', $search_task_ref);
+	}
 }
 if ($search_task_label) {
 	$sql .= natural_search('t.label', $search_task_label);
@@ -463,12 +478,6 @@ if ($search_projectstatus >= 0) {
 	} else {
 		$sql .= " AND p.fk_statut = ".((int) $search_projectstatus);
 	}
-}
-if ($search_project_user > 0) {
-	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".((int) $search_project_user);
-}
-if ($search_task_user > 0) {
-	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $search_task_user);
 }
 if ($search_task_status > -1) {
 	$sql .= " AND t.fk_statut = ".((int) $search_task_status);
@@ -679,6 +688,9 @@ if ($search_project_ref != '') {
 if ($search_project_title != '') {
 	$param .= '&search_project_title='.urlencode($search_project_title);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_task_ref != '') {
 	$param .= '&search_task_ref='.urlencode($search_task_ref);
 }
@@ -863,25 +875,30 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
-if (!empty($arrayfields['t.ref']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'" class="width75">';
+if (!empty($arrayfields['t.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
-if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
+if (!empty($arrayfields['t.ref']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_task_ref_parent" value="'.dol_escape_htmltag($search_task_ref_parent).'" class="maxwidth75">';
+	print '<input type="text" class="flat width75" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['t.label']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'" class="maxwidth75">';
+	print '<input type="text" class="flat width75" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'">';
 	print '</td>';
 }
 // Task Description
 if (!empty($arrayfields['t.description']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_task_description" value="'.dol_escape_htmltag($search_task_description).'" class="maxwidth75">';
+	print '</td>';
+}
+if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_task_ref_parent" value="'.dol_escape_htmltag($search_task_ref_parent).'" class="maxwidth75">';
 	print '</td>';
 }
 // Start date
@@ -1033,12 +1050,12 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['t.ref']['checked'])) {
-	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['t.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['t.rowid']['label'], $_SERVER["PHP_SELF"], 't.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
-	print_liste_field_titre($arrayfields['t.fk_task_parent']['label'], $_SERVER["PHP_SELF"], "t.fk_task_parent", "", $param, "", $sortfield, $sortorder);
+if (!empty($arrayfields['t.ref']['checked'])) {
+	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.label']['checked'])) {
@@ -1047,6 +1064,10 @@ if (!empty($arrayfields['t.label']['checked'])) {
 }
 if (!empty($arrayfields['t.description']['checked'])) {
 	print_liste_field_titre($arrayfields['t.description']['label'], $_SERVER["PHP_SELF"], "t.description", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
+	print_liste_field_titre($arrayfields['t.fk_task_parent']['label'], $_SERVER["PHP_SELF"], "t.fk_task_parent", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.dateo']['checked'])) {
@@ -1182,6 +1203,7 @@ while ($i < $imaxinloop) {
 	$projectstatic->title = $obj->projecttitle;
 	$projectstatic->public = $obj->public;
 	$projectstatic->statut = $obj->projectstatus;
+	$projectstatic->status = $obj->projectstatus;
 	$projectstatic->datee = $db->jdate($obj->projectdatee);
 
 	if ($obj->socid) {
@@ -1233,13 +1255,43 @@ while ($i < $imaxinloop) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Technical ID
+			if (!empty($arrayfields['t.rowid']['checked'])) {
+				print '<td class="center" data-key="id">'.((int) $object->id).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 			// Ref
 			if (!empty($arrayfields['t.ref']['checked'])) {
-				print '<td class="nowraponall">';
+				// When the label column is not displayed, we show the label under the ref
+				$showlabelunderref = (empty($arrayfields['t.label']['checked']) && (string) $object->label !== '');
+				print '<td class="nowraponall'.($showlabelunderref ? ' tdlineheightsmall' : '').'">';
 				print $object->getNomUrl(1, 'withproject');
 				if ($object->hasDelay()) {
 					print img_warning("Late");
 				}
+				if ($showlabelunderref) {
+					print '<div class="tdoverflowmax200 lineheightsmall" title="'.dolPrintLabelForAttribute($object->label).'"><span class="spantitle">'.dolPrintLabel($object->label).'</span></div>';
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Label
+			if (!empty($arrayfields['t.label']['checked'])) {
+				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($object->label).'">';
+				print '<span class="spantitle">'.dol_escape_htmltag($object->label).'</span>';
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Description
+			if (!empty($arrayfields['t.description']['checked'])) {
+				print '<td>';
+				print dolGetFirstLineOfText($object->description, 5);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1260,24 +1312,6 @@ while ($i < $imaxinloop) {
 						}
 					}
 				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Label
-			if (!empty($arrayfields['t.label']['checked'])) {
-				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($object->label).'">';
-				print dol_escape_htmltag($object->label);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Description
-			if (!empty($arrayfields['t.description']['checked'])) {
-				print '<td>';
-				print dolGetFirstLineOfText($object->description, 5);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1352,7 +1386,7 @@ while ($i < $imaxinloop) {
 			// Project status
 			if (!empty($arrayfields['p.fk_statut']['checked'])) {
 				print '<td class="center">';
-				print $projectstatic->getLibStatut(1);
+				print $projectstatic->getLibStatut(5);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1377,15 +1411,9 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.planned_workload';
 				}
-				if (!isset($totalarray['val']['t.planned_workload'])) {
-					$totalarray['val']['t.planned_workload'] = 0;
-				}
 				$totalarray['val']['t.planned_workload'] += $obj->planned_workload;
 				if (!$i) {
 					$totalarray['totalplannedworkloadfield'] = $totalarray['nbfield'];
-				}
-				if (!isset($totalarray['totalplannedworkload'])) {
-					$totalarray['totalplannedworkload'] = 0;
 				}
 				$totalarray['totalplannedworkload'] += $obj->planned_workload;
 			}
@@ -1393,17 +1421,19 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.duration_effective']['checked'])) {
 				$showlineingray = 0;
 				$showproject = 1;
-				print '<td class="center">';
+				print '<td class="center tdlineheightsmall">';
 				if ($showlineingray) {
 					print '<i>';
 				} else {
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.($showproject ? '' : '&withproject=1').'">';
 				}
+				print '<span class="lineheightsmall">';
 				if ($obj->duration_effective) {
 					print convertSecondToTime($obj->duration_effective, $timespentoutputformat);
 				} else {
 					print '--:--';
 				}
+				print '</span>';
 				if ($showlineingray) {
 					print '</i>';
 				} else {
@@ -1412,7 +1442,7 @@ while ($i < $imaxinloop) {
 				if (empty($arrayfields['t.progress_calculated']['checked'])) {
 					if ($obj->planned_workload || $obj->duration_effective) {
 						if ($obj->planned_workload) {
-							print ' <span class="opacitymedium">('.round(100 * $obj->duration_effective / $obj->planned_workload, 2).' %)</span>';
+							print '<br><span class="opacitymedium small lineheightsmall">'.round(100 * $obj->duration_effective / $obj->planned_workload, 2).' %</span>';
 						} else {
 							print $form->textwithpicto('', $langs->trans('WorkloadNotDefined'), 1, 'help');
 						}
@@ -1425,15 +1455,9 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.duration_effective';
 				}
-				if (!isset($totalarray['val']['t.duration_effective'])) {
-					$totalarray['val']['t.duration_effective'] = 0;
-				}
 				$totalarray['val']['t.duration_effective'] += $obj->duration_effective;
 				if (!$i) {
 					$totalarray['totaldurationeffectivefield'] = $totalarray['nbfield'];
-				}
-				if (!isset($totalarray['totaldurationeffective'])) {
-					$totalarray['totaldurationeffective'] = 0;
 				}
 				$totalarray['totaldurationeffective'] += $obj->duration_effective;
 			}
@@ -1468,15 +1492,9 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.progress';
 				}
-				if (!isset($totalarray['val']['t.progress'])) {
-					$totalarray['val']['t.progress'] = 0;
-				}
 				$totalarray['val']['t.progress'] += ($obj->planned_workload * $obj->progress / 100);
 				if (!$i) {
 					$totalarray['totalprogress_declaredfield'] = $totalarray['nbfield'];
-				}
-				if (!isset($totalarray['totaldurationdeclared'])) {
-					$totalarray['totaldurationdeclared'] = 0;
 				}
 				$totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
 			}
@@ -1627,7 +1645,7 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 // Show total line
 //include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']) || isset($totalarray['totalprogress_calculatedfield'])
-	|| isset($totalarray['totaltobill']) || isset($totalarray['totalbilled']) || isset($totalarray['totalbudget'])) {
+	|| !empty($totalarray['pos'])) {
 	print '<tr class="liste_total">';
 	$i = 0;
 	while ($i < $totalarray['nbfield']) {
@@ -1658,16 +1676,16 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
 		} elseif (isset($totalarray['totalprogress_declaredfield']) && $totalarray['totalprogress_declaredfield'] == $i) {
 			print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
-		} elseif (isset($totalarray['totaltobillfield']) && $totalarray['totaltobillfield'] == $i) {
+		} elseif ($totalarray['totaltobillfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
-		} elseif (isset($totalarray['totalbilledfield']) && $totalarray['totalbilledfield'] == $i) {
+		} elseif ($totalarray['totalbilledfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
-		} elseif (isset($totalarray['totalbudget_amountfield']) && $totalarray['totalbudget_amountfield'] == $i) {
+		} elseif ($totalarray['totalbudget_amountfield'] == $i) {
 			print '<td class="center">'.price((float) $totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
 			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
+			if (isset($totalarray['type'][$i]) && $totalarray['type'][$i] == 'duration') { // @phpstan-ignore isset.offset ('type' is empty here but the printFieldListValue hooks get $totalarray by reference and can fill it)
 				print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 			} else {
 				print price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : 0);

@@ -50,7 +50,7 @@ if (isModEnabled('project')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('other', 'fichinter', 'companies', 'interventions'));
+$langs->loadLangs(array('other', 'companies', 'interventions'));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -61,7 +61,6 @@ $confirm = GETPOST('confirm', 'alpha');
 if ($user->isExternalUser()) {
 	$socid = $user->isExternalUser();
 }
-$result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 
 // Get parameters
@@ -85,6 +84,10 @@ if (!$sortfield) {
 
 $object = new Fichinter($db);
 $object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+$result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $upload_dir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'fichinter';

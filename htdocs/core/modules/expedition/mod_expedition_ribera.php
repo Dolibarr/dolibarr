@@ -43,16 +43,15 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	public $error = '';
 
 	/**
-	 * @var string Name of model
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Ribera';
-
-	/**
 	 * @var string model name
 	 */
 	public $name = 'Ribera';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 20;
+
 
 	/**
 	 *	Return default description of numbering model

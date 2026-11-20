@@ -336,7 +336,7 @@ if (empty($conf->use_javascript_ajax) || getDolGlobalString('MAIN_ECM_DISABLE_JS
 			$htmltooltip = '<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 			$htmltooltip = '<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
 			$htmltooltip .= '<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', 0, 1).'<br>';
-			$htmltooltip .= '<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'], "dayhour").'<br>';
+			$htmltooltip .= '<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_creation'], "dayhour").'<br>';
 			$htmltooltip .= '<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
 			$htmltooltip .= '<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
 			if ($nbofsubdir) {
@@ -381,7 +381,7 @@ if ((!isset($mode) || $mode != 'noajax') && is_object($db)) {
 /**
  * treeOutputForAbsoluteDir
  *
- * @param	array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_c:int,fk_user_c:int,statut_c:int,login_c:string,id_children?:int[],level:int}>	$sqltree				Sqltree
+ * @param	array<int,array{id:int,id_mere:int,fulllabel:string,fullpath:string,fullrelativename:string,label:string,description:string,cachenbofdoc:int,date_creation:int,fk_user_c:int,statut_c:int,login_c:string,id_children?:int[],level:int}>	$sqltree				Sqltree
  * @param	string	$selecteddir			Selected dir
  * @param	string	$fullpathselecteddir	Full path of selected dir
  * @param	string	$modulepart				Modulepart
@@ -411,8 +411,9 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 				// All dirs
 				$nboflinesshown = 0;
 				foreach ($files as $file) {
-					// $file can be '.', '..', 'temp', or 'My dir' or 'My file'
-					if (in_array($file, array('temp', '.', '..'))) {
+					// $file can be '.', '..', 'temp', or 'My dir' or 'My file'. Hidden entries (like the directory .versions
+					// with the previous versions of the files) are not shown.
+					if (in_array($file, array('temp', '.', '..')) || strpos($file, '.') === 0) {
 						continue;
 					}
 
@@ -467,7 +468,8 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 
 						$nboflinesshown++;
 
-						print '<li class="directory '.$collapsedorexpanded.' lidirecm">'; // collapsed is opposite if expanded
+						// lidirecmwithsubdir: the directory has sub directories, the theme shows a marker after its name
+						print '<li class="directory '.$collapsedorexpanded.' lidirecm'.($nbofsubdir > 0 ? ' lidirecmwithsubdir' : '').'">'; // collapsed is opposite if expanded
 
 						//print '<div class="divfmdirlia inline-block">';	// Disabled, this break the javascrip component
 						print '<a class="fmdirlia jqft ecmjqft" href="';
@@ -525,7 +527,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 							$htmltooltip = '<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 							$htmltooltip = '<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
 							$htmltooltip .= '<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1, '', 0, 1).'<br>';
-							$htmltooltip .= '<b>'.$langs->trans("ECMCreationDate").'</b>: '.(isset($val['date_c']) ? dol_print_date($val['date_c'], "dayhour") : $langs->trans("NeedRefresh")).'<br>';
+							$htmltooltip .= '<b>'.$langs->trans("ECMCreationDate").'</b>: '.(isset($val['date_creation']) ? dol_print_date($val['date_creation'], "dayhour") : $langs->trans("NeedRefresh")).'<br>';
 							$htmltooltip .= '<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
 							$htmltooltip .= '<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.((isset($val['cachenbofdoc']) && $val['cachenbofdoc'] >= 0) ? $val['cachenbofdoc'] : $langs->trans("NeedRefresh")).'<br>';
 							if ($nboffilesinsubdir > 0) {

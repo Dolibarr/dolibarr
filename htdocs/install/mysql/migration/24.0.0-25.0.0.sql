@@ -38,6 +38,32 @@
 --noqa:disable=RF03
 
 
+-- __MEMBER_CIVILITY__ was renamed into __MEMBER_TITLE__ in v21: migrate existing e-mail templates
+UPDATE llx_c_email_templates SET topic = REPLACE(topic, '__MEMBER_CIVILITY__', '__MEMBER_TITLE__') WHERE topic LIKE '%MEMBER_CIVILITY%';
+UPDATE llx_c_email_templates SET content = REPLACE(content, '__MEMBER_CIVILITY__', '__MEMBER_TITLE__') WHERE content LIKE '%MEMBER_CIVILITY%';
+
+ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
+
+-- Forgotten in previous versions: sequences of renamed tables were not renamed with pgsql
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_c_methode_commande_fournisseur_rowid_seq RENAME TO llx_c_input_method_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_label_rowid_seq RENAME TO llx_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_rowid_seq RENAME TO llx_adherent_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_askpricesupplier_extrafields_rowid_seq RENAME TO llx_supplier_proposal_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_askpricesupplierdet_extrafields_rowid_seq RENAME TO llx_supplier_proposaldet_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_payment_salary_extrafields_rowid_seq RENAME TO llx_salary_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_advtargetemailing_rowid_seq RENAME TO llx_mailing_advtarget_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_prelevement_facture_rowid_seq RENAME TO llx_prelevement_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_prelevement_facture_demande_rowid_seq RENAME TO llx_prelevement_demande_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_bank_categ_rowid_seq RENAME TO llx_category_bank_rowid_seq;
+
+-- V13 forgotten: sequences of tables renamed from llx_livraison* to llx_delivery* were not renamed with pgsql
+
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraison_rowid_seq RENAME TO llx_delivery_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraison_extrafields_rowid_seq RENAME TO llx_delivery_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraisondet_rowid_seq RENAME TO llx_deliverydet_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_livraisondet_extrafields_rowid_seq RENAME TO llx_deliverydet_extrafields_rowid_seq;
+
+
 -- V24 forgotten
 
 ALTER TABLE llx_blockedlog ADD COLUMN pos_source varchar(32) DEFAULT '';
@@ -49,6 +75,19 @@ ALTER TABLE llx_reception ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_
 
 
 -- v25 migration
+
+-- Add the 11 Algerian wilayas created by Law 26-06 and numbered by Decree 26-206.
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '59' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Aflou' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '59');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '60' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Barika' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '60');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '61' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'El Kantara' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '61');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '62' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Bir El Ater' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '62');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '63' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'El Aricha' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '63');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '64' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Ksar Chellala' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '64');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '65' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Aïn Ouessara' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '65');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '66' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Messaad' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '66');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '67' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Ksar El Boukhari' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '67');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '68' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Bou Saâda' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '68');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '69' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'El Abiodh Sidi Cheikh' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '69');
 
 -- Add per entity payment terms/modes and bank account (issue #39146)
 ALTER TABLE llx_societe_perentity ADD COLUMN fk_account integer DEFAULT NULL;
@@ -104,6 +143,43 @@ UPDATE llx_const SET value = 'eratosthene' WHERE value = 'einstein' AND name ='C
 UPDATE llx_document_model SET nom = 'eratosthene' WHERE nom = 'einstein' AND type = 'order' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'eratosthene' AND type = 'order') as subquery WHERE subquery.entity = entity);
 DELETE FROM llx_document_model WHERE nom = 'einstein' AND type = 'order';
 
+-- Switch all aurore templates into zenith
+UPDATE llx_supplier_proposal SET model_pdf = 'zenith' WHERE model_pdf = 'aurore';
+UPDATE llx_const SET value = 'zenith' WHERE value = 'aurore' AND name ='SUPPLIER_PROPOSAL_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'zenith' WHERE nom = 'aurore' AND type = 'supplier_proposal' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'zenith' AND type = 'supplier_proposal') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'aurore' AND type = 'supplier_proposal';
+
+-- Switch all muscadet templates into cornas
+UPDATE llx_commande_fournisseur SET model_pdf = 'cornas' WHERE model_pdf = 'muscadet';
+UPDATE llx_const SET value = 'cornas' WHERE value = 'muscadet' AND name ='COMMANDE_SUPPLIER_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'cornas' WHERE nom = 'muscadet' AND type = 'order_supplier' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'cornas' AND type = 'order_supplier') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'muscadet' AND type = 'order_supplier';
+
+-- Switch all rouget templates into espadon
+UPDATE llx_expedition SET model_pdf = 'espadon' WHERE model_pdf = 'rouget';
+UPDATE llx_const SET value = 'espadon' WHERE value = 'rouget' AND name ='EXPEDITION_ADDON_PDF';
+UPDATE llx_document_model SET nom = 'espadon' WHERE nom = 'rouget' AND type = 'shipping' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'espadon' AND type = 'shipping') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'rouget' AND type = 'shipping';
+
+-- The donation receipt template "generic" (html) has been removed and replaced by the
+-- template "standard" (pdf), available for any country. Switch all generic templates into standard.
+UPDATE llx_don SET model_pdf = 'pdf_standard_donation' WHERE model_pdf = 'html_generic';
+UPDATE llx_const SET value = 'pdf_standard_donation' WHERE value = 'html_generic' AND name ='DON_ADDON_MODEL';
+UPDATE llx_document_model SET nom = 'pdf_standard_donation' WHERE nom = 'html_generic' AND type = 'donation' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'pdf_standard_donation' AND type = 'donation') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'html_generic' AND type = 'donation';
+-- The label of a model is what the user sees in the list of generation templates, so it must
+-- show the name of the new template, not the name of the old "generic" one it was migrated from.
+UPDATE llx_document_model SET libelle = 'Standard' WHERE nom = 'pdf_standard_donation' AND type = 'donation' AND (libelle IS NULL OR libelle = '' OR libelle = 'generic' OR libelle = 'standard');
+-- Same for the "cerfafr" template, so the label shows its display name everywhere.
+UPDATE llx_document_model SET libelle = 'Cerfa HTML FR' WHERE nom = 'html_cerfafr' AND type = 'donation' AND (libelle IS NULL OR libelle = '' OR libelle = 'cerfafr');
+
+-- The delivery receipt template "typhon" has been removed and replaced by "storm".
+-- Switch all typhon templates into storm.
+UPDATE llx_delivery SET model_pdf = 'storm' WHERE model_pdf = 'typhon';
+UPDATE llx_const SET value = 'storm' WHERE value = 'typhon' AND name IN ('DELIVERY_ADDON_PDF', 'LIVRAISON_ADDON_PDF');
+UPDATE llx_document_model SET nom = 'storm', libelle = NULL WHERE nom = 'typhon' AND type = 'delivery' AND NOT EXISTS (SELECT subquery.nom FROM (SELECT nom, entity FROM llx_document_model WHERE nom = 'storm' AND type = 'delivery') as subquery WHERE subquery.entity = entity);
+DELETE FROM llx_document_model WHERE nom = 'typhon' AND type = 'delivery';
+
 -- Index fk_statut on llx_commande for order status filtering (llx_facture already has idx_facture_fk_statut)
 ALTER TABLE llx_commande ADD INDEX idx_commande_fk_statut (fk_statut);
 
@@ -128,11 +204,44 @@ ALTER TABLE llx_receptiondet_batch ADD COLUMN ref_fourn varchar(128) NULL AFTER 
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN start TO date_start;
 -- VPGSQL ALTER TABLE llx_bookcal_availabilities RENAME COLUMN "end" TO date_end;
 
+-- ExpenseReport: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_expensereport CHANGE COLUMN date_create date_creation datetime NOT NULL;
+
+-- ElementContact: rename datecreate into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_element_contact CHANGE COLUMN datecreate date_creation datetime NULL;
+
+-- Mailing: rename date_creat into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_mailing CHANGE COLUMN date_creat date_creation datetime;
+ALTER TABLE llx_mailing_unsubscribe CHANGE COLUMN date_creat date_creation datetime;
+
+-- ECM: rename date_c into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_ecm_directories CHANGE COLUMN date_c date_creation datetime;
+ALTER TABLE llx_ecm_files CHANGE COLUMN date_c date_creation datetime;
+
+-- Multicurrency: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_multicurrency CHANGE COLUMN date_create date_creation datetime DEFAULT NULL;
+
+-- Holiday: rename date_create into date_creation to align with the Dolibarr naming convention
+ALTER TABLE llx_holiday CHANGE COLUMN date_create date_creation datetime NOT NULL;
+ALTER TABLE llx_holiday DROP INDEX idx_holiday_date_create;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_creation (date_creation);
+
 -- Inventory: add last_main_doc used to save the relative path of last generated main document
 ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFTER date_validation;
 
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
 ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
+
+-- Lines of a credit note of a situation invoice cycle cancel a progress of the source lines, so their situation_percent must be negative
+UPDATE llx_facturedet SET situation_percent = -situation_percent WHERE situation_percent > 0 AND fk_facture IN (SELECT f.rowid FROM llx_facture as f WHERE f.type = 2 AND f.situation_cycle_ref > 0);
+
+-- Reduce response times with high transaction volume
+ALTER TABLE llx_facture ADD INDEX idx_facture_status_date (paye, fk_statut, datef);
+
+-- Index on (fk_product, fk_contrat) replaces the redundant index on fk_product alone (it must be created before the drop, as the foreign key fk_contratdet_fk_product needs an index)
+ALTER TABLE llx_contratdet ADD INDEX idx_contratdet_fkproduct_fkcontrat (fk_product, fk_contrat);
+-- VMYSQL4.1 DROP INDEX idx_contratdet_fk_product ON llx_contratdet;
+-- VPGSQL8.2 DROP INDEX idx_contratdet_fk_product;
 
 -- Short-lived tombstone log of deleted agenda events (see llx_deletion_log.sql).
 CREATE TABLE llx_deletion_log(
@@ -256,8 +365,43 @@ ALTER TABLE llx_paiementcharge ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_various ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_salary ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_loan ADD COLUMN import_key varchar(14);
+
+ALTER TABLE llx_loan ADD COLUMN frequency integer DEFAULT 12 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN interest_basis smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN balloon_amount double(24,8) DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN charge_type smallint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_loan ADD COLUMN charge_per_payment smallint DEFAULT 0 NOT NULL;
+-- History of the changes of a loan: rate changes, and payments that differ from the schedule,
+-- with how the unpaid payments were recalculated.
+create table llx_loan_change
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,
+  fk_loan			integer NOT NULL,
+  datec				datetime,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  date_change		date,							-- date from which the change applies
+  reason			varchar(16) NOT NULL,			-- 'rate' (rate change) or 'payment' (payment different from the schedule)
+  rate_old			double,
+  rate_new			double,
+  keep_mode			varchar(16),					-- 'term' (number of payments kept), 'payment' (repayment kept) or '' (no schedule)
+  payment_old		double(24,8),
+  payment_new		double(24,8),
+  nbterm_old		real,
+  nbterm_new		real,
+  fk_payment_loan	integer DEFAULT NULL,			-- payment that caused the change (reason 'payment')
+  fk_user_author	integer DEFAULT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_loan_change ADD INDEX idx_loan_change_fk_loan (fk_loan);
 ALTER TABLE llx_payment_donation ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_payment_expensereport ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_payment_expensereport ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0 AFTER amount;
+UPDATE llx_payment_expensereport SET multicurrency_amount = amount WHERE multicurrency_amount = 0;
+ALTER TABLE llx_payment_expensereport ADD COLUMN multicurrency_code varchar(3) AFTER multicurrency_amount;
+-- The placeholders __DECRYPT()__ and __ENCRYPT()__, replaced at install time, can not be parsed by sqlfluff.
+--noqa:disable=PRS
+UPDATE llx_payment_expensereport SET multicurrency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = (SELECT entity FROM llx_expensereport WHERE rowid = llx_payment_expensereport.fk_expensereport)) WHERE multicurrency_code IS NULL;
+--noqa:enable=PRS
 ALTER TABLE llx_payment_vat ADD COLUMN import_key varchar(14);
 
 -- llx_paiement_facture (the n-n link between a payment and the invoice(s) it pays) is also
@@ -276,13 +420,17 @@ ALTER TABLE llx_ai_request_log ADD COLUMN model varchar(255);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_contact integer AFTER fk_soc;
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_contact (fk_contact);
 
+-- Link an event attendee to the member represented by the registration.
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_member integer AFTER fk_contact;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD INDEX idx_eventorganization_conferenceorboothattendee_fk_member (fk_member);
+
 
 ALTER TABLE llx_actioncomm ADD COLUMN registration_enabled smallint NOT NULL DEFAULT 0 AFTER max_participants;
 
 -- NEW schemas table and schemas extrafields
 CREATE TABLE llx_schemas (
     rowid 			integer AUTO_INCREMENT PRIMARY KEY,
-    uuid 			varchar(64) NOT NULL,                
+    uuid 			varchar(64) NOT NULL,
     name 			varchar(64) NOT NULL,
     label 			varchar(255) NOT NULL,
     schema_kind 	varchar(32) NULL,
@@ -332,6 +480,11 @@ CREATE TABLE llx_extrafields_schemas (
 	tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=innodb;
 
+ALTER TABLE llx_schemas ADD UNIQUE INDEX uk_schemas_name (name, entity);
+ALTER TABLE llx_schemas ADD INDEX idx_schemas_uuid (uuid);
+ALTER TABLE llx_extrafields_schemas ADD UNIQUE INDEX uk_extrafields_schemas_name (fk_schema, name, entity);
+ALTER TABLE llx_extrafields_schemas ADD CONSTRAINT fk_extrafields_schemas_fk_schema FOREIGN KEY (fk_schema) REFERENCES llx_schemas (rowid);
+
 
 -- Barcode management on lots/serial numbers. Columns exist since v15 but were never used.
 -- Empty strings must become NULL first: the unique index does not tolerate them like NULL.
@@ -340,6 +493,34 @@ UPDATE llx_product_lot SET barcode = NULL WHERE barcode = '';
 ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_barcode (barcode);
 ALTER TABLE llx_product_lot ADD INDEX idx_product_lot_fk_barcode_type (fk_barcode_type);
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot_barcode (barcode, fk_barcode_type, entity);
+
+
+-- AI chat: conversation history (reopen past conversations; storage is separate from the pinned context sent to the model)
+create table llx_ai_chat_conversation
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  entity					integer DEFAULT 1 NOT NULL,
+  fk_user					integer NOT NULL,
+  title						varchar(255),
+  date_creation				datetime NOT NULL,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;
+create table llx_ai_chat_message
+(
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  fk_conversation			integer NOT NULL,
+  role						varchar(16) NOT NULL,
+  content_raw				mediumtext,
+  content_html				MEDIUMTEXT,
+  tool_name					varchar(255),
+  pinned					smallint DEFAULT 0,
+  is_error					smallint DEFAULT 0,
+  position					integer DEFAULT 0,
+  datec						datetime NOT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_ai_chat_conversation ADD INDEX idx_ai_chat_conversation_user (fk_user, tms);
+ALTER TABLE llx_ai_chat_message ADD INDEX idx_ai_chat_message_conv (fk_conversation, position);
+ALTER TABLE llx_ai_chat_message ADD CONSTRAINT fk_ai_chat_message_conv FOREIGN KEY (fk_conversation) REFERENCES llx_ai_chat_conversation (rowid);
 
 -- Add table for the AI assistant pending write confirmations (MCP multi-round-trip)
 create table llx_ai_write_confirmation
@@ -359,3 +540,213 @@ create table llx_ai_write_confirmation
 ALTER TABLE llx_ai_write_confirmation ADD UNIQUE INDEX uk_ai_write_confirmation_state (state_hash, entity);
 ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_expiration (date_expiration);
 ALTER TABLE llx_ai_write_confirmation ADD INDEX idx_ai_write_confirmation_fk_user (fk_user);
+
+-- The events of leaves HOLIDAY_VALIDATE, HOLIDAY_MODIFY and HOLIDAY_APPROVE were inserted with the elementtype of the expense reports
+-- by the migrations 8.0.0-9.0.0 and 16.0.0-17.0.0 (and the correct rows inserted after were rejected by the unique key on code).
+-- Same values as in data/llx_c_action_trigger.sql.
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday validated', description = 'Executed when a holiday is validated', rang = 802 WHERE code = 'HOLIDAY_VALIDATE' AND elementtype = 'expensereport';
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday modified', description = 'Executed when a holiday is modified', rang = 801 WHERE code = 'HOLIDAY_MODIFY' AND elementtype = 'expensereport';
+UPDATE llx_c_action_trigger SET elementtype = 'holiday', label = 'Holiday approved', description = 'Executed when a holiday is aprouved', rang = 803 WHERE code = 'HOLIDAY_APPROVE' AND elementtype = 'expensereport';
+
+-- The trigger BILL_SUPPLIER_CANCELED is renamed into BILL_SUPPLIER_CANCEL to be consistent with the trigger BILL_CANCEL of customer invoices.
+-- Same values as in data/llx_c_action_trigger.sql.
+UPDATE llx_c_action_trigger SET code = 'BILL_SUPPLIER_CANCEL' WHERE code = 'BILL_SUPPLIER_CANCELED';
+
+-- On PostgreSQL, repair rowid of llx_c_type_contact that was not set as auto-incremented by migration 20
+-- VPGSQL8.2 CREATE SEQUENCE IF NOT EXISTS llx_c_type_contact_rowid_seq OWNED BY llx_c_type_contact.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_c_type_contact ALTER COLUMN rowid SET DEFAULT nextval('llx_c_type_contact_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_type_contact_rowid_seq', MAX(rowid)) FROM llx_c_type_contact;
+
+-- Add type of contacts for stock transfer (module is new in v25). Same values as in data/llx_c_type_contact.sql.
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'internal', 'STRESP', 'Responsible for stock transfers', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STFROM', 'Contact sending the stock transfer', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('stocktransfer', 'external', 'STDEST', 'Contact receiving the stock transfer', 1);
+
+-- Top menu "Banks | Cash" now opens the new bank dashboard page instead of the list of accounts
+UPDATE llx_menu SET url = '/compta/bank/index.php?mainmenu=bank&leftmenu=bank' WHERE type = 'top' AND mainmenu = 'bank' AND url LIKE '/compta/bank/list.php?search_status=opened%';
+
+-- Indexes for the widgets of the home page: latest prospects and latest suppliers (sorted on tms) and balance of bank accounts
+ALTER TABLE llx_societe ADD INDEX idx_societe_fournisseur_tms(fournisseur, tms);
+ALTER TABLE llx_societe ADD INDEX idx_societe_client_tms(client, tms);
+ALTER TABLE llx_bank ADD INDEX idx_bank_fk_account_amount(fk_account, amount);
+
+-- The ref of a variant attribute is unique per entity, like the ref of a product, not for the whole database
+-- VMYSQL4.1 DROP INDEX uk_product_attribute_ref ON llx_product_attribute;
+-- VPGSQL8.2 DROP INDEX uk_product_attribute_ref;
+ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref, entity);
+
+-- Index on the date of modification of thirdparties: the thirdparty area shows the last modified ones
+ALTER TABLE llx_societe ADD INDEX idx_societe_tms(tms);
+
+-- API keys created from the user's token tab were written to the deprecated column token, while
+-- the API authenticates against tokenstring (where the upgrade that moves user api_key values
+-- puts them). Those keys never worked: copy them where they are read.
+UPDATE llx_oauth_token SET tokenstring = token WHERE service = 'dolibarr_rest_api' AND tokenstring IS NULL AND token IS NOT NULL;
+
+-- Multicurrency support for contracts. llx_contratdet already had these columns (unused until now);
+-- the header table had none, so a contract could never record the currency it was created in.
+ALTER TABLE llx_contrat ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_code varchar(3);
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_contrat ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+-- Passkeys (WebAuthn credentials) used by the authentication mode 'passkey', saved into llx_oauth_token with service 'passkey'
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_label varchar(255) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_credential_id varchar(255) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_user_handle varchar(128) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_sign_count integer NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_aaguid varchar(36) NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_eligible smallint NULL;
+ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
+ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
+
+-- RF or national reference the supplier provides to accept payments
+ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
+
+ALTER TABLE llx_facture_fourn MODIFY COLUMN payment_reference varchar(35);
+
+ALTER TABLE llx_bank_account ADD COLUMN sepa_transfer_schema_version varchar(2) AFTER sepa_local_instrument;
+ALTER TABLE llx_bank_account ADD COLUMN sepa_charge_bearer varchar(4) DEFAULT 'SHAR' AFTER sepa_transfer_schema_version;
+
+ALTER TABLE llx_prelevement_demande ADD COLUMN multicurrency_code varchar(3) AFTER amount;
+ALTER TABLE llx_prelevement_demande ADD COLUMN multicurrency_amount double(24,8) AFTER multicurrency_code;
+
+ALTER TABLE llx_prelevement ADD COLUMN fk_expensereport integer NULL AFTER fk_salary;
+ALTER TABLE llx_prelevement_demande ADD COLUMN fk_expensereport integer NULL AFTER fk_salary;
+
+-- New page/container types for web sites, they can't be disabled from dictionary (can be included into other pages but not accessed directly)
+INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('header', 'PageHeader', 1, 'system', 32, 'container', __ENTITY__);
+INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('footer', 'PageFooter', 1, 'system', 33, 'container', __ENTITY__);
+
+-- Link a various payment to a thirdparty (optional) & add index and contraint
+ALTER TABLE llx_payment_various ADD COLUMN fk_soc integer DEFAULT NULL AFTER fk_projet;
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_datep (datep);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_bank (fk_bank);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_projet (fk_projet);
+ALTER TABLE llx_payment_various ADD INDEX idx_payment_various_fk_soc (fk_soc);
+ALTER TABLE llx_payment_various ADD CONSTRAINT fk_payment_various_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+
+-- Add a primary key on the 4 tables that had none (a primary key is required by Galera and by the other multi-master clusters).
+-- llx_category_bankline is a link table of categories, like the llx_categorie_* ones: its primary key is on the existing columns and replaces the unique index.
+--noqa:disable=PRS
+ALTER TABLE llx_category_bankline ADD PRIMARY KEY pk_category_bankline(lineid, fk_categ);
+--noqa:enable=PRS
+-- VMYSQL4.1 DROP INDEX uk_category_bankline_lineid ON llx_category_bankline;
+-- VPGSQL8.2 DROP INDEX uk_category_bankline_lineid;
+-- The 3 other tables get a rowid column as primary key, like the other tables.
+-- VMYSQL4.3 ALTER TABLE llx_holiday_users ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_holiday_users ADD COLUMN rowid SERIAL PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_user_param ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_user_param ADD COLUMN rowid SERIAL PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 ALTER TABLE llx_opensurvey_user_formanswers ADD COLUMN rowid SERIAL PRIMARY KEY;
+
+-- Opensurvey: the survey of format 'F' (form): type, position and mandatory flag of a question, and the keys of the 2 tables of the form.
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN type VARCHAR(16) NOT NULL DEFAULT 'radio';
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_formquestions ADD COLUMN mandatory TINYINT NOT NULL DEFAULT 0;
+ALTER TABLE llx_opensurvey_formquestions ADD INDEX idx_opensurvey_formquestions_id_sondage (id_sondage);
+ALTER TABLE llx_opensurvey_user_formanswers ADD UNIQUE INDEX uk_opensurvey_user_formanswers (fk_user_survey, fk_question);
+ALTER TABLE llx_opensurvey_user_formanswers ADD INDEX idx_opensurvey_user_formanswers_fk_question (fk_question);
+
+-- Add the document template of an inventory, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_inventory ADD COLUMN model_pdf varchar(255) AFTER date_validation;
+
+-- Add the document template of a leave request, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_holiday ADD COLUMN model_pdf varchar(255) AFTER import_key;
+-- Add the document template of a loan, so that a generated document can be rebuilt with the same one
+ALTER TABLE llx_loan ADD COLUMN model_pdf varchar(255) AFTER fk_user_modif;
+
+-- Reference the customer gives to a line of invoice (the line of its purchase order, sent as BT-132 in an e-invoice)
+ALTER TABLE llx_facturedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AFTER ref_ext;
+-- Reference the customer gives to a line of order (the line of its purchase order, sent as BT-132 in an e-invoice)
+ALTER TABLE llx_commandedet ADD COLUMN ref_customer varchar(128) DEFAULT NULL AFTER ref_ext;
+
+-- TakePOS: store the order printer of an invoice line into a dedicated field instead of special_code
+ALTER TABLE llx_facturedet ADD COLUMN pos_printer_id integer NULL AFTER fk_warehouse;
+UPDATE llx_facturedet SET pos_printer_id = 1, special_code = 0 WHERE special_code = 4 AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+UPDATE llx_facturedet SET special_code = 0 WHERE special_code IN (1, 2, 3) AND fk_facture IN (SELECT rowid FROM llx_facture WHERE module_source = 'takepos' AND fk_statut = 0);
+
+-- Bank accounts of users: an empty currency is the company currency, and each user has one default bank account per currency
+UPDATE llx_user_rib SET currency_code = (SELECT __DECRYPT('value')__ FROM llx_const WHERE __DECRYPT('name')__ = 'MAIN_MONNAIE' AND entity = llx_user_rib.entity) WHERE currency_code IS NULL OR currency_code = '';
+UPDATE llx_user_rib SET default_rib = 1 WHERE rowid IN (SELECT rowid FROM (SELECT MIN(rowid) as rowid FROM llx_user_rib GROUP BY fk_user, currency_code HAVING MAX(default_rib) = 0) as tmp);
+
+-- Social and fiscal tax types for Australia
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN code varchar(24) NOT NULL;
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2801, 'PAYG withholding (PAYGW)',               0, 1, 'TAXAUPAYGW');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2802, 'PAYG income tax instalment (PAYGI)',     0, 1, 'TAXAUPAYGI');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2803, 'Company income tax',                     0, 1, 'TAXAUCIT');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2804, 'Fringe benefits tax (FBT)',              1, 1, 'TAXAUFBT');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2805, 'Superannuation guarantee contributions', 1, 1, 'TAXAUSUPER');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2806, 'Superannuation guarantee charge (SGC)',  1, 1, 'TAXAUSGC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2807, 'Payroll tax (state or territory)',       1, 1, 'TAXAUPAYROLL');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2808, 'Workers compensation premium',           1, 1, 'TAXAUWORKCOMP');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2809, 'Land tax (state or territory)',          1, 1, 'TAXAULAND');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2810, 'ATO interest charges (GIC / SIC)',       0, 1, 'TAXAUGIC');
+insert into llx_c_chargesociales (fk_pays, id, libelle, deductible, active, code) values (28, 2811, 'Activity statement (BAS / IAS)',         0, 1, 'TAXAUBAS');
+
+-- Empty general accounts of thirdparties and users were stored as '-1' (value of the empty option of the select of accounting accounts)
+UPDATE llx_societe SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
+UPDATE llx_societe SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
+UPDATE llx_societe_perentity SET accountancy_code_customer_general = NULL WHERE accountancy_code_customer_general = '-1';
+UPDATE llx_societe_perentity SET accountancy_code_supplier_general = NULL WHERE accountancy_code_supplier_general = '-1';
+UPDATE llx_user SET accountancy_code_user_general = NULL WHERE accountancy_code_user_general = '-1';
+
+ALTER TABLE llx_website_page MODIFY COLUMN aliasalt text;
+ALTER TABLE llx_website_page MODIFY COLUMN htmlheader longtext;
+ALTER TABLE llx_website_page MODIFY COLUMN content longtext;
+
+ALTER TABLE llx_ai_chat_message MODIFY COLUMN content_raw mediumtext;
+
+INSERT INTO llx_c_type_resource (code, label, active) VALUES ('RES_MACHINES', 'Machines', 1);
+
+-- Module QuickMemo moved from the id 141916 (range of external modules) to the core id 55020: rename its permission ids 141916xx into 55020xx
+UPDATE llx_rights_def SET id = id - 14191600 + 5502000 WHERE id IN (14191611, 14191612, 14191613);
+UPDATE llx_user_rights SET fk_id = fk_id - 14191600 + 5502000 WHERE fk_id IN (14191611, 14191612, 14191613);
+UPDATE llx_usergroup_rights SET fk_id = fk_id - 14191600 + 5502000 WHERE fk_id IN (14191611, 14191612, 14191613);
+DELETE FROM llx_rights_def WHERE id IN (14191611, 14191612, 14191613);
+
+-- Remove duplicate indexes (index on columns that are already the first columns of a unique index)
+ALTER TABLE llx_accounting_category_account DROP INDEX idx_accounting_category_account_fk_accounting_category;
+ALTER TABLE llx_accounting_transaction_template DROP INDEX idx_accounting_transaction_template_code;
+ALTER TABLE llx_asset_model DROP INDEX idx_asset_model_entity;
+ALTER TABLE llx_bank DROP INDEX idx_bank_fk_account;
+ALTER TABLE llx_bom_bom DROP INDEX idx_bom_bom_ref;
+ALTER TABLE llx_c_ziptown DROP INDEX idx_c_ziptown_zip;
+ALTER TABLE llx_emailcollector_emailcollectoraction DROP INDEX idx_emailcollector_fk_emailcollector;
+ALTER TABLE llx_emailcollector_emailcollectorfilter DROP INDEX idx_emailcollector_fk_emailcollector;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP INDEX idx_eventorganization_conferenceorboothattendee_fk_project;
+ALTER TABLE llx_paiement_facture DROP INDEX idx_paiement_facture_fk_paiement;
+ALTER TABLE llx_paiementfourn_facturefourn DROP INDEX idx_paiementfourn_facturefourn_fk_paiement;
+ALTER TABLE llx_product DROP INDEX idx_product_barcode;
+ALTER TABLE llx_product_attribute_combination2val DROP INDEX idx_product_att_com2v_prod_combination;
+ALTER TABLE llx_product_batch DROP INDEX idx_fk_product_stock;
+ALTER TABLE llx_product_fournisseur_price DROP INDEX idx_product_barcode;
+ALTER TABLE llx_product_lot DROP INDEX idx_product_lot_barcode;
+ALTER TABLE llx_product_perentity DROP INDEX idx_product_perentity_fk_product;
+ALTER TABLE llx_product_price_by_qty DROP INDEX idx_product_price_by_qty_fk_product_price;
+ALTER TABLE llx_product_stock DROP INDEX idx_product_stock_fk_product;
+ALTER TABLE llx_projet DROP INDEX idx_projet_ref;
+ALTER TABLE llx_projet_task_dependency DROP INDEX idx_projet_task_dependency_fk_task;
+ALTER TABLE llx_societe_perentity DROP INDEX idx_societe_perentity_fk_soc;
+ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
+
+-- Remove index of llx_quickmemo_memo_user on fk_memo (duplicate of uk_memo_user). Mysql only: with pgsql, this name is the one of an index of llx_quickmemo_memo
+-- VMYSQL4.1 DROP INDEX idx_quickmemo_memo_rowid ON llx_quickmemo_memo_user;
+
+create table llx_categorie_skill
+(
+  fk_categorie integer NOT NULL,
+  fk_skill     integer NOT NULL,
+  import_key   varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_skill ADD PRIMARY KEY pk_categorie_skill (fk_categorie, fk_skill);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_skill ADD INDEX idx_categorie_skill_fk_skill (fk_skill);
+
+ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_fk_skill_rowid FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill (rowid);

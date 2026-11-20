@@ -60,7 +60,7 @@ if (isModEnabled('intervention')) {
 $hookmanager->initHooks(array('commercialindex'));
 
 // Load translation files required by the page
-$langs->loadLangs(array("boxes", "commercial", "contracts", "orders", "propal", "supplier_proposal"));
+$langs->loadLangs(array("boxes", "commercial", "companies", "contracts", "orders", "propal", "supplier_proposal"));
 
 $action = GETPOST('action', 'aZ09');
 $bid = GETPOSTINT('bid');
@@ -561,6 +561,8 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
  * Draft interventions
  */
 if (isModEnabled('intervention') && is_object($fichinterstatic)) {
+	$fichinter_static = new Fichinter($db);
+
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut, f.duree as duration";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
@@ -572,7 +574,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
-	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+	$sql .= " WHERE f.entity IN (".getEntity($fichinter_static->element).")";
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND f.fk_statut = 0";
 	if ($socid) {
@@ -756,7 +758,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 
 if (isModEnabled('propal') && is_object($propalstatic)) {
 	$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_statut as status, p.tms as datem,";
-	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
+	$sql .= " s.nom as socname, s.name_alias, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
@@ -803,6 +805,7 @@ if (isModEnabled('propal') && is_object($propalstatic)) {
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->socname;
+				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->client = $obj->client;
 				$companystatic->canvas = $obj->canvas;
 				$companystatic->email = $obj->email;
@@ -857,7 +860,7 @@ if (isModEnabled('order')) {
 	$commandestatic = new Commande($db);
 
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_cloture as datec, c.tms as datem,";
-	$sql .= " s.nom as name, s.rowid as socid";
+	$sql .= " s.nom as name, s.name_alias, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
@@ -901,6 +904,7 @@ if (isModEnabled('order')) {
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
+				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->client = $obj->client;
 				$companystatic->code_client = $obj->code_client;
 				$companystatic->canvas = $obj->canvas;

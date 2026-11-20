@@ -81,7 +81,7 @@ class modSupplierProposal extends DolibarrModules
 			[
 				"SUPPLIER_PROPOSAL_ADDON_PDF",
 				"chaine",
-				"aurore",
+				"zenith",
 				'Name of submodule to generate PDF for supplier quotation request',
 				0,
 			],

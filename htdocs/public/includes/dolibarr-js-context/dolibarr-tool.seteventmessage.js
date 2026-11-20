@@ -49,5 +49,5 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		else{
 			Dolibarr.log('setEventMessage : Message is empty');
 		}
-	}, true);
+	}, { overwrite: true });
 });

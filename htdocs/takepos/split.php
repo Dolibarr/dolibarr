@@ -68,6 +68,8 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
 	$split = GETPOSTINT('split');
 	$invoice = null;
 	$placeid = 0;
+	// The line can only be taken from the draft invoice of this terminal it is moved from
+	$sourceref = '(PROV-POS'.$_SESSION["takeposterminal"].'-'.($split == 1 ? $place : 'SPLIT').')';
 	if ($split == 1) { // Split line
 		$invoice = new Facture($db);
 		$ret = $invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
@@ -94,8 +96,12 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
 				$db->query($sql);
 			}
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET fk_facture = ".((int) $placeid)." WHERE rowid = ".((int) $line);
-		$db->query($sql);
+		if ($placeid > 0) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET fk_facture = ".((int) $placeid)." WHERE rowid = ".((int) $line);
+			$sql .= " AND fk_facture IN (SELECT f.rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.ref = '".$db->escape($sourceref)."'";
+			$sql .= " AND f.fk_statut = ".Facture::STATUS_DRAFT." AND f.entity IN (".getEntity('invoice')."))";
+			$db->query($sql);
+		}
 	} elseif ($split == 0) { // Unsplit line
 		$invoice = new Facture($db);
 		if ($place == "SPLIT") {
@@ -125,8 +131,12 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
 				$db->query($sql);
 			}
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set fk_facture = ".((int) $placeid)." where rowid = ".((int) $line);
-		$db->query($sql);
+		if ($placeid > 0) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET fk_facture = ".((int) $placeid)." WHERE rowid = ".((int) $line);
+			$sql .= " AND fk_facture IN (SELECT f.rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.ref = '".$db->escape($sourceref)."'";
+			$sql .= " AND f.fk_statut = ".Facture::STATUS_DRAFT." AND f.entity IN (".getEntity('invoice')."))";
+			$db->query($sql);
+		}
 	}
 	if ($invoice !== null) {
 		$invoice->fetch(0, '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
@@ -143,20 +153,13 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
  */
 
 $invoice = new Facture($db);
-if (isset($invoiceid) && $invoiceid > 0) {
+$invoiceid = 0; // Invoice does not exist yet
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref = '".$db->escape("(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")")."'";
+$resql = $db->query($sql);
+$obj = $db->fetch_object($resql);
+if ($obj) {
+	$invoiceid = $obj->rowid;
 	$invoice->fetch($invoiceid);
-} else {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref = '".$db->escape("(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")")."'";
-	$resql = $db->query($sql);
-	$obj = $db->fetch_object($resql);
-	if ($obj) {
-		$invoiceid = $obj->rowid;
-	}
-	if (!isset($invoiceid)) {
-		$invoiceid = 0; // Invoice does not exist yet
-	} else {
-		$invoice->fetch($invoiceid);
-	}
 }
 
 $arrayofcss = array('/takepos/css/pos.css.php');
@@ -171,6 +174,16 @@ $disablejs = 0;
 $disablehead = 0;
 
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+// A validated or paid sale can't be split: only lines of a draft sale can be moved
+$invoiceidtosplit = GETPOSTINT('invoiceid');
+if ($invoiceidtosplit > 0) {
+	$invoicetosplit = new Facture($db);
+	if ($invoicetosplit->fetch($invoiceidtosplit) > 0 && $invoicetosplit->status != Facture::STATUS_DRAFT) {
+		print '<body class="takepossplitphp"><div class="center"><br><h2>'.dol_escape_htmltag($langs->trans("ErrorSplitSaleNotDraft")).'</h2></div></body></html>';
+		exit;
+	}
+}
 
 // Define list of possible payments
 $arrayOfValidPaymentModes = array();
@@ -219,7 +232,11 @@ $( document ).ready(function() {
 
 
 
-	$("#headersplit1").html("<?php echo $langs->trans("Place");?> "+parent.place);
+	<?php if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) { ?>
+	$("#headersplit1").html("<?php echo dol_escape_js($langs->trans("Place")); ?> "+parent.place);
+	<?php } else { ?>
+	$("#headersplit1").html("<?php echo dol_escape_js($langs->trans("CurrentSale")); ?>");
+	<?php } ?>
 	$("#headersplit2").html("<?php echo $langs->trans("SplitSale");?>");
 
 });

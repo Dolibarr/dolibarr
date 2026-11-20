@@ -8,7 +8,7 @@
  * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  * Copyright (C) 2024      Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026      Pierre Ardoin        <developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -112,6 +112,11 @@ class Notify
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
+
+	/**
+	 * @var string[] Notifications that could not be sent. They do not block the action that triggered them.
+	 */
+	public $warnings = array();
 
 	/**
 	 * @var string
@@ -657,6 +662,12 @@ class Notify
 			return 0;
 		}
 
+		// No e-mail can be sent: nothing to do, and this must not block the action that triggered the notification
+		if (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
+			dol_syslog(get_class($this)."::send notifcode=".$notifcode.", no notification sent, e-mails are disabled by MAIN_DISABLE_ALL_MAILS", LOG_WARNING);
+			return 0;
+		}
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object id=".$object->id);
@@ -946,7 +957,7 @@ class Notify
 							case 'CONTRACT_MODIFY':
 								$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
-								$dir_output = $conf->contract->multidir_output;
+								$dir_output = rtrim(getMultidirOutput($object, '', 1), '/');
 								$object_type = 'contract';
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 								break;
@@ -974,6 +985,12 @@ class Notify
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
 							// Note the substitution array should contains __REF__, __NEWREF__ ....
+							// On a first validation the object still carries its provisional ref while
+							// newref already holds the final one. Use the final ref for __REF__ so the
+							// notification never shows a (PROVxxx) reference to the recipient.
+							if (!empty($object->newref)) {
+								$substitutionarray['__REF__'] = $object->newref;
+							}
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 						} else {
@@ -1039,13 +1056,11 @@ class Notify
 							'notification'
 						);
 
+						// A notification that cannot be sent (mail server down, address refused...) is reported as a
+						// warning: it must not block the action that triggered it (validation of an invoice...)
 						if (! empty($mailfile->error) || ! empty($mailfile->errors)) {
-							$this->error = $mailfile->error;
-							$this->errors = $mailfile->errors;
-							return -1;
-						}
-
-						if ($mailfile->sendfile()) {
+							$this->addSendWarning($from, $sendto, $mailfile);
+						} elseif ($mailfile->sendfile()) {
 							if ($obj->type_target == 'touserid') {
 								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
 								// @phan-suppress-next-line PhanUndeclaredProperty
@@ -1059,8 +1074,7 @@ class Notify
 								dol_print_error($this->db);
 							}
 						} else {
-							$error++;
-							$this->errors[] = $mailfile->error;
+							$this->addSendWarning($from, $sendto, $mailfile);
 						}
 					} else {
 						dol_syslog("No notification sent for ".$sendto." because email is empty");
@@ -1215,13 +1229,13 @@ class Notify
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-						$object_type = 'order_supplier';
+						$object_type = 'shipping';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionModified", $link, $context_info);
 						break;
 					case 'SHIPPING_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/expedition/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->expedition->dir_output."/sending/".get_exdir(0, 0, 0, 1, $object, 'shipment');
-						$object_type = 'order_supplier';
+						$object_type = 'shipping';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextExpeditionValidated", $link);
 						break;
 					case 'EXPENSE_REPORT_VALIDATE':
@@ -1257,8 +1271,8 @@ class Notify
 					case 'CONTRACT_MODIFY':
 						$link = '<a href="'.$urlwithroot.'/contrat/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$context_info = array_key_exists('signature', $object->context) ? $object->getLibSignedStatus() : '';
-						$dir_output = $conf->contract->multidir_output;
-						$object_type = 'contrat';
+						$dir_output = rtrim(getMultidirOutput($object, '', 1), '/');
+						$object_type = 'contract';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextContractModified", $link, $context_info);
 						break;
 					default:
@@ -1306,6 +1320,12 @@ class Notify
 
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					// On a first validation the object still carries its provisional ref while newref
+					// already holds the final one. Use the final ref for __REF__ so the notification
+					// never shows a (PROVxxx) reference to the recipient.
+					if (!empty($object->newref)) {
+						$substitutionarray['__REF__'] = $object->newref;
+					}
 					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $outputlangs);
 					$message = make_substitutions($emailTemplate->content, $substitutionarray, $outputlangs);
 				} else {
@@ -1356,12 +1376,8 @@ class Notify
 					);
 
 					if (! empty($mailfile->error) || ! empty($mailfile->errors)) {
-						$this->error = $mailfile->error;
-						$this->errors = $mailfile->errors;
-						return -1;
-					}
-
-					if ($mailfile->sendfile()) {
+						$this->addSendWarning($from, $sendto, $mailfile);
+					} elseif ($mailfile->sendfile()) {
 						$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";
 						// @phan-suppress-next-line PhanUndeclaredProperty
 						$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".((!empty($object->socid)  && $object->socid > 0) ? ((int) $object->socid) : 'null').", null, 'email', 'tofixedemail', '".$this->db->escape($object_type)."', ".((int) $object->id).", '".$this->db->escape($sendto)."')";
@@ -1369,8 +1385,7 @@ class Notify
 							dol_print_error($this->db);
 						}
 					} else {
-						$error++;
-						$this->errors[] = $mailfile->error;
+						$this->addSendWarning($from, $sendto, $mailfile);
 					}
 				}
 			}
@@ -1381,6 +1396,23 @@ class Notify
 		} else {
 			return -1 * $error;
 		}
+	}
+
+	/**
+	 * Record a notification that could not be sent: logged, and kept in $this->warnings for the user.
+	 *
+	 * @param	string		$from		Sender
+	 * @param	string		$sendto		Recipient
+	 * @param	CMailFile	$mailfile	Mail that failed
+	 * @return	void
+	 */
+	private function addSendWarning($from, $sendto, $mailfile)
+	{
+		global $langs;
+
+		$reason = $mailfile->error ? $mailfile->error : implode(', ', (array) $mailfile->errors);
+		$this->warnings[] = $langs->trans("ErrorFailedToSendMail", $from, $sendto).($reason ? ' '.$reason : '');
+		dol_syslog(get_class($this)."::send notification to ".$sendto." not sent: ".$reason, LOG_WARNING);
 	}
 
 	/**

@@ -339,7 +339,7 @@ class Project extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,uieditable?:int<0,1>,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -352,7 +352,7 @@ class Project extends CommonObject
 		'datee' => array('type' => 'date', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 35),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 3, 'position' => 55, 'searchall' => 1),
 		'public' => array('type' => 'integer', 'label' => 'Visibility', 'enabled' => 1, 'visible' => -1, 'position' => 65),
-		'fk_opp_status' => array('type' => 'integer:CLeadStatus:core/class/cleadstatus.class.php', 'label' => 'OpportunityStatusShort', 'enabled' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible' => 1, 'position' => 75),
+		'fk_opp_status' => array('type' => 'integer:CLeadStatus:core/class/cleadstatus.class.php', 'label' => 'OpportunityStatusShort', 'enabled' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible' => 1, 'position' => 75, 'alwayseditable' => 1, 'uieditable' => 1),
 		'opp_percent' => array('type' => 'double(5,2)', 'label' => 'OpportunityProbabilityShort', 'enabled' => 'getDolGlobalString("PROJECT_USE_OPPORTUNITIES")', 'visible' => 1, 'position' => 80),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 85, 'searchall' => 1),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 90, 'searchall' => 1),
@@ -613,7 +613,8 @@ class Project extends CommonObject
 			$this->opp_percent = '';
 		}
 		if ($this->date_end && $this->date_end < $this->date_start) {
-			$this->error = $langs->trans("ErrorDateEndLowerThanDateStart");
+			$langs->load("errors");
+			$this->error = $langs->trans("ErrorStartDateGreaterEnd");
 			$this->errors[] = $this->error;
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::update error -3 ".$this->error, LOG_ERR);
@@ -893,6 +894,9 @@ class Project extends CommonObject
 			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."element_time as ptt WHERE pt.rowid = ptt.fk_element AND ptt.elementtype = 'task' AND pt.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'stocktransfer_stocktransfer') {
 			$sql = "SELECT ms.rowid, ms.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."stocktransfer_stocktransfer as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.origintype = 'project' AND ms.fk_origin IN (".$this->db->sanitize((string) $ids).") AND ms.type_mouvement = 1";
+		} elseif ($type == 'stock_mouvement') {
+			// Stock movements have no entity field (the warehouse has one), and the project is stored into fk_projet
+			$sql = "SELECT ms.rowid FROM ".MAIN_DB_PREFIX."stock_mouvement as ms, ".MAIN_DB_PREFIX."entrepot as e WHERE e.rowid = ms.fk_entrepot AND e.entity IN (".getEntity('stock').") AND ms.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} elseif ($type == 'loan') {
 			$sql = "SELECT l.rowid, l.fk_user_author as fk_user FROM ".MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$this->db->sanitize((string) $ids).")";
 		} else {
@@ -1411,6 +1415,69 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * Return the name of the property of the object holding the value of a field of $fields.
+	 * Override of CommonObject::getFieldPropertyName(): the opportunity status is in the property opp_status.
+	 *
+	 * @param	string	$field	Field name
+	 * @return	string			Property name
+	 */
+	protected function getFieldPropertyName($field)
+	{
+		if ($field == 'fk_opp_status') {
+			return 'opp_status';
+		}
+
+		return parent::getFieldPropertyName($field);
+	}
+
+	/**
+	 * Return the output html of a field for the user interface (core/ajax/objectfield.php).
+	 * Override of CommonObject::ajaxOutputField(): the opportunity status is shown with its label, like on the list.
+	 *
+	 * @param	string	$field	Field name, already checked with isFieldReadableFromUi()
+	 * @return	string			Output html
+	 */
+	public function ajaxOutputField($field)
+	{
+		global $langs;
+
+		if ($field == 'fk_opp_status') {
+			if (empty($this->opp_status)) {
+				return '';
+			}
+			$langs->load('projects');
+			$code = dol_getIdFromCode($this->db, (int) $this->opp_status, 'c_lead_status', 'rowid', 'code');
+
+			return dol_escape_htmltag($langs->trans('OppStatus'.$code));
+		}
+
+		return parent::ajaxOutputField($field);
+	}
+
+	/**
+	 * Check if user has a permission on projects, on its own projects or on all projects.
+	 * The access to a given project is checked by restrictedArea().
+	 *
+	 * @param User   $user User to check rights
+	 * @param string $mode Permission to check: 'read', 'create', 'write' or 'delete'
+	 * @return bool True if user has the permission, false otherwise
+	 */
+	public function hasUserPermission(User $user, $mode = 'write')
+	{
+		if ($mode == 'read') {
+			return $user->hasRight('projet', 'lire') || $user->hasRight('projet', 'all', 'lire');
+		}
+		if ($mode == 'create' || $mode == 'write') {
+			return $user->hasRight('projet', 'creer') || $user->hasRight('projet', 'all', 'creer');
+		}
+		if ($mode == 'delete') {
+			return $user->hasRight('projet', 'supprimer') || $user->hasRight('projet', 'all', 'supprimer');
+		}
+
+		return false;
+	}
+
+	/**
 	 * 	Return clickable name (with optional picto)
 	 *
 	 * 	@param	int<0,2>	$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
@@ -1455,18 +1522,21 @@ class Project extends CommonObject
 
 		$url = '';
 		if ($option != 'nolink') {
+			$query = ['id' => $this->id];
 			if (preg_match('/\.php$/', $option)) {
-				$url = dol_buildpath($option, 1).'?id='.$this->id;
+				$baseurl = dol_buildpath($option, 1);
 			} elseif ($option == 'task') {
-				$url = DOL_URL_ROOT.'/projet/tasks.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/tasks.php';
 			} elseif ($option == 'preview') {
-				$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/element.php';
 			} elseif ($option == 'eventorganization') {
-				$url = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?projectid='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php';
+				$query = ['projectid' => $this->id];
 			} elseif ($option == 'mailing') {
-				$url = DOL_URL_ROOT.'/comm/mailing/list.php?projectid='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/comm/mailing/list.php';
+				$query = ['projectid' => $this->id];
 			} else {
-				$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
+				$baseurl = DOL_URL_ROOT.'/projet/card.php';
 			}
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
@@ -1474,12 +1544,12 @@ class Project extends CommonObject
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
+				$query['save_lastsearch_values'] = 1;
 			}
-			$add_save_backpagefor = ($save_pageforbacktolist ? 1 : 0);
-			if ($add_save_backpagefor) {
-				$url .= "&save_pageforbacktolist=".urlencode($save_pageforbacktolist);
+			if ($save_pageforbacktolist) {
+				$query['save_pageforbacktolist'] = $save_pageforbacktolist;
 			}
+			$url = dolBuildUrl($baseurl, $query);
 		}
 
 		$linkclose = '';
@@ -2102,9 +2172,11 @@ class Project extends CommonObject
 		if ($tableName == "actioncomm") {
 			$sql .= " SET fk_project = NULL";
 			$sql .= " WHERE id = ".((int) $elementSelectId);
+			$sql .= " AND fk_project = ".((int) $this->id);
 		} else {
 			$sql .= " SET ".$this->db->sanitize($projectfield)." = NULL";
 			$sql .= " WHERE rowid = ".((int) $elementSelectId);
+			$sql .= " AND ".$this->db->sanitize($projectfield)." = ".((int) $this->id);
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);

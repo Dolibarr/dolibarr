@@ -446,7 +446,7 @@ if ($managedfor == 'member' || ($managedfor == 'thirdparty' && isModEnabled('mem
 		$sql .= " AND (d.datefin IS NULL)";
 	}
 	if ($search_filter == 'waitingsubscription') {
-		$sql .= " AND (d.datefin IS NULL AND t.subscription = '1')";
+		$sql .= " AND (d.datefin IS NULL AND dty.subscription = '1')";
 	}
 	if ($search_filter == 'uptodate') {
 		$sql .= " AND (d.datefin >= '".$db->idate($now)."' OR dty.subscription = '0')";
@@ -550,7 +550,7 @@ if ($managedfor == "member") {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'rowid', $linkback);
+		dol_banner_tab($adhstat, 'rowid', $linkback);
 
 		print '<div class="fichecenter">';
 
@@ -559,7 +559,7 @@ if ($managedfor == "member") {
 
 		// Login
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$adhstat->login.'&nbsp;</td></tr>';
 		}
 
 		// Type
@@ -1050,7 +1050,7 @@ while ($i < $imaxinloop) {
 								print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 							}
 						} else {
-							if ($adherent->subscription == 'yes') {
+							if (!empty($adherent->need_subscription)) {
 								print $langs->trans("SubscriptionNotReceived");
 								if ($adherent->status > 0) {
 									print " ".img_warning();
@@ -1081,6 +1081,7 @@ while ($i < $imaxinloop) {
 				}
 			}
 		}
+
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook

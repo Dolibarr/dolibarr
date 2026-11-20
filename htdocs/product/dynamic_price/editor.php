@@ -154,7 +154,7 @@ if ($action == 'delete' && $usercancreate) {
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', '', 'mod-product page-dynamic_price_editor');
+llxHeader("", $langs->trans("CardProduct".$product->type), '', '', 0, 0, '', '', '', 'mod-product page-dynamic_price_editor');
 
 print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 
@@ -208,7 +208,7 @@ print '<span id="back" class="butAction">'.$langs->trans("GoBack").'</span>';
 if ($eid == 0) {
 	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
 } else {
-	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&tab='.$tab.'&eid='.$eid.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
+	print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&tab='.$tab.'&eid='.$eid.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 }
 print '</div>';
 

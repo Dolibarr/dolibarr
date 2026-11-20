@@ -214,7 +214,7 @@ class Tasks extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -878,7 +878,6 @@ class Tasks extends DolibarrApi
 		unset($object->country_code);
 
 		unset($object->weekWorkLoad);
-		unset($object->weekWorkLoad);
 
 		//unset($object->lines);            // for task we use timespent_lines, but for project we use lines
 
@@ -937,7 +936,6 @@ class Tasks extends DolibarrApi
 		unset($object->country_id);
 		unset($object->country_code);
 
-		unset($object->weekWorkLoad);
 		unset($object->weekWorkLoad);
 
 		unset($object->actiontypecode);

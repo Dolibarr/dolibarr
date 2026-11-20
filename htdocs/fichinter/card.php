@@ -78,6 +78,7 @@ $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
@@ -106,6 +107,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
 		$ret = $object->fetch_thirdparty();
 	}
 	if ($ret < 0) {
@@ -417,7 +419,7 @@ if (empty($reshook)) {
 												$outputlangs = new Translate("", $conf);
 												$outputlangs->setDefaultLang($newlang);
 											}
-											$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
+											$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
 										} else {
 											$prod->fetch($lines[$i]->fk_product);
 											$label = $lines[$i]->product_label;
@@ -461,7 +463,7 @@ if (empty($reshook)) {
 									$desc .= '<br>';
 									$unit_label = '';
 									if ($lines[$i]->fk_unit) {
-										$langs->load('measuring_units');
+										$langs->load('other');
 										$unit_label = $langs->trans($lines[$i]->getLabelOfUnit('short'));
 									}
 									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.($unit_label ? ' '.$unit_label : '').')';
@@ -585,6 +587,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1151,6 +1154,9 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
 	print dol_get_fiche_head([]);
 
@@ -1192,7 +1198,7 @@ if ($action == 'create') {
 	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
-		$langs->load("project");
+		$langs->load("projects");
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
@@ -1397,6 +1403,7 @@ if ($action == 'create') {
 			'name' 		=> 'signed_status',
 			'select_show_empty' => 0,
 			'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
+			'morecss'	=> 'minwidth200',
 			'values'	=> $object->getSignedStatusLocalisedArray()
 		];
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $text, 'confirm_sign', $formquestion, 0, 1);
@@ -1944,7 +1951,7 @@ if ($action == 'create') {
 				// Date intervention
 				print '<td class="center nowrap">';
 				$now = dol_now();
-				$timearray = dol_getdate($now);
+				$timearray = dol_getdate($now + getDolGlobalInt('FICHINTER_DEFAULT_START', 0));
 				if (!GETPOSTINT('diday')) {
 					if (getDolGlobalInt('FICHINTER_DATE_WITHOUT_HOUR')) {
 						$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
@@ -1968,7 +1975,8 @@ if ($action == 'create') {
 					if (getDolGlobalString('INTERVENTION_ADDLINE_FREEDUREATION')) {
 						$selectmode = 'text';
 					}
-					$form->select_duration('duration', (!GETPOSTINT('durationhour') && !GETPOSTINT('durationmin')) ? 3600 : (60 * 60 * GETPOSTINT('durationhour') + 60 * GETPOSTINT('durationmin')), 0, $selectmode);
+					$defaultDuration = getDolGlobalInt('FICHINTER_DEFAULT_DURATION', 3600);
+					$form->select_duration('duration', (!GETPOSTINT('durationhour') && !GETPOSTINT('durationmin')) ? $defaultDuration : (60 * 60 * GETPOSTINT('durationhour') + 60 * GETPOSTINT('durationmin')), 0, $selectmode);
 				}
 				print '</td>';
 
@@ -2144,7 +2152,7 @@ if ($action == 'create') {
 
 				// Clone
 				if ($permissiontoadd) {
-					print '<div class="inline-block divButAction"><a class="butAction butActionClone" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=ficheinter">'.$langs->trans("ToClone").'</a></div>';
+					print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=ficheinter', '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 				}
 
 				// Cancel fichinter
@@ -2158,13 +2166,18 @@ if ($action == 'create') {
 
 				// Delete
 				print '<div class="inline-block divButAction">';
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $permissiontodelete);
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
 				print '</div>';
 			}
 		}
 	}
 
 	print '</div>';
+
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 
 	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -2213,12 +2226,6 @@ if ($action == 'create') {
 		$somethingshown = $formactions->showactions($object, 'fichinter', $socid, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for thirdparty
 
 		print '</div></div>';
-	}
-
-
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
 	}
 
 	// Presend form

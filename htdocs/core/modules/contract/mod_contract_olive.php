@@ -38,6 +38,11 @@ class mod_contract_olive extends ModelNumRefContracts
 	public $name = 'Olive';
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position
+	 */
+	public $position = 20;
+
 
 	/**
 	 *	Constructor

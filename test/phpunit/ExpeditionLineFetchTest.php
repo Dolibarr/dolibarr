@@ -13,16 +13,13 @@
  * \brief      Unit tests for shipment line loading.
  */
 
-// These unit tests need no configured Dolibarr installation or database connection.
-if (!defined('DOL_DOCUMENT_ROOT')) {
-	define('DOL_DOCUMENT_ROOT', dirname(__FILE__).'/../../htdocs');
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
 }
-if (!defined('DOL_DATA_ROOT')) {
-	define('DOL_DATA_ROOT', sys_get_temp_dir());
-}
-if (!defined('MAIN_DB_PREFIX')) {
-	define('MAIN_DB_PREFIX', 'llx_');
-}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+
+// These unit tests need no database connection.
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -35,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
  */
-class ExpeditionLineFetchTest extends \PHPUnit\Framework\TestCase
+class ExpeditionLineFetchTest extends CommonClassTest
 {
 	/** @var Conf|null Original configuration */
 	private $savedConf;
@@ -92,6 +89,15 @@ class ExpeditionLineFetchTest extends \PHPUnit\Framework\TestCase
 			'qty' => 2,
 			'rang' => 1,
 			'extraparams' => '{"source":"test"}',
+			// Product columns joined by fetch_lines_free()
+			'product_ref' => 'PRODUCT7',
+			'product_label' => 'Product 7',
+			'fk_product_type' => 0,
+			'product_barcode' => null,
+			'weight' => 2,
+			'weight_units' => 0,
+			'volume' => null,
+			'volume_units' => null,
 		);
 	}
 
@@ -145,6 +151,7 @@ class ExpeditionLineFetchTest extends \PHPUnit\Framework\TestCase
 		$row = $this->createLineRow(3);
 		$unassignedRow = $this->createLineRow(null);
 		$unassignedRow->rowid = 43;
+		$unassignedRow->fk_parent = null;
 		$unassignedRow->element_type = 'shipping';
 		$unassignedRow->fk_element = null;
 		$unassignedRow->fk_elementdet = null;
@@ -165,10 +172,14 @@ class ExpeditionLineFetchTest extends \PHPUnit\Framework\TestCase
 			$line = $shipment->lines[$index];
 			$this->assertSame($expected->rowid, $line->id);
 			$this->assertSame($expected->fk_product, $line->fk_product);
+			$this->assertSame($expected->fk_parent, $line->fk_parent);
 			$this->assertSame($expected->fk_entrepot, $line->entrepot_id);
 			$this->assertSame($expected->fk_entrepot, $line->fk_entrepot);
 			$this->assertSame($expected->element_type, $line->element_type);
 			$this->assertSame($expected->fk_elementdet, $line->fk_elementdet);
+			$this->assertSame($expected->qty, $line->qty_shipped);
+			$this->assertSame($expected->product_ref, $line->product_ref);
+			$this->assertSame($expected->weight, $line->weight);
 		}
 	}
 

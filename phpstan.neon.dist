@@ -46,6 +46,7 @@ parameters:
 			- htdocs/includes/php-iban/*
 			- htdocs/includes/phpoffice/*
 			- htdocs/includes/printipp/*
+			- htdocs/includes/report-uri/*
 			- htdocs/includes/Psr/*
 			- htdocs/includes/restler/*
 			- htdocs/includes/sabre/*
@@ -90,7 +91,6 @@ parameters:
 		- '#in empty\(\) is not falsy#'
 		- '#in isset\(\) is not nullable#'
 		- '#is always#'
-		- '#Function json_encode invoked with 2 parameters, 1 required#'
 		- '#Loose comparison using#'
 	internalErrorsCountLimit: 50
 	cache:

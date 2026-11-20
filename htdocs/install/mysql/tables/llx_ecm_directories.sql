@@ -29,7 +29,7 @@ CREATE TABLE llx_ecm_directories
   cachenbofdoc		integer NOT NULL DEFAULT 0,
   fullpath    		varchar(750),
   extraparams		varchar(255),					-- for stock other parameters with json format
-  date_c			datetime,
+  date_creation	datetime,
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_c			integer,
   fk_user_m			integer,

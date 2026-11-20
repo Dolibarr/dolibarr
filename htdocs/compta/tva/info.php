@@ -51,7 +51,7 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
+$result = restrictedArea($user, 'tax', $id, 'tva', 'charges');
 
 
 /*

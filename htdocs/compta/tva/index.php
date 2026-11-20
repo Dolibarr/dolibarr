@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
+$langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "products", "trips", "admin"));
 
 $now = dol_now();
 
@@ -272,7 +272,7 @@ report_header($name, '', $period, $periodlink, $description, $builddate, $export
 
 print '<br>';
 
-if ($refresh === true) {
+if ($refresh) {
 	print '<div class="fichecenter"><div class="fichethirdleft">';
 
 	print load_fiche_titre($langs->trans("VATSummary"), '', '');

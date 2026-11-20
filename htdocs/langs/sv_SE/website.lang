@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - website
 Shortname=Kod
 WebsiteName=Webbplatsens namn
-WebsiteSetupDesc=Skapa här de webbplatser du vill använda. Gå sedan till menyn webbplatser för att redigera dem.
+WebsiteSetupDesc=Create here the websites you wish to use. Then go to menu Websites to edit them.
 DeleteWebsite=Ta bort webbplats
 ConfirmDeleteWebsite=Är du säker på att du vill ta bort den här webbplatsen? Alla sidor och innehåll tas också bort. Filerna som laddas upp (som till mediekatalogen, ECM-modulen, ...) kommer att finnas kvar.
 WEBSITE_TYPE_CONTAINER=Typ av sida / container
@@ -17,8 +17,8 @@ WEBSITE_ROBOT=Robotfil (robots.txt)
 WEBSITE_HTACCESS=Webbsida. Htaccess-fil
 WEBSITE_MANIFEST_JSON=Webbplats manifest.json-fil
 WEBSITE_KEYWORDSDesc=Använd ett komma för att separera värden
-EnterHereReadmeInformation=Ange en beskrivning av webbplatsen. Om du distribuerar din webbplats som en mall kommer filen att inkluderas i temptate-paketet.
-EnterHereLicenseInformation=Ange här LICENSEN för koden för webbplatsen. Om du distribuerar din webbplats som en mall kommer filen att inkluderas i temptate-paketet.
+EnterHereReadmeInformation=Enter here a description of the website. If you distribute your website as a template, the file will be included in the template package.
+EnterHereLicenseInformation=Enter here the LICENSE of the code of the website. If you distribute your website as a template, the file will be included in the template package.
 HtmlHeaderPage=HTML-rubrik (endast för den här sidan)
 PageNameAliasHelp=Namn eller alias på sidan. <br> Detta alias används också för att skapa en SEO-URL när webbplatsen springer från en virtuell värd på en webbserver (som Apacke, Nginx, ...). Använd knappen "<strong> %s </strong>" för att redigera detta alias.
 EditTheWebSiteForACommonHeader=Obs! Om du vill definiera en personlig rubrik för alla sidor, redigera rubriken på sidnivån istället för på sidan / behållaren.
@@ -51,12 +51,12 @@ ToDeployYourWebsiteOnLiveYouHave3Solutions=För att driftsätta den här webbpla
 SetHereVirtualHost= <u> Use with Apache/NGinx/... </u>  <br> Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on <br>  <strong> %s </strong>
 ExampleToUseInApacheVirtualHostConfig=Exempel att använda i Apache virtuell värdinställning:
 YouCanAlsoTestWithPHPS=<u>Använd med PHP-inbäddad server</u><br>I utvecklingsmiljön kanske du föredrar att testa webbplatsen med den inbäddade PHP-webbservern genom att köra
-YouCanAlsoDeployToAnotherWHP=<u>Kör din webbplats inuti en Dolibarr webbhotellleverantör</u><br>Om du inte har en webbserver som Apache eller NGinx tillgänglig på internet kan du exportera och importera din webbplats till en annan Dolibarr-instans som tillhandahålls av en annan Dolibarr-webbhotellleverantör som erbjuder fullständig integration med webbplatsmodulen. Du hittar en lista över några Dolibarr-hostingleverantörer på <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on the internet, you can export and import your web site to another Dolibarr instance provided by another Dolibarr hosting provider that provides full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Kontrollera också att den virtuella värdanvändaren (till exempel www-data) har <strong> %s </strong>-behörigheter för filer till <br><strong>%s</strong>
 ReadPerm=Läsa
 WritePerm=Skriva
 TestDeployOnWeb=Test / distribuera på webben
-PreviewSiteServedByWebServer=<u> Förhandsgranska %s i en ny flik. </u> <br> <br> %s kommer att serveras av en extern webbserver (som Apache, Nginx, IIS). Du måste installera och konfigurera den här servern innan du pekar på katalogen: <br> <strong> %s </strong> <br> URL betjänad av extern server: <br> <strong> %s </strong>
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before pointing to the directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
 PreviewSiteServedByDolibarr=<u>Förhandsgranska %s i en ny flik.</u><br><br>%s kommer att hanteras av Dolibarr-servern så den behöver inte installera någon extra webbserver (som Apache, Nginx, IIS).<br>Det obekvämliga är att webbadresserna till sidorna inte är användarvänliga och börjar med sökvägen till din Dolibarr.<br>URL som serveras av Dolibarr:<br><strong>%s</strong><br><br>För att driftsätta eller testa med din egen externa webbserver (som Apache, Nginx, Lighttp) använd länken "%s".
 VirtualHostUrlNotDefined=URL för den virtuella värd som serveras av extern webbserver som inte definierats
 NoPageYet=Inga sidor ännu
@@ -65,12 +65,13 @@ SyntaxHelp=Hjälp med specifika syntaxtips
 YouCanEditHtmlSourceckeditor=Du kan redigera HTML-källkod med knappen "Källa" i redigeraren.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Du kan inkludera PHP-kod i den här källkoden med hjälp av taggarna <strong>&lt;?php ?&gt;</strong>. Följande globala variabler är tillgängliga: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Du kan också inkludera innehåll från en annan sida/behållare med följande syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Du kan göra en omdirigering till en annan sida/behållare med följande syntax (Obs: skriv inte ut något innehåll före en omdirigering):<br><strong>&lt;?php omdirigeraTillBehållare('alias_för_behållaren_att_omdirigera_till'); ?&gt;</strong><br>Du kan också göra en omdirigering med GET-parametrar:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> För att lägga till en länk till en annan sida, använd syntaxen:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;minlänk&lt;a&gt;</strong><br><br>
 YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
-YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> För att inkludera en <strong>länk för att ladda ner</strong> en fil som lagrats i katalogen <strong>dokument</strong>, använd <strong>document.php</strong> wrapper:<br>Exempel, för en fil i documents/ecm (måste loggas), är syntaxen:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>För en fil till dokument/media (öppen katalog för allmän åtkomst) är syntaxen:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored in the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file in documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file in documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=För en fil som delas med en delningslänk (öppen åtkomst med filens delnings-hashnyckel) är syntaxen:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> För att inkludera en <strong>bild</strong> lagrad i katalogen <strong>media</strong> (katalog öppen för allmänheten), använd den relativa sökvägen som börjar med <strong>/medias</strong>, exempel:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored in the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=För en bild som delas med en delningslänk (fri åtkomst med hjälp av filens delnings-hashnyckel), använd omslutaren:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
-YouCanEditHtmlSource4=För att hämta URL:en till en bild i ett html-innehåll i en artikel, använd<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a HTML content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource5=<br><span class="fa fa-edit paddingright"></span> To let a part of the page be changed with mode <strong>Edit inline</strong>, add the attributes <strong>contenteditable="true"</strong> and <strong>id</strong> to its tag. It must contain no PHP code, only text with formatting tags (bold, color, font size...), links, paragraphs, titles, lists and div, example:<br><strong>&lt;p id="intro" contenteditable="true"&gt;My &lt;b&gt;text&lt;/b&gt;&lt;/p&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Klona sida / behållare
 CloneSite=Klona webbplatsen
@@ -88,6 +89,8 @@ ImportSite=Importera webbsidans mall
 IDOfPage=Sidans id
 Banner=Baner
 BlogPost=Blogginlägg
+PageHeader=Rubrik
+PageFooter=Sidfot
 WebsiteAccount=Webbsida konto
 WebsiteAccounts=Webbsida konton
 AddWebsiteAccount=Skapa webbplatskonto
@@ -102,7 +105,7 @@ YouMustDefineTheHomePage=Du måste först definiera standard startsida
 OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Endast modifiering av HTML-källkod är möjlig när innehåll hämtas från en extern webbplats
 GrabImagesInto=Ta även bilder som finns i css och sidan.
-ImagesShouldBeSavedInto=Bilder ska sparas i katalogen
+ImagesShouldBeSavedInto=Images should be saved in the directory
 WebsiteRootOfImages=Root-katalog för webbplatsbilder
 SubdirOfPage=Underkatalog dedikerad till sidan
 AliasPageAlreadyExists=Alias sida <strong> %s </strong> existerar redan
@@ -119,7 +122,7 @@ NoWebSiteCreateOneFirst=Ingen hemsida har skapats än. Skapa en första.
 GoTo=Gå till
 DynamicPHPCodeContainsAForbiddenInstruction=Du lägger till dynamisk PHP-kod som innehåller PHP-instruktionen '<strong> %s </strong>' som är förbjudet som standard som dynamiskt innehåll (se dolda alternativ WEBSITE_PHP_ALLOW_xxx för att öka listan över tillåtna kommandon).
 NotAllowedToAddDynamicContent=You don't have permission to add or edit dynamic PHP content in websites. Ask permission or just keep code into php tags unmodified.
-NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 int the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support to do it for you.
+NotAllowedToAddDynamicContentDisabledGlobaly=You currently can't add or edit dynamic PHP content in this website (even if you have permission to), because this feature must be first enabled globally by setting the parameter %s=1 into the conf.php file.<br>Edit your conf.php file to add this parameter, or ask your administrator or support team to do it for you.
 ReplaceWebsiteContent=Sök eller ersätt webbplatsinnehåll
 DeleteAlsoJs=Vill du också ta bort alla JavaScript-filer som är specifika för den här webbplatsen?
 DeleteAlsoMedias=Vill du också ta bort alla mediefiler som är specifika för denna webbplats?
@@ -140,10 +143,10 @@ MainLanguage=Modersmål
 OtherLanguages=Andra språk
 UseManifest=Ange en manifest.json-fil
 PublicAuthorAlias=Offentligt alias författare
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Tillgängliga språk definieras i webbplatsegenskaper
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined in website properties
 ReplacementDoneInXPages=Byte sker på %s sidor eller behållare
 RSSFeed=RSS-flöde
-RSSFeedDesc=Du kan få ett RSS-flöde av de senaste artiklarna med typen 'blogpost' med hjälp av denna URL
+RSSFeedDesc=You can get an RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s sida (er) / behållare / regenererade
 RegenerateWebsiteContent=Återskapa cachefiler på webbplatsen
 AllowedInFrames=Tillåtet i ramar
@@ -151,6 +154,7 @@ DefineListOfAltLanguagesInWebsiteProperties=Definiera lista över alla tillgäng
 GenerateSitemaps=Skapa webbplats sitemap.xml-fil
 ConfirmGenerateSitemaps=Om du bekräftar raderar du den befintliga webbplatskartfilen ...
 ConfirmSitemapsCreation=Bekräfta generering av webbplatskarta
+ConfirmSetAsHomePage=Are you sure you want to set the page <b>%s</b> as the home page of the website?
 SitemapGenerated=Sitemap-fil <b> %s </b> genererad
 ImportFavicon=Favicon
 ErrorFaviconType=Favicon måste vara png
@@ -509,3 +513,13 @@ ThisDirectoryIsEmpty=This directory is empty
 WrittenBy=Written by %s
 ImportOfWebsiteTemplateIncludingPHPIsAllowedIf=Import of website templates using dynamic content in PHP is allowed only if $dolibarr_website_allow_custom_php is set to 2 in conf.php.
 ImportOfWebsiteTemplateIncludingPHPIsDisabled=Import of website templates using dynamic content in PHP need to have $dolibarr_website_allow_custom_php set to 1 or 2 in conf.php to be allowed.
+CurrentPageVersion=Current page
+ListOfPageVersions=List of archived versions of page (a backup file of page is created each time you save a change, for example on the HTML source)
+EditInLineAllowedAreas=In mode Edit inline, the tags with contenteditable="true", an id and no PHP code inside can be changed and are saved when you leave them. Text formatting (bold, color, font size...), links, paragraphs, titles and lists are allowed, images and other HTML can only be changed in the HTML source.
+ErrorEditInlineElementNoId=This element has contenteditable="true" but no id, so it can not be edited inline.
+ErrorEditInlineElementNotFound=No element with id %s and contenteditable="true" was found in the source of the page.
+ErrorEditInlineElementNotUnique=The id %s is used by several elements with contenteditable="true" in the source of the page.
+ErrorEditInlineElementWithPhp=The element with id %s contains PHP code in the source of the page, so it can only be changed in the HTML source.
+ErrorEditInlineElementNotAllowedHtml=The element with id %s contains HTML that can not be edited inline (image, form, script, comment, other tags or attributes...), so it can only be changed in the HTML source.
+ErrorEditInlineElementNotPlainText=The element with id %s contains HTML in the source of the page and can only be edited inline as plain text, so it can only be changed in the HTML source.
+ErrorEditInlineContentNotAllowed=The new content of the element with id %s contains HTML tags or attributes that are not allowed, so it was not saved.

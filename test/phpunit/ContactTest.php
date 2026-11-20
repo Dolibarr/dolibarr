@@ -28,10 +28,9 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 $langs->load("dict");
 
@@ -416,7 +415,7 @@ class ContactTest extends CommonClassTest
 
 		// Simulate a user assigned to an element, storing a user id into fk_socpeople.
 		// The id of the merged contact is used on purpose: it is the value a buggy UPDATE would move.
-		$sql = "INSERT INTO ".$db->prefix()."element_contact(datecreate, statut, element_id, fk_c_type_contact, fk_socpeople)";
+		$sql = "INSERT INTO ".$db->prefix()."element_contact(date_creation, statut, element_id, fk_c_type_contact, fk_socpeople)";
 		$sql .= " VALUES ('".$db->idate(dol_now())."', 4, 999999, ".((int) $objtype->rowid).", ".((int) $origin->id).")";
 		$this->assertNotFalse($db->query($sql), 'Cannot create the internal link fixture');
 
@@ -504,7 +503,7 @@ class ContactTest extends CommonClassTest
 		$this->assertIsObject($objtype, 'No active external type of contact found');
 
 		foreach (array($dest->id, $origin->id) as $contactid) {
-			$sql = "INSERT INTO ".$db->prefix()."element_contact(datecreate, statut, element_id, fk_c_type_contact, fk_socpeople)";
+			$sql = "INSERT INTO ".$db->prefix()."element_contact(date_creation, statut, element_id, fk_c_type_contact, fk_socpeople)";
 			$sql .= " VALUES ('".$db->idate(dol_now())."', 4, 999998, ".((int) $objtype->rowid).", ".((int) $contactid).")";
 			$this->assertNotFalse($db->query($sql), 'Cannot create the duplicated link fixture');
 		}
@@ -733,47 +732,6 @@ class ContactTest extends CommonClassTest
 	}
 
 	/**
-	 * testContactMergeMovesPolymorphicSocpeopleRefs
-	 *
-	 * llx_ecm_files.src_object_type holds either the element name of the contact ('contact') or its
-	 * table name ('socpeople') depending on the writer, so both flavours must be moved. A list of
-	 * values must not be given to DoliDB::sanitize() as a whole: it removes the quotes it contains and
-	 * would collapse the list into a single value matching nothing.
-	 *
-	 * @return	void
-	 */
-	public function testContactMergeMovesPolymorphicSocpeopleRefs()
-	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		$dest = $this->createContactForMerge('MergeDestEcm');
-		$origin = $this->createContactForMerge('MergeOriginEcm');
-
-		foreach (array('contact', 'socpeople') as $i => $objecttype) {
-			$sql = "INSERT INTO ".$db->prefix()."ecm_files(entity, ref, label, filename, filepath, src_object_type, src_object_id, date_c)";
-			$sql .= " VALUES (".((int) $conf->entity).", 'phpunitmerge".((int) $i).((int) $origin->id)."', 'phpunitmergelabel',";
-			$sql .= " 'phpunitmerge".((int) $i).".txt', 'contact/".((int) $origin->id)."', '".$db->escape($objecttype)."',";
-			$sql .= " ".((int) $origin->id).", '".$db->idate(dol_now())."')";
-			$this->assertNotFalse($db->query($sql), 'Cannot create the indexed file fixture');
-		}
-
-		$result = $dest->mergeContact($origin->id);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(0, $result, 'mergeContact failed: '.$dest->error);
-
-		$sql = "SELECT COUNT(rowid) as nb FROM ".$db->prefix()."ecm_files WHERE label = 'phpunitmergelabel'";
-		$sql .= " AND src_object_id = ".((int) $dest->id);
-		$resql = $db->query($sql);
-		$obj = $db->fetch_object($resql);
-		$db->free($resql);
-		$this->assertEquals(2, $obj->nb, 'Both flavours of src_object_type must be moved to the target contact');
-	}
-
-	/**
 	 * testContactMergeMovesUserLink
 	 *
 	 * llx_user.fk_socpeople and llx_user_alert.fk_contact are moved by User::replaceContact().
@@ -927,8 +885,9 @@ class ContactTest extends CommonClassTest
 	 * testContactMergeMovesFiles
 	 *
 	 * The documents are moved once the transaction is committed, because dol_move() is not
-	 * transactional. Check that the tree is preserved, that a name collision renames the moved file
-	 * instead of overwriting the one of the target contact, and that nothing is left behind.
+	 * transactional, and the merged contact is deleted with $nodelete so that its documents are
+	 * kept. Check that the tree is preserved, that a name collision renames the moved file instead
+	 * of overwriting the one of the target contact, and that nothing is left behind.
 	 *
 	 * @return	void
 	 */

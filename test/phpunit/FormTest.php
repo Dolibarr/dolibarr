@@ -2,6 +2,7 @@
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Joachim Kueter		<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +29,10 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/html.form.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -677,5 +677,258 @@ class FormTest extends CommonClassTest
 		$this->assertStringContainsString('pagination: { more:', $out, 'processResults must tell select2 whether more rows are available');
 
 		unset($conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	}
+
+	/**
+	 * Check filtering, option keys and selection with shared, sales and purchase VAT rates.
+	 *
+	 * @param int|string|null $typevat Requested VAT type, null to omit the argument
+	 * @param int $mode Option key mode
+	 * @param bool $optionsonly Return only options
+	 * @param int[] $expectedids Expected VAT row IDs
+	 * @return void
+	 * @dataProvider loadTvaProvider
+	 */
+	public function testLoadTvaTypes($typevat, $mode, $optionsonly, $expectedids)
+	{
+		global $mysoc;
+
+		$form = $this->createVatForm();
+		$cache = $form->cache_vatrates;
+		$seller = clone $mysoc;
+		$seller->country_code = 'CH';
+		$seller->tva_assuj = 1;
+		$selectedcode = ($typevat == 2 ? 'IPMat' : 'TVADueOPT');
+		if ($typevat === null) {
+			$html = $form->load_tva('tva_tx', '8.1 ('.$selectedcode.')', $seller, null, 0, 0, 1, $optionsonly, $mode);
+		} else {
+			$html = $form->load_tva('tva_tx', '8.1 ('.$selectedcode.')', $seller, null, 0, 0, 1, $optionsonly, $mode, $typevat);
+		}
+
+		$document = new DOMDocument();
+		$document->loadHTML($html);
+		$actualkeys = array();
+		$selectedkeys = array();
+		foreach ($document->getElementsByTagName('option') as $option) {
+			$actualkeys[] = $option->getAttribute('value');
+			if ($option->hasAttribute('selected')) {
+				$selectedkeys[] = $option->getAttribute('value');
+			}
+		}
+		$expectedkeys = array();
+		$expectedselected = '';
+		foreach ($expectedids as $id) {
+			$rate = $cache[$id];
+			$key = ($mode < 0 ? (string) $id : $rate['txtva'].($rate['nprtva'] ? '*' : '').($mode > 0 && $rate['code'] ? ' ('.$rate['code'].')' : ''));
+			$expectedkeys[] = $key;
+			if ($rate['code'] == $selectedcode) {
+				$expectedselected = $key;
+			}
+		}
+		$this->assertSame($expectedkeys, $actualkeys);
+		$this->assertSame(array($expectedselected), $selectedkeys);
+		$this->assertSame(count($expectedids), $form->num);
+		$this->assertSame($optionsonly ? 0 : 1, $document->getElementsByTagName('select')->length);
+		$this->assertSame($cache, $form->cache_vatrates);
+	}
+
+	/**
+	 * Provide all supported VAT types and rendering modes, including an omitted type.
+	 *
+	 * @return array<string,array{0:int|string|null,1:int,2:bool,3:int[]}>
+	 */
+	public function loadTvaProvider()
+	{
+		$cases = array();
+		foreach (array('default' => null, 'all' => 0, 'string-zero' => '0', 'sales' => 1, 'purchases' => 2) as $name => $typevat) {
+			$ids = ($typevat == 1 ? array(1, 2, 3, 4) : ($typevat == 2 ? array(1, 2, 5, 6) : array(1, 2, 3, 4, 5, 6)));
+			foreach (array(0, 1, -1) as $mode) {
+				foreach (array(false, true) as $optionsonly) {
+					$cases[$name.'-'.$mode.'-'.(int) $optionsonly] = array($typevat, $mode, $optionsonly, $ids);
+				}
+			}
+		}
+		return $cases;
+	}
+
+	/**
+	 * Switching VAT types on the same Form must not discard cached rates.
+	 *
+	 * @return void
+	 */
+	public function testLoadTvaReusesAllCachedTypes()
+	{
+		$form = $this->createVatForm();
+		$cache = $form->cache_vatrates;
+		foreach (array(1 => 4, 2 => 4, 0 => 6) as $typevat => $count) {
+			$html = $form->load_tva('tva_tx', '0', null, null, 0, 0, '', true, 1, $typevat);
+			$this->assertSame($count, substr_count($html, '<option '));
+			$this->assertSame($count, $form->num);
+			$this->assertSame($cache, $form->cache_vatrates);
+		}
+	}
+
+	/**
+	 * A dictionary containing only shared rates must behave identically for every type.
+	 *
+	 * @return void
+	 */
+	public function testLoadTvaSharedRates()
+	{
+		$form = $this->createVatForm();
+		$form->cache_vatrates = array_slice($form->cache_vatrates, 0, 2, true);
+		$expected = $form->load_tva('tva_tx', '0', null, null, 0, 0, '', true, 1);
+		foreach (array(0, 1, 2) as $typevat) {
+			$this->assertSame($expected, $form->load_tva('tva_tx', '0', null, null, 0, 0, '', true, 1, $typevat));
+		}
+	}
+
+	/**
+	 * Shared non-recoverable VAT must remain selectable by its numeric rate and NPR flag.
+	 *
+	 * @return void
+	 */
+	public function testLoadTvaSharedNonRecoverableSelection()
+	{
+		$form = $this->createVatForm();
+		foreach (array(0, 1, 2) as $typevat) {
+			$html = $form->load_tva('tva_tx', '2.6', null, null, 0, 1, '', true, 1, $typevat);
+			$document = new DOMDocument();
+			$document->loadHTML($html);
+			$xpath = new DOMXPath($document);
+			$selected = $xpath->query('//option[@selected]');
+			$this->assertSame(1, $selected->length);
+			$this->assertSame('2.6*', $selected->item(0)->getAttribute('value'));
+		}
+	}
+
+	/**
+	 * Sellers not subject to VAT must still be restricted to a disabled zero-rate select.
+	 *
+	 * @return void
+	 */
+	public function testLoadTvaSellerNotSubjectToVat()
+	{
+		global $conf, $mysoc;
+
+		$savedconf = $conf;
+		$conf = clone $conf;
+		$conf->global = clone $conf->global;
+		$conf->global->EXPENSEREPORT_OVERRIDE_VAT = 0;
+		$seller = clone $mysoc;
+		$seller->country_code = 'CH';
+		$seller->tva_assuj = 0;
+		$form = $this->createVatForm();
+		try {
+			foreach (array(0, 1, 2) as $typevat) {
+				$html = $form->load_tva('tva_tx', '0', $seller, null, 0, 0, '', false, 1, $typevat);
+				$document = new DOMDocument();
+				$document->loadHTML($html);
+				$this->assertTrue($document->getElementsByTagName('select')->item(0)->hasAttribute('disabled'));
+				$this->assertSame(1, $document->getElementsByTagName('option')->length);
+				$this->assertSame('0', $document->getElementsByTagName('option')->item(0)->getAttribute('value'));
+			}
+		} finally {
+			$conf = $savedconf;
+		}
+	}
+
+	/**
+	 * testFormMailTemplateTranslatedInRecipientLanguage
+	 *
+	 * The language keys of the subject and of the body of an email template are translated in the language of the recipient,
+	 * also the keys of main.lang and of the language files of the documents.
+	 *
+	 * @return void
+	 */
+	public function testFormMailTemplateTranslatedInRecipientLanguage()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$savmultilangs = getDolGlobalString('MAIN_MULTILANGS');
+		$conf->global->MAIN_MULTILANGS = 1;
+		$db->query("INSERT INTO ".$db->prefix()."c_email_templates (entity, module, type_template, lang, private, label, position, active, topic, content) VALUES (".((int) $conf->entity).", 'facture', 'facture_send', 'en_US', 0, 'TestFormMailLangs', 1, 1, '__(RemainderToPay)__ (__(DateDue)__)', '__(DateDue)__ - __(RemainderToPay)__')");
+		$id = $db->last_insert_id($db->prefix()."c_email_templates");
+
+		$formmail = new FormMail($db);
+		$formmail->param['models'] = 'facture_send';
+		$formmail->param['models_id'] = $id;
+		$formmail->param['langsmodels'] = 'en_US';
+		$formmail->param['returnurl'] = '';
+		$html = $formmail->get_form();
+
+		$conf->global->MAIN_MULTILANGS = $savmultilangs;
+		$db->query("DELETE FROM ".$db->prefix()."c_email_templates WHERE rowid = ".((int) $id));
+
+		$this->assertStringContainsString('value="Remaining unpaid (Due date)"', $html, 'Subject');
+		$this->assertStringContainsString('Due date - Remaining unpaid', $html, 'Body');
+	}
+
+	/**
+	 * testFormconfirmCloseButtonBehavesLikeNo
+	 *
+	 * With useajax=2, the button No reloads the page with confirm=no. Closing the dialog with the close
+	 * button of the title bar must do the same, otherwise the page stays on action=xxx (that may hide
+	 * the action buttons). With useajax=1, the button No only closes the dialog, so nothing is added.
+	 *
+	 * @return void
+	 */
+	public function testFormconfirmCloseButtonBehavesLikeNo()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savajax = $conf->use_javascript_ajax;
+		$savjmobile = $conf->dol_use_jmobile;
+		$conf->use_javascript_ajax = 1;
+		$conf->dol_use_jmobile = 0;
+		$savlayout = $conf->browser->layout ?? null;
+		$conf->browser->layout = 'classic';
+
+		$form = new Form($db);
+		$html2 = $form->formconfirm('card.php?facid=1', 'Title', 'Question', 'confirm_valid', '', 'yes', 2);
+		$html1 = $form->formconfirm('card.php?facid=1', 'Title', 'Question', 'confirm_valid', '', 'yes', 1);
+		$htmlbutton = $form->formconfirm('card.php?facid=1', 'Title', 'Question', 'confirm_valid', '', 'yes', 'mybutton');
+
+		$conf->use_javascript_ajax = $savajax;
+		$conf->dol_use_jmobile = $savjmobile;
+		$conf->browser->layout = $savlayout;
+
+		// useajax=2: the close of the dialog without a choice triggers the button No, that jumps to pageno
+		$this->assertStringContainsString("var pageno='card.php?facid=1&action=confirm_valid&confirm=no';", $html2);
+		$this->assertStringContainsString('beforeClose: function() {', $html2);
+		$this->assertStringContainsString('if ($(this).data("formconfirmchoicedone")) {', $html2);
+		$this->assertStringContainsString('.find(".ui-dialog-buttonpane button").eq(1).trigger("click");', $html2);
+		// Each button sets the flag before it closes the dialog, so it is not handled as a close without choice
+		$this->assertSame(substr_count($html2, '$(this).dialog("close");'), substr_count($html2, '$(this).data("formconfirmchoicedone", 1);'));
+		$this->assertSame(2, substr_count($html2, '$(this).data("formconfirmchoicedone", 1);'));
+
+		// useajax=1 or a button name: the button No does not reload the page, so the close is unchanged
+		$this->assertStringNotContainsString('beforeClose', $html1);
+		$this->assertStringNotContainsString('beforeClose', $htmlbutton);
+	}
+
+	/**
+	 * Build a populated cache without changing the VAT dictionary in the database.
+	 *
+	 * @return Form
+	 */
+	private function createVatForm()
+	{
+		$form = new Form($this->savdb);
+		foreach (array(array('0', '0', '', 0), array('0', '2.6', '', 1), array('1', '8.1', 'TVADue', 0), array('1', '8.1', 'TVADueOPT', 0), array('2', '8.1', 'IPInv', 0), array('2', '8.1', 'IPMat', 0)) as $index => $rate) {
+			$id = $index + 1;
+			$label = $rate[1].'%'.($rate[2] ? ' ('.$rate[2].')' : '');
+			$form->cache_vatrates[$id] = array('rowid' => $id, 'type_vat' => $rate[0], 'txtva' => $rate[1], 'code' => $rate[2], 'nprtva' => $rate[3], 'label' => $label, 'labelpositiverates' => $label);
+		}
+		return $form;
 	}
 }

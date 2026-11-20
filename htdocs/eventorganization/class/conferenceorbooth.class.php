@@ -819,7 +819,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$result = 0;
 
-		$langs->load("eventorganization@eventorganization");
+		$langs->load("eventorganization");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_conferenceorbooth';

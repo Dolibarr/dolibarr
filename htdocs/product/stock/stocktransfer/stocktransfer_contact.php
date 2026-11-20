@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_s
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('facture', 'orders', 'sendings', 'companies', 'stocks'));
+$langs->loadLangs(array('bills', 'orders', 'sendings', 'companies', 'stocks'));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -90,11 +90,7 @@ $permissiondellink = $user->hasRight('stocktransfer', 'stocktransfer', 'write');
 $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-//restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
+restrictedArea($user, 'stocktransfer', $object->id, 'stocktransfer_stocktransfer', 'stocktransfer', 'fk_soc', 'rowid');
 
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
 	accessforbidden();
@@ -171,7 +167,7 @@ if ($object->id > 0) {
 		if (!empty($object->fk_project)) {
 			$morehtmlref .= '<br>';
 			$proj = new Project($db);
-			$proj->fetch($object->fk_project);
+			$proj->fetch((int) $object->fk_project);
 			$morehtmlref .= $proj->getNomUrl(1);
 			if ($proj->title) {
 				$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

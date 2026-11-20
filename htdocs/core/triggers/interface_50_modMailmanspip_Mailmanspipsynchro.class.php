@@ -69,12 +69,14 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 		if ($action == 'CATEGORY_MODIFY' && $object instanceof Categorie) {
+			'@phan-var-force Categorie $object';
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 1;
 
 			// We add subscription if we change category (new category may means more mailing-list to subscribe)
-			// The object in the context is a member, phan can not know it: the call is guarded by method_exists()
+			// The call is guarded by is_object() and method_exists() earlier in the same condition,
+			// but phan cannot infer a type out of the mixed context array.
 			// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 			if (is_object($object->context['linkto']) && method_exists($object->context['linkto'], 'add_to_abo') && $object->context['linkto']->add_to_abo() < 0) {
 				$this->error = $object->context['linkto']->error;
@@ -143,6 +145,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 
 			return $return;
 		} elseif (($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE') && $object instanceof Adherent) {
+			'@phan-var-force Adherent $object';
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 0;

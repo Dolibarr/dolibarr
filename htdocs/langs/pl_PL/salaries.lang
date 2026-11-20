@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=HT paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (z planu kont) używane domyślnie dla „użytkowników” na wynagrodzeniach
@@ -55,8 +56,6 @@ FillFieldFirst=Najpierw wypełnij pole pracownika
 UpdateAmountWithLastSalary=Ustaw kwotę ostatniego wynagrodzenia
 MakeTransferRequest=Złóż wniosek o przeniesienie
 VirementOrder=Żądanie przelewu kredytowego
-WithdrawalReceipt=Polecenie przelewu
-OrderWaiting=Oczekujące zamówienie
 FillEndOfMonth=Koniec miesiąca
 
 # Shortcuts

@@ -28,9 +28,8 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/fichinter/class/fichinter.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fichinter/class/fichinter.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -109,8 +108,8 @@ class FichinterTest extends CommonClassTest
 	 *
 	 * Check that a intervention object can be updated.
 	 *
-	 * @param 	Object	$localobject 	An existing intervention object to update.
-	 * @return 							Intervention object with data fetched and description changed
+	 * @param 	Object		$localobject 	An existing intervention object to update.
+	 * @return 	Fichinter					Intervention object with data fetched and description changed
 	 *
 	 * @depends testFichinterFetch
 	 */
@@ -204,5 +203,185 @@ class FichinterTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		return $result;
+	}
+
+	/**
+	 * testFichinterSetValidSetCloseStatusGuards
+	 *
+	 * setValid() and setClose() must do nothing, and return 0, when the intervention
+	 * does not have a status allowed for the action.
+	 *
+	 * @return	void
+	 */
+	public function testFichinterSetValidSetCloseStatusGuards()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$soc = new Societe($db);
+		$soc->name = "FichinterTest Unittest status guards";
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, $soc->errorsToString());
+
+		$localobject = new Fichinter($db);
+		$localobject->initAsSpecimen();
+		$localobject->socid = $socid;
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, $localobject->errorsToString());
+
+		$check = new Fichinter($db);
+
+		// A draft cannot be closed
+		$localobject->fetch($id);
+		$result = $localobject->setClose($user);
+		$this->assertEquals(0, $result, 'Closing a draft intervention must do nothing');
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $localobject->status, 'In memory status must stay draft');
+		$check->fetch($id);
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $check->status, 'Status in database must stay draft');
+
+		// Draft -> validated -> closed still works
+		$result = $localobject->setValid($user);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+		$result = $localobject->setClose($user);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+		$check->fetch($id);
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $check->status, 'Intervention must be closed');
+		$closedref = $check->ref;
+
+		// A closed intervention cannot be validated
+		$localobject->fetch($id);
+		$result = $localobject->setValid($user);
+		$this->assertEquals(0, $result, 'Validating a closed intervention must do nothing');
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $localobject->status, 'In memory status must stay closed');
+		$this->assertEquals($closedref, $localobject->ref, 'In memory ref must not change');
+		$check->fetch($id);
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $check->status, 'Status in database must stay closed');
+		$this->assertEquals($closedref, $check->ref, 'Ref in database must not change');
+
+		// Closing again does nothing
+		$result = $localobject->setClose($user);
+		$this->assertEquals(0, $result, 'Closing a closed intervention must do nothing');
+
+		$localobject->delete($user);
+	}
+
+	/**
+	 * testFichinterSetDraftStatusGuard
+	 *
+	 * setDraft() must only put back to draft a validated intervention, and must do nothing,
+	 * and return 0, for any other status.
+	 *
+	 * @return	void
+	 */
+	public function testFichinterSetDraftStatusGuard()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$soc = new Societe($db);
+		$soc->name = "FichinterTest Unittest set draft guard";
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, $soc->errorsToString());
+
+		$localobject = new Fichinter($db);
+		$localobject->initAsSpecimen();
+		$localobject->socid = $socid;
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, $localobject->errorsToString());
+
+		$check = new Fichinter($db);
+
+		// A draft is already draft
+		$localobject->fetch($id);
+		$result = $localobject->setDraft($user);
+		$this->assertEquals(0, $result, 'Setting a draft intervention to draft must do nothing');
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $localobject->status, 'In memory status must stay draft');
+
+		// Validated -> draft works
+		$result = $localobject->setValid($user);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+		$result = $localobject->setDraft($user);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $localobject->status, 'In memory status must be draft');
+		$check->fetch($id);
+		$this->assertEquals(Fichinter::STATUS_DRAFT, $check->status, 'Status in database must be draft');
+
+		// A closed intervention cannot be put back to draft
+		$result = $localobject->setValid($user);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+		$result = $localobject->setClose($user);
+		$this->assertGreaterThan(0, $result, $localobject->errorsToString());
+		$localobject->fetch($id);
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $localobject->status, 'Intervention must be closed');
+		$result = $localobject->setDraft($user);
+		$this->assertEquals(0, $result, 'Setting a closed intervention to draft must do nothing');
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $localobject->status, 'In memory status must stay closed');
+		$check->fetch($id);
+		$this->assertEquals(Fichinter::STATUS_CLOSED, $check->status, 'Status in database must stay closed');
+
+		$localobject->delete($user);
+	}
+
+	/**
+	 * testFichinterUpdateExtrafieldError
+	 *
+	 * update() must return an error when the extra fields can not be saved.
+	 *
+	 * @return	void
+	 */
+	public function testFichinterUpdateExtrafieldError()
+	{
+		global $conf,$user,$langs,$db,$extrafields;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+		$soc = new Societe($db);
+		$soc->name = "FichinterTest Unittest update extrafield error";
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, $soc->errorsToString());
+
+		$localobject = new Fichinter($db);
+		$localobject->initAsSpecimen();
+		$localobject->socid = $socid;
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, $localobject->errorsToString());
+		$localobject->fetch($id);
+
+		// Declare, in memory only, an integer extra field so insertExtraFields() refuses a value that is not a number
+		$savextrafields = $extrafields;
+		$extrafields = new ExtraFields($db);
+		$extrafields->attributes[$localobject->table_element] = array(
+			'loaded' => 1,
+			'label' => array('unittestint' => 'Unit test int'),
+			'type' => array('unittestint' => 'int'),
+			'param' => array('unittestint' => ''),
+			'required' => array('unittestint' => 0),
+			'unique' => array('unittestint' => 0),
+			'computed' => array('unittestint' => ''),
+			'emptyonclone' => array('unittestint' => 0),
+		);
+
+		try {
+			$localobject->array_options = array('options_unittestint' => 'not a number');
+			$result = $localobject->update($user);
+		} finally {
+			$extrafields = $savextrafields;
+		}
+
+		$this->assertLessThan(0, $result, 'Update must fail when an extra field has a wrong value');
+		$this->assertNotEmpty($localobject->errors, 'The extra field error must be returned');
+
+		$localobject->array_options = array();
+		$localobject->delete($user);
 	}
 }

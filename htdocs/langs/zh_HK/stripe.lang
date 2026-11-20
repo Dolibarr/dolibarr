@@ -5,7 +5,7 @@ StripeOrCBDoPayment=使用信用卡或 Stripe 支付
 FollowingUrlAreAvailableToMakePayments=以下 URL 可用於向客戶提供用於對 Dolibarr 物件進行付款的頁面
 PaymentForm=支付表單
 WelcomeOnPaymentPage=歡迎使用我們的線上支付服務
-ThisScreenAllowsYouToPay=This screen allow you to make an online payment to %s.
+ThisScreenAllowsYouToPay=This screen allows you to make an online payment to %s.
 ThisIsInformationOnPayment=這是需要支付的資訊
 ToComplete=完成
 YourEMail=用於接收支付確認的電子郵件
@@ -25,7 +25,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=提供無現有對象的任何金額 %s
 ToOfferALinkForOnlinePaymentOnMemberSubscription=為會員訂閱提供 %s 線上付款頁面的網址
 ToOfferALinkForOnlinePaymentOnDonation=為捐款提供 %s 線上付款頁面的網址
 YouCanAddTagOnUrl=您也可以將 url 參數 <b>&tag=value</b> 新增至任何這些 URL（僅對於未連結到物件的付款是必需的），以新增您自己的付款評論標籤。<br>對於沒有現有物件的付款網址，您也可以新增參數<strong>&noidempotency=1</strong>，這樣同一個標籤的同一個連結可以多次使用（有些支付方式如果不加此參數可能會限制每個不同連結的支付次數為1次）
-YouCanEmbedOnWebsite=如果您想將付款頁面整合到Dolibarr網站中，您可以包含以下參數：<b>&ws=website_ref</b>。<br>此外，還有兩個頁面名為<b>付款確定</b>和必須在網站中建立<b> paymentko</b>才能接收線上付款成功或失敗後的重定向。
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful or failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=使用 url 設定 Stripe<b>%s</b>在 Stripe 驗證後自動建立付款。
 AccountParameter=帳戶參數
 UsageParameter=使用參數
@@ -110,3 +110,4 @@ PAYBOX_PBX_RANG=PBX Rang 的值
 PAYBOX_PBX_IDENTIFIANT=PBX ID 的值
 PAYBOX_HMAC_KEY=HMAC 密鑰
 FeatureNotUsedAccordingtoSetup=Feature not used according to your %s setup
+PaymentRecordedButPostPocessingKo=Your payment was recorded by the payment system. However, it appears that our post-payment processing could not be fully completed. We were alerted and will try to solve this soon. We recommend you to not try to pay a second time, and send us a screenshot of this page by email to be sure so we take into account the issue.

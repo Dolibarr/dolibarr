@@ -70,7 +70,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 
 	if (GETPOST('deletephoto')) {
 		$object->photo = '';
-	} elseif (!empty($_FILES['photo']['name'])) {
+	} elseif (!empty($_FILES['photo']['name']) && empty($_FILES['photo']['error'])) {	// A refused upload keeps the current photo
 		$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 	}
 
@@ -110,16 +110,18 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 					}
 				}
 			} else {
-				setEventMessages("ErrorBadImageFormat", null, 'errors');
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			}
 		} else {
 			switch ($_FILES['photo']['error']) {
 				case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 				case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-					$errors[] = "ErrorFileSizeTooLarge";
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
 					break;
 				case 3: //uploaded file was only partially uploaded
-					$errors[] = "ErrorFilePartiallyUploaded";
+					setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 					break;
 			}
 		}
@@ -250,7 +252,7 @@ if ($action == 'edit') {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid" tabindex="-1">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 

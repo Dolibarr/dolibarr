@@ -477,6 +477,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	}
 }
 
+print '<br>';
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
 if ($action == 'edit') {
 	print '<form method="POST" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

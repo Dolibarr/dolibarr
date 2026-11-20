@@ -147,6 +147,10 @@ function init(){
 			}
 			inital_table = $("#<?php echo $tagidfortablednd; ?> .drag").map((_, el) => $(el)[0]).get();
 
+			if (typeof subtotalRefreshRows === 'function') {
+				subtotalRefreshRows();	// The drag and drop may have shown lines of a collapsed block, so we apply the collapsed blocks again
+			}
+
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			console.log("tableDND onDrop");
 			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
@@ -172,9 +176,10 @@ function init(){
 					console.log(roworder, table_element_line, fk_element, element_id, filepath, token);
 					if (reloadpage == 1) {
 						<?php
-						$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
+						$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_string_nohtmltag($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
 						// remove action parameter from URL
 						$redirectURL = preg_replace('/(&|\?)action=[^&#]*/', '', $redirectURL);
+						$redirectURL = dol_sanitizeUrl($redirectURL, 0);
 						?>
 						location.href = <?php echo "'".dol_escape_js($redirectURL)."'"; ?>;
 					}

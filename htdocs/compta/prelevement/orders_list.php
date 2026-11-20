@@ -82,10 +82,12 @@ $object = new BonPrelevement($db);
 $hookmanager->initHooks(array('withdrawalsreceiptslist'));
 
 $usercancreate = $user->hasRight('prelevement', 'bons', 'creer');
-$permissiontodelete = $user->hasRight('prelevement', 'creer');
+$permissiontodelete = $user->hasRight('prelevement', 'bons', 'creer');
+$permissiontocreditdebit = $user->hasRight('prelevement', 'bons', 'credit');
 if ($type == 'bank-transfer') {
 	$usercancreate = $user->hasRight('paymentbybanktransfer', 'create');
 	$permissiontodelete = $user->hasRight('paymentbybanktransfer', 'create');
+	$permissiontocreditdebit = $user->hasRight('paymentbybanktransfer', 'debit');
 }
 
 // Security check
@@ -188,6 +190,80 @@ if (($massaction == "delete" || ($action == 'delete' && $confirm == 'yes')) && $
 	}
 	$massaction = '';
 }
+
+// Classify debited (at date of transfer) - bank transfer only
+// All or nothing: all selected receipts are checked before processing any of them
+if ($massaction == 'classdebited' && $type == 'bank-transfer' && $permissiontocreditdebit) {
+	$TMsg = array();
+	$objecttmp = new BonPrelevement($db);
+	$nbok = 0;
+
+	// First pass: check all selected receipts can be processed, no record is modified during this pass
+	$arrayofobjectids = array();
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			if ($objecttmp->type != 'bank-transfer' || $objecttmp->status != BonPrelevement::STATUS_TRANSFERED || empty($objecttmp->date_trans)) {
+				$langs->load("errors");
+				$error++;
+				$TMsg[] = '<div class="error">'.$langs->trans('ErrorOnlyTransferredStatusCanBeDebitedInMassAction', $objecttmp->ref).'</div><br>';
+				continue;
+			}
+			$arrayofobjectids[] = $objecttmp->id;
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	// Second pass: process all receipts into a global transaction, all or nothing.
+	// Note: set_infocredit() calls begin()/commit()/rollback() but the database layer
+	// manages nested transactions, so the real COMMIT or ROLLBACK is done only at the end of this loop.
+	if (empty($error)) {
+		$db->begin();
+		foreach ($arrayofobjectids as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				$result = $objecttmp->set_infocredit($user, $objecttmp->date_trans, ($objecttmp->checkIfSalaryBonPrelevement() ? 'salary' : ''));
+				if ($result < 0) {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				} else {
+					$nbok++;
+				}
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+		if (empty($error)) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+
+	if (empty($error)) {
+		// Message for elements well updated
+		if ($nbok > 0) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		}
+
+		// Message for elements which can't be updated
+		if (!empty($TMsg)) {
+			sort($TMsg);
+			setEventMessages('', array_unique($TMsg), 'warnings');
+		}
+	} elseif (!empty($TMsg)) {
+		// Validation failed, no record was modified
+		sort($TMsg);
+		setEventMessages('', array_unique($TMsg), 'errors');
+	}
+	$massaction = '';
+}
 $objectclass = 'BonPrelevement';
 $objectlabel = 'BonPrelevement';
 if ($type == 'bank-transfer') {
@@ -214,7 +290,7 @@ if ($type == 'bank-transfer') {
 $help_url = '';
 
 
-$sql = "SELECT p.rowid, p.ref, p.amount, p.statut as status, p.date_trans, p.method_trans, p.date_credit, p.fk_bank_account, p.datec, p.tms as datem";
+$sql = "SELECT p.rowid, p.ref, p.amount, p.statut as status, p.type, p.date_trans, p.method_trans, p.date_credit, p.fk_bank_account, p.datec, p.tms as datem";
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -311,6 +387,9 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
+if ($type == 'bank-transfer' && !empty($permissiontocreditdebit)) {
+	$arrayofmassactions['classdebited'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ClassifyDebitedAtDateOfTransfer");
+}
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predeletedraft'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
@@ -461,6 +540,7 @@ while ($i < $imaxinloop) {
 	$directdebitorder->date_credit = $db->jdate($obj->date_credit);
 	$directdebitorder->amount = $obj->amount;
 	$directdebitorder->status = $obj->status;
+	$directdebitorder->type = $obj->type;
 
 	$object = $directdebitorder;
 

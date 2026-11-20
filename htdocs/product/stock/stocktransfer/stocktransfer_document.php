@@ -86,9 +86,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//restrictedArea($user, 'stocktransfer', $object->id);
+restrictedArea($user, 'stocktransfer', $object->id, 'stocktransfer_stocktransfer', 'stocktransfer', 'fk_soc', 'rowid');
 
 $permissiontoadd = $user->hasRight('stocktransfer', 'stocktransfer', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 

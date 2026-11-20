@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2020	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  * Copyright (C) 2026       Jose Martinez       <jose.martinez@pichinov.com>
@@ -563,8 +563,9 @@ if (empty($reshook)) {
 		$result = $object->newCloneMass($toselect, $journal_code, $massdate);
 		if ($result == -1) {
 			$error += 1;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		if ($error) {
+		if (!$error) {
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit;
@@ -578,6 +579,7 @@ if (empty($reshook)) {
 		$result = $object->assignAccountMass($toselect, (int) $account);
 		if ($result == -1) {
 			$error += 1;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		if (!$error) {
 			$db->commit();
@@ -593,6 +595,7 @@ if (empty($reshook)) {
 		$result = $object->newReturnAccount($toselect, $journal_code, $massdate);
 		if ($result == -1) {
 			$error += 1;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		if (!$error) {
 			$db->commit();
@@ -1537,6 +1540,10 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$objectstatic = new AccountLine($db);
 			$objectstatic->fetch($line->fk_doc);
+		} elseif ($line->doc_type == 'stock_mouvement') {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+			$objectstatic = new MouvementStock($db);
+			$objectstatic->fetch($line->fk_doc);
 		} else {
 			// Other type
 		}
@@ -1551,6 +1558,8 @@ while ($i < min($num, $limit)) {
 			print $objectstatic->getNomUrl(1);
 			$bank_ref = strstr($line->doc_ref, '-');
 			print ' <span class="classfortooltip" title="'.dol_escape_htmltag($line->doc_ref).'">'.dol_escape_htmltag($bank_ref).'</span>';
+		} elseif ($line->doc_type == 'stock_mouvement' && is_object($objectstatic) && $objectstatic->id > 0) {
+			print $objectstatic->getNomUrl(1, 'movements').' '.dol_escape_htmltag($line->doc_ref);
 		} else {
 			print $line->doc_ref;
 		}

@@ -103,7 +103,7 @@ if ($action == 'confirm_rejet' && $permissiontoadd) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		} elseif ($daterej > dol_now()) {
 			$error++;
-			$langs->load("error");
+			$langs->load("errors");
 			setEventMessages($langs->transnoentities("ErrorDateMustBeBeforeToday"), null, 'errors');
 		}
 
@@ -168,7 +168,7 @@ if ($id) {
 	$lipre = new LignePrelevement($db);
 	$bon = null;
 
-	if ($lipre->fetch($id) >= 0) {
+	if ($lipre->fetch($id) == 0) {	// fetch() returns 0 when found
 		$bon = new BonPrelevement($db);
 		$bon->fetch($lipre->bon_rowid);
 
@@ -217,7 +217,7 @@ if ($id) {
 		print '</table>';
 		print dol_get_fiche_end();
 	} else {
-		dol_print_error($db);
+		recordNotFound('', 0);
 	}
 
 	// Form to record a reject

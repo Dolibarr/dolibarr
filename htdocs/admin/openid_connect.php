@@ -190,6 +190,7 @@ print $urlforwikidoc;
 print dol_get_fiche_end();
 
 
+print '<div class="neutral">';
 print $langs->trans("EnableOpenIDConnectAuthentication");
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('MAIN_AUTHENTICATION_OIDC_ON', array(), null, 0, 0, 1);
@@ -200,8 +201,9 @@ if (!empty($conf->use_javascript_ajax)) {
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_MAIN_AUTHENTICATION_OIDC_ON&token=' . newToken() . '">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 	}
 }
+print '</div>';
 
-print '<br><br>';
+print '<br>';
 
 
 if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
@@ -209,7 +211,7 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 		$langs->load("errors");
 		print info_admin($langs->trans("ErrorOpenIDSetupConfNotComplete") . ':  ' . $urlforwikidoc, 0, 0, 1, 'warning');
 	} else {
-		print info_admin('In conf.php file: dolibarr_main_authentication is ' . $dolibarr_main_authentication);
+		print info_admin($langs->trans("OpenIDSetupConfOk", 'conf.php', 'dolibarr_main_authentication').' : <b>' . $dolibarr_main_authentication).'</b>';
 	}
 
 	print '<br>';
@@ -217,7 +219,7 @@ if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_ON')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="tagtable noborder liste nobottomiftotal">';
 	print '<tr class="liste_titre">';
-	print '<th class="liste_titre" colspan="3">' . $langs->trans("Parameters") . '</th>' . "\n";
+	print '<th class="liste_titre" colspan="3">' . $langs->trans("AutomaticSetup") . '</th>' . "\n";
 	print "</tr>\n";
 
 	print '<tr class="oddeven">' . "\n";

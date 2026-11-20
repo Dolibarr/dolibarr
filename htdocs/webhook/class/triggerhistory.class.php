@@ -560,7 +560,7 @@ class TriggerHistory extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$baseurl = DOL_DOCUMENT_ROOT.'/webhook/triggerhistory_card.php';
+		$baseurl = DOL_URL_ROOT.'/webhook/triggerhistory_card.php';
 		$query = ['id' => $this->id];
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not

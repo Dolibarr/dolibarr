@@ -395,6 +395,22 @@ class Tva extends CommonObject
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return if a VAT declaration can be deleted: not once a payment exists, as for invoices
+	 *
+	 *  @return    int         Return integer <=0 if no, >0 if yes
+	 */
+	public function is_erasable()
+	{
+		// phpcs:enable
+		$totalpaid = $this->getSommePaiement();
+		if ($totalpaid < 0) {
+			return -1;
+		}
+		return (empty($totalpaid) ? 1 : 0);
+	}
+
 	/**
 	 *  Delete object in database
 	 *
@@ -406,6 +422,11 @@ class Tva extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
+
+		if ($this->is_erasable() <= 0) {
+			$this->error = 'ErrorRecordHasChildren';
+			return -1;
+		}
 
 		// Call trigger
 		$result = $this->call_trigger('TVA_DELETE', $user);
@@ -909,7 +930,7 @@ class Tva extends CommonObject
 		global $langs;
 
 		// Load translation files required by the page
-		$langs->loadLangs(array("customers", "bills"));
+		$langs->loadLangs(array("companies", "bills"));
 
 		// We reinit status array to force to redefine them because label may change according to properties values.
 		$this->labelStatus = array();
