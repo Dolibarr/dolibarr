@@ -336,7 +336,7 @@ class modQuickMemo extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu' => 'tools',
 			'leftmenu' => 'memo',
-			'url' => '/quickmemo/memo_list.php',
+			'url' => '/quickmemo/memo_list.php?leftmenu=memo',
 			'langs' => 'quickmemo',
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("quickmemo")',

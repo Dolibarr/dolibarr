@@ -144,14 +144,23 @@ if ($what == 'mysql') {
 	}
 
 	if ($cmddump) {
-		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump, 'chaine', 0, '', 0);
+		// Validate the command and check it is an allowed command before saving it
+		$cmddump = $utils->checkDumpCommand($cmddump);
 	}
 
-	$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
+	if ($cmddump) {
+		dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump, 'chaine', 0, '', 0);
+	} elseif ($utils->error) {
+		$errormsg = $utils->error;
+	}
 
-	$errormsg = $utils->error;
-	$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
-	$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
+	if (!$errormsg) {
+		$result = $utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
+
+		$errormsg = $utils->error;
+		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
+		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
+	}
 }
 
 // MYSQL NO BIN
@@ -168,6 +177,14 @@ if ($what == 'postgresql') {
 	$cmddump = GETPOST("postgresqldump", 'none'); // Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
 	$cmddump = dol_sanitizePathName($cmddump);
 	$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
+
+	// Validate the command and check it is an allowed command before saving it
+	if ($cmddump) {
+		$cmddump = $utils->checkDumpCommand($cmddump);
+		if ($cmddump === '') {
+			$errormsg = $utils->error;
+		}
+	}
 
 	/* Not required, the command is output on screen but not ran for pgsql
 	if (!empty($dolibarr_main_restrict_os_commands))

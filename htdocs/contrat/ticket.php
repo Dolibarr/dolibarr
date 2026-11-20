@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
  * @var User $user
  */
 
-$langs->loadLangs(array('companies', 'contracts', 'tickets'));
+$langs->loadLangs(array('companies', 'contracts', 'ticket'));
 
 $socid = GETPOSTINT('socid');
 $id = GETPOSTINT('id');
