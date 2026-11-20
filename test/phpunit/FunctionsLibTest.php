@@ -321,6 +321,41 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
 		$this->assertEquals(" AND ((t.ref LIKE 'SO-%'))", $sql);
 
+		// Test that a forbidden field used as the right operand (unquoted, so a field name) is also forbidden
+		$filter = "(t.description:<:pass_crypted)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.description:>=:PASS_CRYPTED)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.description:in:'a',api_key)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.label:<:salary)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that SQL keywords returning server information are forbidden on both sides
+		$filter = "(t.description:=:CURRENT_USER)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(session_user:like:'dol%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that a quoted string or a non forbidden field is still allowed as the right operand
+		$filter = "(t.description:<:'pass_crypted')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND ((t.description < 'pass_crypted'))", $sql);
+
+		$filter = "(t.date_end:>:date_start)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND ((t.date_end > date_start))", $sql);
+
 
 		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
 

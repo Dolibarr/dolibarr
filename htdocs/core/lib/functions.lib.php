@@ -16430,8 +16430,16 @@ function dolForgeSQLCriteriaCallback($matches)
 	$newforbiddenfields[] = 'pass_crypted';
 	$newforbiddenfields[] = 'pass_temp';
 	$newforbiddenfields[] = 'api_key';
+	// SQL keywords that return server information without parenthesis (mysql/mariadb/pgsql), so they could be guessed by comparison
+	$newforbiddenfields[] = 'current_user';
+	$newforbiddenfields[] = 'session_user';
+	$newforbiddenfields[] = 'system_user';
+	$newforbiddenfields[] = 'user';
+	$newforbiddenfields[] = 'current_role';
+	$newforbiddenfields[] = 'current_schema';
+	$newforbiddenfields[] = 'current_catalog';
 
-	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+	$operand =preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
 	// An operand with more than one level of prefix (example: dbprefix.table.field) is not valid into a USF criteria,
 	// we neutralize it like a forbidden field to avoid any leak or SQL error based on db prefix existence
@@ -16487,6 +16495,10 @@ function dolForgeSQLCriteriaCallback($matches)
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest (should be removed in a future as it allows blind SQL injection)
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'
+				// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
+				if (in_array(dol_strtolower($tmpelemarray[$tmpkey]), $newforbiddenfields)) {
+					return '1=1';
+				}
 			}
 		}
 		$tmpescaped2 .= implode(',', $tmpelemarray);
@@ -16512,6 +16524,10 @@ function dolForgeSQLCriteriaCallback($matches)
 			$tmpescaped = (float) $tmpescaped;
 		} else {
 			$tmpescaped = preg_replace('/[^a-z0-9_]/i', '', $tmpescaped);	// it can be a name of field or a substitution variable like '__NOW__'
+			// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
+			if (in_array(dol_strtolower($tmpescaped), $newforbiddenfields)) {
+				return '1=1';
+			}
 		}
 	}
 
