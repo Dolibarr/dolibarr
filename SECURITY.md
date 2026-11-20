@@ -20,13 +20,19 @@ To report a vulnerability, for a private report, you can:
 -->
 
 - Or send an email to security@dolibarr.org with clear textual description of the report (TXT or MD format, do not submit archive, audio or video files) along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary.
-  In such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager. A mention of your name/pseudo may be added in the commit message (no guarantee for this, our project is maintain by volunteers and they may forgot it sometimes).
+  In such a case, the issue may be created by the developer that will fix the vulnerability or the Release Manager. 
+  
+CREDIT:
+  
+A mention of your name/pseudo may be added in the commit message (no guarantee for this, our project is maintain by volunteers and they may forgot it sometimes).
+
+Important: You must not send reports manually. Credit and answer is NEVER provided when reports are pushed by bot.
 
 
 NOTES:
 
 Submit only 1 report per vulnerability. Reports combining several vulnerabilities are automatically rejected.
- 
+
 For both processes, advisories are sent to application end users by our own live channel (RSS at https://cti.dolibarr.org/index-security.rss, you can subscribe to it with any RSS reader). We do not publish CVE reports ourselves (we have no CNA number), but you are free to do it yourself.
 
 Also, note that we are a project developed by volunteers and have no funds for bounties.
@@ -61,8 +67,6 @@ You must be the first reporter of the vulnerability (duplicate reports are close
 You must avoid tests that could cause degradation or interruption of our service (refrain from using automated tools, and limit yourself to requests per second); that's why we recommend installing the software on your own platform.
 
 You must not leak, manipulate, or destroy any user data of third parties to find your vulnerability.
-
-You must not send reports manually. Reports sent by automatic system are forbidden.
 
 Reports are processed around once a month.
 
