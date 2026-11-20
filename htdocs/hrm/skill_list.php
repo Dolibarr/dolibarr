@@ -37,6 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // load module libraries
 require_once __DIR__.'/class/skill.class.php';
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -47,7 +51,7 @@ require_once __DIR__.'/class/skill.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('hrm', 'other'));
+$langs->loadLangs(array('categories', 'hrm', 'other'));
 
 
 // Get Parameters
@@ -100,6 +104,13 @@ if (!$sortorder) {
 
 // Initialize array of search criteria
 $search_all = GETPOST('search_all', 'alphanohtml');
+$searchCategorySkillOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategorySkillOperator = GETPOSTINT('search_category_skill_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategorySkillOperator = getDolGlobalInt('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategorySkillList = GETPOST('search_category_skill_list', 'array:int');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -206,6 +217,9 @@ if (empty($reshook)) {
 				$search[$key.'_dtend'] = '';
 			}
 		}
+		$search_all = '';
+		$searchCategorySkillOperator = 0;
+		$searchCategorySkillList = array();
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -301,6 +315,35 @@ foreach ($search as $key => $val) {
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
+
+// Search for tag/category ($searchCategorySkillList is an array of ID)
+if (!empty($searchCategorySkillList)) {
+	$searchCategorySkillSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySkillList as $searchCategorySkill) {
+		if (intval($searchCategorySkill) == -2) {
+			$searchCategorySkillSqlList[] = "NOT EXISTS (SELECT ck.fk_skill FROM ".$db->prefix()."categorie_skill as ck WHERE t.rowid = ck.fk_skill)";
+		} elseif (intval($searchCategorySkill) > 0) {
+			if ($searchCategorySkillOperator == 0) {
+				$searchCategorySkillSqlList[] = " EXISTS (SELECT ck.fk_skill FROM ".$db->prefix()."categorie_skill as ck WHERE t.rowid = ck.fk_skill AND ck.fk_categorie = ".((int) $searchCategorySkill).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '').((int) $searchCategorySkill);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySkillSqlList[] = " EXISTS (SELECT ck.fk_skill FROM ".$db->prefix()."categorie_skill as ck WHERE t.rowid = ck.fk_skill AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySkillOperator == 1) {
+		if (!empty($searchCategorySkillSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySkillSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySkillSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySkillSqlList).")";
+		}
+	}
 }
 
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
@@ -409,6 +452,12 @@ foreach ($search as $key => $val) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($searchCategorySkillOperator == 1) {
+	$param .= '&search_category_skill_operator='.urlencode((string) $searchCategorySkillOperator);
+}
+foreach ($searchCategorySkillList as $searchCategorySkill) {
+	$param .= '&search_category_skill_list[]='.urlencode((string) $searchCategorySkill);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -423,10 +472,13 @@ $arrayofmassactions = array(
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
+if (isModEnabled('category') && $permissiontoadd) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -474,6 +526,10 @@ $moreforfilter = '';
 /*$moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
 $moreforfilter.= '</div>';*/
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SKILL, $searchCategorySkillList, 'minwidth300', $searchCategorySkillOperator ? 1 : 0);
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
