@@ -5457,7 +5457,9 @@ class Form
 
 		$nbSituationInvoiceForThirdparty = 0;
 
-		if ($resql && $this->db->num_rows($resql) > 0) {
+		if (!$resql) {
+			dol_syslog("Error sql=" . $sql . ", error=" . $this->db->lasterror(), LOG_ERR);
+		} elseif ($this->db->num_rows($resql) > 0) {
 			// Last seen cycle
 			$ref = 0;
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -5480,8 +5482,6 @@ class Form
 					}
 				}
 			}
-		} else {
-			dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 		}
 
 		if ($nbSituationInvoiceForThirdparty > 0) {
@@ -6000,6 +6000,7 @@ class Form
 
 
 		$output = '<select class="flat minwidth100' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
+		$num = 0;
 		if (is_array($cate_arbo)) {
 			$num = count($cate_arbo);
 
@@ -6037,7 +6038,7 @@ class Form
 		$output .= '</select>';
 		$output .= "\n";
 
-		$this->num = count($cate_arbo);
+		$this->num = $num;
 
 		if ($outputmode == 2) {
 			// TODO: handle error when $cate_arbo is not an array
@@ -7516,10 +7517,10 @@ class Form
 		// Now we load the list of VAT
 		$this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
 
-		// Keep only the VAT qualified for $type_vat
+		// Keep only the VAT qualified for $type_vat (0 means all types)
 		$arrayofvatrates = array();
 		foreach ($this->cache_vatrates as $cachevalue) {
-			if (empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
+			if ($type_vat == 0 || empty($cachevalue['type_vat']) || $cachevalue['type_vat'] == $type_vat) {
 				$arrayofvatrates[] = $cachevalue;
 			}
 		}

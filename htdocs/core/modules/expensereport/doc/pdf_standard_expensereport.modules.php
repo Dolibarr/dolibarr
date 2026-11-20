@@ -755,7 +755,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Phone")." : ".$outputlangs->convToOutputCharset($this->emetteur->phone);
 			}
 			if ($this->emetteur->fax) {
-				$carac_emetteur .= ($carac_emetteur ? ($this->emetteur->tel ? " - " : "\n") : '').$outputlangs->transnoentities("Fax")." : ".$outputlangs->convToOutputCharset($this->emetteur->fax);
+				$carac_emetteur .= ($carac_emetteur ? ($this->emetteur->phone ? " - " : "\n") : '').$outputlangs->transnoentities("Fax")." : ".$outputlangs->convToOutputCharset($this->emetteur->fax);
 			}
 			if ($this->emetteur->email) {
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->emetteur->email);

@@ -1120,8 +1120,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 								}
 							}
 						}
-						$odfHandler->mergeSegment($listlines);
 					}
+					$odfHandler->mergeSegment($listlines);
 				} catch (OdfExceptionSegmentNotFound $e) {
 					// Do nothing
 				} catch (OdfException $e) {

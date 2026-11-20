@@ -233,7 +233,7 @@ function dolDecrypt($chain, $key = '')
 				$newchain = openssl_decrypt((string) $tmpexplode[0], $ciphering, $key, 0, '');
 			}
 			// Test validity of decryption
-			if (!ascii_check($newchain)) {
+			if (!ascii_check($newchain) && !utf8_check($newchain)) {
 				dol_syslog("Error dolDecrypt failed: The key dolibarr_main_dolcrypt or dolibarr_main_instance_unique_id, found in conf.php file, is the the one used to encrypt this encrypted string", LOG_ERR);
 				return $chain;
 			}
@@ -497,6 +497,8 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($features == 'subscription') {
 		$features = 'adherent';
 		$feature2 = 'cotisation';
+		$tableandshare = 'subscription&adherent';
+		$parentfortableentity = 'fk_adherent@adherent';	// A subscription has no entity, the entity is the one of its member
 	}
 	if ($features == 'website' && is_object($object) && $object->element == 'websitepage') {
 		$parentfortableentity = 'fk_website@website';
@@ -1054,6 +1056,30 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename); // We change dbtablename, so we set sharedelement too.
 		}
 
+		// The default rule reads the columns entity and $dbt_keyfield of the table, but some tables own neither of
+		// them. The sql was then built on columns that do not exist, so it always failed and the access was refused
+		// to the users that this rule applies to.
+		// The rule is selected on the table and not on the element of the object, because $object is an id and not
+		// an object for most of the callers, the card of an asset and the card of a workstation included.
+		if ($objectid > 0 && in_array($dbtablename, array('asset', 'paiement', 'paiementfourn', 'workstation_workstation', 'hrm_job', 'hrm_job_user', 'hrm_skill', 'tva', 'localtax', 'chargesociales', 'loan'))) {
+			// None of these objects is linked to a third party, so an external user can own none of them. The
+			// default rule refused him through a link that does not exist, we must refuse him explicitly instead,
+			// otherwise the rules below, which do not look at the third party of the user at all, would grant it.
+			if (!empty($user->socid)) {
+				return false;
+			}
+			if (in_array($dbtablename, array('hrm_job', 'hrm_job_user', 'hrm_skill'))) {
+				// These 3 tables have no entity column either, so no rule that reads the table can be run on them.
+				// The permission is still checked by restrictedArea(), and the $checkhierarchy rule below still runs.
+				// Note that these 3 objects are therefore not partitioned between entities at all, in the database
+				// itself: their cards already answer to a user of another entity, and their lists already show the
+				// records of all of them. This rule does not widen that, it aligns with it.
+				$nocheck[] = $feature;
+			} else {
+				$check[] = $feature;	// Test on the entity only, there is no third party to restrict on
+			}
+		}
+
 		// To avoid an access forbidden with a numeric ref
 		if ($dbt_select != 'rowid' && $dbt_select != 'id') {
 			$objectid = "'".$objectid."'";	// Note: $objectid was already cast into int at begin of this method.
@@ -1268,7 +1294,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			if ($feature == 'expensereport') {
 				$useridtocheck = $object->fk_user_author;
 				if (!$user->hasRight('expensereport', 'readall')) {
-					if (!in_array($useridtocheck, $childids)) {
+					if (!in_array($useridtocheck, $childids) && !($user->hasRight('expensereport', 'approve') && $object->fk_user_validator == $user->id)) {
 						return false;
 					}
 				}
@@ -1294,6 +1320,22 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if (in_array($feature, $checkuser) && is_object($object) && $objectid > 0) {
 			$useridtocheck = $object->fk_user;
 			if (!empty($useridtocheck) && $useridtocheck > 0 && $useridtocheck != $user->id && empty($user->admin)) {
+				return false;
+			}
+		}
+
+		// A private contact (field priv) can only be accessed by the user that created it
+		if ($feature == 'contact' && in_array($dbtablename, array('socpeople', 'contact')) && !empty($objectid)) {
+			$sqlpriv = "SELECT COUNT(dbt.rowid) as nb";
+			$sqlpriv .= " FROM ".MAIN_DB_PREFIX."socpeople as dbt";
+			$sqlpriv .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
+			$sqlpriv .= " AND dbt.priv = 1 AND (dbt.fk_user_creat IS NULL OR dbt.fk_user_creat <> ".((int) $user->id).")";
+			$resqlpriv = $db->query($sqlpriv);
+			if (!$resqlpriv) {
+				return false;
+			}
+			$objpriv = $db->fetch_object($resqlpriv);
+			if ($objpriv && $objpriv->nb > 0) {
 				return false;
 			}
 		}

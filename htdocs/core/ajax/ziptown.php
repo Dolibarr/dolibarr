@@ -102,12 +102,12 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 		$sql .= " FROM ".MAIN_DB_PREFIX.'societe as s';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON s.fk_departement = d.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
-		$sql .= " WHERE";
+		$sql .= " WHERE 1 = 1";
 		if ($zipcode) {
-			$sql .= " s.zip LIKE '".$db->escape($db->escapeforlike($zipcode))."%'";
+			$sql .= " AND s.zip LIKE '".$db->escape($db->escapeforlike($zipcode))."%'";
 		}
 		if ($town) {
-			$sql .= " s.town LIKE '%".$db->escape($db->escapeforlike($town))."%'";
+			$sql .= " AND s.town LIKE '%".$db->escape($db->escapeforlike($town))."%'";
 		}
 		$sql .= " ORDER BY s.fk_pays, s.zip, s.town";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria

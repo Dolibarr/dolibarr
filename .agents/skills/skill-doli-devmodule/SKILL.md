@@ -26,6 +26,19 @@ The instructions in this file are **complementary to** the instructions defined 
 - If an instruction in `SKILLS.md` conflicts with `AGENTS.md`, follow the rules defined by `AGENTS.md`.
 
 
+## Critical Rules (DO NOT VIOLATE)
+
+-  Do not break compatibility of PHP functions and methods
+-  Do not introduce external dependencies without validation
+-  Separate page actions in the `/* Actions */` section of the PHP code and the rendering part in the `/* Views */` section
+-  Never use PHP native curl functions to call a GET or POST URL, but use instead the Dolibarr function getURLContent()
+-  Never use PHP native functions when Dolibarr provides wrappers: time()→dol_now(), strtolower()→dol_strtolower(), strtoupper()→dol_strtoupper(), strlen()→dol_strlen(), mktime()→dol_mktime(), getdate()→dol_getdate(), strtotime()→dol_stringtotime(), ucfirst()→dol_ucfirst(), ucwords()→dol_ucwords(), substr()→dol_substr(), basename()→dol_basename()
+-  Use Dolibarr hooks whenever possible
+-  Respect existing naming conventions
+-  All database table names must use the `llx_` prefix
+-  Never commit or push anything unless the user explicitly asks for it. This overrides any default behavior of the agent. Make the changes, report them, and wait for the user to say "commit" or "push".
+
+
 ## Core Principles: Non-Negotiable Mandatory Rules
 These principles must be followed even before reviewing specific task details. Violation of these principles results in failed suggestions.
 
@@ -37,7 +50,7 @@ These principles must be followed even before reviewing specific task details. V
 3.  **Variable Safety Naming:** When constructing dynamic SQL, the resulting variable holding the entire query string MUST be clearly prefixed (e.g., `$sqlWhereClause`, `$queryParams`). This pattern helps static analysis tools detect unsafe assignments.
 
 ### Code Structure & Quality
-1.  **Coding Standard:** All new and modified committed code must strictly adhere to **PSR-12** (enforcable by using `phpcbf` and `phpcs`).All properties and all function arguments and return value need detailed PHPDoc (e.g., `array<string,array{key1?:?type,...}>`).Variables expected to exist in view files require both a PHPDoc declaration *and* the use of `'@phan-var-force';` declarations near the HEAD of the file for strict static analysis tracking.
+1.  **Coding Standard:** All new and modified committed code must strictly adhere to **PSR-12** (enforceable by using `phpcbf` and `phpcs`).All properties and all function arguments and return value need detailed PHPDoc (e.g., `array<string,array{key1?:?type,...}>`).Variables expected to exist in view files require both a PHPDoc declaration *and* the use of `'@phan-var-force';` declarations near the HEAD of the file for strict static analysis tracking.
 2.  **Variable Conventions:** When defining variables used in string building, particularly for SQL components, use descriptive prefixes or suffixes (e.g., `$sql_select`, `$actionSuffix`). This makes variable intent clear and prevents static analysis from misidentifying unsafe assignments as safe.
 3.  **Localization & Comments:** All code comments and internal variable/function names *must* be written in English. Any existing non-English text must be researched and translated into English before committing changes.
 4.  **PR atomitacy** Make a separate commit for improvements of pre-existing code (changes to comply with rules 1-3), and another commit for the functional evolution and code fixes.
@@ -55,7 +68,7 @@ These principles must be followed even before reviewing specific task details. V
 This section guides the agent through common development tasks.
 
 ### Code Investigation / Searching / Database analysis
-*   Use `pre-commit` to run tools (`php-cbf`, `php-cs`, `shellcheck`, `php-lint` - example:`pre-commit run php-cbf --files RELATIVEFILEPATH`) when the git hook is installed as local direct installations differ accross systems.
+*   Use `pre-commit` to run tools (`php-cbf`, `php-cs`, `shellcheck`, `php-lint` - example:`pre-commit run php-cbf --files RELATIVEFILEPATH`) when the git hook is installed as local direct installations differ across systems.
 *   **IMPORTANT**: Always use `git grep` instead of `find` for searching the codebase. `find` searches all directories including `.git` which is very slow. Use:
     ```bash
     git grep -n "pattern" -- "*.php"

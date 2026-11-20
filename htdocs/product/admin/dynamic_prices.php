@@ -161,7 +161,7 @@ if (!empty($action) && empty($cancel)) {
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("DynamicPrice"), '', 0, 0, '', '', '', 'mod-product page-admin_dynamic_prices');
+llxHeader("", $langs->trans("DynamicPrice"), '', '', 0, 0, '', '', '', 'mod-product page-admin_dynamic_prices');
 
 $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore_lastsearch_values' => 1]).'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
@@ -185,8 +185,8 @@ if ($action != 'create_updater' && $action != 'edit_updater') {
 	if (!empty($arrayglobalvars)) {
 		foreach ($arrayglobalvars as $i => $entry) {
 			print '<tr class="oddeven">';
-			print '<td>'.$entry->code.'</td>';
-			print '<td>'.$entry->description.'</td>';
+			print '<td>'.dol_escape_htmltag($entry->code).'</td>';
+			print '<td>'.dol_escape_htmltag($entry->description).'</td>';
 			print '<td>'.price($entry->value).'</td>';
 			print '<td class="right"><a class="editfielda paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_variable&token='.newToken().'&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_variable&token='.newToken().'&selection='.$entry->id.'">'.img_delete().'</a></td>';
@@ -224,17 +224,17 @@ if ($action == 'create_variable' || $action == 'edit_variable') {
 	//Code
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("Variable").'</td>';
-	print '<td class="valeur"><input type="text" name="code" class="minwidth100" value="'.(empty($price_globals->code) ? '' : $price_globals->code).'"></td>';
+	print '<td class="valeur"><input type="text" name="code" class="minwidth100" value="'.dol_escape_htmltag(empty($price_globals->code) ? '' : $price_globals->code).'"></td>';
 	print '</tr>';
 	//Description
 	print '<tr>';
 	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td class="valeur"><input type="text" name="description" class="minwidth200" value="'.(empty($price_globals->description) ? '' : $price_globals->description).'"></td>';
+	print '<td class="valeur"><input type="text" name="description" class="minwidth200" value="'.dol_escape_htmltag(empty($price_globals->description) ? '' : $price_globals->description).'"></td>';
 	print '</tr>';
 	//Value
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("Value").'</td>';
-	print '<td class="valeur"><input type="text" name="value" class="minwidth100" value="'.(empty($price_globals->value) ? '' : $price_globals->value).'"></td>';
+	print '<td class="valeur"><input type="text" name="value" class="minwidth100" value="'.dol_escape_htmltag((string) (empty($price_globals->value) ? '' : $price_globals->value)).'"></td>';
 	print '</tr>';
 	print '</table>';
 
@@ -271,9 +271,9 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
 			}
 			print '<tr>';
 			print '<td>'.$code.'</td>';
-			print '<td>'.$entry->description.'</td>';
+			print '<td>'.dol_escape_htmltag($entry->description).'</td>';
 			print '<td>'.$langs->trans("GlobalVariableUpdaterType".$entry->type).'</td>';
-			print '<td style="max-width: 250px; word-wrap: break-word; white-space: pre-wrap;">'.$entry->parameters.'</td>';
+			print '<td style="max-width: 250px; word-wrap: break-word; white-space: pre-wrap;">'.dol_escape_htmltag($entry->parameters).'</td>';
 			print '<td>'.$entry->update_interval.'</td>';
 			print '<td>'.$entry->getLastUpdated().'</td>';
 			print '<td class="right"><a class="editfielda paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
@@ -319,7 +319,7 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
 	//Description
 	print '<tr>';
 	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td class="valeur"><input type="text" name="description" class="minwidth200" value="'.(empty($price_updaters->description) ? '' : $price_updaters->description).'"></td>';
+	print '<td class="valeur"><input type="text" name="description" class="minwidth200" value="'.dol_escape_htmltag(empty($price_updaters->description) ? '' : $price_updaters->description).'"></td>';
 	print '</tr>';
 	//Type
 	print '<tr>';

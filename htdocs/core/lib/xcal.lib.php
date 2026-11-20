@@ -102,7 +102,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			$description   = dol_string_nohtmltag(preg_replace("/<br[\s\/]?>/i", "\n", $event["desc"]), 0);
 			$created       = $event["created"];
 			$modified      = $event["modified"];
-			$assignedUsers = $event["assignedUsers"];
+			$assignedUsers = $event["assignedUsers"] ?? array();
 			//print $fulldayevent.' '.dol_print_date($startdate, 'dayhour', 'gmt');
 
 			// Format

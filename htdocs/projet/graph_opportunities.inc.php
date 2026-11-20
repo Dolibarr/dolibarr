@@ -28,6 +28,7 @@
  * @var string $projectsListId
  * @var int $socid
  * @var string[] $listofoppstatus
+ * @var ?string $badgeStatus2
  */
 '
 @phan-var-force string $projectsListId
@@ -35,6 +36,7 @@
 @phan-var-force string[] $listofoppstatus
 @phan-var-force ?array<int,string> $listofopplabel
 @phan-var-force array<string,string> $colorseries
+@phan-var-force ?string $badgeStatus2
 ';
 
 if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
@@ -94,6 +96,9 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		foreach ($valsamount as $key => $val) {
 			if (!in_array($key, $listofstatus) && $key) {
 				$listofstatus[] = $key;
+				if (!isset($colorseries[$key])) {
+					$colorseries[$key] = !empty($badgeStatus2) ? $badgeStatus2 : '#888888';
+				}
 			}
 		}
 

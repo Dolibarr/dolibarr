@@ -896,16 +896,23 @@ IMG;
 		if (getDolGlobalString('MAIN_ODT_AS_PDF') == 'libreoffice') {
 			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
 
-			// We delete and recreate a subdir because the soffice may have change permissions on it
+			// We delete and recreate a subdir because the soffice may have change pemrissions on it
+			// The cleanup is best effort: on Windows, a soffice still exiting from the previous conversion keeps
+			// a lock on its profile (extensions.pmap), and each file it holds raised an unlink/rmdir warning
 			$countdeleted = 0;
-			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf', 0, 0, 0, $countdeleted, 0, 1);
+			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf', 0, 1, 0, $countdeleted, 0, 1);
 			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
 
 			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg((getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf').' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$userinstallation = dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf';
+			// A Windows path (C:/...) needs the empty host of a file URL (file:///C:/...): on file:C:/... soffice fails, and hangs when run by a service
+			if (getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') || preg_match('/^[a-z]:/i', $userinstallation)) {
+				$userinstallation = '///'.$userinstallation;
+			}
+			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg($userinstallation).' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
 			// This feature is now disabled by default. Must set var in conf.php to allow it.
 			global $dolibarr_main_allow_unoconv;

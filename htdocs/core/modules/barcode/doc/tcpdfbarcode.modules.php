@@ -118,9 +118,9 @@ class modTcpdfbarcode extends ModeleBarCode
 
 		$color = array(0, 0, 0);
 
-		$_GET["code"] = $code;
-		$_GET["type"] = $encoding;
-		$_GET["readable"] = $readable;
+		$_GET["code"] = $code; // obsolete? nothing seems to read this back
+		$_GET["type"] = $encoding; // obsolete? nothing seems to read this back
+		$_GET["readable"] = $readable; // obsolete? nothing seems to read this back
 
 		if ($code) {
 			// Load the tcpdf barcode class
@@ -134,6 +134,14 @@ class modTcpdfbarcode extends ModeleBarCode
 				$width = 1;
 				require_once TCPDF_PATH.'tcpdf_barcodes_1d.php';
 				$barcodeobj = new TCPDFBarcode($code, $tcpdfEncoding);
+			}
+
+			if (empty($barcodeobj->getBarcodeArray())) {
+				// Value is not valid for this encoding (for example a wrong checksum digit on a EAN13/UPC/... code).
+				// The tcpdf library would fatal error on imagecreate() if we called getBarcodePNG() with no barcode array.
+				$this->error = 'Value "'.dol_escape_htmltag($code).'" is not valid for encoding "'.dol_escape_htmltag($encoding).'"';
+				dol_syslog("buildBarCode::".$this->error, LOG_WARNING);
+				return -3;
 			}
 
 			dol_syslog("buildBarCode::TCPDF.getBarcodePNG");
@@ -192,9 +200,9 @@ class modTcpdfbarcode extends ModeleBarCode
 
 		$color = array(0, 0, 0);
 
-		$_GET["code"] = $code;
-		$_GET["type"] = $encoding;
-		$_GET["readable"] = $readable;
+		$_GET["code"] = $code; // obsolete? nothing seems to read this back
+		$_GET["type"] = $encoding; // obsolete? nothing seems to read this back
+		$_GET["readable"] = $readable; // obsolete? nothing seems to read this back
 
 		if ($code) {
 			// Load the tcpdf barcode class
@@ -208,6 +216,14 @@ class modTcpdfbarcode extends ModeleBarCode
 				$width = 1;
 				require_once TCPDF_PATH.'tcpdf_barcodes_1d.php';
 				$barcodeobj = new TCPDFBarcode($code, $tcpdfEncoding);
+			}
+
+			if (empty($barcodeobj->getBarcodeArray())) {
+				// Value is not valid for this encoding (for example a wrong checksum digit on a EAN13/UPC/... code).
+				// The tcpdf library would fatal error on imagecreate() if we called getBarcodePngData() with no barcode array.
+				$this->error = 'Value "'.dol_escape_htmltag($code).'" is not valid for encoding "'.dol_escape_htmltag($encoding).'"';
+				dol_syslog("writeBarCode::".$this->error, LOG_WARNING);
+				return -5;
 			}
 
 			dol_syslog("writeBarCode::TCPDF.getBarcodePngData file=".$filebarcode);

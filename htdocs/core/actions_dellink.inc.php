@@ -34,6 +34,7 @@
  * @var Translate $langs
  *
  * @var string $action
+ * @var int $id
  * @var int $permissiondellink
  */
 
@@ -82,8 +83,32 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 
 // Delete link in table llx_element_element
 if ($action == 'dellink' && !empty($permissiondellink) && !$cancellink && $dellinkid > 0) {
-	$result = $object->deleteObjectLinked(0, '', 0, '', $dellinkid);
-	$object->clearObjectLinkedCache();
+	if (empty($object->id) && $id > 0) {
+		$object->fetch($id);
+	}
+	// The link must involve the current object, else any link could be deleted by its rowid alone
+	$linkfound = false;
+	if ($object->id > 0) {
+		$elementtypes = array_unique([$object->getElementType(), $object->element]);
+		$sqlelementtypes = "'".implode("','", array_map([$db, 'escape'], $elementtypes))."'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."element_element";
+		$sql .= " WHERE rowid = ".((int) $dellinkid);
+		$sql .= " AND ((fk_source = ".((int) $object->id)." AND sourcetype IN (".$db->sanitize($sqlelementtypes, 1)."))";
+		$sql .= " OR (fk_target = ".((int) $object->id)." AND targettype IN (".$db->sanitize($sqlelementtypes, 1).")))";
+		$resql = $db->query($sql);
+		if ($resql && $db->num_rows($resql) > 0) {
+			$linkfound = true;
+		}
+	}
+
+	$result = 0;
+	if (!$linkfound) {
+		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+	} else {
+		$result = $object->deleteObjectLinked(0, '', 0, '', $dellinkid);
+		$object->clearObjectLinkedCache();
+	}
+
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}

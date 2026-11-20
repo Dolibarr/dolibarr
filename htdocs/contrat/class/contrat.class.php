@@ -1713,12 +1713,16 @@ class Contrat extends CommonObject
 	{
 		global $user, $langs, $mysoc;
 
+		if (!$this->isLineOfObject($rowid)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$error = 0;
 
 		// Clean parameters
 		$qty = trim((string) $qty);
-		$desc = trim($desc);
-		$desc = trim($desc);
+		$desc = trim((string) $desc);
 		$subprice = price2num($pu);
 		$tvatx = price2num($tvatx);
 		$localtax1tx = price2num($localtax1tx);
@@ -1879,6 +1883,15 @@ class Contrat extends CommonObject
 		$error = 0;
 
 		if ($this->statut >= 0) {
+			if ($this->id > 0) {
+				// The line must belong to this contract
+				$contractline = new ContratLigne($this->db);
+				if ($contractline->fetch($idline) <= 0 || (int) $contractline->fk_contrat !== (int) $this->id) {
+					$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+					return -1;
+				}
+			}
+
 			// Call trigger
 			$this->context['line_id'] = $idline;
 			$result = $this->call_trigger('LINECONTRACT_DELETE', $user);

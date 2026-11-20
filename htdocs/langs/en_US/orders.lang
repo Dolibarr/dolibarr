@@ -59,6 +59,7 @@ StatusOrderRefused=Refused
 StatusOrderReceivedPartially=Partially received
 StatusOrderReceivedAll=All products received
 ShippingExist=A shipment exists
+NotEnoughForAllOrders=Not enough stock for all the open orders
 QtyOrdered=Qty ordered
 ProductQtyInDraft=Product quantity into draft orders
 ProductQtyInDraftOrWaitingApproved=Product quantity into draft or approved orders, not yet ordered

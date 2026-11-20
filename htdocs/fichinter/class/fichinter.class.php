@@ -647,6 +647,9 @@ class Fichinter extends CommonObject
 
 			// Define new ref
 			if ((preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+				if (empty($this->thirdparty)) {	// Not loaded when validated by the API or on closing a ticket
+					$this->fetch_thirdparty();
+				}
 				$num = $this->getNextNumRef($this->thirdparty);
 			} else {
 				$num = (string) $this->ref;

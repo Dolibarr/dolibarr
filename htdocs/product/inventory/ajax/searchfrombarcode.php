@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php";
 $warehouse = new Entrepot($db);
 
 $action = GETPOST("action", "alpha");
-$barcode = GETPOST("barcode", "aZ09");
+$barcode = GETPOST("barcode", "alphanohtml"); // Lot/serial number may contain chars like '/' so we must not use aZ09 sanitizing here. Value is escaped before SQL use.
 $product = GETPOST("product");
 $response = "";
 
@@ -58,7 +58,7 @@ $fk_entrepot = GETPOSTINT("fk_entrepot");
 $fk_inventory = GETPOSTINT("fk_inventory");
 $fk_product = GETPOSTINT("fk_product");
 $reelqty = GETPOSTINT("reelqty");
-$batch = GETPOST("batch", "aZ09");
+$batch = GETPOST("batch", "alphanohtml"); // Lot/serial number may contain chars like '/' so we must not use aZ09 sanitizing here. Value is escaped before SQL use.
 $mode = GETPOST("mode", "aZ");
 
 $warehousefound = 0;
@@ -135,16 +135,34 @@ if ($action == "addnewlineproduct" && $user->hasRight('stock', 'creer')) {
 		$inventoryline->fk_warehouse = $fk_entrepot;
 		$inventoryline->fk_product = $fk_product;
 		$inventoryline->qty_stock = $reelqty;
-		if (!empty($batch)) {
-			$inventoryline->batch = $batch;
-		}
+		// Use '' and not NULL when there is no lot: NULL escapes the unique key, so a duplicate line would be created
+		$inventoryline->batch = (string) $batch;
 		$inventoryline->datec = dol_now();
 
-		$result = $inventoryline->create($user);
+		// Same checks on lot as when a line is added from the inventory page
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$langs->load("errors");
+		$errorcode = '';
+		$tmpproduct = new Product($db);
+		if (isModEnabled('productbatch') && $tmpproduct->fetch($fk_product) > 0) {
+			if ($tmpproduct->status_batch > 0 && $inventoryline->batch === '') {
+				$errorcode = 'ErrorProductNeedBatchNumber';	// The stock movement of a line without lot would be refused when recording
+			} elseif (empty($tmpproduct->status_batch) && $inventoryline->batch !== '') {
+				$errorcode = 'ErrorProductDoesNotNeedBatchNumber';
+			}
+		}
+
+		$result = (empty($errorcode) ? $inventoryline->create($user) : -1);
+		if ($result < 0 && empty($errorcode) && $db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+			$errorcode = 'ErrorRecordAlreadyExists';
+		}
 		if ($result > 0) {
 			$response = array('status' => 'success','message' => 'Success on creating line','id_line' => $result);
 		} else {
 			$response = array('status' => 'error','errorcode' => 'ErrorCreation','message' => "Error on line creation");
+		}
+		if (!empty($errorcode)) {
+			$response = array('status' => 'error', 'errorcode' => $errorcode, 'message' => $langs->transnoentitiesnoconv($errorcode, $tmpproduct->ref));
 		}
 	} else {
 		$response = array('status' => 'error','errorcode' => 'NoIdForInventory','message' => "No id for inventory");

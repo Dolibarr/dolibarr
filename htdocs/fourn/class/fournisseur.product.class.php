@@ -334,6 +334,17 @@ class ProductFournisseur extends Product
 
 		$error = 0;
 
+		// When called on a loaded product, the price line must be one of its own
+		if ($this->id > 0) {
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+			$sql .= " WHERE rowid = ".((int) $rowid)." AND fk_product = ".((int) $this->id);
+			$resql = $this->db->query($sql);
+			if (!$resql || !$this->db->num_rows($resql)) {
+				$this->error = 'ErrorRecordNotFound';
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		// Call trigger

@@ -269,6 +269,10 @@ foreach ($arrayfields as $tmpkey => $tmpval) {
 		break;
 	}
 }
+// The table of lines is joined only if a field of lines is shown, so do not search into it otherwise
+if (!$atleastonefieldinlines) {
+	unset($fieldstosearchall['fd.description']);
+}
 
 $sql = "SELECT";
 $sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.signed_status as signed_status, f.description, f.datec as date_creation, f.tms as date_modification, f.note_public, f.note_private,";
@@ -476,6 +480,12 @@ if ($search_company) {
 }
 if ($search_desc) {
 	$param .= "&search_desc=".urlencode($search_desc);
+}
+if ($search_projet_ref) {
+	$param .= "&search_projet_ref=".urlencode($search_projet_ref);
+}
+if ($search_contrat_ref) {
+	$param .= "&search_contrat_ref=".urlencode($search_contrat_ref);
 }
 if ($search_status != '' && $search_status > -1) {
 	$param .= "&search_status=".urlencode($search_status);

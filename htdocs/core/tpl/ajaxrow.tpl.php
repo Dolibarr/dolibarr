@@ -55,7 +55,7 @@ if (empty($object) || !is_object($object)) {
 <!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on lines of a table -->
 <?php
 $id = $object->id;
-$fk_element = empty($object->fk_element) ? $fk_element : $object->fk_element;
+$fk_element = empty($object->fk_element) ? (isset($fk_element) ? $fk_element : '') : $object->fk_element;
 $table_element_line = (empty($table_element_line) ? $object->table_element_line : $table_element_line);
 $nboflines = (isset($object->lines) ? count($object->lines) : (isset($tasksarray) ? count($tasksarray) : (empty($nboflines) ? 0 : $nboflines)));
 $forcereloadpage = getDolGlobalInt('MAIN_FORCE_RELOAD_PAGE');

@@ -513,7 +513,11 @@ if ($result) {
 						if ($is_sc) {
 							//$tabcompany[$obj->rowid][$compta_user] += $amounttouse;
 						} else {
-							$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+							if (empty($tabtp[$obj->rowid][$compta_user])) {
+								$tabtp[$obj->rowid][$compta_user] = $amounttouse;
+							} else {
+								$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+							}
 						}
 					}
 				} elseif ($links[$key]['type'] == 'sc') {
@@ -614,7 +618,11 @@ if ($result) {
 							$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_employee;
 							$compta_user = $userstatic->accountancy_code;
 							if ($compta_user) {
-								$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+								if (empty($tabtp[$obj->rowid][$compta_user])) {
+									$tabtp[$obj->rowid][$compta_user] = $amounttouse;
+								} else {
+									$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+								}
 								$tabuser[$obj->rowid] = array(
 								'id' => $userstatic->id,
 								'name' => dolGetFirstLastname($userstatic->firstname, $userstatic->lastname),
@@ -1673,9 +1681,9 @@ function getSourceDocRef($val, $typerecord)
 		$sqlmid .= " WHERE sc.rowid=".((int) $val["paymentscid"]);
 		$ref = $langs->transnoentitiesnoconv("SocialContribution");
 	} elseif ($typerecord == 'payment_vat') {
-		$sqlmid = 'SELECT v.rowid as ref';
-		$sqlmid .= " FROM ".MAIN_DB_PREFIX."tva as v";
-		$sqlmid .= " WHERE v.rowid=".((int) $val["paymentvatid"]);
+		$sqlmid = 'SELECT pv.fk_tva as ref';	// paymentvatid is the id of the payment, the ref is the id of the VAT declaration it pays
+		$sqlmid .= " FROM ".MAIN_DB_PREFIX."payment_vat as pv";
+		$sqlmid .= " WHERE pv.rowid=".((int) $val["paymentvatid"]);
 		$ref = $langs->transnoentitiesnoconv("PaymentVat");
 	} elseif ($typerecord == 'payment_donation') {
 		$sqlmid = 'SELECT payd.fk_donation as ref';

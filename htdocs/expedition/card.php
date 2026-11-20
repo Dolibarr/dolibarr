@@ -221,6 +221,14 @@ if (empty($reshook)) {
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
+	// The lines of a shipment can be modified or deleted only when it is a draft
+	if (in_array($action, array('editline', 'updateline', 'deleteline')) && (!$permissiontoadd || $object->status != Expedition::STATUS_DRAFT)) {
+		if ($object->status != Expedition::STATUS_DRAFT) {
+			setEventMessages($langs->trans("StatusOfRefMustBe", $object->ref, $langs->transnoentitiesnoconv("StatusSendingDraftShort")), null, 'errors');
+		}
+		$action = '';
+	}
+
 	// Back to draft
 	if ($action == 'setdraft' && $permissiontoadd) {
 		$object->fetch($id);
@@ -247,6 +255,14 @@ if (empty($reshook)) {
 	// Set incoterm
 	if ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
+	}
+
+	if ($action == 'classin' && $permissiontoadd) {
+		// Link to a project
+		$result = $object->setProject(GETPOSTINT('projectid'));
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	if ($action == 'setref_customer' && $permissiontoadd) {
@@ -435,7 +451,7 @@ if (empty($reshook)) {
 
 							if ($is_batch_or_serial == 2 && $sub_qty[$j]['q'] > 0) {
 								// we stock the batch id to test later if the same serial is shipped on another line for the same product
-								$product_batch_used[$j] = $sub_qty[$j]['id_batch'];
+								$product_batch_used[] = $sub_qty[$j]['id_batch'];
 							}
 
 							$j++;
@@ -857,7 +873,7 @@ if (empty($reshook)) {
 			// Update a line
 			// Clean parameters
 
-			if (!$object->fetch($id) > 0) {
+			if ($object->fetch($id) <= 0) {
 				dol_print_error($db);
 			}
 			$object->fetch_thirdparty();
@@ -1883,6 +1899,7 @@ if ($action == 'create' && $usercancreate) {
 					if (!(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 						$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
 					}
+					$selectedLines = GETPOST('subtotal_toselect', 'array:int');
 					foreach ($object->lines as $line) {
 						if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 							$show_check_add_buttons = true;
@@ -2553,17 +2570,17 @@ if ($action == 'create' && $usercancreate) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}
 							} elseif ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
+								// If we are here, it means STOCK_SUPPORTS_SERVICES is off (otherwise the previous test would be true)
+								// So a service has no stock here, so neither a preselected warehouse nor STOCK_DISALLOW_NEGATIVE_TRANSFER is relevant here.
 								$disabled = '';
 								if (isModEnabled('productbatch') && $product->hasbatch()) {
 									$disabled = 'disabled="disabled"';
 								}
-								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
-									$disabled = 'disabled="disabled"';
-								}
 								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$quantityToBeDelivered.'"'.($disabled ? ' '.$disabled : '').'> ';
-								if (empty($disabled) && !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
-									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
-								}
+								// This hidden field must always be output: it is the marker the POST handler uses to detect that the quantities
+								// of this line are named qtyl<i>_<subj>. Without it the handler looks for qtyl<i> instead, finds nothing and
+								// silently drops the line. Value 0 = no warehouse, same as entl<i> in the single warehouse case above.
+								print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="0">';
 							} else {
 								print $langs->trans("NA");
 							}

@@ -1484,8 +1484,8 @@ if ($object->id > 0) {
 				$invoicetemplate->total_ht = $objp->total_ht;
 				$invoicetemplate->total_tva = $objp->total_tva;
 				$invoicetemplate->total_ttc = $objp->total_ttc;
-				$invoicetemplate->date_last_gen = $objp->date_last_gen;
-				$invoicetemplate->date_when = $objp->date_when;
+				$invoicetemplate->date_last_gen = $db->jdate($objp->date_last_gen);
+				$invoicetemplate->date_when = $db->jdate($objp->date_when);
 
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax250">';

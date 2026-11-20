@@ -472,6 +472,16 @@ class Boms extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// BOM::updateLine() sets fk_bom to this BOM on whatever line it is given, so a line of
+		// another BOM must be refused here or it would be moved into this one.
+		$bomline = new BOMLine($this->db);
+		if ($bomline->fetch($lineid) <= 0) {
+			throw new RestException(404, 'BOM line not found');
+		}
+		if ($bomline->fk_bom != $this->bom->id) {
+			throw new RestException(403, 'Line does not belong to this BOM');
+		}
+
 		$request_data = (object) $request_data;
 
 		$updateRes = $this->bom->updateLine(

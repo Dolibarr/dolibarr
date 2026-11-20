@@ -169,7 +169,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 
 
 		// Load translation files required by page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "sendings", "productbatch", "stocks"));
 
 		global $outputlangsbis;
 		$outputlangsbis = null;

@@ -1679,14 +1679,30 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// Set desc
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
 			$textwasnotmodified = false;
+			$textdiffersonlybymarkup = false;
 			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
 				$textwasnotmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML5)) !== false);
+			} elseif (!empty($desc) && !empty($prodser->description) && dol_textishtml($desc) != dol_textishtml($prodser->description)) {
+				// One side is HTML and the other is not. This happens as soon as a line is saved while the
+				// WYSIWYG editor is enabled on line details: the plain product description becomes "<p>...</p>".
+				// Comparing the raw strings would then report a manual change and silently drop the translation,
+				// so compare the text content instead.
+				$desctextonly = trim(dol_html_entity_decode(dol_string_nohtmltag($desc, 1), ENT_QUOTES | ENT_HTML5));
+				$prodtextonly = trim(dol_html_entity_decode(dol_string_nohtmltag($prodser->description, 1), ENT_QUOTES | ENT_HTML5));
+				$textwasnotmodified = ($prodtextonly !== '' && strpos($desctextonly, $prodtextonly) !== false);
+				$textdiffersonlybymarkup = ($textwasnotmodified && $desctextonly === $prodtextonly);
 			} else {
 				$textwasnotmodified = ($desc == $prodser->description);
 			}
 			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"])) {
 				if ($textwasnotmodified) {
-					$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+					if ($textdiffersonlybymarkup && strpos($desc, $prodser->description) === false) {
+						// Same text, but wrapped in tags or written with HTML entities: the product description
+						// is not present verbatim, so the str_replace below would find nothing to replace.
+						$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
+					} else {
+						$desc = str_replace($prodser->description, $prodser->multilangs[$outputlangs->defaultlang]["description"], $desc);
+					}
 				} elseif ($translatealsoifmodified) {
 					$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
 				}
@@ -2701,10 +2717,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			$outputlangs->load('propal');
 
 			foreach ($objects as $elementobject) {
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefProposal");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+				if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefProposal");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+				}
 			}
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
 			$optiontohidelinkedorders = "PDF_HIDE_LINKED_ORDERS_ON_SAME_THIRDPARTY";
@@ -3029,6 +3047,13 @@ function pdf_render_subtotals(
 	} else {
 		$pdf->MultiCell($width, $pdf->getPageHeight() - $pdf->getBreakMargin() - $curY, '', 0, '', true);
 
+		// The page reached by the measuring pass above was discarded along with
+		// the transaction, and the MultiCell only recreates it when some room was
+		// left to fill. A line starting below the break margin leaves none, so
+		// the page must be added before it can be selected.
+		while ($pdf->getNumPages() < $pageAfter) {
+			$pdf->AddPage();
+		}
 		$pdf->setPage($pageAfter);
 		$pdf->SetXY($generator->marge_gauche, $pdf->getMargins()['top']);
 		$pdf->MultiCell($width, max(0, $yAfter - $pdf->getMargins()['top']), '', 0, '', true);
@@ -3036,7 +3061,9 @@ function pdf_render_subtotals(
 		$pdf->setPage($savePage);
 	}
 
-	$pdf->SetTextColor(colorIsLight(implode(',', $bgColor)));
+	// Dark text on a light background, white text on a dark one (a single argument of SetTextColor() is a gray level 0-255)
+	$textGray = (colorIsLight(implode(',', $bgColor)) === 0) ? 255 : 0;
+	$pdf->SetTextColor($textGray);
 	$pdf->SetXY($saveX, $curY);
 	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());

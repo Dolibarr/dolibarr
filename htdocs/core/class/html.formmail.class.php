@@ -2003,7 +2003,7 @@ class FormMail extends Form
 
 		$parameters = array();
 		$tmparray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-		complete_substitutions_array($tmparray, $outputlangs, null, $parameters);
+		complete_substitutions_array($tmparray, $outputlangs, $object, $parameters);
 
 		$this->substit = $tmparray;
 

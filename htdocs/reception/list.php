@@ -33,6 +33,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -450,6 +451,7 @@ if (empty($reshook)) {
 						if ($lines[$i]->subprice < 0) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
+							$discount->discount_type = 1;
 							$discount->fk_soc = $objecttmp->socid;
 							$discount->socid = $objecttmp->socid;
 							$discount->amount_ht = abs($lines[$i]->total_ht);
@@ -1454,7 +1456,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Note public
-		if (!empty($arrayfields['f.note_public']['checked'])) {
+		if (!empty($arrayfields['e.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
 			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
@@ -1463,7 +1465,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Note private
-		if (!empty($arrayfields['f.note_private']['checked'])) {
+		if (!empty($arrayfields['e.note_private']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
 			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';

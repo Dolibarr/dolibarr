@@ -184,17 +184,17 @@ if (empty($reshook)) {
 		$fk_unit = GETPOSTINT('fk_unit');
 
 		$fk_default_workstation = 0;
-		if (!empty($idprod) && isModEnabled('workstation')) {
+		if (!empty($idprod)) {
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
-			if ($res > 0 && $product->type == Product::TYPE_SERVICE) {
+			if (isModEnabled('workstation') && $res > 0 && $product->type == Product::TYPE_SERVICE) {
 				if ($fk_workstation > 0) {
 					$fk_default_workstation = $fk_workstation;
 				} else {
 					$fk_default_workstation = $product->fk_default_workstation;
 				}
 			}
-			if (empty($fk_unit)) {
+			if ($res > 0 && empty($fk_unit)) {
 				$fk_unit = $product->fk_unit;
 			}
 		}

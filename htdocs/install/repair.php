@@ -91,6 +91,13 @@ if (!is_object($conf)) {
 }
 
 
+// This page runs on the install bootstrap, which never sets $user.
+// dol_delete_file() -> EcmFiles::delete(User $user) requires a User,
+// so we force an empty one here, before any action that may need it.
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+$user = new User($db);
+
+
 /*
  * View
  */
@@ -1043,7 +1050,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 				// To show ref or specific information according to view to show (defined by $module)
 				if ($modulepart == 'invoice') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'invoice_supplier') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
@@ -1051,19 +1058,19 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 				}
 				if ($modulepart == 'propal') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'order') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'order_supplier') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'contract') {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);
-					$ref = $reg[1];
+					$ref = empty($reg[1]) ? '' : $reg[1];
 				}
 				if ($modulepart == 'tax') {
 					preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg);
@@ -1402,7 +1409,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 		$listofmods .= ($listofmods ? ',' : '')."'".$db->escape($val)."'";
 	}
 
-	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
+	$sql = "SELECT id, entity, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1412,9 +1419,12 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				if ($obj->id > 0) {
-					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
+					print '<tr><td>Found line with id '.$obj->id.', entity '.$obj->entity.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') {
+						// The primary key of rights_def is (id, entity), so the entity of the found line must be part of the
+						// delete. Without it, cleaning a permission of one entity removes the same id in all the other ones.
 						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
+						$sqldelete .= " AND entity = ".((int) $obj->entity);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
 							dol_print_error($db);
@@ -1577,7 +1587,9 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 			}
 			print '</td></tr>';
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Restore dropped foreign keys
@@ -1602,7 +1614,9 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 				fclose($handle);
 			}
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Enable foreign key checking
@@ -1707,7 +1721,9 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 			}
 			print '</td></tr>';
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Restore dropped foreign keys
@@ -1732,7 +1748,9 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 				fclose($handle);
 			}
 			flush();
-			ob_flush();
+			if (ob_get_level() > 0) {
+				ob_flush();
+			}
 		}
 
 		// Enable foreign key checking
@@ -1938,7 +1956,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 			if (!($n_processed_rows & 0xff)) {
 				echo '<tr><td>Processed '.$n_processed_rows.' rows with '.count($errors).' errors…'."</td></tr>\n";
 				flush();
-				ob_flush();
+				if (ob_get_level() > 0) {
+					ob_flush();
+				}
 			}
 		}
 	} else {
