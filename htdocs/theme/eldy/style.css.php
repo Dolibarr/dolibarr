@@ -3076,6 +3076,7 @@ td.showDragHandle {
 	}
 	#id-right > div.fiche {
 		min-width: min-content;		/* The fiche grows with a wide list, so its right margin stays visible at the end of the horizontal scroll */
+		display: flow-root;			/* Contain floats (fichehalfleft/right), so the bottom padding of #id-right is kept at the end of the scroll */
 	}
 	div.fiche>form>div.div-table-responsive, div.fiche>div.div-table-responsive {
 		overflow-x: visible;		/* The horizontal scroll of a full page list is done by #id-right */
