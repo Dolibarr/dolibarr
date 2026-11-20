@@ -142,6 +142,10 @@ class EvaluationLine extends CommonObjectLine
 	/**
 	 * @var int
 	 */
+	public $rankorder;
+	/**
+	 * @var int
+	 */
 	public $required_rank;
 	/**
 	 * @var string
