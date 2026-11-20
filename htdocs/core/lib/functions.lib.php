@@ -16439,7 +16439,7 @@ function dolForgeSQLCriteriaCallback($matches)
 	$newforbiddenfields[] = 'current_schema';
 	$newforbiddenfields[] = 'current_catalog';
 
-	$operand =preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
 	// An operand with more than one level of prefix (example: dbprefix.table.field) is not valid into a USF criteria,
 	// we neutralize it like a forbidden field to avoid any leak or SQL error based on db prefix existence
