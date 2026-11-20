@@ -2065,7 +2065,7 @@ while ($i < $imaxinloop) {
 		}
 		// Address
 		if (!empty($arrayfields['s.address']['checked'])) {
-			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($companystatic->address).'">'.dolPrintHTML($companystatic->address).'</td>';
+			print '<td title="'.dolPrintHTMLForAttribute($companystatic->address).'"><div class="twolinesmax-normallineheight minwidth200onall maxwidth250">'.dolPrintHTML($companystatic->address).'</div></td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

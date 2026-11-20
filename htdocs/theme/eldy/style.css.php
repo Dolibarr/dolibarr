@@ -381,6 +381,7 @@ if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->M
 	$maxwidthloginblock += 50;
 	$minwidthtmenu = 0;
 }
+$heighttopmenu = ($disableimages ? (26 + 8) : ($heightmenu + 2)); /* real height of the top menu bar (height + padding-top of div.tmenucenter) */
 
 if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 	$maxwidthloginblock += 55;
@@ -1486,7 +1487,7 @@ textarea.centpercent {
 	/* The top menu is itself sticky at top 0 with a z-index of 1005 (see .side-nav-vert below),
 	   so a table header stuck at 0 is painted underneath it and stays invisible. Offset it by the
 	   height of the top menu, the same value .side-nav is offset by when it is made sticky. */
-	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? '50px' : '0'); ?>;
+	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? $heighttopmenu.'px' : '0'); ?>;
 	z-index: 2;
 }
 .liste_titre.stickyagenda {
@@ -2493,7 +2494,9 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
-	/* A full page list can expand the page, so the horizontal scrollbar is the one of the window, always visible */
+}
+/* A full page list can expand the page, so the horizontal scrollbar is the one of the window, always visible */
+div.fiche>form>div.div-table-responsive, div.fiche>div.div-table-responsive {
 	width: auto;
 	min-width: 0;
 }
@@ -3026,6 +3029,8 @@ td.showDragHandle {
 	width: 100%;
 	<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
 		display: table;					/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
+	<?php } elseif (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled') { ?>
+		display: flex;					/* Use flex so the height of the left column is independent from the height of the right column */
 	<?php } ?>
 	/* table-layout: fixed; */
 
@@ -3048,6 +3053,19 @@ td.showDragHandle {
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
 }
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' && getDolGlobalString('THEME_STICKY_TOPMENU') != 'scrollleftmenu_after_mainpage') { ?>
+#id-left {
+	display: block;
+}
+#id-container > .side-nav {
+	flex-shrink: 0;
+}
+#id-right {
+	display: block;
+	flex: 1 1 0;
+	width: auto;	/* No min-width: 0 and no width: 100%, so a wide list enlarges the page and the horizontal scrollbar is the one of the window */
+}
+<?php } ?>
 .bodyforlist #id-right {
 	padding-bottom: 4px;
 }
@@ -3113,12 +3131,15 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 ?>
 
 .side-nav {
-<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
-	position: sticky;
-	top: 50px;
-	display: block;
-<?php } else { ?>
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'disabled') { ?>
 	display: table-cell;
+<?php } else { ?>
+	position: sticky;
+	top: <?php echo $heighttopmenu; ?>px;
+	display: block;
+	box-sizing: border-box;			/* So border and padding are inside the height and do not make the page scroll */
+	height: calc(100vh - <?php echo $heighttopmenu; ?>px);		/* So the side nav remains visible to the bottom of the page */
+	overflow-y: auto;				/* A scrollbar appears if the menu content is longer than the page */
 <?php } ?>
 	border-<?php echo $right; ?>: 1px solid #F0F0F0;
 	border-bottom: 1px solid #F0F0F0;
