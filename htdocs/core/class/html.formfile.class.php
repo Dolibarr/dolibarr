@@ -251,7 +251,6 @@ class FormFile
 		$out .= ' ';
 		// Show overwrite if exists for ECM module, and everywhere when the replaced files are kept as previous versions
 		if ($sectionid || getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS') > 0) {
-			$langs->load('link');
 			$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1">';
 			$out .= '<label for="overwritefile" class="opacitylow paddingleft paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
 			$out .= '</span>';
@@ -326,7 +325,6 @@ class FormFile
 		// Section to generate the form to upload a new file
 		if ($linkfiles) {
 			$out2 .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
-			$langs->load('link');
 
 			if ($nooutput != 2) {
 				$title = $langs->trans("LinkANewFile");
@@ -2419,7 +2417,6 @@ class FormFile
 		global $conf, $langs;
 		global $sortfield, $sortorder;
 
-		$langs->load("link");
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($this->db);

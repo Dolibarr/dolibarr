@@ -2874,7 +2874,7 @@ class Contact extends CommonObject
 	public function libProspCommStatut($statut, $mode = 0, $label = '', $picto = '')
 	{
 		global $langs;
-		$langs->load('customers');
+		$langs->load('companies');
 
 		if ($mode == 2) {
 			if ($statut == '-1' || $statut == 'ST_NO') {

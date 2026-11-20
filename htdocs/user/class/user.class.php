@@ -489,7 +489,7 @@ class User extends CommonObject
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
 		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Warehouse', 'enabled' => "isModEnabled('stock')", 'visible' => 1, 'notnull' => 0, 'showoncombobox' => 1, 'index' => 1, 'position' => 50, 'searchall' => 1, 'bi' => 0),
 		'ref_employee' => array('type' => 'varchar(50)', 'label' => 'RefEmployee', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 30, 'searchall' => 1),
-		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
+		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 0, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
 
 	const STATUS_DISABLED = 0;
@@ -525,6 +525,12 @@ class User extends CommonObject
 		$this->rights->user->user_advance = new stdClass();
 		$this->rights->user->self_advance = new stdClass();
 		$this->rights->user->group_advance = new stdClass();
+
+		// Show the national registration number into combo lists only to users allowed to read HR personal information
+		global $user;
+		if (isModEnabled('hrm') && $user instanceof User && ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write'))) {
+			$this->fields['national_registration_number']['showoncombobox'] = 1;
+		}
 	}
 
 	/**
@@ -4343,7 +4349,7 @@ class User extends CommonObject
 	{
 		global $langs;
 
-		$langs->load("user");
+		$langs->load("users");
 
 		// Set the '$modele' to the name of the document template (model) to use
 		if (!dol_strlen($modele)) {

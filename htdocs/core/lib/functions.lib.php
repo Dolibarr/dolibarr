@@ -4229,6 +4229,51 @@ function getUserRemoteIP($trusted = 0)
 }
 
 /**
+ * 	Return the DolGeoIP object to resolve IPs, or null if the GeoIP module is not enabled or has no datafile.
+ *  The object is kept in cache so the GeoIP database is opened only once per page, even when called for each line of a list.
+ *
+ * 	@return ?DolGeoIP			DolGeoIP object, or null
+ */
+function dolGetGeoIPObject()
+{
+	global $conf;
+
+	if (!isModEnabled('geoipmaxmind')) {
+		return null;
+	}
+
+	if (getDolGlobalString('GEOIP_VERSION') == 'php') {
+		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+	} else {
+		$datafileembedded = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
+		if ($datafileembedded === '') {
+			return null;	// Module enabled but no datafile uploaded yet
+		}
+		$diroffile = getMultidirOutput(null, 'geoipmaxmind');
+		$datafile = $diroffile . '/' . $datafileembedded;
+	}
+	//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
+	if ($datafile === '') {
+		return null;
+	}
+
+	if (!isset($conf->cache['geoip']) || !is_array($conf->cache['geoip'])) {
+		$conf->cache['geoip'] = array();
+	}
+	if (!array_key_exists($datafile, $conf->cache['geoip'])) {
+		$conf->cache['geoip'][$datafile] = null;
+		try {
+			include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
+			$conf->cache['geoip'][$datafile] = new DolGeoIP('country', $datafile);
+		} catch (Exception $e) {
+			//print 'Error with GeoIP database: '.$e->getMessage();
+		}
+	}
+
+	return $conf->cache['geoip'][$datafile];
+}
+
+/**
  * 	Return a country code from IP. Empty string if not found.
  *
  * 	@param	string	$ip			IP
@@ -4238,24 +4283,14 @@ function dolGetCountryCodeFromIp($ip)
 {
 	$countrycode = '';
 
-	if (isModEnabled('geoipmaxmind')) {
-		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
-			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
-		} else {
-			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
-			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
-		}
-		//$ip='24.24.24.24';
-		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
-		if ($datafile) {
-			try {
-				include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
-				$geoip = new DolGeoIP('country', $datafile);
-				//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
-				$countrycode = $geoip->getCountryCodeFromIP($ip);
-			} catch (Exception $e) {
-				//print 'Error with GeoIP database: '.$e->getMessage();
-			}
+	//$ip='24.24.24.24';
+	$geoip = dolGetGeoIPObject();
+	if ($geoip) {
+		try {
+			//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
+			$countrycode = $geoip->getCountryCodeFromIP($ip);
+		} catch (Exception $e) {
+			//print 'Error with GeoIP database: '.$e->getMessage();
 		}
 	}
 
@@ -4273,21 +4308,12 @@ function dolGetCityFromIp($ip)
 {
 	$cityname = '';
 
-	if (isModEnabled('geoipmaxmind')) {
-		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
-			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
-		} else {
-			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
-			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
-		}
-		if ($datafile) {
-			try {
-				include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
-				$geoip = new DolGeoIP('country', $datafile);
-				$cityname = $geoip->getCityNameFromIP($ip);
-			} catch (Exception $e) {
-				//print 'Error with GeoIP database: '.$e->getMessage();
-			}
+	$geoip = dolGetGeoIPObject();
+	if ($geoip) {
+		try {
+			$cityname = $geoip->getCityNameFromIP($ip);
+		} catch (Exception $e) {
+			//print 'Error with GeoIP database: '.$e->getMessage();
 		}
 	}
 

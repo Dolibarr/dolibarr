@@ -796,11 +796,19 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Ref of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.ref']['checked'])) {
-					print '<td class="nowraponall">';
+					print '<td class="nowraponall'.(empty($arrayfields['t.label']['checked']) ? ' tdlineheightsmall' : '').'">';
+					if (empty($arrayfields['t.label']['checked'])) {
+						print '<div class="tdoverflowmax250 inline-block lineheightsmall">';
+					}
 					if ($showlineingray) {
 						print '<i>'.img_object('', 'projecttask').' '.$lines[$i]->ref.'</i>';
 					} else {
 						print $taskstatic->getNomUrl(1, 'withproject');
+					}
+					if (empty($arrayfields['t.label']['checked'])) {
+						// When task label column is not visible, show the label under the ref
+						print '<br><span class="spantitle">'.($showlineingray ? '<i>' : '').dolPrintLabel($lines[$i]->label).($showlineingray ? '</i>' : '').'</span>';
+						print '</div>';
 					}
 					print '</td>';
 				}

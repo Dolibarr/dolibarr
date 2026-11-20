@@ -689,7 +689,6 @@ if (isModEnabled('supplier_proposal')) {
 if (isModEnabled('supplier_order')) {
 	print '<div id="supplier_order"></div>';
 
-	$langs->load("supplier_order");
 	print load_fiche_titre($langs->trans("SupplierOrder"), '', 'supplier_proposal');
 
 	print '<div class="div-table-responsive-no-min">';

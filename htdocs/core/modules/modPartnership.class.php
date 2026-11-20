@@ -344,7 +344,7 @@ class modPartnership extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => $fk_mainmenu,
 			'leftmenu' => 'partnership',
-			'url' => '/partnership/partnership_list.php',
+			'url' => '/partnership/partnership_list.php?leftmenu=partnership',
 			'langs' => 'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1100 + $r,
 			'enabled' => 'isModEnabled("partnership")', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled.
@@ -358,7 +358,7 @@ class modPartnership extends DolibarrModules
 			'titre' => 'NewPartnership',
 			'mainmenu' => $fk_mainmenu,
 			'leftmenu' => 'partnership_new',
-			'url' => '/partnership/partnership_card.php?action=create',
+			'url' => '/partnership/partnership_card.php?action=create&leftmenu=partnership',
 			'langs' => 'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1100 + $r,
 			'enabled' => 'isModEnabled("partnership")', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -372,7 +372,7 @@ class modPartnership extends DolibarrModules
 			'titre' => 'ListOfPartnerships',
 			'mainmenu' => $fk_mainmenu,
 			'leftmenu' => 'partnership_list',
-			'url' => '/partnership/partnership_list.php',
+			'url' => '/partnership/partnership_list.php?leftmenu=partnership',
 			'langs' => 'partnership', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1100 + $r,
 			'enabled' => 'isModEnabled("partnership")', // Define condition to show or hide menu entry. Use '$conf->partnership->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

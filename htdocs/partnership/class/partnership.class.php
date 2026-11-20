@@ -108,7 +108,7 @@ class Partnership extends CommonObject
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Reference of object", 'csslist' => 'tdoverflowmax150'),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 'isModEnabled("multicompany")', 'position' => 15, 'notnull' => 1, 'visible' => -2, 'default' => '1', 'index' => 1,),
 		'fk_type' => array('type' => 'integer:PartnershipType:partnership/class/partnership_type.class.php:0:(active:=:1)', 'label' => 'Type', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'csslist' => 'tdoverflowmax100', 'help' => 'YouCanChangeValuesForThisListFromDictionarySetup'),
-		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax125',),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax125',),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax125'),
@@ -228,10 +228,10 @@ class Partnership extends CommonObject
 		$this->isextrafieldmanaged = 1;
 
 		if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
-			$this->fields['fk_member'] = array('type' => 'integer:Adherent:adherents/class/adherent.class.php:1', 'label' => 'Member', 'enabled' => '1', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'picto' => 'member', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax150');
+			$this->fields['fk_member'] = array('type' => 'integer:Adherent:adherents/class/adherent.class.php:1', 'label' => 'Member', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'picto' => 'member', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax150');
 			unset($this->fields['fk_soc']);
 		} else {
-			$this->fields['fk_soc'] = array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => '1', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'picto' => 'company', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax150');
+			$this->fields['fk_soc'] = array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => '1', 'position' => 50, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'picto' => 'company', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax150');
 			unset($this->fields['fk_member']);
 		}
 
