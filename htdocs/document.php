@@ -149,7 +149,8 @@ $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = ($entity > 0 ? $entity : $conf->entity);
+// Read again after main.inc.php: for an already logged session, it overwrites the global $entity with the session entity.
+$entity = (GETPOSTINT('entity') > 0 ? GETPOSTINT('entity') : $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
