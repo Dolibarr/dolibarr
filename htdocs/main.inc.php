@@ -3204,12 +3204,12 @@ function top_menu_importfile()
                 event.preventDefault();
                 console.log("Click on #topmenu-uploadfile-link while the AI module is not enabled, we show a popup");
                 jQuery("#topmenu-uploadfile-dialog").dialog({
-                    title: "'.dol_escape_js($langs->transnoentitiesnoconv('UploadFile')).'",
+                    title: \''.dol_escape_js($langs->transnoentitiesnoconv('UploadFile')).'\',
                     modal: true,
                     resizable: false,
                     width: Math.min(500, jQuery(window).width() - 20),
                     buttons: [{
-                        text: "'.dol_escape_js($langs->transnoentitiesnoconv('Close')).'",
+                        text: \''.dol_escape_js($langs->transnoentitiesnoconv('Close')).'\',
                         click: function() { jQuery(this).dialog("close"); }
                     }]
                 });

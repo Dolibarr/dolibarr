@@ -505,7 +505,7 @@ if (isModEnabled("bank")) {
 
 	// Account
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1, 0, 0, 'maxwidth125');
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth125');
 	print '</td>';
 }
 // Amount
