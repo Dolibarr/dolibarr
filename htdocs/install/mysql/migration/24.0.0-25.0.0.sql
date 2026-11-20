@@ -232,6 +232,9 @@ ALTER TABLE llx_inventory ADD COLUMN last_main_doc varchar(255) DEFAULT NULL AFT
 ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_prev_id (fk_prev_id);
 ALTER TABLE llx_facture ADD INDEX idx_facture_situation_cycle_ref (situation_cycle_ref);
 
+-- Lines of a credit note of a situation invoice cycle cancel a progress of the source lines, so their situation_percent must be negative
+UPDATE llx_facturedet SET situation_percent = -situation_percent WHERE situation_percent > 0 AND fk_facture IN (SELECT f.rowid FROM llx_facture as f WHERE f.type = 2 AND f.situation_cycle_ref > 0);
+
 -- Reduce response times with high transaction volume
 ALTER TABLE llx_facture ADD INDEX idx_facture_status_date (paye, fk_statut, datef);
 
@@ -732,3 +735,18 @@ ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
 
 -- Remove index of llx_quickmemo_memo_user on fk_memo (duplicate of uk_memo_user). Mysql only: with pgsql, this name is the one of an index of llx_quickmemo_memo
 -- VMYSQL4.1 DROP INDEX idx_quickmemo_memo_rowid ON llx_quickmemo_memo_user;
+
+create table llx_categorie_skill
+(
+  fk_categorie integer NOT NULL,
+  fk_skill     integer NOT NULL,
+  import_key   varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_skill ADD PRIMARY KEY pk_categorie_skill (fk_categorie, fk_skill);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_skill ADD INDEX idx_categorie_skill_fk_skill (fk_skill);
+
+ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_fk_skill_rowid FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill (rowid);

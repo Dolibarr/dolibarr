@@ -1427,7 +1427,7 @@ class ToolApiBridge extends McpTool
 		// they all call, 'fixed_params' the arguments forced on the call.
 		$uploadParams = [
 			'filename' => "Name of the file to create (e.g. 'photo.jpg').",
-			'filecontent' => "Content of the file. Omit to create an empty file.",
+			'filecontent' => "Content of the file. For a file the user attached to the chat, give only its reference (e.g. '@attachment1'), never its content: the file is put on execution. Omit to create an empty file.",
 			'fileencoding' => "'base64' when filecontent is base64-encoded, empty (default) for plain text.",
 			'overwriteifexists' => "1 to overwrite a file that already exists with the same name, 0 (default) to fail instead.",
 			'createdirifnotexists' => "1 (default) to create the subdirectories when they do not exist, 0 to fail."
@@ -1460,7 +1460,7 @@ class ToolApiBridge extends McpTool
 				// Dolibarr right covers every area (an invoice needs facture/...).
 				'post' => [
 					'suffix' => 'upload',
-					'description' => "Attach a file to a business object. Give modulepart (the object type), the ref of the object (its directory is derived from it; for a third party or a contact use the rowid instead), and filecontent base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
+					'description' => "Attach a file to a business object. Give modulepart (the object type), the ref of the object (its directory is derived from it; for a third party or a contact use the rowid instead), and filecontent: the reference of a file attached to the chat (e.g. '@attachment1'), or a content base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewUploadDocument',
 						'required' => ['filename', 'modulepart', 'ref'],
@@ -1507,7 +1507,7 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'upload',
 					'module' => 'ecm',
 					'fixed_params' => ['modulepart' => 'ecm'],
-					'description' => "Upload a file into the DMS (ECM module) manual area, the free directory tree where users file documents not linked to a business object. Give subdir (the directory inside the tree, preferably an existing one) and filecontent base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
+					'description' => "Upload a file into the DMS (ECM module) manual area, the free directory tree where users file documents not linked to a business object. Give subdir (the directory inside the tree, preferably an existing one) and filecontent: the reference of a file attached to the chat (e.g. '@attachment1'), or a content base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewUploadDocument',
 						'required' => ['filename'],
@@ -1552,7 +1552,7 @@ class ToolApiBridge extends McpTool
 				'post' => [
 					'suffix' => 'upload',
 					'fixed_params' => ['modulepart' => 'medias'],
-					'description' => "Upload a file into the public medias directory, where the images, videos and documents of the websites of the website module are stored: the file becomes publicly reachable. Give subdir (e.g. 'image/mywebsite' for the images of the website mywebsite) and filecontent base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
+					'description' => "Upload a file into the public medias directory, where the images, videos and documents of the websites of the website module are stored: the file becomes publicly reachable. Give subdir (e.g. 'image/mywebsite' for the images of the website mywebsite) and filecontent: the reference of a file attached to the chat (e.g. '@attachment1'), or a content base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewUploadDocument',
 						'required' => ['filename', 'subdir'],
@@ -1916,7 +1916,7 @@ class ToolApiBridge extends McpTool
 				),
 				'getPageById' => array(
 					'suffix' => 'pages_get',
-					'description' => "One page or blog post of a website, with its HTML content, by the rowid of the page.",
+					'description' => "Read one page or blog post of a website, with its HTML content, by the rowid of the page.",
 					'params' => array('pageid' => "Rowid of the page or blog post.")
 				),
 				'postPage' => array(
@@ -2626,7 +2626,7 @@ class ToolApiBridge extends McpTool
 		$supplierOrderDeleteLine['write']['access'] = array('fournisseur', 'commande_fournisseur', 'commande');
 		$this->enrichments['supplier_orders']['methods']['deleteLine'] = $supplierOrderDeleteLine;
 		// The REST postLine() of a contract reads every field: none is left unset.
-		$this->enrichments['contracts']['methods']['postLine'] = $this->addLineMethod('contract', 'api_contracts_list', 'Contrat', array('contrat', 'creer'), false, array(), array('price_base_type' => 'HT', 'localtax1_tx' => 0, 'localtax2_tx' => 0, 'remise_percent' => 0, 'date_start' => '', 'date_end' => '', 'subprice_excl_tax' => 0, 'info_bits' => 0, 'fk_fournprice' => null, 'pa_ht' => 0, 'array_options' => array(), 'fk_unit' => null, 'rang' => -1));
+		$this->enrichments['contracts']['methods']['postLine'] = $this->addLineMethod('contract', 'api_contracts_list', 'Contrat', array('contrat', 'creer'), false, array(), array('price_base_type' => 'HT', 'localtax1_tx' => 0, 'localtax2_tx' => 0, 'remise_percent' => 0, 'date_start' => '', 'date_end' => '', 'subprice_inc_tax' => 0, 'info_bits' => 0, 'fk_fournprice' => null, 'pa_ht' => 0, 'array_options' => array(), 'fk_unit' => null, 'rang' => -1));
 		$this->enrichments['interventions']['methods']['postLine'] = $this->lineMethod('add', 'intervention', 'Fichinter', array('ficheinter', 'creer'), 'intervention');
 
 		// Header of a draft: the fields a user corrects, by their old and new value.

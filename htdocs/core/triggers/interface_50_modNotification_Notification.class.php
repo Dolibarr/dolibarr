@@ -103,6 +103,10 @@ class InterfaceNotification extends DolibarrTriggers
 			$this->errors = array_merge(empty($this->errors) ? array() : $this->errors, empty($notify->error) ? array() : array($notify->error), $notify->errors);
 			return $resultSend;
 		}
+		// Notifications that could not be sent do not cancel the action: the user is only warned
+		if (!empty($notify->warnings)) {
+			setEventMessages(null, $notify->warnings, 'warnings');
+		}
 
 		return 1;
 	}

@@ -250,9 +250,11 @@ class Tickets extends DolibarrApi
 		$socid = DolibarrApiAccess::$user->socid ?: $socid;
 
 		$search_sale = null;
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides the socid filter, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -849,14 +851,18 @@ class Tickets extends DolibarrApi
 	 * @return  array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Ticket not found
+	 * @throws RestException 500 Error when deleting the ticket
 	 */
 	public function delete($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'delete')) {
 			throw new RestException(403);
 		}
-		$result = $this->ticket->fetch($id);
-		if (!$result) {
+		$result = $this->ticket->fetch((int) $id);
+		if ($result <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 
@@ -864,8 +870,8 @@ class Tickets extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->ticket->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting ticket');
+		if ($this->ticket->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when deleting the ticket: '.$this->ticket->errorsToString());
 		}
 
 		return array(
@@ -938,7 +944,7 @@ class Tickets extends DolibarrApi
 	 * Delete the attachment files saved for a message that could not be created, with their entries in the ECM index.
 	 *
 	 * @param	string[]	$files	Full paths of the files to delete
-	 * @return	void
+	 * @return	void			No return value
 	 */
 	private function _deleteMessageAttachments(array $files): void
 	{
@@ -1029,7 +1035,7 @@ class Tickets extends DolibarrApi
 	 * @param	int		$contactid	Contact id that was linked
 	 * @param	string	$type		Contact type code
 	 * @param	string	$source		'internal' or 'external'
-	 * @return	void
+	 * @return	void			No return value, throws a RestException on failure
 	 * @throws	RestException
 	 */
 	private function _addContactResultOrThrow(int $result, int $contactid, string $type, string $source): void

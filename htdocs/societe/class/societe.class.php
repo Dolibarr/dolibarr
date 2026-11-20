@@ -5351,7 +5351,7 @@ class Societe extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$langs->load('customers');
+		$langs->load('companies');
 
 		if ($mode == 2) {
 			if ($status == '-1' || $status == 'ST_NO') {

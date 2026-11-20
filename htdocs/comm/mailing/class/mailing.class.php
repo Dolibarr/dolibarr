@@ -1120,7 +1120,7 @@ class Mailing extends CommonObject
 	{
 		// phpcs:enable
 		global $langs;
-		$langs->load("mailing");
+		$langs->load("mails");
 
 		$labelStatus = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
 		$labelStatusShort = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
