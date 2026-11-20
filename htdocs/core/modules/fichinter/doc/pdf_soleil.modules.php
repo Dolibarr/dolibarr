@@ -546,15 +546,6 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height + 1, $this->corner_radius, 0, 0, 'D');	 // Rect takes a length in 3rd parameter and 4th parameter
 
 		if (empty($hidebottom)) {
-			$employee_name = '';
-			if (!empty($object)) {
-				$arrayidcontact = $object->getIdContact('internal', 'INTERVENING');
-				if (count($arrayidcontact) > 0) {
-					$object->fetch_user($arrayidcontact[0]);
-					$employee_name = $object->user->getFullName($outputlangs);
-				}
-			}
-
 			$internalBox = self::getSignatureBox(true);
 			$externalBox = self::getSignatureBox(false);
 
@@ -562,7 +553,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			$pdf->MultiCell($internalBox['width'], 5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"), 0, 'L', false);
 
 			$pdf->SetXY($internalBox['x'], $internalBox['y']);
-			$pdf->MultiCell($internalBox['width'], $internalBox['height'], $employee_name, 1, 'L');
+			$pdf->MultiCell($internalBox['width'], $internalBox['height'], '', 1, 'L');
 
 			$pdf->SetXY($externalBox['x'], $externalBox['y'] - 5);
 			$pdf->MultiCell($externalBox['width'], 5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"), 0, 'L', false);

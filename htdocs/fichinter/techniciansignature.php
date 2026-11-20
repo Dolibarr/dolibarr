@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 $langs->loadLangs(array('interventions', 'errors', 'other'));
 $id = GETPOSTINT('id');
 $object = new Fichinter($db);
-if (!isModEnabled('ficheinter') || !$user->hasRight('ficheinter', 'lire') || !$user->hasRight('ficheinter', 'creer')
+if (!isModEnabled('intervention') || !$user->hasRight('ficheinter', 'lire') || !$user->hasRight('ficheinter', 'creer')
 	|| $id <= 0 || $object->fetch($id) <= 0 || (int) $object->entity !== (int) $conf->entity) {
 	accessforbidden();
 }
