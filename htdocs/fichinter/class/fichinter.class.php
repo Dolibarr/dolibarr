@@ -298,7 +298,7 @@ class Fichinter extends CommonObject
 	 */
 	public function lockSignatureDocument()
 	{
-		$sql = 'SELECT last_main_doc, signed_status, fk_statut, model_pdf FROM '.$this->db->prefix().$this->table_element;
+		$sql = "SELECT last_main_doc, signed_status, fk_statut, model_pdf FROM ".$this->db->prefix().$this->table_element;
 		$sql .= ' WHERE rowid = '.((int) $this->id).' AND entity = '.((int) $this->entity);
 		$sql .= ' FOR UPDATE';
 		$resql = $this->db->query($sql);
