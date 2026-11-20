@@ -735,3 +735,9 @@ ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
 
 -- Remove index of llx_quickmemo_memo_user on fk_memo (duplicate of uk_memo_user). Mysql only: with pgsql, this name is the one of an index of llx_quickmemo_memo
 -- VMYSQL4.1 DROP INDEX idx_quickmemo_memo_rowid ON llx_quickmemo_memo_user;
+
+-- Add inventory / stock asset and COGS accounting codes to product tables
+ALTER TABLE llx_product ADD COLUMN accountancy_code_stock varchar(32) AFTER accountancy_code_buy_export;
+ALTER TABLE llx_product ADD COLUMN accountancy_code_cogs varchar(32) AFTER accountancy_code_stock;
+ALTER TABLE llx_product_perentity ADD COLUMN accountancy_code_stock varchar(32) AFTER accountancy_code_buy_export;
+ALTER TABLE llx_product_perentity ADD COLUMN accountancy_code_cogs varchar(32) AFTER accountancy_code_stock;
