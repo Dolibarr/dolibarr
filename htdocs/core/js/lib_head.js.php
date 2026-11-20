@@ -1623,6 +1623,13 @@ $(document).ready(function() {
 			, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
 			, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
 		});
+
+		// Close all notifications (messages, warnings and errors) when the ESC key is pressed
+		$(document).on('keydown', function(e) {
+			if (e.key === 'Escape' || e.keyCode === 27) {
+				$('.jnotify-container .jnotify-notification').remove();
+			}
+		});
 	}
 });
 	<?php
@@ -1673,6 +1680,8 @@ jQuery(document).ready(function() {
 		// The page is in an iframe
 		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
 		jQuery(".id-container").css('width', '100%');
+		// Without the left menu, #id-right must not stay a table-cell, otherwise its width is reduced to the width of its content
+		jQuery("#id-right").css({"display": "block", "width": "100%"});
 
 	}
 
@@ -2011,6 +2020,75 @@ $(function() {
 				checkBox.prop('checked', nextCheckStatus).trigger('change');
 				setLastClickedRowStatus($(this), 1);
 			}
+		}
+	});
+});
+
+
+/*
+ * Left menu with MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER: the sub entries of a block are expanded when mouse stays over its title,
+ * other blocks are collapsed. A mousemove is required, so a title moving under a still mouse during animation does not expand.
+ */
+$(function() {
+	let blocks = $('.blockvmenuexpandonhover');
+	if (blocks.length === 0) {
+		return;
+	}
+	let animationDuration = 250;
+	let hoverDelay = 150;			/* To not expand blocks when mouse just crosses titles */
+	let hoverTimer = null;
+
+	let collapseBlocks = function () {
+		blocks.filter('.blockvmenuexpanded').removeClass('blockvmenuexpanded').children('.menu_subentries').stop(true).slideUp(animationDuration);
+	};
+
+	let expandBlock = function (block) {
+		if (block.hasClass('blockvmenuexpanded')) {
+			return;
+		}
+		collapseBlocks();
+		block.addClass('blockvmenuexpanded').children('.menu_subentries').stop(true).slideDown(animationDuration);
+	};
+
+	/* Expand the block if it has sub entries, else (block with class blockvmenucollapseonhover) collapse the expanded block */
+	let activateBlock = function (block) {
+		if (block.hasClass('blockvmenuexpandonhover')) {
+			expandBlock(block);
+		} else {
+			collapseBlocks();
+		}
+	};
+
+	let isBlockToChange = function (block) {
+		if (block.hasClass('blockvmenuexpandonhover')) {
+			return !block.hasClass('blockvmenuexpanded');
+		}
+		return blocks.filter('.blockvmenuexpanded').length > 0;
+	};
+
+	blocks.add('.blockvmenucollapseonhover').children('.menu_titre').on('mousemove', function () {
+		let block = $(this).parent();
+		if (hoverTimer === null && isBlockToChange(block)) {
+			hoverTimer = setTimeout(function () {
+				hoverTimer = null;
+				activateBlock(block);
+			}, hoverDelay);
+		}
+	}).on('mouseleave', function () {
+		clearTimeout(hoverTimer);
+		hoverTimer = null;
+	}).on('focusin', function () {
+		activateBlock($(this).parent());
+	});
+
+	/* Click on the arrow expands a collapsed block or collapses an expanded one, instead of following the title link */
+	$('.blockvmenuexpandonhover .menuexpandarrow').on('click', function (e) {
+		let block = $(this).closest('.blockvmenuexpandonhover');
+		e.preventDefault();
+		if (block.hasClass('blockvmenuexpanded')) {
+			collapseBlocks();
+		} else {
+			expandBlock(block);
 		}
 	});
 });

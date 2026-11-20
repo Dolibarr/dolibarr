@@ -87,9 +87,6 @@ if (isModEnabled('stock')) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'products', 'stocks', 'productbatch'));
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 
 
 // Get Parameters
@@ -2231,7 +2228,7 @@ if ($action == 'create') {
 
 		// Bank Account
 		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER') && isModEnabled("bank")) {
-			$langs->load("bank");
+			$langs->load("banks");
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			$form->select_comptes($fk_account ?? '', 'fk_account', 0, '', 1);

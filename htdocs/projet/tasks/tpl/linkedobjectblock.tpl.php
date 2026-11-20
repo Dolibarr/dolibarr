@@ -46,7 +46,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 /** @var Task[] $linkedObjectBlock */
 
 // Load translation files required by the page
-$langs->load("tasks");
+$langs->load("projects");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
 /** @var Task[] $linkedObjectBlock */

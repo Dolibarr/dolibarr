@@ -2067,7 +2067,7 @@ class QuickMemo {
 		if (!menuContainer) return;
 
 		const dropdown = document.createElement('div');
-		dropdown.className = 'atoplogin dropdown inline-block mod-quick-memo-menu';
+		dropdown.className = 'atoplogin dropdown inline-block topmenu-any mod-quick-memo-menu';
 		dropdown.id = this.param.menuDropDownId;
 
 		let textLoading = await Dolibarr.tools.langs.trans('Loading');
