@@ -62,6 +62,8 @@ You must avoid tests that could cause degradation or interruption of our service
 
 You must not leak, manipulate, or destroy any user data of third parties to find your vulnerability.
 
+You must not send reports manually. Reports sent by automatic system are forbidden.
+
 Reports are processed around once a month.
 
 
