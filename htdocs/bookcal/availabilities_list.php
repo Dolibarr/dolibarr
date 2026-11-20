@@ -282,6 +282,18 @@ if ($object->ismultientitymanaged == 1  || $object->ismultientitymanaged != '') 
 } else {
 	$sql .= " WHERE 1 = 1";
 }
+// Restriction on sale representative (a sales representative not allowed to see all customers is limited
+// to his own customers, the thirdparty boundary is the one of the parent calendar)
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = bc.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+		$userschilds = $user->getAllChildIds();
+		if (!empty($userschilds)) {
+			$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = bc.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
+		}
+	}
+	$sql .= ")";
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {

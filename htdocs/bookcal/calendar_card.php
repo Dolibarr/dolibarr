@@ -107,10 +107,20 @@ if ($enablepermissioncheck) {
 $upload_dir = $conf->bookcal->multidir_output[isset($object->entity) ? $object->entity : 1].'/calendar';
 
 // Security check (enable the most restrictive one)
-//if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, $object, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
+// Check the user is allowed to access the thirdparty of the record, and the thirdparty of the
+// target record on create, add or update (a sales representative not allowed to see all customers is limited to his own customers)
+if ($object->id > 0 && !checkUserAccessToObject($user, array($object->element), $object->id, $object->table_element, '', 'fk_soc', 'rowid')) {
+	accessforbidden();
+}
+if (in_array($action, array('create', 'add', 'update', 'set_thirdparty')) && GETPOSTINT('fk_soc') > 0 && !checkUserAccessToObject($user, array('societe'), GETPOSTINT('fk_soc'))) {
+	accessforbidden();
+}
 if (!isModEnabled("bookcal")) {
 	accessforbidden();
 }

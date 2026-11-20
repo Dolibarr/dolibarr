@@ -85,6 +85,24 @@ $permissiontoaccess = (isModEnabled('website') && $user->hasRight('website', 're
 if (!$permissiontoaccess) {
 	accessforbidden('NotAllowed');
 }
+// Check the thirdparty (fk_soc) of the website account is into the scope of the user, including on
+// create and reassignment: an external user is limited to his own company, a sales representative
+// not allowed to see all customers is limited to his own customers.
+if ($user->socid > 0) {
+	if ($object->id > 0 && (empty($object->fk_soc) || $object->fk_soc != $user->socid)) {
+		accessforbidden();
+	}
+	if (in_array($action, array('create', 'add', 'update')) && GETPOSTISSET('fk_soc') && GETPOSTINT('fk_soc') != $user->socid) {
+		accessforbidden();
+	}
+} elseif (!$user->hasRight('societe', 'client', 'voir')) {
+	if ($object->id > 0 && (empty($object->fk_soc) || !checkUserAccessToObject($user, array('societe'), $object->fk_soc))) {
+		accessforbidden();
+	}
+	if (in_array($action, array('create', 'add', 'update')) && GETPOSTINT('fk_soc') > 0 && !checkUserAccessToObject($user, array('societe'), GETPOSTINT('fk_soc'))) {
+		accessforbidden();
+	}
+}
 
 // Permissions
 $permissiontocreate = 0;
