@@ -1805,9 +1805,10 @@ function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_b
  *	@param	float		$h					Cell minimum height. The cell extends automatically if needed.
  *	@param	string		$align				Align
  *	@param	float		$default_font_size	Font size
+ *	@param	?float		$linegap			Gap after the preceding cell, or null for legacy positioning
  *	@return	float                           The Y PDF position
  */
-function pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
+function pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size, $linegap = null)
 {
 	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);	// May update $object->note_public
 
@@ -1818,10 +1819,13 @@ function pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, $
 				$reftoshow .= ' / '.$linkedobject["date_value"];
 			}
 
-			$posy += 3;
+			$posy += $linegap ?? 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFont('', '', (float) $default_font_size - 2);
 			$pdf->MultiCell($w, $h, $reftoshow, '', $align);
+			if ($linegap !== null) {
+				$posy = $pdf->GetY();
+			}
 		}
 	}
 
