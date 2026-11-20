@@ -64,6 +64,11 @@ function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 	print '</body></html>';
 }
 
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+define("DOLENTITY", $entity);
+
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
@@ -75,6 +80,9 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 // Security check
 if (!isModEnabled('don')) {
 	httponly_accessforbidden('Module Donation not enabled');
+}
+if (!getDolGlobalString('DONATION_ENABLE_PUBLIC')) {
+	httponly_accessforbidden("Donation pages for public visitors have not been enabled");
 }
 
 
@@ -89,7 +97,9 @@ llxHeaderVierge("");
 
 $sql = "SELECT d.datedon as datedon, d.lastname, d.firstname, d.amount, d.public, d.societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d";
-$sql .= " WHERE d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
+$sql .= " WHERE d.fk_statut in (2, 3)";
+$sql .= " AND d.entity IN (".getEntity('donation').")";
+$sql .= " ORDER BY d.datedon DESC";
 
 $resql = $db->query($sql);
 if ($resql) {

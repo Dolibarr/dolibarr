@@ -362,7 +362,7 @@ class modMyModule extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle paddingright"'),
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'myobject',
-			'url' => '/mymodule/mymoduleindex.php',
+			'url' => '/mymodule/mymoduleindex.php?leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => "isModEnabled('mymodule')", // Define condition to show or hide menu entry. Use isModEnabled("mymodule") if entry must be visible if module is enabled.
@@ -377,7 +377,7 @@ class modMyModule extends DolibarrModules
 			'titre' => 'New_MyObject',
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'mymodule_myobject_new',
-			'url' => '/mymodule/myobject_card.php?action=create',
+			'url' => '/mymodule/myobject_card.php?action=create&leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => "isModEnabled('mymodule')", // Define condition to show or hide menu entry. Use isModEnabled("mymodule") if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -392,7 +392,7 @@ class modMyModule extends DolibarrModules
 			'titre' => 'List_MyObject',
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'mymodule_myobject_list',
-			'url' => '/mymodule/myobject_list.php',
+			'url' => '/mymodule/myobject_list.php?leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => "isModEnabled('mymodule')", // Define condition to show or hide menu entry. Use isModEnabled("mymodule") if entry must be visible if module is enabled.
