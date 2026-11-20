@@ -918,6 +918,15 @@ class AccountancyExport
 			$line->subledger_label = str_replace(array("- ", "…", "..."), "", $line->subledger_label);
 			$line->subledger_label = dol_string_unaccent($line->subledger_label);
 
+			// Quadratus is a fixed-width format: keep only printable ASCII so multibyte chars do not shift the next fields
+			$line->doc_ref = self::toFixedWidthAscii($line->doc_ref);
+			$line->label_operation = self::toFixedWidthAscii($line->label_operation);
+			$line->numero_compte = self::toFixedWidthAscii($line->numero_compte);
+			$line->label_compte = self::toFixedWidthAscii($line->label_compte);
+			$line->subledger_account = self::toFixedWidthAscii($line->subledger_account);
+			$line->subledger_label = self::toFixedWidthAscii($line->subledger_label);
+			$line->code_journal = self::toFixedWidthAscii($line->code_journal);
+
 			$code_compta = $line->numero_compte;
 			if (!empty($line->subledger_account)) {
 				$code_compta = $line->subledger_account;
@@ -2690,6 +2699,34 @@ class AccountancyExport
 	public static function trunc($str, $size)
 	{
 		return dol_trunc($str, $size, 'right', 'UTF-8', 1);
+	}
+
+	/**
+	 * Convert a string into printable ASCII for fixed-width formats (Quadratus).
+	 * Every character remaining outside printable ASCII after dol_string_unaccent() (typographic
+	 * apostrophe, quotes, dashes, ligatures, euro sign...) is several bytes long in UTF-8 and is
+	 * counted as several characters by str_pad(), so it shifts all the next fields of the line.
+	 *
+	 * @param 	string	$str 	String (already unaccented)
+	 * @return 	string			String with printable ASCII characters only
+	 */
+	private static function toFixedWidthAscii($str)
+	{
+		$str = strtr((string) $str, array(
+			"\u{2018}" => "'", "\u{2019}" => "'", "\u{201A}" => "'", "\u{2032}" => "'",
+			"\u{201C}" => '"', "\u{201D}" => '"', "\u{201E}" => '"', "\u{00AB}" => '"', "\u{00BB}" => '"',
+			"\u{2013}" => '-', "\u{2014}" => '-', "\u{2026}" => '...',
+			"\u{0153}" => 'oe', "\u{0152}" => 'OE', "\u{00E6}" => 'ae', "\u{00C6}" => 'AE', "\u{00DF}" => 'ss',
+			"\u{20AC}" => 'EUR', "\u{00A0}" => ' ', "\u{202F}" => ' ',
+		));
+
+		// Replace any other non printable ASCII character by a space (one space per character when string is valid UTF-8)
+		$result = preg_replace('/[^\x20-\x7E]/u', ' ', $str);
+		if ($result === null) {
+			$result = preg_replace('/[^\x20-\x7E]/', ' ', $str);
+		}
+
+		return (string) $result;
 	}
 
 	/**
