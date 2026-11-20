@@ -750,3 +750,12 @@ ALTER TABLE llx_categorie_skill ADD INDEX idx_categorie_skill_fk_skill (fk_skill
 
 ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_fk_skill_rowid FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill (rowid);
+
+-- Share of a quick memo with users or groups (a row is a user or a group, the other column is 0)
+CREATE TABLE llx_quickmemo_memo_share(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_memo integer NOT NULL,
+	fk_user integer NOT NULL DEFAULT 0,
+	fk_usergroup integer NOT NULL DEFAULT 0
+) ENGINE=innodb;
+ALTER TABLE llx_quickmemo_memo_share ADD UNIQUE INDEX uk_quickmemo_memo_share (fk_memo, fk_user, fk_usergroup);
