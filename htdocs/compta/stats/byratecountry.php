@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin", "accountancy"));
+$langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "products", "trips", "admin", "accountancy"));
 
 $modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') : getDolGlobalString('ACCOUNTING_MODE'));
 

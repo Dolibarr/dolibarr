@@ -138,7 +138,7 @@ if (!function_exists('dol_loginfunction')) {
 		global $dolibarr_main_demo, $dolibarr_main_force_https;
 		global $db, $hookmanager;
 
-		$langs->loadLangs(array("main", "other", "help", "admin"));
+		$langs->loadLangs(array("main", "other", "admin"));
 
 		// Instantiate hooks of thirdparty module only if not already define
 		$hookmanager->initHooks(array('mainloginpage'));

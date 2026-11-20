@@ -40,7 +40,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
+$langs->loadLangs(array('orders', 'propal', 'bills', 'other', 'products'));
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -169,7 +169,7 @@ $h++;
 // The custom reports tool is not available to external users
 if (empty($user->socid)) {
 	$head[$h][0] = DOL_URL_ROOT.'/product/stats/index.php?tabfamily=productstats';
-	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][1] = $langs->trans("CustomReport");
 	$head[$h][2] = 'customreports';
 	$h++;
 }

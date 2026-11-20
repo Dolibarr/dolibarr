@@ -42,7 +42,7 @@ require_once __DIR__.'/class/triggerhistory.class.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("webhook@webhook", "other", "admin"));
+$langs->loadLangs(array("other", "admin"));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'create'/'add', 'edit'/'update', 'view', ...

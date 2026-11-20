@@ -2112,7 +2112,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$module = 'commande';
 		$myobject = 'commande';
 	} elseif ($objecttype == 'mailing') {
-		$langs->load('mailing');
+		$langs->load('mails');
 		$classpath = 'comm/mailing/class';
 	} elseif ($objecttype == 'propal') {
 		$langs->load('propal');

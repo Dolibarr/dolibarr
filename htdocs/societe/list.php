@@ -62,7 +62,7 @@ if (isModEnabled('category')) {
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
+$langs->loadLangs(array("companies", "commercial", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
@@ -1855,7 +1855,7 @@ if (!empty($arrayfields['s2.nom']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // IP Address
@@ -2114,7 +2114,11 @@ while ($i < $imaxinloop) {
 			$labeltypeofcompany = empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 
 			print '<td class="center tdoverflowmax125" title="'.dolPrintHTMLForAttribute($labeltypeofcompany).'">';
-			print dolPrintHTML($labeltypeofcompany);
+			if (!empty($labeltypeofcompany)) {
+				print '<span class="badge badge-status badge-thirdpartytype">';
+				print dolPrintHTML($labeltypeofcompany);
+				print '</span>';
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

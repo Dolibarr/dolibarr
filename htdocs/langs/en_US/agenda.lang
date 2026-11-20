@@ -202,6 +202,7 @@ Availabilities=Availabilities
 NewAvailabilities=New availabilities
 NewCalendar=New calendar
 ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
+CalendarLabelBookCalHelp=Enter a name for your calendar that groups together all the availabilities of the same type, for example 'Calendar of availabilities for appointment booking' or 'Calendar of availabilities for phone call reminder'.
 AppointmentDuration = Appointment Duration : %s
 BookingSuccessfullyBooked=Your booking has been saved
 BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s

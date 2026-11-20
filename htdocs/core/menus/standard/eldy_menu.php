@@ -134,6 +134,12 @@ class MenuManager
 			$leftmenu = $forceleftmenu;
 		}
 
+		// When left menu entries are expanded on hover, the menu entries of modules must be loaded for all values of leftmenu
+		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
+		if (empty($forceleftmenu) && isLeftMenuExpandOnHover()) {
+			$leftmenu = 'all';
+		}
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 		$tabMenu = array();
 		$menuArbo = new Menubase($this->db, 'eldy');
