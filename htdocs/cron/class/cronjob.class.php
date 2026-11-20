@@ -1335,11 +1335,14 @@ class Cronjob extends CommonObject
 				if ($result === false || (!is_bool($result) && $result != 0)) {
 					$langs->load("errors");
 
-					if (!is_array($object->errors) || !in_array($object->error, $object->errors)) {
-						$errmsg .= $object->error;
+					// The class of the job may not declare the properties error and errors
+					$objecterror = isset($object->error) ? $object->error : '';
+					$objecterrors = (isset($object->errors) && is_array($object->errors)) ? $object->errors : array();
+					if (!in_array($objecterror, $objecterrors)) {
+						$errmsg .= $objecterror;
 					}
-					if (is_array($object->errors) && count($object->errors)) {
-						$errmsg .= (($errmsg ? ', ' : '').implode(', ', $object->errors));
+					if (count($objecterrors)) {
+						$errmsg .= (($errmsg ? ', ' : '').implode(', ', $objecterrors));
 					}
 					if (empty($errmsg)) {
 						$errmsg = $langs->trans('ErrorUnknown');
