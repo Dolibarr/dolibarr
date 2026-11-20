@@ -312,7 +312,7 @@ class WebPortalMember extends Adherent
 		$linkstart .= $linkclose . '>';
 		$linkend = '</a>';
 
-		if ($option === 'nolink') {
+		if ($option == 'nolink') {
 			$linkstart = '';
 			$linkend = '';
 		}

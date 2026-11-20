@@ -278,6 +278,9 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Add non object fields to fields for list
+if (!isset($arrayfields[$tableprefix.'.rowid'])) {	// Technical ID is hidden by the object when MAIN_SHOW_TECHNICAL_ID is off, but must remain selectable
+	$arrayfields[$tableprefix.'.rowid'] = array('label' => "TechnicalID", 'checked' => '-1', 'enabled' => '1', 'position' => 10);
+}
 $arrayfields['s.nom'] = array('label' => "ThirdParty", 'checked' => '1', 'position' => 21, 'enabled' => (!isModEnabled('societe') ? '0' : '1'));
 $arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'checked' => '0', 'position' => 22);
 $arrayfields['s.code_client'] = array('label' => "RefCustomer", 'checked' => '0', 'position' => 23);
@@ -362,12 +365,14 @@ if ($mode == 'kanbangroupby' && $groupby) {
 				$i = 1;
 				while ($i < ($num + 1)) {	// $num + 1 because we added the undefined entry so we start with $i=1;
 					$objp = $db->fetch_object($resql);
-					$groupbyvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+					// Same label as in the lead status selector: translation of OppStatus<code>, else label of dictionary
+					$labeloppstatus = ($langs->transnoentitiesnoconv("OppStatus".$objp->code) != "OppStatus".$objp->code ? $langs->transnoentitiesnoconv("OppStatus".$objp->code) : $objp->label);
+					$groupbyvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					// If this is a group code that need to be collapsed
 					if ($objp->code == 'WON') {
-						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					} elseif ($objp->code == 'LOST') {
-						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					}
 
 					$i++;
@@ -679,7 +684,7 @@ if (!$user->hasRight('projet', 'all', 'lire')) {
 if ($socid > 0) {
 	$sql .= " AND (p.fk_soc = ".((int) $socid).")"; // This filter if when we use a hard coded filter on company on url (not related to filter for external users)
 }
-if ($search_id) {
+if ($search_id != '') {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
 if ($search_ref) {
@@ -1477,8 +1482,8 @@ if ($conf->main_checkbox_left_column) {
 }
 // Project ID
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print '<td class="liste_titre" id="search_id">';
-	print '<input type="text" class="flat width50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center" id="search_id">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 // Project ref
@@ -1736,7 +1741,7 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -2168,7 +2173,7 @@ while ($i < $imaxinloop) {
 		}
 		// Project ID
 		if (!empty($arrayfields['p.rowid']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="center nowraponall">';
 			print $object->id;
 			print '</td>';
 			if (!$i) {

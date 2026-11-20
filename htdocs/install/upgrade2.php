@@ -701,6 +701,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_ACCOUNTING' => 'newboxdefonly',
 				'MAIN_MODULE_AGENDA' => 'newboxdefonly',
 				'MAIN_MODULE_BOM' => 'menuonly',
+				'MAIN_MODULE_BOOKCAL' => 'menuonly',
 				'MAIN_MODULE_BANQUE' => 'menuonly',
 				'MAIN_MODULE_BARCODE' => 'newboxdefonly',
 				'MAIN_MODULE_CRON' => 'newboxdefonly',
@@ -714,6 +715,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
 				'MAIN_MODULE_FICHEINTER' => 'newboxdefonly',
 				'MAIN_MODULE_HOLIDAY' => 'newboxdefonly',
+				'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => 'newboxdefonly',
 				'MAIN_MODULE_LOAN' => 'newboxdefonly',
 				'MAIN_MODULE_MARGIN' => 'menuonly',
 				'MAIN_MODULE_MRP' => 'menuonly',
@@ -721,6 +723,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_PARTNERSHIP' => 'newboxdefonly',
 				'MAIN_MODULE_PRINTING' => 'newboxdefonly',
 				'MAIN_MODULE_PRODUIT' => 'newboxdefonly',
+				'MAIN_MODULE_QUICKMEMO' => 'menuonly',
 				'MAIN_MODULE_RECRUITMENT' => 'menuonly',
 				'MAIN_MODULE_RESOURCE' => 'noboxes',
 				'MAIN_MODULE_SALARIES' => 'newboxdefonly',
@@ -734,6 +737,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_USER' => 'newboxdefonly', //This one must be always done and only into last targeted version)
 				'MAIN_MODULE_VARIANTS' => 'newboxdefonly',
 				'MAIN_MODULE_WEBSITE' => 'newboxdefonly',
+				'MAIN_MODULE_WORKSTATION' => 'newboxdefonly',
 			);
 
 			$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);
@@ -2844,7 +2848,7 @@ function migrate_project_user_resp($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."element_contact (";
-					$sql2 .= "datecreate";
+					$sql2 .= "date_creation";
 					$sql2 .= ", statut";
 					$sql2 .= ", element_id";
 					$sql2 .= ", fk_c_type_contact";
@@ -2923,7 +2927,7 @@ function migrate_project_task_actors($db, $langs, $conf)
 					$obj = $db->fetch_object($resql);
 
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."element_contact (";
-					$sql2 .= "datecreate";
+					$sql2 .= "date_creation";
 					$sql2 .= ", statut";
 					$sql2 .= ", element_id";
 					$sql2 .= ", fk_c_type_contact";
@@ -4402,6 +4406,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/supplier_order/doc/pdf_muscadet.modules.php',
 		'/core/modules/supplier_proposal/doc/pdf_aurore.modules.php',
 		'/core/modules/facture/pdf_oursin.modules.php',
+		'/core/modules/cheque/doc/pdf_blochet.class.php',		// renamed into pdf_blochet.modules.php
 		'/core/modules/mailings/contacts2.modules.php',
 		'/core/modules/mailings/contacts3.modules.php',
 		'/core/modules/mailings/contacts4.modules.php',
@@ -4543,6 +4548,8 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_API' => array('class' => 'modApi'),
 		'MAIN_MODULE_BARCODE' => array('class' => 'modBarcode', 'remove' => 1),
 		'MAIN_MODULE_BLOCKEDLOG' => array('class' => 'modBlockedLog', 'deleteinsertmenus' => 1),
+		'MAIN_MODULE_BOOKCAL' => array('class' => 'modBookCal', 'deleteinsertmenus' => 1),
+		'MAIN_MODULE_QUICKMEMO' => array('class' => 'modQuickMemo', 'deleteinsertmenus' => 1),
 		'MAIN_MODULE_CRON' => array('class' => 'modCron', 'remove' => 1),
 		'MAIN_MODULE_SOCIETE' => array('class' => 'modSociete', 'remove' => 1),
 		'MAIN_MODULE_PRODUIT' => array('class' => 'modProduct'),
@@ -4669,8 +4676,7 @@ function migrate_reload_menu($db, $langs, $conf)
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler = array();
-	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENU_SMARTPHONE') == 'auguria_menu'
-		|| getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE') == 'auguria_menu') {
+	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu') {
 		$listofmenuhandler['auguria'] = 1; // We set here only dynamic menu handlers
 	}
 
@@ -5727,7 +5733,7 @@ function migrate_apiresttokens()
 					$tmpuser->fetch((int) $obj->fk_user, '', '', 1, ($obj->entity ? $obj->entity : $conf->entity));
 
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, tokenstring, fk_user, datec, entity, apicount_total)";
-					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring)))."', ";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape(dolEncrypt(dolDecrypt($obj->tokenstring), '', '', 'dolibarr'))."', ";
 					$sqlforinsert .= ((int) $obj->fk_user).", '".$db->idate(dol_now())."', ".((int) $obj->entity).", ";
 					$sqlforinsert .= getDolUserInt('API_COUNT_CALL', 0, $tmpuser);
 					$sqlforinsert .= ")";

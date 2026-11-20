@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2026	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
  * Copyright (C) 2022-2026  Frédéric France         <frederic.france@free.fr>
@@ -1191,6 +1191,7 @@ class Account extends CommonObject
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
 		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer,";
+		$sql .= " ba.extraparams,";
 		$sql .= ' c.code as country_code, c.label as country,';
 		$sql .= ' d.code_departement as state_code, d.nom as state,';
 		$sql .= ' aj.code as accountancy_journal';
@@ -1267,6 +1268,8 @@ class Account extends CommonObject
 
 				$this->ics           = $obj->ics;
 				$this->ics_transfer  = $obj->ics_transfer;
+
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -1871,6 +1874,28 @@ class Account extends CommonObject
 		return $out;
 	}
 
+	/**
+	 * Return the translation key for a displayed bank-account field
+	 *
+	 * @param	string	$field	Field returned by getFieldsToShow
+	 * @return	string			Translation key
+	 */
+	public function getBankFieldLabel($field)
+	{
+		$country_code = $this->getCountryCode();
+
+		if ($country_code == 'CA' && $field == 'BankCode') {
+			return 'InstitutionNumber';
+		}
+		if ($country_code == 'CA' && $field == 'DeskCode') {
+			return 'TransitNumber';
+		}
+		if ($country_code == 'US' && $field == 'BankCode') {
+			return 'ABARoutingNumber';
+		}
+
+		return $field;
+	}
 
 	/**
 	 * Return if a bank account is defined with detailed information (bank code, desk code, number and key).
@@ -1879,15 +1904,19 @@ class Account extends CommonObject
 	 * @return		int        0=No bank code need + Account number is enough
 	 *                         1=Need 2 fields for bank code: Bank, Desk (France, Spain, ...) + Account number and key
 	 *                         2=Need 1 field for bank code:  Bank only (Sort code for Great Britain, BSB for Australia) + Account number
+	 *                         3=Need 2 fields for bank code: Institution number and transit number + Account number (Canada)
 	 */
 	public function useDetailedBBAN()
 	{
 		$country_code = $this->getCountryCode();
 
-		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC'))) {
+		if (in_array($country_code, array('FR', 'ES', 'GA', 'IT', 'NC', 'DZ'))) {
 			return 1; // France, Spain, Gabon, ... - Not valid for CH
 		}
-		if (in_array($country_code, array('AD', 'AU', 'BE', 'CA', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
+		if ($country_code == 'CA') {
+			return 3;
+		}
+		if (in_array($country_code, array('AD', 'AU', 'BE', 'DE', 'DK', 'GR', 'GB', 'ID', 'IE', 'IR', 'KR', 'NL', 'NZ', 'UK', 'US'))) {
 			return 2; // Australia, England...
 		}
 		return 0;
@@ -2017,6 +2046,12 @@ class Account extends CommonObject
 		} elseif ($detailedBBAN == 2) {
 			$fieldarray = array(
 					'BankCode',
+					'BankAccountNumber'
+			);
+		} elseif ($detailedBBAN == 3) {
+			$fieldarray = array(
+					'BankCode',
+					'DeskCode',
 					'BankAccountNumber'
 			);
 		} else {
@@ -2892,6 +2927,7 @@ class AccountLine extends CommonObjectLine
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
+				$this->fk_user_rappro = $obj->fk_user_rappro;
 				$this->user_rappro = $obj->fk_user_rappro;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);

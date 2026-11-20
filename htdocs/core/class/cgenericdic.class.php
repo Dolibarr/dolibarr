@@ -44,7 +44,7 @@ class CGenericDic extends CommonDict
 	public $table_element = 'undefined';	// Will be defined into constructor
 
 	/**
-	 * @var CtyperesourceLine[] Lines
+	 * @var CGenericDic[] Lines
 	 */
 	public $lines = array();
 
@@ -81,8 +81,10 @@ class CGenericDic extends CommonDict
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$fieldrowid = 'rowid';
 		$fieldlabel = 'label';
 		if ($this->table_element == 'c_stcomm') {
+			$fieldrowid = 'id';
 			$fieldlabel = 'libelle';
 		} elseif ($this->table_element == 'c_type_fees') {
 			$fieldrowid = 'id';
@@ -104,10 +106,16 @@ class CGenericDic extends CommonDict
 
 		// Insert request
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
+		if (!empty($this->id)) {
+			$sql .= $this->db->sanitize($fieldrowid).',';	// Some dictionaries have no auto incremented id (c_stcomm)
+		}
 		$sql .= 'code,';
-		$sql .= $fieldlabel;
+		$sql .= $this->db->sanitize($fieldlabel).',';
 		$sql .= 'active';
 		$sql .= ') VALUES (';
+		if (!empty($this->id)) {
+			$sql .= ((int) $this->id).',';
+		}
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(!isset($this->active) ? 'NULL' : ((int) $this->active));
@@ -122,9 +130,10 @@ class CGenericDic extends CommonDict
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
+		if (!$error && empty($this->id)) {
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element, $fieldrowid);
+		}
 		if (!$error) {
-			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
-
 			// Uncomment this and change CTYPERESOURCE to your own tag if you
 			// want this action to call a trigger.
 			//if (!$notrigger) {
@@ -146,6 +155,24 @@ class CGenericDic extends CommonDict
 
 			return $this->id;
 		}
+	}
+
+	/**
+	 * Return if the dictionary table has a column 'entity'
+	 * (hard coded list: no DDL request, the fetch may run inside a transaction)
+	 *
+	 * @return bool
+	 */
+	private function tableHasEntityColumn()
+	{
+		return in_array($this->table_element, array(
+			'c_accounting_category', 'c_accounting_report', 'c_asset_disposal_type', 'c_barcode_type',
+			'c_email_senderprofile', 'c_email_templates', 'c_exp_tax_cat', 'c_exp_tax_range', 'c_field_list',
+			'c_holiday_types', 'c_hrm_public_holiday', 'c_invoice_subtype', 'c_paiement', 'c_partnership_type',
+			'c_payment_term', 'c_productbatch_qcstatus', 'c_shipment_mode', 'c_shipment_package_type',
+			'c_socialnetworks', 'c_ticket_category', 'c_ticket_resolution', 'c_ticket_severity', 'c_ticket_type',
+			'c_transport_mode', 'c_tva', 'c_type_container'
+		));
 	}
 
 	/**
@@ -181,7 +208,11 @@ class CGenericDic extends CommonDict
 		} elseif ($code) {
 			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
 		} elseif ($label) {
-			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+			$sql .= " WHERE ".$this->db->sanitize("t.".$fieldlabel)." = '".$this->db->escape($label)."'";
+		}
+		// The same code or label may exist in several entities: search only in the allowed ones
+		if (!$id && ($code || $label) && $this->tableHasEntityColumn()) {
+			$sql .= " AND t.entity IN (".getEntity($this->table_element).")";
 		}
 
 		$resql = $this->db->query($sql);
@@ -284,6 +315,7 @@ class CGenericDic extends CommonDict
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
+			$this->lines = array();
 			while ($obj = $this->db->fetch_object($resql)) {
 				$line = new self($this->db);
 
@@ -292,6 +324,8 @@ class CGenericDic extends CommonDict
 				$line->code = $obj->code;
 				$line->label = $obj->label;
 				$line->active = $obj->active;
+
+				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
 
@@ -391,6 +425,9 @@ class CGenericDic extends CommonDict
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$fieldrowid = 'rowid';
+		if ($this->table_element == 'c_stcomm' || $this->table_element == 'c_type_fees') {
+			$fieldrowid = 'id';
+		}
 
 		$error = 0;
 

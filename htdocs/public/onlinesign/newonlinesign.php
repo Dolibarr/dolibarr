@@ -71,7 +71,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "members", "paybox", "stripe", "propal", "commercial"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "members", "stripe", "propal", "commercial"));
 
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
@@ -346,7 +346,7 @@ $error = 0;
 // Signature on commercial proposal
 if ($source == 'proposal') {
 	$found = true;
-	$langs->load("proposal");
+	$langs->load("propal");
 
 	$result = $object->fetch_thirdparty($object->socid);
 
@@ -526,7 +526,7 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 } elseif ($source == 'contract') { // Signature on contract
 	$found = true;
-	$langs->load("contract");
+	$langs->load("contracts");
 
 	$result = $object->fetch_thirdparty($object->socid);
 

@@ -107,6 +107,7 @@ class Mo extends CommonObject
 		'date_start_planned' => array('type' => 'datetime', 'label' => 'DateStartPlannedMo', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'notnull' => -1, 'index' => 1, 'help' => 'KeepEmptyForAsap', 'alwayseditable' => 1, 'csslist' => 'nowraponall'),
 		'date_end_planned' => array('type' => 'datetime', 'label' => 'DateEndPlannedMo', 'enabled' => 1, 'visible' => 1, 'position' => 56, 'notnull' => -1, 'index' => 1, 'alwayseditable' => 1, 'csslist' => 'nowraponall'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000, 'notnull' => -1,),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => 0, 'position' => 1001, 'notnull' => 0),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '2' => 'InProgress', '3' => 'StatusMOProduced', '9' => 'Canceled')),
 		'fk_parent_line' => array('type' => 'integer:MoLine:mrp/class/mo.class.php', 'label' => 'ParentMo', 'enabled' => 1, 'visible' => 0, 'position' => 1020, 'default' => '0', 'notnull' => 0, 'index' => 1,'showoncombobox' => 0),
@@ -1229,7 +1230,8 @@ class Mo extends CommonObject
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " status = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid = '".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".((int) $user->id);
+		$sql .= " fk_user_valid = ".((int) $user->id).",";
+		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
@@ -1306,6 +1308,63 @@ class Mo extends CommonObject
 		} else {
 			$this->db->rollback();
 			return -1;
+		}
+	}
+
+	/**
+	 *      Set status of the MO and record the user who changed it
+	 *
+	 *      @param	int		$status			Status to set
+	 *      @param	?int	$elementId		Id of element to force (use this->id by default if null)
+	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
+	 *      @param	string	$trigkey		Trigger key to use for trigger
+	 *      @param	string	$fieldstatus	Name of status field in this->table_element
+	 *      @return int						Return integer <0 if KO, >0 if OK
+	 */
+	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = '')
+	{
+		global $user;
+
+		$result = parent::setStatut($status, $elementId, $elementType, $trigkey, $fieldstatus);
+		if ($result > 0 && empty($elementId) && empty($elementType)) {
+			$this->setUserModif($user);
+		}
+
+		return $result;
+	}
+
+	/**
+	 *	Set status of the MO and record the user who changed it
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *	@param	int		$status			New status to set (often a constant like self::STATUS_XXX)
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	string	$triggercode	Trigger code to use
+	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function setStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	{
+		$result = parent::setStatusCommon($user, $status, $notrigger, $triggercode);
+		if ($result > 0) {
+			$this->setUserModif($user);
+		}
+
+		return $result;
+	}
+
+	/**
+	 *	Record the user of the last change, as the generic status setters only update the status
+	 *
+	 *	@param	User	$user	User who made the change
+	 *	@return	void
+	 */
+	private function setUserModif($user)
+	{
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		$sql .= " SET fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		if ($this->db->query($sql)) {
+			$this->fk_user_modif = $user->id;
 		}
 	}
 

@@ -84,11 +84,60 @@ $backtopage = GETPOST('backtopage', 'alpha');
 function aiToolIsWrite($handler, $name)
 {
 	$tool = $handler->toolsByName[$name] ?? null;
-	if (is_object($tool) && method_exists($tool, 'writeConfirmationPreview') && $tool->writeConfirmationPreview($name, array()) !== McpTool::NO_WRITE) {
-		return true;
+	if (is_object($tool) && method_exists($tool, 'writeConfirmationPreview')) {
+		try {
+			if ($tool->writeConfirmationPreview($name, array()) !== McpTool::NO_WRITE) {
+				return true;
+			}
+		} catch (Throwable $e) {
+			// A read tool answers NO_WRITE before reading its arguments: only a write refuses empty ones (supplier order workflow...)
+			return true;
+		}
 	}
 
 	return (bool) preg_match('/^(create|update|delete|add|remove|change|write|edit|validate|pay|send)/i', $name);
+}
+
+/**
+ * Permissions required to run a tool: those the tool declares, plus, for a REST API tool,
+ * those tested by the API method it calls.
+ *
+ * @param	McpHandler				$handler		Handler with the tools loaded
+ * @param	string					$name			Tool name
+ * @param	array<string,string>	$rightsLabels	Translated label of permissions, keyed by 'module/perms[/subperms]'
+ * @return	string									HTML output
+ */
+function aiToolRightsHtml($handler, $name, $rightsLabels)
+{
+	global $langs;
+
+	$tool = $handler->toolsByName[$name] ?? null;
+	if (!is_object($tool) || !method_exists($tool, 'getRequiredRights')) {
+		return '';
+	}
+	$declared = $tool->getRequiredRights($name);
+	if ($declared === McpTool::RIGHTS_UNDECLARED) {
+		return '<span class="warning">'.$langs->trans('ToolRightsUndeclared').'</span>';
+	}
+
+	$rights = is_array($declared) ? $declared : array();
+	if (method_exists($tool, 'toolApiRights')) {
+		// @phan-suppress-next-line PhanUndeclaredMethod  The method's existence is tested above.
+		$rights = array_merge($rights, $tool->toolApiRights($name));
+	}
+
+	$lines = array();
+	foreach ($rights as $right) {
+		$right = array_values((array) $right);
+		$key = ($right[0] ?? '').'/'.($right[1] ?? '').(!empty($right[2]) ? '/'.$right[2] : '');
+		$label = $rightsLabels[$key] ?? '';
+		$lines[$key] = '<li>'.($label !== '' ? dol_escape_htmltag($label).' ' : '').'<span class="opacitymedium">('.dol_escape_htmltag($key).')</span></li>';
+	}
+	if (!empty($lines)) {
+		return '<ul class="small">'.implode('', $lines).'</ul>';
+	}
+
+	return '<span class="opacitymedium">'.$langs->trans($declared === McpTool::RIGHTS_ENFORCED_DOWNSTREAM ? 'ToolRightsCheckedDownstream' : 'ToolRightsNone').'</span>';
 }
 
 $mcpHandler = new McpHandler($db, $user, $conf, McpHandler::CTX_ASSISTANT);
@@ -118,6 +167,9 @@ if (!empty($unfilteredSchema) && is_array($unfilteredSchema)) {
 
 $rawAst     = getDolGlobalString('AI_ASSISTANT_ALLOWED_TOOLS');
 $rawMcp     = getDolGlobalString('AI_MCP_SERVER_ALLOWED_TOOLS');
+// When the chat assistant or the MCP server is disabled, its active switches are dimmed: they have no effect
+$astEnabled = getDolGlobalBool('AI_ASSISTANT_ENABLED');
+$mcpEnabled = getDolGlobalBool('AI_MCP_ENABLED');
 $astAllowed = McpHandler::resolveAllowList($rawAst, $allDiscoveredTools);
 $mcpAllowed = McpHandler::resolveAllowList($rawMcp, $allDiscoveredTools);
 
@@ -156,7 +208,9 @@ if ($action == 'addrights' || $action == 'delrights') {
 		}
 	}
 
-	header('Location: ' . $_SERVER['PHP_SELF']);
+	// Keep page_y (added by the .reposition links) so the scroll position is restored after redirect
+	$page_y = GETPOSTINT('page_y');
+	header('Location: ' . $_SERVER['PHP_SELF'] . ($page_y > 0 ? '?page_y=' . $page_y : ''));
 	exit;
 }
 
@@ -204,9 +258,10 @@ $head = aiAdminPrepareHead();
 print dol_get_fiche_head($head, 'tools', 'MCP Server', -1, 'ai');
 
 print '<!-- Tools quick setup -->';
-print '<div class="info">' . $langs->trans("ToolAccessControlHelp") . '</div>';
+print '<div class="info">' . $langs->trans("ToolAccessControlHelp") . '<br>' . $langs->trans("ToolAccessControlHelp2") . '</div>';
+print '<br>';
 
-print '<div class="marginleftonly" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px;">';
+print '<div class="neutral" style="display:flex; flex-wrap:wrap; gap:40px; margin-top:15px; padding-top:15px;">';
 
 // Presets For Chat Assistant
 print '<div>';
@@ -228,11 +283,33 @@ print '</div>';
 
 print '<br>';
 
+// Translated label of permissions, keyed by 'module/perms[/subperms]', to show the rights required by each tool
+$rightsLabels = array();
+$rightsModuleAliases = array('propale' => 'propal', 'produit' => 'product');	// Other names accepted by User::hasRight() for the same permissions
+$sql = "SELECT r.id, r.libelle as label, r.module, r.module_origin, r.perms, r.subperms";
+$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+$sql .= " WHERE r.entity = ".((int) $conf->entity);
+$resql = $db->query($sql);
+if ($resql) {
+	$useAdvancedPerms = getDolGlobalString('MAIN_USE_ADVANCED_PERMS');
+	while ($obj = $db->fetch_object($resql)) {
+		$rightmodule = !empty($obj->module_origin) ? $obj->module_origin : $obj->module;
+		$rightlabel = ($useAdvancedPerms &&($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->transnoentitiesnoconv("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->transnoentitiesnoconv("Permission".$obj->id) : $langs->transnoentitiesnoconv($obj->label)));
+		foreach (array_unique(array($rightmodule, $rightsModuleAliases[$rightmodule] ?? $rightmodule)) as $tmpmodule) {
+			$rightsLabels[$tmpmodule.'/'.$obj->perms.(!empty($obj->subperms) ? '/'.$obj->subperms : '')] = $rightlabel;
+		}
+	}
+	$db->free($resql);
+} else {
+	dol_print_error($db);
+}
+
 // Tools table
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent" id="toolsTable">';
 print '<tr class="liste_titre">';
-print '<td class="tdoverflowmax200" style="min-width: 130px;">' . $langs->trans('Tool') . '</td>';
+print '<td class="tdoverflowmax250" style="min-width: 130px;">' . $langs->trans('Tool') . '</td>';
+print '<td class="center width25"></td>';
 print '<td class="hideonsmartphone">' . $langs->trans('ToolDescription') . '</td>';
 print '<td class="center" style="min-width: 60px;">' . $langs->trans('ToolActionType') . '</td>';
 print '<td class="center nowraponall">' . $langs->trans('ChatAssistant') . '</td>';
@@ -240,7 +317,7 @@ print '<td class="center nowraponall">' . $langs->trans('McpServer') . '</td>';
 print '</tr>';
 
 if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
-	print '<tr class="oddeven"><td colspan="5" class="opacitymedium">' . $langs->trans('NoMcpToolsDiscovered') . '</td></tr>';
+	print '<tr class="oddeven"><td colspan="6" class="opacitymedium">' . $langs->trans('NoMcpToolsDiscovered') . '</td></tr>';
 } else {
 	$groupId = 0;
 	$finalGroupsList = array_merge($groupedNormalTools, $groupedSystemTools);
@@ -248,9 +325,13 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 	foreach ($finalGroupsList as $categoryName => $definitions) {
 		$groupId++;
 
+		// Tools of a group sorted by name
+		$toolNames = array_column($definitions, 'name');
+		array_multisort($toolNames, SORT_ASC, SORT_STRING | SORT_FLAG_CASE, $definitions);
+
 		print '<tr class="trgroup trforbreaknobg" data-group="group-' . $groupId . '">';
-		print '<td colspan="5" class="mcp-trigger-collapse" style="cursor:pointer;">';
-		print '<span class="toggle-icon">▼</span> ' . dol_escape_htmltag($categoryName);
+		print '<td colspan="6" class="mcp-trigger-collapse" style="cursor:pointer;">';
+		print '<span class="toggle-icon">▼</span> ' . dol_escape_htmltag($categoryName) . ' <span class="opacitymedium">(' . count($definitions) . ')</span>';
 		print '</td>';
 		print '</tr>';
 
@@ -273,15 +354,43 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 			print '<tr class="oddeven group-' . $groupId . '" data-tool-name="' . dol_escape_htmltag($name) . '" data-tool-type="' . $type . '">';
 
 			// Tool
-			print '<td style="padding-left:20px; min-width: 130px; word-break: break-all;" class="tdoverflowmax200">';
+			print '<td style="padding-left:20px; min-width: 130px; word-break: break-all;" class="tdoverflowmax250">';
 			print '<strong>' . dol_escape_htmltag($name) . '</strong>';
 			if ($isSystem) {
 				print '<br><span class="badgeneutral">' . $langs->trans('System') . '</span>';
 			}
 			print '</td>';
 
+			// Technical definition as sent to the LLM, shown in a popup (system tools are never sent to the LLM)
+			print '<td class="center">';
+			if (!$isSystem) {
+				$llmDef = cleanToolSchemaForLLM(array($def));
+				$llmJson = (string) json_encode($llmDef[0], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+				// REST API route called by the tool, when identifiable
+				$popupTitle = $name;
+				$toolObj = $mcpHandler->toolsByName[$name] ?? null;
+				if (is_object($toolObj) && method_exists($toolObj, 'toolApiUrl')) {
+					// @phan-suppress-next-line PhanUndeclaredMethod  The method's existence is tested above.
+					$apiUrl = (string) $toolObj->toolApiUrl($name);
+					if ($apiUrl !== '') {
+						$popupTitle .= ' (' . $apiUrl . ')';
+					}
+				}
+				print '<a href="#" class="ai-tool-definition" data-target="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" data-title="' . dolPrintHTMLForAttribute($popupTitle) . '">';
+				print img_picto($langs->trans('ToolRightsAndDefinition'), 'info');
+				print '</a>';
+				print '<div id="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" style="display: none;">';
+				print '<strong>' . $langs->trans('ToolRequiredPermissions') . '</strong><br>' . aiToolRightsHtml($mcpHandler, $name, $rightsLabels) . '<br><br>';
+				print '<strong>' . $langs->trans('ToolDefinitionSentToLLM') . '</strong>';
+				print '<pre class="small">' . dol_escape_htmltag($llmJson, 0, 1) . '</pre>';
+				print '</div>';
+			}
+			print '</td>';
+
 			// Tool Description (hidden on mobile)
-			print '<td class="small opacitymedium hideonsmartphone">' . dol_escape_htmltag($desc) . '</td>';
+			print '<td class="small opacitymedium hideonsmartphone">';
+			print '<div class="twolinesmax-normallineheight" title="' . dolPrintHTMLForAttribute($desc) . '">' . dol_escape_htmltag($desc) . '</div>';
+			print '</td>';
 
 			// Type Badge
 			print '<td class="center">' . $typeBadge . '</td>';
@@ -302,7 +411,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 					'toolname'    => $name
 				], true);
 
-				print '<a class="ctx-ast-link reposition' . $lockCssClass . '" href="' . $urlAst . '">';
+				print '<a class="ctx-ast-link reposition' . $lockCssClass . (($isAstOn && !$astEnabled) ? ' opacitymedium' : '') . '" href="' . $urlAst . '">';
 				print img_picto($langs->trans($isAstOn ? 'Remove' : 'Add'), $pictoAst, '', 0, 0, 0, '', !$isAstOn ? 'font-status6' : ($type == 'write' ? 'font-status2' : 'font-status4'));
 				print '</a>';
 			}
@@ -321,7 +430,7 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 					'toolname'    => $name
 				], true);
 
-				print '<a class="ctx-mcp-link reposition' . $lockCssClass . '" href="' . $urlMcp . '">';
+				print '<a class="ctx-mcp-link reposition' . $lockCssClass . (($isMcpOn && !$mcpEnabled) ? ' opacitymedium' : '') . '" href="' . $urlMcp . '">';
 				print img_picto($langs->trans($isMcpOn ? 'Remove' : 'Add'), $pictoMcp, '', 0, 0, 0, '', !$isMcpOn ? 'font-status6' : ($type == 'write' ? 'font-status2' : 'font-status4'));
 				print '</a>';
 			}

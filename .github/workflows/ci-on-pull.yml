@@ -14,14 +14,14 @@ jobs:
   wait-for-pr-checks:
     name: Wait for the cheap PR checks to be green
     runs-on: ubuntu-latest
-    timeout-minutes: 1
+    timeout-minutes: 2
     permissions:
       contents: read
       actions: read # to read the workflow runs of the PR checks
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-      MAX_WAIT_SECONDS: '600'
+      MAX_WAIT_SECONDS: '100'
     steps:
       - name: Wait for the check workflows to be green
         run: |

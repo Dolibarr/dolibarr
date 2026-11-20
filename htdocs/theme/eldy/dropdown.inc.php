@@ -56,6 +56,10 @@ button.dropdown-item.global-search-item {
 	border-bottom-right-radius: 6px;
 }
 
+#top-bookmark-search-nothing-found {
+	color: #444;
+}
+
 
 .dropdown-search {
 	border-color: #eee;
@@ -154,7 +158,7 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after, div#topmenu-quickmemo-dropdown a.dropdown-toggle::after {
 	display: none;
 }
 
@@ -330,12 +334,16 @@ a.top-menu-dropdown-link {
 	border-radius: 0;
 }
 
+/* Any element (picto of a module added into the group of tools of the top right menu via the hook
+ * printTopRightMenu) can apply the class topmenu-any to get the same padding as the pictos of the core. */
+.topmenu-any,
 #topmenu-tool,
 #topmenu-global-search-dropdown,
 #topmenu-ai-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,
 #topmenu-uploadfile-dropdown,
+#topmenu-quickmemo-dropdown,
 #topmenu-login-dropdown {
 	padding: 0 5px 0 5px;
 }
@@ -456,10 +464,65 @@ a.dropdown-item {
 
 li.liinputsearch, div.liinputsearch {
 	position: sticky;
-	display: block;
 	top: 0;
 	background: var(--colorbackbody);
 	z-index: 1;
+}
+div.liinputsearch {
+	display: block;
+}
+
+/* Column selector: the line of the search area is a row with the checkbox to check all,
+ * the picto of trash to delete the personalization of the position of the fields, and the search
+ * input that fills the remaining width */
+li.liinputsearch {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding-right: 10px;
+	/* The bar of the search area, on the full width of the row (under the checkbox and the picto of trash too) */
+	border-bottom: 1px solid var(--inputbordercolor);
+}
+li.liinputsearch input[type="checkbox"],
+li.liinputsearch span.fas {
+	flex: 0 0 auto;
+}
+li.liinputsearch input[type="text"] {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 140px;
+	/* The bar is that of the row, the input has none anymore */
+	border-bottom: 0 !important;
+}
+
+/* Picto to delete the personalization of the position of the fields: the picto of move of the
+ * fields, crossed with a thin rising diagonal bar */
+li.liinputsearch span.deletepositionfields_dropdownselectedfields {
+	position: relative;
+}
+li.liinputsearch span.deletepositionfields_dropdownselectedfields::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	background-image:
+		linear-gradient(160deg, transparent calc(50% - 0.5px), currentColor calc(50% - 0.5px), currentColor calc(50% + 0.5px), transparent calc(50% + 0.5px));
+}
+
+/* Column selector: the label of each field fills the row and the picto of
+ * drag and drop is at the end of the row */
+.dropdown dd ul.sortable li {
+	display: flex;
+	align-items: center;
+}
+.dropdown dd ul.sortable li label {
+	flex: 1 1 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 

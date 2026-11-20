@@ -182,10 +182,10 @@ if ($allowdownloadapp) {
 
 print '<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>';
 
-print '<span class="opacitymedium">';
+print '<div class="info">';
 print $langs->trans("BackupDesc3", $dolibarr_main_db_name).'<br>';
-print $langs->trans("BackupDescY").'<br>';
-print '</span>';
+print $langs->trans("BackupDescY");
+print '</div>';
 
 print '<br>';
 
@@ -198,7 +198,6 @@ print load_fiche_titre($title);
 //print '<table class="liste nohover centpercent noborderbottom">';
 //print '<tr class="liste_titre">';
 //print '<td class="liste_titre">';
-print '<span class="opacitymedium">'.$langs->trans("DatabaseName").' : </span><b>'.$dolibarr_main_db_name.'</b><br><br>';
 //print '</td>';
 //print '</tr>';
 //print '<tr class="oddeven nohover"><td class="nohover">';
@@ -235,7 +234,7 @@ print '<tr>';
 print '<td class="tdtop nopaddingleftimp">';
 
 print '<div class="centpercent center margintoponly marginbottomonly">';
-print img_picto('', 'setup', 'class="pictofixedwidth"').'<a class="classlink" id="lnk">'.$langs->trans("ShowAdvancedOptions").'...</a>';
+print img_picto('', 'setup', 'class="pictofixedwidth"').'<a class="classlink cursorpointer" id="lnk">'.$langs->trans("ShowAdvancedOptions").'...</a>';
 print '</div>';
 
 print '<script type="text/javascript">
@@ -579,8 +578,7 @@ foreach ($compression as $key => $val) {
 	} else {
 		// Disabled export format
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
-		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-		print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
+		print ' '.$form->textwithpicto('<label class="opacitymedium" for="'.$val['id'].'">'.$val['label'].'</label>', $langs->trans("NotAvailablePHPModuleNotInstalled"), 1, 'info', '');
 	}
 	print ' &nbsp; &nbsp; ';
 	$i++;
@@ -636,7 +634,7 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 print '<div id="backupdatabaseright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'backup/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'backup/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto; margin-top: 25px;"');
 print '<br>';
 
 print '</div>';
@@ -659,10 +657,10 @@ if ($allowdownloadapp) {
 
 print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>';
 
-print '<span class="opacitymedium">';
+print '<div class="info">';
 print $langs->trans("BackupDesc2", DOL_DATA_ROOT).'<br>';
-print $langs->trans("BackupDescX").'<br><br>';
-print '</span>';
+print $langs->trans("BackupDescX");
+print '</div>';
 
 print '<div id="backupfilesleft" class="fichehalfleft">';
 
@@ -684,6 +682,12 @@ print "\n";
 print $langs->trans("Compression").': &nbsp; ';
 $filecompression = $compression;
 unset($filecompression['none']);
+// The gz, bz and zstd archives are built with OS commands, not with PHP functions, so no PHP function is required
+foreach (array('gz', 'bz', 'zstd') as $key) {
+	if (isset($filecompression[$key])) {
+		$filecompression[$key]['function'] = '';
+	}
+}
 $filecompression['zip'] = array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip', 'label' => $langs->trans("FormatZip"));
 
 // The gz, bz and zstd formats are built by export_files.php with OS commands (tar then a compressor). When
@@ -713,12 +717,12 @@ foreach ($filecompression as $key => $val) {
 		print ' <label for="'.$val['id'].'2">'.$val['label'].'</label>';
 	} else { // Disabled export format
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2" disabled>';
-		print ' <label for="'.$val['id'].'2">'.$val['label'].'</label>';
 		if (!empty($disabledbyrestriction[$key])) {
-			print ' <span class="opacitymedium">('.$langs->trans("NotAvailableCommandNotAllowed", $disabledbyrestriction[$key]).')</span>';
+			$reasonnotavailable = $langs->trans("NotAvailableCommandNotAllowed", $disabledbyrestriction[$key]);
 		} else {
-			print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
+			$reasonnotavailable = $langs->trans("NotAvailablePHPModuleNotInstalled");
 		}
+		print ' '.$form->textwithpicto('<label class="opacitymedium" for="'.$val['id'].'2">'.$val['label'].'</label>', $reasonnotavailable, 1, 'info', '');
 	}
 	print ' &nbsp; &nbsp; ';
 	$i++;
@@ -741,7 +745,7 @@ print '</div>';
 print '<div id="backupfileright" class="fichehalfright">';
 
 $filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'documents/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'documents/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto; margin-top: 25px;"');
 print '<br>';
 
 print '</div>';
@@ -764,10 +768,10 @@ if ($allowdownloadapp) {
 
 	print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">3</legend>';
 
-	print '<span class="opacitymedium">';
+	print '<div class="info">';
 	print $langs->trans("BackupDescApp", DOL_DOCUMENT_ROOT).'<br>';
-	print $langs->trans("BackupDescX").'<br><br>';
-	print '</span>';
+	print $langs->trans("BackupDescX");
+	print '</div>';
 
 	print '<div id="backupappfilesleft" class="fichehalfleft">';
 
@@ -795,12 +799,12 @@ if ($allowdownloadapp) {
 			print ' <label for="'.$val['id'].'3">'.$val['label'].'</label>';
 		} else {	// Disabled export format
 			print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'3" disabled>';
-			print ' <label for="'.$val['id'].'3">'.$val['label'].'</label>';
 			if (!empty($disabledbyrestriction[$key])) {
-				print ' <span class="opacitymedium">('.$langs->trans("NotAvailableCommandNotAllowed", $disabledbyrestriction[$key]).')</span>';
+				$reasonnotavailable = $langs->trans("NotAvailableCommandNotAllowed", $disabledbyrestriction[$key]);
 			} else {
-				print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
+				$reasonnotavailable = $langs->trans("NotAvailablePHPModuleNotInstalled");
 			}
+			print ' '.$form->textwithpicto('<label class="opacitymedium" for="'.$val['id'].'3">'.$val['label'].'</label>', $reasonnotavailable, 1, 'info', '');
 		}
 		print ' &nbsp; &nbsp; ';
 	}
@@ -821,7 +825,7 @@ if ($allowdownloadapp) {
 	print '<div id="backupappfilesright" class="fichehalfright">';
 
 	$filearray = dol_dir_list($conf->admin->dir_output.'/backupapp', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
-	$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'backupapp/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
+	$result = $formfile->list_of_documents($filearray, null, 'systemtools', $paramallowdownloadapp, 1, 'backupapp/', 1, 3, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto; margin-top: 25px;"');
 	print '<br>';
 
 	print '</div>';
@@ -842,11 +846,10 @@ print "<!-- Save setup conf -->\n";
 
 print '<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">'.($allowdownloadapp ? 4 : 3).'</legend>';
 
-print '<br>';
 
-print '<span class="opacitymedium">';
-print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key '.$langs->transnoentitiesnoconv("or").' dolibarr_main_instance_unique_id').'<br>';
-print '</span>';
+print '<div class="info">';
+print $langs->trans("BackupDesc4", 'dolibarr_main_dolcrypt_key '.$langs->transnoentitiesnoconv("or").' dolibarr_main_instance_unique_id');
+print '</div>';
 
 print '<br>';
 

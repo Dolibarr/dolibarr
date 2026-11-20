@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=پے پال ماڈیول سیٹ اپ
-PaypalDesc=یہ ماڈیول صارفین کو <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external"> PayPal </a> کے ذریعے ادائیگی کی اجازت دیتا ہے۔ اسے ایڈہاک ادائیگی کے لیے یا Dolibarr آبجیکٹ (انوائس، آرڈر، ...) سے متعلق ادائیگی کے لیے استعمال کیا جا سکتا ہے۔
+PaypalDesc=This module allows payment by customers via <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. This can be used for an ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=پے پال (کارڈ یا پے پال) سے ادائیگی کریں
 PaypalDoPayment=پے پال کے ساتھ ادائیگی کریں۔
 PAYPAL_API_SANDBOX=موڈ ٹیسٹ/سینڈ باکس
@@ -19,7 +19,7 @@ NewOnlinePaymentFailed=نئی آن لائن ادائیگی کی کوشش کی ل
 ONLINE_PAYMENT_SENDEMAIL=ہر ادائیگی کی کوشش کے بعد اطلاعات کے لیے ای میل ایڈریس (کامیابی اور ناکامی کے لیے)
 ReturnURLAfterPayment=ادائیگی کے بعد URL واپس کریں۔
 ValidationOfOnlinePaymentFailed=آن لائن ادائیگی کی توثیق ناکام ہوگئی
-PaymentSystemConfirmPaymentPageWasCalledButFailed=ادائیگی کی تصدیق کے صفحے کو ادائیگی کے نظام کی طرف سے بلایا گیا تھا ایک خرابی واپس آ گئی
+PaymentSystemConfirmPaymentPageWasCalledButFailed=The payment confirmation page was called by the online payment system and returned an error
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API کال ناکام ہوگئی۔
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API کال ناکام ہوگئی۔
 DetailedErrorMessage=خرابی کا تفصیلی پیغام

@@ -446,7 +446,7 @@ if ($managedfor == 'member' || ($managedfor == 'thirdparty' && isModEnabled('mem
 		$sql .= " AND (d.datefin IS NULL)";
 	}
 	if ($search_filter == 'waitingsubscription') {
-		$sql .= " AND (d.datefin IS NULL AND t.subscription = '1')";
+		$sql .= " AND (d.datefin IS NULL AND dty.subscription = '1')";
 	}
 	if ($search_filter == 'uptodate') {
 		$sql .= " AND (d.datefin >= '".$db->idate($now)."' OR dty.subscription = '0')";

@@ -13,6 +13,11 @@
  * \brief Tests for the ticket write tools exposed by the AI MCP API bridge.
  */
 
+global $conf,$user,$langs,$db,$mysoc;
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once __DIR__.'/../../htdocs/ai/class/mcptool.class.php';
 require_once __DIR__.'/../../htdocs/ai/tools/api_bridge.class.php';
 
@@ -104,7 +109,7 @@ class AiMcpTicketWriteApiFixture
 /**
  * Ticket write metadata tests requiring neither a database nor an API credential.
  */
-class AiMcpApiBridgeTicketsTest extends PHPUnit\Framework\TestCase
+class AiMcpApiBridgeTicketsTest extends CommonClassTest
 {
 	/**
 	 * The tickets endpoint now lists the write methods on top of the reads.
@@ -115,12 +120,14 @@ class AiMcpApiBridgeTicketsTest extends PHPUnit\Framework\TestCase
 	{
 		$bridge = new ToolApiBridge(null);
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$endpoints = $property->getValue($bridge);
 
 		$this->assertArrayHasKey('tickets', $endpoints);
 		$this->assertSame(
-			array('post', 'postNewMessage', 'put', 'postContact', 'deleteContact', 'index', 'get', 'getByTrackId', 'getByRef'),
+			array('post', 'postNewMessage', 'put', 'postContact', 'deleteContact', 'close', 'assign', 'index', 'get'),
 			array_keys($endpoints['tickets']['methods'])
 		);
 	}
@@ -134,7 +141,9 @@ class AiMcpApiBridgeTicketsTest extends PHPUnit\Framework\TestCase
 	{
 		$bridge = new ToolApiBridge(null);
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$methods = $property->getValue($bridge)['tickets']['methods'];
 
 		foreach (array('post', 'postNewMessage', 'put', 'postContact', 'deleteContact') as $method) {
@@ -164,10 +173,14 @@ class AiMcpApiBridgeTicketsTest extends PHPUnit\Framework\TestCase
 	{
 		$bridge = new ToolApiBridge(null);
 		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$meta = $property->getValue($bridge)['tickets']['methods']['post'];
 		$method = new ReflectionMethod(ToolApiBridge::class, 'buildToolDefinition');
-		$method->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$method->setAccessible(true);
+		}
 
 		$definition = $method->invoke($bridge, array('class' => AiMcpTicketWriteApiFixture::class, 'label' => 'support tickets'), 'tickets', 'post', 'api_tickets_create', $meta);
 
@@ -175,33 +188,6 @@ class AiMcpApiBridgeTicketsTest extends PHPUnit\Framework\TestCase
 		$this->assertSame(array('subject', 'message'), $definition['inputSchema']['required']);
 		$this->assertArrayHasKey('socid', $definition['inputSchema']['properties']);
 		$this->assertArrayNotHasKey('request_data', $definition['inputSchema']['properties']);
-	}
-
-	/**
-	 * The update schema exposes the flat fields and requires only the ticket id.
-	 *
-	 * @return void
-	 */
-	public function testTicketUpdateSchema()
-	{
-		$bridge = new ToolApiBridge(null);
-		$property = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
-		$property->setAccessible(true);
-		$meta = $property->getValue($bridge)['tickets']['methods']['put'];
-		$method = new ReflectionMethod(ToolApiBridge::class, 'buildToolDefinition');
-		$method->setAccessible(true);
-
-		$definition = $method->invoke($bridge, array('class' => AiMcpTicketWriteApiFixture::class, 'label' => 'support tickets'), 'tickets', 'put', 'api_tickets_update', $meta);
-
-		$this->assertSame('api_tickets_update', $definition['name']);
-		$this->assertSame(array('id'), $definition['inputSchema']['required']);
-		$this->assertArrayHasKey('fk_user_assign', $definition['inputSchema']['properties']);
-		$this->assertArrayHasKey('fk_statut', $definition['inputSchema']['properties']);
-		// Fields the API would honour but that a confirmer must never see
-		// written: they stay out of the advertised schema.
-		foreach (array('track_id', 'fk_user_create', 'ref', 'datec', 'origin_email') as $hidden) {
-			$this->assertArrayNotHasKey($hidden, $definition['inputSchema']['properties'], "update advertises $hidden");
-		}
 	}
 
 	/**

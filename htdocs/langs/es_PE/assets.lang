@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - assets
-DeleteType=Borrar
 MenuListAssets=Lista
 MenuListAssetModels=Lista
 AssetReversalAmountHT=Importe de amortización (sin IGV)

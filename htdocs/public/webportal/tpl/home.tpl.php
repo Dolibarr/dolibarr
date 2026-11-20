@@ -13,9 +13,19 @@ if (empty($context) || !is_object($context)) {
 /**
  * @var Context $context
  * @var Translate $langs
+ * @var HookManager $hookmanager
  */
 
-?>
+/** @var array<string,array<string,mixed>> $navMenu */
+$navMenu = array();
+/** @var array<string,array<string,mixed>> $navGroupMenu */
+$navGroupMenu = array();
+'@phan-var-force array<string,array<string,mixed>> $navGroupMenu';
+/** @var array<string,array<string,mixed>> $navUserMenu */
+$navUserMenu = array();
+/** @var int $maxTopMenu */
+$maxTopMenu = 0;
+
 if ($context->userIsLog()) {
 	// menu propal
 	if (isModEnabled('propal') && getDolGlobalInt('WEBPORTAL_PROPAL_LIST_ACCESS')) {
@@ -54,7 +64,7 @@ if ($context->userIsLog()) {
 			'id' => 'document_list',
 			'rank' => 40,
 			'url' => $context->getControllerUrl('documentlist'),
-			'name' => $langs->trans('MyDocuments'), // CORRIGÉ : Clé de traduction correcte
+			'name' => $langs->trans('MyDocuments'),
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}

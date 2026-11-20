@@ -223,6 +223,28 @@ class ToolReports extends McpTool
 	}
 
 	/**
+	 * Return the SQL filter restricting rows to the thirdparties the user can see:
+	 * external users see only their company, sales reps without "see all" only their customers.
+	 *
+	 * @param string $alias Alias of the table holding the fk_soc column.
+	 * @return string SQL condition starting with " AND ", or '' when no restriction.
+	 */
+	private function getThirdpartyRestrictionSql($alias)
+	{
+		if (!is_object($this->user)) {
+			return " AND 1 = 0";
+		}
+		if ($this->user->socid > 0) {
+			return " AND ".$this->db->sanitize($alias).".fk_soc = ".((int) $this->user->socid);
+		}
+		if (!$this->user->hasRight('societe', 'client', 'voir')) {
+			return " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE ".$this->db->sanitize($alias).".fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $this->user->id).")";
+		}
+
+		return '';
+	}
+
+	/**
 	 * Resolves a Thirdparty ID from either an ID or a name.
 	 *
 	 * If `thirdparty_id` is provided, it is returned directly.
@@ -261,7 +283,7 @@ class ToolReports extends McpTool
 	 * Generate a sales/revenue report.
 	 *
 	 * @param array<string, mixed> $args Input arguments (date_start, date_end, limit, etc.)
-	 * @return array<int, array<string, string>> List of sales with localized keys and values.
+	 * @return array<int, array<string, string>>|array{rows:array<int,array<string,string>>,chart:array<string,mixed>} List of rows, or {rows, chart} when grouped.
 	 */
 	private function getSalesReport(array $args): array
 	{
@@ -277,10 +299,13 @@ class ToolReports extends McpTool
 
 		$list      = [];
 		$totalSum  = 0.0;
+		$chartLabels = [];
+		$chartData   = [];
 		// Status Filter: Valid (1) and Paid (2). Exclude Draft (0) and Abandoned (3).
 		$dateRange = " AND f.datef >= '" . $this->db->idate($dateStart)
 			. "' AND f.datef <= '" . $this->db->idate($dateEnd)
-			. "' AND f.fk_statut IN (1, 2)";
+			. "' AND f.fk_statut IN (1, 2)"
+			. $this->getThirdpartyRestrictionSql('f');
 
 		// CASE 1 -- Detailed list for a specific thirdparty.
 		if ($socid) {
@@ -361,6 +386,8 @@ class ToolReports extends McpTool
 			if ($resql) {
 				while ($r = $this->db->fetch_object($resql)) {
 					$totalSum += (float) $r->total_amount;
+					$chartLabels[] = $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown');
+					$chartData[]   = (float) $r->total_amount;
 					$list[] = [
 						$colName                                  => $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown'),
 						$langs->transnoentitiesnoconv("Number")   => (int) $r->count_inv,
@@ -389,6 +416,19 @@ class ToolReports extends McpTool
 				$langs->transnoentitiesnoconv("Total")  => $langs->transnoentitiesnoconv("Total"),
 				$langs->transnoentitiesnoconv("Amount") => price($totalSum)
 			];
+		}
+
+		// Grouped results carry a chart payload the chat renders as a bar/line
+		// chart; the rows stay in 'rows' so the model and the table are unchanged.
+		if (!empty($chartData)) {
+			return array(
+				'rows'  => $list,
+				'chart' => array(
+					'type'    => ($groupBy === 'month' ? 'line' : 'bar'),
+					'labels'  => $chartLabels,
+					'datasets' => array(array('label' => $langs->transnoentitiesnoconv('Amount'), 'data' => $chartData)),
+				),
+			);
 		}
 
 		return $list;
@@ -539,7 +579,7 @@ class ToolReports extends McpTool
 	 * Generate a purchase/expense report.
 	 *
 	 * @param array<string, mixed> $args Input arguments.
-	 * @return array<int, array<string, string>> List of purchases or groups.
+	 * @return array<int, array<string, string>>|array{rows:array<int,array<string,string>>,chart:array<string,mixed>} List of rows, or {rows, chart} when grouped.
 	 */
 	private function getPurchaseReport(array $args): array
 	{
@@ -553,6 +593,8 @@ class ToolReports extends McpTool
 		$dateEnd = dol_stringtotime($args['date_end']);
 		$list = [];
 		$totalSum = 0.0;
+		$chartLabels = [];
+		$chartData = [];
 
 		// Detailed report for a specific Supplier
 		if ($socid) {
@@ -563,7 +605,7 @@ class ToolReports extends McpTool
 					AND f.fk_soc = " . (int) $socid . "
 					AND f.datef >= '" . $this->db->idate($dateStart) . "'
 					AND f.datef <= '" . $this->db->idate($dateEnd) . "'
-					AND f.fk_statut > 0
+					AND f.fk_statut > 0" . $this->getThirdpartyRestrictionSql('f') . "
 					ORDER BY f.datef DESC";
 
 			$resql = $this->db->query($sql);
@@ -601,7 +643,7 @@ class ToolReports extends McpTool
 				WHERE f.entity IN (" . getEntity('facture_fourn') . ")
 				AND f.datef >= '" . $this->db->idate($dateStart) . "'
 				AND f.datef <= '" . $this->db->idate($dateEnd) . "'
-				AND f.fk_statut > 0
+				AND f.fk_statut > 0" . $this->getThirdpartyRestrictionSql('f') . "
 				GROUP BY group_key
 				ORDER BY total_amount DESC";
 
@@ -609,6 +651,8 @@ class ToolReports extends McpTool
 			if ($resql) {
 				while ($r = $this->db->fetch_object($resql)) {
 					$totalSum += (float) $r->total_amount;
+					$chartLabels[] = $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown');
+					$chartData[] = (float) $r->total_amount;
 					$list[] = [
 						$colName => $r->group_key ? $r->group_key : $langs->transnoentitiesnoconv('Unknown'),
 						$langs->transnoentitiesnoconv("Number") => $r->count_inv,
@@ -637,6 +681,18 @@ class ToolReports extends McpTool
 			$summary[$langs->transnoentitiesnoconv("Number")] = "";
 		}
 		$list[] = $summary;
+
+		// Same contract as getSalesReport: grouped results carry a chart payload.
+		if (!empty($chartData)) {
+			return array(
+				'rows'  => $list,
+				'chart' => array(
+					'type'    => ($groupBy === 'month' ? 'line' : 'bar'),
+					'labels'  => $chartLabels,
+					'datasets' => array(array('label' => $langs->transnoentitiesnoconv('Amount'), 'data' => $chartData)),
+				),
+			);
+		}
 
 		return $list;
 	}
@@ -741,22 +797,22 @@ class ToolReports extends McpTool
 		$dateEnd = dol_stringtotime($args['date_end']);
 
 		// Income (Customer Invoices - Validated/Paid, no Drafts)
-		$sqlIncome = "SELECT SUM(total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture
+		$sqlIncome = "SELECT SUM(f.total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture as f
 					  WHERE entity IN (" . getEntity('facture') . ")
 					  AND datef >= '" . $this->db->idate($dateStart) . "'
 					  AND datef <= '" . $this->db->idate($dateEnd) . "'
-					  AND fk_statut IN (1, 2)";
+					  AND fk_statut IN (1, 2)" . $this->getThirdpartyRestrictionSql('f');
 
 		$resIncome = $this->db->query($sqlIncome);
 		$objIncome = $this->db->fetch_object($resIncome);
 		$income = $objIncome && $objIncome->total ? (float) $objIncome->total : 0.0;
 
 		// Expenses (Supplier Invoices - Validated, no Drafts)
-		$sqlExpense = "SELECT SUM(total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture_fourn
+		$sqlExpense = "SELECT SUM(f.total_ttc) as total FROM " . MAIN_DB_PREFIX . "facture_fourn as f
 					   WHERE entity IN (" . getEntity('facture_fourn') . ")
 					   AND datef >= '" . $this->db->idate($dateStart) . "'
 					   AND datef <= '" . $this->db->idate($dateEnd) . "'
-					   AND fk_statut > 0";
+					   AND fk_statut > 0" . $this->getThirdpartyRestrictionSql('f');
 
 		$resExpense = $this->db->query($sqlExpense);
 		$objExpense = $this->db->fetch_object($resExpense);

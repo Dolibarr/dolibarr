@@ -61,9 +61,6 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'orders', 'sendings'));
 
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -293,7 +290,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
  *	View
  */
 
-$title = $langs->trans('Delivery');
+$title = $langs->trans('DeliveryOrder');
 
 llxHeader('', $title, 'Livraison', '', 0, 0, '', '', '', 'mod-delivery page-card');
 

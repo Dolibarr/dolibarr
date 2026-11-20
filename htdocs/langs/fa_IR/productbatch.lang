@@ -47,9 +47,13 @@ HideLots=مخفی کردن تعداد زیادی
 OutOfOrder=از کار افتاده
 InWorkingOrder=در حال کار
 ToReplace=جایگزین کردن
-CantMoveNonExistantSerial=خطا. شما درخواست جابجایی رکوردی را برای سریالی دارید که دیگر وجود ندارد. ممکن است سریال یکسانی را چندین بار از یک انبار در یک محموله دریافت کرده باشید یا توسط محموله دیگری استفاده شده باشد. این محموله را حذف کرده و یک محموله دیگر آماده کنید.
+CantMoveNonExistantSerial=Error: You requested a stock movement on a record for a serial that no longer exists. Maybe you used the same serial in the same warehouse several times in the same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=اجرای ناقص تعمیر جدول لات با پارامتر '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= اصلاح موجودی به دلیل منحصر به فرد بودن شماره سریال الزامی است.
 ErrorBatchesNeedStockManagement=خطا. محصولی که با مدیریت batch/lot اداره می‌شود باید در انبار نیز مدیریت شود.
 ForceBatchesNeedStockManagement=محصولی که با مدیریت batch/lot اداره می‌شود باید در انبار نیز مدیریت شود (مدیریت موجودی به‌طور خودکار (اجبار) روی بله قرار می‌گیرد).
 BatchInformationNotfound=Batch information not found
+EnterMultipleSerialNumbers=Enter multiple serial numbers
+EnterOneSerialNumberPerLine=Type, paste or scan the serial numbers, one per line
+NbOfSerialNumbersDetected=%s serial number(s) detected
+ErrorDuplicateSerialNumberInList=Serial number %s is present several times in the list

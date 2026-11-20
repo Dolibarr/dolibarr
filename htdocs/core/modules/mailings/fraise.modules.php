@@ -269,11 +269,11 @@ class mailing_fraise extends MailingTargets
 			$sql .= " AND a.statut = -1";
 		} elseif (GETPOST("filter", 'aZ09') == 'pending') {
 			// Validated member whose type requires a subscription, but none was ever recorded
-			$sql .= " AND a.statut = 1 AND a.datefin IS NULL AND ta.subscription = 1";
+			$sql .= " AND a.statut = 1 AND a.datefin IS NULL AND ta.subscription = '1'";
 		} elseif (GETPOST("filter", 'aZ09') == '1a') {
-			$sql .= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
+			$sql .= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = '0')";
 		} elseif (GETPOST("filter", 'aZ09') == '1b') {
-			$sql .= " AND a.statut=1 AND a.datefin IS NOT NULL AND a.datefin < '".$this->db->idate($now)."' AND ta.subscription = 1";
+			$sql .= " AND a.statut=1 AND a.datefin IS NOT NULL AND a.datefin < '".$this->db->idate($now)."' AND ta.subscription = '1'";
 		} elseif (GETPOST("filter", 'aZ09') === '0') {
 			$sql .= " AND a.statut=0";
 		}

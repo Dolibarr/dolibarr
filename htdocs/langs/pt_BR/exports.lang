@@ -21,7 +21,6 @@ LineTotalVAT=Valor ICMS por Linha
 TypeOfLineServiceOrProduct=Tipo de Linha (0
 FileToImport=Arquivo de origem de importação
 FieldsInSourceFile=Campos em arquivo de origem
-MoveField=Mover campo número da colunas
 ExampleOfImportFile=Exemplo de arquivo de importação
 SaveImportProfile=Guardar este perfil de importação
 ErrorImportDuplicateProfil=Falha ao salvar este perfil de importação com este nome. Um perfil existente já existe com este nome.

@@ -5,7 +5,8 @@
  * Copyright (C) 2004       Benoit Mortier              <benoit.mortier@opensides.be>
  * Copyright (C) 2008-2011  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2026       Solution Libre SAS          <contact@solution-libre.fr>
- * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Alexandre Spangaro          <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 
 /**
  * 	\defgroup   banque     Module bank
- * 	\brief      Module pour gerer la tenue d'un compte bancaire et rapprochements
+ * 	\brief      Module for managing bank account records and reconciliations
  *	\file       htdocs/core/modules/modBanque.class.php
  *	\ingroup    banque
  *	\brief      Description and activation file for the module bank
@@ -214,7 +215,8 @@ class modBanque extends DolibarrModules
 			'cp.id'=>"PaymentMode",
 			'v.accountancy_code'=>'AccountAccounting', 'v.subledger_account'=>'SubledgerAccount',
 			'v.note'=>'Note', 'v.datec'=>'DateCreation',
-			'p.ref'=>'ProjectRef', 'p.title'=>'ProjectLabel'
+			'p.ref'=>'ProjectRef', 'p.title'=>'ProjectLabel',
+			'v.fk_soc'=>'IdThirdParty', 's.nom'=>'ThirdParty'
 		);
 		$this->export_TypeFields_array[$r] = array(
 			'v.rowid'=>'Text', 'v.label'=>'Text', 'v.datep'=>'Date', 'v.datev'=>'Date',
@@ -222,16 +224,26 @@ class modBanque extends DolibarrModules
 			'cp.id'=>'List:c_paiement:code:id:code',
 			"v.accountancy_code"=>"Text", "v.subledger_account"=>"Text",
 			"v.note"=>"Text", 'v.datec'=>"Date",
-			"p.ref"=>"Text", "p.title"=>"Text"
+			"p.ref"=>"Text", "p.title"=>"Text",
+			"v.fk_soc"=>"Numeric", "s.nom"=>"Text"
 		);
 		$this->export_entities_array[$r] = array(
 			'v.rowid'=>'payment', 'v.label'=>'payment', 'v.datev'=>'payment', 'v.datep'=>'payment',
 			'v.num_payment'=>'payment', 'v.amount'=>'payment', 'v.sens'=>'payment',
 			'cp.id'=>'payment',
-			'v.accountancy_code'=>'payment', 'v.subledger_account'=>"payment",
-			'v.note'=>"payment", 'v.datec'=>"payment",
-			"p.ref"=>"project", "p.title"=>"project"
+			'v.accountancy_code'=>'payment', 'v.subledger_account'=>'payment',
+			'v.note'=>'payment', 'v.datec'=>'payment',
+			'p.ref'=>'project', 'p.title'=>'project',
+			'v.fk_soc'=>'company', 's.nom'=>'company'
 		);
+		// Hide thirdparty fields if the option is not enabled
+		$keystounset = array();
+		if (!getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+			$keystounset = array('v.fk_soc', 's.nom');
+		}
+		foreach ($keystounset as $key) {
+			unset($this->export_fields_array[$r][$key], $this->export_TypeFields_array[$r][$key], $this->export_entities_array[$r][$key]);
+		}
 		// Add extra fields
 		$keyforselect = 'payment_various';
 		$keyforelement = 'payment';
@@ -242,7 +254,10 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."projet as p ON v.fk_projet = p.rowid";
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_paiement as cp ON v.fk_typepayment = cp.id";
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_various_extrafields as extra ON v.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .= ' WHERE v.entity IN ('.getEntity('payment_various').')';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON v.fk_soc = s.rowid';
+		if (getDolGlobalString('BANK_VARIOUS_PAYMENT_USE_THIRDPARTY')) {
+			$this->export_sql_end[$r] .= ' WHERE v.entity IN (' . getEntity('payment_various') . ')';
+		}
 		$this->export_sql_order[$r] = ' ORDER BY v.datep';
 	}
 

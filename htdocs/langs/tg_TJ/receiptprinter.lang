@@ -69,7 +69,6 @@ DOL_VALUE_DAY=Рӯзи ҳисобнома -фактура
 DOL_VALUE_DAY_LETTERS=Рӯзи ҳисобнома-фактура дар мактубҳо
 DOL_LINE_FEED_REVERSE=Хати хати баръакс
 InvoiceID=ID фактура
-InvoiceRef=Реф -фактура
 DOL_PRINT_OBJECT_LINES=Хатҳои ҳисобнома -фактура
 DOL_VALUE_CUSTOMER_FIRSTNAME=Номи муштарӣ
 DOL_VALUE_CUSTOMER_LASTNAME=Номи муштарӣ

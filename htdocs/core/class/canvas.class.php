@@ -252,6 +252,7 @@ class Canvas
 	{
 		$control = $this->control;
 		if (method_exists($control, 'doActions')) {
+			// The doActions() method is not declared in all canvas controllers (ActionsContactCardCommon...): @phan-suppress-next-line PhanUndeclaredMethod
 			$ret = $control->doActions($action, $id);
 			return $ret;
 		}

@@ -227,9 +227,11 @@ class Invoices extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -248,6 +250,10 @@ class Invoices extends DolibarrApi
 			} elseif ($search_sale > 0) {
 				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
+		}
+		// An unknown value used to be ignored, so the whole list came back as if it were the filtered one
+		if ((string) $status !== '' && !in_array($status, array('draft', 'unpaid', 'paid', 'cancelled'), true)) {
+			throw new RestException(400, "Bad value for parameter status. Expected one of: draft, unpaid, paid, cancelled");
 		}
 		// Filter by status
 		if ($status == 'draft') {
@@ -341,7 +347,7 @@ class Invoices extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -2250,9 +2256,11 @@ class Invoices extends DolibarrApi
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -2274,6 +2282,10 @@ class Invoices extends DolibarrApi
 			}
 		}
 
+		// An unknown value used to be ignored, so the whole list came back as if it were the filtered one
+		if ((string) $status !== '' && !in_array($status, array('draft', 'active', 'suspended'), true)) {
+			throw new RestException(400, "Bad value for parameter status. Expected one of: draft, active, suspended");
+		}
 		// Filter by status
 		if ($status == 'active') {
 			$sql .= " AND t.suspended = 0 AND t.frequency IS NOT NULL";
@@ -2344,7 +2356,7 @@ class Invoices extends DolibarrApi
 			$obj_ret['pagination'] = array(
 				'total' => (int) $total,
 				'page' => $page,
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			);
 		}
