@@ -95,7 +95,7 @@ Without `--no-cache`, `claudes.sh` builds the image only when its build context 
 The build context does not contain any file of the repository: the pre-commit hooks are not preloaded into the image, they are kept into the directory `~/.cache/docker-claude/pre-commit` of the host, mounted into the container (see the pre-commit section of `dev/build/docker-vibe/README.md`).
 
 ### Send emails
-The outbound SMTP ports are blocked like for docker-vibe. To start a container that is allowed to send emails, run it with:
+The outbound SMTP ports are blocked like for docker-vibe: on a machine with the unified cgroup v2 hierarchy (Ubuntu 21.10+), the block is scoped to the only container (`--cgroup` into `smtpblock.sh`, with the cgroup path seen from the host thanks to `--cgroupns=host`, done by `claudes.sh`), so the other processes of the machine can still connect to these ports; without it, the block applies to the whole machine. To start a container that is allowed to send emails, run it with:
 ````
 DOCKER_ALLOW_SMTP=1 claudes
 ````
