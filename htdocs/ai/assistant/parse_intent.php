@@ -603,7 +603,7 @@ try {
 	}
 	// Text of the user only, for the intent classifier: the English notes appended to $query
 	// (e.g. "the task" below) must not activate a category and filter out the tools really asked for.
-	$queryForIntent = $query;
+	$queryForIntent = $query;	// Not an SQL request, it is the text of the user @phan-suppress-current-line SqlInjection
 	// Files kept from earlier messages: the model can still give their reference to an upload tool
 	$aiAttachmentsNote = ai_attachment_list_note($aiCurrentAttachmentRefs);
 	if ($aiAttachmentsNote !== '') {
