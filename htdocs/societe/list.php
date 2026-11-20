@@ -2093,7 +2093,7 @@ while ($i < $imaxinloop) {
 		}
 		// Region
 		if (!empty($arrayfields['region.nom']['checked'])) {
-			print "<td>".dolPrintHTML($obj->region_name)."</td>\n";
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($obj->region_name).'">'.dolPrintHTML($obj->region_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

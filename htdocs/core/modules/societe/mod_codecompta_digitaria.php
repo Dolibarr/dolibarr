@@ -164,9 +164,10 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 		// Warn if the generated code length (prefix + number of characters) does not match the auxiliary
 		// account length: the general ledger would then pad the code with trailing zeros (length_accounta()).
-		if ($this->codeLengthDiffersFromAuxiliaryLength($this->prefixcustomeraccountancycode, (int) $this->customeraccountancycodecharacternumber)
-			|| $this->codeLengthDiffersFromAuxiliaryLength($this->prefixsupplieraccountancycode, (int) $this->supplieraccountancycodecharacternumber)) {
-			$texte .= '<br><div class="warning">'.img_warning().' '.$langs->trans("WarningDigitariaCodeLengthNotMatchingAccountLength", getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')).'</div>';
+		if (getDolGlobalString('SOCIETE_CODECOMPTA_ADDON') == 'mod_codecompta_digitaria'
+			&& ($this->codeLengthDiffersFromAuxiliaryLength($this->prefixcustomeraccountancycode, (int) $this->customeraccountancycodecharacternumber)
+			|| $this->codeLengthDiffersFromAuxiliaryLength($this->prefixsupplieraccountancycode, (int) $this->supplieraccountancycodecharacternumber))) {
+			$texte .= '<div class="warning">'.img_warning().' '.$langs->trans("WarningDigitariaCodeLengthNotMatchingAccountLength", getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')).'</div>';
 		}
 
 		$texte .= '</form>';
