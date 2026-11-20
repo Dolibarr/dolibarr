@@ -116,6 +116,9 @@ if ($id > 0 || !empty($ref)) {
 	if ($ret < 0) {
 		dol_print_error($db, $object->error);
 	}
+	if ($object->id > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+	}
 	$ret = $object->fetch_thirdparty();
 	if ($ret < 0) {
 		dol_print_error($db, $object->error);
@@ -254,13 +257,6 @@ if (empty($reshook)) {
 
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
-				if (isModEnabled('category')) {
-					$categories = GETPOST('categories', 'array');
-					if (method_exists($object, 'setCategories')) {
-						$object->setCategories($categories);
-					}
-				}
-
 				$db->commit();
 
 				// Define output language
@@ -365,7 +361,11 @@ if (empty($reshook)) {
 		// Delete link of credit note to invoice
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOSTINT("discountid"));
-		$discount->unlink_invoice();
+		if ($result > 0 && $object->id > 0 && $discount->fk_invoice_supplier == $object->id) {	// The credit note must be linked to this invoice
+			$discount->unlink_invoice();
+		} else {
+			setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
+		}
 	} elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setPaid($user);
@@ -739,19 +739,29 @@ if (empty($reshook)) {
 			}
 			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
 				foreach ($amount_ht as $tva_tx => $xxx) {
-					$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
-					$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
-					$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
 					// multi-currency
 					$discount->multicurrency_code = $object->multicurrency_code;
 					$discount->multicurrency_tx = $object->multicurrency_tx;
-					$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
+						// A credit note can mix lines of both signs: each VAT rate keeps its own sign
+						$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
+						$discount->amount_tva = -((float) $amount_tva[$tva_tx]);
+						$discount->amount_ttc = -((float) $amount_ttc[$tva_tx]);
+						$discount->multicurrency_total_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_total_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_total_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+					} else {
+						$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
+						$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
+						$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
+						$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					}
 					// keep compatibility
-					$discount->multicurrency_amount_ht = abs((float) $discount->multicurrency_total_ht);
-					$discount->multicurrency_amount_tva = abs((float) $discount->multicurrency_total_tva);
-					$discount->multicurrency_amount_ttc = abs((float) $discount->multicurrency_total_ttc);
+					$discount->multicurrency_amount_ht = $discount->multicurrency_total_ht;
+					$discount->multicurrency_amount_tva = $discount->multicurrency_total_tva;
+					$discount->multicurrency_amount_ttc = $discount->multicurrency_total_ttc;
 
 					// Clean vat code
 					$reg = array();
@@ -859,6 +869,8 @@ if (empty($reshook)) {
 				// This is a replacement invoice
 				$result = $object->fetch(GETPOSTINT('fac_replacement'));
 				$object->fetch_thirdparty();
+
+				$tmpproject = GETPOSTINT('projectid');
 
 				$object->ref = GETPOST('ref', 'alphanohtml');
 				$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
@@ -1008,7 +1020,10 @@ if (empty($reshook)) {
 						$totaldeposits = $facture_source->getSumDepositsUsed();
 						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
 						$desc = $langs->trans('invoiceAvoirLineWithPaymentRestAmount');
-						$retAddLine = $object->addline($desc, $remain_to_pay, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'TTC');
+
+						// Pass the amount already signed: addline() forces -abs() on credit notes with the default setup, so this
+						// changes nothing there, but it keeps the line negative when that forcing is relaxed (see addline()).
+						$retAddLine = $object->addline($desc, -$remain_to_pay, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'TTC');
 
 						if ($retAddLine < 0) {
 							$error++;
@@ -1465,6 +1480,13 @@ if (empty($reshook)) {
 			$action = 'create';
 			//$_GET['socid'] = $_POST['socid'];
 		} else {
+			if (isModEnabled('category')) {
+				$categories = GETPOST('categories', 'array');
+				if (method_exists($object, 'setCategories')) {
+					$object->setCategories($categories);
+				}
+			}
+
 			$db->commit();
 
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -1502,7 +1524,7 @@ if (empty($reshook)) {
 		if (GETPOST('productid') > 0) {
 			$productsupplier = new ProductFournisseur($db);
 			if (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') == 1) {		// Not the common case
-				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, (float) price2num(GETPOST('qty')), GETPOSTINT('productid'), 'restricthtml', GETPOSTINT('socid')) < 0) {
+				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, (float) price2num(GETPOST('qty'), '', 2), GETPOSTINT('productid'), 'restricthtml', GETPOSTINT('socid')) < 0) {
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
 			}
@@ -1554,7 +1576,7 @@ if (empty($reshook)) {
 			$tva_tx,
 			$localtax1_tx,
 			$localtax2_tx,
-			(float) price2num(GETPOST('qty'), 'MS'),
+			(float) price2num(GETPOST('qty'), 'MS', 2),
 			GETPOSTINT('productid'),
 			$price_base_type,
 			$info_bits,
@@ -1656,7 +1678,7 @@ if (empty($reshook)) {
 
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);		// Can be '1.2' or '1.2 (CODE)'
 
-		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
 
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
 		if (empty($remise_percent)) {
@@ -4222,7 +4244,7 @@ if ($action == 'create') {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=paid&token='.newToken().'">'.$langs->trans('ClassifyPaidPartially').'</a>';
 					} else {
 						if (!getDolGlobalString('INVOICE_CAN_NEVER_BE_CANCELED')) {
-							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+							print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=canceled&token='.newToken().'">'.$langs->trans('ClassifyCanceled').'</a>';
 						}
 					}
 				}

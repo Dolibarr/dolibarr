@@ -64,7 +64,8 @@ if (!$object->fetch($id, $ref) > 0) {
 	dol_print_error($db);
 }
 
-$permissionnote = $user->hasRight('expensereport', 'creer'); // Used by the include of actions_setnotes.inc.php
+// An expense report can be modified only if it is for the user or one of his subordinates, or with the permission to write the expense reports of everybody
+$permissionnote = $user->hasRight('expensereport', 'creer') && (in_array($object->fk_user_author, $childids) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance'))); // Used by the include of actions_setnotes.inc.php
 
 if ($object->id > 0) {
 	// Check current user can read this expense report
@@ -72,8 +73,14 @@ if ($object->id > 0) {
 	if ($user->hasRight('expensereport', 'readall')) {
 		$canread = 1;
 	}
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')) {
+		$canread = 1;	// Can create an expense report for everybody, so can also read it
+	}
 	if ($user->hasRight('expensereport', 'lire') && in_array($object->fk_user_author, $childids)) {
 		$canread = 1;
+	}
+	if ($user->hasRight('expensereport', 'approve') && $object->fk_user_validator == $user->id) {
+		$canread = 1;	// The user designated to approve this expense report
 	}
 	if (!$canread) {
 		accessforbidden();

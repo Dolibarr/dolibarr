@@ -553,7 +553,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			if (!empty($extralabels)) {
 				if (empty($object->id)) {
 					foreach ($extralabels as $key => $value) {
-						if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
+						if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_customer_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
 							if (!empty($extrafields->attributes["product_customer_price"]['langfile'][$key])) {
 								$langs->load($extrafields->attributes["product_customer_price"]['langfile'][$key]);
 							}
@@ -579,7 +579,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					if ($resql) {
 						$obj = $db->fetch_object($resql);
 						foreach ($extralabels as $key => $value) {
-							if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
+							if (!empty($extrafields->attributes["product_customer_price"]['list'][$key]) && ($extrafields->attributes["product_customer_price"]['list'][$key] == 1 || $extrafields->attributes["product_customer_price"]['list'][$key] == 3 || ($action == "edit_customer_price" && $extrafields->attributes["product_customer_price"]['list'][$key] == 4))) {
 								if (!empty($extrafields->attributes["product_customer_price"]['langfile'][$key])) {
 									$langs->load($extrafields->attributes["product_customer_price"]['langfile'][$key]);
 								}
@@ -763,7 +763,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
 
-		$option = '&search_prod='.$search_prod.'&id='.$object->id.'&label='.$search_label.'&price='.$search_price.'&price_ttc='.$search_price_ttc;
+		$option = '&search_prod='.urlencode($search_prod).'&id='.$object->id.'&search_label='.urlencode($search_label).'&search_price='.urlencode($search_price).'&search_price_ttc='.urlencode($search_price_ttc);
 
 		print '<!-- view specific price for each product -->'."\n";
 

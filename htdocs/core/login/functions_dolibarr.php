@@ -122,7 +122,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					// For compatibility with very old versions
 					if (!$passok) {
 						if ((!$passcrypted || $passtyped)
-							&& ($passclear && ($passtyped == $passclear))) {
+							&& ($passclear && hash_equals((string) $passclear, (string) $passtyped))) {
 							$passok = true;
 							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication ok - found old pass in database", LOG_WARNING);
 						}

@@ -739,7 +739,7 @@ class pdf_cyan extends ModelePDFPropales
 					}
 
 					// Total with tax line (TTC)
-					if ($this->getColumnStatus('totalincltax')) {
+					if ($this->getColumnStatus('totalincltax') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
 						$total_incl_tax = pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails);
 						$this->printStdColumnContent($pdf, $curY, 'totalincltax', $total_incl_tax);
 					}
@@ -1776,6 +1776,7 @@ class pdf_cyan extends ModelePDFPropales
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+				$posy = $pdf->getY();
 			}
 		}
 

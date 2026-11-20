@@ -195,7 +195,7 @@ if (empty($reshook)) {
 					// Check amount
 					if ((abs((float) $amounts[$cursorfacid]) > abs((float) $amountsresttopay[$cursorfacid]))) {
 						$addwarning = 1;
-						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPaySupplier")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
+						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
 					}
 					// Check date
 					if ($datepaye && ($datepaye < $tmpinvoice->date)) {
@@ -222,7 +222,7 @@ if (empty($reshook)) {
 					// Check amount
 					if ((abs((float) $multicurrency_amounts[$cursorfacid]) > abs((float) $multicurrency_amountsresttopay[$cursorfacid]))) {
 						$addwarning = 1;
-						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPaySupplier")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
+						$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' '.$langs->trans("HelpPaymentHigherThanReminderToPaySupplier");
 					}
 					// Check date
 					if ($datepaye && ($datepaye < $tmpinvoice->date)) {
@@ -332,6 +332,7 @@ if (empty($reshook)) {
 			$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 			$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
 			$paiement->paiementid = GETPOSTINT('paiementid');
+			$paiement->paiementcode = (string) dol_getIdFromCode($db, (string) $paiement->paiementid, 'c_paiement', 'id', 'code', 1);
 			$paiement->num_payment = GETPOST('num_paiement', 'alphanohtml');
 			$paiement->note_private = GETPOST('comment', 'alpha');
 			$paiement->fk_account = GETPOSTINT('accountid');

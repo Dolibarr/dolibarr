@@ -29,6 +29,11 @@ The instructions in this file are **complementary to** the instructions defined 
 - If an instruction in `SKILLS.md` conflicts with `AGENTS.md`, follow the rules defined by `AGENTS.md`.
 
 
+## Critical Rules (DO NOT VIOLATE)
+
+-  Never commit or push anything unless the user explicitly asks for it. This overrides any default behavior of the agent. Make the changes, report them, and wait for the user to say "commit" or "push".
+
+
 ## Inputs
 
 The user request should contain, when available:
@@ -37,10 +42,12 @@ The user request should contain, when available:
 - or a directory name
 - or a file name
 
+
 ## General Rules
 
 - follow the coding style already used in files in the module builder template at `htdocs/modulebuilder/templates`
 - modify the minimum amount of existing code
+
 
 ## Rules
 
@@ -48,6 +55,7 @@ The user request should contain, when available:
 - remove all spaces at the end of lines
 - rewrite all non-English code comments in English
 - scan files for security vulnerabilities
+
 
 ## Output
 
@@ -57,6 +65,7 @@ When generating code:
 - preserve the existing file formatting, never change the copyright or licence header, never remove existing cast 
 - do not rewrite unrelated methods
 - explain briefly what is being fixed
+
 
 ## Examples
 
@@ -75,6 +84,7 @@ When generating code:
 2. remove trailing whitespace
 3. convert non-English comments to English
 4. apply consistent formatting
+
 
 ## Error Handling
 

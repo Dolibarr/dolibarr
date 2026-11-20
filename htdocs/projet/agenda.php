@@ -77,8 +77,16 @@ $search_agenda_label = GETPOST('search_agenda_label');
 
 $hookmanager->initHooks(array('projectcardinfo'));
 
+$object = new Project($db);
+
 // Security check
 $id = GETPOSTINT("id");
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+	if ($object->id > 0) {
+		$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+	}
+}
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
@@ -112,10 +120,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  */
 
 $form = new Form($db);
-$object = new Project($db);
 
 if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 		$object->fetchComments();

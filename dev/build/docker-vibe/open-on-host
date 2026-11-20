@@ -1,0 +1,30 @@
+#!/bin/sh
+# Open a URL (or a file) on the desktop of the host, from inside the container.
+# Installed as the BROWSER program of the image (see Dockerfile): Python's
+# webbrowser module (used by Vibe to open the links of the chat) calls it.
+#
+# It uses the xdg-desktop-portal of the host session over the D-Bus session
+# bus (mounted by vibes.sh): the host opens the URL in its default browser,
+# no browser is needed inside the container.
+
+url="$1"
+if [ -z "$url" ]; then
+    echo "open-on-host: no URL provided" >&2
+    exit 1
+fi
+
+if command -v gdbus >/dev/null 2>&1 && [ -n "${DBUS_SESSION_BUS_ADDRESS}" ]; then
+    if gdbus call --session \
+        --dest org.freedesktop.portal.Desktop \
+        --object-path /org/freedesktop/portal/desktop \
+        --method org.freedesktop.portal.OpenURI.OpenURI \
+        "" "$url" "{}" >/dev/null 2>&1; then
+        exit 0
+    fi
+fi
+
+echo "open-on-host: unable to open '$url' on the host." >&2
+echo "open-on-host: the D-Bus session bus of the host is not reachable (is the" >&2
+echo "open-on-host: container started with vibes.sh from a graphical session, and" >&2
+echo "open-on-host: does the host run xdg-desktop-portal?). See README.md." >&2
+exit 1

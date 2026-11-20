@@ -64,7 +64,12 @@ if (!$user->hasRight('takepos', 'run')) {
 $langs->loadLangs(array("main", "bills", "cashdesk"));
 
 $invoice = new Facture($db);
-$invoice->fetch($facid);
+$result = $invoice->fetch($facid);
+// Only an invoice of the POS, in an entity of the user, can be sent from the POS
+if ($result <= 0 || $invoice->module_source != 'takepos' || !in_array($invoice->entity, explode(',', getEntity('invoice')))) {
+	accessforbidden();
+}
+
 $customer = new Societe($db);
 $customer->fetch($invoice->socid);
 
@@ -107,6 +112,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs  = array();
 $head = '';
+
 top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
 
 ?>

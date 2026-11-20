@@ -151,14 +151,14 @@ class Productlot extends CommonObject
 		'fk_product'    => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'enabled' => 1, 'visible' => 1, 'position' => 5, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'picto' => 'product', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax250'),
 		'batch'         => array('type' => 'varchar(30)', 'label' => 'Batch', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'comment' => 'Batch', 'searchall' => 1, 'picto' => 'lot', 'validate' => 1),
 		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 20),
-		'sellby'        => array('type' => 'date', 'label' => 'SellByDate', 'enabled' => 'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible' => 1, 'notnull' => 0, 'position' => 60),
-		'eatby'         => array('type' => 'date', 'label' => 'EatByDate', 'enabled' => 'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible' => 1, 'notnull' => 0, 'position' => 62),
-		'eol_date'        => array('type' => 'date', 'label' => 'EndOfLife', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position' => 70),
-		'manufacturing_date' => array('type' => 'date', 'label' => 'ManufacturingDate', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?1:0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?5:0', 'position' => 80),
-		'scrapping_date'     => array('type' => 'date', 'label' => 'DestructionDate', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?1:0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?5:0', 'position' => 90),
+		'sellby'        => array('type' => 'date', 'label' => 'SellByDate', 'enabled' => 'getDolGlobalInt("PRODUCT_DISABLE_SELLBY") ? 0 : 1', 'visible' => 1, 'notnull' => 0, 'position' => 60),
+		'eatby'         => array('type' => 'date', 'label' => 'EatByDate', 'enabled' => 'getDolGlobalInt("PRODUCT_DISABLE_EATBY") ? 0 : 1', 'visible' => 1, 'notnull' => 0, 'position' => 62),
+		'eol_date'        => array('type' => 'date', 'label' => 'EndOfLife', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL") ? 1 : 0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL") ? 5 : 0', 'position' => 70),
+		'manufacturing_date' => array('type' => 'date', 'label' => 'ManufacturingDate', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY") ? 1 : 0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY") ? 5 : 0', 'position' => 80),
+		'scrapping_date'     => array('type' => 'date', 'label' => 'DestructionDate', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY") ? 1 : 0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY") ? 5 : 0', 'position' => 90),
 		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY", 0)', 'visible'=>5, 'position'=>100),
-		'qc_frequency'        => array('type' => 'integer', 'label' => 'QCFrequency', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position' => 110),
-		'lifetime'        => array('type' => 'integer', 'label' => 'Lifetime', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position' => 110),
+		'qc_frequency'        => array('type' => 'integer', 'label' => 'QCFrequency', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL") ? 1 : 0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL") ? 5 : 0', 'position' => 110),
+		'lifetime'        => array('type' => 'integer', 'label' => 'Lifetime', 'enabled' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL") ? 1 : 0', 'visible' => 'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL") ? 5 : 0', 'position' => 110),
 		'model_pdf'		=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -2, 'position' => 310),
 		'datec'         => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 500),
@@ -708,6 +708,8 @@ class Productlot extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -754,18 +756,21 @@ class Productlot extends CommonObject
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		// TODO
-		//if (!$error) {
-		//if (!$notrigger) {
-		// Uncomment this and change PRODUCTLOT to your own tag if you
-		// want this action calls a trigger.
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('PRODUCTLOT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
 
-		//// Call triggers
-		//$result=$this->call_trigger('PRODUCTLOT_DELETE',$user);
-		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-		//// End call triggers
-		//}
-		//}
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
@@ -786,6 +791,19 @@ class Productlot extends CommonObject
 			return -1 * $error;
 		} else {
 			$this->db->commit();
+
+			// Delete the directory of the documents of the lot
+			if (!empty($conf->productbatch->multidir_output[$this->entity])) {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				$dir = $conf->productbatch->multidir_output[$this->entity].'/'.get_exdir(0, 0, 0, 1, $this, 'product_batch');
+				if (file_exists($dir)) {
+					if (!dol_delete_dir_recursive($dir)) {
+						$this->error = 'ErrorFailToDeleteDir';
+						$this->errors[] = $this->error;
+						return -2;
+					}
+				}
+			}
 
 			return 1;
 		}
@@ -1083,8 +1101,8 @@ class Productlot extends CommonObject
 			$sql .= " SUM(mp.qty) as qty";
 			$sql .= " FROM ".$this->db->prefix()."mrp_mo as c";
 			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo=c.rowid";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
-				$sql .= "INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+				$sql .= " INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " WHERE ";
 			$sql .= " c.entity IN (".getEntity('mo').")";

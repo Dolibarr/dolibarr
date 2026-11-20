@@ -73,7 +73,7 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 // Security check
 global $conf;
 $encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
-if ($encodedsecurekey != $securekey) {
+if (!hash_equals($encodedsecurekey, (string) $securekey)) {
 	httponly_accessforbidden('Bad value for securitykey or public profile not enabled');
 }
 

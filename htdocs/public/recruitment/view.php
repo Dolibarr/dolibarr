@@ -97,7 +97,20 @@ if (!isModEnabled("recruitment")) {
 	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
+// Done before the actions, so no application can be recorded when the public interface is disabled
+if (!getDolGlobalInt('RECRUITMENT_ENABLE_PUBLIC_INTERFACE')) {
+	$langs->load("errors");
+	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
+	$db->close();
+	exit();
+}
+
 $object->fetch(0, $ref);
+// A draft job position is not published, it must not be shown nor receive applications
+if ($object->id <= 0 || $object->status == RecruitmentJobPosition::STATUS_DRAFT) {
+	$langs->load("errors");
+	httponly_accessforbidden($langs->trans('ErrorRecordNotFound'), 404);
+}
 $user->loadDefaultValues();
 $errmsg = "";
 
@@ -120,6 +133,12 @@ if ($action == "dosubmit") {	// Test on permission not required here (anonymous 
 	if (!strlen($ref)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")));
+		$action = 'view';
+	}
+	// Only a job position still open can receive an application
+	if ($object->status != RecruitmentJobPosition::STATUS_VALIDATED) {
+		$error++;
+		array_push($object->errors, $langs->trans($object->status == RecruitmentJobPosition::STATUS_RECRUITED ? "JobClosedTextCandidateFound" : "JobClosedTextCanceled"));
 		$action = 'view';
 	}
 	if (!strlen($email)) {
@@ -236,13 +255,6 @@ if (getDolGlobalString('MAIN_RECRUITMENT_CSS_URL')) {
 
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
-
-if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
-	$langs->load("errors");
-	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
-	$db->close();
-	exit();
-}
 
 $arrayofjs = array();
 $arrayofcss = array();

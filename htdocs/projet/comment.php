@@ -56,6 +56,8 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOSTINT('withproject');
 
+$mode = GETPOST('mode');
+
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
@@ -84,7 +86,10 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-// include comment actions
+// Security check - scoped to the specific project
+restrictedArea($user, 'projet', $object->id, 'projet&project');
+
+// include comment actions (after security check to prevent IDOR)
 include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 /*

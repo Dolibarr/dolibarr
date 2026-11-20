@@ -179,6 +179,14 @@ if (empty($reshook)) {
 	// Actions to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
+	// The lines of a shipment can be modified or deleted only when it is a draft
+	if (in_array($action, array('editline', 'updateline', 'deleteline')) && (!$permissiontoadd || $object->status != Expedition::STATUS_DRAFT)) {
+		if ($object->status != Expedition::STATUS_DRAFT) {
+			setEventMessages($langs->trans("StatusOfRefMustBe", $object->ref, $langs->transnoentitiesnoconv("StatusSendingDraftShort")), null, 'errors');
+		}
+		$action = '';
+	}
+
 	// Back to draft
 	if ($action == 'setdraft' && $permissiontoadd) {
 		$object->fetch($id);
@@ -337,7 +345,7 @@ if (empty($reshook)) {
 
 						if ($is_batch_or_serial == 2 && $sub_qty[$j]['q'] > 0) {
 							// we stock the batch id to test later if the same serial is shipped on another line for the same product
-							$product_batch_used[$j] = $sub_qty[$j]['id_batch'];
+							$product_batch_used[] = $sub_qty[$j]['id_batch'];
 						}
 
 						$j++;
@@ -1266,6 +1274,7 @@ if ($action == 'create') {
 					if (!(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 						$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
 					}
+					$selectedLines = GETPOST('subtotal_toselect', 'array:int');
 					foreach ($object->lines as $line) {
 						if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 							$show_check_add_buttons = true;

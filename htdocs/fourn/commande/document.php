@@ -82,6 +82,9 @@ if ($object->fetch($id, $ref) < 0) {
 	dol_print_error($db);
 	exit;
 }
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
 
 $upload_dir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $object->fetch_thirdparty();

@@ -1251,7 +1251,8 @@ class tcpdi_parser {
             }
         }
 
-        if ($annots[0] == PDF_TYPE_OBJREF)
+        // No /Annots up to the root of the page tree: $annots is false
+        if (is_array($annots) && $annots[0] == PDF_TYPE_OBJREF)
             return $this->getObjectVal($annots);
         return $annots;
     }

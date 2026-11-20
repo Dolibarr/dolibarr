@@ -2114,7 +2114,9 @@ if ($placeid > 0) {
 					$htmlforlines .= '<td class="right">'.price($line->subprice).'</td>';
 				}
 				$htmlforlines .= '<td class="right">'.vatrate(price2num($line->remise_percent), true).'</td>';
-				$htmlforlines .= '<td class="right">';
+				// nowraponall keeps the qty and its '(stock)' block on one line: on narrow layouts
+				// the native display otherwise wraps over three lines inside the qty column.
+				$htmlforlines .= '<td class="right nowraponall">';
 				$htmlforlines .= $line->qty;
 				if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire')) {
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];

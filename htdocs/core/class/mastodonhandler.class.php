@@ -34,7 +34,7 @@ class MastodonHandler
 	/**
 	 * @var array<array{id:string,content:string,created_at:string,url:string,media_url:string}|array{}>    Posts of social network (Mastodon)
 	 */
-	private $posts;
+	private $posts = [];
 
 	/**
 	 * @var String Error code (or message)
@@ -89,8 +89,8 @@ class MastodonHandler
 	 */
 	public function fetch($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
 	{
-		if (empty($this->accessToken) && isset($authParams['access_token'])) {
-			return false;
+		if (empty($this->accessToken) && !empty($authParams['access_token'])) {
+			$this->accessToken = $authParams['access_token'];
 		}
 		$cacheFile = $cacheDir.'/'.dol_hash($urlAPI, '3');
 		$foundInCache = false;

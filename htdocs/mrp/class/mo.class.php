@@ -645,6 +645,24 @@ class Mo extends CommonObject
 		}
 	}
 
+	/**
+	 * Return if consumption or production has started on the MO (it has consumed or produced lines).
+	 * If yes, $this->error is set with the message to show.
+	 *
+	 * @return 	bool		True if the MO has consumed or produced lines
+	 */
+	public function hasConsumedOrProducedLines()
+	{
+		global $langs;
+
+		if (count($this->fetchLinesLinked('consumed')) || count($this->fetchLinesLinked('produced'))) {
+			$langs->load('mrp');
+			$this->error = $langs->trans('ErrorMoConsumptionOrProductionStarted');
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Count number of movement with origin of MO
@@ -724,6 +742,11 @@ class Mo extends CommonObject
 	{
 		$error = 0;
 		$role = "";
+
+		// The consumed and produced lines can't be deleted here, their stock movements would not be reversed
+		if ($this->hasConsumedOrProducedLines()) {
+			return -1;
+		}
 
 		if ($this->status != self::STATUS_DRAFT) {
 			dol_syslog("Bad status for MO object. Can't add production lines. Check that MO has status DRAFT.");
@@ -943,9 +966,27 @@ class Mo extends CommonObject
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
+
+		// The line must belong to this MO (checked before any stock movement is reversed)
+		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
+		$sql .= " WHERE rowid = ".((int) $idline)." AND fk_mo = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql || !$this->db->num_rows($resql)) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+			return -1;
+		}
+
 		$productstatic = new Product($this->db);
 
 		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);	// Get lines consumed under the one to delete
+
+		// A line to produce can't be deleted once something was produced from it (the production would stay in stock)
+		$arrayofproducedlines = $this->fetchLinesLinked('produced', $idline);
+		if (!empty($arrayofproducedlines)) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorRecordHasChildren');
+			return -1;
+		}
 
 		$result = 0;
 
@@ -958,12 +999,17 @@ class Mo extends CommonObject
 			// The fk_movement was not recorded so we try to guess the product and quantity to restore.
 			$moline = new MoLine($this->db);
 			$TArrayMoLine = $moline->fetchAll('', '', 1, 0, '(fk_stock_movement:=:'.((int) $fk_movement).')');
-			$moline = array_shift($TArrayMoLine);
+			$moline = is_array($TArrayMoLine) ? array_shift($TArrayMoLine) : null;
+			if (!is_object($moline) || (int) $moline->fk_mo !== (int) $this->id) {
+				$this->db->rollback();
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
 			$movement = new MouvementStock($this->db);
 			$movement->fetch($fk_movement);
 			$productstatic->fetch($movement->product_id);
-			$qtytoprocess = $movement->qty;
+			$qtytoprocess = 0 - $movement->qty;	// The value of the movement is the stock change, the reversal must apply the opposite
 
 			// Reverse stock movement
 			$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
@@ -972,7 +1018,7 @@ class Mo extends CommonObject
 			if (($qtytoprocess >= 0)) {
 				$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
 			} else {
-				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
+				$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
 			}
 			if ($idstockmove < 0) {
 				$this->error++;
@@ -998,7 +1044,7 @@ class Mo extends CommonObject
 				if ($qtytoprocess >= 0) {
 					$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 				} else {
-					$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 				}
 				if ($idstockmove < 0) {
 					$this->error++;
@@ -1129,7 +1175,8 @@ class Mo extends CommonObject
 		$sql .= " SET ref = '".$this->db->escape($num)."',";
 		$sql .= " status = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid = '".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".((int) $user->id);
+		$sql .= " fk_user_valid = ".((int) $user->id).",";
+		$sql .= " fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
@@ -1210,6 +1257,63 @@ class Mo extends CommonObject
 	}
 
 	/**
+	 *      Set status of the MO and record the user who changed it
+	 *
+	 *      @param	int		$status			Status to set
+	 *      @param	?int	$elementId		Id of element to force (use this->id by default if null)
+	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
+	 *      @param	string	$trigkey		Trigger key to use for trigger
+	 *      @param	string	$fieldstatus	Name of status field in this->table_element
+	 *      @return int						Return integer <0 if KO, >0 if OK
+	 */
+	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
+	{
+		global $user;
+
+		$result = parent::setStatut($status, $elementId, $elementType, $trigkey, $fieldstatus);
+		if ($result > 0 && empty($elementId) && empty($elementType)) {
+			$this->setUserModif($user);
+		}
+
+		return $result;
+	}
+
+	/**
+	 *	Set status of the MO and record the user who changed it
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *	@param	int		$status			New status to set (often a constant like self::STATUS_XXX)
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	string	$triggercode	Trigger code to use
+	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function setStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	{
+		$result = parent::setStatusCommon($user, $status, $notrigger, $triggercode);
+		if ($result > 0) {
+			$this->setUserModif($user);
+		}
+
+		return $result;
+	}
+
+	/**
+	 *	Record the user of the last change, as the generic status setters only update the status
+	 *
+	 *	@param	User	$user	User who made the change
+	 *	@return	void
+	 */
+	private function setUserModif($user)
+	{
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		$sql .= " SET fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+		if ($this->db->query($sql)) {
+			$this->fk_user_modif = $user->id;
+		}
+	}
+
+	/**
 	 *	Set draft status
 	 *
 	 *	@param	User	$user			Object user that modify
@@ -1221,6 +1325,10 @@ class Mo extends CommonObject
 		// Protection
 		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
+		}
+		// Once consumption or production has started, the lines can't be changed or reset any more
+		if ($this->hasConsumedOrProducedLines()) {
+			return -1;
 		}
 
 		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
@@ -1347,7 +1455,7 @@ class Mo extends CommonObject
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error = $stockmove->error;
@@ -1385,7 +1493,7 @@ class Mo extends CommonObject
 					if ($qtytoprocess >= 0) {
 						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], abs($qtytoprocess), 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error = $stockmove->error;

@@ -1446,6 +1446,7 @@ class AccountancyExport
 
 				// FEC:JournalLib
 				$labeljournal = dol_string_unaccent($langs->transnoentities($line->journal_label));
+				$labeljournal = str_replace(array("\t", "\n", "\r"), " ", $labeljournal);
 				$labeljournal = dol_string_nospecial($labeljournal, ' ');
 				$tab[] = $labeljournal;
 
@@ -1459,15 +1460,18 @@ class AccountancyExport
 				$tab[] = length_accountg($line->numero_compte);
 
 				// FEC:CompteLib
+				$line->label_compte = str_replace(array("\t", "\n", "\r"), " ", $line->label_compte);
 				$tab[] = dol_string_unaccent($line->label_compte);
 
 				// FEC:CompAuxNum
 				$tab[] = length_accounta($line->subledger_account);
 
 				// FEC:CompAuxLib
+				$line->subledger_label = str_replace(array("\t", "\n", "\r"), " ", $line->subledger_label);
 				$tab[] = dol_string_unaccent($line->subledger_label);
 
 				// FEC:PieceRef
+				$line->doc_ref = str_replace(array("\t", "\n", "\r"), " ", $line->doc_ref);
 				$tab[] = $line->doc_ref;
 
 				// FEC:PieceDate
@@ -1486,6 +1490,7 @@ class AccountancyExport
 				$tab[] = price2fec($line->credit);
 
 				// FEC:EcritureLet
+				$line->lettering_code = str_replace(array("\t", "\n", "\r"), " ", (string) $line->lettering_code);
 				$tab[] = $line->lettering_code;
 
 				// FEC:DateLet
@@ -1666,6 +1671,7 @@ class AccountancyExport
 
 				// FEC:JournalLib
 				$labeljournal = dol_string_unaccent($langs->transnoentities($line->journal_label));
+				$labeljournal = str_replace(array("\t", "\n", "\r"), " ", $labeljournal);
 				$labeljournal = dol_string_nospecial($labeljournal, ' ');
 				$tab[] = $labeljournal;
 
@@ -1679,15 +1685,18 @@ class AccountancyExport
 				$tab[] = length_accountg($line->numero_compte);
 
 				// FEC:CompteLib
+				$line->label_compte = str_replace(array("\t", "\n", "\r"), " ", $line->label_compte);
 				$tab[] = dol_string_unaccent($line->label_compte);
 
 				// FEC:CompAuxNum
 				$tab[] = length_accounta($line->subledger_account);
 
 				// FEC:CompAuxLib
+				$line->subledger_label = str_replace(array("\t", "\n", "\r"), " ", $line->subledger_label);
 				$tab[] = dol_string_unaccent($line->subledger_label);
 
 				// FEC:PieceRef
+				$line->doc_ref = str_replace(array("\t", "\n", "\r"), " ", $line->doc_ref);
 				$tab[] = $line->doc_ref;
 
 				// FEC:PieceDate
@@ -1706,6 +1715,7 @@ class AccountancyExport
 				$tab[] = price2fec($line->credit);
 
 				// FEC:EcritureLet
+				$line->lettering_code = str_replace(array("\t", "\n", "\r"), " ", (string) $line->lettering_code);
 				$tab[] = $line->lettering_code;
 
 				// FEC:DateLet

@@ -47,7 +47,7 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('FR-ARMISTICE',   __ENTITY__, 1, '', 0, 11, 11, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('FR-EASTER',      __ENTITY__, 1, 'eastermonday', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('FR-ASCENSION',   __ENTITY__, 1, 'ascension', 0, 0, 0, 1);
-INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('FR-PENTECOST',   __ENTITY__, 1, 'pentecost', 0, 0, 0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('FR-PENTECOST',   __ENTITY__, 1, 'pentecotemonday', 0, 0, 0, 1);
 
 -- Belgium only (2)
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-VICTORYDAY',  __ENTITY__, 2, '', 0,  5,  8, 1);
@@ -57,7 +57,7 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-ARMISTICE',   __ENTITY__, 2, '', 0, 11, 11, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-EASTER',      __ENTITY__, 2, 'eastermonday', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-ASCENSION',   __ENTITY__, 2, 'ascension', 0, 0, 0, 1);
-INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-PENTECOST',   __ENTITY__, 2, 'pentecost', 0, 0, 0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-PENTECOST',   __ENTITY__, 2, 'pentecotemonday', 0, 0, 0, 1);
 
 -- Italy (3)
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, year, month, day, active) VALUES('IT-LIBEAZIONE',     __ENTITY__, 3, 0,  4, 25, 1);
@@ -96,7 +96,7 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 -- Austria (41)
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('AT-EASTER',       __ENTITY__, 41, 'eastermonday', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('AT-ASCENSION',    __ENTITY__, 41,    'ascension', 0, 0, 0, 1);
-INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('AT-PENTECOST',    __ENTITY__, 41,    'pentecost', 0, 0, 0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('AT-PENTECOST',    __ENTITY__, 41, 'pentecotemonday', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('AT-FRONLEICHNAM', __ENTITY__, 41, 'fronleichnam', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('AT-KONEGIE',      __ENTITY__, 41,             '', 0,  6,  1, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('AT-26OKT',        __ENTITY__, 41,             '', 0, 10, 26, 1);
@@ -123,5 +123,3 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 -- India (117)
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-REPUBLICDAY',  __ENTITY__, 117, '', 0,  1, 26, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-GANDI',        __ENTITY__, 117, '', 0, 10,  2, 1);
-
-

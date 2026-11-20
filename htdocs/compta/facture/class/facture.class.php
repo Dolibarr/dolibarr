@@ -755,6 +755,12 @@ class Facture extends CommonInvoice
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture');
 
+			// Keep author on object so a later call to update() does not reset fk_user_author
+			if ($origin_user_author_id > 0) {
+				$this->user_creation_id = $origin_user_author_id;
+				$this->fk_user_author = $origin_user_author_id;
+			}
+
 			// Update ref with new one
 			$this->ref = '(PROV'.$this->id.')';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".((int) $this->id);
@@ -831,22 +837,26 @@ class Facture extends CommonInvoice
 				$fk_parent_line = 0;
 
 				dol_syslog("There is ".count($this->lines)." lines into ->lines that are InvoiceLines");
-				foreach ($this->lines as $i => $val) {
-					$newinvoiceline = $this->lines[$i];
+				// Loop on a copy: addline() appends the inserted lines to $this->lines and uses
+				// count($this->lines) to shift ranks, so the input lines must not remain in it.
+				$linestoadd = $this->lines;
+				$this->lines = array();
+				foreach ($linestoadd as $i => $val) {
+					$newinvoiceline = $linestoadd[$i];
 					'@phan-var-force FactureLigne $newinvoiceline';
 
 					$newinvoiceline->context = $this->context;
 
 					$newinvoiceline->fk_facture = $this->id;
 
-					$newinvoiceline->origin = $this->lines[$i]->element;
-					$newinvoiceline->origin_id = $this->lines[$i]->id;
+					$newinvoiceline->origin = $linestoadd[$i]->element;
+					$newinvoiceline->origin_id = $linestoadd[$i]->id;
 
 					// Auto set date of service ?
-					if ($this->lines[$i]->date_start_fill == 1 && $originaldatewhen) {		// $originaldatewhen is defined when generating from recurring invoice only
+					if ($linestoadd[$i]->date_start_fill == 1 && $originaldatewhen) {		// $originaldatewhen is defined when generating from recurring invoice only
 						$newinvoiceline->date_start = $originaldatewhen;
 					}
-					if ($this->lines[$i]->date_end_fill == 1 && $previousdaynextdatewhen) {	// $previousdaynextdatewhen is defined when generating from recurring invoice only
+					if ($linestoadd[$i]->date_end_fill == 1 && $previousdaynextdatewhen) {	// $previousdaynextdatewhen is defined when generating from recurring invoice only
 						$newinvoiceline->date_end = $previousdaynextdatewhen;
 					}
 
@@ -1824,11 +1834,15 @@ class Facture extends CommonInvoice
 
 			foreach ($TTotalByTva as $tva => &$total) {
 				$tva_rate_only = preg_replace('/\s*\(.*\)/', '', (string) $tva);
-				$coef = $total / $origin->total_ttc; // Calc coef
+				$coef = ($origin->total_ttc != 0 ? $total / $origin->total_ttc : 0); // Calc coef (0 if the total of the origin is 0, there is nothing to split)
 				$am = $amount * $coef;
 				$amount_ttc_diff += $am;
+				if (!isset($amountdeposit[$tva])) {
+					$amountdeposit[$tva] = 0;
+				}
 				$amountdeposit[$tva] += $am / (1 + ((float) $tva_rate_only) / 100); // Convert into HT for the addline
 			}
+			unset($total);	// Break the reference, it must not alter $TTotalByTva later
 		} else {
 			$totalamount = 0;
 			$lines = $origin->lines;
@@ -2340,6 +2354,7 @@ class Facture extends CommonInvoice
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
+				$this->cond_reglement_label = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc = $obj->cond_reglement_libelle_doc;
 				$this->fk_account = ($obj->fk_account > 0) ? $obj->fk_account : null;
 				$this->fk_facture_source	= $obj->fk_facture_source;
@@ -2870,6 +2885,11 @@ class Facture extends CommonInvoice
 		$result = $remise->fetch($idremise);
 
 		if ($result > 0) {
+			if ($this->socid > 0 && $remise->fk_soc != $this->socid) {	// The discount must belong to the thirdparty of the invoice
+				$this->error = $langs->trans("ErrorDiscountNotSameCompany");
+				$this->db->rollback();
+				return -6;
+			}
 			if ($remise->fk_facture) {	// Protection against multiple submission
 				$this->error = $langs->trans("ErrorDiscountAlreadyUsed");
 				$this->db->rollback();
@@ -2911,6 +2931,8 @@ class Facture extends CommonInvoice
 			$facligne->total_tva = -(float) $remise->amount_tva;
 			$facligne->total_ttc = -(float) $remise->amount_ttc;
 
+			$facligne->fk_multicurrency = $this->fk_multicurrency;
+			$facligne->multicurrency_code = $this->multicurrency_code;
 			$facligne->multicurrency_subprice = -(float) $remise->multicurrency_subprice;
 			$facligne->multicurrency_total_ht = -(float) $remise->multicurrency_amount_ht;
 			$facligne->multicurrency_total_tva = -(float) $remise->multicurrency_amount_tva;
@@ -4326,13 +4348,14 @@ class Facture extends CommonInvoice
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				$tmpproduct = new Product($this->db);
 				$result = $tmpproduct->fetch($fk_product);
-				if (abs($qty) < $tmpproduct->packaging) {
-					$qty = (float) $tmpproduct->packaging;
+				$qtysign = ((float) $qty < 0 ? -1 : 1);	// The rounding is done on the absolute value, the sign of the quantity is kept
+				if (abs((float) $qty) < (float) $tmpproduct->packaging) {
+					$qty = $qtysign * (float) $tmpproduct->packaging;
 					setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 				} else {
-					if (!empty($tmpproduct->packaging) && $qty > $tmpproduct->packaging) {
+					if (!empty($tmpproduct->packaging) && (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $tmpproduct->packaging) * (float) $tmpproduct->packaging, 'MS') != 0) {	// Not a multiple of the packaging
 						$coeff = intval(abs($qty) / $tmpproduct->packaging) + 1;
-						$qty = price2num((float) $tmpproduct->packaging * $coeff, 'MS');
+						$qty = price2num($qtysign * (float) $tmpproduct->packaging * $coeff, 'MS');
 						setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 					}
 				}
@@ -4605,6 +4628,27 @@ class Facture extends CommonInvoice
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
+			// Round the quantity to the packaging before computing the amounts of the line (and checking the stock),
+			// else the line is saved with the rounded quantity but with the amounts of the quantity before rounding
+			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
+				$tmpline = new FactureLigne($this->db);
+				if ($tmpline->fetch($rowid) > 0) {
+					$qtysign = ((float) $qty < 0 ? -1 : 1);	// The rounding is done on the absolute value, the sign of the quantity is kept
+					if (abs((float) $qty) < (float) $tmpline->packaging) {
+						$qty = $qtysign * (float) $tmpline->packaging;
+					} else {
+						if (!empty($tmpline->packaging)
+							&& is_numeric($tmpline->packaging)
+							&& (float) $tmpline->packaging > 0
+							&& (float) price2num(abs((float) $qty) - round(abs((float) $qty) / (float) $tmpline->packaging) * (float) $tmpline->packaging, 'MS') != 0) {
+							$coeff = intval(abs((float) $qty) / $tmpline->packaging) + 1;
+							$qty = price2num($qtysign * (float) $tmpline->packaging * $coeff, 'MS');
+							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+						}
+					}
+				}
+			}
+
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, $situation_percent, $this->multicurrency_tx, $pu_ht_devise);
 
 			$total_ht  = $tabprice[0];
@@ -4691,21 +4735,6 @@ class Facture extends CommonInvoice
 				$apply_abs_price_on_credit_note = true;
 			}
 
-
-			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-				if ($qty < $this->line->packaging) {
-					$qty = $this->line->packaging;
-				} else {
-					if (!empty($this->line->packaging)
-						&& is_numeric($this->line->packaging)
-						&& (float) $this->line->packaging > 0
-						&& fmod((float) $qty, (float) $this->line->packaging) > 0) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
-						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
-					}
-				}
-			}
 
 			$this->line->id = $rowid;
 			$this->line->rowid = $rowid;
@@ -4883,7 +4912,10 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 
-		if ($id > 0 && $line->fk_facture != $id) {
+		if ($id <= 0) {
+			$id = $this->id;
+		}
+		if ($id > 0 && (int) $line->fk_facture !== (int) $id) {
 			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 			return -1;
 		}
@@ -6277,8 +6309,25 @@ class Facture extends CommonInvoice
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
 						$langs->load("errors");
-						$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
-						return 0;
+						if (is_numeric($template)) {
+							// The cron was started with a template id and that id cannot be
+							// resolved at all. This is almost certainly a global setup error
+							// (template deleted or wrong id passed to the cron), and every
+							// remaining invoice in this batch would fail the same way. Stop
+							// here so the operator can fix the setup before retrying, instead
+							// of flooding the cron output with one identical error per
+							// invoice (per @eldy's review of PR #38547).
+							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
+							return 0;
+						}
+						// The cron was started with a template label and getEMailTemplate
+						// also filters by the recipient's language (see html.formmail.class.php
+						// line 1786). Only the invoices for thirdparties whose default_lang
+						// has no matching template fail; the rest of the batch is fine.
+						// Log the error and continue so a single missing translation does
+						// not stop reminders for everyone else (see issue #34656).
+						$errorsMsg[] = $langs->trans('ErrorFailedToFindEmailTemplate', $template).' (invoice '.$tmpinvoice->ref.')';
+						continue;
 					}
 
 					// PREPARE EMAIL

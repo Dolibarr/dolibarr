@@ -989,7 +989,9 @@ if (empty($reshook)) {
 	$triggersendname = 'PROPAL_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROPOSAL_TO';
 	$trackid = 'pro'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	if ($usercansend) {	// The right to send is also tested here, not only to show the button (action=send can be forged)
+		include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	}
 
 
 	// Go back to draft
@@ -1365,7 +1367,9 @@ if (empty($reshook)) {
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 						$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
-						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+						// A price level with no price row leaves multiprices_base_type empty (null or ''), and an empty
+						// value is not 'HT' for addline(), which then takes the price as TTC and stores it with the VAT added.
+						$price_base_type = (empty($prod->multiprices_base_type[$object->thirdparty->price_level]) ? 'HT' : $prod->multiprices_base_type[$object->thirdparty->price_level]);
 						if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 							if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
 								$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
@@ -1380,7 +1384,9 @@ if (empty($reshook)) {
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 					$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+					// A price level with no price row leaves multiprices_base_type empty (null or ''), and an empty
+					// value is not 'HT' for addline(), which then takes the price as TTC and stores it with the VAT added.
+					$price_base_type = (empty($prod->multiprices_base_type[$object->thirdparty->price_level]) ? 'HT' : $prod->multiprices_base_type[$object->thirdparty->price_level]);
 					if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
 							$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
@@ -2008,7 +2014,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+			$qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 
 			$result = $object->updateline(GETPOSTINT('lineid'), (float) $pu, (float) $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $description, $price_base_type, $info_bits, $special_code, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $type, $date_start, $date_end, $array_options, GETPOSTINT("units"), (float) $pu_ht_devise);
 

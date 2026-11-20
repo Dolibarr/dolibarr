@@ -206,7 +206,7 @@ if (!$sortfield) {
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = isModEnabled('invoice') ? $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id : '';
 
 $now = dol_now();
 $error = 0;
@@ -299,7 +299,9 @@ $arrayfields = array(
 	'f.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
 	'f.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
-
+if ($user->socid) {
+	unset($arrayfields['f.note_private']);
+}
 if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$arrayfields['f.retained_warranty'] = array('label' => $langs->trans("RetainedWarranty"), 'checked' => '0', 'position' => 86);
 }

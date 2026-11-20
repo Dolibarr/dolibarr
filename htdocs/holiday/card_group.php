@@ -131,6 +131,11 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday', '', '', 'rowid', $object->status);
 
+// A collective leave request is created for any users and groups, so it needs the permission to create leave requests for everybody (the form is shown only with it)
+if ($action == 'add' && !$user->hasRight('holiday', 'writeall')) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
