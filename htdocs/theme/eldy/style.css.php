@@ -2493,6 +2493,9 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
+	/* A full page list can expand the page, so the horizontal scrollbar is the one of the window, always visible */
+	width: auto;
+	min-width: 0;
 }
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
 	overflow-x: auto;
