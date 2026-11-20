@@ -1374,6 +1374,7 @@ NbRecordQualified=Number of qualified records
 auto=auto
 UploadFile=Direct import of documents
 FeatureNeedAIModuleEnabledAndConfigured=This feature is available only if the AI module (Artificial Intelligence) is enabled and configured.
+FeatureNeedMulticompanyModuleInstalled=This feature is available only if the Multicompany module has been installed and enabled.
 GoToModulesSetupPage=Go to the setup page of modules
 AskYourAdministratorToEnableIt=Ask the administrator of your instance to enable it.
 OrClickToSelectAFile=click to select a file on disk

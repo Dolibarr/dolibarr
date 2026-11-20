@@ -2114,7 +2114,11 @@ while ($i < $imaxinloop) {
 			$labeltypeofcompany = empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 
 			print '<td class="center tdoverflowmax125" title="'.dolPrintHTMLForAttribute($labeltypeofcompany).'">';
-			print dolPrintHTML($labeltypeofcompany);
+			if (!empty($labeltypeofcompany)) {
+				print '<span class="badge badge-status badge-thirdpartytype">';
+				print dolPrintHTML($labeltypeofcompany);
+				print '</span>';
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -400,11 +400,11 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.minimumamount']['checked'])) {
-				print '<th class="center">'.$langs->trans("MinimumAmountShort").'</th>';
+				print '<th class="right">'.$langs->trans("MinimumAmountShort").'</th>';
 				$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.amount']['checked'])) {
-			print '<th class="center">'.$langs->trans("Amount").'</th>';
+			print '<th class="right">'.$langs->trans("Amount").'</th>';
 			$totalarray['nbfield']++;
 		}
 		if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
@@ -511,22 +511,22 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				}
 				// Minimum amount
 				if (!empty($arrayfields['t.minimumamount']['checked'])) {
-					print '<td class="center">';
+					print '<td class="right">';
 					$minimumamount = ((is_null($objp->minimumamount) || $objp->minimumamount === '') ? '' : price($objp->minimumamount));
-					print $minimumamount;
+					print '<span class="amount">'.$minimumamount.'</span>';
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.amount']['checked'])) {
-					print '<td class="center">';
+					print '<td class="right">';
 					$amount = (is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount));
 					$minimumamount = (is_null($objp->minimumamount) || $objp->minimumamount === '' ? '' : price($objp->minimumamount));
-					print '<span class="amount">'.$amount.'</span>';
 					if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
-						print img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup');
+						print img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup').' ';
 					}
 					if ($amount && $minimumamount && $amount < $minimumamount) {
-						print img_warning('Amount lower than minimum of '.price($minimumamount).' defined in setup');
+						print img_warning('Amount lower than minimum of '.price($minimumamount).' defined in setup').' ';
 					}
+					print '<span class="amount">'.$amount.'</span>';
 					print '</td>';
 				}
 				if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
