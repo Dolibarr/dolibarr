@@ -138,6 +138,14 @@ export function initAiAssistant(container) {
     // sessionStorage key of the conversation (per user and entity), see saveChatHistory()
     const HISTORY_KEY = config.historyKey || '';
     const HISTORY_MAX_MSGS = 20;
+    // sessionStorage key of the prompts typed by the user, recalled with ArrowUp/ArrowDown in the input
+    const PROMPTS_KEY = HISTORY_KEY ? HISTORY_KEY + '_prompts' : '';
+    // localStorage key of the picked model, bound to the login session (see getAiChatAssistantConfig()).
+    // Declared before the bootstrap: initModelPicker() reads it when called there.
+    const MODEL_CHOICE_KEY = config.modelChoiceKey || 'aiModelChoice';
+    const PROMPTS_MAX = 50;
+    let promptsIndex = -1;    // -1 = not browsing the history, else position from the most recent prompt
+    let promptsDraft = '';    // what was typed before browsing, restored when going back down
     // "All" mode of the context bar: every exchange, including the next ones, travels as context
     let contextAllMode = false;
 
@@ -241,6 +249,7 @@ export function initAiAssistant(container) {
     // Handle Submit (Enter) vs New Line (Shift+Enter)
     input.addEventListener('keydown', (e) => {
         if (paletteKey(e)) return;
+        if (promptsKey(e)) return;
         if (e.key === 'Enter') {
             if (e.shiftKey) {
                 // Shift+Enter: Allow new line (default behavior), just ensure resize happens
@@ -252,6 +261,62 @@ export function initAiAssistant(container) {
             }
         }
     });
+
+    /**
+     * Load the list of the previous prompts (oldest first).
+     * @returns {string[]}
+     */
+    function promptsLoad() {
+        if (!PROMPTS_KEY) return [];
+        try {
+            const list = JSON.parse(sessionStorage.getItem(PROMPTS_KEY) || '[]');
+            return Array.isArray(list) ? list.filter((v) => typeof v === 'string') : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    /**
+     * Add a prompt to the history (no consecutive duplicate) and stop browsing it.
+     * @param {string} prompt - The prompt sent by the user
+     */
+    function promptsAdd(prompt) {
+        promptsIndex = -1;
+        promptsDraft = '';
+        prompt = String(prompt || '').trim();
+        if (!prompt || !PROMPTS_KEY) return;
+        const list = promptsLoad();
+        if (list[list.length - 1] !== prompt) list.push(prompt);
+        try { sessionStorage.setItem(PROMPTS_KEY, JSON.stringify(list.slice(-PROMPTS_MAX))); } catch (e) { /* private mode or quota: no history */ }
+    }
+
+    /**
+     * ArrowUp/ArrowDown in the input recall the previous/next prompts, like in a shell.
+     * Only when the caret is on the first line (up) or the last line (down), so a multi-line prompt stays editable.
+     * @param {KeyboardEvent} e - The keydown event
+     * @returns {boolean} true if the key was handled
+     */
+    function promptsKey(e) {
+        if ((e.key !== 'ArrowUp' && e.key !== 'ArrowDown') || e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return false;
+        if (input.selectionStart !== input.selectionEnd) return false;
+        const caret = input.selectionStart;
+        if (e.key === 'ArrowUp' && input.value.lastIndexOf('\n', caret - 1) !== -1) return false;
+        if (e.key === 'ArrowDown' && input.value.indexOf('\n', caret) !== -1) return false;
+        const list = promptsLoad();
+        if (e.key === 'ArrowUp') {
+            if (promptsIndex + 1 >= list.length) return false;
+            if (promptsIndex === -1) promptsDraft = input.value;
+            promptsIndex++;
+        } else {
+            if (promptsIndex < 0) return false;
+            promptsIndex--;
+        }
+        e.preventDefault();
+        input.value = (promptsIndex < 0) ? promptsDraft : list[list.length - 1 - promptsIndex];
+        input.setSelectionRange(input.value.length, input.value.length);
+        autoResizeInput();
+        return true;
+    }
 
     // Handle Send Button Click
     if (sendBtn) {
@@ -402,7 +467,43 @@ export function initAiAssistant(container) {
                 //   if it ever completes, is simply ignored).
                 const LOCAL_EXTRACT_TIMEOUT_MS = 20000;
                 const LOCAL_IMAGE_MAX_BYTES = 1500000;
+                // Option AI_ATTACHMENT_CONVERT_TO_TEXT: attachments are converted into
+                // text in the browser so the obfuscation applies on their content, and
+                // a file that cannot be converted is refused instead of sent as binary.
+                // 0=sent as is, 1=converted except a binary above the size threshold, 2=always converted.
+                const toTextMode = parseInt(config.attachmentToText || 0, 10);
+                const toTextMaxBytes = parseInt(config.attachmentToTextMaxBytes || 1500000, 10);
+
+                // With text conversion, a HEIC photo is handled from its JPEG transcoding.
+                // Renamed .jpg: the server keeps it under this name for an upload tool.
+                if (toTextMode && isHeic(file)) {
+                    try {
+                        file = new File([await transcodeImageToBlob(file, 'image/jpeg')], file.name.replace(/\.(heic|heif)$/i, '') + '.jpg', { type: 'image/jpeg' });
+                    } catch (errHeic) {
+                        throw new Error(t('AIAttachmentMustBeConvertedToText'));
+                    }
+                }
+
+                // BMP is taken by no provider: transcoded to PNG (lossless) by the browser, no external library.
+                if (file.type === 'image/bmp' || /\.bmp$/i.test(file.name)) {
+                    try {
+                        file = new File([await transcodeImageToBlob(file, 'image/png')], file.name.replace(/\.bmp$/i, '') + '.png', { type: 'image/png' });
+                    } catch (errBmp) {
+                        throw new Error(t('AIAttachmentTypeNotAllowed').replace('%s', file.type || file.name));
+                    }
+                }
+
                 const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|gif|bmp|webp)$/i.test(file.name);
+                // Image formats every provider takes natively (same list as ai_validate_attachments())
+                const isNativeImage = /^image\/(png|jpeg|gif|webp)$/.test(file.type);
+                // AI_SUPPORT_PRIVACY_ON_ALL_TYPE_OF_UPLOADED_FILES off: no conversion with external JS libraries,
+                // every file is handled as if above the threshold (native binary sent as is).
+                const convertSupported = !!parseInt(config.attachmentConvertSupport || 0, 10);
+                const isNativeBinary = (isNativeImage || file.type === 'application/pdf');
+                const isNativeText = (file.type === 'text/plain' || /^(text|application)\/xml$/.test(file.type) || /\.xml$/i.test(file.name));
+                // Mode 1: a native binary (image or PDF) above the threshold is sent as is
+                const sendAsIs = isNativeBinary && (!convertSupported || (toTextMode === 1 && file.size > toTextMaxBytes));
+                const toText = (toTextMode > 0 && !sendAsIs);
 
                 // HEIC/HEIF (iPhone photos): no provider-agnostic path exists — the
                 // in-browser OCR cannot decode it, Anthropic/OpenAI reject the MIME
@@ -410,14 +511,14 @@ export function initAiAssistant(container) {
                 // canvas where the browser can decode HEIC (Safari/iOS — precisely
                 // where those photos come from); otherwise send natively when the
                 // configured provider accepts it; otherwise explain clearly.
-                if (isHeic(file)) {
+                if (!toTextMode && isHeic(file)) {
                     let heicPayload = '';
                     try {
                         heicPayload = await transcodeImageToJpegMarker(file);
                     } catch (errHeic) {
                         if (parseInt(config.providerAcceptsHeic || 0, 10)) {
                             const b64 = String(await fileToBase64(file)).split(',').pop();
-                            heicPayload = `__FILE_ATTACHMENT__[image/heic]::${b64}`;
+                            heicPayload = `__FILE_ATTACHMENT__[${attachmentMarkerType('image/heic', file.name)}]::${b64}`;
                         } else {
                             throw new Error(t('AIAttachmentHeicUnsupported'));
                         }
@@ -428,31 +529,50 @@ export function initAiAssistant(container) {
                     input.focus();
                     return;
                 }
-                // Enforced privacy redaction: document contents cannot be masked,
-                // so the cloud-attachment fallback is off the table. Local
-                // extraction becomes the only route - attempt it even for large
-                // images (slow OCR beats a policy bypass), and fail with the
-                // policy message instead of silently shipping the file.
-                const redactOnly = !!parseInt(config.privacyRedaction || 0, 10);
-
                 let contentPayload = '';
-                if (redactOnly || !(isImage && file.size > LOCAL_IMAGE_MAX_BYTES)) {
+                const officeMime = officeMimeType(file);
+                if (officeMime) {
+                    // Office documents are always converted into text by the server with the bundled
+                    // libraries (ai_convert_office_attachment_to_text()), never in the browser.
+                    const b64 = String(await fileToBase64(file)).split(',').pop();
+                    contentPayload = `__FILE_ATTACHMENT__[${attachmentMarkerType(officeMime, file.name)}]::${b64}`;
+                } else if (toText) {
+                    // Local conversion is the only route: no timeout nor size limit
+                    // (slow OCR beats a binary send), any non empty text is accepted.
                     try {
-                        contentPayload = await Promise.race([
-                            processLocalFile(file),
-                            new Promise((resolve) => setTimeout(() => resolve(''), LOCAL_EXTRACT_TIMEOUT_MS))
-                        ]);
+                        contentPayload = await processLocalFile(file);
                     } catch (errLocal) {
                         contentPayload = '';
                     }
-                }
-                const usefulChars = (contentPayload || '').replace(/\s+/g, '').length;
-                if (usefulChars < 120) {
-                    if (redactOnly) {
-                        throw new Error(t('AIAttachmentBlockedByPrivacy'));
+                    if (!String(contentPayload || '').trim()) {
+                        throw new Error(t('AIAttachmentMustBeConvertedToText'));
                     }
-                    statusBar.innerText = t('ProcessingFile') + ` ${file.name} (cloud)...`;
+                } else if (sendAsIs || isNativeImage) {
+                    // No text conversion: the file is sent to the LLM as it is, without OCR.
                     contentPayload = await processCloudFile(file);
+                } else if (!convertSupported) {
+                    // No external library: text and XML files are read with the browser native API.
+                    if (isNativeText) {
+                        contentPayload = await processLocalFile(file);
+                    } else {
+                        throw new Error(t('AIAttachmentTypeNotAllowed').replace('%s', file.type || file.name));
+                    }
+                } else {
+                    if (!(isImage && file.size > LOCAL_IMAGE_MAX_BYTES)) {
+                        try {
+                            contentPayload = await Promise.race([
+                                processLocalFile(file),
+                                new Promise((resolve) => setTimeout(() => resolve(''), LOCAL_EXTRACT_TIMEOUT_MS))
+                            ]);
+                        } catch (errLocal) {
+                            contentPayload = '';
+                        }
+                    }
+                    const usefulChars = (contentPayload || '').replace(/\s+/g, '').length;
+                    if (usefulChars < 120) {
+                        statusBar.innerText = t('ProcessingFile') + ` ${file.name} (cloud)...`;
+                        contentPayload = await processCloudFile(file);
+                    }
                 }
 
                 if (!contentPayload || contentPayload.length < 5) {
@@ -481,20 +601,44 @@ export function initAiAssistant(container) {
     }
 
     /**
-     * Transcode an image file to a JPEG cloud-attachment marker via canvas.
+     * Transcode an image file to a blob of another type (image/jpeg, image/png) via canvas.
      * Only works where the browser can decode the source format (HEIC: Safari).
      */
-    async function transcodeImageToJpegMarker(file) {
+    async function transcodeImageToBlob(file, type) {
         const bitmap = await createImageBitmap(file);	// throws where HEIC is not decodable
         const canvas = document.createElement('canvas');
         canvas.width = bitmap.width;
         canvas.height = bitmap.height;
         canvas.getContext('2d').drawImage(bitmap, 0, 0);
-        const blob = await new Promise((resolve, reject) => {
-            canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.85);
+        return await new Promise((resolve, reject) => {
+            canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob failed'))), type, 0.85);
         });
+    }
+
+    /**
+     * Return the MIME type of an office document (docx, odt, xlsx, xls, ods) converted into text
+     * by the server, or '' for another file. Browsers may report an empty type for these files.
+     */
+    function officeMimeType(file) {
+        const mimes = {
+            docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            odt: 'application/vnd.oasis.opendocument.text',
+            xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            xls: 'application/vnd.ms-excel',
+            ods: 'application/vnd.oasis.opendocument.spreadsheet'
+        };
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        return mimes[ext] || '';
+    }
+
+    /**
+     * Transcode an image file to a JPEG cloud-attachment marker via canvas.
+     * Only works where the browser can decode the source format (HEIC: Safari).
+     */
+    async function transcodeImageToJpegMarker(file) {
+        const blob = await transcodeImageToBlob(file, 'image/jpeg');
         const base64 = String(await fileToBase64(blob)).split(',').pop();
-        return `__FILE_ATTACHMENT__[image/jpeg]::${base64}`;
+        return `__FILE_ATTACHMENT__[${attachmentMarkerType('image/jpeg', file.name.replace(/\.(heic|heif)$/i, '') + '.jpg')}]::${base64}`;
     }
 
     /** Pick a FontAwesome icon class from a file name extension. */
@@ -593,7 +737,14 @@ export function initAiAssistant(container) {
     function initModelPicker() {
         if (!modelSelect) return;
         let saved = '';
-        try { saved = localStorage.getItem('aiModelChoice') || ''; } catch (e) { /* private mode */ }
+        try {
+            // Forget the choices of the previous logins: a new login starts on the default model
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const k = localStorage.key(i);
+                if (k && k.indexOf('aiModelChoice') === 0 && k !== MODEL_CHOICE_KEY) localStorage.removeItem(k);
+            }
+            saved = localStorage.getItem(MODEL_CHOICE_KEY) || '';
+        } catch (e) { /* private mode */ }
 
         // Presets rely on a name heuristic (see resolveModel): only offered when
         // AI_SUGGESTS_PRESETS_TO_TRY_TO_CHANGE_MODEL_DYNAMICALLY is on.
@@ -628,7 +779,8 @@ export function initAiAssistant(container) {
                     modelSelect.appendChild(sep);
                     modelList.forEach((id) => {
                         const o = document.createElement('option');
-                        o.value = id; o.textContent = id;
+                        o.value = id;
+                        o.textContent = id + ((config.defaultModel && id === config.defaultModel) ? ' (' + t('Default') + ')' : '');
                         modelSelect.appendChild(o);
                     });
                     // Saved model no longer offered by the provider: fall back to
@@ -636,7 +788,7 @@ export function initAiAssistant(container) {
                     // picker never looks silently ignored, cf. review on #39878).
                     if (saved && saved.indexOf('preset:') !== 0 && modelList.indexOf(saved) < 0) {
                         appendMsg('system', escapeHtml(t('AIModelSavedGone').replace('%s', saved)));
-                        try { localStorage.removeItem('aiModelChoice'); } catch (e) { /* ignore */ }
+                        try { localStorage.removeItem(MODEL_CHOICE_KEY); } catch (e) { /* ignore */ }
                         saved = '';
                     }
                 }
@@ -645,7 +797,15 @@ export function initAiAssistant(container) {
             .catch(() => { /* provider unreachable: keep Auto + presets */ });
 
         modelSelect.addEventListener('change', () => {
-            try { localStorage.setItem('aiModelChoice', modelSelect.value); } catch (e) { /* ignore */ }
+            try { localStorage.setItem(MODEL_CHOICE_KEY, modelSelect.value); } catch (e) { /* ignore */ }
+        });
+
+        // Model changed in another browser tab of the same session: show it in this tab too
+        window.addEventListener('storage', (e) => {
+            if (e.key !== MODEL_CHOICE_KEY) return;
+            saved = e.newValue || '';
+            modelSelect.value = Array.prototype.some.call(modelSelect.options, (o) => o.value === saved) ? saved : '';
+            refreshSelect2Combo(modelSelect);
         });
     }
 
@@ -715,62 +875,6 @@ export function initAiAssistant(container) {
         return v;
     }
 
-    // =========================================================================
-    // LIBRARY LOADERS & EXTRACTORS
-    // =========================================================================
-
-    /**
-     * Loads Mammoth.js (for .docx) via script tag.
-     */
-    async function getMammothLib() {
-        if (window.mammoth) return window.mammoth;
-        const scriptUrl = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.11.0/mammoth.browser.min.js';
-        return loadScript(scriptUrl, 'mammoth');
-    }
-
-    /**
-     * Loads SheetJS (for .xls/.xlsx) via script tag.
-     */
-    async function getXlsxLib() {
-        if (window.XLSX) return window.XLSX;
-        const scriptUrl = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
-        return loadScript(scriptUrl, 'XLSX');
-    }
-
-    /**
-     * Loads JSZip (for .odt/.ods) via script tag.
-     */
-    async function getJszipLib() {
-        if (window.JSZip) return window.JSZip;
-        const scriptUrl = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-        return loadScript(scriptUrl, 'JSZip');
-    }
-
-    /**
-     * Generic Helper to load a script and check for the global variable.
-     */
-    function loadScript(url, globalVarName) {
-        if (document.querySelector(`script[src="${url}"]`)) {
-            // If script exists but var isn't loaded yet, poll briefly
-            return new Promise((resolve) => {
-                const check = setInterval(() => {
-                    if (window[globalVarName]) {
-                        clearInterval(check);
-                        resolve(window[globalVarName]);
-                    }
-                }, 50);
-            });
-        }
-
-        return new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = url;
-            script.async = true;
-            script.onload = () => resolve(window[globalVarName]);
-            script.onerror = () => reject(new Error(`${t('NetworkError')}: ${url}`));
-            document.head.appendChild(script);
-        });
-    }
 
 
     // =========================================================================
@@ -818,6 +922,30 @@ export function initAiAssistant(container) {
         }
     }
 
+    /**
+     * Tesseract language list for OCR: the user language plus English.
+     * Each language is a separate traineddata download, so keep the list short.
+     */
+    function getOcrLangList() {
+        const tesseractCodes = {
+            am: 'amh', ar: 'ara', az: 'aze', bg: 'bul', bn: 'ben', br: 'bre', bs: 'bos', ca: 'cat',
+            cs: 'ces', cy: 'cym', da: 'dan', de: 'deu', el: 'ell', es: 'spa', et: 'est', eu: 'eus',
+            fa: 'fas', fi: 'fin', fr: 'fra', gl: 'glg', he: 'heb', hi: 'hin', hr: 'hrv', hu: 'hun',
+            id: 'ind', is: 'isl', it: 'ita', ja: 'jpn', ka: 'kat', kk: 'kaz', km: 'khm', kn: 'kan',
+            ko: 'kor', ku: 'kmr', lo: 'lao', lt: 'lit', lv: 'lav', mk: 'mkd', mn: 'mon', ms: 'msa',
+            my: 'mya', nb: 'nor', ne: 'nep', nl: 'nld', pl: 'pol', pt: 'por', ro: 'ron', ru: 'rus',
+            sk: 'slk', sl: 'slv', sq: 'sqi', sr: 'srp', sv: 'swe', sw: 'swa', ta: 'tam', tg: 'tgk',
+            th: 'tha', tr: 'tur', uk: 'ukr', ur: 'urd', uz: 'uzb', vi: 'vie', zh: 'chi_sim'
+        };
+        const locale = String(config.locale || '').toLowerCase();
+        let code = tesseractCodes[locale.split('-')[0]] || '';
+        if (locale === 'zh-tw' || locale === 'zh-hk') {
+            code = 'chi_tra';
+        }
+
+        return (code && code !== 'eng') ? code + '+eng' : 'eng';
+    }
+
     async function extractTextFromImage(file) {
         try {
             statusBar.innerText = t('TryingOCR');
@@ -826,16 +954,7 @@ export function initAiAssistant(container) {
             const Tesseract = module.default || window.Tesseract;
 
             if (Tesseract) {
-                const langList =
-                    'afr+amh+ara+asm+aze+aze_cyrl+bel+ben+bod+bos+bre+bul+cat+ceb+ces+' +
-                    'chi_sim+chi_tra+chr+cos+cym+dan+deu+dzo+ell+eng+enm+' +
-                    'epo+est+eus+fao+fas+fil+fin+fra+frk+frm+fry+gla+gle+glg+' +
-                    'grc+guj+hat+heb+hin+hrv+hun+hye+iku+ind+isl+ita+ita_old+jav+jpn+' +
-                    'kan+kat+kat_old+kaz+khm+kir+kmr+kor+kor_vert+lao+lat+lav+lit+' +
-                    'ltz+mal+mar+mkd+mlt+mon+mri+msa+mya+nep+nld+nor+oci+ori+osd+' +
-                    'pan+pol+por+pus+que+ron+rus+san+sin+slk+slv+snd+spa+spa_old+' +
-                    'sqi+srp+srp_latn+sun+swa+swe+syr+tam+tat+tel+tgk+tha+tir+ton+' +
-                    'tur+uig+ukr+urd+uzb+uzb_cyrl+vie+yid+yor';
+                const langList = getOcrLangList();
 
                 const { data: { text } } = await Tesseract.recognize(
                     file,
@@ -894,68 +1013,6 @@ export function initAiAssistant(container) {
         return JSON.stringify(jsonObject, null, 2);
     }
 
-    //Extractors for Office/ODF Files ---
-    async function extractTextFromWord(file) {
-        statusBar.innerText = t('ReadingWord');
-        try {
-            const mammoth = await getMammothLib();
-            statusBar.innerText = t('ReadingWord');
-            const arrayBuffer = await file.arrayBuffer();
-            const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-            return result.value;
-        } catch (e) {
-            throw new Error(t('Error') + ": " + e.message);
-        }
-    }
-
-    async function extractTextFromExcel(file) {
-        statusBar.innerText = t('ReadingExcel');
-        try {
-            const XLSX = await getXlsxLib();
-            statusBar.innerText = t('ReadingExcel');
-            const arrayBuffer = await file.arrayBuffer();
-            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-
-            // Grab the first sheet name
-            const firstSheetName = workbook.SheetNames[0];
-
-            // Convert sheet to CSV (good format for AI to understand data)
-            const csvData = XLSX.utils.sheet_to_csv(workbook.Sheets[firstSheetName], { header: 1 });
-
-            return `--- Excel Sheet: ${firstSheetName} ---\n${csvData}`;
-        } catch (e) {
-            throw new Error(t('Error') + ": " + e.message);
-        }
-    }
-
-    async function extractTextFromOdf(file) {
-        statusBar.innerText = t('ReadingOdf');
-        try {
-            const JSZip = await getJszipLib();
-            statusBar.innerText = t('ReadingOdf');
-            const zip = await JSZip.loadAsync(file);
-
-            // For ODT, the text is usually in 'content.xml'. For ODS, also 'content.xml'
-            let contentXml = null;
-            if (zip.file("content.xml")) {
-                contentXml = await zip.file("content.xml").async("string");
-            } else {
-                throw new Error("Invalid ODF file (content.xml missing).");
-            }
-
-            const textContent = contentXml.replace(/<[^>]+>/g, '\n')
-                .replace(/\s+/g, ' ')
-                .replace(/&nbsp;/g, ' ')
-                .replace(/&lt;/g, '<')
-                .replace(/&gt;/g, '>')
-                .replace(/&amp;/g, '&')
-                .trim();
-            return `--- ODF Content ---\n${textContent}`;
-        } catch (e) {
-            throw new Error(t('Error') + ": " + e.message);
-        }
-    }
-
     function fileToBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -1001,36 +1058,6 @@ export function initAiAssistant(container) {
         // PDF files
         if (file.type === 'application/pdf') {
             return await extractTextFromPDF(file);
-        }
-
-        // Word documents (.docx)
-        if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-            || file.name.endsWith('.docx')) {
-            return await extractTextFromWord(file);
-        }
-
-        // Excel files (.xlsx)
-        if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            || file.name.endsWith('.xlsx')) {
-            return await extractTextFromExcel(file);
-        }
-
-        // Legacy Excel files (.xls)
-        if (file.type === 'application/vnd.ms-excel'
-            || file.name.endsWith('.xls')) {
-            return await extractTextFromExcel(file);
-        }
-
-        // OpenDocument Text (.odt)
-        if (file.type === 'application/vnd.oasis.opendocument.text'
-            || file.name.endsWith('.odt')) {
-            return await extractTextFromOdf(file);
-        }
-
-        // OpenDocument Spreadsheet (.ods)
-        if (file.type === 'application/vnd.oasis.opendocument.spreadsheet'
-            || file.name.endsWith('.ods')) {
-            return await extractTextFromOdf(file);
         }
 
         // Image files
@@ -1103,7 +1130,15 @@ export function initAiAssistant(container) {
         // pure base64 after '::' and hands it to the LLM as a native multimodal
         // part — with the prefix left in, the marker is never recognized.
         const base64 = String(await fileToBase64(file)).split(',').pop();
-        return `__FILE_ATTACHMENT__[${file.type}]::${base64}`;
+        return `__FILE_ATTACHMENT__[${attachmentMarkerType(file.type, file.name)}]::${base64}`;
+    }
+
+    /**
+     * Type part of an attachment marker: the MIME type and the original file name, so the server
+     * keeps the file under its name for an upload tool (see ai_attachment_parse_marker_type()).
+     */
+    function attachmentMarkerType(mime, name) {
+        return `${mime};name=${encodeURIComponent(name || '')}`;
     }
 
     // =========================================================================
@@ -1609,7 +1644,7 @@ export function initAiAssistant(container) {
         'thirdparties': ['thirdparties', 'contacts'], 'customer invoices': ['invoices'], 'supplier invoices': ['supplier_invoices'],
         'sales orders': ['orders'], 'supplier orders': ['supplier_orders'], 'commercial proposals': ['proposals'],
         'supplier proposals': ['supplier_proposals'], 'products and services': ['products'],
-        'stock and warehouses': ['warehouses', 'stockmovements'], 'projects': ['projects', 'tasks'], 'contracts': ['contracts'],
+        'stock and warehouses': ['warehouses', 'stockmovements'], 'projects': ['projects', 'project_tasks'], 'contracts': ['contracts'],
         'interventions': ['interventions'], 'tickets': ['tickets'], 'shipments': ['shipments'], 'receptions': ['receptions'],
         'members': ['members', 'subscriptions'], 'donations': ['donations'], 'expense reports': ['expensereports'],
         'agenda': ['agendaevents'], 'manufacturing': ['mos', 'boms']
@@ -2079,8 +2114,12 @@ export function initAiAssistant(container) {
                 e.preventDefault();
                 paletteLoad().then(() => {
                     const later = paletteParseCommand(input.value);
-                    if (later && (later.text !== '' || later.cmd.name === 'total')) runCommand(later.cmd.name, later.text);
-                    else paletteOpen(input.value.slice(1));
+                    if (later && (later.text !== '' || later.cmd.name === 'total')) {
+                        promptsAdd(input.value);
+                        runCommand(later.cmd.name, later.text);
+                    } else {
+                        paletteOpen(input.value.slice(1));
+                    }
                 });
                 return true;
             }
@@ -2093,6 +2132,7 @@ export function initAiAssistant(container) {
             }
             if (typed && (typed.text !== '' || typed.cmd.name === 'total')) {
                 e.preventDefault();
+                promptsAdd(input.value);
                 runCommand(typed.cmd.name, typed.text);
                 return true;
             }
@@ -2278,7 +2318,7 @@ export function initAiAssistant(container) {
             const template = t('ConfirmAiAction');
             messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
         }
-        let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${details}</p>` : ''}</div></div>`;
+        let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${escapeHtml(details)}</p>` : ''}</div></div>`;
         const actions = [
             { text: t('YesProceed'), class: 'danger', icon: 'fa-check', onclick: () => confirmAction() },
             { text: t('Cancel'), icon: 'fa-times', onclick: () => cancelAction() }
@@ -2646,10 +2686,12 @@ export function initAiAssistant(container) {
 
     // Compact, model-oriented snippet of a tool result for the pinned context:
     // the model needs the shape and the ids, not the full rendered table.
+    // Max size (in characters) of one tool result sent back as context (setup AI_CHAT_CONTEXT_MAX_SIZE).
+    const CONTEXT_MAX_SIZE = Math.max(0, isNaN(parseInt(config.contextMaxSize, 10)) ? 200000 : parseInt(config.contextMaxSize, 10));
     function contextSnippetOf(result, toolName) {
         let s = '';
         try { s = JSON.stringify(result); } catch (e) { s = String(result); }
-        if (s.length > 1500) s = s.slice(0, 1500) + '…';
+        if (s.length > CONTEXT_MAX_SIZE) s = s.slice(0, CONTEXT_MAX_SIZE) + '…';
         return '[' + (toolName || 'tool') + ' result] ' + s;
     }
 
@@ -2817,6 +2859,7 @@ export function initAiAssistant(container) {
         // again, without a second bubble.
         const isResend = !!(resend && typeof resend.sentQuery === 'string');
         const query = isResend ? resend.query : input.value.trim();
+        if (!isResend) promptsAdd(query);
         if (!isResend && paletteWanted(query)) {
             // A tool or a command, not a question for the model.
             paletteLoad().then(() => {
@@ -3213,7 +3256,11 @@ export function initAiAssistant(container) {
 
     function formatResult(data, isRecursive = false, toolName = '') {
         if (!data) return t('NoDataAvailable');
-        if (data.error) return `<span style="color:red">${t('error')}: ${data.error}</span>`;
+        if (data.error) {
+            // 'detail' is the reason given by the API (e.g. a 403 that explains itself), shown under the translated error
+            const detail = data.detail ? `<br><span class="small opacitymedium">${escapeHtml(String(data.detail))}</span>` : '';
+            return `<span style="color:red">${t('error')}: ${data.error}</span>${detail}`;
+        }
         let content = '';
         let isArray = false;
         let isObject = false;

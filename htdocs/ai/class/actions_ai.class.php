@@ -73,7 +73,7 @@ class ActionsAi
 		if (!getDolGlobalInt('AI_EMAILCLEANER_EXPOSE_OPERATION', 0)) return 0;
 
 		$arrayoftypes = (!empty($parameters['arrayoftypes']) && is_array($parameters['arrayoftypes'])) ? $parameters['arrayoftypes'] : array();
-		$langs->load('ai');
+		$langs->load('admin');
 		$arrayoftypes['hook_ai_emailcleaner'] = $langs->trans('AIEmailCleanerOperation');
 		$this->results = $arrayoftypes;
 
@@ -189,6 +189,24 @@ class ActionsAi
 			return 0;
 		}
 		if (empty($user->id) || !$user->hasRight('ai', 'assistant', 'use')) {
+			return 0;
+		}
+		// Website editor: it addresses its page with website=REF&pageid=N (no id/ref), so the card detection below
+		// cannot see it. The page selected in the editor is the context; parse_intent.php adds the website ref.
+		$selfPath = (string) ($_SERVER['PHP_SELF'] ?? '');
+		$selfRoot = (string) constant('DOL_URL_ROOT');
+		$selfRel = ($selfRoot !== '' && strpos($selfPath, $selfRoot) === 0) ? dol_substr($selfPath, dol_strlen($selfRoot)) : $selfPath;
+		$websitePageId = (int) ($GLOBALS['pageid'] ?? 0);
+		if ($selfRel === '/website/index.php' && $websitePageId > 0) {
+			$websitePage = $GLOBALS['objectpage'] ?? null;
+			$context = array(
+				'element' => 'websitepage',
+				'id' => $websitePageId,
+				'ref' => (is_object($websitePage) && (int) $websitePage->id === $websitePageId) ? (string) $websitePage->pageurl : '',
+				'socid' => 0
+			);
+			print "\n".'<script nonce="'.getNonce().'">window.aiPageContext = '.json_encode($context).';</script>'."\n";
+
 			return 0;
 		}
 		// printCommonFooter's call site passes a hardcoded null object; the

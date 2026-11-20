@@ -2849,7 +2849,7 @@ class Task extends CommonObjectLine
 
 		dol_syslog("mergeTask merge task id=".$task_origin_id." (will be deleted) into the task id=".$this->id);
 
-		$langs->load('error');
+		$langs->load('errors');
 
 		if (!$error && $task_origin->fetch($task_origin_id) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');

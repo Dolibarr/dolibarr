@@ -85,6 +85,10 @@ if ($mysoc->isInEEC()) {
 	$list_account[] = 'ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT';
+if (isModEnabled('stock')) {
+	$list_account[] = 'ACCOUNTING_PRODUCT_COGS_ACCOUNT';
+	$list_account[] = 'ACCOUNTING_PRODUCT_STOCK_ACCOUNT';
+}
 
 $list_account[] = '---Service---';
 $list_account[] = 'ACCOUNTING_SERVICE_SOLD_ACCOUNT';

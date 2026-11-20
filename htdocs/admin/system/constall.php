@@ -40,7 +40,7 @@ require '../../main.inc.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "user", "admin"));
+$langs->loadLangs(array("install", "users", "admin"));
 
 
 if (!$user->admin) {

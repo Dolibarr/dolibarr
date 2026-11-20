@@ -963,7 +963,7 @@ function pdfWriteVATArray($docgenerator, &$index, $pdf, $outputlangs, $outputlan
 	if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {	// by default, we show detail of vat here
 		// VAT
 		foreach ($docgenerator->tva_array as $tvakey => $tvaval) {
-			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
+			if ((float) $tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {	// $tvakey can be 'rate (code)', for example '0 (C+S-18)'
 				$tmpatleastoneratenotnull++;
 
 				$index++;
@@ -2238,6 +2238,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$productCustomerPriceStatic = new ProductCustomerPrice($db);
+				// fk_soc and socid are declared in child classes: @phan-suppress-next-line PhanUndeclaredProperty
 				$filter = array('fk_product' => (string) $idprod, 'fk_soc' => (string) $object->socid);
 
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
@@ -2355,8 +2356,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			}
 
 			// Add also info of planned warehouse for lot
-			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
-				$resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock);
+			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {    // @phan-suppress-current-line PhanUndeclaredProperty    // $detail is an ExpeditionLineBatch that owns the property fk_origin_stock
+				$resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock); // @phan-suppress-current-line PhanUndeclaredProperty
 				if ($resproductbatch > 0) {
 					$reswarehouse = $tmpwarehouse->fetch($tmpproductbatch->warehouseid);
 					if ($reswarehouse > 0) {

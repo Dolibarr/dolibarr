@@ -280,6 +280,67 @@ class OpensurveyquestionTest extends CommonClassTest
 	}
 
 	/**
+	 * testRespondentsAndCountAnswers
+	 *
+	 * @return void
+	 */
+	public function testRespondentsAndCountAnswers()
+	{
+		global $user, $db;
+
+		$survey = $this->createFormSurvey();
+
+		$qcolor = new Opensurveyquestion($db);
+		$qcolor->id_sondage = $survey->id_sondage;
+		$qcolor->question = 'Colors ?';
+		$qcolor->type = Opensurveyquestion::TYPE_CHECKBOX;
+		$qcolor->available_answers = "red\nblue\ngreen";
+		$qcolor->position = 1;
+		$qcolor->create();
+		$qtext = new Opensurveyquestion($db);
+		$qtext->id_sondage = $survey->id_sondage;
+		$qtext->question = 'Remarks ?';
+		$qtext->type = Opensurveyquestion::TYPE_TEXT;
+		$qtext->position = 2;
+		$qtext->create();
+
+		// 3 respondents: Ann (red+green, remark), Ben (red only, no remark), Cid (answers nothing)
+		$ids = array();
+		foreach (array('Ann', 'Ben', 'Cid') as $name) {
+			$db->query("INSERT INTO ".MAIN_DB_PREFIX."opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation) VALUES ('".$name."', '".$db->escape($survey->id_sondage)."', '', '127.0.0.1', '".$db->idate(dol_now())."')");
+			$ids[$name] = (int) $db->last_insert_id(MAIN_DB_PREFIX.'opensurvey_user_studs');
+		}
+		$this->addAnswer($ids['Ann'], (int) $qcolor->id, "red\ngreen");
+		$this->addAnswer($ids['Ann'], (int) $qtext->id, 'nice');
+		$this->addAnswer($ids['Ben'], (int) $qcolor->id, 'red');
+
+		$respondents = $qcolor->fetchRespondents($survey->id_sondage);
+		$this->assertIsArray($respondents);
+		$this->assertCount(3, $respondents);
+		$this->assertSame(array('Ann', 'Ben', 'Cid'), array_column($respondents, 'name'));
+		$this->assertSame(array((int) $qcolor->id => "red\ngreen", (int) $qtext->id => 'nice'), $respondents[$ids['Ann']]['answers']);
+		$this->assertSame(array(), $respondents[$ids['Cid']]['answers']);
+		$this->assertSame(array(), $qcolor->fetchRespondents('doesnotexist'));
+
+		$result = $qcolor->countAnswers($respondents);
+		$this->assertSame(array('red' => 2, 'blue' => 0, 'green' => 1), $result['counts']);
+		$this->assertSame(2, $result['answered']);
+		$this->assertSame(1, $qtext->countAnswers($respondents)['answered']);
+
+		// deleteVoter: refuses a respondent of another survey, deletes the answers with the respondent
+		$other = $this->createFormSurvey();
+		$this->assertSame(0, $other->deleteVoter($ids['Ann']), 'Not a respondent of this survey');
+		$this->assertSame(1, $survey->deleteVoter($ids['Ann']));
+		$this->assertSame('0', $this->countRows("SELECT COUNT(*) FROM ".MAIN_DB_PREFIX."opensurvey_user_formanswers WHERE fk_user_survey = ".$ids['Ann']));
+		$this->assertSame('0', $this->countRows("SELECT COUNT(*) FROM ".MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_users = ".$ids['Ann']));
+		$this->assertSame('1', $this->countRows("SELECT COUNT(*) FROM ".MAIN_DB_PREFIX."opensurvey_user_formanswers WHERE fk_user_survey = ".$ids['Ben']), 'Answers of the other respondents are kept');
+		$this->assertSame(0, $survey->deleteVoter($ids['Ann']), 'Already deleted');
+
+		$this->assertGreaterThan(0, $survey->delete($user));
+		$this->assertGreaterThan(0, $other->delete($user));
+	}
+
+	/**
 	 * testDeleteSurveyDeletesQuestionsAndAnswers
 	 *
 	 * @return void

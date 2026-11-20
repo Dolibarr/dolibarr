@@ -125,7 +125,9 @@ class ApiExplorerAccessControlTest extends CommonClassTest
 	private function scopeInstances($replacement = null)
 	{
 		$property = new ReflectionProperty('Luracast\Restler\Scope', 'instances');
-		$property->setAccessible(true);
+		if (PHP_VERSION_ID < 80100) {
+			$property->setAccessible(true);
+		}
 		$before = $property->getValue();
 		if (is_array($replacement)) {
 			$property->setValue(null, $replacement);

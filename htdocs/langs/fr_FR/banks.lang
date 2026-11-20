@@ -215,3 +215,4 @@ PaymentReferenceOfAccount=Référence de paiement
 PaymentReferenceOfAccountHelp=Référence à fournir lors du paiement sur ce compte, identique pour tous les factures : la référence RF (ISO 11649) ou la référence nationale qui vous a été fournie pour votre contrat, compteur ou compte fournisseur. Une référence RF est vérifiée.
 ErrorPaymentReferenceOfAccountTooLong=La référence de paiement est trop longue (35 caractères maximum).
 ErrorPaymentReferenceOfAccountNotValid=La référence de paiement RF n'est pas valide : les chiffres de contrôle ne correspondent pas.
+ErrorQRReferenceNotValid=La référence QR n'est pas valide : elle doit comporter 27 chiffres et et son dernier chiffre doit correspondre au chiffre de contrôle

@@ -385,6 +385,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_examplevalues_array;
 	/**
+	 * @var array<array<array{0:string,1?:string,2?:string}>>
+	 */
+	public $import_permission;
+	/**
 	 * @var array<array<string,string>>
 	 */
 	public $import_updatekeys_array;
@@ -522,6 +526,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * @var int<0,1>
 	 */
 	public $need_javascript_ajax;
+
+	/**
+	 * @var int<0,1>	1 if the module must be configured after its activation to work. A warning is then shown after activation.
+	 */
+	public $need_setup = 0;
 
 	/**
 	 * @var bool
@@ -2220,8 +2229,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						}
 					}
 
-					// If we want to init permissions on admin users
-					if (!empty($reinitadminperms)) {
+					// If we want to init permissions on admin users (not when permissions are given by user groups only)
+					if (!empty($reinitadminperms) && !getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
 						$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
 						dol_syslog(get_class($this)."::insert_permissions Search all admin users", LOG_DEBUG);
 

@@ -339,11 +339,11 @@ class FormProduct
 
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
-				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
+				if (is_scalar($selected) && ((string) $selected === '-2' || $selected === 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 					$selected = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 				}
 			} else {
-				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+				if (is_scalar($selected) && ((string) $selected === '-2' || $selected === 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 					$selected = $user->fk_warehouse;
 				}
 			}

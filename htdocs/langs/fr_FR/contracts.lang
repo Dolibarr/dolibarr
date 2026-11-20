@@ -104,7 +104,7 @@ StandardContractsTemplate=Modèle standard de contrats
 ContactNameAndSignature=Pour %s, nom et signature:
 OnlyLinesWithTypeServiceAreUsed=Seules les lignes de type "Service" seront clonées
 ConfirmCloneContract=Etes vous sûr de vouloir cloner le contrat <b>%s</b> ?
-LowerDateEndPlannedShort=Date de fin de service la plus basse parmi les services actifs
+LowerDateEndPlannedShort=Prochaine expiration d'un service
 SendContractRef=Informations contrat __REF__
 OtherContracts=Autres contrats
 ##### Statistics #####

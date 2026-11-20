@@ -125,7 +125,9 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	{
 		$metadata = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
 		if (PHP_VERSION_ID < 80100) {
-			$metadata->setAccessible(true);
+			if (PHP_VERSION_ID < 80100) {
+				$metadata->setAccessible(true);
+			}
 		}
 		$enrichments = $metadata->getValue($this->bridge);
 		$enrichments['supplier_orders']['methods']['put']['write']['defaults'] = ['qty' => 1, 'note_public' => 'default'];
@@ -219,12 +221,16 @@ class ApiSupplierOrderHeaderUpdateTest extends CommonClassTest
 	{
 		$metadata = new ReflectionProperty(ToolApiBridge::class, 'enrichments');
 		if (PHP_VERSION_ID < 80100) {
-			$metadata->setAccessible(true);
+			if (PHP_VERSION_ID < 80100) {
+				$metadata->setAccessible(true);
+			}
 		}
 		$write = $metadata->getValue($this->bridge)['supplier_orders']['methods']['put']['write'];
 		$schemaMethod = new ReflectionMethod(ToolApiBridge::class, 'updateInputSchema');
 		if (PHP_VERSION_ID < 80100) {
-			$schemaMethod->setAccessible(true);
+			if (PHP_VERSION_ID < 80100) {
+				$schemaMethod->setAccessible(true);
+			}
 		}
 		$schema = $schemaMethod->invoke($this->bridge, $write);
 		$this->assertFalse($schema['additionalProperties']);
@@ -361,12 +367,16 @@ class ApiSupplierOrderHeaderBridgeFixture extends ToolApiBridge
 	{
 		$routes = new ReflectionProperty(ToolApiBridge::class, 'routes');
 		if (PHP_VERSION_ID < 80100) {
-			$routes->setAccessible(true);
+			if (PHP_VERSION_ID < 80100) {
+				$routes->setAccessible(true);
+			}
 		}
 		$routes->setValue($this, ['api_supplier_orders_update' => ['supplier_orders', 'put']]);
 		$endpoints = new ReflectionProperty(ToolApiBridge::class, 'endpoints');
 		if (PHP_VERSION_ID < 80100) {
-			$endpoints->setAccessible(true);
+			if (PHP_VERSION_ID < 80100) {
+				$endpoints->setAccessible(true);
+			}
 		}
 		$endpoints->setValue($this, ['supplier_orders' => ['path' => __FILE__, 'class' => ApiSupplierOrderHeaderEndpointFixture::class]]);
 		return [];

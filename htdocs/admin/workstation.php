@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation.lib.php';
  */
 
 // Translations
-$langs->loadLangs(array("admin", "workstation"));
+$langs->loadLangs(array("admin", "mrp"));
 
 // Parameters
 $action = GETPOST('action', 'aZ09');

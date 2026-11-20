@@ -59,14 +59,14 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_perf');
 
 print load_fiche_titre($langs->trans("PerfDolibarr"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').'</span>';
+print '<div class="info">';
+print $langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance');
 print ' &nbsp; &nbsp; ';
 print '<a href="'.$_SERVER["PHP_SELF"].'">';
 print img_picto($langs->trans("Reload"), 'refresh').' ';
 print $langs->trans("Reload");
 print '</a>';
-print '<br>';
-print '<br>';
+print '</div>';
 
 
 print '<br>';

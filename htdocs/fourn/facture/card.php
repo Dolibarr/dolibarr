@@ -77,9 +77,6 @@ if (isModEnabled('accounting')) {
 }
 
 $langs->loadLangs(array('bills', 'compta', 'suppliers', 'companies', 'products', 'banks', 'admin'));
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 
 $id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
 
@@ -524,6 +521,20 @@ if (empty($reshook)) {
 	if ($action == 'settransportmode' && $usercancreate) {
 		// transport mode
 		$result = $object->setTransportMode(GETPOSTINT('transport_mode_id'));
+	} elseif ($action == 'setpayment_reference' && $usercancreate) {
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		$object->fetch($id);
+		$object->payment_reference = CompanyBankAccount::cleanPaymentReference(GETPOST('payment_reference', 'alphanohtml'));
+		$errorkey = FactureFournisseur::checkPaymentReference($object->payment_reference);
+		if ($errorkey) {
+			setEventMessages($langs->trans($errorkey), null, 'errors');
+			$action = 'editpayment_reference';
+		} else {
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 	} elseif ($action == 'setlabel' && $usercancreate) {
 		// Set label
 		$object->fetch($id);
@@ -1882,7 +1893,7 @@ if (empty($reshook)) {
 		if (GETPOST('productid') > 0) {
 			$productsupplier = new ProductFournisseur($db);
 			if (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') == 1) {		// Not the common case
-				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, (float) price2num(GETPOST('qty')), GETPOSTINT('productid'), 'restricthtml', GETPOSTINT('socid')) < 0) {
+				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, (float) price2num(GETPOST('qty'), '', 2), GETPOSTINT('productid'), 'restricthtml', GETPOSTINT('socid')) < 0) {
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
 			}
@@ -1942,7 +1953,7 @@ if (empty($reshook)) {
 			$tva_tx,
 			$localtax1_tx,
 			$localtax2_tx,
-			(float) price2num(GETPOST('qty'), 'MS'),
+			(float) price2num(GETPOST('qty'), 'MS', 2),
 			GETPOSTINT('productid'),
 			$price_base_type,
 			$info_bits,
@@ -2060,7 +2071,7 @@ if (empty($reshook)) {
 
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);		// Can be '1.2' or '1.2 (CODE)'
 
-		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
 
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
 		if (empty($remise_percent)) {
@@ -3980,6 +3991,13 @@ if ($action == 'create') {
 				print img_warning($langs->trans('Late'));
 			}
 			print '</td>';
+
+			// Payment reference
+			print '<tr><td>';
+			print $form->editfieldkey("PaymentReference", 'payment_reference', $object->payment_reference, $object, (int) $form_permission);
+			print '</td><td>';
+			print $form->editfieldval("PaymentReference", 'payment_reference', $object->payment_reference, $object, $form_permission, 'string', GETPOST('payment_reference', 'alphanohtml'), null, null, '', 1, '', 'id', 'auto', array(), $action);
+			print '</td></tr>';
 
 			// Mode of payment
 			$langs->load('bills');

@@ -1,0 +1,18 @@
+#!/bin/sh
+# Sendmail stub installed by the docker-vibe and docker-claude images (see dev/build/docker-vibe/README.md).
+# No MTA is installed in this image: emails received here are stored into /var/mail/outbox
+# and are never delivered anywhere.
+
+umask 000
+
+outbox=/var/mail/outbox
+mkdir -p "$outbox" 2>/dev/null || exit 0
+
+file="$outbox/$(date +%Y%m%d_%H%M%S%N)_$$.eml"
+{
+    echo "X-SendmailStub-Args: $*"
+    echo
+    cat
+} > "$file" 2>/dev/null
+
+exit 0

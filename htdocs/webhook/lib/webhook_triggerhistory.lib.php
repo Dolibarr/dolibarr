@@ -32,7 +32,6 @@ function triggerhistoryPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("webhook@webhook");
 
 	$h = 0;
 	$head = array();

@@ -107,7 +107,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		global $conf, $mc;
 		global $form;
 
-		$langs->load("thirdparties");
+		$langs->load("companies");
 
 		$disabled = ((!empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? ' disabled' : '');
 
