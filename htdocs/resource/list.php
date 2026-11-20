@@ -72,6 +72,7 @@ if (!is_array($search_array_options)) {
 	$search_array_options = array();
 }
 $search_all          = trim(GETPOST('search_all', 'alphanohtml'));
+$search_id			= GETPOST("search_id", 'alpha');	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref			= GETPOST("search_ref", 'alpha');
 $search_type		= GETPOST("search_type", 'alpha');
 $search_address		= GETPOST("search_address", 'alpha');
@@ -115,6 +116,11 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
+	't.rowid' => array(
+		'label' => $langs->trans("TechnicalID"),
+		'checked' => '-1',
+		'position' => 0
+	),
 	't.ref' => array(
 		'label' => $langs->trans("Ref"),
 		'checked' => '1',
@@ -187,6 +193,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
+	$search_id = "";
 	$search_ref = "";
 	$search_type = "";
 	$search_address = "";
@@ -299,6 +306,9 @@ $sql .= " WHERE t.entity IN (".getEntity('resource').")";
 if (!empty($search_all)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+if ($search_id) {
+	$sql .= natural_search('t.rowid', $search_id, 1);
+}
 if ($search_ref) {
 	$sql .= natural_search('t.ref', $search_ref);
 }
@@ -396,6 +406,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -483,13 +496,13 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1)); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="tagtable liste">'."\n";
 
 // Fields title search
 
 // Core fields rendered by this page (extra fields are rendered by the extrafields tpls)
-$corelistfields = array('t.ref', 'ty.label', 't.address', 't.zip', 't.town', 'st.nom', 'co.label', 't.phone', 't.email', 't.max_users', 't.url');
+$corelistfields = array('t.rowid', 't.ref', 'ty.label', 't.address', 't.zip', 't.town', 'st.nom', 'co.label', 't.phone', 't.email', 't.max_users', 't.url');
 
 print '<tr class="liste_titre_filter">';
 // Action column
@@ -504,6 +517,11 @@ foreach ($arrayfields as $key => $val) {
 		continue; // Extra fields are rendered by the extrafields tpls
 	}
 	switch ($key) {
+		case 't.rowid':
+			print '<td class="liste_titre center">';
+			print '<input type="text" class="flat width50" name="search_id" value="'.dolPrintHTMLForAttribute($search_id).'">';
+			print '</td>';
+			break;
 		case 't.ref':
 			print '<td class="liste_titre">';
 			print '<input type="text" class="flat maxwidth100" name="search_ref" value="'.$search_ref.'">';
@@ -586,7 +604,7 @@ if ($conf->main_checkbox_left_column) {
 foreach ($arrayfields as $key => $val) {
 	if (!empty($val['checked']) && in_array($key, $corelistfields)) {
 		// @phan-suppress-next-line PhanTypeInvalidDimOffset
-		print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], $key, "", $param, "", $sortfield, $sortorder);
+		print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], $key, "", $param, "", $sortfield, $sortorder, ($key == 't.rowid' ? 'center ' : ''));
 	}
 }
 // Extra fields
@@ -642,6 +660,9 @@ while ($i < $imaxinloop) {
 			continue; // Extra fields are rendered by the extrafields tpls
 		}
 		switch ($key) {
+			case 't.rowid':
+				print '<td class="center tdoverflowmax50">'.((int) $obj->rowid).'</td>';
+				break;
 			case 't.ref':
 				print '<td class="tdoverflowmax150">'.$objectstatic->getNomUrl(5).'</td>';
 				break;

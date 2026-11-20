@@ -2080,6 +2080,17 @@ $(function() {
 	}).on('focusin', function () {
 		activateBlock($(this).parent());
 	});
+
+	/* Click on the arrow expands a collapsed block or collapses an expanded one, instead of following the title link */
+	$('.blockvmenuexpandonhover .menuexpandarrow').on('click', function (e) {
+		let block = $(this).closest('.blockvmenuexpandonhover');
+		e.preventDefault();
+		if (block.hasClass('blockvmenuexpanded')) {
+			collapseBlocks();
+		} else {
+			expandBlock(block);
+		}
+	});
 });
 
 }

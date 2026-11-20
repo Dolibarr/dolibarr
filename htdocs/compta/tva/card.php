@@ -798,40 +798,48 @@ if ($id > 0) {
 	print '<div class="tabsAction">'."\n";
 
 	if ($action != 'edit') {
-		// Reopen
-		if ($object->paye && $user->hasRight('tax', 'charges', 'creer')) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 
-		// Edit
-		if ($object->paye == 0 && $user->hasRight('tax', 'charges', 'creer')) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
-		}
+		if (empty($reshook)) {
+			// Reopen
+			if ($object->paye && $user->hasRight('tax', 'charges', 'creer')) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
+			}
 
-		// Emit payment
-		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->hasRight('tax', 'charges', 'creer')) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement_vat.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment").'</a></div>';
-		}
+			// Edit
+			if ($object->paye == 0 && $user->hasRight('tax', 'charges', 'creer')) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
+			}
 
-		// Classify 'paid'
-		if ($object->paye == 0
-		&& (
-			(round($resteapayer) <= 0 && $object->amount > 0)
-			|| (round($resteapayer) >= 0 && $object->amount < 0)
-		)
-		&& $user->hasRight('tax', 'charges', 'creer')) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=paid">'.$langs->trans("ClassifyPaid")."</a></div>";
-		}
+			// Emit payment
+			if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->hasRight('tax', 'charges', 'creer')) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement_vat.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment").'</a></div>';
+			}
 
-		// Clone
-		if ($user->hasRight('tax', 'charges', 'creer')) {
-			print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=clone', '', true, array('attr' => array('class' => 'reposition'))).'</div>';
-		}
+			// Classify 'paid'
+			if ($object->paye == 0
+			&& (
+				(round($resteapayer) <= 0 && $object->amount > 0)
+				|| (round($resteapayer) >= 0 && $object->amount < 0)
+			)
+			&& $user->hasRight('tax', 'charges', 'creer')) {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=paid">'.$langs->trans("ClassifyPaid")."</a></div>";
+			}
 
-		if ($user->hasRight('tax', 'charges', 'supprimer') && empty($totalpaid)) {
-			print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
-		} else {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
+			// Clone
+			if ($user->hasRight('tax', 'charges', 'creer')) {
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=clone', '', true, array('attr' => array('class' => 'reposition'))).'</div>';
+			}
+
+			if ($user->hasRight('tax', 'charges', 'supprimer') && empty($totalpaid)) {
+				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
+			}
 		}
 	}
 	print '</div>'."\n";
