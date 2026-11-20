@@ -186,8 +186,11 @@ $permissiontodelete = $user->hasRight('partnership', 'delete');
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-// External user is limited to his own thirdparty
+// External user is limited to his own thirdparty, and has no access to partnerships of members
 if ($user->socid > 0) {
+	if ($managedfor == 'member') {
+		accessforbidden();
+	}
 	$socid = $user->socid;
 }
 //restrictedArea($user, 'partnership', $object->id);
@@ -403,7 +406,8 @@ if ($managedfor == 'member') {
 	}
 }
 // If internal user has no permission to see all thirdparties, restrict on thirdparties he is sale representative for
-if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+// (not in member mode: a partnership of a member has no thirdparty to restrict on)
+if ($managedfor != 'member' && empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 }
 foreach ($search as $key => $val) {
