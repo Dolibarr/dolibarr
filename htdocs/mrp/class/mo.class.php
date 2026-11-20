@@ -372,6 +372,22 @@ class Mo extends CommonObject
 		}
 
 		if (!$error) {
+			if (!empty($this->linked_objects) && is_array($this->linked_objects)) {
+				foreach ($this->linked_objects as $origin => $tmp_origin_id) {
+					if (is_array($tmp_origin_id)) {
+						foreach ($tmp_origin_id as $origin_id) {
+							$this->add_object_linked($origin, $origin_id);
+						}
+					} else {
+						$this->add_object_linked($origin, $tmp_origin_id);
+					}
+				}
+			} elseif (!empty($this->origin) && !empty($this->origin_id)) {
+				$this->add_object_linked($this->origin, $this->origin_id);
+			}
+		}
+
+		if (!$error) {
 			$this->db->commit();
 			return $idcreated;
 		} else {
