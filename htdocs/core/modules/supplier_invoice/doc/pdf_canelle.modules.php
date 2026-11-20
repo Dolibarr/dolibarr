@@ -533,10 +533,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$this->tva[$vatrate] = 0;
 					}
 					if (empty($this->localtax1[$localtax1rate])) {
-						$this->localtax1[$localtax1rate] = 0;
+						$this->localtax1[$localtax1rate] = 0.0;
 					}
 					if (empty($this->localtax2[$localtax2rate])) {
-						$this->localtax2[$localtax2rate] = 0;
+						$this->localtax2[$localtax2rate] = 0.0;
 					}
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate] += $localtax1ligne;

@@ -489,7 +489,7 @@ class SocieteAccount extends CommonObject
 	{
 		global $langs;
 
-		$langs->loadLangs(['companies, commercial', 'website']);
+		$langs->loadLangs(['companies', 'commercial', 'website']);
 
 		$datas = [];
 		$option = $params['option'] ?? '';

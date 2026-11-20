@@ -398,6 +398,23 @@ function checkIbanForAccount($account = null, $ibantocheck = null)
 	} elseif ($ibantocheck == null) {
 		$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
 	}
+
+	// Get country code of bank account (from account, or guessed from IBAN prefix)
+	$country_code = '';
+	if (is_object($account)) {
+		$country_code = $account->getCountryCode();
+	}
+	$reg = array();
+	if (empty($country_code) && preg_match('/^([a-zA-Z]){2}/', $ibantocheck, $reg)) {
+		$country_code = strtoupper($reg[1]);
+	}
+
+	// IBAN format can be checked only for accounts in the SEPA zone (Europe)
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	if (!in_array($country_code, getCountriesInSEPA())) {
+		return true;
+	}
+
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
 
 	$iban = new PHP_IBAN\IBAN($ibantocheck);

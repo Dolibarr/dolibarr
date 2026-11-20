@@ -73,8 +73,6 @@ class FichinterStats extends Stats
 	 */
 	public function __construct($db, $socid, $mode, $userid = 0)
 	{
-		global $user, $conf;
-
 		$this->db = $db;
 
 		$this->socid = ($socid > 0 ? $socid : 0);
@@ -90,7 +88,7 @@ class FichinterStats extends Stats
 			//$this->where.= " AND c.fk_statut > 0";    // Not draft and not cancelled
 		}
 
-		$this->where .= ($this->where ? ' AND ' : '')."c.entity IN (".getEntity('intervention').')';
+		$this->where .= ($this->where ? ' AND ' : '')."c.entity IN (".getEntity('fichinter').')';
 
 		if ($this->socid) {
 			$this->where .= " AND c.fk_soc = ".((int) $this->socid);

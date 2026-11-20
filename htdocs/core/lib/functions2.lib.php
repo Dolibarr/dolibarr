@@ -385,7 +385,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Signature
-	if (!empty($object->user_signature) || !empty($object->user_signature_id) || !empty($object->date_signature)) {
+	if (!empty($object->user_signature_id) || !empty($object->date_signature)) {
 		'@phan-var-force Propal $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
@@ -396,20 +396,14 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_signature)) {
-			if ($object->user_signature->id) {
-				print $object->user_signature->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans('Unknown');
-			}
+		$userstatic = new User($db);
+		if (!empty($object->user_signature_id)) {
+			$userstatic->fetch($object->user_signature_id);
+		}
+		if ($userstatic->id) {
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
-			$userstatic = new User($db);
-			$userstatic->fetch($object->user_signature_id ? $object->user_signature_id : $object->user_signature);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans('Unknown');
-			}
+			print $langs->trans('Unknown');
 		}
 
 		if (!empty($object->date_signature)) {
@@ -645,7 +639,7 @@ function isValidVATID($company)
 		elseif ($vatprefix == 'MC') $vatprefix = 'FR';	// Monaco is using french VAT numbers
 		else $vatprefix = preg_quote($vatprefix, '/');*/
 		$vatprefix = '[a-zA-Z][a-zA-Z]';
-		if (!preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', $company->tva_intra))) {
+		if (!preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', (string) $company->tva_intra))) {
 			return 0;
 		}
 	}
@@ -2118,7 +2112,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$module = 'commande';
 		$myobject = 'commande';
 	} elseif ($objecttype == 'mailing') {
-		$langs->load('mailing');
+		$langs->load('mails');
 		$classpath = 'comm/mailing/class';
 	} elseif ($objecttype == 'propal') {
 		$langs->load('propal');
