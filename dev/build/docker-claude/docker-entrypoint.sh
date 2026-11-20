@@ -6,18 +6,53 @@ GROUP_ID="${HOST_GID:-1000}"
 USER_NAME="${HOST_USER:-developer}"
 GROUP_NAME="${HOST_GROUP:-developer}"
 
-# Block the outbound SMTP ports (25, 465, 587) of the machine running the container (the VM).
-# The container uses --network=host, so the block is installed once on the network stack shared
+# Block the outbound SMTP ports (25, 465, 587) from the container.
+# The container uses --network=host, so the block is installed on the network stack shared
 # with the VM (it requires the capability NET_ADMIN, added by claudes.sh).
 # It guarantees that no email can be sent from the container (see dev/build/docker-vibe/README.md).
+# When the unified cgroup v2 hierarchy is mounted, the block is scoped to the cgroup of the
+# container (see smtpblock.sh), so the other processes of the VM (an MTA running on a
+# production server for example) can still connect to these ports. The cgroup path must be
+# the one seen from the host: claudes.sh starts the container with --cgroupns=host for that,
+# otherwise the path read here is relative to the cgroup namespace of the container.
 # Set the environment variable DOCKER_ALLOW_SMTP=1 to start a container without this protection.
 if [ "${DOCKER_ALLOW_SMTP:-}" != "1" ]; then
-    if ! /usr/local/bin/smtpblock.sh; then
-        echo "ERROR: Failed to block the outbound SMTP ports 25, 465 and 587."
-        echo "The container is stopped to guarantee that no email can be sent from it."
-        echo "Run the container with the capability NET_ADMIN (--cap-add=NET_ADMIN),"
-        echo "or set DOCKER_ALLOW_SMTP=1 to run it without the outbound SMTP ports block."
+    # Unified cgroup v2 hierarchy mounted ? (the paths of the scoped block are resolved
+    # by the kernel into that hierarchy only, otherwise the block can not be scoped)
+    SMTPBLOCK_CGROUP2=$(stat -fc %T /sys/fs/cgroup 2>/dev/null)
+    SMTPBLOCK_CGROUP=""
+    if [ "$SMTPBLOCK_CGROUP2" = "cgroup2fs" ]; then
+        # cgroup of the container into the unified hierarchy, as seen by the kernel
+        SMTPBLOCK_CGROUP=$(grep '^0::' /proc/self/cgroup 2>/dev/null | cut -d: -f3)
+    fi
+
+    if [ -n "$SMTPBLOCK_CGROUP" ] && [ "$SMTPBLOCK_CGROUP" != "/" ]; then
+        echo "Block the outbound SMTP ports for the cgroup $SMTPBLOCK_CGROUP"
+        if ! /usr/local/bin/smtpblock.sh --cgroup "$SMTPBLOCK_CGROUP"; then
+            echo "ERROR: Failed to block the outbound SMTP ports 25, 465 and 587 of the container."
+            echo "The container is stopped to guarantee that no email can be sent from it."
+            echo "Run the container with the capability NET_ADMIN (--cap-add=NET_ADMIN),"
+            echo "or set DOCKER_ALLOW_SMTP=1 to run it without the outbound SMTP ports block."
+            exit 1
+        fi
+    elif [ "$SMTPBLOCK_CGROUP2" = "cgroup2fs" ]; then
+        # Unified hierarchy mounted but the cgroup is not seen as from the host: the container
+        # was not started with --cgroupns=host. Refuse to start rather than blocking the
+        # SMTP ports of the whole machine.
+        echo "ERROR: The cgroup of the container ($SMTPBLOCK_CGROUP) is not the one seen by the kernel."
+        echo "The container must be started with --cgroupns=host (done by claudes.sh) so the SMTP block"
+        echo "can be scoped to the only container, or with DOCKER_ALLOW_SMTP=1 to run without it."
         exit 1
+    else
+        # No unified cgroup v2 hierarchy (cgroup v1 on the VM, old distribution): the block
+        # can not be scoped to the container, it is installed on the whole machine like before.
+        if ! /usr/local/bin/smtpblock.sh; then
+            echo "ERROR: Failed to block the outbound SMTP ports 25, 465 and 587."
+            echo "The container is stopped to guarantee that no email can be sent from it."
+            echo "Run the container with the capability NET_ADMIN (--cap-add=NET_ADMIN),"
+            echo "or set DOCKER_ALLOW_SMTP=1 to run it without the outbound SMTP ports block."
+            exit 1
+        fi
     fi
 fi
 
