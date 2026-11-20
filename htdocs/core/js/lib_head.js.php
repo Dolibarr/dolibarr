@@ -720,7 +720,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 
 			/* reset page_y param */
-			var page_y = $(document).scrollTop();
+			var page_y = $(dolGetMainScrollElement()).scrollTop();
 			url = url.replace(/page_y=\d+/g, '');
 			if (page_y > 0) {
 				if (url.indexOf('?') > -1) {
@@ -825,7 +825,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 					url = url + "?dol_resetcache=1";
 				}
 			}
-			var page_y = $(document).scrollTop();
+			var page_y = $(dolGetMainScrollElement()).scrollTop();
 			url = url.replace(/page_y=\d+/g, '');
 			if (page_y > 0) {
 				if (url.indexOf('?') > -1) {
@@ -1201,6 +1201,23 @@ function getParameterByName(name, valueifnotfound)
 	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
 		results = regex.exec(location.search);
 	return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+/*
+ * Return the element that scrolls the main area of the page: #id-right when the theme makes it scrollable, else the document
+ *
+ * @return	Element				Element to use with jQuery scrollTop()
+ */
+function dolGetMainScrollElement()
+{
+	var idright = document.getElementById("id-right");
+	if (idright) {
+		var overflowy = window.getComputedStyle(idright).overflowY;
+		if (overflowy == "auto" || overflowy == "scroll") {
+			return idright;
+		}
+	}
+	return document.scrollingElement || document.documentElement;
 }
 
 /*

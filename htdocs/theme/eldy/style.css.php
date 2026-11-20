@@ -3063,7 +3063,26 @@ td.showDragHandle {
 #id-right {
 	display: block;
 	flex: 1 1 0;
-	width: auto;	/* No min-width: 0 and no width: 100%, so a wide list enlarges the page and the horizontal scrollbar is the one of the window */
+	width: auto;	/* No min-width: 0 and no width: 100%, so a wide list enlarges the page and the horizontal scrollbar is the one of the window (on small screens only, see below) */
+}
+/* When the left menu is visible, #id-right is the scroll area, so its scrollbars are always visible, at the right of the left menu and under the top menu */
+@media only screen and (min-width: <?php echo(getDolGlobalInt('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', (int) round($nbtopmenuentries * 47, 0) + 130) + 1); ?>px)	/* no reduction 3 */
+{
+	#id-right {
+		min-width: 0;
+		box-sizing: border-box;
+		height: calc(100vh - <?php echo $heighttopmenu; ?>px);
+		overflow: auto;
+	}
+	#id-right > div.fiche {
+		min-width: min-content;		/* The fiche grows with a wide list, so its right margin stays visible at the end of the horizontal scroll */
+	}
+	div.fiche>form>div.div-table-responsive, div.fiche>div.div-table-responsive {
+		overflow-x: visible;		/* The horizontal scroll of a full page list is done by #id-right */
+	}
+	.liste_titre.sticky {
+		top: 0;						/* The sticky header is relative to #id-right that scrolls, not to the window */
+	}
 }
 <?php } ?>
 .bodyforlist #id-right {
@@ -3258,8 +3277,8 @@ div.vmenu, td.vmenu {
 	.side-nav {
 		border-bottom: 1px solid #BBB;
 		background: #FFF;
-		padding-left: 20px;
-		padding-right: 20px;
+		padding-left: 10px;
+		padding-right: 10px;
 		position: absolute;
 			z-index: 90;
 	}
@@ -10265,7 +10284,8 @@ table.jPicker {
 		padding-top: 75px;
 		/*position: relative;
 		top: 75px;*/
-		width: 245px; 	/* must be same than div.login_block */
+		box-sizing: border-box;		/* Same box model whatever is THEME_STICKY_TOPMENU, so the padding is inside the width */
+		width: 285px; 	/* must be same than div.login_block: width 245px + padding-left 20px + padding-right 20px */
 		box-shadow: none;
 	}
 	#id-left {
@@ -10335,6 +10355,10 @@ table.jPicker {
 		min-width: unset !important;
 	}
 
+	span.select2.select2-container.select2-container--default {
+		width: auto !important;
+	}
+
 	div.login_block_other {
 		margin-right: unset;
 	}
@@ -10349,6 +10373,9 @@ table.jPicker {
 	.login_block_elem {
 		padding: 0 !important;
 		height: 38px;
+	}
+	.login_block_elem:has(span.aversion) {
+		display: none;		/* Hide the version when the top menu is reduced */
 	}
 	li.tmenu, li.tmenusel {
 		min-width: 32px;
