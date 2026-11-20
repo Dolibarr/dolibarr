@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("categories", "compta", "mrp", "stocks"));
+$langs->loadLangs(array("categories", "compta", "hrm", "mrp", "stocks"));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -185,6 +185,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$tmpobject = new Mo($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'mo';
+	} elseif ($type == Categorie::TYPE_SKILL && $user->hasRight('hrm', 'all', 'write')) {
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+		$tmpobject = new Skill($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'skill';
 	} elseif ($type == Categorie::TYPE_INVOICE && $user->hasRight('facture', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$tmpobject = new Facture($db);
@@ -284,6 +289,10 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 		$newobject = new Mo($db);
 		$elementtype = 'mo';
+	} elseif ($type == Categorie::TYPE_SKILL && $user->hasRight('hrm', 'all', 'write')) {
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+		$newobject = new Skill($db);
+		$elementtype = 'skill';
 	} elseif ($type == Categorie::TYPE_INVOICE && $user->hasRight('facture', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$newobject = new Facture($db);
@@ -1576,6 +1585,93 @@ if ($type == Categorie::TYPE_ORDER) {
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 					print "</a>";
 				}
+				print "</tr>\n";
+			}
+		} else {
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+		}
+		print "</table>\n";
+
+		print "</form>\n";
+	}
+}
+
+// List of Skills
+// The objects of the category are listed only to a user allowed to read them
+if ($type == Categorie::TYPE_SKILL && !$user->hasRight('hrm', 'all', 'read')) {
+	accessforbidden("NotEnoughPermissions", 0, 0);
+}
+if ($type == Categorie::TYPE_SKILL) {
+	require_once DOL_DOCUMENT_ROOT.'/hrm/class/skill.class.php';
+
+	$permission = $user->hasRight('hrm', 'all', 'write');
+
+	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
+	if ($objects < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+	} else {
+		/** @var Skill[] $objects */
+		'@phan-var-force Skill[] $objects';
+		// Form to add record into a category
+		$showclassifyform = $user->hasRight('hrm', 'all', 'write');
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddSkillIntoCategory").' &nbsp;';
+			print $form->selectForForms('Skill:hrm/class/skill.class.php', 'elemid', 0, 1, '', '', 'maxwidth500');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
+		print '<form method="post" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+		print '<input type="hidden" name="type" value="'.$typeid.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="action" value="list">';
+
+		print '<br>';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+		$num = count($objects);
+		$nbtotalofrecords = '';
+		$newcardbutton = '';
+
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+		print_barre_liste($langs->trans("Skills"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'shapes', 0, $newcardbutton, '', $limit);
+
+		print "<table class='noborder centpercent'>\n";
+		print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td><td>'.$langs->trans("SkillType").'</td><td></td></tr>'."\n";
+
+		if (count($objects) > 0) {
+			$i = 0;
+			foreach ($objects as $key => $skill) {
+				$i++;
+				if ($i > $limit) {
+					break;
+				}
+
+				print "\t".'<tr class="oddeven">'."\n";
+				print '<td class="nowrap tdtop">';
+				print $skill->getNomUrl(1);
+				print "</td>\n";
+				print '<td class="tdtop">'.$skill->showOutputField($skill->fields['skill_type'], 'skill_type', (string) $skill->skill_type)."</td>\n";
+				// Link to delete from category
+				print '<td class="right">';
+				if ($permission) {
+					print '<a href="'.dolPrintHTMLForAttributeUrl($_SERVER['PHP_SELF'].'?'.(empty($socid) ? 'id' : 'socid').'='.((int) $object->id).'&type='.urlencode((string) $typeid).'&action=unlink&token='.newToken().'&removeelem='.((int) $skill->id)).'">';
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
+					print "</a>";
+				}
+				print "</td>\n";
 				print "</tr>\n";
 			}
 		} else {
