@@ -283,12 +283,12 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-				print '<td class="tdoverflowmax125 center lineheightsmall">'.dol_print_date($db->jdate($obj->date_start), 'dayreduceformat');
+				print '<td class="tdoverflowmax125 center tdlineheightsmall lineheightsmall">'.dol_print_date($db->jdate($obj->date_start), 'dayreduceformat');
 				print '<br><span class="opacitymedium small" title="'.dolPrintHTML($langs->trans($listhalfday[$starthalfday])).'">';
 				$labelshort = $langs->trans($listhalfday[$starthalfday.'short']) != $listhalfday[$starthalfday.'short'] ? $langs->trans($listhalfday[$starthalfday.'short']) : $langs->trans($listhalfday[$starthalfday]);
 				print $labelshort;
 				print '</span>';
-				print '<td class="tdoverflowmax125 center lineheightsmall">'.dol_print_date($db->jdate($obj->date_end), 'dayreduceformat');
+				print '<td class="tdoverflowmax125 center tdlineheightsmall lineheightsmall">'.dol_print_date($db->jdate($obj->date_end), 'dayreduceformat');
 				print '<br><span class="opacitymedium small" title="'.dolPrintHTML($langs->trans($listhalfday[$endhalfday])).'">';
 				$labelshort = $langs->trans($listhalfday[$endhalfday.'short']) != $listhalfday[$endhalfday.'short'] ? $langs->trans($listhalfday[$endhalfday.'short']) : $langs->trans($listhalfday[$starthalfday]);
 				print $labelshort;
