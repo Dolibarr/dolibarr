@@ -4056,9 +4056,9 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		}
 
 		$rep .= $newphoneastart;
-		$rep .= ($withpicto ? img_picto($titlealt, $picto) : '');
+		$rep .= ($withpicto ? img_picto($titlealt, $picto, ($separ != 'hidenum' ? 'class="pictofixedwidth"' : '')) : '');	// The fixed width picto replaces the space before the number
 		if ($separ != 'hidenum') {
-			$rep .= ($withpicto ? ' ' : '') . $newphone;
+			$rep .= $newphone;
 		}
 		$rep .= $newphoneaend;
 
