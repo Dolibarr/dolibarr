@@ -120,7 +120,7 @@ class Asset extends CommonObject
 		'date_acquisition' => array('type' => 'date', 'label' => 'AssetDateAcquisition', 'enabled' => 1, 'position' => 90, 'notnull' => 1, 'visible' => 1,),
 		'date_start' => array('type' => 'date', 'label' => 'AssetDateStart', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => -1,),
 		'acquisition_value_ht' => array('type' => 'price', 'label' => 'AssetAcquisitionValueHT', 'enabled' => 1, 'position' => 110, 'notnull' => 1, 'visible' => 1, 'isameasure' => 1, 'validate' => 1,),
-		'recovered_vat' => array('type' => 'price', 'label' => 'AssetRecoveredVAT', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'isameasure' => 1, 'validate' => 1,),
+		'recovered_vat' => array('type' => 'price', 'label' => 'AssetRecoveredVAT', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => -1, 'isameasure' => 1, 'validate' => 1,),
 		'reversal_date' => array('type' => 'date', 'label' => 'AssetReversalDate', 'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => 1,),
 		'reversal_amount_ht' => array('type' => 'price', 'label' => 'AssetReversalAmountHT', 'enabled' => 1, 'position' => 140, 'notnull' => 0, 'visible' => 1, 'isameasure' => 1, 'validate' => 1, 'csslist' => 'maxwidth50'),
 		'disposal_date' => array('type' => 'date', 'label' => 'AssetDisposalDate', 'enabled' => 1, 'position' => 200, 'notnull' => 0, 'visible' => -2,),
