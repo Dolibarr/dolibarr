@@ -44,49 +44,46 @@ UPDATE llx_website_page SET content = '...new html...' WHERE rowid = <pageid>;
 * The `type_container` column can be `page` (common page), `banner` if this is just a part of a page included into a main page, `blogpost` if the page is a news article (fulle page or included into another page),
   or `library` if page contains only PHP functions, or `setup` for a page never shown to visitor but used to offer a form to setup the website, or `other` (usually a part of page included into a main `page` type page)
 * The content of each page must be organized using `<section conteneditable="true" id="a unique id">` tags to separate each independant block of content.
+* When generating the text of an article to publish (for example a `blogpost`), add a few emojis to make it livelier (a few only, related to the topic, not one per sentence).
 
 
-## Regenerating the .tpl.php file
+## Images and documents (medias directory)
 
-The `content` column alone is not rendered directly. Each page has a generated file:
+Images and documents shown by the website are stored in the public medias directory (`documents/medias/`), not in the page content.
+Manage them with the MCP tools `api_documents_medias_*` (paths are always relative to the medias directory):
 
-```
-documents/website/<site-ref>/page<pageid>.tpl.php
-```
+- `api_documents_medias_list`: list a directory. Params: `subdir` (e.g. `image/mywebsite`, empty for the root), `recursive` (0|1), `search`, `sortfield` (`name`|`date`|`size`), `sortorder` (`asc`|`desc`). Use it to check whether a file already exists before uploading it or linking it.
+- `api_documents_medias_download`: get the content (base64) of one small file. Param: `original_file` (e.g. `image/mywebsite/picture.png`).
+- `api_documents_medias_upload`: upload a file. Params: `filename`, `subdir`, `filecontent` (base64) with `fileencoding='base64'`, `overwriteifexists`, `createdirifnotexists` (set it to 1 if the directory may not exist yet). The user is asked to confirm before the file is written. The file becomes publicly reachable.
 
-- `<site-ref>` is the `ref` of the website (directory `documents/website/<ref>/`).
-- `documents` is the Dolibarr documents root (`$dolibarr_main_data_root` from `htdocs/conf/conf.php`). With multi-entity enabled, the path is `documents/<entity>/website/<site-ref>/`.
-- After any change to the `content` column, this file MUST be regenerated, otherwise the change is not visible on the rendered site.
+Conventions for the website `mywebsite` (use the `ref` of the website):
 
-Important: the .tpl.php file is NOT a raw copy of the `content` column. It is built by `dolSavePageContent()` (in `htdocs/core/lib/website2.lib.php`), which wraps the page content with a PHP header, the page `htmlheader`, the website CSS and other PHP code. So never write the `content` value raw into the .tpl.php file.
+- Images go into `image/mywebsite/`. To show one in a page, insert into the `content`:
+  `<img src="/medias/image/mywebsite/filename.ext">`
+- Documents (pdf, ...) go into `doc/mywebsite/`. To offer a download link, insert into the `content`:
+  `<a href="/document.php?modulepart=medias&file=doc/mywebsite/filename.ext">Download</a>`
+  (the `file` parameter is the path relative to the medias directory, so it must match the `subdir` used for the upload).
 
-Two ways to regenerate the file:
 
-1. Preferred, through Dolibarr code: call `dolSavePageContent($filetpl, $website, $objectpage, 1)` with the website object and the page object loaded from database, where `$filetpl = $dolibarr_main_data_root.'/website/'.$website->ref.'/page'.$pageid.'.tpl.php'`. This is exactly what the website editor does when saving a page. It can also be done by saving the page from the website editor UI (Website menu -> site -> edit page -> Save).
-2. Only if Dolibarr code cannot be executed: archive the old file first (see below), then regenerate the file with the same structure as the previous version, replacing only the part that carries the page content with the new value from the `content` column.
+## Regenerating the page on disk (.tpl.php file)
+
+Each page is rendered from a generated file `documents/website/<site-ref>/page<pageid>.tpl.php` (`documents/<entity>/...` with multi-entity), built by `dolSavePageContent()` (in `htdocs/core/lib/website2.lib.php`), not a raw copy of the `content` column.
+
+- When the page is created or updated with the MCP tools `api_websites_pages_create` / `api_websites_pages_update` (or from the website editor UI), this file is regenerated automatically: nothing more to do.
+- Only if the `content` column was changed directly in database by SQL, regenerate it by calling `dolSavePageContent($filetpl, $website, $objectpage, 1)` (it archives the old file, see below). Never write the `content` value raw into the .tpl.php file.
 
 
 ## Archiving the previous version
 
-Before rewriting `page<pageid>.tpl.php`, the existing file MUST be archived as:
+The previous `page<pageid>.tpl.php` is archived as `page<pageid>.tpl.php.v<TIMESTAMP>` (unix timestamp, last 5 versions kept) by `dolSavePageContent()` when called with `$backupold = 1`, through `archiveOrBackupFile()` (in `htdocs/core/lib/files.lib.php`).
 
-```
-documents/website/<site-ref>/page<pageid>.tpl.php.v<TIMESTAMP>
-```
-
-- `<TIMESTAMP>` is the unix timestamp of the moment of archiving (this is the convention of `archiveOrBackupFile()` in `htdocs/core/lib/files.lib.php`, which moves — not copies — the old file and keeps the last 5 versions only).
-- Never overwrite or delete the old .tpl.php without creating this `.v<TIMESTAMP>` version file first.
+- The tools `api_websites_pages_create` / `api_websites_pages_update` and the website editor UI already do it: nothing more to do.
+- Only if the `content` column was changed directly by SQL, call `dolSavePageContent()` with `$backupold = 1`. Never overwrite or delete the old .tpl.php without this version file.
 
 
 ## Verification
 
-After an edit, check that:
-
-1. The `content` column of `llx_website_page` contains the new HTML.
-2. `documents/website/<site-ref>/page<pageid>.tpl.php` has been rewritten (check its modification time).
-3. The previous version exists as `page<pageid>.tpl.php.v<TIMESTAMP>`.
-
-If the site is served through the alias/container mode, also check that the alias file `documents/website/<site-ref>/<pageurl>.php` still points to the right tpl file (it should not need to be regenerated when only the content changes).
+After an edit, check with `api_websites_pages_get` that the page contains the new HTML.
 
 
 ## Saving website as a template in GIT sources

@@ -22,7 +22,8 @@ and uses `skill-doli-code-review` for the code review.
   commit message). The only exception is the action **Update branch**, run without confirmation.
 - Never publish the details of an unfixed security vulnerability in a public comment: warn the
   user and suggest the private channel (GitHub Security Advisory) instead.
-- Never merge, approve, close or label a PR in this loop, unless the user explicitly asks for it.
+- Never merge, approve, close or label a PR in this loop, unless the user explicitly asks for it
+  (choosing **b) Merge** is such an explicit request).
 - Remember the PR already proposed during the session (processed or skipped) so they are never
   proposed twice.
 - To filter JSON output, write the Python filter into a temporary script file in the scratchpad
@@ -33,26 +34,42 @@ and uses `skill-doli-code-review` for the code review.
 
 1. Get the current branch: `git branch --show-current` (e.g. `develop` or `22.0`). Remember it
    to come back to it after each PR.
-2. List the open PRs targeting this branch, most recent first, draft PRs excluded:
+2. List the open PRs targeting this branch, most recent first, draft PRs excluded. By default, PRs
+   with the label `PR defered - Not priority` are excluded too (include them only if the user asks):
 
    ```bash
    gh pr list -R Dolibarr/dolibarr --base BRANCH --state open --limit 200 \
-     --json number,title,author,url,isDraft,createdAt \
-     --jq '[.[] | select(.isDraft | not)] | sort_by(.createdAt) | reverse | .[] | "#\(.number) \(.author.login) - \(.title) \(.url)"'
+     --json number,title,author,url,isDraft,createdAt,labels \
+     --jq '[.[] | select(.isDraft | not) | select([.labels[].name] | index("PR defered - Not priority") | not)] | sort_by(.createdAt) | reverse | .[] | "#\(.number) \(.author.login) - \(.title) \(.url)"'
    ```
 
 3. Take the most recent PR not yet proposed in this session. Display its number, title, author,
    **link**, its **mergeable status** (mergeable / not mergeable, from `mergeable` and
    `mergeStateStatus`) and its **CI status** (OK / running / error, and if error, the name of each
-   failing check), using `gh pr view N -R Dolibarr/dolibarr --json mergeable,mergeStateStatus,statusCheckRollup`
-   (keep only the latest run of each check). Then ask the user (with the AskUserQuestion tool).
-   The text of the question must itself contain the full web link of the PR
-   (`https://github.com/Dolibarr/dolibarr/pull/N`), because the message written before the
-   question may not stay visible while the question is displayed:
-   - **a) Process it**
-   - **b) Next one** → go back to step 3 with the next PR.
-   - **c) Stop** → go back to the initial branch if needed and give a short summary of the
+   failing check), using `gh pr view N -R Dolibarr/dolibarr --json createdAt,changedFiles,mergeable,mergeStateStatus,statusCheckRollup`
+   (keep only the latest run of each check).
+   This loop is mostly run from a **smartphone**: do NOT use the AskUserQuestion tool (its links
+   are neither clickable nor copyable) and do not open a browser with `xdg-open`. Display the PR in
+   a normal text message. Start the message with the PR number and title (e.g. `**#N - Title**`),
+   then give the links as Markdown links, so they are clickable:
+   - PR link: `[https://github.com/Dolibarr/dolibarr/pull/N](https://github.com/Dolibarr/dolibarr/pull/N)`
+   - If the PR is mergeable and the CI is OK, also give the link to the diff of the files, with the
+     number of modified files in parentheses in its label (`changedFiles` of `gh pr view`), e.g.
+     `- Diff des fichiers (3) : [https://github.com/Dolibarr/dolibarr/pull/N/files](https://github.com/Dolibarr/dolibarr/pull/N/files)`
+
+   Then, in this order: the author, the creation date of the PR (`createdAt`, e.g. `2026-11-10`),
+   the mergeable status and the CI status.
+
+   End the message with the choices below and wait for the user to reply with a letter:
+   - **a) Code review**
+   - **b) Merge** → only proposed when the PR is mergeable and the CI is OK. Run the action
+     **Merge**, then go back to step 3 with the next PR.
+   - **c) Next one** → go back to step 3 with the next PR.
+   - **d) Stop** → go back to the initial branch if needed and give a short summary of the
      session (PRs processed and actions done).
+
+   When **b) Merge** is not proposed, keep the same letters (a, c, d) so that a letter always
+   means the same choice.
 4. If **a)**, run the "Process a PR" procedure below, then go back to step 3 with the next PR.
 5. When the list is empty, say so and stop.
 
@@ -121,6 +138,17 @@ run the action **Update branch** (no confirmation).
 2. Show the exact text to the user and wait for approval (the user can amend it).
 3. Publish: `gh pr comment N -R Dolibarr/dolibarr --body-file FILE` (file in the scratchpad
    directory).
+
+### Merge (the choice b) is the confirmation)
+
+1. Check again that the PR is still mergeable and the CI OK, with the same `headRefOid` as the one
+   displayed (a new commit may have been pushed meanwhile). Otherwise, tell the user and do not merge.
+2. Merge with a merge commit, as done for the other PRs of the project:
+
+   ```bash
+   gh pr merge N -R Dolibarr/dolibarr --merge --match-head-commit HEADREFOID
+   ```
+3. Report the result to the user (merged, or the error returned by GitHub).
 
 ### Update branch (no confirmation)
 

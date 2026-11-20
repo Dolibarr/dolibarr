@@ -113,6 +113,41 @@ class RestAPIAgendaEventsTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestAgendaEventListPagination
+	 *
+	 * @return void
+	 */
+	public function testRestAgendaEventListPagination()
+	{
+		$test = "List agenda events with pagination data";
+
+		$first_id = $this->createEvent("$test (create first event)");
+		$second_id = $this->createEvent("$test (create second event)");
+
+		try {
+			$filter = array(
+				'sqlfilters' => "(t.id:=:".$first_id.") or (t.id:=:".$second_id.")",
+				'pagination_data' => 'true',
+			);
+
+			// limit=0 means no limit, it must not fail with a division by zero
+			$result = $this->getUrl('agendaevents', "$test (limit=0)", 'GET', $filter + array('limit' => 0));
+			$this->assertCount(2, $result['content']['data'] ?? array(), "$test (limit=0) All events must be returned");
+			$this->assertEquals(2, $result['content']['pagination']['total'] ?? null, "$test (limit=0) Total must be 2");
+			$this->assertEquals(1, $result['content']['pagination']['page_count'] ?? null, "$test (limit=0) All events are on 1 page");
+			$this->assertEquals(0, $result['content']['pagination']['limit'] ?? null, "$test (limit=0) Limit must be returned");
+
+			$result = $this->getUrl('agendaevents', "$test (limit=1)", 'GET', $filter + array('limit' => 1));
+			$this->assertCount(1, $result['content']['data'] ?? array(), "$test (limit=1) Only 1 event must be returned");
+			$this->assertEquals(2, $result['content']['pagination']['total'] ?? null, "$test (limit=1) Total must be 2");
+			$this->assertEquals(2, $result['content']['pagination']['page_count'] ?? null, "$test (limit=1) Events are on 2 pages");
+		} finally {
+			$this->getUrl('agendaevents/'.$first_id, "$test (cleanup first event)", 'DELETE');
+			$this->getUrl('agendaevents/'.$second_id, "$test (cleanup second event)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestAgendaEventPost
 	 *
 	 * @return void

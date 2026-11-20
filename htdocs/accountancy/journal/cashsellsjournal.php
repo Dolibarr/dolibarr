@@ -263,7 +263,7 @@ if ($result) {
 				$buyer = null;	// We don't need the buyer in this case
 			}
 			$seller = $mysoc;
-			$vatdata = getTaxesFromId($tax_id, $buyer, $seller, 0);
+			$vatdata = getTaxesFromId($tax_id, $buyer, $seller, 0, 1);
 			$vatdata_cache[$tax_id] = $vatdata;
 		}
 		$compta_tva = (!empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);

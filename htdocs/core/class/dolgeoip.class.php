@@ -99,7 +99,9 @@ class DolGeoIP
 			dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);
 			return;
 		}
-		if (!file_exists($datfile) || !is_readable($datfile)) {
+		// Use dol_is_file() and not file_exists() so a directory (when no datafile is set) is rejected before the GeoIP2 reader leaks memory on it
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if (!dol_is_file($datfile) || !is_readable($datfile)) {
 			$this->error = 'ErrorGeoIPClassNotInitialized';
 			$this->errorlabel = "Datafile ".$datfile." not found";
 			dol_syslog('DolGeoIP '.$this->errorlabel, LOG_ERR);

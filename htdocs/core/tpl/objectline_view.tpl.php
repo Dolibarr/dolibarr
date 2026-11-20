@@ -310,6 +310,10 @@ if (($line->info_bits & 2) == 2) {
 		}
 	}
 
+	// Reference the customer gives to the line (line of its purchase order)
+	if ($line instanceof OrderLine && !empty($line->ref_customer)) {
+		print '<br><span class="opacitymedium">'.$langs->trans('RefCustomerLine').':</span> '.dol_escape_htmltag($line->ref_customer);
+	}
 
 	// Option badge (proposals): the line keeps its real quantity/price but is excluded from the document total
 	if ($object->element == 'propal' && !empty($line->is_option)) {
@@ -469,7 +473,7 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 	$upinctax = isset($line->subprice_ttc) ? $line->subprice_ttc : null;
 	if (!$upinctax && $line->total_ttc && $line->qty) {		// The unit price including tax was not saved, so we try to guess it
 		// Note that unit price is always for 100% of line, it is not prorata of situation percent, when total_ttc is.
-		$upinctax = price2num($line->total_ttc * ($line->situation_percent ? 100 / $line->situation_percent : 1) / (float) $line->qty, 'MU');
+		$upinctax = price2num($line->total_ttc * ($line->situation_percent ? 100 / abs((float) $line->situation_percent) : 1) / (float) $line->qty, 'MU');
 	}
 	if (!$upinctax) {
 		$upinctax = price2num($line->subprice * (1 + ((($line->info_bits & 1) ? 0 : (float) $line->tva_tx) / 100)), 'MU'); // one tax
@@ -545,8 +549,7 @@ print '</td>';
 //Shippable Status
 if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
 	$coldisplay++;
-	print '<td class="linecolstock center">';
-
+	print '<td class="linecolstock center nowraponall">';
 
 	if ($line->fk_product > 0 && $line->product_type == 0) {
 		static $productstatcache = array();
@@ -554,10 +557,12 @@ if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shi
 		if (empty($productstatcache[$line->fk_product])) {
 			$prod = new Product($this->db);
 			$prod->fetch($line->fk_product);
-			$prod->load_stock('nobatch,warehouseopen');
+			$prod->load_stock('nobatch,warehouseopen'); // Virtual stock is loaded too
 			$productstatcache[$line->fk_product]['stockreel'] = $prod->stock_reel;
+			$productstatcache[$line->fk_product]['stockvirtual'] = $prod->stock_theorique;
 		}
 		$stock = $productstatcache[$line->fk_product]['stockreel'];
+		$stockvirtual = $productstatcache[$line->fk_product]['stockvirtual'];
 		$reliquat = $line->qty;
 		if (!empty($object->expeditions[$line->id])) {
 			$reliquat -= $object->expeditions[$line->id];
@@ -568,6 +573,14 @@ if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shi
 			} else {
 				print img_picto($langs->trans("Stock").': '.$stock, 'dolly', '', 0, 0, 0, '', 'error');
 			}
+			// The real and the virtual stock quantities next to the icon: already computed, shown at no cost
+			$langs->load("stocks");
+			$tooltip = $langs->trans("Stock").': '.$stock.' - '.$langs->trans("VirtualStock").': '.$stockvirtual;
+			print ' <span class="small nowraponall" title="'.dol_escape_htmltag($tooltip).'">';
+			print '<span class="'.($stock >= $reliquat ? 'ok' : 'error').'">'.price2num($stock, 'MS').'</span>';
+			print ' <span class="opacitymedium">/</span> ';
+			print '<span class="'.($stockvirtual >= $reliquat ? 'ok' : 'error').'">'.price2num($stockvirtual, 'MS').'</span>';
+			print '</span>';
 		} else {
 			print img_picto($langs->trans("Shipped"), 'statut5');
 		}
@@ -600,9 +613,9 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 		$previous_progress = $line->getAllPrevProgress($object->id);
 		$current_progress = $previous_progress + (float) $line->situation_percent;
-		print '<td class="linecolcycleref nowraponall right">'.$current_progress.'%</td>';
-		$coldisplay++;
 		print '<td  class="nowrap right">'.$line->situation_percent.'%</td>';
+		$coldisplay++;
+		print '<td class="linecolcycleref nowraponall right">'.$current_progress.'%</td>';
 		$coldisplay++;
 		$locataxes_array = getLocalTaxesFromRate($line->tva.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), 0, ($senderissupplier ? $mysoc : $object->thirdparty), ($senderissupplier ? $object->thirdparty : $mysoc));
 		$tmp = calcul_price_total($line->qty, $line->pu, $line->remise_percent, $line->txtva, -1, -1, 0, 'HT', $line->info_bits, $line->type, ($senderissupplier ? $object->thirdparty : $mysoc), $locataxes_array, 100, $object->multicurrency_tx, $line->multicurrency_subprice);

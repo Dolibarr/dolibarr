@@ -1012,7 +1012,7 @@ if ($resql) {
 			if ($j >= $nbmaxlinks) {
 				break;
 			}
-			$newentreyinlist = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($num_releve).'">';
+			$newentreyinlist = '<a target="releve'.dol_escape_htmltag(dol_sanitizeFileName($id.'_'.$num_releve)).'" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($num_releve).'">';
 			$newentreyinlist .= img_picto($num_releve, 'generic', 'class="paddingright"');
 			$newentreyinlist .= dol_escape_htmltag($num_releve).'</a> &nbsp; ';
 			$listoflastreceipts = $newentreyinlist.$listoflastreceipts;

@@ -6,18 +6,53 @@ GROUP_ID="${HOST_GID:-1000}"
 USER_NAME="${HOST_USER:-developer}"
 GROUP_NAME="${HOST_GROUP:-developer}"
 
-# Block the outbound SMTP ports (25, 465, 587) of the machine running the container (the VM).
-# The container uses --network=host, so the block is installed once on the network stack shared
+# Block the outbound SMTP ports (25, 465, 587) from the container.
+# The container uses --network=host, so the block is installed on the network stack shared
 # with the VM (it requires the capability NET_ADMIN, added by claudes.sh).
 # It guarantees that no email can be sent from the container (see dev/build/docker-vibe/README.md).
+# When the unified cgroup v2 hierarchy is mounted, the block is scoped to the cgroup of the
+# container (see smtpblock.sh), so the other processes of the VM (an MTA running on a
+# production server for example) can still connect to these ports. The cgroup path must be
+# the one seen from the host: claudes.sh starts the container with --cgroupns=host for that,
+# otherwise the path read here is relative to the cgroup namespace of the container.
 # Set the environment variable DOCKER_ALLOW_SMTP=1 to start a container without this protection.
 if [ "${DOCKER_ALLOW_SMTP:-}" != "1" ]; then
-    if ! /usr/local/bin/smtpblock.sh; then
-        echo "ERROR: Failed to block the outbound SMTP ports 25, 465 and 587."
-        echo "The container is stopped to guarantee that no email can be sent from it."
-        echo "Run the container with the capability NET_ADMIN (--cap-add=NET_ADMIN),"
-        echo "or set DOCKER_ALLOW_SMTP=1 to run it without the outbound SMTP ports block."
+    # Unified cgroup v2 hierarchy mounted ? (the paths of the scoped block are resolved
+    # by the kernel into that hierarchy only, otherwise the block can not be scoped)
+    SMTPBLOCK_CGROUP2=$(stat -fc %T /sys/fs/cgroup 2>/dev/null)
+    SMTPBLOCK_CGROUP=""
+    if [ "$SMTPBLOCK_CGROUP2" = "cgroup2fs" ]; then
+        # cgroup of the container into the unified hierarchy, as seen by the kernel
+        SMTPBLOCK_CGROUP=$(grep '^0::' /proc/self/cgroup 2>/dev/null | cut -d: -f3)
+    fi
+
+    if [ -n "$SMTPBLOCK_CGROUP" ] && [ "$SMTPBLOCK_CGROUP" != "/" ]; then
+        echo "Block the outbound SMTP ports for the cgroup $SMTPBLOCK_CGROUP"
+        if ! /usr/local/bin/smtpblock.sh --cgroup "$SMTPBLOCK_CGROUP"; then
+            echo "ERROR: Failed to block the outbound SMTP ports 25, 465 and 587 of the container."
+            echo "The container is stopped to guarantee that no email can be sent from it."
+            echo "Run the container with the capability NET_ADMIN (--cap-add=NET_ADMIN),"
+            echo "or set DOCKER_ALLOW_SMTP=1 to run it without the outbound SMTP ports block."
+            exit 1
+        fi
+    elif [ "$SMTPBLOCK_CGROUP2" = "cgroup2fs" ]; then
+        # Unified hierarchy mounted but the cgroup is not seen as from the host: the container
+        # was not started with --cgroupns=host. Refuse to start rather than blocking the
+        # SMTP ports of the whole machine.
+        echo "ERROR: The cgroup of the container ($SMTPBLOCK_CGROUP) is not the one seen by the kernel."
+        echo "The container must be started with --cgroupns=host (done by claudes.sh) so the SMTP block"
+        echo "can be scoped to the only container, or with DOCKER_ALLOW_SMTP=1 to run without it."
         exit 1
+    else
+        # No unified cgroup v2 hierarchy (cgroup v1 on the VM, old distribution): the block
+        # can not be scoped to the container, it is installed on the whole machine like before.
+        if ! /usr/local/bin/smtpblock.sh; then
+            echo "ERROR: Failed to block the outbound SMTP ports 25, 465 and 587."
+            echo "The container is stopped to guarantee that no email can be sent from it."
+            echo "Run the container with the capability NET_ADMIN (--cap-add=NET_ADMIN),"
+            echo "or set DOCKER_ALLOW_SMTP=1 to run it without the outbound SMTP ports block."
+            exit 1
+        fi
     fi
 fi
 
@@ -91,6 +126,17 @@ if [ -n "${HOST_APACHE_LOG_GID:-}" ] && [ "$HOST_APACHE_LOG_GID" != "0" ]; then
     fi
     usermod --append --groups "$LOG_GROUP" "$USER_NAME"
 fi
+# Same for the groups owning the mail logs of the host (mounted by claudes.sh), given as a list of GIDs.
+for LOG_GID in ${HOST_MAIL_LOG_GIDS:-}; do
+    if [ "$LOG_GID" != "0" ]; then
+        LOG_GROUP=$(getent group "$LOG_GID" | cut -d: -f1)
+        if [ -z "$LOG_GROUP" ]; then
+            LOG_GROUP="hostmaillog$LOG_GID"
+            groupadd --gid "$LOG_GID" "$LOG_GROUP"
+        fi
+        usermod --append --groups "$LOG_GROUP" "$USER_NAME"
+    fi
+done
 
 
 # Allow the user to become root inside the container with a passwordless sudo
@@ -110,9 +156,23 @@ fi
 # Claude Code reads its project settings, skills and agents from .claude and
 # its instructions from CLAUDE.md: they are links to the files shared by all
 # the agents (.agents). Links are created only when the files do not exist.
-if [ -n "$WORKDIR" ] && [ -d "$WORKDIR/.agents" ] && [ ! -e "$WORKDIR/.claude" ] && [ ! -L "$WORKDIR/.claude" ]; then
-	echo "Create link $WORKDIR/.claude"
-	runuser -u "$USER_NAME" -- ln -s .agents "$WORKDIR/.claude" 2>/dev/null
+# .claude is a real directory (a link would block the worktrees of Claude Code) whose entries are links.
+if [ -n "$WORKDIR" ] && [ -d "$WORKDIR/.agents" ]; then
+	# Replace the old link .claude -> .agents created by previous versions of this script
+	if [ -L "$WORKDIR/.claude" ] && [ "$(readlink "$WORKDIR/.claude")" = ".agents" ]; then
+		echo "Replace link $WORKDIR/.claude with a directory"
+		rm -f "$WORKDIR/.claude"
+	fi
+	if [ ! -e "$WORKDIR/.claude" ] && [ ! -L "$WORKDIR/.claude" ]; then
+		echo "Create directory $WORKDIR/.claude"
+		runuser -u "$USER_NAME" -- mkdir "$WORKDIR/.claude"
+	fi
+	for ENTRY in skills agents hooks; do
+		if [ -d "$WORKDIR/.agents/$ENTRY" ] && [ -d "$WORKDIR/.claude" ] && [ ! -L "$WORKDIR/.claude" ] && [ ! -e "$WORKDIR/.claude/$ENTRY" ] && [ ! -L "$WORKDIR/.claude/$ENTRY" ]; then
+			echo "Create link $WORKDIR/.claude/$ENTRY"
+			runuser -u "$USER_NAME" -- ln -s "../.agents/$ENTRY" "$WORKDIR/.claude/$ENTRY" 2>/dev/null
+		fi
+	done
 fi
 if [ -n "$WORKDIR" ] && [ -f "$WORKDIR/.agents/AGENTS.md" ] && [ ! -e "$WORKDIR/CLAUDE.md" ] && [ ! -L "$WORKDIR/CLAUDE.md" ]; then
 	echo "Create link $WORKDIR/CLAUDE.md"
