@@ -3444,8 +3444,12 @@ if (!GETPOST('hide_websitemenu')) {
 			$htmltext .= '<!-- Message defined translate key set into WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER -->';
 			$htmltext .= '<br>'.$langs->trans(getDolGlobalString('WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER'));
 		} else {
-			$htmltext .= $langs->trans("ToDeployYourWebsiteOnLiveYouHave3Solutions").'<br><br>';
-			$htmltext .= '<div class="titre inline-block">1</div> - '.$langs->trans("SetHereVirtualHost", $dataroot);
+			$htmltext .= '<span class="opacitymedium">'.$langs->trans("ToDeployYourWebsiteOnLiveYouHave3Solutions").'</span><br><br>';
+			$htmltext .= '<div class="titre inline-block">1</div> - '.$langs->trans("YouCanAlsoTestWithPHPS");
+			$htmltext .= '<br><div class="urllink"><input type="text" id="cliphpserver" spellcheck="false" class="quatrevingtpercent" value="php -S 0.0.0.0:8080 -t '.$dataroot.'"></div>';
+			$htmltext .= ajax_autoselect("cliphpserver");
+			$htmltext .= '<br>';
+			$htmltext .= '<div class="titre inline-block">2</div> - '.$langs->trans("SetHereVirtualHost", $dataroot);
 			$htmltext .= '<br>';
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
@@ -3500,10 +3504,6 @@ if (!GETPOST('hide_websitemenu')) {
 			$htmltext .= '<br>'.$langs->trans("ExampleToUseInApacheVirtualHostConfig").':<br>';
 			$htmltext .= '<div class="quatrevingtpercent exampleapachesetup wordbreak" spellcheck="false">'.dol_nl2br(dol_escape_htmltag($examplewithapache, 1, 1)).'</div>';
 
-			$htmltext .= '<br>';
-			$htmltext .= '<div class="titre inline-block">2</div> - '.$langs->trans("YouCanAlsoTestWithPHPS");
-			$htmltext .= '<br><div class="urllink"><input type="text" id="cliphpserver" spellcheck="false" class="quatrevingtpercent" value="php -S 0.0.0.0:8080 -t '.$dataroot.'"></div>';
-			$htmltext .= ajax_autoselect("cliphpserver");
 			$htmltext .= '<br>';
 			$htmltext .= '<div class="titre inline-block">3</div> - '.$langs->trans("YouCanAlsoDeployToAnotherWHP");
 		}
@@ -6158,7 +6158,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
 		// so editable will be available only from container created from scratch
 		//$out.='<div id="bodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
-		$out .= '<div id="divbodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.'">'."\n";
+		$out .= '<div id="divbodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.' bodywebpagetype-'.dol_sanitizeKeyCode((string) $objectpage->type_container).'">'."\n";
 
 		$newcontent = $objectpage->content;
 
