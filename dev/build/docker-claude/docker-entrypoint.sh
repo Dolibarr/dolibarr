@@ -250,6 +250,20 @@ if [ "$REMOTE_CONTROL" = "1" ]; then
         CLAUDE_OPTIONS="remote-control --permission-mode auto"
     fi
 
+    # Always use the spawn mode same-dir, so claude does not ask to choose between same-dir and worktree at launch.
+    # Not added when --spawn is already provided, nor with --continue or --session-id (claude refuses them with --spawn).
+    ADD_SPAWN=1
+    for arg in "${CLAUDE_ARGS[@]}"; do
+        case "$arg" in
+            --spawn|--spawn=*|-c|--continue|--session-id|--session-id=*)
+                ADD_SPAWN=0
+                ;;
+        esac
+    done
+    if [ "$ADD_SPAWN" = "1" ]; then
+        CLAUDE_OPTIONS="$CLAUDE_OPTIONS --spawn same-dir"
+    fi
+
     # Launching with --rc is the consent to Remote Control: mark its dialog as seen into the state file, otherwise
     # claude asks "Enable Remote Control? (y/n)" at each launch (the state file is copied from the host by claudes.sh).
     # The file is rewritten by the user with an atomic move, as other containers may read it at the same time.

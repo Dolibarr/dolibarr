@@ -69,6 +69,8 @@ outward-facing ones (push, pull request, ...) are still asked. Add `--yolo` to h
 accepted with `--permission-mode bypassPermissions`.
 The confirmation `Enable Remote Control? (y/n)` is answered at launch: `--rc` sets `remoteDialogSeen` into the state
 file of the container (`~/.claude/.claude.json`, copied from the host at each launch, so the answer was lost before).
+The spawn mode is always `same-dir` (`--spawn same-dir` is added), so the choice between same-dir and worktree is not
+asked either. Use `claudes --rc --spawn worktree` to get a git worktree per session instead.
 
 The other arguments are passed to claude, for example to resume the last conversation:
 ````
