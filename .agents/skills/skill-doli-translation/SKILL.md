@@ -14,10 +14,10 @@ allowed-tools:
 
 ## Golden rule
 
-- **Only the `en_US` language files are edited by hand**: `htdocs/<projectname>/langs/en_US/*.lang`.
+- **Only the `en_US` language files are edited by hand**: For the core project: `htdocs/langs/en_US/*.lang` - For external modules: `htdocs/<projectnameornothingforcore>/langs/en_US/*.lang`.
 - All other locales (`fr_FR`, `de_DE`, ...) are **never edited manually** in this repository. They are produced and synchronized by Transifex (external tool). This is the rule stated in the project AGENTS.md ("Internationalisation" section) and it overrides any request to "also add the French translation".
 - When a new key is needed:
-  1. Add it only to `htdocs/<projectname>/langs/en_US/<file>.lang` (PascalCase key names, `Key=English value`).
+  1. Add it only to `htdocs/<projectnameornothingforcore>/langs/en_US/<file>.lang` (PascalCase key names, `Key=English value`).
   2. Push the source to Transifex with `txpush.sh` (translators translate it there).
   3. Pull the translated key back into the locale files with `txpull.sh`.
 - If a French/other-locale string is needed immediately before a pull, it is acceptable to add it manually, but be aware that the next Transifex pull may overwrite it — the authoritative flow remains push/pull.
@@ -28,14 +28,14 @@ allowed-tools:
   - Organization: Defined after the `[o:`, project: defined after the `:p:`.
   - One resource per `.lang` file: `r:admin`, `r:cabinetmed`, etc.
   - For each resource:
-    - `source_file = htdocs/<projectname>/langs/en_US/<file>.lang` (the reference language)
-    - `file_filter = htdocs/<projectname>/langs/<lang>/<file>.lang` (where translated files are written)
+    - `source_file = htdocs/<projectnameornothingforcore>/langs/en_US/<file>.lang` (the reference language)
+    - `file_filter = htdocs/<projectnameornothingforcore>/langs/<lang>/<file>.lang` (where translated files are written)
     - `type = MOZILLAPROPERTIES` (the .lang format `key=value`)
 - The scripts refuse to run if `.tx/` does not exist at the repository root (they assume the root as working directory).
 - **Resource slug rule (before any `-r` option)**: the full resource slug is `<project>.<resource>` where `<project>` is the value after `:p:` and `<resource>` the value after `r:` in `.tx/config` — NOT the module name.
 - Always read `.tx/config` (or run `tx status`) to get the exact slug before pushing or pulling a single resource. The tx client (v1.6.x) exits with code 1 and prints NO error message when the slug is unknown, so a wrong slug fails silently.
 - Transifex client installation / update (see `dev/translation/README`): `sudo pip install --upgrade transifex-client`
-- The direct transifex URL to make translations is: https://app.transifex.com/<organizationname>/<projectname>/translate/
+- The direct transifex URL to make translations is: https://app.transifex.com/<organizationname>/<projectnameornothingforcore>/translate/
 
 ## dev/translation/txpush.sh — push local files to Transifex
 
@@ -46,7 +46,7 @@ Usage (from the repository root):
 ```
 
 - `txpush.sh source` → runs `tx push -s`: pushes the en_US source files to Transifex. **This is the command to run after editing en_US files.**
-- `txpush.sh fr_FR` (or any `xx_XX`) → loops over `htdocs/<projectname>/langs/xx_XX/*.lang` and runs `tx push --skip -r projectname.<file> -t -l xx_XX` for each: pushes a local translation file into Transifex as a translation. Only used to feed Transifex with a locally-corrected translation.
+- `txpush.sh fr_FR` (or any `xx_XX`) → loops over `htdocs/<projectnameornothingforcore>/langs/xx_XX/*.lang` and runs `tx push --skip -r projectname.<file> -t -l xx_XX` for each: pushes a local translation file into Transifex as a translation. Only used to feed Transifex with a locally-corrected translation.
 - A local translation file is skipped if the Transifex side is newer. `-f` forces the overwrite of the translation on Transifex (but not the translation memory).
 - `-r projectname.<file>` limits the push to one resource, e.g. `-r projectname.myfile`.
 
@@ -58,7 +58,7 @@ Usage (from the repository root):
 ./dev/translation/txpull.sh (all|xx_XX) [-r projectname.<file>] [-f] [-s]
 ```
 
-- `txpull.sh all` → loops over every directory in `htdocs/<projectname>/langs/*` except `en_US` and runs `tx pull -l <lang>` for each: downloads all translated files from Transifex into the local tree.
+- `txpull.sh all` → loops over every directory in `htdocs/<projectnameornothingforcore>/langs/*` except `en_US` and runs `tx pull -l <lang>` for each: downloads all translated files from Transifex into the local tree.
 - `txpull.sh fr_FR` (or any `xx_XX`) → `tx pull -l xx_XX`: downloads only that language.
 - A local file is skipped if the local copy is newer than the Transifex one. `-f` forces the local file to be overwritten (does not work with `all`).
 - `-r projectname.<file>` limits the pull to one resource.
@@ -80,16 +80,17 @@ grep -rn "notranslate" htdocs/<projectname>/langs/ --include=*.lang | grep -v "/
 
 - Such translations must not be fixed in the local files (they would be overwritten by the next pull) but on Transifex.
 - For each language `ll_CC` found (e.g. `fr_FR`), the following link opens the Transifex page listing the translations to fix:
-  - Link with the source text: `https://app.transifex.com/<organizationname>/<projectname>/translate/#ll_CC/$?q=text%3ASourceTextToSearch`
-  - Link with the translated text: `https://app.transifex.com/<organizationname>/<projectname>/translate/#ll_CC/$?q=translation_text%3ATranslatedTextToSearch`
-  - Link with the translationkey: `https://app.transifex.com/<organizationname>/<projectname>/translate/#ll_CC/$?q=key%3ATranslationText`
+  - Link with the source text: `https://app.transifex.com/<organizationname>/<projectnameornothingforcore>/translate/#ll_CC/$?q=text%3ASourceTextToSearch`
+  - Link with the translated text: `https://app.transifex.com/<organizationname>/<projectnameornothingforcore>/translate/#ll_CC/$?q=translation_text%3ATranslatedTextToSearch`
+  - Link with the translation key: `https://app.transifex.com/<organizationname>/<projectnameornothingforcore>/translate/#ll_CC/$?q=key%3ATranslationText`
+  - Link to non translated keys: `https://app.transifex.com/<organizationname>/<projectnameornothingforcore>/translate/#ll_CC/$?q=translated%3Ano`
 - Once fixed on Transifex, pull the language again with `txpull.sh ll_CC`.
 
 ## Complete workflow for a new translation key
 
 Example: add the key `DossierMedical=Dossier médical` feature string.
 
-1. Add the English key to `htdocs/<projectname>/langs/en_US/<projectname>.lang`.
+1. Add the English key to `htdocs/<projectnameornothingforcore>/langs/en_US/<projectname>.lang`.
 2. Commit/push the en_US change following the project git workflow.
 3. Run `./dev/translation/txpush.sh source -r projectname.modulename` (or without `-r` for all files).
 4. Wait for translators (or the translation memory) to translate it on Transifex.

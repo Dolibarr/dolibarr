@@ -35,10 +35,18 @@ border-radius: 10px;
 }
 
 
+.opensurveywizardchoices {
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: 30px;
+}
 .index_date, .index_sondage {
-float: left;
-width: 50%;
+flex: 1 1 280px;
 text-align: center;
+}
+img.opacity.imgopensurveywizard {
+max-width: 200px;
 }
 
 .orange {
@@ -322,7 +330,6 @@ div.presentationdatefin {
 div.cadre {
 	padding:10px;
 	font-family:arial, sans-serif;
-	font-size:12px;
 	position:static;
 	top:235px;
 	text-align:center;

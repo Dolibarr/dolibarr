@@ -524,6 +524,43 @@ class Opensurveysondage extends CommonObject
 	}
 
 	/**
+	 * Delete a respondent of the survey, with the answers of a survey of format 'F' (form) that he gave
+	 *
+	 * @param	int		$idusers	Id of the respondent (id_users of the table opensurvey_user_studs)
+	 * @return	int					Return integer <0 if KO, 0 if the respondent is not a respondent of this survey, >0 if OK
+	 */
+	public function deleteVoter($idusers)
+	{
+		// The respondent must be one of this survey
+		$sql = "SELECT id_users FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql .= " WHERE id_users = ".((int) $idusers)." AND id_sondage = '".$this->db->escape($this->id_sondage)."'";
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		if ($this->db->num_rows($resql) == 0) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$resql = $this->db->query("DELETE FROM ".MAIN_DB_PREFIX."opensurvey_user_formanswers WHERE fk_user_survey = ".((int) $idusers));
+		if ($resql) {
+			$resql = $this->db->query("DELETE FROM ".MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_users = ".((int) $idusers)." AND id_sondage = '".$this->db->escape($this->id_sondage)."'");
+		}
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+
+		return 1;
+	}
+
+	/**
 	 * getTooltipContentArray
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18

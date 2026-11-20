@@ -280,6 +280,8 @@ class Members extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
+		global $hookmanager;
+
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
@@ -299,6 +301,16 @@ class Members extends DolibarrApi
 		if ($category > 0) {
 			$sql .= " AND c.fk_categorie = ".((int) $category);
 			$sql .= " AND c.fk_member = t.rowid";
+		}
+		// Add where from hooks
+		$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'members', 'apimethod' => __METHOD__);
+		$object = new Adherent($this->db);
+		$action = 'list';
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			$sql = $hookmanager->resPrint;
+		} elseif ($reshook == 0) {
+			$sql .= $hookmanager->resPrint;
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -351,7 +363,7 @@ class Members extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -904,7 +916,7 @@ class Members extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -1112,6 +1124,25 @@ class Members extends DolibarrApi
 		}
 
 		return $this->memberstats->getAmountByMonth($year, $format);
+	}
+
+	/**
+	 *  Return the number, total amount and average amount of subscriptions by year
+	 *
+	 * @return array 				Array of statistics by year, most recent year first
+	 * @phan-return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>
+	 * @phpstan-return array<array{year:string,nb:int,nb_diff?:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>
+	 *
+	 * @url GET stats/amountbyyear
+	 * @throws	RestException	403		Access denied
+	 */
+	public function getAmountByYear()
+	{
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->memberstats->getAllByYear();
 	}
 
 	/**

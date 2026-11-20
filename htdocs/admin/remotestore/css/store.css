@@ -119,6 +119,9 @@ div.divsearchfield {
 .compatibleafterupdate {
     color: orange;
 }
+.notvalidated {
+    color: orange;
+}
 .compatible {
     color: rgb(0,135,160);
 }
@@ -253,6 +256,7 @@ span.details{
     }
     #listing-content{
         width: 75%;
+        min-width: 0;   /* Override the min-width: 100% of .div-table-responsive so the list stays at the right of the categories */
         float: right;
     }
 }

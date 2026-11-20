@@ -476,9 +476,10 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  * 		@param	int			          $usecontact		    Use contact instead of company
  * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetshipping', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
  *      @param  ?CommonObject         $object               Object we want to build document for
+ *      @param   string               $type                 Type of address ('BILLING' or 'SHIPPING')
  * 		@return	string|int				    		        String with full address or -1 if KO
  */
-function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
+function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null, $type = 'BILLING')
 {
 	global $hookmanager;
 
@@ -499,7 +500,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	$reshook = 0;
 	$stringaddress = '';
 	if (is_object($hookmanager)) {
-		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact);
+		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact, 'type' => $type);
 		$action = '';
 		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -704,7 +705,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 
 			// Intra VAT
-			if (!getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) {
+			if ($type == 'BILLING' && !getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) {
 				if ($usecontact && is_object($targetcontact) && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
 					$targetcontact->fetch_thirdparty();
 					if (!empty($targetcontact->thirdparty->id) && $targetcontact->thirdparty->tva_intra) {
@@ -722,47 +723,49 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 
 			// Professional Ids
-			if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+			if ($type == 'BILLING') {
+				if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
-			}
-			if (getDolGlobalString('MAIN_PROFID2_IN_ADDRESS') && !empty($targetcompany->idprof2)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId2", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID2_IN_ADDRESS') && !empty($targetcompany->idprof2)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId2", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
-			}
-			if (getDolGlobalString('MAIN_PROFID3_IN_ADDRESS') && !empty($targetcompany->idprof3)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId3", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID3_IN_ADDRESS') && !empty($targetcompany->idprof3)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId3", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
-			}
-			if (getDolGlobalString('MAIN_PROFID4_IN_ADDRESS') && !empty($targetcompany->idprof4)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId4", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID4_IN_ADDRESS') && !empty($targetcompany->idprof4)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId4", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
-			}
-			if (getDolGlobalString('MAIN_PROFID5_IN_ADDRESS') && !empty($targetcompany->idprof5)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId5", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID5_IN_ADDRESS') && !empty($targetcompany->idprof5)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId5", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
-			}
-			if (getDolGlobalString('MAIN_PROFID6_IN_ADDRESS') && !empty($targetcompany->idprof6)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId6", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID6_IN_ADDRESS') && !empty($targetcompany->idprof6)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId6", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
 			}
 
 			// Public note
@@ -960,7 +963,7 @@ function pdfWriteVATArray($docgenerator, &$index, $pdf, $outputlangs, $outputlan
 	if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {	// by default, we show detail of vat here
 		// VAT
 		foreach ($docgenerator->tva_array as $tvakey => $tvaval) {
-			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {
+			if ((float) $tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {	// $tvakey can be 'rate (code)', for example '0 (C+S-18)'
 				$tmpatleastoneratenotnull++;
 
 				$index++;
@@ -2235,6 +2238,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$productCustomerPriceStatic = new ProductCustomerPrice($db);
+				// fk_soc and socid are declared in child classes: @phan-suppress-next-line PhanUndeclaredProperty
 				$filter = array('fk_product' => (string) $idprod, 'fk_soc' => (string) $object->socid);
 
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
@@ -2352,8 +2356,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			}
 
 			// Add also info of planned warehouse for lot
-			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
-				$resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock);
+			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {    // @phan-suppress-current-line PhanUndeclaredProperty    // $detail is an ExpeditionLineBatch that owns the property fk_origin_stock
+				$resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock); // @phan-suppress-current-line PhanUndeclaredProperty
 				if ($resproductbatch > 0) {
 					$reswarehouse = $tmpwarehouse->fetch($tmpproductbatch->warehouseid);
 					if ($reswarehouse > 0) {
@@ -3101,10 +3105,12 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			$outputlangs->load('propal');
 
 			foreach ($objects as $elementobject) {
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefProposal");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+				if (canDisplayLinkedObjectInPDF($object, $elementobject)) {
+					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefProposal");
+					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
+					$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+				}
 			}
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
 			$optiontohidelinkedorders = "PDF_HIDE_LINKED_ORDERS_ON_SAME_THIRDPARTY";

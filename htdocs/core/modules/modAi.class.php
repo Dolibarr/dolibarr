@@ -132,6 +132,7 @@ class modAi extends DolibarrModules
 
 		// Prerequisites
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
+		$this->need_setup = 1; // The module can't work without a setup of the AI service and API key
 
 		// Messages at activation
 		$this->warnings_activation = array();

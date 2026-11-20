@@ -176,6 +176,11 @@ class Context
 	 */
 	public $theme;
 
+	/**
+	 * @var ?bool Set to true (by a hook for example) to hide the menus
+	 */
+	public $doNotDisplayMenu;
+
 
 	/**
 	 * Constructor

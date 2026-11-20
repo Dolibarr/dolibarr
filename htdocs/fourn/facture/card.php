@@ -77,9 +77,6 @@ if (isModEnabled('accounting')) {
 }
 
 $langs->loadLangs(array('bills', 'compta', 'suppliers', 'companies', 'products', 'banks', 'admin'));
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 
 $id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
 
@@ -524,6 +521,20 @@ if (empty($reshook)) {
 	if ($action == 'settransportmode' && $usercancreate) {
 		// transport mode
 		$result = $object->setTransportMode(GETPOSTINT('transport_mode_id'));
+	} elseif ($action == 'setpayment_reference' && $usercancreate) {
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+		$object->fetch($id);
+		$object->payment_reference = CompanyBankAccount::cleanPaymentReference(GETPOST('payment_reference', 'alphanohtml'));
+		$errorkey = FactureFournisseur::checkPaymentReference($object->payment_reference);
+		if ($errorkey) {
+			setEventMessages($langs->trans($errorkey), null, 'errors');
+			$action = 'editpayment_reference';
+		} else {
+			$result = $object->update($user);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 	} elseif ($action == 'setlabel' && $usercancreate) {
 		// Set label
 		$object->fetch($id);
@@ -1882,7 +1893,7 @@ if (empty($reshook)) {
 		if (GETPOST('productid') > 0) {
 			$productsupplier = new ProductFournisseur($db);
 			if (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY') == 1) {		// Not the common case
-				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, (float) price2num(GETPOST('qty')), GETPOSTINT('productid'), 'restricthtml', GETPOSTINT('socid')) < 0) {
+				if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, (float) price2num(GETPOST('qty'), '', 2), GETPOSTINT('productid'), 'restricthtml', GETPOSTINT('socid')) < 0) {
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
 			}
@@ -1942,7 +1953,7 @@ if (empty($reshook)) {
 			$tva_tx,
 			$localtax1_tx,
 			$localtax2_tx,
-			(float) price2num(GETPOST('qty'), 'MS'),
+			(float) price2num(GETPOST('qty'), 'MS', 2),
 			GETPOSTINT('productid'),
 			$price_base_type,
 			$info_bits,
@@ -2060,7 +2071,7 @@ if (empty($reshook)) {
 
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);		// Can be '1.2' or '1.2 (CODE)'
 
-		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
 
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
 		if (empty($remise_percent)) {
@@ -3981,6 +3992,13 @@ if ($action == 'create') {
 			}
 			print '</td>';
 
+			// Payment reference
+			print '<tr><td>';
+			print $form->editfieldkey("PaymentReference", 'payment_reference', $object->payment_reference, $object, (int) $form_permission);
+			print '</td><td>';
+			print $form->editfieldval("PaymentReference", 'payment_reference', $object->payment_reference, $object, $form_permission, 'string', GETPOST('payment_reference', 'alphanohtml'), null, null, '', 1, '', 'id', 'auto', array(), $action);
+			print '</td></tr>';
+
 			// Mode of payment
 			$langs->load('bills');
 			print '<tr><td class="nowrap">';
@@ -4601,18 +4619,13 @@ if ($action == 'create') {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table id="tablelines" class="noborder noshadow centpercent">';
 
-			global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-			$forceall = 1;
-			$dateSelector = 0;
-			$inputalsopricewithtax = 1;
-			$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
-			if (getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY')) {
-				$senderissupplier = getDolGlobalInt('SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY');
-			}
+			// Display context of lines, also sets the global variables used by the line templates
+			$linesContext = $object->initObjectLinesDisplay();
 
 			// Show object lines (result may vary according to hidden option MAIN_NO_INPUT_PRICE_WITH_TAX)
-			if (!empty($object->lines)) {
-				$object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
+			// With nolines=1, the card is loaded without its lines, to refresh the other parts of the page in ajax
+			if (!empty($object->lines) && !GETPOSTINT('nolines')) {
+				$object->printObjectLines($action, $linesContext['seller'], $linesContext['buyer'], $lineid, $linesContext['dateSelector']);
 			}
 
 			$num = count($object->lines);
@@ -4628,7 +4641,7 @@ if ($action == 'create') {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
 					if (empty($reshook)) {
-						$object->formAddObjectLine(1, $societe, $mysoc);
+						$object->formAddObjectLine($linesContext['dateSelector'], $linesContext['seller'], $linesContext['buyer']);
 					}
 				}
 			}

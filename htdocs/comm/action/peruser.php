@@ -290,7 +290,10 @@ while ($i < $MAXAGENDA) {
 	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 	$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 
-	if (getDolUserString($source) && getDolUserString($name)) {
+	// A calendar set up before the switch of the user setup page existed holds no AGENDA_EXT_ENABLED_x_y
+	// at all, so the default here keeps it in the list instead of hiding it on upgrade. This is
+	// why it differs from the global calendars above, where a missing constant means disabled.
+	if (getDolUserString($source) && getDolUserString($name) && getDolUserString($enabled, '1')) {
 		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 		$listofextcals[] = array(
 			'type' => 'usersetup',
@@ -734,10 +737,11 @@ $sql .= $hookmanager->resPrint;
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca, ".MAIN_DB_PREFIX."actioncomm as a";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a ON a.fk_action = ca.id";
 // We must filter on resource table
 if ($resourceid > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as r ON r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 
 // We must filter on assignment table
@@ -760,8 +764,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " WHERE a.fk_action = ca.id";
-$sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+$sql .= " WHERE a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
 
 // Condition on actioncode
 if (!empty($actioncode)) {
@@ -798,9 +801,6 @@ if (!empty($actioncode)) {
 			}
 		}
 	}
-}
-if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
 	$sql .= " AND a.fk_project = ".((int) $pid);
@@ -891,6 +891,12 @@ if ($search_categ_cus != -1) {
 		$sql .= " AND EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id AND ca.fk_categorie IN (".$db->sanitize((string) $search_categ_cus)."))";
 	}
 }
+
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 // Sort on date
 $sql .= $db->order("fk_user_action, datep");
 //print $sql;

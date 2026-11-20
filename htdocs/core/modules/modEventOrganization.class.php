@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,6 +138,13 @@ class modEventOrganization extends DolibarrModules
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$this->const = array(
 			[
+				"CONFERENCEORBOOTH_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/eventorganization",
+				"",
+				0,
+			],
+			[
 				'EVENTORGANIZATION_TASK_LABEL',
 				'chaine',
 				'',
@@ -249,7 +256,7 @@ class modEventOrganization extends DolibarrModules
 			'prefix' => img_picto('', 'eventorganization', 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => 'project',
 			'leftmenu' => 'eventorganization',
-			'url' => '/projet/list.php?search_usage_event_organization=1&search_status=99&mainmenu=project&contextpage=organizedevents',
+			'url' => '/projet/list.php?search_usage_event_organization=1&search_status=99&mainmenu=project&contextpage=organizedevents&leftmenu=eventorganization',
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -261,7 +268,7 @@ class modEventOrganization extends DolibarrModules
 			'fk_menu' => 'fk_mainmenu=project,fk_leftmenu=eventorganization',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type' => 'left',			                // This is a Left menu entry
 			'titre' => 'New',
-			'url' => '/projet/card.php?leftmenu=projects&action=create&usage_organize_event=1&usage_opportunity=0',
+			'url' => '/projet/card.php?leftmenu=eventorganization&action=create&usage_organize_event=1&usage_opportunity=0',
 			'langs' => 'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -273,7 +280,7 @@ class modEventOrganization extends DolibarrModules
 			'fk_menu' => 'fk_mainmenu=project,fk_leftmenu=eventorganization',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type' => 'left',			                // This is a Left menu entry
 			'titre' => 'List',
-			'url' => '/projet/list.php?search_usage_event_organization=1&search_status=99&mainmenu=project&contextpage=organizedevents',
+			'url' => '/projet/list.php?search_usage_event_organization=1&search_status=99&mainmenu=project&contextpage=organizedevents&leftmenu=eventorganization',
 			'langs' => 'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -288,7 +295,7 @@ class modEventOrganization extends DolibarrModules
 			'prefix' => img_picto('', 'conferenceorbooth', 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => 'project',
 			'leftmenu' => 'eventorganizationconforbooth',
-			'url' => '/eventorganization/conferenceorbooth_list.php?mainmenu=project',
+			'url' => '/eventorganization/conferenceorbooth_list.php?mainmenu=project&leftmenu=eventorganizationconforbooth',
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -300,7 +307,7 @@ class modEventOrganization extends DolibarrModules
 			'fk_menu' => 'fk_mainmenu=project,fk_leftmenu=eventorganizationconforbooth',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type' => 'left',			                // This is a Left menu entry
 			'titre' => 'New',
-			'url' => '/eventorganization/conferenceorbooth_card.php?leftmenu=projects&action=create',
+			'url' => '/eventorganization/conferenceorbooth_card.php?leftmenu=eventorganizationconforbooth&action=create',
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -312,7 +319,7 @@ class modEventOrganization extends DolibarrModules
 			'fk_menu' => 'fk_mainmenu=project,fk_leftmenu=eventorganizationconforbooth',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type' => 'left',			                // This is a Left menu entry
 			'titre' => 'List',
-			'url' => '/eventorganization/conferenceorbooth_list.php?mainmenu=project',
+			'url' => '/eventorganization/conferenceorbooth_list.php?mainmenu=project&leftmenu=eventorganizationconforbooth',
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -327,7 +334,7 @@ class modEventOrganization extends DolibarrModules
 			'prefix' => img_picto('', 'contact', 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => 'project',
 			'leftmenu' => 'eventorganizationconforattendee',
-			'url' => '/eventorganization/conferenceorboothattendee_list.php?withproject=0&mainmenu=project',
+			'url' => '/eventorganization/conferenceorboothattendee_list.php?withproject=0&mainmenu=project&leftmenu=eventorganizationconforattendee',
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -339,7 +346,7 @@ class modEventOrganization extends DolibarrModules
 			'fk_menu' => 'fk_mainmenu=project,fk_leftmenu=eventorganizationconforattendee',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type' => 'left',			                // This is a Left menu entry
 			'titre' => 'List',
-			'url' => '/eventorganization/conferenceorboothattendee_list.php?withproject=0&mainmenu=project',
+			'url' => '/eventorganization/conferenceorboothattendee_list.php?withproject=0&mainmenu=project&leftmenu=eventorganizationconforattendee',
 			'langs' => 'eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("eventorganization")',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

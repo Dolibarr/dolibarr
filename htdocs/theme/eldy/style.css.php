@@ -300,6 +300,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackhmenu = '000000';
 }
+$colortextbackhmenu = colorGetReadableTextColor($colorbackhmenu1, $colortextbackhmenu, ($colortextbackhmenu == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 $colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
@@ -309,6 +310,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackvmenu = '222222';
 }
+$colortextbackvmenu = colorGetReadableTextColor($colorbackvmenu1, $colortextbackvmenu, ($colortextbackvmenu == 'FFFFFF' ? '222222' : 'FFFFFF'));
 
 $colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
 
@@ -323,6 +325,8 @@ if ($colortexttitle == '') {
 		$colortexttitle = '000000';
 		$colorshadowtitle = 'FFFFFF';
 	}
+	$colortexttitle = colorGetReadableTextColor($colorbacktitle1, $colortexttitle, ($colortexttitle == 'FFFFFF' ? '000000' : 'FFFFFF'));
+	$colorshadowtitle = ($colortexttitle == 'FFFFFF' ? '888888' : 'FFFFFF');
 } else {
 	$colorshadowtitle = '888888';
 }
@@ -335,6 +339,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbacktab = '000000';
 }
+$colortextbacktab = colorGetReadableTextColor($colorbacktabcard1, $colortextbacktab, ($colortextbacktab == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
@@ -477,8 +482,8 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--tableforfieldcolor:#666;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
-	--amountremaintopaybackcolor:none;
-	--productlinestockod: #002200;
+	--amountremaintopaybackcolor:inherit;
+	--productlinestockok: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
@@ -536,7 +541,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	            --tableforfieldcolor:rgb(220,220,220);
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
-	            --amountremaintopaybackcolor:rbg(245,130,46);
+	            --amountremaintopaybackcolor:rgb(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
@@ -783,10 +788,10 @@ section.setupsection {
 	padding: 20px !important;
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
-	box-shadow: 0 0 4px rgb(0, 0, 0, 0.18);
+	box-shadow: 1px 1px 4px rgb(0, 0, 0, 0.18);
 }
 section.setupsection:hover {
-	box-shadow: 0 0 5px #aaa;
+	box-shadow: 1px 1px 5px #aaa;
 }
 
 
@@ -1096,6 +1101,12 @@ input.pageplusone {
 	font-size: 90%;
 	opacity: 0.5;
 }
+.growthup {
+	color: #080;
+}
+.growthdown {
+	color: #968822;
+}
 .fontsizeunset {
 	font-size: unset !important;
 }
@@ -1329,6 +1340,9 @@ th .button {
 }
 .valignmiddle {
 	vertical-align: middle;
+}
+.valignbaseline {
+	vertical-align: baseline;
 }
 .valignbottom {
 	vertical-align: bottom;
@@ -2483,6 +2497,19 @@ div.fiche>form>div.div-table-responsive {
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
 	overflow-x: auto;
 }
+/* The column selector popup must not have the dd as containing block, else the overflow of the div truncates it */
+.div-table-responsive dd.dropdowndd, .div-table-responsive-no-min dd.dropdowndd {
+	position: static;
+}
+.div-table-responsive dd.dropdowndd ul, .div-table-responsive-no-min dd.dropdowndd ul {
+	top: auto;
+	<?php echo $right; ?>: auto;
+	margin-top: 2px;
+	transform: translateX(<?php echo($left == 'left' ? 'calc(-100% + 20px)' : 'calc(100% - 20px)'); ?>);	/* pop is align on right of picto */
+}
+.div-table-responsive dd.dropdowndd ul.selectedfieldsleft, .div-table-responsive-no-min dd.dropdowndd ul.selectedfieldsleft {
+	transform: none;
+}
 
 /* Style used for table in public ticket */
 div.ticketpublicarealist>form>div.div-table-responsive {
@@ -3067,11 +3094,20 @@ td.showDragHandle {
 }
 <?php } ?>
 
-@media screen and (prefers-color-scheme: dark) {
+<?php
+if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
+		print "@media screen and (prefers-color-scheme: dark) {\n";
+	} else {
+		print "@media not print {\n";
+	} ?>
 	.side-nav-vert {
 		border-bottom: 1px solid #888;
 	}
+	<?php
+	print "}\n";
 }
+?>
 
 .side-nav {
 <?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
@@ -3252,7 +3288,8 @@ div.fiche {
 	margin-top: 0px;
 }
 .page-modulehelp div.fiche {
-	width: 100%;
+	width: auto;	/* width:auto + flex-grow so margins fit whether #id-right is block (page in iframe) or flex */
+	flex-grow: 1;
 	margin-left: 15px;
 	margin-right: 20px;
 }
@@ -3778,7 +3815,7 @@ div.menu_titre {
 	padding-bottom: 4px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: <?php echo $leftmenuwidth - 2; ?>px;				/* required to have overflow working. must be same than menu_contenu */
+	width: <?php echo $leftmenuwidth - 10; ?>px;				/* required to have overflow working. must be same than menu_contenu */
 }
 .mainmenuaspan
 {
@@ -3786,7 +3823,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
-	opacity: 0.9;
+	opacity: 0.95;
 }
 
 div.mainmenu {
@@ -4026,7 +4063,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, <?php print getDolGlobalInt('THEME_DARKMODEENABLED') ? 0.4 : 0.2; ?>), 0 2px 6px rgba(60, 60, 60, 0.15);
 	border-radius: 5px;
 }
-.login_table input#username, .login_table input#password, .login_table input#securitycode {
+.login_table input#username, .login_table input#password, .login_table input#securitycode, .login_table input#totpcode {
 	/* border: none; */
 	border-bottom: solid 1px rgba(160,160,160,.4);
 	padding: 8px;
@@ -4036,7 +4073,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	margin-bottom: 5px;
 	margin-right: 10px;
 }
-.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus, .login_table input#totpcode:focus {
 	outline: none !important;
 }
 .login_table .trinputlogin {
@@ -4053,7 +4090,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	padding-left: 10px;
 	width: 14px;
 }
-.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode {
+.login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode, .login_table .tdinputlogin input#totpcode {
 	font-size: 1.1em;
 }
 /* Serve as reference for icon that toggles showing the password */
@@ -4234,7 +4271,7 @@ div.login_block_user {
 .alogin:hover, .atoplogin:hover {
 	text-decoration:underline !important;
 }
-.alogin.aloginpasswordforgotten, .alogin.aloginpasswordforgotten:hover, .alogin.aloginhelp, .alogin.aloginhelp:hover {
+.alogin.aloginpasswordforgotten, .alogin.aloginpasswordforgotten:hover, .alogin.aloginhelp, .alogin.aloginhelp:hover, .alogin.alogincanceltotp, .alogin.alogincanceltotp:hover {
 	opacity: 0.5;
 }
 
@@ -4383,6 +4420,24 @@ input.vmenusearchselectcombo[type=text] {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	width: <?php echo $leftmenuwidth - 2; ?>px;				/* required to have overflow working. must be same than .menu_titre */
+}
+/* Arrow of left menu titles with MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER. Rotation duration must be same than slide animation in lib_head.js.php */
+.menuexpandarrow {
+	width: 10px;
+	text-align: center;
+	font-size: 0.75em;
+	opacity: 0.6;
+	position: absolute;			/* top is not set so the arrow stays on the line of the title, right is relative to div.vmenu */
+	<?php print $right; ?>: 6px;
+	margin-top: 6px;
+	transform: rotate(<?php print($left == 'left' ? '0' : '180'); ?>deg);
+	transition: transform 0.25s;
+}
+.blockvmenuexpanded .menuexpandarrow {
+	transform: rotate(90deg);
+}
+.menuexpandarrowempty {
+	visibility: hidden;
 }
 #menu_contenu_logo { /* padding-top: 0; */ }
 .companylogo { }
@@ -4611,6 +4666,17 @@ img.toolbarbutton {
 li.expanded > a.fmdirlia.jqft.ecmjqft {
 	font-weight: bold !important;
 }
+/* Marker after the name of a directory that has sub directories: closed or open */
+li.lidirecmwithsubdir > a.fmdirlia::after {
+	content: "\25B8";
+	display: inline-block;	/* not underlined with the name */
+	padding-left: 6px;
+	opacity: 0.6;
+	font-weight: normal;
+}
+li.lidirecmwithsubdir.expanded > a.fmdirlia::after {
+	content: "\25BE";
+}
 
 .divfmdirlia {
 	width: calc(100% - 100px);
@@ -4646,7 +4712,7 @@ div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
 */
 div.tabBar {
 	color: var(--colortextbacktab);
-	padding-top: 20px;
+	padding-top: 30px;
 	padding-left: 0px; padding-right: 0px;
 	padding-bottom: 2px;
 	margin: 0px 0px 30px 0px;
@@ -5040,21 +5106,59 @@ table.noborder {
 .fichehalfright table.noborder, .fichehalfleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
-table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
-	<?php
-	if ($userborderontable) { ?>
+<?php if ($userborderontable) { ?>
+/* Lateral borders are painted by the cells of the first and last column of each row,
+   so they can not be overpainted by the cell backgrounds when border is not collapsed and corners are rounded. */
+table.liste > tbody > tr > td:first-child, table.liste > tbody > tr > th:first-child,
+table.liste > thead > tr > td:first-child, table.liste > thead > tr > th:first-child,
+table.liste > tfoot > tr > td:first-child, table.liste > tfoot > tr > th:first-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > td:first-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > th:first-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > td:first-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > th:first-child,
+table.formdoc > tbody > tr > td:first-child, table.formdoc > tbody > tr > th:first-child,
+table.formdoc > thead > tr > td:first-child, table.formdoc > thead > tr > th:first-child,
+div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
 	border-left: 1px solid var(--colortopbordertitle1);
-	border-right: 1px solid var(--colortopbordertitle1);
-	<?php } ?>
 }
+table.liste > tbody > tr > td:last-child, table.liste > tbody > tr > th:last-child,
+table.liste > thead > tr > td:last-child, table.liste > thead > tr > th:last-child,
+table.liste > tfoot > tr > td:last-child, table.liste > tfoot > tr > th:last-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > td:last-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > th:last-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > td:last-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > th:last-child,
+table.formdoc > tbody > tr > td:last-child, table.formdoc > tbody > tr > th:last-child,
+table.formdoc > thead > tr > td:last-child, table.formdoc > thead > tr > th:last-child,
+div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
+	border-right: 1px solid var(--colortopbordertitle1);
+}
+<?php } ?>
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 	border-collapse: separate !important;
 	border-spacing: 0px;
+	margin: 0px 0px 20px 0px;
+}
+/* Top border is painted by the cells of the first row (like the bottom border painted by the cells of the last row),
+   so it can not be overpainted by the cell backgrounds when border is not collapsed and corners are rounded. */
+table.liste > *:first-child > tr:first-child > td, table.liste > *:first-child > tr:first-child > th,
+table.noborder > *:first-child > tr:first-child > td, table.noborder > *:first-child > tr:first-child > th,
+table.formdoc > *:first-child > tr:first-child > td, table.formdoc > *:first-child > tr:first-child > th,
+div.noborder:not(.paymenttable):not(.margintable) {
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
-	margin: 0px 0px 20px 0px;
+}
+/* No top border when the table is attached under a filter bar or a title bar
+   (the liste_titre_bydiv is the header of the card, the table continues it) */
+table.liste.listwithfilterbefore > *:first-child > tr:first-child > td, table.liste.listwithfilterbefore > *:first-child > tr:first-child > th,
+table.noborder.listwithfilterbefore > *:first-child > tr:first-child > td, table.noborder.listwithfilterbefore > *:first-child > tr:first-child > th,
+table.formdoc.listwithfilterbefore > *:first-child > tr:first-child > td, table.formdoc.listwithfilterbefore > *:first-child > tr:first-child > th,
+div.liste_titre_bydiv ~ div.div-table-responsive > table > *:first-child > tr:first-child > td,
+div.liste_titre_bydiv ~ div.div-table-responsive > table > *:first-child > tr:first-child > th,
+div.liste_titre_bydiv ~ div.div-table-responsive-no-min > table > *:first-child > tr:first-child > td,
+div.liste_titre_bydiv ~ div.div-table-responsive-no-min > table > *:first-child > tr:first-child > th,
+div.liste_titre_bydiv + table > *:first-child > tr:first-child > td,
+div.liste_titre_bydiv + table > *:first-child > tr:first-child > th {
+	border-top-width: 0px;
+	border-top-style: none;
 }
 #tablelines, #tablelinesservice {
 	border-bottom-width: 1px;
@@ -5088,6 +5192,9 @@ table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type {
 /* CSS to remove the interline border */
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
+}
+/* Keep the top border of the card on the first row */
+table.nointerlines tr:not(:first-child) td {
 	border-top: unset !important;
 }
 
@@ -5104,13 +5211,25 @@ table.noborder.cal_month {
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:first-child,
 table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
-table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > td:first-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > th:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > th:first-child,
+table.formdoc > *:first-child > tr:first-child > td:first-child,
+table.formdoc > *:first-child > tr:first-child > th:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
 table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
-table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > td:last-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > th:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > th:last-child,
+table.formdoc > *:first-child > tr:first-child > td:last-child,
+table.formdoc > *:first-child > tr:first-child > th:last-child {
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
@@ -5332,6 +5451,9 @@ div.refaddress div.address {
 }
 div.refidno form {
 	display: inline-block;
+	/* Negative vertical margins so the edit form (select2 28px + button) does not increase the line height of the banner */
+	margin-top: -4px;
+	margin-bottom: -4px;
 }
 
 div.pagination {
@@ -5366,7 +5488,7 @@ li.pagination.paginationpage.paginationpageleft, li.pagination.paginationpage.pa
 }
 div.pagination li.pagination a,
 div.pagination li.pagination span {
-  padding: 6px 12px;
+  padding: 5px 12px;
   line-height: 1.42857143;
   text-decoration: none;
   background-repeat: repeat-x;
@@ -5707,6 +5829,10 @@ table.tableforservicepart1 tr td {
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
 }
+.paymenttable > *:first-child > tr:first-child > td, .paymenttable > *:first-child > tr:first-child > th,
+.margintable > *:first-child > tr:first-child > td, .margintable > *:first-child > tr:first-child > th {
+	border-top: none !important;
+}
 .bordertopimp {
 	border-top: 1px solid var(--colortopbordertitle1) !important;
 }
@@ -6025,7 +6151,7 @@ table.liste tr.oddeven:nth-of-type(even) {
 .boxtable {
 	border-bottom-width: 1px;
 	background: var(--colorbackbody);
-	border-top: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
+	border-top: 0;
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
 .boxtable tr td.tdboxstats {
@@ -6662,7 +6788,7 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 
 /* height of top title */
 .fiche > table.table-fiche-title tr.toptitle, .fiche > form > table.table-fiche-title tr.toptitle {
-	height: 60px;
+	height: 54px;
 }
 /* height of other title */
 table.table-fiche-title tr.toptitle, table.table-fiche-title tr.toptitle {
@@ -7238,6 +7364,11 @@ span#morelines {
 	background: #f5f5f5 !important;
 	border: 1px solid #ccc !important;
 }
+.websitebar button.button, .websitebar button.buttonDelete {
+	/* Align height of native button elements with sibling anchor buttons (button keeps UA font-size and line-height) */
+	font-size: inherit;
+	line-height: normal;
+}
 .websiteselection {
 	/* display: inline-block; */
 	padding-<?php echo $right; ?>: 10px;
@@ -7323,6 +7454,7 @@ table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
 table.cal_month td { padding-left: 1px !important; padding-right: 1px !important; }
 table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !important; }
+table.cal_month td.cal_current_month, table.cal_month td.cal_other_month { padding-top: 0 !important; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E8E8E8; border-right: 0; border-bottom: solid 1px #E8E8E8; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E8E8E8; }
 .cal_current_month_oneday { border-right: solid 1px #E8E8E8; }
@@ -8069,6 +8201,16 @@ td.gtaskheading.gstartdate, td.gtaskheading.genddate {
 	border-left: none;
 	border-right: none;
 	border-top: none;
+}
+
+/* Field to choose files of the file manager (filemanager.tpl.php): files can be dropped on it */
+input[type="file"].ecmfiledropinput, div.tabBar input[type="file"].ecmfiledropinput {
+	border: 2px dotted var(--colortextlink);
+	border-radius: 4px;
+}
+input[type="file"].ecmfiledropinput.ecmfiledropinputover, div.tabBar input[type="file"].ecmfiledropinput.ecmfiledropinputover {
+	border-style: solid;
+	background-color: var(--colorbacklinepairhover);
 }
 
 /* ============================================================================== */
@@ -9027,6 +9169,13 @@ dd.dropdowndd ul li {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+}
+/* Fixed width for the dd of the multiselect array (list columns selector of list pages),
+ * whatever the length of the fields labels, and no horizontal scrollbar */
+dd.dropdowndd ul {
+	width: 260px;
+	max-width: calc(100vw - 40px);
+	overflow-x: hidden;
 }
 
 /* ============================================================================== */

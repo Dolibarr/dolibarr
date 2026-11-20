@@ -301,6 +301,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackhmenu = '000000';
 }
+$colortextbackhmenu = colorGetReadableTextColor($colorbackhmenu1, $colortextbackhmenu, ($colortextbackhmenu == 'FFFFFF' ? '000000' : 'FFFFFF'));
 
 $colorbackvmenu1 = implode(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
@@ -310,6 +311,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbackvmenu = '222222';
 }
+$colortextbackvmenu = colorGetReadableTextColor($colorbackvmenu1, $colortextbackvmenu, ($colortextbackvmenu == 'FFFFFF' ? '222222' : 'FFFFFF'));
 
 $colortopbordertitle1 = implode(',', colorStringToArray($colortopbordertitle1)); // Normalize value to 'x,y,z'
 
@@ -324,6 +326,8 @@ if ($colortexttitle == '') {
 		$colortexttitle = '101010';
 		$colorshadowtitle = 'FFFFFF';
 	}
+	$colortexttitle = colorGetReadableTextColor($colorbacktitle1, $colortexttitle, ($colortexttitle == 'FFFFFF' ? '101010' : 'FFFFFF'));
+	$colorshadowtitle = ($colortexttitle == 'FFFFFF' ? '888888' : 'FFFFFF');
 } else {
 	$colorshadowtitle = '888888';
 }
@@ -336,6 +340,7 @@ if ($tmpval <= 460) {
 } else {
 	$colortextbacktab = '111111';
 }
+$colortextbacktab = colorGetReadableTextColor($colorbacktabcard1, $colortextbacktab, ($colortextbacktab == 'FFFFFF' ? '111111' : 'FFFFFF'));
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
 $colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1));
@@ -452,8 +457,8 @@ $leftmenuwidth = 254;
 	--tableforfieldcolor:#666;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
-	--amountremaintopaybackcolor:none;
-	--productlinestockod: #002200;
+	--amountremaintopaybackcolor:inherit;
+	--productlinestockok: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
@@ -513,7 +518,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	            --tableforfieldcolor:rgb(220,220,220);
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
-	            --amountremaintopaybackcolor:rbg(245,130,46);
+	            --amountremaintopaybackcolor:rgb(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
@@ -987,6 +992,12 @@ input.pageplusone {
 	font-size: 95%;
 	opacity: 0.5;
 }
+.growthup {
+	color: #080;
+}
+.growthdown {
+	color: #968822;
+}
 .fontsizeunset {
 	font-size: unset !important;
 }
@@ -1213,6 +1224,9 @@ th .button {
 }
 .valignmiddle {
 	vertical-align: middle;
+}
+.valignbaseline {
+	vertical-align: baseline;
 }
 .valignbottom {
 	vertical-align: bottom;
@@ -2321,6 +2335,19 @@ div.fiche>form>div.div-table-responsive {
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
 	overflow-x: auto;
 }
+/* The column selector popup must not have the dd as containing block, else the overflow of the div truncates it */
+.div-table-responsive dd.dropdowndd, .div-table-responsive-no-min dd.dropdowndd {
+	position: static;
+}
+.div-table-responsive dd.dropdowndd ul, .div-table-responsive-no-min dd.dropdowndd ul {
+	top: auto;
+	<?php echo $right; ?>: auto;
+	margin-top: 2px;
+	transform: translateX(<?php echo($left == 'left' ? 'calc(-100% + 20px)' : 'calc(100% - 20px)'); ?>);	/* pop is align on right of picto */
+}
+.div-table-responsive dd.dropdowndd ul.selectedfieldsleft, .div-table-responsive-no-min dd.dropdowndd ul.selectedfieldsleft {
+	transform: none;
+}
 
 /* Style used for table in public ticket */
 div.ticketpublicarealist>form>div.div-table-responsive {
@@ -2642,7 +2669,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.login_vertical_align {
 		padding-left: 0;
 	}
-	.login_table input#username, .login_table input#password, .login_table input#securitycode {
+	.login_table input#username, .login_table input#password, .login_table input#securitycode, .login_table input#totpcode {
 		margin-left: 5px !important;
 	}
 	div#login_left, div#login_right {
@@ -3043,7 +3070,8 @@ div.fiche>table:first-child {
 	margin-bottom: 15px !important;
 }
 .page-modulehelp div.fiche {
-	width: 100%;
+	width: auto;	/* width:auto + flex-grow so margins fit whether #id-right is block (page in iframe) or flex */
+	flex-grow: 1;
 	margin-left: 15px;
 	margin-right: 20px;
 }
@@ -3569,7 +3597,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
-	opacity: 0.9;
+	opacity: 0.95;
 }
 
 div.mainmenu {
@@ -3804,7 +3832,7 @@ form#login {
 
 	border-top:solid 1px #f8f8f8;
 }
-.login_table input#username, .login_table input#password, .login_table input#securitycode{
+.login_table input#username, .login_table input#password, .login_table input#securitycode, .login_table input#totpcode{
 	/* border: none; */
 	/* border-bottom: solid 1px rgba(180,180,180,.4); */
 	padding: 5px;
@@ -3813,7 +3841,7 @@ form#login {
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
-.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
+.login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus, .login_table input#totpcode:focus {
 	outline: none !important;
 }
 .login_table .trinputlogin {
@@ -4146,6 +4174,24 @@ div.vmenu, td.vmenu {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+/* Arrow of left menu titles with MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER. Rotation duration must be same than slide animation in lib_head.js.php */
+.menuexpandarrow {
+	width: 10px;
+	text-align: center;
+	font-size: 0.75em;
+	opacity: 0.6;
+	position: absolute;			/* top is not set so the arrow stays on the line of the title, right is relative to div.vmenu */
+	<?php print $right; ?>: 6px;
+	margin-top: 6px;
+	transform: rotate(<?php print($left == 'left' ? '0' : '180'); ?>deg);
+	transition: transform 0.25s;
+}
+.blockvmenuexpanded .menuexpandarrow {
+	transform: rotate(90deg);
+}
+.menuexpandarrowempty {
+	visibility: hidden;
+}
 #menu_contenu_logo { padding-right: 4px; }
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
@@ -4382,6 +4428,17 @@ img.toolbarbutton {
 
 li.expanded > a.fmdirlia.jqft.ecmjqft {
 	font-weight: bold !important;
+}
+/* Marker after the name of a directory that has sub directories: closed or open */
+li.lidirecmwithsubdir > a.fmdirlia::after {
+	content: "\25B8";
+	display: inline-block;	/* not underlined with the name */
+	padding-left: 6px;
+	opacity: 0.6;
+	font-weight: normal;
+}
+li.lidirecmwithsubdir.expanded > a.fmdirlia::after {
+	content: "\25BE";
 }
 
 .divfmdirlia {
@@ -5057,6 +5114,7 @@ table.listwithfilterbefore {
 .confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 .confirmquestions { margin-top: 5px; }
 .confirmquestions .tagtr .tagtd { height: 2em; vertical-align: middle; }
+.confirmquestions .tagtd { padding-top: 5px; padding-bottom: 5px; }	/* same spacing than eldy (where it is set on all .tagtd) */
 
 
 /* Pagination */
@@ -5080,6 +5138,9 @@ div.refidno  {
 }
 div.refidno form {
 	display: inline-block;
+	/* Negative vertical margins so the edit form (select2 28px + button) does not increase the line height of the banner */
+	margin-top: -4px;
+	margin-bottom: -4px;
 }
 div.refaddress div.address {
 	line-height: 1.2em;
@@ -5115,7 +5176,7 @@ div.pagination li {
 
 div.pagination li.pagination a,
 div.pagination li.pagination span {
-  padding: 6px 12px;
+  padding: 5px 12px;
   padding-top: 8px;
   line-height: 1.42857143;
   color: var(--color-black);
@@ -6281,6 +6342,12 @@ div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin,
 	opacity: 0.5;
 }
 
+/* height of top title */
+.fiche > table.table-fiche-title tr.toptitle, .fiche > form > table.table-fiche-title tr.toptitle {
+	height: 54px;
+}
+
+
 table.table-fiche-title tr.toptitle {
 	height: 60px;
 }
@@ -6436,7 +6503,8 @@ div#card-errors {
 
 button.ui-button-icon-only.ui-dialog-titlebar-close {
 	padding: 12px;
-	margin-top: -15px;
+	margin-top: 0;
+	transform: translateY(-50%);	/* center vertically whatever the real height of the button (padding + border) */
 	margin-right: 15px;
 }
 .ui-dialog-content {
@@ -6469,6 +6537,11 @@ div#dialogforpopup {
 
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-button:active, .ui-dialog .ui-dialog-buttonpane .ui-button.ui-state-active, .ui-dialog .ui-dialog-buttonpane .ui-button.ui-state-active:hover {
+	background: var(--butactionbg) !important;	/* same than .butAction instead of the default blue of .ui-state-active */
+	color: var(--textbutaction) !important;
+	border-color: var(--butactionbg) !important;	/* keep border width so button does not move, but remove the blue color */
 }
 .ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
 	padding-left: 1em !important;
@@ -6804,6 +6877,10 @@ span#morelines {
 	margin: 2px 4px 2px 4px  !important;
 	line-height: normal;
 }
+.websitebar button.button, .websitebar button.buttonDelete {
+	/* Align height of native button elements with sibling anchor buttons (button keeps UA font-size) */
+	font-size: inherit;
+}
 .websitebar input.button.bordertransp, .websitebar input.buttonDelete.bordertransp {
 	color: #444 !important;
 	text-shadow: none;
@@ -6881,6 +6958,7 @@ table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
 table.cal_month td { padding-left: 1px !important; padding-right: 1px !important; }
 table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !important; }
+table.cal_month td.cal_current_month, table.cal_month td.cal_other_month { padding-top: 0 !important; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
@@ -7597,6 +7675,16 @@ td.gtaskheading.gstartdate, td.gtaskheading.genddate {
 	border-top: none;
 }
 
+
+/* Field to choose files of the file manager (filemanager.tpl.php): files can be dropped on it */
+input[type="file"].ecmfiledropinput, div.tabBar input[type="file"].ecmfiledropinput {
+	border: 2px dotted var(--colortextlink);
+	border-radius: 4px;
+}
+input[type="file"].ecmfiledropinput.ecmfiledropinputover, div.tabBar input[type="file"].ecmfiledropinput.ecmfiledropinputover {
+	border-style: solid;
+	background-color: var(--colorbacklinepairhover);
+}
 
 /* ============================================================================== */
 /*  jFileTree                                                                     */
@@ -8517,6 +8605,13 @@ dd.dropdowndd ul li {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+}
+/* Fixed width for the dd of the multiselect array (list columns selector of list pages),
+ * whatever the length of the fields labels, and no horizontal scrollbar */
+dd.dropdowndd ul {
+	width: 260px;
+	max-width: calc(100vw - 40px);
+	overflow-x: hidden;
 }
 
 

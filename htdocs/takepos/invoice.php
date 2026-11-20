@@ -445,6 +445,10 @@ if (empty($reshook)) {
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
 
+		// Stock of products with lot/serial is moved below only when this call validates the draft sale.
+		// A later payment on an already validated sale must not move it a second time.
+		$invoicewasdraft = ($invoice->status == Facture::STATUS_DRAFT);
+
 		$invoice->oldcopy = dol_clone($invoice, 2);
 
 		$db->begin();
@@ -590,7 +594,7 @@ if (empty($reshook)) {
 		$warehouseid = 0;
 		// Update stock for batch products
 		if (!$error && $res >= 0) {
-			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
+			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange && $invoicewasdraft) {
 				// Update stocks
 				dol_syslog("Now we record the stock movement for each qualified line");
 
@@ -856,6 +860,14 @@ if (empty($reshook)) {
 
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
+
+		// The header (and what follows) must show the customer of this sale, not the one of the current cart
+		$soc = new Societe($db);
+		if ($invoice->socid > 0) {
+			$soc->fetch($invoice->socid);
+		} else {
+			$soc->fetch(getDolGlobalInt($constforcompanyid));
+		}
 	}
 
 	// If we add a line and no invoice yet, we create the invoice
@@ -1071,7 +1083,7 @@ if (empty($reshook)) {
 		if (getDolGlobalString('TAKEPOS_GROUP_SAME_PRODUCT') && empty($prod->status_batch)) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
-					if ($line->special_code == 4) {
+					if ($line->pos_printer_id > 0) {
 						continue;
 					} // If this line is sended to printer create new line
 					// check if qty in stock
@@ -1150,7 +1162,7 @@ if (empty($reshook)) {
 						$pu_company_ttc = '';
 						$price_base_type = 'HT';
 					}
-					$idoflineadded = $invoice->addline($line['description'], $pu_company_ht, $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, (float) $line['remise_percent'], '', 0, 0, 0, 0, $price_base_type, $pu_company_ttc, $prod->type, -1, 0, '', 0, (empty($parent_line) ? '' : $parent_line), (empty($line['fk_fournprice']) ? 0 : $line['fk_fournprice']), (empty($line['pa_ht']) ? '' : $line['pa_ht']), '', $line['array_options'], 100, 0, $prod->fk_unit, $pu_ht_devise, '', 0, $line_multicurrency_subprice_source);
+					$idoflineadded = $invoice->addline($line['description'], $pu_company_ht, $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, (float) $line['remise_percent'], '', 0, 0, 0, 0, $price_base_type, $pu_company_ttc, $prod->type, -1, 0, '', 0, (empty($parent_line) ? '' : $parent_line), (empty($line['fk_fournprice']) ? 0 : $line['fk_fournprice']), (empty($line['pa_ht']) ? '' : $line['pa_ht']), '', $line['array_options'], 100, 0, $prod->fk_unit, $pu_ht_devise, '', 0, null, $line_multicurrency_subprice_source);
 				}
 			}
 
@@ -1204,7 +1216,7 @@ if (empty($reshook)) {
 
 	if ($action == "deleteline" && ($user->hasRight('takepos', 'editlines') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		/*
-		$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
+		$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || !($line->pos_printer_id > 0)));
 		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 			if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 				$permissiontoupdateline = true;
@@ -1311,7 +1323,7 @@ if (empty($reshook)) {
 	if ($action == "updateqty") {	// Test on permission is done later
 		foreach ($invoice->lines as $line) {
 			if ($line->id == $idline) {
-				$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
+				$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || !($line->pos_printer_id > 0)));
 				if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 					if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 						$permissiontoupdateline = true;
@@ -1368,7 +1380,7 @@ if (empty($reshook)) {
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 					// echo $langs->trans("CantBeLessThanMinPrice");
 				} else {
-					$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
+					$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || !($line->pos_printer_id > 0)));
 					if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 						if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 							$permissiontoupdateline = true;
@@ -1419,7 +1431,7 @@ if (empty($reshook)) {
 					$langs->load("products");
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 				} else {
-					$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || $line->special_code != "4"));
+					$permissiontoupdateline = ($user->hasRight('takepos', 'editlines') && ($user->hasRight('takepos', 'editorderedlines') || !($line->pos_printer_id > 0)));
 					if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 						if ($invoice->status == $invoice::STATUS_DRAFT && $invoice->pos_source && $invoice->module_source == 'takepos') {
 							$permissiontoupdateline = true;
@@ -1553,7 +1565,7 @@ if (empty($reshook)) {
 		$catsprinter3 = explode(';', getDolGlobalString('TAKEPOS_PRINTED_CATEGORIES_3'));
 		$linestoprint = 0;
 		foreach ($invoice->lines as $line) {
-			if ($line->special_code == "4") {
+			if ($line->pos_printer_id > 0) {
 				continue;
 			}
 			$c = new Categorie($db);
@@ -1565,7 +1577,7 @@ if (empty($reshook)) {
 			}
 			if ($count > 0) {
 				$linestoprint++;
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='1' where rowid = ".((int) $line->id); //Set to print on printer 1
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set pos_printer_id = -1 where rowid = ".((int) $line->id); //Set to print on printer 1
 				$db->query($sql);
 				$order_receipt_printer1 .= '<tr><td class="left">';
 				if ($line->fk_product) {
@@ -1588,13 +1600,13 @@ if (empty($reshook)) {
 			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 1
 			echo "';</script>";
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture = ".((int) $invoice->id); // Set as printed
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set pos_printer_id = 1 where pos_printer_id = -1 and fk_facture = ".((int) $invoice->id); // Set as printed
 		$db->query($sql);
 		$invoice->fetch($placeid); //Reload object after set lines as printed
 		$linestoprint = 0;
 
 		foreach ($invoice->lines as $line) {
-			if ($line->special_code == "4") {
+			if ($line->pos_printer_id > 0) {
 				continue;
 			}
 			$c = new Categorie($db);
@@ -1603,7 +1615,7 @@ if (empty($reshook)) {
 			$count = count($result);
 			if ($count > 0) {
 				$linestoprint++;
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='2' where rowid = ".((int) $line->id); //Set to print on printer 2
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set pos_printer_id = -2 where rowid = ".((int) $line->id); //Set to print on printer 2
 				$db->query($sql);
 				$order_receipt_printer2 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 				if (!empty($line->array_options['options_order_notes'])) {
@@ -1620,13 +1632,13 @@ if (empty($reshook)) {
 			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 2
 			echo "';</script>";
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture = ".((int) $invoice->id); // Set as printed
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set pos_printer_id = 2 where pos_printer_id = -2 and fk_facture = ".((int) $invoice->id); // Set as printed
 		$db->query($sql);
 		$invoice->fetch($placeid); //Reload object after set lines as printed
 		$linestoprint = 0;
 
 		foreach ($invoice->lines as $line) {
-			if ($line->special_code == "4") {
+			if ($line->pos_printer_id > 0) {
 				continue;
 			}
 			$c = new Categorie($db);
@@ -1635,7 +1647,7 @@ if (empty($reshook)) {
 			$count = count($result);
 			if ($count > 0) {
 				$linestoprint++;
-				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='3' where rowid = ".((int) $line->id); //Set to print on printer 3
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set pos_printer_id = -3 where rowid = ".((int) $line->id); //Set to print on printer 3
 				$db->query($sql);
 				$order_receipt_printer3 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 				if (!empty($line->array_options['options_order_notes'])) {
@@ -1652,7 +1664,7 @@ if (empty($reshook)) {
 			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 3
 			echo "';</script>";
 		}
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='3' and fk_facture = ".((int) $invoice->id); // Set as printed
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set pos_printer_id = 3 where pos_printer_id = -3 and fk_facture = ".((int) $invoice->id); // Set as printed
 		$db->query($sql);
 		$invoice->fetch($placeid); //Reload object after set lines as printed
 	}
@@ -1733,6 +1745,9 @@ if (empty($reshook)) {
 			}
 		}
 	}
+} else {
+	// Standard actions replaced by a hook: the hook provides the section with the invoice link
+	$sectionwithinvoicelink = $hookmanager->resPrint;
 }
 
 
@@ -1918,6 +1933,14 @@ function PrintHTMLToSlashPrint(id){
 function PrintByESCPOSOld(id){
 	console.log("PrintByESCPOSOld id=" + id);
 	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo currentToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id, function(data, status) {
+		// The answer must be the base64url ESC/POS ticket. Anything else (login page after session loss, PHP error...) must not be sent to the printer.
+		data = $.trim(data);
+		if (!/^[A-Za-z0-9_-]+$/.test(data)) {
+			console.log("PrintByESCPOSOld: answer is not a ticket, print canceled");
+			alert("<?php echo dol_escape_js($langs->transnoentitiesnoconv("FailedToSendToPrinter")); ?>");
+			window.location.reload();	// Session lost: Dolibarr will show the login page
+			return;
+		}
 		$.ajax({
 			type: "POST",
 			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
@@ -2372,16 +2395,26 @@ if ($placeid > 0) {
 		$tmplines = array_reverse($invoice->lines);
 		$htmlsupplements = array();
 		foreach ($tmplines as $line) {
+			// Allow external modules to replace the display of a line
+			$parameters = array('line' => $line, 'htmlsupplements' => $htmlsupplements, 'form' => $form);
+			$reshook = $hookmanager->executeHooks('takeposShowInvoiceLine', $parameters, $invoice, $action);    // Note that $action and $object may have been modified by some hooks
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} elseif ($reshook > 0) {
+				print $hookmanager->resPrint;
+				continue;
+			}
+
 			if ($line->fk_parent_line != false) {
 				if (!isset($htmlsupplements[$line->fk_parent_line])) {
 					$htmlsupplements[$line->fk_parent_line] = '';
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '<tr class="drag drop oddeven posinvoiceline';
-				if ($line->special_code == "4") {
+				if ($line->pos_printer_id > 0) {
 					$htmlsupplements[$line->fk_parent_line] .= ' order';
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '" id="'.$line->id.'"';
-				if ($line->special_code == "4") {
+				if ($line->pos_printer_id > 0) {
 					$htmlsupplements[$line->fk_parent_line] .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '>';
@@ -2422,11 +2455,11 @@ if ($placeid > 0) {
 			$htmlforlines = '';
 
 			$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
-			if ($line->special_code == "4") {
+			if ($line->pos_printer_id > 0) {
 				$htmlforlines .= ' order';
 			}
 			$htmlforlines .= '" id="'.$line->id.'"';
-			if ($line->special_code == "4") {
+			if ($line->pos_printer_id > 0) {
 				$htmlforlines .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
 			}
 			$htmlforlines .= '>';

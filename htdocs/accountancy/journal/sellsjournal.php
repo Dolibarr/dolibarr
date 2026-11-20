@@ -291,7 +291,7 @@ if ($result) {
 				$buyer = null;	// We don't need the buyer in this case
 			}
 			$seller = $mysoc;
-			$vatdata = getTaxesFromId($tax_id, $buyer, $seller, 0);
+			$vatdata = getTaxesFromId($tax_id, $buyer, $seller, 0, 1);
 			$vatdata_cache[$vatdata_cache_key] = $vatdata;
 		}
 		if (!empty(length_accountg($accountCustomerDepositVAT)) && $accountCustomerDepositVAT != 'NotDefined' && $obj->type == Facture::TYPE_DEPOSIT) {

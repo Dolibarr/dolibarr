@@ -1313,7 +1313,7 @@ class FormOther
 
 		// Define selectboxlist
 		$arrayboxtoactivatelabel = array();
-		if (getDolUserString($confuserzone)) {
+		if (getDolUserString($confuserzone) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {	// No combo list to add a widget in text browser mode
 			$boxorder = '';
 			$langs->load("boxes"); // Load label of boxes
 			foreach ($boxactivated as $box) {

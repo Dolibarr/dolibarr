@@ -35,6 +35,7 @@ require '../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -279,6 +280,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 $morehtmlstatus = '';
 $outputlangs = $langs;
@@ -604,7 +606,10 @@ if ($id > 0) {
 		print '</td></tr>';
 
 		// Interest basis
-		$bases = array(0 => $langs->trans('LoanInterestBasisPeriod'), 1 => $langs->trans('LoanInterestBasisDaily'));
+		$bases = array();
+		foreach (loanInterestBases() as $key => $label) {
+			$bases[$key] = $langs->trans($label);
+		}
 		print '<tr><td>'.$form->textwithpicto($langs->trans("LoanInterestBasis"), $langs->trans("LoanInterestBasisHelp")).'</td>';
 		print '<td>';
 		if ($action == 'edit') {
@@ -861,6 +866,22 @@ if ($id > 0) {
 
 				print "</div>";
 			}
+
+			/*
+			 * Generated documents
+			 */
+			print '<div class="fichecenter"><div class="fichehalfleft">';
+			print '<a name="builddoc"></a>'; // ancre
+
+			$objref = dol_sanitizeFileName($object->ref);
+			$filedir = $conf->loan->dir_output.'/'.$objref;
+			$urlsource = $_SERVER["PHP_SELF"].'?id='.$object->id;
+			$genallowed = (int) $user->hasRight('loan', 'read');		// If you can read, you can build the document to read its content
+			$delallowed = (int) $user->hasRight('loan', 'write');	// If you can create or edit, you can remove a file on the card
+			print $formfile->showdocuments('loan:Loan', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+
+			print '</div><div class="fichehalfright">';
+			print '</div></div>';
 		}
 	} else {
 		// Loan not found

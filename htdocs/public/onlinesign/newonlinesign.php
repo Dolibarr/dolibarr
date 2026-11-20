@@ -346,7 +346,7 @@ $error = 0;
 // Signature on commercial proposal
 if ($source == 'proposal') {
 	$found = true;
-	$langs->load("proposal");
+	$langs->load("propal");
 
 	$result = $object->fetch_thirdparty($object->socid);
 
@@ -526,7 +526,7 @@ if ($source == 'proposal') {
 	print '</td></tr>'."\n";
 } elseif ($source == 'contract') { // Signature on contract
 	$found = true;
-	$langs->load("contract");
+	$langs->load("contracts");
 
 	$result = $object->fetch_thirdparty($object->socid);
 
