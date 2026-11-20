@@ -4198,7 +4198,7 @@ abstract class CommonObject
 							// will give different results than the one stored in database (the good one are the one in database and we must not fix anything).
 							// A line entered including tax keeps the total including tax computed from its unit price including tax.
 							$isenteredincludingtax = ($fieldupttc && (float) $obj->total_ttc == (float) price2num($obj->up_ttc * $obj->qty * (1 - $obj->remise_percent / 100), 'MT'));
-							if ($obj->description != '(DEPOSIT)' && !$isenteredincludingtax && !getDolGlobalInt('MAIN_DISABLE_AUTOFIX_CORRUPTED_LINES_WHEN_TOTAL_DOES_NOT_MATCH_RECALCULATION_FROM_UP')) {
+							if (strpos((string) $obj->description, '(DEPOSIT)') !== 0 && !$isenteredincludingtax && !getDolGlobalInt('MAIN_DISABLE_AUTOFIX_CORRUPTED_LINES_WHEN_TOTAL_DOES_NOT_MATCH_RECALCULATION_FROM_UP')) {
 								// After calculation from HT, totals sum of all part is consistent ($diff_on_current_total) + total_ht is same + we are not on a line with a bad unit amount + we have found a difference between VAT part calculated from unit price and the VAT part into database,
 								// and we ask to force the use of rounding on line (like what we did on initial calculation) so this should not happen, so we force the update of line to fix this.
 								// This part of code must be called only to fix corrupted data due to the use of the old feature to round total instead of rounding lines.
