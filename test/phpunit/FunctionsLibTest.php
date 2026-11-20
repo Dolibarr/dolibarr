@@ -366,6 +366,15 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
 
+		// Forbidden fields or SQL keywords are also forbidden into a subrequest
+		$filter = "(t.label:IN:1,user)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.fk_user:IN:SELECT rowid FROM llx_user WHERE pass_crypted < 'a')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND (1=1)", $sql);
+
 		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is unset (default)
 		$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
 

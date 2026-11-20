@@ -16493,6 +16493,11 @@ function dolForgeSQLCriteriaCallback($matches)
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
 			} elseif (!empty($dolibarr_allow_unsecured_select_in_extrafields_filter)) {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest (should be removed in a future as it allows blind SQL injection)
+				// No word of the subrequest must be a forbidden field (it could be guessed by comparison)
+				$tmpwords = preg_split('/[^a-z0-9_]+/', dol_strtolower($tmpelemarray[$tmpkey]), -1, PREG_SPLIT_NO_EMPTY);
+				if (is_array($tmpwords) && count(array_intersect($tmpwords, $newforbiddenfields)) > 0) {
+					return '1=1';
+				}
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'
 				// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
