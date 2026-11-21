@@ -429,6 +429,36 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
+	print $langs->trans("Locales");
+	print '</td><td>';
+	print '</td></tr>';
+
+	// First day for weeks
+	print '<tr class="oddeven"><td>' . $langs->trans("WeekStartOnDay") . '</td><td>';
+	print $formother->select_dayofweek(getDolGlobalString('MAIN_START_WEEK', '1'), 'MAIN_START_WEEK', 0);
+	print '</td>';
+	print '</tr>';
+
+	// DefaultWorkingDays
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingDays") . '</td><td>';
+	print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5') . '">';
+	print '</td>';
+	print '</tr>';
+
+	// DefaultWorkingHours
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingHours") . '</td><td>';
+	print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18') . '">';
+	print '</td>';
+	print '</tr>';
+
+	// Firstname/Name
+	print '<tr class="oddeven"><td>' . $langs->trans("FirstnameNamePosition") . '</td><td>';
+	$array = array(0 => $langs->trans("Firstname") . ' ' . $langs->trans("Lastname"), 1 => $langs->trans("Lastname") . ' ' . $langs->trans("Firstname"));
+	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, getDolGlobalInt('MAIN_FIRSTNAME_NAME_POSITION', 0));
+	print '</td>';
+	print '</tr>';
+
 	print '</table>' . "\n";
 	print '</div>';
 
@@ -437,6 +467,7 @@ if ($mode == 'other') {
 	print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 	print '</div>';
 
+	print '<br>';
 	print '<br>';
 	print '<br>';
 
@@ -448,6 +479,12 @@ if ($mode == 'other') {
 	print $langs->trans("Miscellaneous");
 	print '</td>';
 	print '<td></td>';
+	print '</tr>';
+
+	// Show search area in top menu
+	print '<tr class="oddeven"><td>' . img_picto('', 'search', 'class="pictofixedwidth"'). ' '.$langs->trans("ShowSearchAreaInTopMenu") .'</td><td>';
+	print ajax_constantonoff("MAIN_USE_TOP_MENU_SEARCH_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
 	print '</tr>';
 
 	if (!empty($conf->use_javascript_ajax)) {
@@ -493,31 +530,6 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
-	// First day for weeks
-	print '<tr class="oddeven"><td>' . $langs->trans("WeekStartOnDay") . '</td><td>';
-	print $formother->select_dayofweek(getDolGlobalString('MAIN_START_WEEK', '1'), 'MAIN_START_WEEK', 0);
-	print '</td>';
-	print '</tr>';
-
-	// DefaultWorkingDays
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingDays") . '</td><td>';
-	print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5') . '">';
-	print '</td>';
-	print '</tr>';
-
-	// DefaultWorkingHours
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingHours") . '</td><td>';
-	print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18') . '">';
-	print '</td>';
-	print '</tr>';
-
-	// Firstname/Name
-	print '<tr class="oddeven"><td>' . $langs->trans("FirstnameNamePosition") . '</td><td>';
-	$array = array(0 => $langs->trans("Firstname") . ' ' . $langs->trans("Lastname"), 1 => $langs->trans("Lastname") . ' ' . $langs->trans("Firstname"));
-	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, getDolGlobalInt('MAIN_FIRSTNAME_NAME_POSITION', 0));
-	print '</td>';
-	print '</tr>';
-
 	// Hide unauthorized menus
 	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("HideUnauthorizedMenu"), $langs->trans("JustGrayedOtherwise")) . '</td><td>';
 	print ajax_constantonoff("MAIN_MENU_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
@@ -539,12 +551,6 @@ if ($mode == 'other') {
 	print '</tr>';
 	*/
 
-
-	// Show search area in top menu
-	print '<tr class="oddeven"><td>' . img_picto('', 'search', 'class="pictofixedwidth"'). ' '.$langs->trans("ShowSearchAreaInTopMenu") .'</td><td>';
-	print ajax_constantonoff("MAIN_USE_TOP_MENU_SEARCH_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	print '</td>';
-	print '</tr>';
 
 	// Show bugtrack link
 	print '<tr class="oddeven"><td>';

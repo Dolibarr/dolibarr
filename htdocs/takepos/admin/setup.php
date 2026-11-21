@@ -37,6 +37,7 @@ require '../../main.inc.php'; // Load $user and permissions
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -55,7 +56,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$langs->loadLangs(array("admin", "cashdesk"));
+$langs->loadLangs(array("admin", "banks", "cashdesk"));
 
 global $db, $mysoc;
 
@@ -86,7 +87,6 @@ if ($action == 'set') {
 	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_SORTPRODUCTFIELD", GETPOST('TAKEPOS_SORTPRODUCTFIELD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ADDON", GETPOST('TAKEPOS_ADDON', 'alpha'), 'int', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -122,6 +122,19 @@ if ($action == 'set') {
 } elseif ($action == 'setrefmod') {
 	$value = GETPOST('value', 'alpha');
 	dolibarr_set_const($db, "TAKEPOS_REF_ADDON", $value, 'chaine', 0, '', $conf->entity);
+} elseif ($action == 'setcashcontrol') {
+	// Offset (in hours) of the local time of the point of sale ahead of the time of the server, used to define the end of the day of a cash control
+	$tzoffset = GETPOSTFLOAT('TAKEPOS_CASHCONTROL_TZ_OFFSET');
+	if ($tzoffset < -12 || $tzoffset > 12) {
+		$langs->load("errors");
+		setEventMessages($langs->trans("ErrorBadValueForParameter", GETPOST('TAKEPOS_CASHCONTROL_TZ_OFFSET', 'alphanohtml'), $langs->transnoentitiesnoconv("CashControlTZOffset")), null, 'errors');
+		$error++;
+	} else {
+		$res = dolibarr_set_const($db, "TAKEPOS_CASHCONTROL_TZ_OFFSET", (string) $tzoffset, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
 }
 
 if ($action != '') {
@@ -162,13 +175,12 @@ print dol_get_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
 $now = dol_now();
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-print load_fiche_titre($langs->trans('CashDeskRefNumberingModules'), '', '');
+print '<br>';
 
 print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name")."</td>\n";
-print '<td>'.$langs->trans("Description")."</td>\n";
+print '<td colspan="2">'.$langs->trans("CashDeskRefNumberingModules")."</td>\n";
 print '<td class="nowrap">'.$langs->trans("Example")."</td>\n";
 print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
@@ -200,7 +212,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
+						print '<tr class="oddeven"><td><div class="refid inline-block">'.dolPrintLabel(dol_ucfirst(preg_replace('/^mod_takepos_ref_/', '', $module->getName($langs))))."</div></td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -268,7 +280,7 @@ print "\n";
 print '<br>';
 
 
-print load_fiche_titre($langs->trans('Options'), '', '');
+print '<br>';
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -306,14 +318,6 @@ print '<td>';
 //print $form->selectCategories(Categorie::TYPE_PRODUCT, 'TAKEPOS_ROOT_CATEGORY_ID', null);
 print img_object('', 'category', 'class="paddingright"').$form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0, 0, 'maxwidth500 widthcentpercentminusx');
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
-print "</td></tr>\n";
-
-// Sort product
-print '<tr class="oddeven"><td>';
-print $langs->trans("SortProductField");
-print '<td>';
-$array = array('rowid' => 'TechnicalID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
-print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD', 'rowid'), 0, 0, 0, '', 1);
 print "</td></tr>\n";
 
 print '<tr class="oddeven"><td>';
@@ -386,25 +390,11 @@ print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, 
 // TODO Add link to go to email templates
 print "</td></tr>\n";
 
-// Control cash box at opening pos
-print '<tr class="oddeven"><td>';
-print $langs->trans('ControlCashOpening');
-print '<td>';
-print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
-print "</td></tr>\n";
-
 // Delayed Pay Button
 print '<tr class="oddeven"><td>';
 print $langs->trans('AllowDelayedPayment');
 print '<td>';
 print ajax_constantonoff("TAKEPOS_DELAYED_PAYMENT", array(), $conf->entity, 0, 0, 1, 0);
-print "</td></tr>\n";
-
-// Show price without vat
-print '<tr class="oddeven"><td>';
-print $langs->trans('ShowPriceHT');
-print '<td>';
-print ajax_constantonoff("TAKEPOS_SHOW_HT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Use price excl. taxes (HT) and not price incl. taxes (TTC)
@@ -523,6 +513,44 @@ if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	print '</table>';
 	print '</div>';
 }
+
+print $form->buttonsSaveCancel("Save", '');
+
+print "</form>\n";
+
+print '<br>';
+
+// Cash control
+print load_fiche_titre($langs->trans('CashControl'), '', '');
+
+// A dedicated action is used so this form does not overwrite the constants saved by the action 'set'
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="setcashcontrol">';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+
+print '<tr class="liste_titre">';
+print '<td class="notitlefield">'.$langs->trans("CashControl").'</td><td></td>';
+print "</tr>\n";
+
+// Control cash box at opening pos
+print '<tr class="oddeven"><td>';
+print $langs->trans('ControlCashOpening');
+print '</td><td>';
+print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Offset relative to the time of the server used to define the end of the day of a cash control
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans('CashControlTZOffset'), $langs->trans('CashControlTZOffsetHelp', getServerTimeZoneString()));
+print '</td><td>';
+print '<input type="number" name="TAKEPOS_CASHCONTROL_TZ_OFFSET" min="-12" max="12" step="0.25" class="width75" value="'.dolPrintHTMLForAttribute(getDolGlobalString('TAKEPOS_CASHCONTROL_TZ_OFFSET', '0')).'">';
+print "</td></tr>\n";
+
+print '</table>';
+print '</div>';
 
 print $form->buttonsSaveCancel("Save", '');
 

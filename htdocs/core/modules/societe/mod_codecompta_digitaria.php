@@ -164,9 +164,10 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 		// Warn if the generated code length (prefix + number of characters) does not match the auxiliary
 		// account length: the general ledger would then pad the code with trailing zeros (length_accounta()).
-		if ($this->codeLengthDiffersFromAuxiliaryLength($this->prefixcustomeraccountancycode, (int) $this->customeraccountancycodecharacternumber)
-			|| $this->codeLengthDiffersFromAuxiliaryLength($this->prefixsupplieraccountancycode, (int) $this->supplieraccountancycodecharacternumber)) {
-			$texte .= '<br><div class="warning">'.img_warning().' '.$langs->trans("WarningDigitariaCodeLengthNotMatchingAccountLength", getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')).'</div>';
+		if (getDolGlobalString('SOCIETE_CODECOMPTA_ADDON') == 'mod_codecompta_digitaria'
+			&& ($this->codeLengthDiffersFromAuxiliaryLength($this->prefixcustomeraccountancycode, (int) $this->customeraccountancycodecharacternumber)
+			|| $this->codeLengthDiffersFromAuxiliaryLength($this->prefixsupplieraccountancycode, (int) $this->supplieraccountancycodecharacternumber))) {
+			$texte .= '<div class="warning">'.img_warning().' '.$langs->trans("WarningDigitariaCodeLengthNotMatchingAccountLength", getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')).'</div>';
 		}
 
 		$texte .= '</form>';
@@ -411,7 +412,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (!is_array($storage)) {
 			return false; // bad type, $this->error already set
 		}
-		list($table, $column) = $storage;
+		$table = $storage[0];
+		$column = $storage[1];
 
 		$sql = "SELECT ".$db->sanitize($column)." as code";
 		$sql .= " FROM ".$db->prefix().$db->sanitize($table);
@@ -479,7 +481,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (!is_array($storage)) {
 			return -1; // bad type, $this->error already set
 		}
-		list($table, $typethirdparty) = $storage;
+		$table = $storage[0];
+		$typethirdparty = $storage[1];
 
 		$sql = "SELECT " . $db->sanitize($typethirdparty) . " FROM " . $db->prefix() . $db->sanitize($table);
 		$sql .= " WHERE " . $db->sanitize($typethirdparty) . " = '" . $db->escape($code) . "'";

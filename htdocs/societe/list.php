@@ -1855,7 +1855,7 @@ if (!empty($arrayfields['s2.nom']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // IP Address
@@ -2065,7 +2065,7 @@ while ($i < $imaxinloop) {
 		}
 		// Address
 		if (!empty($arrayfields['s.address']['checked'])) {
-			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($companystatic->address).'">'.dolPrintHTML($companystatic->address).'</td>';
+			print '<td title="'.dolPrintHTMLForAttribute($companystatic->address).'"><div class="twolinesmax-normallineheight minwidth200onall maxwidth250">'.dolPrintHTML($companystatic->address).'</div></td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2093,7 +2093,7 @@ while ($i < $imaxinloop) {
 		}
 		// Region
 		if (!empty($arrayfields['region.nom']['checked'])) {
-			print "<td>".dolPrintHTML($obj->region_name)."</td>\n";
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($obj->region_name).'">'.dolPrintHTML($obj->region_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

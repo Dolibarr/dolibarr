@@ -381,6 +381,7 @@ if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->M
 	$maxwidthloginblock += 50;
 	$minwidthtmenu = 0;
 }
+$heighttopmenu = ($disableimages ? (26 + 8) : ($heightmenu + 2)); /* real height of the top menu bar (height + padding-top of div.tmenucenter) */
 
 if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 	$maxwidthloginblock += 55;
@@ -1486,7 +1487,7 @@ textarea.centpercent {
 	/* The top menu is itself sticky at top 0 with a z-index of 1005 (see .side-nav-vert below),
 	   so a table header stuck at 0 is painted underneath it and stays invisible. Offset it by the
 	   height of the top menu, the same value .side-nav is offset by when it is made sticky. */
-	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? '50px' : '0'); ?>;
+	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? $heighttopmenu.'px' : '0'); ?>;
 	z-index: 2;
 }
 .liste_titre.stickyagenda {
@@ -2494,6 +2495,11 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
 }
+/* A full page list can expand the page, so the horizontal scrollbar is the one of the window, always visible */
+div.fiche>form>div.div-table-responsive, div.fiche>div.div-table-responsive {
+	width: auto;
+	min-width: 0;
+}
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
 	overflow-x: auto;
 }
@@ -3023,6 +3029,8 @@ td.showDragHandle {
 	width: 100%;
 	<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
 		display: table;					/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
+	<?php } elseif (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled') { ?>
+		display: flex;					/* Use flex so the height of the left column is independent from the height of the right column */
 	<?php } ?>
 	/* table-layout: fixed; */
 
@@ -3045,6 +3053,39 @@ td.showDragHandle {
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
 }
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' && getDolGlobalString('THEME_STICKY_TOPMENU') != 'scrollleftmenu_after_mainpage') { ?>
+#id-left {
+	display: block;
+}
+#id-container > .side-nav {
+	flex-shrink: 0;
+}
+#id-right {
+	display: block;
+	flex: 1 1 0;
+	width: auto;	/* No min-width: 0 and no width: 100%, so a wide list enlarges the page and the horizontal scrollbar is the one of the window (on small screens only, see below) */
+}
+/* When the left menu is visible, #id-right is the scroll area, so its scrollbars are always visible, at the right of the left menu and under the top menu */
+@media only screen and (min-width: <?php echo(getDolGlobalInt('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', (int) round($nbtopmenuentries * 47, 0) + 130) + 1); ?>px)	/* no reduction 3 */
+{
+	#id-right {
+		min-width: 0;
+		box-sizing: border-box;
+		height: calc(100vh - <?php echo $heighttopmenu; ?>px);
+		overflow: auto;
+	}
+	#id-right > div.fiche {
+		min-width: min-content;		/* The fiche grows with a wide list, so its right margin stays visible at the end of the horizontal scroll */
+		display: flow-root;			/* Contain floats (fichehalfleft/right), so the bottom padding of #id-right is kept at the end of the scroll */
+	}
+	div.fiche>form>div.div-table-responsive, div.fiche>div.div-table-responsive {
+		overflow-x: visible;		/* The horizontal scroll of a full page list is done by #id-right */
+	}
+	.liste_titre.sticky {
+		top: 0;						/* The sticky header is relative to #id-right that scrolls, not to the window */
+	}
+}
+<?php } ?>
 .bodyforlist #id-right {
 	padding-bottom: 4px;
 }
@@ -3110,12 +3151,15 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 ?>
 
 .side-nav {
-<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
-	position: sticky;
-	top: 50px;
-	display: block;
-<?php } else { ?>
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'disabled') { ?>
 	display: table-cell;
+<?php } else { ?>
+	position: sticky;
+	top: <?php echo $heighttopmenu; ?>px;
+	display: block;
+	box-sizing: border-box;			/* So border and padding are inside the height and do not make the page scroll */
+	height: calc(100vh - <?php echo $heighttopmenu; ?>px);		/* So the side nav remains visible to the bottom of the page */
+	overflow-y: auto;				/* A scrollbar appears if the menu content is longer than the page */
 <?php } ?>
 	border-<?php echo $right; ?>: 1px solid #F0F0F0;
 	border-bottom: 1px solid #F0F0F0;
@@ -3234,8 +3278,8 @@ div.vmenu, td.vmenu {
 	.side-nav {
 		border-bottom: 1px solid #BBB;
 		background: #FFF;
-		padding-left: 20px;
-		padding-right: 20px;
+		padding-left: 10px;
+		padding-right: 10px;
 		position: absolute;
 			z-index: 90;
 	}
@@ -6961,7 +7005,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	margin-bottom: 10px;	/* same than .ui-widget-header */
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1007 !important;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005) */
+	z-index: 1007;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005). No !important, so jquery-ui can raise a modal opened over another one */
 }
 .ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
 	z-index: 1008 !important; /* To always be over the dialog box */
@@ -10241,7 +10285,8 @@ table.jPicker {
 		padding-top: 75px;
 		/*position: relative;
 		top: 75px;*/
-		width: 245px; 	/* must be same than div.login_block */
+		box-sizing: border-box;		/* Same box model whatever is THEME_STICKY_TOPMENU, so the padding is inside the width */
+		width: 285px; 	/* must be same than div.login_block: width 245px + padding-left 20px + padding-right 20px */
 		box-shadow: none;
 	}
 	#id-left {
@@ -10311,6 +10356,10 @@ table.jPicker {
 		min-width: unset !important;
 	}
 
+	span.select2.select2-container.select2-container--default {
+		width: auto !important;
+	}
+
 	div.login_block_other {
 		margin-right: unset;
 	}
@@ -10325,6 +10374,9 @@ table.jPicker {
 	.login_block_elem {
 		padding: 0 !important;
 		height: 38px;
+	}
+	.login_block_elem:has(span.aversion) {
+		display: none;		/* Hide the version when the top menu is reduced */
 	}
 	li.tmenu, li.tmenusel {
 		min-width: 32px;

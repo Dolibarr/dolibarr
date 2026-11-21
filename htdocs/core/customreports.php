@@ -244,6 +244,7 @@ $arrayoftype = array(
 	'contract' => array('label' => 'Contracts', 'picto' => 'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
 	'contractdet' => array('label' => 'ContractLines', 'picto' => 'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
 	'fichinter' => array('label' => 'Interventions', 'picto' => 'intervention', 'ObjectClassName' => 'Fichinter', 'enabled' => isModEnabled('intervention'), 'ClassPath' => "/fichinter/class/fichinter.class.php", 'langs' => 'interventions'),
+	'project' => array('label' => 'Projects', 'picto' => 'project', 'ObjectClassName' => 'Project', 'enabled' => isModEnabled('project'), 'ClassPath' => "/projet/class/project.class.php", 'langs' => 'projects'),
 	'bom' => array('label' => 'BOM', 'picto' => 'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
 	'mrp' => array('label' => 'MO', 'picto' => 'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'picto' => 'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
@@ -1026,7 +1027,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby);
 			$tmpforloop = explode(',', $arrayofxaxis[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1054,7 +1057,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby[$val]); var_dump($tmpval);
 			$tmpforloop = explode(',', $arrayofgroupby[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1082,7 +1087,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby);
 			$tmpforloop = explode(',', $arrayofmesures[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1118,7 +1125,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 				$tmpval = explode('.', $val);
 				$tmpforloop = explode(',', $arrayoffilterfields[$val]['tablefromt']);
 				foreach ($tmpforloop as $tmptableandalias) {
-					list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+					$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+					$tmptable = $tmparray[0];
+					$tmptablealias = $tmparray[1];
 					if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 						$tmpforexplode = explode('__', $tmptablealias);
 						$endpart = end($tmpforexplode);

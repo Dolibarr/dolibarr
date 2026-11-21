@@ -624,6 +624,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					'member' => dol_buildpath('/adherents/card.php?action=create', 1),
 					'expensereport' => dol_buildpath('/expensereport/card.php?action=create', 1),
 					'holiday' => dol_buildpath('/holiday/card.php?action=create', 1),
+					'intervention' => dol_buildpath('/fichinter/card.php?action=create', 1),
 					'cubes' => dol_buildpath('/mrp/mo_card.php?action=create', 1),
 
 				);

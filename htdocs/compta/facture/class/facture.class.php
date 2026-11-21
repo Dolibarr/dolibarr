@@ -539,7 +539,9 @@ class Facture extends CommonInvoice
 			// Multicurrency (test on $this->multicurrency_tx because we should take the default rate of multicurrency_code only if not using original rate)
 			if (empty($this->multicurrency_tx)) {
 				// If original rate is not set, we take a default value from date
-				list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
+				$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
+				$this->fk_multicurrency = $tmparray[0];
+				$this->multicurrency_tx = $tmparray[1];
 			} else {
 				// original rate multicurrency_tx and multicurrency_code are already known, so we keep them and we catch only the ID of the currency.
 				$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
