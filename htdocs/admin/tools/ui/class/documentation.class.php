@@ -234,6 +234,12 @@ class Documentation
 						'DocContributeStep3' => '#contributesection-step3',
 					),
 				),
+				'HiddenConf' => array(
+					'url' => dol_buildpath($this->baseUrl.'/resources/hidden-conf.php', 1),
+					'icon' => 'fas fa-code',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 

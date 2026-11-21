@@ -1,0 +1,1004 @@
+# Dolibarr language file - Source file is en_US - hiddenconf
+# Titles and descriptions of hidden constants, see htdocs/admin/tools/ui/resources/hidden-conf-list.lib.php
+
+# Global Options
+HiddenConfTitle_ADD_UNSPLASH_LOGIN_BACKGROUND=Use an image URL as background of the login page
+HiddenConfDesc_ADD_UNSPLASH_LOGIN_BACKGROUND=Value is the URL of an image (for example a random image service). It is also used on the forgotten and reset password pages and takes precedence over the saved background image. An external site may then see every visit of your login page.
+HiddenConfTitle_API_DISABLE_LOGIN_API=Disable the login entry point of the REST API
+HiddenConfTitle_GRAPH_USE_FISCAL_YEAR=Start widget graphs on the first month of the fiscal year instead of January
+HiddenConfTitle_MAIN_ALL_TOWN_TO_UPPER=Write town and address in uppercase
+HiddenConfTitle_MAIN_ALL_TO_UPPER=Write third party, contact and member last names in uppercase
+HiddenConfDesc_MAIN_ALL_TO_UPPER=Can alter names in languages where capitalization rules differ.
+HiddenConfTitle_MAIN_APPLICATION_TITLE=Replace the application name shown on the login page and in the top bar
+HiddenConfDesc_MAIN_APPLICATION_TITLE=If the value starts with <code>+</code>, the text is appended to "Dolibarr" instead of replacing it. Changing the name may break version detection by mobile applications such as DoliDroid.
+HiddenConfTitle_MAIN_AUTOFILL_DATE=Prefill date fields with today on invoice, order and payment forms
+HiddenConfDesc_MAIN_AUTOFILL_DATE=Not recommended: users may keep a wrong date without checking it.
+HiddenConfTitle_MAIN_AUTOFILL_DATE_PROPOSAL=Prefill the date of a new proposal with today
+HiddenConfDesc_MAIN_AUTOFILL_DATE_PROPOSAL=Removed in version 23.
+HiddenConfTitle_MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES=Insert date and user automatically when editing the private note
+HiddenConfTitle_MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES=Insert date and user automatically when editing the public note
+HiddenConfTitle_MAIN_CHECKBOX_LEFT_COLUMN=Show the column of selection checkboxes on the left of lists
+HiddenConfDesc_MAIN_CHECKBOX_LEFT_COLUMN=Default: 1 (left). Set 0 to put it on the right. Each user can override it in their own display setup.
+HiddenConfTitle_MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION=Link each line created from another document to its source line
+HiddenConfDesc_MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION=Enabled by default (the value is forced to 1 when not defined). Set it to 0 to go back to the old, buggy behavior that stored the id of the line with the type of the parent object.
+HiddenConfTitle_MAIN_DEFAULT_LANGUAGE_FILTER=Exclude one language from the language selection lists
+HiddenConfDesc_MAIN_DEFAULT_LANGUAGE_FILTER=Value is a language code, for example <code>en_US</code>, which cannot be removed by deleting its langs folder.
+HiddenConfTitle_MAIN_DEFAULT_PAYMENT_TERM_ID=Default payment term (ID) preselected in every payment term list
+HiddenConfDesc_MAIN_DEFAULT_PAYMENT_TERM_ID=Deprecated: applies to the whole application, use the default values setup instead.
+HiddenConfTitle_MAIN_DEFAULT_PAYMENT_TYPE_ID=Default payment method (ID) preselected in every payment method list
+HiddenConfDesc_MAIN_DEFAULT_PAYMENT_TYPE_ID=Deprecated: applies to the whole application (also new third parties), use the default values setup instead.
+HiddenConfTitle_MAIN_DISABLEDRAFTSTATUS=Skip the draft status: create projects and check deposits directly validated
+HiddenConfDesc_MAIN_DISABLEDRAFTSTATUS=Only projects and check deposit slips use it today. <code>MAIN_DISABLEDRAFTSTATUS_PROJECT</code> and <code>MAIN_DISABLEDRAFTSTATUS_CHEQUE</code> do the same for one object only.
+HiddenConfTitle_MAIN_DISABLE_AJAX_COMBOX=Disable the enhanced searchable select boxes (select2) everywhere
+HiddenConfDesc_MAIN_DISABLE_AJAX_COMBOX=Plain HTML select lists are used instead. This is not limited to third parties.
+HiddenConfTitle_MAIN_DISABLE_CONTACTS_TAB=Hide the Contacts/Addresses tab on object cards
+HiddenConfTitle_MAIN_DISABLE_FULL_SCANLIST=Do not count all records on lists (faster on very large tables)
+HiddenConfDesc_MAIN_DISABLE_FULL_SCANLIST=The total number of records and pages is no longer computed, which saves a full scan on tables with millions of rows.
+HiddenConfTitle_MAIN_DISABLE_JQUERY_JNOTIFY=Show confirmation and error messages inside the page instead of floating popups
+HiddenConfTitle_MAIN_DISABLE_MULTIPLE_FILEUPLOAD=Allow only one file per upload in the file sending forms
+HiddenConfTitle_MAIN_DISABLE_NOTES_TAB=Hide the Notes tab on object cards
+HiddenConfTitle_MAIN_DISABLE_PDF_THUMBS=Do not build preview thumbnails of PDF files
+HiddenConfDesc_MAIN_DISABLE_PDF_THUMBS=Useful when Imagick is missing or crashes.
+HiddenConfTitle_MAIN_DISABLE_SELECT2_FOCUS_PROTECTION=Disable the focus workaround of select2 combo lists
+HiddenConfDesc_MAIN_DISABLE_SELECT2_FOCUS_PROTECTION=By default a JavaScript fix gives the focus to the search field when a select2 combo opens (otherwise Ajax combos may need a second click). Disable it only if it conflicts with a custom script.
+HiddenConfTitle_MAIN_DISABLE_TRUNC=Never truncate long texts in lists and select boxes
+HiddenConfTitle_MAIN_DOC_SORT_FIELD=Default sort field of the Documents tab
+HiddenConfDesc_MAIN_DOC_SORT_FIELD=Default is the file name.
+HiddenConfTitle_MAIN_DOC_SORT_ORDER=Default sort order of the Documents tab
+HiddenConfDesc_MAIN_DOC_SORT_ORDER=<code>ASC</code> (default) or <code>DESC</code>.
+HiddenConfTitle_MAIN_DOC_UPLOAD_NOT_RENAME_BY_DEFAULT=Uncheck by default the option to rename uploaded files
+HiddenConfTitle_MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME=Prefix the file name of third party ODT documents with the third party name
+HiddenConfTitle_MAIN_DOC_USE_TIMING=Add a date and time suffix to the file name of generated ODT documents
+HiddenConfDesc_MAIN_DOC_USE_TIMING=Value is a date format such as <code>%%Y%%m%%d%%H%%M</code>. With <code>1</code>, <code>%%Y%%m%%d%%H%%M%%S</code> is used.
+HiddenConfTitle_MAIN_DOL_SCRIPTS_ROOT=Path of the folder containing the scripts directory, shown in the cron command line
+HiddenConfDesc_MAIN_DOL_SCRIPTS_ROOT=Used to build the command line suggested on the scheduled jobs setup page, for example <code>/var/www/dolibarr</code>.
+HiddenConfTitle_MAIN_DONT_KEEP_NOTE_ON_CLONING=Do not copy notes when cloning a proposal or an invoice
+HiddenConfDesc_MAIN_DONT_KEEP_NOTE_ON_CLONING=Applies to proposals, customer invoices and supplier invoices.
+HiddenConfTitle_MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER=Do not keep email headers in messages saved by the email collector
+HiddenConfDesc_MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER=Enabled by default by the Ticket module.
+HiddenConfWarning_MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER=Bug in the setup page: without JavaScript, the Yes/No selector shows the value of <code>TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND</code> instead of this option.
+HiddenConfTitle_MAIN_ENABLE_AJAX_TOOLTIP=Load the tooltips of object links with an Ajax request
+HiddenConfDesc_MAIN_ENABLE_AJAX_TOOLTIP=The tooltip content is fetched when the mouse goes over the link instead of being built with the page, which makes long lists lighter.
+HiddenConfTitle_MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES=Allow importing lines from linked documents into the current document
+HiddenConfTitle_MAIN_ENABLE_LOG_TO_HTML=Allow showing logs inside pages by adding <code>logtohtml=1</code> to the URL
+HiddenConfTitle_MAIN_FEATURES_LEVEL=Level of features to show: stable, experimental or development
+HiddenConfDesc_MAIN_FEATURES_LEVEL=<code>0</code> stable only (default), <code>1</code> adds experimental features, <code>2</code> adds features under development.
+HiddenConfTitle_MAIN_FILESYSTEM_ENCODING=Force the character encoding of the server file system
+HiddenConfDesc_MAIN_FILESYSTEM_ENCODING=Use it when file names with accents are wrong. By default Dolibarr assumes <code>UTF-8</code> on Linux and macOS and <code>ISO-8859-1</code> on Windows.
+HiddenConfTitle_MAIN_FIRST_TO_UPPER=Capitalize the first letter of each word of third party, contact and member names
+HiddenConfDesc_MAIN_FIRST_TO_UPPER=Can alter names in languages where capitalization rules differ.
+HiddenConfTitle_MAIN_FORCELANGDIR=Load translation files from another directory first
+HiddenConfDesc_MAIN_FORCELANGDIR=Value is a path relative to the Dolibarr root, for example <code>/mymodule</code> to read <code>/mymodule/langs/xx_XX</code>.
+HiddenConfTitle_MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT=Preselect the free text line when adding a line to a document
+HiddenConfDesc_MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT=Any value checks the free line option by default on proposals, orders and invoices. With <code>product</code> or <code>service</code>, this line type is also preselected.
+HiddenConfTitle_MAIN_HELPCENTER_LINKTOUSE=URL of the "Need help" link shown on the login page
+HiddenConfTitle_MAIN_HIDE_POWERED_BY=Hide the "Powered by Dolibarr" logo on public pages
+HiddenConfTitle_MAIN_HOOK_DEBUG=Log every hook call in the Dolibarr logs
+HiddenConfDesc_MAIN_HOOK_DEBUG=Writes a debug line for each hook method found and called, which is very verbose. Any non zero value enables it, there is no higher level.
+HiddenConfTitle_MAIN_HTML_TITLE=Control the content of the browser tab title
+HiddenConfDesc_MAIN_HTML_TITLE=List of keywords: <code>showapp</code> adds the application name, <code>thirdpartynameonly</code>, <code>contactnameonly</code> and <code>projectnameonly</code> show only the object name on its tabs. Default is <code>thirdpartynameonly,contactnameonly,projectnameonly</code>.
+HiddenConfTitle_MAIN_HTTP_CONTENT_SECURITY_POLICY=Content Security Policy header sent with pages
+HiddenConfDesc_MAIN_HTTP_CONTENT_SECURITY_POLICY=Removed in version 17.
+HiddenConfTitle_MAIN_KEEP_REF_CUSTOMER_ON_CLONING=Keep the customer reference when cloning a proposal or an order
+HiddenConfTitle_MAIN_LANGUAGES_ALLOWED=Restrict the available languages to this list
+HiddenConfDesc_MAIN_LANGUAGES_ALLOWED=Comma separated language codes without spaces. Other languages are hidden from the language lists.
+HiddenConfTitle_MAIN_LINK_BY_REF=Link objects by choosing their type and entering their reference
+HiddenConfTitle_MAIN_LIST_ALLOW_PRIVATE_NOTES=Allow the private note as a column of lists
+HiddenConfTitle_MAIN_LIST_ALLOW_PUBLIC_NOTES=Allow the public note as a column of lists
+HiddenConfTitle_MAIN_LOGIN_BADCHARUNAUTHORIZED=Characters forbidden in user logins
+HiddenConfDesc_MAIN_LOGIN_BADCHARUNAUTHORIZED=Used only when <code>$dolibarr_login_badcharunauthorized</code> is set to <code>'MAIN_LOGIN_BADCHARUNAUTHORIZED'</code> in conf.php. The value is the plain list of forbidden characters (not a regular expression). Default: comma, at sign, angle brackets and quotes.
+HiddenConfTitle_MAIN_LOGOUT_GOTO_URL=URL to redirect users to after logout
+HiddenConfTitle_MAIN_MAXLIST_OVERLOAD=Maximum number of records loaded in the summary lists of home areas
+HiddenConfDesc_MAIN_MAXLIST_OVERLOAD=Used for draft or open objects on home pages and some tabs. Default is 500.
+HiddenConfTitle_MAIN_MAXTABS_IN_CARD=Maximum number of tabs shown on a card, the others go in a dropdown
+HiddenConfDesc_MAIN_MAXTABS_IN_CARD=Default is 99.
+HiddenConfTitle_MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING=Show the "setup not complete" warning while fewer modules than this are enabled
+HiddenConfDesc_MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING=Only modules not enabled automatically are counted. Default is 1, set 0 to never show the warning.
+HiddenConfTitle_MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT=Default view of the modules setup page
+HiddenConfDesc_MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT=<code>common</code> for the list view, <code>commonkanban</code> (default) for the cards view.
+HiddenConfTitle_MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH=Number of years shown in widget graphs
+HiddenConfDesc_MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH=Default is 3 (5 for the invoices per year widget).
+HiddenConfTitle_MAIN_NO_CONCAT_DESCRIPTION=Use only the typed description on lines, without the product description
+HiddenConfDesc_MAIN_NO_CONCAT_DESCRIPTION=Removed in version 22: use the description options of the Products module setup.
+HiddenConfTitle_MAIN_NO_INPUT_PRICE_WITH_TAX=Remove the unit price including tax field from document lines
+HiddenConfDesc_MAIN_NO_INPUT_PRICE_WITH_TAX=Applies to the add and edit line forms of proposals, orders, invoices, etc. Forced to 1 when your company uses a second or third local tax: set it explicitly to 0 to keep the field.
+HiddenConfTitle_MAIN_ONLY_LOGIN_ALLOWED=Maintenance mode: only these logins can connect
+HiddenConfDesc_MAIN_ONLY_LOGIN_ALLOWED=One login, or several separated by semicolons. Any other user is refused, even if already connected. It is filled automatically by the button that blocks other sessions in Admin tools.
+HiddenConfTitle_MAIN_OPTIMIZEFORTEXTBROWSER=Simplify the interface for text browsers and screen readers
+HiddenConfDesc_MAIN_OPTIMIZEFORTEXTBROWSER=Set automatically for text browsers such as lynx, and can also be set per user.
+HiddenConfTitle_MAIN_OPTIMIZE_SPEED=Enable experimental speed optimizations (bit mask)
+HiddenConfDesc_MAIN_OPTIMIZE_SPEED=Bit <code>2</code> enables a shared memory cache (shmop) for translations and other data. It is not reliable, Memcached is a better choice.
+HiddenConfTitle_MAIN_PAGESIZE_CHOICES=Choices offered in the "number of lines per page" selector of lists
+HiddenConfDesc_MAIN_PAGESIZE_CHOICES=Comma separated <code>value:label</code> pairs.
+HiddenConfTitle_MAIN_PASSWORD_FORGOTLINK=Replace the target URL of the "Password forgotten" link on the login page
+HiddenConfTitle_MAIN_PHONE_SEPAR=Separator used when formatting phone numbers
+HiddenConfDesc_MAIN_PHONE_SEPAR=Default is a space.
+HiddenConfTitle_MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN=Copy the contacts of the source object when creating an object from another one
+HiddenConfDesc_MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN=Enabled by default (<code>*</code>). Set to <code>0</code> to stop copying contacts, for example from a proposal to an order or invoice.
+HiddenConfTitle_MAIN_PUBLIC_NOTE_IN_ADDRESS=Print the third party public note in the address block of PDF documents
+HiddenConfTitle_MAIN_REMOVE_INSTALL_WARNING=Hide the security warning about the install pages on the home page
+HiddenConfDesc_MAIN_REMOVE_INSTALL_WARNING=Better fix the cause: create an <code>install.lock</code> file in the documents directory.
+HiddenConfTitle_MAIN_REPEATCONTACTONEACHTAB=Show the contacts on every tab of a card, not only the main one
+HiddenConfDesc_MAIN_REPEATCONTACTONEACHTAB=Removed in version 7.
+HiddenConfTitle_MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=Compute customer document totals by rounding the total instead of summing rounded lines
+HiddenConfDesc_MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=Applies to proposals, orders and invoices. Expense reports always use the sum of rounded lines.
+HiddenConfTitle_MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER=Compute supplier document totals by rounding the total instead of summing rounded lines
+HiddenConfDesc_MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER=Same as <code>MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND</code> for supplier proposals, orders and invoices.
+HiddenConfTitle_MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED=Remove supplier invoices from the global search
+HiddenConfTitle_MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE=Open the record directly when a search finds only one result
+HiddenConfDesc_MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE=Enabled by default. Set to <code>0</code> to show the list with a single line instead.
+HiddenConfTitle_MAIN_SEARCH_FORM_ON_HOME_AREAS=Show search forms on the home pages of modules
+HiddenConfDesc_MAIN_SEARCH_FORM_ON_HOME_AREAS=Mostly redundant with the global search in the top bar.
+HiddenConfTitle_MAIN_SERVER_TZ=Force the time zone used by PHP on the server
+HiddenConfDesc_MAIN_SERVER_TZ=Use only if the PHP time zone cannot be set, ideally to <code>UTC</code>. <code>auto</code> keeps the PHP setting. Changing it later shifts the dates already saved.
+HiddenConfTitle_MAIN_SERVICES_ARE_ECOMMERCE_200238EC=Use the VAT rates of the buyer country for services sold to EU individuals
+HiddenConfDesc_MAIN_SERVICES_ARE_ECOMMERCE_200238EC=Removed. Value <code>1</code> mixed seller and buyer country rates, <code>2</code> offered only the buyer country rates.
+HiddenConfTitle_MAIN_SHOWDATABASENAMEINHELPPAGESLINK=Show the database name next to the version in the top bar tooltip
+HiddenConfTitle_MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP=Show uploaded files too in the documents popup of lists
+HiddenConfDesc_MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP=By default the popup only lists the generated documents (named exactly like the reference). With this option, every file whose name starts with the reference is listed.
+HiddenConfTitle_MAIN_SHOW_TECHNICAL_ID=Show technical IDs on cards and in some lists
+HiddenConfDesc_MAIN_SHOW_TECHNICAL_ID=Not supported on every page.
+HiddenConfTitle_MAIN_SHOW_TUNING_INFO=Log performance information (cache setup) in the browser JavaScript console
+HiddenConfDesc_MAIN_SHOW_TUNING_INFO=The page build time is only shown when <code>MAIN_SHOW_TUNING_INFO</code> is set as a web server environment variable.
+HiddenConfTitle_MAIN_STATS_GRAPHS_SHOW_N_YEARS=Number of past years shown on statistics pages
+HiddenConfDesc_MAIN_STATS_GRAPHS_SHOW_N_YEARS=Integer between 1 and 10, default 2. Used by the statistics pages of the modules (orders, members, projects, expense reports...).
+HiddenConfTitle_MAIN_STORE_COMPUTED_EXTRAFIELDS=Store the result of computed extra fields in the database
+HiddenConfDesc_MAIN_STORE_COMPUTED_EXTRAFIELDS=The formula is evaluated when the object is saved and the result is written in the column, so lists can sort, filter and sum on it. The stored value is a snapshot, refreshed only when the record is saved again.
+HiddenConfTitle_MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES=Consider third parties of unknown nature as companies
+HiddenConfDesc_MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES=Used for VAT rules when nothing (VAT number, professional ID, type) tells if it is a company. Default <code>0</code> treats them as individuals.
+HiddenConfTitle_MAIN_USE_ADVANCED_PERMS=Enable advanced permissions
+HiddenConfDesc_MAIN_USE_ADVANCED_PERMS=Adds finer permissions in some modules, for example separate rights to validate or to send documents.
+HiddenConfTitle_MAIN_USE_ALTERNATE_TRANSLATION_FOR=Fields of objects that can receive a translation in other languages
+HiddenConfDesc_MAIN_USE_ALTERNATE_TRANSLATION_FOR=Format: <code>element:field1,field2</code>, several elements separated by <code>;</code>.
+HiddenConfTitle_MAIN_USE_HOURMIN_IN_DATE_RANGE=Add hours and minutes to the start and end dates of document lines
+HiddenConfTitle_MAIN_USE_JQUERY_JEDITABLE=Edit some fields of cards in place with Ajax
+HiddenConfDesc_MAIN_USE_JQUERY_JEDITABLE=Removed in version 24. It skipped business checks and triggers.
+HiddenConfTitle_MAIN_USE_JQUERY_MULTISELECT=jQuery plugin used for multiple selection lists
+HiddenConfDesc_MAIN_USE_JQUERY_MULTISELECT=Empty or <code>1</code> means <code>select2</code>, the only value really supported.
+HiddenConfTitle_MAIN_USE_OLD_SEARCH_FORM=Use the old search form of the left menu instead of the search combo
+HiddenConfDesc_MAIN_USE_OLD_SEARCH_FORM=Only when the search is not in the top menu. It is also forced on smartphones.
+HiddenConfTitle_MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN=Add a quick creation menu (+) in the top bar
+HiddenConfTitle_MAIN_USE_TOP_MENU_SEARCH_DROPDOWN=Move the search field into the top menu
+HiddenConfTitle_MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL=Treat EU companies without a valid VAT number as individuals for VAT
+HiddenConfDesc_MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL=Removed in version 23.
+HiddenConfTitle_MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID=Apply the product VAT rate to EU companies without a valid VAT number
+HiddenConfDesc_MAIN_USE_VAT_OF_PRODUCT_FOR_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID=Removed in version 14.
+HiddenConfTitle_MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC=Apply the product VAT rate to individual customers outside the EU
+HiddenConfDesc_MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC=Normally no VAT applies to them, there is rarely a reason to enable it.
+HiddenConfTitle_MAIN_USE_ZIPTOWN_DICTIONNARY=Suggest zip codes and towns from the zip/town dictionary
+HiddenConfDesc_MAIN_USE_ZIPTOWN_DICTIONNARY=Without it, suggestions come from the addresses of existing third parties.
+HiddenConfTitle_MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS=VAT rate to use when no default rate can be found
+HiddenConfDesc_MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS=Replaces the highest rate of the country. A VAT code can follow in parentheses, for example <code>20 (CODE)</code>. <code>none</code> leaves the rate empty.
+HiddenConfTitle_MAIN_VIEW_LINE_NUMBER=Show a line number in front of each line of documents on screen
+HiddenConfDesc_MAIN_VIEW_LINE_NUMBER=Screen only. Use <code>PDF_ADD_POSITION</code> for PDF documents.
+HiddenConfTitle_MAIN_VIEW_LINE_NUMBER_IN_LIST=Show a line number in some lists
+HiddenConfTitle_MAIN_VOLUME_DEFAULT_ROUND=Number of decimals of volume totals
+HiddenConfTitle_MAIN_VOLUME_DEFAULT_UNIT=Unit used to display volume totals
+HiddenConfDesc_MAIN_VOLUME_DEFAULT_UNIT=Power of ten relative to m³: <code>0</code> m³, <code>-3</code> dm³, <code>-6</code> cm³. By default the best unit is chosen.
+HiddenConfTitle_MAIN_WEIGHT_DEFAULT_ROUND=Number of decimals of weight totals
+HiddenConfTitle_MAIN_WEIGHT_DEFAULT_UNIT=Unit used to display weight totals and preselected on new products
+HiddenConfDesc_MAIN_WEIGHT_DEFAULT_UNIT=Power of ten relative to kg: <code>0</code> kg, <code>-3</code> g, <code>3</code> t. By default the best unit is chosen for totals.
+HiddenConfTitle_SHOW_SOCINFO_ON_PRINT=Add your company details on pages printed with the print button
+HiddenConfTitle_SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD=Link third parties in lists and search to their customer or supplier card
+HiddenConfTitle_USER_HIDE_INACTIVE_IN_COMBOBOX=Hide disabled users in user selection lists
+
+# Security Options
+HiddenConfTitle_MAIN_ALLOW_SVG_FILES_AS_IMAGES=Accept SVG files as images
+HiddenConfDesc_MAIN_ALLOW_SVG_FILES_AS_IMAGES=Not recommended: an SVG file can embed JavaScript and be used for XSS attacks.
+HiddenConfTitle_MAIN_MODULES_FOR_EXTERNAL=Modules available to external users
+HiddenConfDesc_MAIN_MODULES_FOR_EXTERNAL=Comma separated list of module names. Default: user, societe, propal, commande, facture, categorie, supplierproposal, fournisseur, contact, projet, contrat, ficheinter, expedition, reception, agenda, resource, adherent, blockedlog, ticket. External modules can add themselves to this list.
+HiddenConfTitle_MAIN_RESTRICTHTML_ONLY_VALID_HTML=Reject HTML content that is not valid HTML
+HiddenConfDesc_MAIN_RESTRICTHTML_ONLY_VALID_HTML=Enabled by default (1): HTML fields are parsed and rebuilt with the PHP DOM extension. Value 2 also removes some style attributes. Set 0 to disable.
+HiddenConfTitle_MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY=Repair and sanitize HTML content with the Tidy library
+HiddenConfDesc_MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY=Enabled by default when the PHP tidy extension is installed. Set 0 to disable.
+HiddenConfTitle_MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES=Also remove non standard attributes from HTML content
+HiddenConfDesc_MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES=Disabled by default. When enabled, attributes that are not in the allowed list are stripped from HTML fields.
+HiddenConfTitle_MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML=Allow basic HTML in product labels and text fields
+HiddenConfDesc_MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML=By default these labels are stripped of any HTML tag. With this option a restricted HTML is kept (product labels, barcode sheets, text fields). Lowers security.
+HiddenConfTitle_MAIN_SECURITY_ANTI_SSRF_SERVER_IP=IP addresses of the server, used by the anti-SSRF checks
+HiddenConfDesc_MAIN_SECURITY_ANTI_SSRF_SERVER_IP=Comma separated list. When Dolibarr fetches an external URL, these IPs are refused like local ones. When only local URLs are allowed, the target IP must be in this list.
+HiddenConfTitle_MAIN_SECURITY_CSRF_WITH_TOKEN=Level of the anti-CSRF token check
+HiddenConfDesc_MAIN_SECURITY_CSRF_WITH_TOKEN=0: no token check, 1: POST requests only, 2: also GET requests with a sensitive action (delete, remove...), 3 (default): also every GET request with an action or massaction parameter. Some external modules may not support level 3.
+HiddenConfTitle_MAIN_SECURITY_FORCERP=Value of the Referrer-Policy HTTP header
+HiddenConfDesc_MAIN_SECURITY_FORCERP=Default: <code>same-origin</code>, so no referrer is sent to other sites. Other standard values such as <code>strict-origin-when-cross-origin</code> can be used.
+HiddenConfTitle_MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT=Maximum number of images allowed in an HTML content
+HiddenConfDesc_MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT=Content with more images is refused. Default: 1000.
+HiddenConfTitle_MAIN_SECURITY_SALT=Salt added to passwords before hashing
+HiddenConfDesc_MAIN_SECURITY_SALT=Only used when the hashing algorithm is not password_hash (the default). Changing it makes the passwords already hashed with a salt unusable.
+
+# Members Module
+HiddenConfTitle_ADHERENT_DEFAULT_CREATE_THIRDPARTY=Create a third party automatically when a member is created
+HiddenConfDesc_ADHERENT_DEFAULT_CREATE_THIRDPARTY=Applies to the member card and to the public registration form.
+HiddenConfTitle_MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH=Number of years taken into account in the member widgets and graph
+HiddenConfDesc_MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH=Only members whose subscription ends after January 1st of the current year minus this number are counted. Empty or 0 (default): all members.
+HiddenConfTitle_MEMBER_ALLOW_CHANGE_OF_TYPE=Let members change their member type on the public payment page
+HiddenConfTitle_MEMBER_NEWFORM_FORCEMORPHY=Force the member nature on the public registration form
+HiddenConfDesc_MEMBER_NEWFORM_FORCEMORPHY=<code>phy</code> for an individual, <code>mor</code> for a legal entity.
+HiddenConfTitle_MEMBER_NO_SYNC_LINKED_THIRDPARTY=Do not update the linked third party when a member is modified
+HiddenConfTitle_MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH=Suggest the end of the month as end date of a new subscription
+HiddenConfDesc_MEMBER_SUBSCRIPTION_SUGGEST_END_OF_MONTH=By default no end date is suggested. Takes precedence over <code>MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR</code>.
+HiddenConfTitle_MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR=Suggest the end of the year as end date of a new subscription
+HiddenConfDesc_MEMBER_SUBSCRIPTION_SUGGEST_END_OF_YEAR=By default no end date is suggested.
+
+# Accounting Module
+HiddenConfTitle_ACCOUNTANCY_COMBO_FOR_AUX=Use a combo list to select subledger accounts
+HiddenConfDesc_ACCOUNTANCY_COMBO_FOR_AUX=May make the accounting pages very slow with a large number of third parties.
+HiddenConfTitle_ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY=Allow sale and purchase accounting accounts on third parties
+HiddenConfDesc_ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY=Adds two fields on the third party card. When filled, they are suggested for the binding of the lines of this third party, with priority over the product accounts.
+HiddenConfTitle_ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE=Check by default the option to flag lines as exported in the accounting export
+HiddenConfDesc_ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE=Despite its name, value 1 checks the box that records the export date on the exported lines, empty or 0 leaves it unchecked.
+HiddenConfTitle_ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE=Leave unchecked by default the validation of lines in the accounting export
+HiddenConfDesc_ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE=1: the box to validate (lock) the exported lines is unchecked by default, 0: checked.
+HiddenConfTitle_ACCOUNTING_MANAGE_ZERO=Keep accounting account numbers as entered, without padding zeros
+HiddenConfDesc_ACCOUNTING_MANAGE_ZERO=By default accounts are completed with zeros up to the length set in the accounting setup, so 1 and 10 can end up identical. With this option trailing zeros are significant.
+
+# Agenda Module
+HiddenConfTitle_AGENDA_ADDACTIONFOREMAIL=Show a link to create an event next to email addresses
+HiddenConfDesc_AGENDA_ADDACTIONFOREMAIL=The link opens the event creation form with the email type, prefilled with the contact or third party. Requires the right to create events.
+HiddenConfTitle_AGENDA_ADDACTIONFORPHONE=Show a link to create an event next to phone numbers
+HiddenConfDesc_AGENDA_ADDACTIONFORPHONE=The link opens the event creation form with the phone call type, prefilled with the contact or third party.
+HiddenConfTitle_AGENDA_ALL_CALENDARS=Show the events of all users by default in the agenda
+HiddenConfDesc_AGENDA_ALL_CALENDARS=Applies to the calendar views and the event list. Without it, only the events of the current user are shown first.
+HiddenConfTitle_AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS=Hours added to the start date to fill a missing event end date
+HiddenConfDesc_AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS=When an event is saved without end date, the end date becomes start date plus this number of hours. Default: 1.
+HiddenConfTitle_AGENDA_DISABLE_LOCATION=Hide the location field of events
+HiddenConfTitle_AGENDA_MAX_EVENTS_DAY_VIEW=Maximum number of events shown per day in the calendar views
+HiddenConfDesc_AGENDA_MAX_EVENTS_DAY_VIEW=Default: 3. Extra events are hidden behind a link.
+HiddenConfTitle_AGENDA_SUPPORT_PRIORITY_IN_EVENTS=Show a priority field on events
+HiddenConfTitle_AGENDA_USE_EVENT_TYPE=Use event types (the type becomes required on events)
+HiddenConfDesc_AGENDA_USE_EVENT_TYPE=Deprecated option, now set from the agenda setup page.
+HiddenConfTitle_MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT=Allow any contact as event participant, not only those of the third party
+HiddenConfDesc_MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT=May be very slow on large databases, since all contacts are loaded in the list.
+HiddenConfTitle_MAIN_ADD_EVENT_ON_ELEMENT_CARD=Add a button to create an event from document cards
+HiddenConfWarning_MAIN_ADD_EVENT_ON_ELEMENT_CARD=No effect: all the code using this option is commented out.
+
+# Bank Module
+HiddenConfTitle_BANK_ASK_PAYMENT_BANK_DURING_ORDER=Ask for the bank account to use for payment on sales orders
+HiddenConfTitle_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for the bank account to use for payment on proposals
+HiddenConfDesc_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Applies to commercial proposals and to supplier price requests.
+HiddenConfTitle_BANK_CAN_RECONCILIATE_CASHACCOUNT=Allow reconciliation of cash accounts
+HiddenConfTitle_BANK_DISABLE_CHECK_DEPOSIT=Hide the check deposit feature
+HiddenConfDesc_BANK_DISABLE_CHECK_DEPOSIT=Removes the check deposit menu entry and its block on the home page.
+HiddenConfTitle_BANK_USE_OLD_VARIOUS_PAYMENT=Enter miscellaneous bank entries directly in the account (old method)
+HiddenConfDesc_BANK_USE_OLD_VARIOUS_PAYMENT=Deprecated. By default these entries are recorded as miscellaneous payments. This option brings back the direct entry form in the bank entries list and hides the miscellaneous payments menu.
+HiddenConfTitle_MAIN_IBAN_IS_NEVER_MANDATORY=Never require IBAN and BIC on bank accounts
+
+# BOM and MO Module
+HiddenConfTitle_ALLOW_USE_KITS_INTO_BOM_AND_MO=Allow a kit as product to manufacture in a manufacturing order
+HiddenConfDesc_ALLOW_USE_KITS_INTO_BOM_AND_MO=When the kits feature is enabled, creating a manufacturing order for a kit is refused unless this option is set.
+HiddenConfTitle_BOM_SUB_BOM=Allow a bill of materials to include other bills of materials
+
+# Bookmarks Module
+HiddenConfTitle_BOOKMARKS_SHOW_IN_MENU=Maximum number of bookmarks shown in the bookmarks menu
+HiddenConfDesc_BOOKMARKS_SHOW_IN_MENU=Empty or 0: no limit.
+
+# Inalterable Log Module
+HiddenConfTitle_BLOCKEDLOG_ADD_ACTIONS_SUPPORTED=Additional events to record in the unalterable log
+HiddenConfDesc_BLOCKEDLOG_ADD_ACTIONS_SUPPORTED=Comma separated list of trigger codes, added to the built in list of recorded events.
+HiddenConfTitle_BLOCKEDLOG_USE_REMOTE_AUTHORITY=Send the fingerprints of the unalterable log to a remote authority
+HiddenConfDesc_BLOCKEDLOG_USE_REMOTE_AUTHORITY=Works with <code>BLOCKEDLOG_AUTHORITY_URL</code>, which holds the URL of the authority.
+HiddenConfWarning_BLOCKEDLOG_USE_REMOTE_AUTHORITY=No effect: all the code using this option is commented out.
+
+# Category-Tags Module
+HiddenConfTitle_CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP=Manage tags from menu entries instead of a popup
+HiddenConfDesc_CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP=By default tags are edited from a popup opened next to the tag selector. With this option the popup button is removed and tag entries are added to the left menu of the modules.
+HiddenConfTitle_CATEGORY_SHOW_COUNTS=Show the number of objects of each tag in the tag tree
+
+# Contracts
+HiddenConfTitle_CONTRACT_ALLOW_EXTERNAL_DOWNLOAD=Create a public download link when a contract PDF is generated
+HiddenConfTitle_CONTRACT_HIDE_PLANNED_DATE_ON_PDF=Hide the planned service dates on the contract PDF
+HiddenConfDesc_CONTRACT_HIDE_PLANNED_DATE_ON_PDF=Applies to the strato PDF template.
+HiddenConfTitle_CONTRACT_HIDE_PRICE_ON_PDF=Hide the prices on the contract PDF
+HiddenConfDesc_CONTRACT_HIDE_PRICE_ON_PDF=Applies to the strato PDF template.
+HiddenConfTitle_CONTRACT_HIDE_QTY_ON_PDF=Hide the quantities on the contract PDF
+HiddenConfDesc_CONTRACT_HIDE_QTY_ON_PDF=Applies to the strato PDF template.
+HiddenConfTitle_CONTRACT_HIDE_REAL_DATE_ON_PDF=Hide the real service dates on the contract PDF
+HiddenConfDesc_CONTRACT_HIDE_REAL_DATE_ON_PDF=Applies to the strato PDF template.
+HiddenConfTitle_CONTRACT_SHOW_SIGNATURE_STATUS_WITH_SERVICE_STATUS=Show the signature status next to the service statuses of contracts
+HiddenConfTitle_CONTRACT_SUPPORT_PRODUCTS=Allow products, not only services, on contract lines
+
+# Cron module
+HiddenConfTitle_CRON_DISABLE_KEY_CHANGE=Prevent changing the security key of scheduled jobs
+HiddenConfDesc_CRON_DISABLE_KEY_CHANGE=1: the key is shown read only. -1: the key stays editable but without the generate button, with a warning. Useful on hosted instances where the cron command line contains the key.
+HiddenConfTitle_CRON_DISABLE_TUTORIAL_CRON=Hide the help explaining how to set up the cron command
+HiddenConfDesc_CRON_DISABLE_TUTORIAL_CRON=Useful on hosted instances where the host sets up the cron.
+HiddenConfTitle_CRON_WARNING_DELAY_HOURS=Launch interval of the cron, in hours, shown as a warning
+HiddenConfDesc_CRON_WARNING_DELAY_HOURS=Displays a message on the scheduled jobs pages saying that jobs can run with a delay of up to this number of hours.
+
+# Direct Debit Orders
+HiddenConfTitle_WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS=Accept invoices of any status in direct debit and credit transfer orders
+HiddenConfDesc_WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS=By default only unpaid invoices are proposed, to avoid paying the same invoice twice.
+
+# Donation Module
+HiddenConfTitle_DONATION_USE_THIRDPARTIES=Link donations to a third party
+HiddenConfDesc_DONATION_USE_THIRDPARTIES=The donor name and address then come from the third party.
+
+# Email
+HiddenConfTitle_MAIL_FORCE_DELIVERY_RECEIPT_INVOICE=Ask for a delivery receipt by default when sending an invoice by email
+HiddenConfTitle_MAIL_FORCE_DELIVERY_RECEIPT_ORDER=Preselect "Yes" for the delivery receipt when sending a sales order by email
+HiddenConfDesc_MAIL_FORCE_DELIVERY_RECEIPT_ORDER=The delivery receipt field is only displayed when <code>MAIN_EMAIL_SUPPORT_ACK</code> is also set.
+HiddenConfTitle_MAIL_FORCE_DELIVERY_RECEIPT_PROPAL=Preselect "Yes" for the delivery receipt when sending a commercial proposal by email
+HiddenConfDesc_MAIL_FORCE_DELIVERY_RECEIPT_PROPAL=The delivery receipt field is only displayed when <code>MAIN_EMAIL_SUPPORT_ACK</code> is also set.
+HiddenConfTitle_MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_PROPOSAL=Preselect "Yes" for the delivery receipt when sending a price request by email
+HiddenConfDesc_MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_PROPOSAL=The delivery receipt field is only displayed when <code>MAIN_EMAIL_SUPPORT_ACK</code> is also set.
+HiddenConfTitle_MAIL_MASS_ACTION_SEARCH_MOST_RECENT_FILE_IF_NOT_FOUND=In mass email sending, attach the most recent document when the recorded file no longer exists
+HiddenConfTitle_MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL=Maximum number of recipients (To + Cc + Bcc) allowed in one email
+HiddenConfDesc_MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL=Default is <code>10</code>. Sending is refused above this value. Separate limits can be set with <code>MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL</code>, <code>MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL</code> and <code>MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL</code>.
+HiddenConfTitle_MAIL_PREFIX_FOR_EMAIL_ID=Prefix used to build the Message-ID of sent emails
+HiddenConfDesc_MAIL_PREFIX_FOR_EMAIL_ID=Set a fixed string, or <code>SERVER_NAME</code> to use the virtual host name. By default a hash based on the instance unique id is used.
+HiddenConfTitle_MAIN_COPY_FILE_IN_EVENT_AUTO=Copy the email attachments into the event created when sending an email
+HiddenConfTitle_MAIN_EMAIL_ADD_TRACK_ID=Add a tracking id in emails to link replies to the source object (removed)
+HiddenConfDesc_MAIN_EMAIL_ADD_TRACK_ID=With <code>1</code> the id was added in the Message-ID header, with <code>2</code> it was also appended to the sender address (name+trackid@domain).
+HiddenConfTitle_MAIN_EMAIL_SUPPORT_ACK=Show the "Delivery receipt" option in email sending forms
+HiddenConfDesc_MAIN_EMAIL_SUPPORT_ACK=Hidden by default since most mail clients ignore delivery receipt requests.
+HiddenConfTitle_MAIN_EMAIL_USECCC=Show a Bcc field in email sending forms
+HiddenConfDesc_MAIN_EMAIL_USECCC=Set to <code>1</code> to show an empty field, or to an email address to show the field prefilled with it.
+HiddenConfTitle_MAIN_EMAIL_USE_LAYOUT=Offer predefined layouts in the email form
+HiddenConfDesc_MAIN_EMAIL_USE_LAYOUT=Enabled by default, available with the WYSIWYG editor. Set 0 to hide them.
+HiddenConfTitle_MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS=IP addresses of the servers sending the emails, shown in the email setup page
+HiddenConfDesc_MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS=Comma separated list of IPs or of URLs returning the public IP. Used to help users set their SPF record (PHP mail method) or their SMTP IP restrictions. Useful for hosting providers.
+HiddenConfTitle_MAIN_FIX_FOR_BUGGED_MTA=Use LF only line endings in emails, for mail servers that add CR
+HiddenConfDesc_MAIN_FIX_FOR_BUGGED_MTA=Enabled by default. Some mail servers add a CR before each LF and break RFC compliant emails, so Dolibarr writes LF only. Set 0 if your recipients get broken emails (reported with Exim).
+HiddenConfTitle_MAIN_IMAP_USE_PHPIMAP=Use the embedded PHP-IMAP library instead of the native PHP imap extension for email collectors
+HiddenConfTitle_MAIN_INFO_SOCIETE_MAIL_ALIASES=Additional sender addresses proposed in the "From" list of email forms
+HiddenConfDesc_MAIN_INFO_SOCIETE_MAIL_ALIASES=Comma separated list of addresses, each one as <code>Name &lt;email&gt;</code> or just an email.
+HiddenConfTitle_MAIN_MAILFORM_DISABLE_ENTERKEY=Disable the Enter key in email forms
+HiddenConfDesc_MAIN_MAILFORM_DISABLE_ENTERKEY=Avoids sending the email by mistake.
+HiddenConfTitle_MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS=Embed images stored in the medias directory as inline content in sent emails
+HiddenConfDesc_MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS=Emails become heavier and are more likely to be flagged as spam.
+HiddenConfTitle_MAIN_MAIL_ALLOW_SENDMAIL_F=Pass the sender to sendmail with the -f option
+HiddenConfDesc_MAIN_MAIL_ALLOW_SENDMAIL_F=Only for the PHP mail sending method. Use it when your sendmail ignores the From header or requires the -f option.
+HiddenConfTitle_MAIN_MAIL_AUTOCOPY_PROPOSAL_TO=Always add this address in Bcc when sending a commercial proposal by email
+HiddenConfDesc_MAIN_MAIL_AUTOCOPY_PROPOSAL_TO=Same logic exists for other objects with <code>MAIN_MAIL_AUTOCOPY_ORDER_TO</code>, <code>MAIN_MAIL_AUTOCOPY_INVOICE_TO</code>, <code>MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO</code>, etc. The address is shown in the form only if <code>MAIN_EMAIL_USECCC</code> is set.
+HiddenConfTitle_MAIN_MAIL_DEBUG=Save the last email sent into a debug file
+HiddenConfDesc_MAIN_MAIL_DEBUG=Headers and content are written into <code>dolibarr_mail.log</code> in the documents directory, overwritten at each sending. On error the file is moved to <code>dolibarr_mail.err</code>.
+HiddenConfTitle_MAIN_MAIL_DEBUG_ERR_WITH_DATE=Keep one error file per failed email, named with the date
+HiddenConfDesc_MAIN_MAIL_DEBUG_ERR_WITH_DATE=With <code>MAIN_MAIL_DEBUG</code>, each failed email is saved in a <code>dolibarr_mail.*.err</code> file named with date and time, instead of overwriting <code>dolibarr_mail.err</code>.
+HiddenConfTitle_MAIN_MAIL_DEBUG_LOG_WITH_DATE=Keep previous versions of the email debug file
+HiddenConfDesc_MAIN_MAIL_DEBUG_LOG_WITH_DATE=With <code>MAIN_MAIL_DEBUG</code>, each <code>dolibarr_mail.log</code> is archived as a versioned copy. The value is the number of copies to keep.
+HiddenConfTitle_MAIN_MAIL_DO_NOT_USE_SIGN=Do not add the user signature to emails
+HiddenConfDesc_MAIN_MAIL_DO_NOT_USE_SIGN=The user and sender profile signature keys stay empty in email templates and mass mailings.
+HiddenConfTitle_MAIN_MAIL_ENABLED_USER_DEST_SELECT=Also propose internal users as recipients in email sending forms
+HiddenConfTitle_MAIN_MAIL_FORCE_CONTENT_TYPE_TO_HTML=Always send emails in HTML format, even when the content is plain text
+HiddenConfTitle_MAIN_MAIL_FORCE_FROM=Force the From address of all emails sent
+HiddenConfDesc_MAIN_MAIL_FORCE_FROM=When no reply address is given, the original sender is kept as Reply-To.
+HiddenConfTitle_MAIN_MAIL_FORCE_NOT_SENDING_TO=Email addresses that never receive any email
+HiddenConfDesc_MAIN_MAIL_FORCE_NOT_SENDING_TO=Comma separated list. These addresses are removed from To, Cc and Bcc before sending.
+HiddenConfTitle_MAIN_MAIL_NO_FULL_EMAIL=Use bare email addresses, without the name, for sender and recipients
+HiddenConfDesc_MAIN_MAIL_NO_FULL_EMAIL=May help with very old mail servers.
+HiddenConfTitle_MAIN_MAIL_SENDMAIL_FORCE_BA=Call sendmail with the -ba option
+HiddenConfDesc_MAIN_MAIL_SENDMAIL_FORCE_BA=Only for the PHP mail sending method: sendmail then reads the sender from the From or Sender header. Setting <code>mail.force_extra_parameters</code> in php.ini is an alternative.
+HiddenConfTitle_MAIN_MAIL_USE_MULTI_PART=Build emails with an alternative plain text part
+HiddenConfWarning_MAIN_MAIL_USE_MULTI_PART=No effect: the application always forces this option to 1.
+
+# Emailing Module
+HiddenConfTitle_EMAILING_USE_ADVANCED_SELECTOR=Use the advanced recipient selector in emailings
+HiddenConfDesc_EMAILING_USE_ADVANCED_SELECTOR=Automatically enabled when JavaScript is on and <code>MAIN_FEATURES_LEVEL</code> is 1 or more.
+HiddenConfTitle_MAILING_LIMIT_SENDBYCLI=Maximum number of emails sent in one run of the emailing command line script
+HiddenConfDesc_MAILING_LIMIT_SENDBYCLI=<code>0</code> or not set means no limit, <code>-1</code> forbids sending from the command line. The value <code>$dolibarr_mailing_limit_sendbycli</code> of conf.php overrides it.
+HiddenConfTitle_MAILING_LIMIT_SENDBYWEB=Maximum number of emails sent in one emailing batch from the web interface
+HiddenConfDesc_MAILING_LIMIT_SENDBYWEB=Default is <code>25</code>. The value <code>$dolibarr_mailing_limit_sendbyweb</code> of conf.php overrides it.
+HiddenConfTitle_MAILING_LIMIT_WARNING_NOPHPMAIL=Warning shown on emailing sending when a method other than PHP mail is used
+HiddenConfDesc_MAILING_LIMIT_WARNING_NOPHPMAIL=Value is a translation key or a plain text message.
+HiddenConfTitle_MAILING_LIMIT_WARNING_PHPMAIL=Warning shown on emailing sending when the PHP mail method is used
+HiddenConfDesc_MAILING_LIMIT_WARNING_PHPMAIL=Value is a translation key or a plain text message.
+HiddenConfTitle_MAILING_NO_USING_PHPMAIL=Forbid sending emailings with the PHP mail method (an SMTP server is required)
+HiddenConfDesc_MAILING_NO_USING_PHPMAIL=The error message can include a contact address set with <code>MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS</code>.
+HiddenConfTitle_MAILING_PREFIX_FOR_EMAIL_ID=Prefix used to build the email id in headers of emailings (removed)
+HiddenConfDesc_MAILING_PREFIX_FOR_EMAIL_ID=Replaced by <code>MAIL_PREFIX_FOR_EMAIL_ID</code>.
+HiddenConfTitle_MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS=Contact address shown when emailings are refused because no SMTP server is set
+HiddenConfDesc_MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS=Only used with <code>MAILING_NO_USING_PHPMAIL</code>.
+
+# Expense Report
+HiddenConfTitle_EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS=Allow several expense reports of the same user on overlapping periods
+HiddenConfTitle_EXPENSEREPORT_OVERRIDE_VAT=Allow VAT selection on expense reports even if the company is not subject to VAT
+HiddenConfTitle_EXPENSEREPORT_USE_OLD_NUMBERING_RULE=Use the old fixed numbering of expense reports (before v7) with the default numbering model
+HiddenConfTitle_MAIN_USE_EXPENSE_IK=Enable mileage allowances (vehicle categories and kilometric scales) on expense reports
+HiddenConfTitle_MAIN_USE_EXPENSE_RULE=Enable expense report rules limiting amounts per user or group (removed)
+
+# Export Module
+HiddenConfTitle_EXPORTS_SHARE_MODELS=Share export profiles between all users
+HiddenConfTitle_EXPORTTOOL_CATEGORIES=Add the tags/categories of products and services as a column in their export profiles
+HiddenConfTitle_EXPORT_CSV_FORCE_CHARSET=Character set used for CSV content
+HiddenConfDesc_EXPORT_CSV_FORCE_CHARSET=Only used by CSV files built outside the Export module, for example the export of the unalterable log archives.
+HiddenConfWarning_EXPORT_CSV_FORCE_CHARSET=No effect in the Export module: its CSV formats force their own character set (ISO-8859-1 or UTF-8).
+HiddenConfTitle_EXPORT_CSV_SEPARATOR_TO_USE=Field separator used in CSV exports
+HiddenConfDesc_EXPORT_CSV_SEPARATOR_TO_USE=Default is a comma.
+HiddenConfTitle_USE_STRICT_CSV_RULES=How line breaks inside values are written in CSV exports
+HiddenConfDesc_USE_STRICT_CSV_RULES=<code>2</code> (default): line breaks replaced by <code>\n</code> and value quoted. <code>1</code>: line breaks kept as is and value quoted (strict CSV). <code>0</code>: line breaks replaced by <code>\n</code> without quotes.
+
+# Foundation Module
+HiddenConfTitle_MEMBER_EXT_URL_SUBSCRIPTION_INFO=URL of an external page with membership information, linked from the public subscription and payment pages
+HiddenConfTitle_MEMBER_URL_REDIRECT_SUBSCRIPTION=URL to redirect to after the public member (or third party) registration form is submitted
+HiddenConfDesc_MEMBER_URL_REDIRECT_SUBSCRIPTION=Not used when the visitor is sent to the online payment page.
+
+# Holiday Module
+HiddenConfTitle_HOLIDAY_HIDE_BALANCE=Hide the leave balance on the leave request card and on the HRM home page
+HiddenConfDesc_HOLIDAY_HIDE_BALANCE=Set to <code>1</code>, or to a translation key or text to show that message instead of the balance.
+
+# Interventions Module
+HiddenConfTitle_FICHINTER_CLASSIFY_BILLED=Allow classifying interventions as "Billed"
+HiddenConfDesc_FICHINTER_CLASSIFY_BILLED=Adds the buttons on the card, the status in lists and statistics, and the related agenda event.
+HiddenConfTitle_FICHINTER_DISABLE_DETAILS=Disable the detail lines of interventions
+HiddenConfDesc_FICHINTER_DISABLE_DETAILS=<code>1</code>: no lines on the card, an intervention can be validated without lines. <code>2</code>: lines kept on the card but line columns hidden in the list.
+
+# Invoice Module
+HiddenConfTitle_FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM=Copy the public and private notes of the origin object when creating a supplier invoice from it
+HiddenConfTitle_FACTURE_DEPOSITS_ARE_JUST_PAYMENTS=Handle deposit invoices as simple payments on the final invoice (not recommended)
+HiddenConfDesc_FACTURE_DEPOSITS_ARE_JUST_PAYMENTS=The final invoice amount is not reduced, a payment is recorded instead and the deposit is not counted in turnover. Not allowed in many European countries.
+HiddenConfTitle_FACTURE_ENABLE_NEGATIVE=Allow validating a customer invoice with a negative total
+HiddenConfTitle_FACTURE_ENABLE_NEGATIVE_LINES=Allow adding lines with a negative amount on customer invoices
+HiddenConfTitle_FACTURE_REUSE_NOTES_ON_CREATE_FROM=Copy the public and private notes of the origin object when creating a customer invoice from it
+HiddenConfTitle_FACTURE_SENDBYEMAIL_FOR_ALL_STATUS=Allow sending draft invoices by email
+HiddenConfTitle_INVOICEREC_SET_AUTOFILL_DATE_START=Set "Auto fill start date" to yes for lines of a template invoice created from an invoice
+HiddenConfDesc_INVOICEREC_SET_AUTOFILL_DATE_START=Use <code>INVOICEREC_SET_AUTOFILL_DATE_END</code> for the end date.
+HiddenConfTitle_INVOICE_ALLOW_EXTERNAL_DOWNLOAD=Create a public share link for each generated invoice PDF
+HiddenConfDesc_INVOICE_ALLOW_EXTERNAL_DOWNLOAD=The link can be inserted in email templates with <code>__DIRECTDOWNLOAD_URL_INVOICE__</code>.
+HiddenConfTitle_INVOICE_ALLOW_FREE_REF=Allow changing the ref of a draft invoice
+HiddenConfDesc_INVOICE_ALLOW_FREE_REF=Only available when the company is located outside the European Union.
+HiddenConfTitle_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED=Allow converting the remainder of a partially refunded credit note into a reusable discount
+HiddenConfTitle_INVOICE_AUTO_NEXT_MONTH_ON_LINES=When cloning an invoice, shift service lines covering a full month to the next month
+HiddenConfDesc_INVOICE_AUTO_NEXT_MONTH_ON_LINES=Only for lines whose period starts on the first day and ends on the last day of a month.
+HiddenConfTitle_INVOICE_CAN_ALWAYS_BE_REMOVED=Allow deleting any invoice, even if it is not the last one (removed)
+HiddenConfTitle_INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE=Allow modifying a validated invoice even if a payment was recorded
+HiddenConfDesc_INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE=Records already archived by the Unalterable logs module are not changed, a new log entry is added.
+HiddenConfTitle_INVOICE_CAN_NEVER_BE_EDITED=Never allow putting a validated invoice back to draft
+HiddenConfDesc_INVOICE_CAN_NEVER_BE_EDITED=See also <code>INVOICE_CAN_NEVER_BE_REMOVED</code>.
+HiddenConfTitle_INVOICE_CAN_NEVER_BE_REMOVED=Never allow deleting an invoice, except drafts with a temporary (PROV) ref
+HiddenConfDesc_INVOICE_CAN_NEVER_BE_REMOVED=See also <code>INVOICE_CAN_NEVER_BE_EDITED</code>.
+HiddenConfTitle_INVOICE_CREDIT_NOTE_STANDALONE=Allow creating a credit note not linked to an origin invoice
+HiddenConfDesc_INVOICE_CREDIT_NOTE_STANDALONE=Enabled by default when the company country is Greece.
+HiddenConfTitle_INVOICE_DEFAULT_NOTE_PUBLIC=Default public note of new invoices (removed)
+HiddenConfTitle_INVOICE_DISABLE_CREDIT_NOTE=Disable the credit note invoice type
+HiddenConfTitle_INVOICE_DISABLE_DEPOSIT=Disable the deposit invoice type
+HiddenConfDesc_INVOICE_DISABLE_DEPOSIT=Enabled by default when the company country is Greece.
+HiddenConfTitle_INVOICE_DISABLE_REPLACEMENT=Disable the replacement invoice type
+HiddenConfDesc_INVOICE_DISABLE_REPLACEMENT=Enabled by default when the company country is France or Greece. Set to <code>0</code> to allow replacement invoices there.
+HiddenConfTitle_INVOICE_DISALLOW_REOPEN=Forbid reopening paid or abandoned customer invoices
+HiddenConfTitle_INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN=Keep lines with a negative price as they are instead of converting them into discounts when creating an invoice
+HiddenConfDesc_INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN=For credit notes, also requires <code>FACTURE_ENABLE_NEGATIVE_LINES</code>.
+HiddenConfTitle_INVOICE_MAX_FUTURE_DELAY=Tolerance in seconds for invoice dates in the future
+HiddenConfDesc_INVOICE_MAX_FUTURE_DELAY=By default an invoice dated after the end of the current day is refused. Applies to customer and supplier invoices.
+HiddenConfTitle_INVOICE_POINTOFTAX_DATE=Add a "Point of tax" date on invoices
+HiddenConfDesc_INVOICE_POINTOFTAX_DATE=Required in some countries. The date is printed on invoice PDF.
+HiddenConfTitle_INVOICE_POSITIVE_CREDIT_NOTE=Show amounts of credit notes as positive values on PDF
+HiddenConfTitle_INVOICE_REC_DATE_TO_YES=Preselect yes for the auto fill of start and end dates in the line form of template invoices
+HiddenConfTitle_INVOICE_SUBTYPE_ENABLED=Enable invoice subtypes (from the "Invoice subtypes" dictionary)
+HiddenConfDesc_INVOICE_SUBTYPE_ENABLED=Required in some countries, enabled by default for Greece. A subtype becomes mandatory on invoice creation.
+HiddenConfTitle_INVOICE_USE_DEFAULT_DOCUMENT=Allow a default PDF model per invoice type
+HiddenConfDesc_INVOICE_USE_DEFAULT_DOCUMENT=Models are chosen in the invoice setup and the model is selected automatically when the invoice type is chosen on creation.
+HiddenConfTitle_INVOICE_USE_RETAINED_WARRANTY=Enable retained warranty on invoices
+HiddenConfDesc_INVOICE_USE_RETAINED_WARRANTY=Also available in the "Situation invoices" tab of the invoice setup when situation invoices are enabled.
+HiddenConfTitle_INVOICE_USE_SITUATION=Enable situation invoices
+HiddenConfDesc_INVOICE_USE_SITUATION=<code>1</code>: legacy cumulative mode (known bugs, not compatible with double-entry accounting). <code>2</code>: new progressive mode. Once enabled, a "Situation invoices" tab in the invoice setup allows changing the mode.
+HiddenConfTitle_INVOICE_USE_SITUATION_CREDIT_NOTE=Allow credit notes on situation invoices
+HiddenConfDesc_INVOICE_USE_SITUATION_CREDIT_NOTE=Requires <code>INVOICE_USE_SITUATION</code>. Also available in the "Situation invoices" tab of the invoice setup.
+HiddenConfTitle_LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED=Limit the number of invoices proposed as source when creating a credit note
+HiddenConfDesc_LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED=Improves performance for customers with many invoices (for example with TakePOS).
+HiddenConfTitle_MAIN_DEPOSIT_MULTI_TVA=Create one line per VAT rate of the origin document when creating a deposit invoice
+HiddenConfDesc_MAIN_DEPOSIT_MULTI_TVA=Also applies to supplier invoices and to the deduction of the deposit on the final invoice.
+HiddenConfTitle_MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT=Hide all VAT information on generated PDF documents
+HiddenConfTitle_MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN=Hide the VAT column of lines on generated PDF documents, keeping VAT totals
+HiddenConfTitle_MAIN_SHOW_FACNUMBER_IN_DISCOUNT_LIST=Show the source invoice ref in the list of available discounts
+HiddenConfTitle_PDF_INVOICE_SHOW_PRICE_INCL_TAX=Add a column with the unit price including tax on invoice PDF (sponge model)
+HiddenConfTitle_SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED=Allow converting the remainder of a partially refunded supplier credit note into a reusable discount
+HiddenConfTitle_SUPPLIER_INVOICE_ENABLE_NEGATIVE=Allow validating a supplier invoice with a negative total
+HiddenConfTitle_SUPPLIER_INVOICE_ENABLE_NEGATIVE_LINES=Allow adding lines with a negative amount on supplier invoices
+HiddenConfTitle_WORKFLOW_BILL_ON_SHIPMENT=Choose whether billing status is tracked on orders or on shipments
+HiddenConfDesc_WORKFLOW_BILL_ON_SHIPMENT=<code>1</code>: billing is done from shipments, the "Billed" column and classify billed buttons of orders are hidden. <code>0</code>: billing status of shipments is hidden. Not set: both are available.
+
+# Leave
+HiddenConfTitle_MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY=Count Saturday as a non working day
+HiddenConfDesc_MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY=Default is <code>1</code>. Set to <code>0</code> to make Saturday a working day in leave and delay calculations.
+HiddenConfTitle_MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=Count Sunday as a non working day
+HiddenConfDesc_MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=Default is <code>1</code>. Set to <code>0</code> to make Sunday a working day in leave and delay calculations.
+
+# Look or Theme
+HiddenConfTitle_ALLOW_THEME_JS=Load a custom JavaScript file from the theme folder
+HiddenConfDesc_ALLOW_THEME_JS=When set, the file <code>theme/THEME/THEME.js</code> (same name as the active theme folder) is included in every page if it exists.
+HiddenConfTitle_MAIN_DISABLE_GLOBAL_BOXSTATS=Hide the global statistics board on the home page
+HiddenConfDesc_MAIN_DISABLE_GLOBAL_BOXSTATS=The "Dolibarr state board" widget no longer shows its counters.
+HiddenConfTitle_MAIN_DISABLE_GLOBAL_WORKBOARD=Hide the work board on the home page
+HiddenConfTitle_MAIN_EASTER_EGG_COMMITSTRIP=Show the latest CommitStrip comic on the login page
+HiddenConfDesc_MAIN_EASTER_EGG_COMMITSTRIP=The server must be able to reach commitstrip.com.
+HiddenConfTitle_MAIN_FAVICON_URL=URL of a custom favicon
+HiddenConfTitle_MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD=Always show the statistic labels of the "open elements" dashboard boxes, not only on hover
+HiddenConfTitle_THEME_AGRESSIVENESS_RATIO=Color intensity of the theme (removed)
+HiddenConfDesc_THEME_AGRESSIVENESS_RATIO=From <code>-100</code> (light grey) to <code>100</code> (very bright), <code>0</code> being the default.
+HiddenConfTitle_THEME_SHOW_BORDER_ON_INPUT=Show a border around input fields
+HiddenConfDesc_THEME_SHOW_BORDER_ON_INPUT=On by default, set to <code>0</code> to hide borders. Also available in the theme setup.
+
+# Manifest (Progressive Web App)
+HiddenConfTitle_MAIN_MANIFEST_APPLI_BG_COLOR=Background color of the web app manifest (PWA)
+HiddenConfDesc_MAIN_MANIFEST_APPLI_BG_COLOR=Color code used as <code>background_color</code>. Default is #ffffff.
+HiddenConfTitle_MAIN_MANIFEST_APPLI_LOGO_URL=Icon URL declared in the web app manifest (PWA)
+HiddenConfDesc_MAIN_MANIFEST_APPLI_LOGO_URL=When set, this image URL is added as an icon of the manifest. Use <code>MAIN_MANIFEST_APPLI_LOGO_URL_SIZE</code> to declare its size.
+HiddenConfTitle_MAIN_MANIFEST_APPLI_LOGO_URL_SIZE=Size in pixels of the custom manifest icon (PWA)
+HiddenConfDesc_MAIN_MANIFEST_APPLI_LOGO_URL_SIZE=A single number, declared as a square size (for example 512 gives 512x512). Only used with <code>MAIN_MANIFEST_APPLI_LOGO_URL</code>.
+HiddenConfTitle_MAIN_MANIFEST_APPLI_THEME_COLOR=Theme color of the web app manifest (PWA)
+HiddenConfDesc_MAIN_MANIFEST_APPLI_THEME_COLOR=Color code used as <code>theme_color</code>. Defaults to the top menu color of the Eldy theme, or #F05F40.
+
+# Order Module
+HiddenConfTitle_MAIN_MASSACTION_CREATEBILLS_REDIRECT_IF_MANY=Go to the invoice list when the "Create invoices" mass action creates several
+HiddenConfDesc_MAIN_MASSACTION_CREATEBILLS_REDIRECT_IF_MANY=Applies to the mass action of the sales order list.
+HiddenConfTitle_MAIN_MASSACTION_CREATEBILLS_REDIRECT_IF_ONE=Open the invoice when the "Create invoices" mass action creates only one
+HiddenConfDesc_MAIN_MASSACTION_CREATEBILLS_REDIRECT_IF_ONE=Applies to the mass action of the sales order list.
+HiddenConfTitle_MAIN_ORDERLIST_CREATEBILLS_ONEBYTHIRD=Default value of "One invoice per third party" when creating invoices from orders
+HiddenConfDesc_MAIN_ORDERLIST_CREATEBILLS_ONEBYTHIRD=Used as preselected choice in the mass action form of the sales order list: <code>yes</code> or <code>no</code> (default <code>no</code>).
+HiddenConfTitle_MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_ORDER=Use separate "Create" buttons instead of a dropdown on order and proposal cards
+HiddenConfDesc_MAIN_REMOVE_DROPDOWN_CREATE_BUTTONS_ON_ORDER=Restores the button layout used before the dropdown introduced in version 19.
+HiddenConfTitle_MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER=Show the customer reference of the proposal when creating an order from it
+HiddenConfDesc_MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER=On the order creation form, a field prefilled with the proposal customer reference is shown so it is copied to the order.
+HiddenConfTitle_ORDER_ALLOW_EXTERNAL_DOWNLOAD=Add a public share link to generated sales order documents
+HiddenConfDesc_ORDER_ALLOW_EXTERNAL_DOWNLOAD=Each generated PDF gets a share key so it can be downloaded without login.
+HiddenConfTitle_ORDER_DEFAULT_NOTE_PUBLIC=Default text of the public note of sales orders
+HiddenConfTitle_ORDER_ENABLE_NEGATIVE=Allow validating sales orders with a negative total
+HiddenConfDesc_ORDER_ENABLE_NEGATIVE=The Validate button is shown even when the total including tax is below zero.
+HiddenConfTitle_ORDER_REQUIRE_SOURCE=Make the "Source" field mandatory on sales orders
+HiddenConfDesc_ORDER_REQUIRE_SOURCE=The order cannot be created when no source (channel) is selected.
+HiddenConfTitle_ORDER_VALID_AFTER_CLOSE_PROPAL=Validate immediately the order created when a proposal is signed
+HiddenConfDesc_ORDER_VALID_AFTER_CLOSE_PROPAL=The order generated automatically on proposal closing is validated right away instead of staying draft.
+HiddenConfTitle_THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER=Copy third party extra fields to new sales orders
+HiddenConfDesc_THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER=Only extra fields with the same code on both objects are copied.
+
+# PDF Options
+HiddenConfTitle_DOC_SHOW_FIRST_SALES_REP=Show the first sales representative in the PDF header
+HiddenConfTitle_MAIN_ADD_PDF_BACKGROUND=Use a PDF file as background of generated PDF documents
+HiddenConfDesc_MAIN_ADD_PDF_BACKGROUND=File name of a PDF stored in <code>documents/mycompany</code>. Its first page is imported under the content of supported templates (proposals, orders, invoices, etc.). Value <code>-1</code> disables it.
+HiddenConfTitle_MAIN_DISABLE_FORCE_SAVEAS=Open downloaded documents in the browser instead of forcing a download
+HiddenConfDesc_MAIN_DISABLE_FORCE_SAVEAS=<code>1</code>: the file is displayed in the current tab when the browser can. <code>2</code>: same, and document links open in a new tab.
+HiddenConfTitle_MAIN_DISABLE_PDF_AUTOUPDATE=Do not regenerate the PDF automatically after each change
+HiddenConfDesc_MAIN_DISABLE_PDF_AUTOUPDATE=By default the document is rebuilt when lines are added, edited, moved or deleted, or on validation. With this option, use the "Generate" button. Can speed up slow servers.
+HiddenConfTitle_MAIN_DISABLE_PDF_COMPRESSION=Disable compression of generated PDF files
+HiddenConfDesc_MAIN_DISABLE_PDF_COMPRESSION=Produces larger files, mainly useful for debugging.
+HiddenConfTitle_MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_COMMANDE=Hide product descriptions on sales order PDF
+HiddenConfDesc_MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_COMMANDE=Only the product reference and label are kept.
+HiddenConfTitle_MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_FACTURE=Hide product descriptions on customer invoice PDF
+HiddenConfDesc_MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_FACTURE=Only the product reference and label are kept.
+HiddenConfTitle_MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_INVOICE_SUPPLIER=Hide product descriptions on vendor invoice PDF
+HiddenConfDesc_MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_INVOICE_SUPPLIER=Only the product reference and label are kept.
+HiddenConfTitle_MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_ORDER_SUPPLIER=Hide product descriptions on purchase order PDF
+HiddenConfDesc_MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_ORDER_SUPPLIER=Only the product reference and label are kept.
+HiddenConfTitle_MAIN_DOCUMENTS_WITH_PICTURE_WIDTH=Width of product pictures in PDF documents
+HiddenConfDesc_MAIN_DOCUMENTS_WITH_PICTURE_WIDTH=Width in mm of the picture column when product pictures are enabled on PDF. Default is 20.
+HiddenConfTitle_MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS=Show the company address details in the PDF footer
+HiddenConfTitle_MAIN_GENERATE_INVOICES_WITH_PICTURE=Show the product picture on lines of customer invoice PDF
+HiddenConfDesc_MAIN_GENERATE_INVOICES_WITH_PICTURE=The first picture of the product is used.
+HiddenConfTitle_MAIN_GENERATE_ORDERS_WITH_PICTURE=Show the product picture on lines of sales order PDF
+HiddenConfDesc_MAIN_GENERATE_ORDERS_WITH_PICTURE=The first picture of the product is used.
+HiddenConfTitle_MAIN_GENERATE_PROPOSALS_WITH_PICTURE=Show the product picture on lines of commercial proposal PDF
+HiddenConfDesc_MAIN_GENERATE_PROPOSALS_WITH_PICTURE=The first picture of the product is used. It reduces the width left for the description.
+HiddenConfTitle_MAIN_GENERATE_SUPPLIER_ORDER_WITH_PICTURE=Show the product picture on lines of purchase order PDF
+HiddenConfDesc_MAIN_GENERATE_SUPPLIER_ORDER_WITH_PICTURE=The first picture of the product is used (Cornas template).
+HiddenConfTitle_MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE=Show the product picture on lines of price request PDF
+HiddenConfDesc_MAIN_GENERATE_SUPPLIER_PROPOSAL_WITH_PICTURE=The first picture of the product is used (Zenith template).
+HiddenConfTitle_MAIN_INVERT_SENDER_RECIPIENT=Swap the sender and recipient blocks on PDF documents
+HiddenConfDesc_MAIN_INVERT_SENDER_RECIPIENT=Enabled automatically when the company country is Germany, unless the constant is defined.
+HiddenConfTitle_MAIN_ODT_AS_PDF=Convert documents generated from ODT templates into PDF
+HiddenConfDesc_MAIN_ODT_AS_PDF=Value <code>libreoffice</code> uses the <code>soffice</code> command that must be installed on the server. Value <code>jodconverter</code> is deprecated.
+HiddenConfTitle_MAIN_ODT_AS_PDF_DEL_SOURCE=Delete the ODT file after its conversion into PDF
+HiddenConfDesc_MAIN_ODT_AS_PDF_DEL_SOURCE=Only used with ODT to PDF conversion enabled.
+HiddenConfTitle_MAIN_PDF_ADDALSOTARGETDETAILS=Add the recipient phone, fax, email and website in PDF addresses
+HiddenConfDesc_MAIN_PDF_ADDALSOTARGETDETAILS=Useful when a printed document is handed to a carrier.
+HiddenConfTitle_MAIN_PDF_DASH_BETWEEN_LINES=Draw a dashed separator between lines of PDF documents
+HiddenConfDesc_MAIN_PDF_DASH_BETWEEN_LINES=Enabled by default when the constant is not defined. Set it to 0 to remove the separators.
+HiddenConfTitle_MAIN_PDF_DONOTREPEAT_HEAD=Do not repeat the document header on following PDF pages
+HiddenConfDesc_MAIN_PDF_DONOTREPEAT_HEAD=Supported by some templates (contracts, projects, etc.).
+HiddenConfTitle_MAIN_PDF_FORCE_FONT=Force the font used in PDF documents
+HiddenConfDesc_MAIN_PDF_FORCE_FONT=Overrides the font defined by the language files. The font must be known by TCPDF.
+HiddenConfTitle_MAIN_PDF_FORCE_FONT_SIZE=Force the base font size of PDF documents
+HiddenConfDesc_MAIN_PDF_FORCE_FONT_SIZE=Overrides the size defined by the language files (usually 10).
+HiddenConfTitle_MAIN_PDF_FREETEXT_HEIGHT=Height reserved for the free text at the bottom of PDF documents
+HiddenConfDesc_MAIN_PDF_FREETEXT_HEIGHT=Value in mm, default is 5. Increase it when a long free text overlaps the content.
+HiddenConfTitle_MAIN_PDF_HIDE_SENDER_NAME=Hide your company name in the sender block of PDF documents
+HiddenConfTitle_MAIN_PDF_NO_RECIPENT_FRAME=Remove the recipient frame and its "Bill to" label on PDF documents
+HiddenConfDesc_MAIN_PDF_NO_RECIPENT_FRAME=The recipient address is still printed, without the border.
+HiddenConfTitle_MAIN_PDF_NO_SENDER_FRAME=Remove the sender frame and its "Sender" label on PDF documents
+HiddenConfDesc_MAIN_PDF_NO_SENDER_FRAME=The sender address is still printed, without the grey background box.
+HiddenConfTitle_MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING=Add a signature area to commercial proposal PDF
+HiddenConfDesc_MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING=Enabled by default when the constant is not defined (Cyan template).
+HiddenConfTitle_MAIN_PDF_TITLE_BACKGROUND_COLOR=Background color of the title line of PDF tables
+HiddenConfDesc_MAIN_PDF_TITLE_BACKGROUND_COLOR=RGB values separated by commas.
+HiddenConfTitle_MAIN_PDF_USE_LARGE_LOGO=Use the full size company logo in PDF instead of the small one
+HiddenConfDesc_MAIN_PDF_USE_LARGE_LOGO=Gives a sharper logo but the PDF files can become very large.
+HiddenConfTitle_MAIN_PROFID1_IN_SOURCE_ADDRESS=Show your professional ID 1 in the sender address of PDF documents
+HiddenConfDesc_MAIN_PROFID1_IN_SOURCE_ADDRESS=Only when this ID is filled in the company setup.
+HiddenConfTitle_MAIN_PROFID2_IN_SOURCE_ADDRESS=Show your professional ID 2 in the sender address of PDF documents
+HiddenConfDesc_MAIN_PROFID2_IN_SOURCE_ADDRESS=Only when this ID is filled in the company setup.
+HiddenConfTitle_MAIN_PROFID3_IN_SOURCE_ADDRESS=Show your professional ID 3 in the sender address of PDF documents
+HiddenConfDesc_MAIN_PROFID3_IN_SOURCE_ADDRESS=Only when this ID is filled in the company setup.
+HiddenConfTitle_MAIN_PROFID4_IN_SOURCE_ADDRESS=Show your professional ID 4 in the sender address of PDF documents
+HiddenConfDesc_MAIN_PROFID4_IN_SOURCE_ADDRESS=Only when this ID is filled in the company setup.
+HiddenConfTitle_MAIN_PROFID5_IN_SOURCE_ADDRESS=Show your professional ID 5 in the sender address of PDF documents
+HiddenConfDesc_MAIN_PROFID5_IN_SOURCE_ADDRESS=Only when this ID is filled in the company setup.
+HiddenConfTitle_MAIN_PROFID6_IN_SOURCE_ADDRESS=Show your professional ID 6 in the sender address of PDF documents
+HiddenConfDesc_MAIN_PROFID6_IN_SOURCE_ADDRESS=Only when this ID is filled in the company setup.
+HiddenConfTitle_MAIN_TVAINTRA_IN_SOURCE_ADDRESS=Show your VAT number in the sender address of PDF documents
+HiddenConfDesc_MAIN_TVAINTRA_IN_SOURCE_ADDRESS=Required in some countries even if the number is already in the footer.
+HiddenConfTitle_MAIN_USE_BACKGROUND_ON_PDF=Use an image as background of generated PDF documents
+HiddenConfDesc_MAIN_USE_BACKGROUND_ON_PDF=File name of an image stored in <code>documents/mycompany/logos</code>. Value <code>-1</code> disables it. May hide some content of the page.
+HiddenConfTitle_MAIN_USE_COMPANY_NAME_OF_CONTACT=Use the company of the recipient contact in PDF addresses
+HiddenConfDesc_MAIN_USE_COMPANY_NAME_OF_CONTACT=When the recipient contact belongs to another third party than the document one, its company name (and VAT number) is shown. Most templates do this when the constant is not defined, set it to 0 to disable.
+HiddenConfTitle_MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF=Show totals in both currencies on PDF with Multicurrency
+HiddenConfDesc_MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF=When the document uses a foreign currency, amounts in the main currency are also shown.
+HiddenConfTitle_PDF_ADD_POSITION=Add a line number column in PDF documents
+HiddenConfDesc_PDF_ADD_POSITION=Supported by recent templates (invoices, orders, shipments, purchase orders, interventions). Some templates also have their own constant, like <code>PDF_SPONGE_ADD_POSITION</code>.
+HiddenConfTitle_PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN=Show only BIC and IBAN in bank details of PDF documents
+HiddenConfDesc_PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN=The national account number (bank code, sort code, etc.) is hidden. Some countries still require it.
+HiddenConfTitle_PDF_BOLD_PRODUCT_REF_AND_PERIOD=Show the product reference and service period in bold on PDF lines
+HiddenConfTitle_PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES=Hide the product label on PDF lines
+HiddenConfWarning_PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES=Misleading name: the label is hidden on the lines of all PDF documents, not only supplier ones.
+HiddenConfTitle_PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES=Change how product references are shown on supplier PDF lines
+HiddenConfDesc_PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES=<code>1</code>: show only the supplier reference. <code>2</code>: show the supplier reference followed by the internal reference. By default the internal reference comes first.
+HiddenConfTitle_PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME=Add the third party alias name to its name on PDF documents
+HiddenConfDesc_PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME=<code>1</code>: name then alias. <code>2</code>: alias then name.
+HiddenConfTitle_PDF_ORDER_SHOW_PRICE_INCL_TAX=Add a unit price including tax column on sales order PDF
+HiddenConfDesc_PDF_ORDER_SHOW_PRICE_INCL_TAX=Eratosthene template.
+HiddenConfTitle_PDF_PROPAL_SHOW_PRICE_INCL_TAX=Add a unit price including tax column on proposal PDF
+HiddenConfDesc_PDF_PROPAL_SHOW_PRICE_INCL_TAX=Cyan template.
+HiddenConfTitle_PDF_SECURITY_ENCRYPTION=Encrypt and protect generated PDF files
+HiddenConfDesc_PDF_SECURITY_ENCRYPTION=Options: <code>PDF_SECURITY_ENCRYPTION_RIGHTS</code> (JSON list of blocked rights, default ["modify","copy"]), <code>PDF_SECURITY_ENCRYPTION_USERPASS</code>, <code>PDF_SECURITY_ENCRYPTION_OWNERPASS</code> (random if empty), <code>PDF_SECURITY_ENCRYPTION_STRENGTH</code> (0 RC4 40 bit to 3 AES 256 bit).
+HiddenConfWarning_PDF_SECURITY_ENCRYPTION=Not supported: the PDF setup page warns that it breaks several PDF features, such as mass PDF generation and online signature.
+HiddenConfTitle_PDF_SHOW_PROJECT=Show the linked project on PDF documents
+HiddenConfDesc_PDF_SHOW_PROJECT=Supported by several templates (invoices, orders, purchase orders, supplier invoices, assets).
+HiddenConfTitle_PDF_USE_ALSO_LANGUAGE_CODE=Generate PDF documents in a second language as well
+HiddenConfDesc_PDF_USE_ALSO_LANGUAGE_CODE=Language code added to the main language of the document, so texts appear in both.
+HiddenConfTitle_PDF_USE_GETALIASNBPAGE_FOR_TOTAL=Use the TCPDF page count alias for the total number of pages
+HiddenConfTitle_SHIPPING_PDF_DISPLAY_AMOUNT_HT=Show unit price and total excluding tax on shipment PDF
+HiddenConfDesc_SHIPPING_PDF_DISPLAY_AMOUNT_HT=Espadon template.
+HiddenConfTitle_SHOW_SUBPRODUCT_REF_IN_PDF=Show the references of kit components on PDF lines
+
+# Point of Sale (POS)
+HiddenConfTitle_CASHDESK_SHOW_KEYPAD=Show a numeric keypad in the former Simple POS module
+HiddenConfTitle_POS_ADDON=Numbering model of invoices created by the point of sale
+HiddenConfDesc_POS_ADDON=Name of an invoice numbering model.
+HiddenConfTitle_TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT=Allow choosing the bank account during a TakePOS payment
+HiddenConfTitle_TAKEPOS_CONTROL_CASH_OPENING=Ask for the cash fund when opening TakePOS
+HiddenConfTitle_TAKEPOS_ENABLE_SUMUP=Enable SumUp card terminal support in TakePOS
+HiddenConfDesc_TAKEPOS_ENABLE_SUMUP=Adds the SumUp settings in TakePOS setup and terminals, and a SumUp payment button.
+HiddenConfTitle_TAKEPOS_NUMPAD_FORCE_PAYMENT_ICONS_LABELS=Show payment method labels with icons on the TakePOS keypad
+
+# Products Module
+HiddenConfTitle_CATEGORY_GRAPHSTATS_ON_PRODUCTS=Show a chart of products per category on the Products area page
+HiddenConfTitle_MAIN_DIRECT_STATUS_UPDATE=Change status with an on/off switch directly on cards
+HiddenConfDesc_MAIN_DIRECT_STATUS_UPDATE=Applies to product sell and buy status (card and list) and to third party status, for users allowed to edit them.
+HiddenConfTitle_MAIN_DISABLE_FREE_LINES=Forbid free lines (without product) in documents
+HiddenConfDesc_MAIN_DISABLE_FREE_LINES=Only lines linked to a product or service can be added.
+HiddenConfTitle_MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE=Allow any unit type when editing a document line
+HiddenConfDesc_MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE=By default, when a line already has a unit, only units of the same type (weight, length, etc.) are offered.
+HiddenConfTitle_MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE=Do not add customs code and country of origin to line descriptions
+HiddenConfDesc_MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE=By default they are appended to the description when a product is added to a proposal, order, invoice or reception.
+HiddenConfTitle_MAIN_SEARCH_PRODUCT_BY_FOURN_REF=Also search products by supplier reference in product selectors
+HiddenConfTitle_MAIN_SHOW_PRODUCT_ACTIVITY_TRIM=Show quarterly turnover per product type on the Products area page
+HiddenConfDesc_MAIN_SHOW_PRODUCT_ACTIVITY_TRIM=Requires the Invoices module and read permission on invoices.
+HiddenConfTitle_PRODUCT_ADD_FORM_ADD_TO=Show forms on the product card to add the product to a draft proposal, order or invoice
+HiddenConfTitle_PRODUCT_ADD_NET_MEASURE=Add a net measure field (net weight, volume or pieces) on the product card
+HiddenConfDesc_PRODUCT_ADD_NET_MEASURE=Useful when two values are needed for each product, for example gross and net weight.
+HiddenConfTitle_PRODUCT_ADD_TYPE_IN_DOCUMENTS=Prefix document lines with "Product" or "Service"
+HiddenConfTitle_PRODUCT_DENY_CHANGE_PRODUCT_TYPE=Prevent changing the type (product or service) of an existing product
+HiddenConfDesc_PRODUCT_DENY_CHANGE_PRODUCT_TYPE=The type is shown read only on the price and variant pages.
+HiddenConfTitle_PRODUCT_DISABLE_ACCOUNTING=Hide the accounting account fields on the product card
+HiddenConfDesc_PRODUCT_DISABLE_ACCOUNTING=The accounting code columns are also removed from the product list.
+HiddenConfTitle_PRODUCT_DISABLE_CUSTOM_INFO=Hide the customs information (customs code, country of origin) on products (old versions)
+HiddenConfDesc_PRODUCT_DISABLE_CUSTOM_INFO=Removed in version 22.0.
+HiddenConfTitle_PRODUCT_DISABLE_EATBY=Hide the eat-by date when dispatching received products
+HiddenConfTitle_PRODUCT_DISABLE_LENGTH=Hide the length field on the product card (old versions)
+HiddenConfDesc_PRODUCT_DISABLE_LENGTH=Removed in version 6.0, replaced by <code>PRODUCT_DISABLE_SIZE</code>.
+HiddenConfTitle_PRODUCT_DISABLE_NATURE=Hide the product nature field on the product card
+HiddenConfDesc_PRODUCT_DISABLE_NATURE=Applies to the create, edit and view modes of the product card and to the kit composition page.
+HiddenConfTitle_PRODUCT_DISABLE_PRICES=Hide the price fields in the product creation form
+HiddenConfTitle_PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES=Do not copy customer prices to subsidiaries of the customer
+HiddenConfDesc_PRODUCT_DISABLE_PROPAGATE_CUSTOMER_PRICES_ON_CHILD_COMPANIES=By default, creating or deleting a customer specific price also applies it to third parties whose parent is this customer.
+HiddenConfTitle_PRODUCT_DISABLE_PUBLIC_URL=Hide the "Public URL" field on product cards
+HiddenConfTitle_PRODUCT_DISABLE_SELLBY=Hide the sell-by date when dispatching received products
+HiddenConfTitle_PRODUCT_DISABLE_SIZE=Hide the size fields (length, width, height) on the product card
+HiddenConfDesc_PRODUCT_DISABLE_SIZE=The length columns are also removed from the product list.
+HiddenConfTitle_PRODUCT_DISABLE_STOCK_LEVELS=Hide the stock alert limit and desired stock fields on the product card
+HiddenConfTitle_PRODUCT_DISABLE_SURFACE=Hide the surface field on the product card
+HiddenConfTitle_PRODUCT_DISABLE_VOLUME=Hide the volume field on the product card
+HiddenConfDesc_PRODUCT_DISABLE_VOLUME=The volume columns are also removed from the product list.
+HiddenConfTitle_PRODUCT_DISABLE_WEIGHT=Hide the weight field on the product card
+HiddenConfTitle_PRODUCT_DONOTSEARCH_ANYWHERE=Search products only from the start of the reference or label
+HiddenConfDesc_PRODUCT_DONOTSEARCH_ANYWHERE=Much faster on large catalogs because database indexes can be used.
+HiddenConfTitle_PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES=Copy the product extra field values into the line extra fields when a product is selected
+HiddenConfDesc_PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES=Only extra fields with the same code on the product and on the line are filled, in the add line form.
+HiddenConfTitle_PRODUCT_LOT_ENABLE_QUALITY_CONTROL=Show the lifetime and quality control fields on products and lots
+HiddenConfDesc_PRODUCT_LOT_ENABLE_QUALITY_CONTROL=Adds the lifetime and quality control frequency fields on the product card and the related dates on the lot card.
+HiddenConfTitle_PRODUCT_MAX_LENGTH_COMBO=Maximum length of the product label shown in the product selection list
+HiddenConfDesc_PRODUCT_MAX_LENGTH_COMBO=Number of characters kept for the label when adding lines to documents. Default: 48.
+HiddenConfTitle_PRODUCT_MAX_VISIBLE_PHOTO=Maximum number of photos shown in the header of the product card
+HiddenConfDesc_PRODUCT_MAX_VISIBLE_PHOTO=Default: 5. On phone layout only one photo is shown.
+HiddenConfTitle_PRODUCT_PRICE_BASE_TYPE=Default price base (excluding or including tax) for new products
+HiddenConfDesc_PRODUCT_PRICE_BASE_TYPE=Accepted values: <code>HT</code> (excluding tax) or <code>TTC</code> (including tax).
+HiddenConfTitle_PRODUCT_SEARCH_AUTO_SELECT_IF_ONLY_ONE=Automatically select the product when the search returns a single result
+HiddenConfDesc_PRODUCT_SEARCH_AUTO_SELECT_IF_ONLY_ONE=Enabled by default. Set to <code>0</code> to disable it in the product search fields.
+HiddenConfTitle_PRODUCT_SHOW_ORIGIN_IN_COMBO=Show the country of origin of products in the product selection list
+HiddenConfTitle_PRODUCT_SORT_BY_CATEGORY=Sort the product selection list by category instead of by reference
+HiddenConfDesc_PRODUCT_SORT_BY_CATEGORY=1 sorts categories in ascending order, any other value in descending order.
+HiddenConfWarning_PRODUCT_SORT_BY_CATEGORY=Bug flagged in the code: when a product is in several categories, the one used for sorting is picked arbitrarily.
+HiddenConfTitle_PRODUCT_USE_OLD_PATH_FOR_PHOTO=Also look for product photos in the old storage path (before 3.7)
+HiddenConfDesc_PRODUCT_USE_OLD_PATH_FOR_PHOTO=Only useful for old installations whose photos were never moved to the new directory layout.
+HiddenConfTitle_PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY=Use the sub-products prices when a kit has no cost price or WAP
+HiddenConfDesc_PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY=In the buying price suggestions of document lines, an empty cost price or weighted average price of a kit is replaced by the sum of the values of its sub-products.
+HiddenConfWarning_PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY=Possible bug: the values of the sub-products are added without taking their quantity in the kit into account.
+HiddenConfTitle_PRODUCT_USE_UNITS=Enable units on products and show the unit on document lines
+HiddenConfDesc_PRODUCT_USE_UNITS=Units come from the units dictionary. The unit of the product is copied onto the lines and shown in a dedicated column.
+HiddenConfTitle_PRODUIT_ATTRIBUTES_HIDECHILD=Hide the variants (child products) in product selection lists
+HiddenConfTitle_PRODUIT_CUSTOMER_PRICES_BY_QTY=Enable prices per quantity on products (experimental)
+HiddenConfTitle_PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES=Enable prices per quantity combined with price levels per customer segment (experimental)
+HiddenConfTitle_PRODUIT_DESC_IN_LIST=Show the product long description in lists
+HiddenConfTitle_PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL=Use a dedicated VAT rate for each price level (multi-prices)
+HiddenConfDesc_PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL=Only useful with prices per segment.
+HiddenConfWarning_PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL=The code describes this behavior as a bug kept for backward compatibility: avoid it on new setups.
+HiddenConfTitle_PRODUIT_PDF_MERGE_PROPAL=Append the PDF files of the products to the generated proposal PDF
+HiddenConfDesc_PRODUIT_PDF_MERGE_PROPAL=On the product Documents tab you choose which PDF files to merge, they are added at the end of the proposal PDF (model Cyan).
+HiddenConfTitle_RESOURCE_ON_PRODUCTS=Add a Resources tab on products to link resources to them
+HiddenConfTitle_RESOURCE_ON_SERVICES=Add a Resources tab on services to link resources to them
+
+# Projects Module
+HiddenConfTitle_PROJECT_ALLOW_COMMENT_ON_PROJECT=Enable comments on projects
+HiddenConfTitle_PROJECT_ALLOW_COMMENT_ON_TASK=Enable comments on project tasks
+HiddenConfTitle_PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY=Allow linking an object to projects of other third parties
+HiddenConfDesc_PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY=Value <code>all</code> for any third party, or a comma separated list of third party IDs whose projects can be selected.
+HiddenConfTitle_PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT=Never show closed projects in project selection lists
+HiddenConfTitle_PROJECT_CAN_ALWAYS_LINK_TO_ALL_CUSTOMERS=Allow linking proposals, orders and invoices to any project, whatever its customer
+HiddenConfTitle_PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS=Allow linking vendor objects to any project, whatever its third party
+HiddenConfDesc_PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS=Enabled by default (value 1 when not defined). Set to <code>0</code> to only offer projects of the same vendor. See also <code>PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY</code>.
+HiddenConfTitle_PROJECT_CREATE_NO_DRAFT=Create projects directly in validated status, without draft
+HiddenConfTitle_PROJECT_CREATE_ON_OVERVIEW_DISABLED=Hide the "Create" buttons on the project overview tab
+HiddenConfTitle_PROJECT_DISABLE_UNLINK_FROM_OVERVIEW=Prevent non admin users from unlinking objects on the project overview tab
+HiddenConfTitle_PROJECT_ELEMENTS_FOR_MINUS_MARGIN=List of object types counted as costs in the project overview margin
+HiddenConfDesc_PROJECT_ELEMENTS_FOR_MINUS_MARGIN=Comma separated element codes (for example <code>order_supplier,invoice_supplier</code>) replacing the default list. See also <code>PROJECT_ELEMENTS_FOR_PLUS_MARGIN</code>.
+HiddenConfTitle_PROJECT_ENABLE_SUB_PROJECT=Enable parent projects (sub-projects)
+HiddenConfDesc_PROJECT_ENABLE_SUB_PROJECT=Adds a parent project field on the project card and list.
+HiddenConfTitle_PROJECT_HIDE_TASKS=Hide the task features of projects
+HiddenConfDesc_PROJECT_HIDE_TASKS=For users who only use projects as an analytic key: task menus, tabs, widget and search are hidden.
+HiddenConfTitle_PROJECT_HIDE_UNSELECTABLES=Hide the projects that cannot be selected (draft or closed) in selection lists
+HiddenConfTitle_PROJECT_LINK_ON_OVERWIEW_DISABLED=Hide the "Link to" forms on the project overview tab
+HiddenConfWarning_PROJECT_LINK_ON_OVERWIEW_DISABLED=The constant name contains a typo (OVERWIEW instead of OVERVIEW): write it exactly like this.
+HiddenConfTitle_PROJECT_LIST_SHOW_STARTDATE=Show the start date of projects in project lists (old versions)
+HiddenConfDesc_PROJECT_LIST_SHOW_STARTDATE=No longer used in the code.
+HiddenConfTitle_PROJECT_OPEN_ALWAYS_ON_TAB=Open projects on a given tab instead of the main card when clicking their link
+HiddenConfDesc_PROJECT_OPEN_ALWAYS_ON_TAB=Accepted values: <code>task</code>, <code>preview</code>, <code>eventorganization</code>, <code>mailing</code> or the relative path of a .php page.
+HiddenConfTitle_PROJECT_SHOW_REF_INTO_LISTS=Add a project reference column in lists (old versions)
+HiddenConfDesc_PROJECT_SHOW_REF_INTO_LISTS=Removed in version 5.0.
+HiddenConfTitle_PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS=Allow entering time on any task of projects I am a contact of (old versions)
+HiddenConfDesc_PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS=Even when not assigned to the task. No longer used in the code.
+HiddenConfTitle_TIMESPENT_ALWAYS_UPDATE_THM=Always refresh the hourly rate of a time spent line when it is updated
+HiddenConfDesc_TIMESPENT_ALWAYS_UPDATE_THM=By default the user's current hourly rate is only applied when the duration changes or when the line has no rate.
+
+# Proposals Module
+HiddenConfTitle_MAIN_PROPAL_CHOOSE_ODT_DOCUMENT=Choose the ODT templates used for each proposal status in the ODT model setup
+HiddenConfDesc_MAIN_PROPAL_CHOOSE_ODT_DOCUMENT=Adds selectors for the default template, the template for proposals to bill and the one for closed proposals.
+HiddenConfWarning_MAIN_PROPAL_CHOOSE_ODT_DOCUMENT=Possible bug: the ODT models of users and user groups also read this option (code copied from proposals).
+HiddenConfTitle_PROPAL_CLONE_ON_CREATE_PAGE=Offer to create a proposal by cloning an existing one on the creation page
+HiddenConfDesc_PROPAL_CLONE_ON_CREATE_PAGE=The "Clone" button of an existing proposal is the recommended way.
+HiddenConfTitle_PROPAL_DEFAULT_NOTE_PUBLIC=Default text of the public note of proposals (old versions)
+HiddenConfDesc_PROPAL_DEFAULT_NOTE_PUBLIC=No longer used in the code.
+HiddenConfTitle_PROPAL_DISABLE_SIGNATURE=Hide the signature box on proposal PDFs
+HiddenConfTitle_PROPAL_ENABLE_NEGATIVE=Allow validating a proposal with a negative amount
+HiddenConfTitle_PROPAL_REOPEN_UNSIGNED_ONLY=Only allow reopening proposals that are not signed
+HiddenConfDesc_PROPAL_REOPEN_UNSIGNED_ONLY=Signed or billed proposals can no longer be reopened.
+HiddenConfTitle_PROPAL_SIGNATURE_ON_ALL_PAGES=Place the online signature on every page of the proposal PDF
+HiddenConfTitle_PROPAL_SIGNATURE_ON_SPECIFIC_PAGE=Page of the proposal PDF where the online signature is placed
+HiddenConfDesc_PROPAL_SIGNATURE_ON_SPECIFIC_PAGE=A positive number is a page number, a negative one counts back from the end (<code>-1</code> = second to last page). Ignored when <code>PROPAL_SIGNATURE_ON_ALL_PAGES</code> is set. Default: last page.
+HiddenConfTitle_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD=Create a public share link automatically when a proposal PDF is generated
+HiddenConfTitle_PROPOSAL_ARE_NOT_BILLABLE=Hide the billing buttons on signed proposals
+HiddenConfTitle_PROPOSAL_AUTO_ADD_AUTHOR_AS_CONTACT=Add the author of a new proposal as its internal follow-up contact
+HiddenConfTitle_PROPOSAL_PDF_HIDE_PAYMENTMODE=Hide the payment method on proposal PDFs
+HiddenConfTitle_PROPOSAL_PDF_HIDE_PAYMENTTERM=Hide the payment terms on proposal PDFs
+HiddenConfTitle_WORKFLOW_PROPAL_CAN_CLASSIFY_BILLED_WITHOUT_INVOICES=Show the "Classify billed" button on proposals with no linked invoice (old versions)
+HiddenConfDesc_WORKFLOW_PROPAL_CAN_CLASSIFY_BILLED_WITHOUT_INVOICES=No longer used in the code.
+
+# Receptions
+HiddenConfTitle_RECEPTION_STANDALONE=Allow creating receptions without a source purchase order
+HiddenConfDesc_RECEPTION_STANDALONE=Lines are then added by hand on the draft reception.
+
+# Recruitment
+HiddenConfTitle_MAIN_RECRUITMENT_CSS_URL=URL of a custom CSS file for the public recruitment pages
+HiddenConfTitle_RECRUITMENT_IMAGE_PUBLIC_INTERFACE=URL of an image shown at the top of the public recruitment pages
+HiddenConfTitle_RECRUITMENT_NEWFORM_TEXT=Custom text shown on the public recruitment pages
+HiddenConfDesc_RECRUITMENT_NEWFORM_TEXT=Plain text, or a translation key between parentheses, for example <code>(MyKey)</code>.
+
+# Services Module
+HiddenConfTitle_MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE=Add a button to copy the service dates of the previous line on document lines
+HiddenConfTitle_SERVICE_ARE_ECOMMERCE_200238EC=Apply the buyer country VAT to services sold to individuals in the EU
+HiddenConfDesc_SERVICE_ARE_ECOMMERCE_200238EC=EU distance selling rule for non company buyers. Value 1 lists the VAT rates of both buyer and seller countries, value 2 only those of the buyer country.
+
+# Shipments
+HiddenConfTitle_SHIPMENT_GETS_ALL_ORDER_PRODUCTS=Keep all order lines in shipments, including lines with zero quantity
+HiddenConfTitle_SHIPMENT_STANDALONE=Allow creating shipments without a source sales order
+HiddenConfDesc_SHIPMENT_STANDALONE=Lines are then added by hand on the draft shipment.
+HiddenConfTitle_SHIPMENT_SUPPORTS_SERVICES=Allow shipping services without managing their stock
+HiddenConfTitle_SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Show the stock entry date of lots and sort them by this date in shipments
+HiddenConfTitle_SHIPPING_PDF_HIDE_ORDERED=Hide the ordered quantity column on shipment PDFs
+HiddenConfTitle_STOCK_SUPPORTS_SERVICES=Manage stock for services and allow shipping them
+HiddenConfTitle_STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS=Allow shipment lines without a source warehouse
+
+# SMS
+HiddenConfTitle_MAIN_SMS_DEBUG=Log the content of sent SMS into a debug file
+HiddenConfDesc_MAIN_SMS_DEBUG=The file <code>dolibarr_sms.log</code> is written in the documents root directory.
+
+# Stocks
+HiddenConfTitle_DISABLE_QTY_OVERWRITE=Disable the quantity overwrite on inventories (old versions)
+HiddenConfDesc_DISABLE_QTY_OVERWRITE=No longer used in the code.
+HiddenConfTitle_ENTREPOT_EXTRA_STATUS=Add a third warehouse status: open for internal movements only
+HiddenConfDesc_ENTREPOT_EXTRA_STATUS=Warehouses in this status cannot be used for shipments or receptions.
+HiddenConfTitle_MAIN_WAREHOUSE_LIST_DISPLAY_MODE=Display mode of warehouse names in warehouse selection lists
+HiddenConfDesc_MAIN_WAREHOUSE_LIST_DISPLAY_MODE=0 (default): full path with parent warehouses, 1: warehouse label only, 2: last parent and warehouse label.
+HiddenConfTitle_STOCK_ALLOW_DELETE_OF_MOVEMENT=Enable the mass action to delete stock movements
+HiddenConfDesc_STOCK_ALLOW_DELETE_OF_MOVEMENT=Use with care: deleting movements makes the stock history inconsistent.
+HiddenConfTitle_STOCK_EXCLUDE_VIRTUAL_PRODUCTS=Do not check the stock of kits (virtual products) in shipments
+HiddenConfTitle_STOCK_MOVEMENT_LIST_HIDE_UNIT_PRICE=Hide the unit price column in the stock movement list
+HiddenConfTitle_SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED=Hide the dispatch lines of products already fully received
+HiddenConfDesc_SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED=On the dispatch page of purchase orders and receptions, only lines with a remaining quantity are shown.
+HiddenConfTitle_SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK=Purchase order statuses taken into account in the virtual stock
+HiddenConfDesc_SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK=Comma separated list of status codes. Default: <code>3,4</code> (ordered, partially received) for purchase orders and <code>4</code> for receptions.
+
+# Stripe
+HiddenConfTitle_STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=Choose the Stripe payment form used on the online payment page
+HiddenConfDesc_STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=<code>1</code> (default when not defined): Stripe card form with automatic confirmation of the payment intent. <code>2</code>: Stripe PaymentElement form, which offers all the payment methods enabled on your Stripe account.
+
+# Suppliers Module
+HiddenConfTitle_DISPLAY_DISCOUNTED_SUPPLIER_PRICE=Show supplier prices with the supplier discount applied in product selection lists
+HiddenConfTitle_FOURN_PRODUCT_AVAILABILITY=Add an availability field on supplier prices of products
+HiddenConfDesc_FOURN_PRODUCT_AVAILABILITY=The field is shown on the supplier prices tab of the product. It overlaps with the delivery delay field that already exists on supplier prices.
+HiddenConfTitle_MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER=Allow changing the supplier of a draft supplier order
+HiddenConfTitle_RELOAD_PAGE_ON_SUPPLIER_CHANGE=Reload the supplier order or invoice creation form when the supplier is changed
+HiddenConfDesc_RELOAD_PAGE_ON_SUPPLIER_CHANGE=The form was then refreshed with the default values of the selected supplier.
+HiddenConfTitle_SUPPLIER_HIDE_SUPPLIER_OBJECTLINES=Hide the supplier price information shown on lines of customer documents
+HiddenConfDesc_SUPPLIER_HIDE_SUPPLIER_OBJECTLINES=This is the buying price chosen on the line (for margin calculation), displayed to users allowed to read suppliers.
+HiddenConfTitle_SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY=Only allow products having a price for this supplier in supplier invoices
+HiddenConfDesc_SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY=With <code>1</code>, the product list only contains products with a buying price for the supplier, and the minimum quantity is checked and prefilled. <code>2</code> restricts the list the same way without the minimum quantity check.
+HiddenConfTitle_SUPPLIER_ORDER_AUTOADD_USER_CONTACT=Add the approving user as follow-up contact of the supplier order
+HiddenConfDesc_SUPPLIER_ORDER_AUTOADD_USER_CONTACT=When a user approves a supplier order, he is added as internal contact of type "responsible for follow-up".
+HiddenConfTitle_SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT=Allow updating the supplier price from the reception screen
+HiddenConfDesc_SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT=Adds price, discount and "update price" columns on each line to receive. Not available when multicurrency or dynamic prices are enabled.
+HiddenConfTitle_SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID=Default payment method of new supplier orders
+HiddenConfDesc_SUPPLIER_ORDER_DEFAULT_PAYMENT_MODE_ID=Value is the ID (<code>rowid</code>) of a payment method of the dictionary table <code>llx_c_paiement</code>. Used only when the supplier has no payment method defined.
+HiddenConfTitle_SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT=Allow editing the buying price used for the weighted average price when receiving
+HiddenConfDesc_SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT=Shows an editable buying price on each line of the receipt screen of supplier orders.
+HiddenConfWarning_SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT=Flagged as not tested in the code.
+HiddenConfTitle_SUPPLIER_ORDER_MORE_THAN_WISHED=Set supplier orders to "Received completely" even when more was received than ordered
+HiddenConfTitle_SUPPLIER_ORDER_NO_DIRECT_APPROVE=Remove the "Validate and approve" shortcut on supplier orders
+HiddenConfDesc_SUPPLIER_ORDER_NO_DIRECT_APPROVE=Validation and approval must then always be done in two separate steps, even by a user allowed to approve.
+HiddenConfTitle_SUPPLIER_ORDER_USE_DISPATCH_STATUS=Add a status on each line received from a supplier order
+HiddenConfDesc_SUPPLIER_ORDER_USE_DISPATCH_STATUS=Each dispatched line can then be checked or refused.
+HiddenConfTitle_SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY=Only allow products having a price for this supplier in supplier orders
+HiddenConfDesc_SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY=With <code>1</code>, the product list only contains products with a buying price for the supplier, and the minimum quantity is checked and prefilled. <code>2</code> restricts the list the same way without the minimum quantity check.
+HiddenConfTitle_SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD=Create a public download link for the PDF of price requests
+HiddenConfDesc_SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD=A share key is set on the generated document, and the substitution variable <code>__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__</code> can be used in email templates.
+HiddenConfTitle_SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY=Only allow products having a price for this supplier in price requests
+HiddenConfDesc_SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY=With <code>1</code>, the product list only contains products with a buying price for the supplier, and the minimum quantity is checked and prefilled. <code>2</code> restricts the list the same way without the minimum quantity check.
+
+# Third Parties Module
+HiddenConfTitle_COMPANY_AQUARIUM_CLEAN_REGEX=Regex applied to accounting codes generated by the Aquarium numbering model
+HiddenConfDesc_COMPANY_AQUARIUM_CLEAN_REGEX=The regex must contain capturing groups: the generated code is replaced by the content of the first three groups, the rest is dropped. Example <code>^..(..)..(.*)</code> removes characters 1, 2, 5 and 6.
+HiddenConfTitle_CONTACT_DISABLE_PERSONALINFO=Hide the personal information block on the contact card
+HiddenConfTitle_MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES=Allow sharing contacts between several third parties
+HiddenConfDesc_MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES=Adds a tab on the third party card to link contacts of other third parties.
+HiddenConfWarning_MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES=Flagged as unstable in the code: permissions and contact import may not handle shared contacts well.
+HiddenConfTitle_MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS=Add a "New member" button on the card of customers
+HiddenConfDesc_MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS=Shown only for customers not yet linked to a member, when the Members module is enabled.
+HiddenConfTitle_SOCIETE_ADD_REF_IN_LIST=Show the third party code with the name in selection lists
+HiddenConfDesc_SOCIETE_ADD_REF_IN_LIST=<code>1</code>: code and name (and alias). <code>2</code>: code and alias. <code>3</code>: alias only.
+HiddenConfTitle_SOCIETE_ASK_FOR_SHIPPING_METHOD=Allow a default shipping method on the customer card
+HiddenConfDesc_SOCIETE_ASK_FOR_SHIPPING_METHOD=It is then used as default value when creating documents for this customer.
+HiddenConfTitle_SOCIETE_DISABLE_CUSTOMERS=Hide menus and features related to customers
+HiddenConfDesc_SOCIETE_DISABLE_CUSTOMERS=The customer choice is removed from the third party type selectors.
+HiddenConfTitle_SOCIETE_DISABLE_PARENTCOMPANY=Disable the parent company field of third parties
+HiddenConfDesc_SOCIETE_DISABLE_PARENTCOMPANY=Also hides the list of subsidiaries.
+HiddenConfTitle_SOCIETE_DISABLE_PROSPECTS=Hide menus and features related to prospects
+HiddenConfDesc_SOCIETE_DISABLE_PROSPECTS=The prospect choice is removed from the third party type selectors, and prospect statistics are hidden.
+HiddenConfTitle_SOCIETE_DISABLE_PROSPECTSCUSTOMERS=Remove the combined "Prospect / Customer" status of third parties
+HiddenConfDesc_SOCIETE_DISABLE_PROSPECTSCUSTOMERS=A third party created as prospect and customer is saved as customer only.
+HiddenConfTitle_SOCIETE_DISABLE_STATE=Do not use the state/province field
+HiddenConfDesc_SOCIETE_DISABLE_STATE=Hidden on forms (including public forms) and in displayed addresses.
+HiddenConfTitle_SOCIETE_DISABLE_WORKFORCE=Hide the workforce field on the third party card
+HiddenConfTitle_SOCIETE_EMAIL_MANDATORY=Make the email mandatory for third parties
+HiddenConfDesc_SOCIETE_EMAIL_MANDATORY=Applies to the third party card, the public third party registration form and the REST API. The field is also shown as mandatory on the contact card.
+HiddenConfTitle_SOCIETE_NO_SYNC_LINKED_MEMBER=Do not copy third party changes to the linked member
+HiddenConfTitle_SOCIETE_SHOW_VAT_IN_LIST=Show the VAT number in third party selection lists
+HiddenConfTitle_SOCIETE_SORT_ON_TYPEENT=Sort order of the third party type lists
+HiddenConfDesc_SOCIETE_SORT_ON_TYPEENT=Default <code>ASC</code> sorts the list on label. Set <code>NONE</code> to keep the order defined by the position in the dictionary.
+HiddenConfTitle_THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER=Allow tags/categories on third parties that are neither customer, prospect nor supplier
+HiddenConfTitle_THIRDPARTY_CUSTOMERCODE_EQUALS_MEMBERREF=Use the member reference as customer code when creating a third party from a member
+HiddenConfDesc_THIRDPARTY_CUSTOMERCODE_EQUALS_MEMBERREF=Without it, a new customer code is generated by the numbering model.
+HiddenConfTitle_THIRDPARTY_CUSTOMERPROSPECT_BY_DEFAULT=Preset the "Prospect / Customer" status when creating a third party
+HiddenConfDesc_THIRDPARTY_CUSTOMERPROSPECT_BY_DEFAULT=Not applied when the creation is started from the supplier menu.
+HiddenConfTitle_THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT=Default customer/prospect status of a new third party
+HiddenConfDesc_THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT=<code>1</code>: customer, <code>2</code>: prospect, <code>3</code>: prospect and customer.
+HiddenConfTitle_THIRDPARTY_DEFAULT_CREATE_CONTACT=Create third parties as individuals by default
+HiddenConfDesc_THIRDPARTY_DEFAULT_CREATE_CONTACT=The creation form opens with "Individual" selected (except from the supplier menu). A third party created from a member also gets a matching contact.
+HiddenConfTitle_THIRDPARTY_DEFAULT_USELOCALTAX1=Check "Use second tax" by default when creating a third party
+HiddenConfTitle_THIRDPARTY_DEFAULT_USELOCALTAX2=Check "Use third tax" by default when creating a third party
+HiddenConfTitle_THIRDPARTY_INCLUDE_PARENT_IN_LINKTO=Also list objects of the parent company in the "Link to" feature
+HiddenConfTitle_THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO=Also list objects of the project's third party in the "Link to" feature
+HiddenConfDesc_THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO=Useful when the project linked to the current object belongs to another third party.
+HiddenConfTitle_THIRDPARTY_LOGO_ALLOW_EXTERNAL_DOWNLOAD=Create a public download link for uploaded third party logos
+HiddenConfDesc_THIRDPARTY_LOGO_ALLOW_EXTERNAL_DOWNLOAD=A share key is set on the logo file when it is uploaded.
+HiddenConfTitle_THIRDPARTY_MIN_NB_PROF_ID=Minimum number of professional IDs always shown on third party forms
+HiddenConfDesc_THIRDPARTY_MIN_NB_PROF_ID=Default <code>2</code>. Professional IDs above this number are shown only if they have a label for the country of the third party.
+HiddenConfTitle_THIRDPARTY_NOTCUSTOMERPROSPECT_BY_DEFAULT=Do not preset the "Customer/Prospect" status when creating a third party
+HiddenConfTitle_THIRDPARTY_QUICKSEARCH_ON_FIELDS=Fields used by the global search of the third party list
+HiddenConfDesc_THIRDPARTY_QUICKSEARCH_ON_FIELDS=Replaces the default fields. Format: <code>field=LabelKey</code> pairs separated by <code>;</code>, fields using the SQL alias <code>s.</code>.
+HiddenConfTitle_THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION=Also create a contact when creating an individual third party
+HiddenConfDesc_THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION=When "Individual" is chosen on the creation form, extra contact fields (first name, contact tags, email opt-out) are shown and a contact is created with the third party.
+HiddenConfTitle_THIRDPARTY_SUPPLIER_BY_DEFAULT=Preset the supplier status when creating a third party
+HiddenConfDesc_THIRDPARTY_SUPPLIER_BY_DEFAULT=Applies when no third party type is given in the creation URL, and only if a supplier module is enabled.
+
+# Ticket Module
+HiddenConfTitle_TICKETS_MESSAGE_FORCE_MAIL=Check "Send message by email" by default when adding a ticket message
+HiddenConfTitle_TICKET_ADD_AUTHOR_AS_CONTACT=Add the author of a ticket as contact of the ticket
+HiddenConfDesc_TICKET_ADD_AUTHOR_AS_CONTACT=<code>1</code>: add the creating user as internal contact. <code>2</code>: same, but an external user is added as external contact (his linked contact). Not applied to tickets created from the public interface.
+HiddenConfTitle_TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED=Allow changing the classification of a ticket even when it is closed
+HiddenConfTitle_TICKET_ASSIGN_CONTACT_TO_MESSAGE=Link the known contact to messages posted from the public ticket interface
+HiddenConfDesc_TICKET_ASSIGN_CONTACT_TO_MESSAGE=The contact is found from the sender email and added as contact of the ticket.
+HiddenConfTitle_TICKET_AUTO_ASSIGN_CONTRACT_CREATE=Automatically create a contract linked to new tickets
+HiddenConfTitle_TICKET_AUTO_ASSIGN_USER_CREATE=Automatically assign new tickets to the user creating them
+HiddenConfDesc_TICKET_AUTO_ASSIGN_USER_CREATE=<code>0</code>: no automatic assignment. <code>1</code>: assign the current user if no user was chosen. <code>2</code>: always assign the current user, even if another user was chosen.
+HiddenConfTitle_TICKET_AUTO_CREATE_FICHINTER_CREATE=Automatically create an intervention linked to new tickets
+HiddenConfTitle_TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION=Check "Notify the third party" by default when creating a ticket
+HiddenConfTitle_TICKET_INCLUDE_LINK_TO_PUBLIC_INTERFACE_IN_MESSAGE=Add a link to follow the ticket in emails sent to the customer
+HiddenConfDesc_TICKET_INCLUDE_LINK_TO_PUBLIC_INTERFACE_IN_MESSAGE=The link points to the public ticket interface when it is enabled, otherwise to the internal ticket card.
+HiddenConfTitle_TICKET_INCLUDE_SUSPENDED_STATUS=Enable the "Waiting" (suspended) status for tickets
+HiddenConfTitle_TICKET_LIMIT_VIEW_ASSIGNED_ONLY=Only show tickets assigned to the user
+HiddenConfDesc_TICKET_LIMIT_VIEW_ASSIGNED_ONLY=Users allowed to manage tickets still see all of them.
+HiddenConfTitle_TICKET_SEND_PRIVATE_EMAIL=Allow sending private ticket messages by email
+HiddenConfDesc_TICKET_SEND_PRIVATE_EMAIL=Without it, a message marked as private cannot be sent by email.
+HiddenConfTitle_TICKET_SHOW_MESSAGES_ON_CARD=Show all messages of the ticket on the ticket card
+HiddenConfTitle_WORKFLOW_TICKET_CLOSE_INTERVENTION=Close the interventions linked to a ticket when the ticket is closed
+
+# VAT Report
+HiddenConfTitle_MAIN_INCLUDE_ZERO_VAT_IN_REPORTS=Include lines with 0%% VAT in VAT reports
+HiddenConfDesc_MAIN_INCLUDE_ZERO_VAT_IN_REPORTS=Useful for reverse charge within the EU.
+
+# Website Module
+HiddenConfTitle_WEBSITE_ADD_CSS_TO_BODY=CSS classes added to the body tag of website pages
+HiddenConfDesc_WEBSITE_ADD_CSS_TO_BODY=Value is one or more class names separated by spaces.
+HiddenConfTitle_WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE=Add a button to overwrite the website template sources with the current website
+HiddenConfDesc_WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE=Meant for developers: the export is unzipped into <code>install/doctemplates/websites/</code> (or into a given path), replacing the template files.
+HiddenConfTitle_WEBSITE_USE_WEBSITE_ACCOUNTS=Manage website accounts of third parties
+HiddenConfDesc_WEBSITE_USE_WEBSITE_ACCOUNTS=Added a dedicated table and a tab on the third party card.
+
+# WYSIWYG Editor
+HiddenConfTitle_FCKEDITOR_ALLOW_ANY_CONTENT=Disable content filtering of the WYSIWYG editor
+HiddenConfDesc_FCKEDITOR_ALLOW_ANY_CONTENT=All HTML tags and attributes are kept. This removes an important protection of the editor, use it with care.
+HiddenConfTitle_FCKEDITOR_ENABLE_DETAILS_FULL=Use the full WYSIWYG toolbar for line descriptions
+HiddenConfDesc_FCKEDITOR_ENABLE_DETAILS_FULL=The toolbar of notes is used instead of the reduced one, which allows inserting images. PDF generation may fail with some content, and an external image that disappears breaks the document.
+HiddenConfTitle_FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP=Start the spell checker of the WYSIWYG editor automatically
+HiddenConfTitle_MAIN_ALLOW_WYSIWYG_EVEN_ON_UNSECURED_EXTERNAL_HTTP_URL=Allow media links using plain http URLs in WYSIWYG content
+HiddenConfDesc_MAIN_ALLOW_WYSIWYG_EVEN_ON_UNSECURED_EXTERNAL_HTTP_URL=By default, external media with an http (not https) URL are refused when Dolibarr itself is served in http.
+HiddenConfTitle_MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK=Allow media links to local or private network addresses in WYSIWYG content
+HiddenConfDesc_MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK=By default, images or media pointing to localhost or a private IP are refused in rich text content.
+
+# STRIPE Module
+HiddenConfTitle_STRIPE_FORCE_VERSION=Stripe API version used by Dolibarr
+HiddenConfDesc_STRIPE_FORCE_VERSION=Format <code>YYYY-MM-DD</code>. Default is <code>2022-11-15</code>.
+HiddenConfTitle_STRIPE_REUSE_EXISTING_INTENT_IF_FOUND=Reuse the existing Stripe payment intent of an object instead of creating a new one
+HiddenConfDesc_STRIPE_REUSE_EXISTING_INTENT_IF_FOUND=Not applied with card present (terminal) payments.
+
+# ClickToDial Module
+HiddenConfTitle_CLICKTODIAL_FORCENEWTARGET=Open click-to-dial links in a new browser tab
+
+# For SaaS / Cloud hosting integrators
+HiddenConfTitle_MAILING_LIMIT_SENDBYDAY=Maximum number of emails per day shown in mass emailing warnings
+HiddenConfDesc_MAILING_LIMIT_SENDBYDAY=Only informative: Dolibarr shows it in warnings but does not block sending. The value can also come from <code>$dolibarr_mailing_limit_sendbyday</code> in <code>conf.php</code>, which takes precedence.
+HiddenConfTitle_MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE=Always create the install.lock file at the end of an upgrade
+HiddenConfDesc_MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE=Install, upgrade and repair tools are then locked until the lock file is removed, even if the upgrade was not to the latest version.
+HiddenConfTitle_MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD=SPF value to suggest in the email setup page
+HiddenConfDesc_MAIN_EXTERNAL_SMTP_SPF_STRING_TO_ADD=Shown in a help message so that users add it to the SPF record of their domain. Useful when you preconfigure your own SMTP server.
+HiddenConfTitle_MAIN_FILECHECK_LOCAL_SUFFIX=Suffix of the signature file used by the file integrity checker
+HiddenConfDesc_MAIN_FILECHECK_LOCAL_SUFFIX=Lets you check a customized Dolibarr against your own signature file, e.g. <code>filelist-X.Y.Z-mysuffix.xml</code> generated with <code>build/generate_filelist_xml.php</code>. Use <code>MAIN_FILECHECK_LOCAL_EXT</code> = <code>.zip</code> for a zipped file.
+HiddenConfTitle_MAIN_FIRST_PING_OK_ID=Disable the anonymous ping sent after installation
+HiddenConfDesc_MAIN_FIRST_PING_OK_ID=Set it to <code>disabled</code>. Otherwise Dolibarr stores here the identifier of the ping already done.
+HiddenConfTitle_MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP=Hide the warning encouraging to set up an SMTP server
+HiddenConfDesc_MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP=Set to <code>1</code> by default when not defined. Set <code>0</code> to show the warning while the PHP mail method is used.
+HiddenConfTitle_MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE=Do not redirect to the upgrade page for a maintenance version change
+HiddenConfDesc_MAIN_NO_UPGRADE_REDIRECT_ON_LEVEL_3_CHANGE=The upgrade page is then shown automatically only when the major or minor version changes (X or Y in X.Y.Z).
+HiddenConfTitle_MAIN_SETUP_MODULES_DESC=Always show the help text explaining how to enable modules
+HiddenConfDesc_MAIN_SETUP_MODULES_DESC=Without it, the text is shown on the modules setup page only while few modules are enabled.
+HiddenConfTitle_SYSLOG_DISABLE_LOGHANDLER_SYSLOG=Disable the system syslog log handler
+HiddenConfDesc_SYSLOG_DISABLE_LOGHANDLER_SYSLOG=Useful on hosting with many instances, to avoid all of them writing to the same system log.
+HiddenConfTitle_WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER=Extra message shown in the website deployment help
+HiddenConfDesc_WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER=Value is a text or a translation key, for example to tell that publishing a website needs an extra subscription.
