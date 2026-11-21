@@ -655,6 +655,7 @@ ReturnAccount=Return
 Clone=Clone
 AlreadyReturnedAccount=Entry n°%s has already been reversed
 SuccessReturnedAccount=Entry n°%s has been reversed
+CancellationOfAbandonedInvoice=Cancellation of the abandoned invoice
 AccountancyCodeToSet=Accountancy code to set on products/services for
 DescInventoryJournal=This journal displays stock movements (shipments, receptions, sales, purchases, and inventory adjustments) and generates the corresponding Inventory Asset and Cost of Goods Sold (COGS) / Stock variation entries.
 StockAccountNotDefined=Inventory / Purchase account not defined on product or in default accounts
