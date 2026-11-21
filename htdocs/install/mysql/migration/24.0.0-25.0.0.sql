@@ -750,3 +750,15 @@ ALTER TABLE llx_categorie_skill ADD INDEX idx_categorie_skill_fk_skill (fk_skill
 
 ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_fk_skill_rowid FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill (rowid);
+
+-- Optional second approval for leave requests and expense reports
+ALTER TABLE llx_holiday ADD COLUMN fk_validator_secondary integer DEFAULT NULL;
+ALTER TABLE llx_holiday ADD COLUMN fk_user_approve_secondary integer DEFAULT NULL;
+ALTER TABLE llx_holiday ADD COLUMN date_approval_secondary datetime DEFAULT NULL;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_validator_secondary (fk_validator_secondary);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_approve_secondary (fk_user_approve_secondary);
+ALTER TABLE llx_expensereport ADD COLUMN fk_user_validator_secondary integer DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD COLUMN fk_user_approve_secondary integer DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD COLUMN date_approve_secondary datetime DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_validator_secondary (fk_user_validator_secondary);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_approve_secondary (fk_user_approve_secondary);

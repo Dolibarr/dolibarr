@@ -33,3 +33,6 @@ ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_refuse (fk_user_ref
 --ALTER TABLE llx_expensereport ADD CONSTRAINT fk_expensereport_fk_user_valid 		FOREIGN KEY (fk_user_valid)		 REFERENCES llx_user (rowid);
 --ALTER TABLE llx_expensereport ADD CONSTRAINT fk_expensereport_fk_user_approve 	FOREIGN KEY (fk_user_approve)	 REFERENCES llx_user (rowid);
 --ALTER TABLE llx_expensereport ADD CONSTRAINT fk_expensereport_fk_user_refuse		FOREIGN KEY (fk_user_refuse)     REFERENCES llx_user (rowid);
+
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_validator_secondary (fk_user_validator_secondary);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_approve_secondary (fk_user_approve_secondary);
