@@ -3,6 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller			<lvessiller@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026  		Pierre Ardoin             	<developpeur@lesmetiersdubatiment.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,6 +112,11 @@ if (isModEnabled('order')) {
 // Enable access for the invoices
 if (isModEnabled('invoice')) {
 	$formSetup->newItem('WEBPORTAL_INVOICE_LIST_ACCESS')->setAsYesNo();
+}
+
+// Enable access for the customer contracts
+if (isModEnabled('contract')) {
+	$formSetup->newItem('WEBPORTAL_CONTRACT_LIST_ACCESS')->setAsYesNo();
 }
 
 // Enable access for the intervention
