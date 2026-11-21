@@ -228,6 +228,13 @@ $coldisplay++;
 		}
 	}
 
+	// Option flag (proposals only): line kept with a real quantity but excluded from document totals
+	if ($object->element == 'propal') {
+		$lineisoptionchecked = GETPOSTISSET('is_option') ? GETPOSTINT('is_option') : (!empty($line->is_option) ? 1 : 0);
+		print '<div class="clearboth"></div>';
+		print '<label class="nowraponall paddingtop"><input type="checkbox" class="flat" name="is_option" value="1"'.($lineisoptionchecked ? ' checked="checked"' : '').'> '.$form->textwithpicto($langs->trans('LineIsOption'), $langs->trans('LineIsOptionHelp')).'</label>';
+	}
+
 	// Reference the customer gives to the line (line of its purchase order). Kept editable when already filled.
 	if ($line instanceof OrderLine && (getDolGlobalString('MAIN_ENABLE_LINE_REF_CUSTOMER') || !empty($line->ref_customer))) {
 		print '<div class="paddingtop">'.$langs->trans('RefCustomerLine').' : <input type="text" name="line_ref_customer" id="line_ref_customer" class="width150" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('line_ref_customer') ? GETPOST('line_ref_customer', 'alphanohtml') : (string) $line->ref_customer).'"></div>';
