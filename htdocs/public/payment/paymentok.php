@@ -158,6 +158,7 @@ if (getDolGlobalString($paramcreditorlong)) {
 
 
 $ispaymentok = false;
+$paymentalreadyrecorded = 0;	// Set to 1 when the page is loaded again for a payment already recorded by a previous load
 // If payment is ok
 $PAYMENTSTATUS = $TRANSACTIONID = $TAXAMT = $NOTE = '';
 // If payment is ko
@@ -404,8 +405,17 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
 	}
 
+	// The browser may load this page twice: the 1st load recorded the payment and removed TRANSACTIONID from session
+	if (!$error && empty($TRANSACTIONID) && !empty($_SESSION['paymentokdonesessioncode']) && GETPOST('paymentoksessioncode') === $_SESSION['paymentokdonesessioncode']) {
+		$paymentalreadyrecorded = 1;
+		$TRANSACTIONID = empty($_SESSION['paymentokdonetransactionid']) ? '' : $_SESSION['paymentokdonetransactionid'];
+		dol_syslog("The page is loaded again for the transaction ".$TRANSACTIONID." already recorded, so nothing is done again", LOG_WARNING, 0, '_payment');
+	}
+
 	// Check on payment platform that the payment has been really validated
-	if (!$error && $TRANSACTIONID) {
+	if ($paymentalreadyrecorded) {
+		// Payment was already checked and recorded by the previous load of the page
+	} elseif (!$error && $TRANSACTIONID) {
 		// Stripe payment verification via Stripe API
 		try {
 			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -460,7 +470,7 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 		setEventMessages($errmsg, null, 'errors');
 	}
 
-	if (!$error) {
+	if (!$error && !$paymentalreadyrecorded) {
 		$ispaymentok = true; // We will do the rest of code
 	} else {
 		$ispaymentok = false; // We won't do the rest of code
@@ -2054,7 +2064,7 @@ if ($ispaymentok) {
 
 // Show result message
 if (empty($doactionsthenredirect)) {
-	if ($ispaymentok) {
+	if ($ispaymentok || $paymentalreadyrecorded) {
 		print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
 		if ($TRANSACTIONID) {
 			print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
@@ -2250,6 +2260,12 @@ if ($ispaymentok) {
 	}
 }
 
+
+// Keep a trace of the recorded payment, so a new load of this page shows the result instead of an error
+if ($ispaymentok && GETPOST('paymentoksessioncode')) {
+	$_SESSION['paymentokdonesessioncode'] = GETPOST('paymentoksessioncode');
+	$_SESSION['paymentokdonetransactionid'] = $TRANSACTIONID;
+}
 
 // Clean session variables to avoid duplicate actions if post is resent
 unset($_SESSION["FinalPaymentAmt"]);
