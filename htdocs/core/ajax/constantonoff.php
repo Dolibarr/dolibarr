@@ -94,6 +94,11 @@ if (!empty($action) && !empty($name)) {
 				dolibarr_del_const($db, $name, 0);
 			}
 		}
+		// The constant may be used by the js or css generated for the browser (core/js/lib_head.js.php, theme): change the
+		// revision of the display setup so the browser loads them again (see "revision=" in main.inc.php)
+		if ($action == 'set' || $action == 'del') {	// Test on permission not required here. Already done into test on user->admin in header.
+			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
+		}
 	}
 } else {
 	httponly_accessforbidden('Param action and name is required', 403);

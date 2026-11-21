@@ -2271,7 +2271,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			// Global js function
 			print '<!-- Includes JS of Dolibarr -->'."\n";
 			if (!defined('DISABLE_LIB_HEAD_JS')) {
-				print '<script nonce="' . getNonce() . '" src="' . DOL_URL_ROOT . '/core/js/lib_head.js.php?lang=' . $langs->defaultlang . '&' . $ext . '"></script>' . "\n";
+				// The script contains values of the setup (MAIN_ROW_SINGLECLICK_TOSELECT, MAIN_START_WEEK...): add the revision of the
+				// display setup, like for the theme, so the browser does not keep a cached copy after the setup is changed
+				print '<script nonce="' . getNonce() . '" src="' . DOL_URL_ROOT . '/core/js/lib_head.js.php?lang=' . $langs->defaultlang . '&' . $ext . '&revision=' . getDolGlobalInt("MAIN_IHM_PARAMS_REV") . '"></script>' . "\n";
 			}
 
 			// Leaflet
