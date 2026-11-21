@@ -68,8 +68,8 @@ if ($type == 'title') {
 	}
 
 	$formquestion = array_merge($formquestion, array(
-		array('type' => 'text', 'name' => 'subtotallinedesc', 'label' => $langs->trans("SubtotalLineDesc"), 'moreattr' => 'placeholder="' . $langs->trans("Description") . '"'),
-		array('type' => 'select', 'name' => 'subtotallinelevel', 'label' => $langs->trans("SubtotalLineLevel"), 'values' => $depth_array, 'default' => 1, 'select_show_empty' => 0),
+		array('type' => 'other', 'name' => 'subtotallinedesc', 'label' => $langs->trans("SubtotalLineDesc"), 'value' => '<textarea class="width200" rows="3" name="subtotallinedesc" id="subtotallinedesc" placeholder="' . dol_escape_htmltag($langs->trans("Description")) . '"></textarea>'),
+		array('type' => 'select', 'name' => 'subtotallinelevel', 'label' => $langs->trans("SubtotalLineLevel"), 'values' => $depth_array, 'default' => 1, 'select_show_empty' => 0, 'morecss' => 'minwidth100 marginbottomonly'),
 		array('type' => 'checkbox', 'value' => true, 'name' => 'titleshowuponpdf', 'label' => $langs->trans("ShowUPOnPDF")),
 		array('type' => 'checkbox', 'value' => true, 'name' => 'titleshowtotalexludingvatonpdf', 'label' => $langs->trans("ShowTotalExludingVATOnPDF")),
 		array('type' => 'checkbox', 'value' => false, 'name' => 'titleforcepagebreak', 'label' => $langs->trans("ForcePageBreak")),
