@@ -1172,6 +1172,17 @@ if (!defined('NOLOGIN')) {
 
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]." Session id=".session_id());
 
+		// With sessions stored in database nothing locks the session during a request (the file handler
+		// of PHP does). The id of this session is new, and the browser gets it with the first bytes of
+		// the page: the stylesheets and scripts of the page are then asked with it while this request
+		// still runs. If the login is only saved at the end of the request, they read a session that is
+		// not authenticated yet and may save it back after this request has saved the login, which
+		// logs the user out on the next page. So save the authenticated session now, before any output.
+		if (!empty($php_session_save_handler) && $php_session_save_handler == 'db' && session_status() === PHP_SESSION_ACTIVE) {
+			session_write_close();
+			dol_session_start();
+		}
+
 		// Enforce the max number of concurrent sessions per user (only when sessions are stored in database).
 		// Opening this new session evicts the user's oldest sessions above the limit, logging those browsers out.
 		if (!empty($php_session_save_handler) && $php_session_save_handler == 'db' && !empty($conf->file->main_limit_sessions_per_user) && (int) $conf->file->main_limit_sessions_per_user > 0) {
