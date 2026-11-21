@@ -12,7 +12,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * - postCard() posts data to the card like a form of the card (ex: action=updateline)
 	 *
 	 * There is one controller by card (element and id), shared by all the scripts of the page: same date of modification, same state.
-	 * Features using it are added as parts of this tool, see definePart().
+	 * The edition of the card in place is done by parts of this tool: Dolibarr.tools.card.fields and Dolibarr.tools.card.lines (experimental).
 	 *
 	 * Containers of fields are [data-dol-field][data-dol-element][data-dol-id] (see Form::editfieldval()), or [data-dol-field]
 	 * without element for the object of the card (ex: totals of the cards).
@@ -74,6 +74,18 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		document.querySelectorAll(`a[href*="token=${oldToken}"]`).forEach(link => {
 			link.setAttribute('href', link.getAttribute('href').split(`token=${oldToken}`).join(`token=${newToken}`));
 		});
+	}
+
+	/**
+	 * Check if the anti CSRF token of the session is renewed on each call (MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL):
+	 * the current token and the next one printed by the page are then different
+	 * @returns {boolean}
+	 */
+	function isTokenRenewedOnEachCall() {
+		const current = document.querySelector('meta[name="anti-csrf-currenttoken"]');
+		const next = document.querySelector('meta[name="anti-csrf-newtoken"]');
+
+		return !!(current && next && current.getAttribute('content') !== next.getAttribute('content'));
 	}
 
 	/**
@@ -366,18 +378,26 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * The card answers without its lines (nolines=1), and keeps the event messages of the action in session
 		 * (noflusheventmessages=1): they are returned by the next call of fetchLines() or reload() with lines.
 		 * The anti CSRF tokens of the page are updated with the ones of the card.
+		 * When the card redirects after the action (most cards after adding or deleting a line), the redirect is not followed:
+		 * the messages of the action stay in session.
 		 *
 		 * @param {FormData|Object} data Data posted, the anti CSRF token is added if missing
 		 * @param {Object} [options] See reload()
-		 * @returns {Promise<Document>} Card loaded after the action
+		 * @returns {Promise<Document|null>} Card loaded after the action, null if the card redirected
 		 */
 		async postCard(data, options = {}) {
 			const url = new URL(this.url, window.location.href);
 			url.searchParams.set('nolines', '1');
 			url.searchParams.set('noflusheventmessages', '1');
 
-			const html = await Dolibarr.tools.fetch.post(url.toString(), data, { responseType: 'text', ...options });
-			const doc = new DOMParser().parseFromString(html, 'text/html');
+			const response = await Dolibarr.tools.fetch.post(url.toString(), data, { ...options, responseType: 'response', redirect: 'manual' });
+			if (response.type === 'opaqueredirect') {
+				// The token of the session was renewed by the card and is unknown: it is read from the card loaded without lines
+				if (isTokenRenewedOnEachCall()) await this.fetchCardWithoutLines(options);
+				return null;
+			}
+
+			const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
 			syncCsrfToken(doc);
 
 			return doc;
@@ -471,8 +491,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
-	 * Define a part of the card tool (a feature using the controllers of the cards, ex: 'fields' for the edition of the fields),
-	 * available as Dolibarr.tools.card.<name>. A part can not be replaced.
+	 * Define a part of the card tool (ex: 'fields', 'lines'), available as Dolibarr.tools.card.<name>. A part can not be replaced.
 	 * @param {string} name
 	 * @param {Object} api
 	 */
