@@ -1954,6 +1954,19 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		// Link to action types
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_actioncomm as c ON a.fk_action = c.id";
 
+		if (is_object($filterobj) && $filterobj->id > 0 && get_class($filterobj) == 'User') {
+			// Join on a materialized list of event ids linked to this user (direct owner or resource).
+			// Note: we intentionally avoid "a.fk_user_action = X OR EXISTS(...)" in the WHERE clause: with ORDER BY a.datep DESC LIMIT n,
+			// MySQL can no longer stop scanning the datep index as soon as it has found n matching rows once a row is
+			// checked against a correlated OR EXISTS, so for a user with zero linked events it has to scan the whole
+			// actioncomm table instead of stopping early (seen in prod: ~9s for a user with no event vs ~0.2s for one with events).
+			$sql .= " INNER JOIN (";
+			$sql .= " SELECT id AS cid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_user_action = " . ((int) $filterobj->id);
+			$sql .= " UNION";
+			$sql .= " SELECT fk_actioncomm AS cid FROM " . MAIN_DB_PREFIX . "actioncomm_resources WHERE element_type = '" . $db->escape($filterobj->table_element) . "' AND fk_element = " . ((int) $filterobj->id);
+			$sql .= " ) as userevents ON userevents.cid = a.id";
+		}
+
 		// Set $force_filter_contact:
 		// - true for a filter on a user or a contact, so a link on table llx_actioncomm_resources or llx_actioncomm.fk_user_action
 		// - false for a link on table llx_element_resources
@@ -2077,12 +2090,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				return 'Bad value for $filterobj';
 			}
 		} else {
-			if (is_object($filterobj) && $filterobj->id > 0 && get_class($filterobj) == 'User') {
-				$sql .= " AND (u.rowid = " . ((int) $filterobj->id) . ' OR ';
-				$sql .= " EXISTS (SELECT r.rowid FROM " . MAIN_DB_PREFIX . "actioncomm_resources as r WHERE a.id = r.fk_actioncomm";
-				$sql .= " AND r.element_type = '" . $db->escape($filterobj->table_element) . "' AND r.fk_element = " . ((int) $filterobj->id) . ')';
-				$sql .= ")";
-			}
+			// Filtering for User is now done with the "userevents" join added right after the FROM clause.
 			if (is_object($objcon) && $objcon->id > 0) {
 				$sql .= " AND EXISTS (SELECT r.rowid FROM " . MAIN_DB_PREFIX . "actioncomm_resources as r WHERE a.id = r.fk_actioncomm";
 				$sql .= " AND r.element_type = '" . $db->escape($objcon->table_element) . "' AND r.fk_element = " . ((int) $objcon->id) . ')';
