@@ -218,9 +218,11 @@ if ($in_bookkeeping == 'notyet') {
 if ($manageCustomerDepositInInvoice) {
 	// Exclude the lines that consume a down payment, they are replaced by the reversal of the down payment (see $sql2).
 	// Same condition as $sql2: only discounts coming from a down payment invoice.
-	$sql .= " AND COALESCE(fd.fk_remise_except, 0) NOT IN (SELECT re.rowid FROM ".$db->prefix()."societe_remise_except as re";
+	// The reversal is only done for standard invoices, so the other types (replacement, situation...) keep the line.
+	$sql .= " AND (f.type <> ".Facture::TYPE_STANDARD;
+	$sql .= " OR COALESCE(fd.fk_remise_except, 0) NOT IN (SELECT re.rowid FROM ".$db->prefix()."societe_remise_except as re";
 	$sql .= " INNER JOIN ".$db->prefix()."facture as fs ON fs.rowid = re.fk_facture_source";
-	$sql .= " WHERE fs.type = ".Facture::TYPE_DEPOSIT." AND re.description LIKE '(DEPOSIT)%')";
+	$sql .= " WHERE fs.type = ".Facture::TYPE_DEPOSIT." AND re.description LIKE '(DEPOSIT)%'))";
 }
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
