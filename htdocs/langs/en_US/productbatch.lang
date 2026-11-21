@@ -23,6 +23,7 @@ printQty=Qty: %d
 printPlannedWarehouse=Warehouse: %s
 AddDispatchBatchLine=Add a line for Shelf Life dispatching
 WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, some modes for automatic stock decrease or increase may be not available. The other options have no restriction.
+StockOptionDisabledByLotSerial=With Lot/Serial enabled, stock changes must be recorded with lot/serial data. Automatic stock adjustment at this event is unavailable for all products, including products without lot/serial tracking. The saved setting is retained and applies again if the Lot/Serial module is disabled.
 ProductDoesNotUseBatchSerial=This product does not use lot/serial number
 ProductLotSetup=Setup of module lot/serial
 ShowCurrentStockOfLot=Show current stock for couple product/lot

@@ -240,8 +240,28 @@ print dol_get_fiche_head($head, 'general', $langs->trans("StockSetup"), -1, 'sto
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
+/**
+ * Display an unavailable stock calculation setting with Lot/Serial information.
+ *
+ * @param Form      $form      Form helper
+ * @param Translate $langs     Translation handler
+ * @param int       $useJavascriptAjax Whether JavaScript tooltips are available
+ * @return void
+ */
+function stockPrintSettingForcedByModule(Form $form, Translate $langs, int $useJavascriptAjax): void
+{
+	$message = $langs->trans("StockOptionDisabledByLotSerial");
+	print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium valignmiddle"');
+	print ' ';
+	if ($useJavascriptAjax) {
+		print $form->textwithpicto('', $message, 1, 'info');
+	} else {
+		print '<span title="'.dol_escape_htmltag($message).'">'.img_picto($langs->trans("Information"), 'info').'</span>';
+	}
+}
 
 $disableStockCalculateOn = array();
+$productbatchDisableStockCalculateOn = array();
 if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 	// If option virtual stock is enabled, we disable some mode for inc/dec stock change
 	// Why this ? As i don't see why, i comment this code by a hidden option
@@ -260,13 +280,14 @@ if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 if (isModEnabled('productbatch')) {
 	// If module lot/serial enabled, we disable some mode for inc/dec stock change
 	$langs->load("productbatch");
-	$disableStockCalculateOn[] = 'BILL';
-	$disableStockCalculateOn[] = 'VALIDATE_ORDER';
+	$productbatchDisableStockCalculateOn[] = 'BILL';
+	$productbatchDisableStockCalculateOn[] = 'VALIDATE_ORDER';
 	// STOCK_CALCULATE_ON_SHIPMENT is ok so not disable
 	// STOCK_CALCULATE_ON_SHIPMENT_CLOSE is ok so not disabled
 
-	$disableStockCalculateOn[] = 'SUPPLIER_BILL';
-	$disableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
+	$productbatchDisableStockCalculateOn[] = 'SUPPLIER_BILL';
+	$productbatchDisableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
+	$disableStockCalculateOn = array_merge($disableStockCalculateOn, $productbatchDisableStockCalculateOn);
 
 	$descmode = ""; $incmode = "";
 	/* $descmode = $langs->trans('DeStockOnShipmentOnClosing');
@@ -307,13 +328,21 @@ print '<td class="right">';
 if (isModEnabled('invoice')) {
 	if ($conf->use_javascript_ajax) {
 		if (in_array('BILL', $disableStockCalculateOn)) {
-			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+			if (in_array('BILL', $productbatchDisableStockCalculateOn, true)) {
+				stockPrintSettingForcedByModule($form, $langs, $conf->use_javascript_ajax);
+			} else {
+				print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+			}
 		} else {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_BILL', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 		}
 	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_BILL", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_BILL'));
+		if (in_array('BILL', $productbatchDisableStockCalculateOn, true)) {
+			stockPrintSettingForcedByModule($form, $langs, $conf->use_javascript_ajax);
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("STOCK_CALCULATE_ON_BILL", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_BILL'));
+		}
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module30Name")).'</span>';
@@ -329,13 +358,21 @@ print '<td class="right">';
 if (isModEnabled('order')) {
 	if ($conf->use_javascript_ajax) {
 		if (in_array('VALIDATE_ORDER', $disableStockCalculateOn)) {
-			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+			if (in_array('VALIDATE_ORDER', $productbatchDisableStockCalculateOn, true)) {
+				stockPrintSettingForcedByModule($form, $langs, $conf->use_javascript_ajax);
+			} else {
+				print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+			}
 		} else {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 		}
 	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_VALIDATE_ORDER", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER'));
+		if (in_array('VALIDATE_ORDER', $productbatchDisableStockCalculateOn, true)) {
+			stockPrintSettingForcedByModule($form, $langs, $conf->use_javascript_ajax);
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("STOCK_CALCULATE_ON_VALIDATE_ORDER", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER'));
+		}
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module25Name")).'</span>';
@@ -412,13 +449,21 @@ print '<td class="right">';
 if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
 		if (in_array('SUPPLIER_BILL', $disableStockCalculateOn)) {
-			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+			if (in_array('SUPPLIER_BILL', $productbatchDisableStockCalculateOn, true)) {
+				stockPrintSettingForcedByModule($form, $langs, $conf->use_javascript_ajax);
+			} else {
+				print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+			}
 		} else {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 		}
 	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_BILL", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL'));
+		if (in_array('SUPPLIER_BILL', $productbatchDisableStockCalculateOn, true)) {
+			stockPrintSettingForcedByModule($form, $langs, $conf->use_javascript_ajax);
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_BILL", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL'));
+		}
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
@@ -434,13 +479,21 @@ print '<td class="right">';
 if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
 		if (in_array('SUPPLIER_VALIDATE_ORDER', $disableStockCalculateOn)) {
-			print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+			if (in_array('SUPPLIER_VALIDATE_ORDER', $productbatchDisableStockCalculateOn, true)) {
+				stockPrintSettingForcedByModule($form, $langs, $conf->use_javascript_ajax);
+			} else {
+				print img_picto($langs->trans("Disabled"), 'off', 'class="opacitymedium"');
+			}
 		} else {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1, 0, '', '', 'reposition');
 		}
 	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER'));
+		if (in_array('SUPPLIER_VALIDATE_ORDER', $productbatchDisableStockCalculateOn, true)) {
+			stockPrintSettingForcedByModule($form, $langs, $conf->use_javascript_ajax);
+		} else {
+			$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+			print $form->selectarray("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER'));
+		}
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module40Name")).'</span>';
