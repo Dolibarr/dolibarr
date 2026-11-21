@@ -27,7 +27,7 @@
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2026		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
- * Copyright (C) 2026		Jose MARTINEZ				<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez				<jose.martinez@pichinov.com>
  * Copyright (C) 2026		Joachim Kueter		<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -4294,10 +4294,19 @@ class Form
 
 		// Sort by category
 		// The preselected product is put first so it is not cut by the limit (for example a product just created with the + button of the line form)
+		// A product whose ref or barcode is exactly the searched text is put first too, so it is not cut by the limit
+		// (for example a short numeric ref also found inside thousands of other refs, labels and barcodes)
+		$sqlorderfirst = '';
+		if ((int) $selected > 0) {
+			$sqlorderfirst .= " CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END,";
+		}
+		if ($filterkey != '') {
+			$sqlorderfirst .= " CASE WHEN p.ref = '".$this->db->escape($filterkey)."'".(isModEnabled('barcode') ? " OR p.barcode = '".$this->db->escape($filterkey)."'" : "")." THEN 0 ELSE 1 END,";
+		}
 		if (getDolGlobalString('PRODUCT_SORT_BY_CATEGORY')) {
-			$sql .= " ORDER BY".((int) $selected > 0 ? " CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END," : "")." categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
-		} elseif ((int) $selected > 0) {
-			$sql .= " ORDER BY CASE WHEN p.rowid = ".((int) $selected)." THEN 0 ELSE 1 END, p.ref ASC";
+			$sql .= " ORDER BY".$sqlorderfirst." categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
+		} elseif ($sqlorderfirst != '') {
+			$sql .= " ORDER BY".$sqlorderfirst." p.ref ASC";
 		} else {
 			$sql .= $this->db->order("p.ref");
 		}
@@ -4977,7 +4986,10 @@ class Form
 		}
 
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array(
+			'filterkey' => &$filterkey,
+			'socid' => $socid,
+		);
 		$reshook = $hookmanager->executeHooks('selectSuppliersProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
@@ -5010,7 +5022,16 @@ class Form
 			}
 			$sql .= ')';
 		}
-		$sql .= " ORDER BY pfp.ref_fourn DESC, pfp.quantity ASC";
+		// A product whose ref, supplier ref or barcode is exactly the searched text is put first, so it is not cut by the limit
+		$sql .= " ORDER BY";
+		if ($filterkey != '') {
+			$sql .= " CASE WHEN p.ref = '".$this->db->escape($filterkey)."' OR pfp.ref_fourn = '".$this->db->escape($filterkey)."'";
+			if (isModEnabled('barcode')) {
+				$sql .= " OR p.barcode = '".$this->db->escape($filterkey)."' OR pfp.barcode = '".$this->db->escape($filterkey)."'";
+			}
+			$sql .= " THEN 0 ELSE 1 END,";
+		}
+		$sql .= " pfp.ref_fourn DESC, pfp.quantity ASC";
 		$sql .= $this->db->plimit($limit, 0);
 
 		// Build output string
