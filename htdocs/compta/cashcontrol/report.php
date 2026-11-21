@@ -115,23 +115,25 @@ print '<!-- Begin div id-container --><div id="id-container" class="id-container
 
 $dates = $datee = 0;
 
-if ($syear && !$smonth) {
-	$dates = dol_get_first_day($syear, 1); $datee = dol_get_last_day($syear, 12);
-} elseif ($syear && $smonth && !$sday) {
-	$dates = dol_get_first_day($syear, $smonth); $datee = dol_get_last_day($syear, $smonth);
-} elseif ($syear && $smonth && $sday) {
-	$dates = dol_mktime(0, 0, 0, $smonth, $sday, $syear); $datee = dol_mktime(23, 59, 59, $smonth, $sday, $syear);
+if ($syear) {
+	// The period is deduced from the end date stored in UTC in the 6 components year, month, day, hour, min and sec (same as cashcontrol_card.php)
+	$tmparray = $object->getPeriodStartAndEnd();
+	$dates = $tmparray[0];
+	$datee = $tmparray[1];
 } else {
 	dol_print_error(null, 'Year not defined');
 }
 $datefilter = 'p.datep';
+$datefiltertz = 'tzserver';		// Dates of llx_paiement are stored in the time zone of the server
 $modulesourcefilter = 'f.module_source';
 $amountfield = 'pf.amount';
 $possource = 'f.pos_source';
 $fieldentity = 'p.entity';
 $joinleft = 'LEFT ';
 if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+	// In this cases we are using dates stored in UTC in db.
 	$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
+	$datefiltertz = 'gmt';			// Dates of llx_blockedlog are stored in UTC
 	$modulesourcefilter = 'bl.module_source';
 	$amountfield = 'bl.amounts';
 	$possource = 'bl.pos_source';
@@ -153,7 +155,7 @@ $sql .= " ".MAIN_DB_PREFIX."c_paiement as cp";
 $sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 $sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 $sql .= " AND ".$db->sanitize($possource)." = '".$db->escape($terminalid)."'";
-$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate($dates, $datefiltertz)."' AND '".$db->idate($datee, $datefiltertz)."'";
 $sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
 $sql .= " ORDER BY ".$db->sanitize($datefilter)." ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
