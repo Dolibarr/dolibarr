@@ -56,11 +56,15 @@ $constnote = GETPOST('constnote', 'alphanohtml');
 // Search criteria
 $search_name = GETPOST('search_name', 'alpha');
 $search_value = GETPOST('search_value', 'alpha');
+$search_note = GETPOST('search_note', 'alpha');
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {	// All tests are required to be compatible with all browsers
 	$search_name = '';
 	$search_value = '';
+	$search_note = '';
+	$search_all = '';
 }
 
 // True if the search or clear search button of the list of records was submitted
@@ -192,6 +196,50 @@ jQuery(document).ready(function() {
 		jQuery("#action").val('update');			// so default action if we type enter will be update, but correct action is also detected correctly without that when clicking on "Update" button.
 		jQuery(this).closest("tr").find(".checkforselect").prop("checked", true);
 	});
+	// Value and comment fields grow with their content, and Enter still submits the update like a single line input
+	function constFitHeight(el) {
+		el.style.height = 'auto';
+		el.style.height = (el.scrollHeight + el.offsetHeight - el.clientHeight) + 'px';
+	}
+	// Only the height can be resized: a width set by hand would break the column layout
+	jQuery("textarea.constautoheight").css({"box-sizing": "border-box", "overflow": "hidden", "resize": "vertical"}).on("input", function() {
+		constFitHeight(this);
+	}).keydown(function(e) {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			if (jQuery(this).hasClass("inputforupdate")) {
+				jQuery("#updateconst input[name='update']").click();
+			} else {
+				jQuery("#add").click();
+			}
+		}
+	});
+	// Column widths are final only once the table is laid out, so the height is fitted again each time the width of a field changes
+	if (window.ResizeObserver) {
+		var constWidths = new WeakMap();
+		var constObserver = new ResizeObserver(function(entries) {
+			entries.forEach(function(entry) {
+				if (constWidths.get(entry.target) !== entry.contentRect.width) {
+					constWidths.set(entry.target, entry.contentRect.width);
+					constFitHeight(entry.target);
+				}
+			});
+		});
+		jQuery("textarea.constautoheight").each(function() {
+			constObserver.observe(this);
+		});
+	} else {
+		jQuery("textarea.constautoheight").each(function() {
+			constFitHeight(this);
+		});
+	}
+	// Enter into the search field must filter the list, not submit the zone to add a new record
+	jQuery("input[name='search_all']").keydown(function(e) {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			jQuery("button.button_search").first().click();
+		}
+	});
 	jQuery("#add").click(function() {
 		jQuery("#action").val('add');		// so the add is forced even if we typed before into a field of a record
 	});
@@ -223,12 +271,26 @@ if (empty($user->entity) && $debug) {
 $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $urlbuttonplus, '', ($addformvisible ? 2 : 1));
 
 $param = '';
+if ($search_all !== '') {
+	$param .= '&search_all='.urlencode($search_all);
+}
 if ($search_name !== '') {
 	$param .= '&search_name='.urlencode($search_name);
 }
 if ($search_value !== '') {
 	$param .= '&search_value='.urlencode($search_value);
 }
+if ($search_note !== '') {
+	$param .= '&search_note='.urlencode($search_note);
+}
+
+// Search field on name, value and comment at once
+$fieldstosearchall = array(
+	$db->decrypt('name') => 'Name',
+	$db->decrypt('value') => 'Value',
+	'note' => 'Comment',
+);
+$searchallinput = '<input type="search" class="flat minwidth200 marginrightonly" name="search_all" value="'.dol_escape_htmltag($search_all).'" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" spellcheck="false">';
 
 // Unique form, so the combo of mass actions into the line of title can submit the selection of records
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST" spellcheck="false">';
@@ -237,9 +299,17 @@ print '<input type="hidden" id="action" name="action" value="add">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-print load_fiche_titre($langs->trans("OtherSetup"), $newcardbutton, 'title_setup', 0, '', '', $massactionbutton);
+print load_fiche_titre($langs->trans("OtherSetup"), $searchallinput.$newcardbutton, 'title_setup', 0, '', '', $massactionbutton);
 
 print '<div class="info">'.$langs->trans("ConstDesc")."</div><br>\n";
+
+if ($search_all !== '') {
+	$fieldlabels = array();
+	foreach ($fieldstosearchall as $val) {
+		$fieldlabels[] = $langs->trans($val);
+	}
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", dol_escape_htmltag($search_all)).implode(', ', $fieldlabels).'</div>';
+}
 
 // Zone to add a new record (visible only when we click on the button +)
 if ($addformvisible) {
@@ -262,14 +332,14 @@ if ($addformvisible) {
 	// Line to add new record
 	print "\n";
 
-	print '<tr class="oddeven nohover"><td>';
+	print '<tr class="oddeven nohover"><td class="tdtop">';
 	print '<input type="text" class="flat minwidth300" name="constname" value="'.dolPrintHTMLForAttribute($constname).'" spellcheck="false">';
 	print '</td>'."\n";
-	print '<td>';
-	print '<input type="text" class="flat minwidth100" name="constvalue" value="'.dolPrintHTMLForAttribute($constvalue, 1).'" spellcheck="false">';
+	print '<td class="tdtop">';
+	print '<textarea class="flat constautoheight centpercent minwidth150" rows="1" name="constvalue" spellcheck="false">'.htmlspecialchars((string) $constvalue).'</textarea>';
 	print '</td>';
-	print '<td>';
-	print '<input type="text" class="flat minwidth100" name="constnote" value="'.dolPrintHTMLForAttribute($constnote).'">';
+	print '<td class="tdtop">';
+	print '<textarea class="flat constautoheight centpercent minwidth200 small" rows="2" name="constnote">'.htmlspecialchars((string) $constnote).'</textarea>';
 	print '</td>';
 	print '<td>';
 	print '</td>';
@@ -318,7 +388,9 @@ print '<td class="liste_titre">';
 print '<input type="text" class="flat maxwidth100" name="search_value" value="'.dol_escape_htmltag($search_value).'">';
 print '</td>';
 // Comment
-print '<td class="liste_titre"></td>';
+print '<td class="liste_titre">';
+print '<input type="text" class="flat maxwidth100" name="search_note" value="'.dol_escape_htmltag($search_note).'">';
+print '</td>';
 // Date last change
 print '<td class="liste_titre"></td>';
 // Entity limit to superadmin
@@ -375,6 +447,12 @@ if ($search_name !== '') {
 if ($search_value !== '') {
 	$sql .= natural_search($db->decrypt('value'), $search_value);
 }
+if ($search_note !== '') {
+	$sql .= natural_search('note', $search_note);
+}
+if ($search_all !== '') {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
 $sql .= $db->order($sortfield, $sortorder);
 
 dol_syslog("Const::listConstant", LOG_DEBUG);
@@ -401,42 +479,42 @@ if ($result) {
 
 		// Action column
 		if ($conf->main_checkbox_left_column) {
-			print '<td class="center">'.$actioncolumncontent.'</td>';
+			print '<td class="tdtop center">'.$actioncolumncontent.'</td>';
 		}
 
-		print '<td>'.dol_escape_htmltag($obj->name).'</td>'."\n";
+		print '<td class="tdtop">'.str_replace('_', '_<wbr>', dol_escape_htmltag($obj->name)).'</td>'."\n";	// long names can wrap after an underscore
 
 		// Value
-		print '<td>';
+		print '<td class="tdtop">';
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
 		if (!isModEnabled('multicompany') || !empty($user->entity)) {	// If there is no input for entity, we save it into a hidden input
 			print '<input type="hidden" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 		}
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.(isset($value) ? htmlspecialchars($value) : '').'">';
+		print '<textarea id="value_'.$i.'" class="flat inputforupdate constautoheight centpercent minwidth150" rows="1" name="const['.$i.'][value]" spellcheck="false">'.(isset($value) ? htmlspecialchars($value) : '').'</textarea>';
 		print '</td>';
 
 		// Note
-		print '<td>';
-		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate minwidth200" name="const['.$i.'][note]" value="'.(empty($obj->note) ? '' : htmlspecialchars($obj->note, 1)).'">';
+		print '<td class="tdtop">';
+		print '<textarea id="note_'.$i.'" class="flat inputforupdate constautoheight centpercent minwidth200 small" rows="1" name="const['.$i.'][note]">'.(empty($obj->note) ? '' : htmlspecialchars($obj->note, 1)).'</textarea>';
 		print '</td>';
 
 		// Date last change
-		print '<td class="nowraponall center">';
+		print '<td class="tdtop nowraponall center">';
 		print dol_print_date($db->jdate($obj->tms), 'dayhour');
 		print '</td>';
 
 		// Entity limit to superadmin
 		if (isModEnabled('multicompany') && empty($user->entity)) {
-			print '<td class="center">';
+			print '<td class="tdtop center">';
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 			print '</td>';
 		}
 
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
-			print '<td class="center">'.$actioncolumncontent.'</td>';
+			print '<td class="tdtop center">'.$actioncolumncontent.'</td>';
 		}
 
 		print "</tr>\n";
