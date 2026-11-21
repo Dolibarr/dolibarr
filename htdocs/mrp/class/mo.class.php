@@ -833,18 +833,44 @@ class Mo extends CommonObject
 	/**
 	 * Recurse through BOM only adding products to the list of lines to consume/produce
 	 *
+	 * Before the lines are processed, the hook 'processBOMLines' is called with the parameters 'role', 'bom',
+	 * 'quantity' and 'fk_product' (the product produced by $bom: the product of the MO, or the product of the parent
+	 * line for a sub BOM). This method can be called from any page, API or cron job, so a module that implements the
+	 * hook declares the context 'all'. A module can:
+	 * - return > 0 with $this->results['lines'] = array of BOMLine (or objects with the same properties: id, fk_product,
+	 *   qty, qty_frozen, efficiency, fk_bom_child, fk_unit, position, disable_stock_change, fk_default_workstation)
+	 *   to replace the lines to process. If several modules return lines, the last one wins.
+	 * - return < 0 to stop the creation of the MO, with the errors of the module.
+	 *
 	 * @param  User 	$user      	User that modifies
 	 * @param  string 	$role    	MoLine Role that products are added as ('toproduce', 'toconsume', 'produced', 'consumed')
 	 * @param  BOM 		$bom        BOM to parse lines from
 	 * @param  float 	$quantity 	Quantity modifier for sub products/BOM
-	 * @return int             		Return integer <0 if KO, >0 if OK
+	 * @return int             		Number of errors (0 if OK)
 	 */
 	public function processBOM(User $user, $role, $bom, $quantity)
 	{
+		global $action, $hookmanager;
+
 		$error = 0;
 
+		$bomlines = $bom->lines;
+		if (is_object($hookmanager)) {	// No hook manager when the caller defined NOHOOKMANAGER
+			$hookmanager->error = '';	// Errors of previous hooks of the request must not be reported as errors of this one
+			$hookmanager->errors = array();
+			$parameters = array('role' => $role, 'bom' => $bom, 'quantity' => $quantity, 'fk_product' => (empty($this->context['fk_product_bom_processed']) ? (int) $this->fk_product : (int) $this->context['fk_product_bom_processed']));
+			$reshook = $hookmanager->executeHooks('processBOMLines', $parameters, $this, $action);
+			if ($reshook < 0) {
+				$this->setErrorsFromObject($hookmanager);
+				return 1;
+			}
+			if ($reshook > 0 && isset($hookmanager->resArray['lines']) && is_array($hookmanager->resArray['lines'])) {
+				$bomlines = $hookmanager->resArray['lines'];
+			}
+		}
+
 		$quantity /= $bom->qty;
-		foreach ($bom->lines as $line) {
+		foreach ($bomlines as $line) {
 			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : $line->qty;
 
 			$tmpproduct = new Product($this->db);
@@ -852,7 +878,10 @@ class Mo extends CommonObject
 			if ($line->fk_bom_child > 0 && !in_array($line->id, $this->noFlattenBomLineIds)) {
 				$bom = new BOM($this->db);
 				$bom->fetch((int) $line->fk_bom_child);
+				$fk_product_bom_processed_saved = (empty($this->context['fk_product_bom_processed']) ? 0 : (int) $this->context['fk_product_bom_processed']);
+				$this->context['fk_product_bom_processed'] = (int) $line->fk_product;	// The sub BOM produces the product of the line
 				$error += $this->processBOM($user, $role, $bom, $quantity_line);
+				$this->context['fk_product_bom_processed'] = $fk_product_bom_processed_saved;
 			} else {
 				$moline = new MoLine($this->db);
 				$moline->fk_mo = $this->id;
