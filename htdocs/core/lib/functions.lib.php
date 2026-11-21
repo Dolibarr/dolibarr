@@ -13271,6 +13271,13 @@ function printCommonFooter($zone = 'private')
 								// Solution 1: Add handler on submit to check if mandatory fields are empty
 								print 'var form = $(\'[name="'.dol_escape_js($paramkey).'"]\').closest("form");'."\n";
 								print "form.on('submit', function(event) {
+										if (\$(this).find('input[name=\"changecompany\"]').val() == '1') {
+											// Programmatic resubmit to reload the page after a company change (the reload is what
+											// fills the mandatory fields from the thirdparty), so skip the mandatory fields check
+											console.log('Submit is a company change reload, we accept submit without checking mandatory fields');
+											return true;
+										}
+
 										var submitter = \$(this).find(':submit:focus').get(0);
 										var buttonName = submitter ? \$(submitter).attr('name') : 'save';
 
