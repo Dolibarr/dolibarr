@@ -320,7 +320,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		global $langs, $extrafields;
 		$error = 0;
 
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 
 		$object = new self($this->db);
 
@@ -433,7 +433,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		dol_syslog(__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 
 		$records = array();
 
@@ -567,6 +567,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public function validate($user, $notrigger = 0)
 	{
+		dol_syslog(__METHOD__.'::begin', LOG_DEBUG);
 		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -773,6 +774,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
+		dol_syslog(__METHOD__.'::withpicto='.$withpicto, LOG_DEBUG);
 		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
@@ -787,6 +789,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Name').':</b> '.$this->firstname.' '.$this->lastname;
 		$label .= '<br><b>'.$langs->trans('DateOfRegistration').':</b> '.dol_print_date($this->date_subscription, 'dayhour');
 		$label .= '<br><b>'.$langs->trans('AmountPaid').':</b> '.$this->amount;
 
@@ -874,7 +877,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 			}
 		}
 
-		if ($withpicto != 2) {
+		// we test for 3 before not 2, because else we would have to add && $withpicto != 3
+		if ($withpicto == 3) {
+			$result .= $this->firstname.' '.$this->lastname;
+		} elseif ($withpicto != 2) {
 			$result .= $this->ref;
 		}
 
