@@ -66,6 +66,7 @@ LoanChangeFrom=Applies from
 LoanBalloon=Balloon / residual
 LoanBalloonHelp=Lump sum due with the last payment, on top of the regular instalments (common for vehicle finance). Leave empty if the loan is fully repaid by its instalments.
 LoanBalloonInLastPayment=The last payment includes the balloon / residual of %s.
+ErrorLoanBalloonGreaterThanCapital=The balloon / residual amount cannot be greater than the capital.
 LoanInterestBasisHelp=How the interest of each payment is worked out. Many lenders charge interest daily: choose the daily calculation if the interest on your statements does not match the annual rate divided by the number of payments per year.
 ApplyGracePeriod=Apply grace period
 TermPaidAllreadyPaid = This term is already paid
