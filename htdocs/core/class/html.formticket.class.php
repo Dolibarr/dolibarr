@@ -700,12 +700,14 @@ class FormTicket
                             var url = obj.url;
                             var htmlname = obj.htmlname;
                             var showempty = obj.showempty;
+                            // Token required: with MAIN_SECURITY_CSRF_WITH_TOKEN >= 3 (the default), a GET with an "action" parameter is refused without it.
                             $.getJSON(url,
                                     {
                                         action: method,
                                         id: id,
                                         htmlname: htmlname,
-                                        showempty: showempty
+                                        showempty: showempty,
+                                        token: "'.currentToken().'"
                                     },
                                     function(response) {
                                         $.each(obj.params, function(key,action) {
