@@ -10,6 +10,7 @@
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW				        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -825,7 +826,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 			while ($datep <= $repeateventlimitdate && !$error) {
 				$finalobject = clone $object;
-
+				$finalobject->uid = '';	// Each occurrence is a new event, create() gives it its own uid (the uid column is unique)
 
 				$finalobject->datep = $datep;
 				$finalobject->datef = $datef;
