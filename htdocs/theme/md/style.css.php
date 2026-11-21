@@ -1365,6 +1365,11 @@ textarea.centpercent {
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
+.liste_titre.stickyagenda {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+}
 .nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;
 }
@@ -6994,6 +6999,7 @@ tr.trcalday { height: 300px; }
 .cal_event a:active     { color: #111111; font-weight: normal !important; }
 .cal_event_busy a:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
+table.cal_month tr.liste_titre td.tdfordaytitle { min-width: 120px; }
 a.dayevent-aday {
 	margin-left: 8px;
 }
