@@ -3143,6 +3143,14 @@ class Ticket extends CommonObject
 								$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
 							}
 
+							$parameters = array('sendto' => $sendto, 'sendtocc' => $sendtocc, 'mailtype' => 'internal');
+							$reshook = $hookmanager->executeHooks('updateSendtoccTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+							if (empty($reshook)) {
+								$sendtocc = array_merge($sendtocc, $hookmanager->resArray);
+							} elseif ($reshook > 0) {
+								$sendtocc = $hookmanager->resArray;
+							}
+
 							$email_from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 
 							$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
@@ -3345,6 +3353,14 @@ class Ticket extends CommonObject
 											}
 										}
 									}
+								}
+
+								$parameters = array('sendto' => $sendto, 'sendtocc' => $sendtocc, 'mailtype' => 'external');
+								$reshook = $hookmanager->executeHooks('updateSendtoccTicketMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+								if (empty($reshook)) {
+									$sendtocc = array_merge($sendtocc, $hookmanager->resArray);
+								} elseif ($reshook > 0) {
+									$sendtocc = $hookmanager->resArray;
 								}
 
 								// Don't try to send email when no recipient
