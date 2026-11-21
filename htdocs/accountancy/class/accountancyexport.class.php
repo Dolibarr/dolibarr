@@ -949,11 +949,11 @@ class AccountancyExport
 				$tab['lib_compte'] = str_pad(self::trunc($line->subledger_label, 30), 30);
 
 				if ($line->doc_type == 'customer_invoice') {
-					$tab['lib_alpha'] = strtoupper(self::trunc(dol_string_unaccent($line->subledger_label), 7));
+					$tab['lib_alpha'] = str_pad(strtoupper(self::trunc(dol_string_unaccent($line->subledger_label), 7)), 7);
 					$tab['filler'] = str_repeat(' ', 52);
 					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), 8), 8);
 				} elseif ($line->doc_type == 'supplier_invoice') {
-					$tab['lib_alpha'] = strtoupper(self::trunc(dol_string_unaccent($line->subledger_label), 7));
+					$tab['lib_alpha'] = str_pad(strtoupper(self::trunc(dol_string_unaccent($line->subledger_label), 7)), 7);
 					$tab['filler'] = str_repeat(' ', 52);
 					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), 8), 8);
 				} else {
