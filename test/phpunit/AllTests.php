@@ -225,6 +225,8 @@ class AllTests
 		$suite->addTestSuite('FilesLibMoveDirTest');
 		require_once dirname(__FILE__).'/FilesLibTest.php';
 		$suite->addTestSuite('FilesLibTest');
+		require_once dirname(__FILE__).'/MenusStandardLibTest.php';
+		$suite->addTestSuite('MenusStandardLibTest');
 		require_once dirname(__FILE__).'/CommonFieldsViewTplTest.php';
 		$suite->addTestSuite('CommonFieldsViewTplTest');
 		require_once dirname(__FILE__).'/InstallRepairEcmTest.php';
