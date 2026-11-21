@@ -4,6 +4,7 @@
  * Copyright (C) 2018-2020  Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Michael Wallis			<mh.wallis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,6 +301,8 @@ if ($date_startmonth > $date_endmonth) {
 }
 print	'</tr>';
 
+$groupsperaccount = array();	// Groups of each account, to warn about accounts in several groups
+
 if ($modecompta == 'CREANCES-DETTES') {
 	//if (!empty($date_start) && !empty($date_end))
 	//	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -519,6 +522,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				foreach ($cpts as $i => $cpt) {    // Loop on each account.
 					if (isset($cpt['account_number'])) {
 						$arrayofaccountforfilter[] = $cpt['account_number'];
+						$groupsperaccount[$cpt['account_number']][] = $code;
 					}
 				}
 
@@ -752,6 +756,21 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 print "</table>";
 print '</div>';
+
+// Warn about accounts counted in more than one group
+if (!empty($groupsperaccount)) {
+	$duplicates = array();
+	foreach ($groupsperaccount as $accountnumber => $groupcodes) {
+		if (count($groupcodes) > 1) {
+			$duplicates[] = $accountnumber.' ('.implode(', ', $groupcodes).')';
+		}
+	}
+	if (count($duplicates)) {
+		print '<div class="warning margintoponly">'.img_warning().' '.$langs->trans("AccountsInSeveralGroups", count($duplicates)).':<br>';
+		print dol_escape_htmltag(implode(', ', array_slice($duplicates, 0, 10)).(count($duplicates) > 10 ? ', ...' : ''));
+		print '</div>';
+	}
+}
 
 // End of page
 llxFooter();
