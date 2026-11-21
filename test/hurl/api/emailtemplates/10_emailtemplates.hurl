@@ -7,7 +7,7 @@ GET http://{{hostnport}}/api/index.php/emailtemplates?sortfield=e.rowid&sortorde
 HTTP 200
 
 # GET sorted emailtemplates
-GET http://{{hostnport}}/api/index.php/emailtemplates?sortfield=e.rowid&sortorder=DSC
+GET http://{{hostnport}}/api/index.php/emailtemplates?sortfield=e.rowid&sortorder=DESC
 HTTP 200
 
 # GET with limit and page
