@@ -236,6 +236,7 @@ NoUserGroupDefined=No user group defined
 Password=Password
 PasswordRetype=Repeat your password
 YouMustChangeYourPassword=You must change your password before continuing.
+PasswordChangedLogInAgain=Your password has been changed. Log in again with your new password.
 NoteSomeFeaturesAreDisabled=Note that a lot of features/modules are disabled in this demonstration.
 YourUserFile=Your user file
 Name=Name
