@@ -82,6 +82,7 @@ create table llx_facturedet
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva		double(24,8) DEFAULT 0,
   multicurrency_total_ttc		double(24,8) DEFAULT 0,
+  multicurrency_subprice_source	tinyint NOT NULL DEFAULT 0,		-- 1 = currency unit price comes from a fixed per-currency product price
   ref_ext						varchar(255) DEFAULT NULL,
   ref_customer					varchar(128) DEFAULT NULL,		-- reference the customer gives to the line it is billed for (line of its purchase order)
   extraparams				 	varchar(255)						-- to stock other parameters in json format
