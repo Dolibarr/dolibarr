@@ -975,4 +975,63 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
 		$this->assertEquals(Fichinter::STATUS_CLOSED, $result['content']['status'] ?? null, "$test Intervention must stay closed");
 	}
+
+	/**
+	 * testRestInterventionPostWithoutProject
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionPostWithoutProject()
+	{
+		$test = "Create an intervention without project nor description";
+
+		$result = $this->getUrl('interventions', $test, 'POST', array("socid" => 1));
+		$intervention_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $intervention_id, "$test Id of intervention is not > 0");
+		array_unshift($this->objectstodelete, 'interventions/'.$intervention_id);
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals($intervention_id, $result['content']['id'] ?? null, "$test The intervention must be found");
+		$this->assertEmpty($result['content']['fk_project'] ?? null, "$test The intervention must have no project");
+	}
+
+	/**
+	 * testRestInterventionPostWithoutSocid
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionPostWithoutSocid()
+	{
+		$test = "Create an intervention without third party";
+
+		$result = $this->getUrl('interventions', $test, 'POST', array("description" => "Intervention without third party"), 400);
+		$this->assertStringContainsString('socid', $result['content']['error']['message'] ?? '', "$test The missing third party must be the reason of the refusal");
+	}
+
+	/**
+	 * testRestInterventionPostExtrafieldHtml
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionPostExtrafieldHtml()
+	{
+		$test = "Create an intervention with an html extrafield";
+
+		$attrname = 'apitest'.mt_rand(0, 99999999);
+		$extrafield = array(
+			'label' => $attrname, 'type' => 'html', 'pos' => 100, 'size' => '', 'list' => '1', 'default' => '', 'param' => '', 'perms' => '', 'help' => '',
+			'computed' => '', 'langfile' => '', 'unique' => 0, 'required' => 0, 'alwayseditable' => 1, 'totalizable' => 0, 'printable' => 0, 'showintooltip' => 0,
+		);
+		$this->getUrl('setup/extrafields/fichinter/'.$attrname, "$test (create extrafield)", 'POST', $extrafield);
+
+		try {
+			$intervention_id = $this->createIntervention($test, array("array_options" => array($attrname => '<strong>Bold</strong> text')));
+			array_unshift($this->objectstodelete, 'interventions/'.$intervention_id);
+
+			$result = $this->getUrl('interventions/'.$intervention_id, "$test (read after create)", 'GET');
+			$this->assertStringContainsString('<strong>Bold</strong>', $result['content']['array_options']['options_'.$attrname] ?? '', "$test Extrafield must keep its allowed markup");
+		} finally {
+			$this->getUrl('setup/extrafields/fichinter/'.$attrname, "$test (cleanup extrafield)", 'DELETE');
+		}
+	}
 }
