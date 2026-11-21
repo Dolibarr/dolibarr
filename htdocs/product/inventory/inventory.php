@@ -316,7 +316,10 @@ if (empty($reshook)) {
 		$sql .= ' LEFT JOIN ' . $db->prefix() . 'entrepot as e ON id.fk_warehouse = e.rowid';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 		$sql .= $db->order($sortfieldforsql, $sortorderforsql);
-		$sql .= $db->plimit($limit, $offset);
+		// Read the slice of the page that was displayed. When the user changes the number of records per page,
+		// the form is submitted with the new limit, but the posted quantities are the ones of the previous slice.
+		$limitofdisplayedpage = GETPOSTINT('limitofdisplayedpage') > 0 ? GETPOSTINT('limitofdisplayedpage') : $limit;
+		$sql .= $db->plimit($limitofdisplayedpage, $limitofdisplayedpage * $page);
 
 		$db->begin();
 
@@ -634,6 +637,7 @@ print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
 // Keep the same limit as the displayed page, otherwise the save reads a different page slice
 // (plimit($limit, $offset)) than the one shown and quantities of the extra rows are lost (#35207).
 print '<input type="hidden" name="limit" value="' . ((int) $limit) . '">';
+print '<input type="hidden" name="limitofdisplayedpage" value="' . ((int) $limit) . '">';
 if ($backtopage) {
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 }
