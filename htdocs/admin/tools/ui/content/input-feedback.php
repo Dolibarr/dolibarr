@@ -153,6 +153,37 @@ document.getElementById(\'btn-process-fail\').addEventListener(\'click\', functi
 			'</script>',
 			);
 			$documentation->showCode($lines); ?>
+
+			<h3>Updated value</h3>
+			<p>
+				For a value displayed (not an input) updated without reloading the page, like the fields edited in ajax on the cards:
+				the <code>.updated-feedback</code> class sweeps the value with a reflection of white light once, from left to right, over the text.
+				Add the modifier <code>--soft</code> on the other values changed as a consequence (computed fields): lighter, slightly after.
+				Remove the class at the end of the animation to show it again
+				(<code>Dolibarr.tools.card.showUpdatedFeedback(el, {soft})</code> does it, and limits the reflection to the text of the element,
+				with the variables <code>--updated-feedback-left</code> and <code>--updated-feedback-width</code>).
+			</p>
+			<div class="documentation-example">
+				<table class="border centpercent tableforfield">
+					<tr><td class="titlefield">Date</td><td id="test-updated-01">10/03/2026</td></tr>
+					<tr><td>End of validity</td><td id="test-updated-02">25/03/2026</td></tr>
+				</table>
+				<br>
+				<button id="btn-updated-replay" type="button" class="button" >Replay</button>
+				<script>
+					document.getElementById('btn-updated-replay').addEventListener('click', function () {
+						// Limited to the text of the cells by the tool of the cards
+						Dolibarr.tools.card.showUpdatedFeedback(document.getElementById('test-updated-01'));
+						Dolibarr.tools.card.showUpdatedFeedback(document.getElementById('test-updated-02'), { soft: true });
+					});
+				</script>
+			</div>
+			<?php
+			$lines = array(
+			'<span class="updated-feedback">Value changed by the user</span>',
+			'<span class="updated-feedback --soft">Value computed from it</span>',
+			);
+			$documentation->showCode($lines); ?>
 		</div>
 
 

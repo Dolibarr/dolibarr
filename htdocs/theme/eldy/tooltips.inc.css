@@ -264,3 +264,80 @@ body[dir="rtl"] .dol-tooltip::after {
 	transform: translateX(0) translateY(-50%);
 	border-color: transparent var(--tooltip-bg-color) transparent transparent;
 }
+
+/* ****************************************************** */
+/* Popover of the ajax edition of a field (field popover) */
+/* ****************************************************** */
+
+/* Dolibarr.tools.card.fields: placed over the value of the field, so the layout of the card does not move */
+.dol-field-popover {
+	position: absolute;
+	z-index: 1000;
+	box-sizing: border-box;
+	padding: 0.375rem 0.5rem;
+	color: var(--tooltip-txt-color);
+	background-color: var(--tooltip-bg-color);
+	border: 1px solid var(--tooltip-border-color);
+	border-radius: 0.375rem;
+	box-shadow: 0 1px 20px rgba(0, 0, 0, 0.12);
+}
+.dol-field-popover.--dark-mode {
+	color: var(--tooltip-txt-color-dark-theme);
+	background-color: var(--tooltip-bg-color-dark-theme);
+	border-color: var(--tooltip-border-color-dark-theme);
+}
+/* Inputs and buttons on one line, buttons below a multiline editor (notes) */
+.dol-field-popover {
+	display: flex;
+	align-items: center;
+	gap: 0.375rem;
+}
+.dol-field-popover.--multiline {
+	flex-direction: column;
+	align-items: stretch;
+}
+.dol-field-popover .dol-field-popover-inputs {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+.dol-field-popover .dol-field-popover-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.25rem;
+	flex: 0 0 auto;
+}
+.dol-field-popover .dol-field-popover-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.75rem;
+	height: 1.75rem;
+	padding: 0;
+	border: 1px solid var(--tooltip-border-color);
+	border-radius: 0.375rem;
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+}
+.dol-field-popover .dol-field-popover-button:hover,
+.dol-field-popover .dol-field-popover-button:focus-visible {
+	background-color: rgba(0, 0, 0, 0.06);
+}
+.dol-field-popover .dol-field-popover-save {
+	color: #fff;
+	background-color: var(--butactionbg, #4a7c9b);
+	border-color: var(--butactionbg, #4a7c9b);
+}
+.dol-field-popover .dol-field-popover-save:hover,
+.dol-field-popover .dol-field-popover-save:focus-visible {
+	background-color: var(--butactionbg, #4a7c9b);
+	filter: brightness(1.1);
+}
+.dol-field-popover .dol-field-popover-button:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+/* Value under the popover */
+.dol-field-editing {
+	opacity: 0.4;
+}
