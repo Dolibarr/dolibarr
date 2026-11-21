@@ -2501,18 +2501,22 @@ class Products extends DolibarrApi
 		unset($object->user_closing_id);
 
 		// Supplier buying-price context: only filled after get_buyprice(), not by a plain read
-		// (complements fourn_pu / fourn_socid / ref_fourn / product_fourn_id already removed above)
-		unset($object->buyprice);
-		unset($object->fourn_qty);
-		unset($object->fourn_multicurrency_price);
-		unset($object->fourn_multicurrency_unitprice);
-		unset($object->fourn_multicurrency_tx);
-		unset($object->fourn_multicurrency_id);
-		unset($object->fourn_multicurrency_code);
-		unset($object->vatrate_supplier);
-		unset($object->desc_supplier);
-		unset($object->default_vat_code_supplier);
-		unset($object->product_fourn_price_id);
+		// (complements fourn_pu / fourn_socid / ref_fourn / product_fourn_id already removed above).
+		// Kept on the ProductFournisseur objects returned by the purchase price routes, where they
+		// carry the price id, minimum quantity, supplier description and multicurrency prices.
+		if (!($object instanceof ProductFournisseur)) {
+			unset($object->buyprice);
+			unset($object->fourn_qty);
+			unset($object->fourn_multicurrency_price);
+			unset($object->fourn_multicurrency_unitprice);
+			unset($object->fourn_multicurrency_tx);
+			unset($object->fourn_multicurrency_id);
+			unset($object->fourn_multicurrency_code);
+			unset($object->vatrate_supplier);
+			unset($object->desc_supplier);
+			unset($object->default_vat_code_supplier);
+			unset($object->product_fourn_price_id);
+		}
 
 		// Transient scaffolding not related to the product record
 		unset($object->specimen);
