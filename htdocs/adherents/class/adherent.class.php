@@ -3246,6 +3246,332 @@ class Adherent extends CommonObject
 	}
 
 	/**
+	 *	Build the SELECT, FROM and WHERE parts of the query of the list of members, hooks included.
+	 *
+	 *	The list page, the API and any other consumer share the same query this way, so that a module
+	 *	that adds a column or a table through the printFieldListXxx hooks is seen by all of them.
+	 *	The aliases default to those of the list page ('d' for the member itself, as the hooks of the
+	 *	context 'memberslist' expect it), and a consumer that already published other ones to its own
+	 *	users overrides them with $params['aliases'].
+	 *
+	 *	@param	array<string,mixed>	$search			Search criteria, keys are the names of the search fields of the
+	 *												list page without their 'search_' prefix ('lastname', 'town',
+	 *												'datefin_start', 'array_options'...)
+	 *	@param	array<string,mixed>	$params			'extrafields' (an ExtraFields already loaded, else it is loaded here),
+	 *												'fieldstosearchall' (the fields of the search on all fields; its
+	 *												keys carry the aliases, so they follow 'aliases' below),
+	 *												'arrayfields' (the displayed columns of the list page, keyed the
+	 *												same way: when 'd.firstname' is not one of them, the search on the
+	 *												lastname also searches the firstname, as the list page does),
+	 *												'aliases' (table aliases to use instead of the default ones, keys
+	 *												'member', 'type', 'thirdparty', 'state', 'country', 'extrafields')
+	 *	@param	?HookManager		$hookmanager	Hook manager already initialized on the wanted context. null runs no hook.
+	 *	@param	string				$action			Current action, may be modified by the hooks
+	 *	@return	array{sqlselect:string,sqlfrom:string,sqlwhere:string}	The parts of the query, to concatenate in this order,
+	 *												or the three parts empty when two tables were given the same alias
+	 */
+	public function getListSqlParts($search = array(), $params = array(), $hookmanager = null, &$action = '')
+	{
+		global $conf;
+
+		$object = $this;
+		$db = $this->db;
+		$now = dol_now();
+
+		$search_id = isset($search['id']) ? $search['id'] : '';
+		$search_ref = isset($search['ref']) ? $search['ref'] : '';
+		$search_lastname = isset($search['lastname']) ? $search['lastname'] : '';
+		$search_firstname = isset($search['firstname']) ? $search['firstname'] : '';
+		$search_gender = isset($search['gender']) ? $search['gender'] : '';
+		$search_civility = isset($search['civility']) ? $search['civility'] : '';
+		$search_company = isset($search['company']) ? $search['company'] : '';
+		$search_login = isset($search['login']) ? $search['login'] : '';
+		$search_address = isset($search['address']) ? $search['address'] : '';
+		$search_zip = isset($search['zip']) ? $search['zip'] : '';
+		$search_town = isset($search['town']) ? $search['town'] : '';
+		$search_state = isset($search['state']) ? $search['state'] : '';
+		$search_country = isset($search['country']) ? $search['country'] : '';
+		$search_phone = isset($search['phone']) ? $search['phone'] : '';
+		$search_phone_perso = isset($search['phone_perso']) ? $search['phone_perso'] : '';
+		$search_phone_mobile = isset($search['phone_mobile']) ? $search['phone_mobile'] : '';
+		$search_type = isset($search['type']) ? $search['type'] : '';
+		$search_amount = isset($search['amount']) ? $search['amount'] : '';
+		$search_minimumamount = isset($search['minimumamount']) ? $search['minimumamount'] : '';
+		$search_email = isset($search['email']) ? $search['email'] : '';
+		$search_categ = isset($search['categ']) ? $search['categ'] : '';
+		$search_morphy = isset($search['morphy']) ? $search['morphy'] : '';
+		$search_import_key = isset($search['import_key']) ? $search['import_key'] : '';
+		$search_filter = isset($search['filter']) ? $search['filter'] : '';
+		$search_status = isset($search['status']) ? $search['status'] : '';
+		$search_all = isset($search['all']) ? $search['all'] : '';
+		$search_datec_start = isset($search['datec_start']) ? $search['datec_start'] : '';
+		$search_datec_end = isset($search['datec_end']) ? $search['datec_end'] : '';
+		$search_datem_start = isset($search['datem_start']) ? $search['datem_start'] : '';
+		$search_datem_end = isset($search['datem_end']) ? $search['datem_end'] : '';
+		$search_datefin_start = isset($search['datefin_start']) ? $search['datefin_start'] : '';
+		$search_datefin_end = isset($search['datefin_end']) ? $search['datefin_end'] : '';
+		$search_no_email = isset($search['no_email']) ? (int) $search['no_email'] : -1;
+		$arrayfields = isset($params['arrayfields']) ? $params['arrayfields'] : array();
+		$fieldstosearchall = isset($params['fieldstosearchall']) ? $params['fieldstosearchall'] : array();
+		$search_array_options = isset($search['array_options']) ? $search['array_options'] : array();
+
+		$extrafields = isset($params['extrafields']) ? $params['extrafields'] : null;
+		if (!is_object($extrafields)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+			$extrafields->fetch_name_optionals_label($this->table_element);
+		}
+
+		// Table aliases of the returned SQL. A consumer that already published aliases of its own keeps
+		// them this way: the REST API has been exposing the member table itself as 't' for years, through
+		// its sqlfilters and its default sortfield 't.rowid', so reusing this query must not silently
+		// change what they mean.
+		$aliases = array(
+			'member' => 'd',
+			'type' => 't',
+			'thirdparty' => 's',
+			'state' => 'state',
+			'country' => 'country',
+			'extrafields' => 'ef'
+		);
+		if (!empty($params['aliases']) && is_array($params['aliases'])) {
+			$aliases = array_merge($aliases, $params['aliases']);
+		}
+		if (count(array_unique($aliases)) != count($aliases)) {
+			$this->error = 'getListSqlParts: the same alias was given to two different tables';
+			$this->errors[] = $this->error;
+			return array('sqlselect' => '', 'sqlfrom' => '', 'sqlwhere' => '');
+		}
+		$sanitizedmember = $this->db->sanitize($aliases['member']);
+		$sanitizedtype = $this->db->sanitize($aliases['type']);
+		$sanitizedthirdparty = $this->db->sanitize($aliases['thirdparty']);
+		$sanitizedstate = $this->db->sanitize($aliases['state']);
+		$sanitizedcountry = $this->db->sanitize($aliases['country']);
+		$sanitizedextra = $this->db->sanitize($aliases['extrafields']);
+
+		$select = "SELECT";
+		$select .= " ".$sanitizedmember.".rowid, ".$sanitizedmember.".ref, ".$sanitizedmember.".login, ".$sanitizedmember.".lastname, ".$sanitizedmember.".firstname, ".$sanitizedmember.".gender, ".$sanitizedmember.".societe as company, ".$sanitizedmember.".fk_soc as socid,";
+		$select .= " ".$sanitizedmember.".civility, ".$sanitizedmember.".datefin, ".$sanitizedmember.".address, ".$sanitizedmember.".zip, ".$sanitizedmember.".town, ".$sanitizedmember.".state_id, ".$sanitizedmember.".country,";
+		$select .= " ".$sanitizedmember.".email, ".$sanitizedmember.".phone, ".$sanitizedmember.".phone_perso, ".$sanitizedmember.".phone_mobile, ".$sanitizedmember.".birth, ".$sanitizedmember.".public, ".$sanitizedmember.".photo,";
+		$select .= " ".$sanitizedmember.".fk_adherent_type as type_id, ".$sanitizedmember.".morphy, ".$sanitizedmember.".statut as status, ".$sanitizedmember.".datec as date_creation, ".$sanitizedmember.".tms as date_modification,";
+		$select .= " ".$sanitizedmember.".note_private, ".$sanitizedmember.".note_public, ".$sanitizedmember.".import_key,";
+		$select .= " ".$sanitizedthirdparty.".nom,";
+		$select .= " ".$this->db->ifsql($sanitizedmember.".societe IS NULL", $sanitizedthirdparty.".nom", $sanitizedmember.".societe")." as companyname,";
+		$select .= " ".$sanitizedtype.".libelle as type, ".$sanitizedtype.".subscription, ".$sanitizedtype.".amount, ".$sanitizedtype.".minimumamount,";
+		$select .= " ".$sanitizedstate.".code_departement as state_code, ".$sanitizedstate.".nom as state_name";
+
+		if (isModEnabled('mailing')) {
+			// The alias is concatenated on the next line: CodingPhpTest reads "xxx = \".$var" as a value
+			// forged without quotes, and it cannot tell it from an alias (same false positive as 5b9b2b83830).
+			$select .= ", (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = ";
+			$select .= $sanitizedmember.".email) as unsubscribed";
+		}
+
+		// Add fields from extrafields
+		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
+			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+				$select .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? ", ".$sanitizedextra.".".$key." as options_".$key : "");
+			}
+		}
+
+		// Add fields from hooks
+		$parameters = array();
+		if ($hookmanager instanceof HookManager) {
+			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$select .= $hookmanager->resPrint;
+		}
+		$select = preg_replace('/,\s*$/', '', $select);
+
+		// SQL Alias adherent
+		$from = " FROM ".MAIN_DB_PREFIX."adherent as ".$sanitizedmember;
+		if (!empty($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
+			$from .= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as ".$sanitizedextra." on (".$sanitizedmember.".rowid = ".$sanitizedextra.".fk_object)";
+		}
+		$from .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as ".$sanitizedcountry." on (".$sanitizedcountry.".rowid = ".$sanitizedmember.".country)";
+		$from .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as ".$sanitizedstate." on (".$sanitizedstate.".rowid = ".$sanitizedmember.".state_id)";
+		$from .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as ".$sanitizedthirdparty." on (".$sanitizedthirdparty.".rowid = ".$sanitizedmember.".fk_soc)";
+
+		// SQL Alias adherent_type
+		$from .= " INNER JOIN ".MAIN_DB_PREFIX."adherent_type as ".$sanitizedtype." ON ".$sanitizedtype.".rowid = ".$sanitizedmember.".fk_adherent_type";
+		// Add table from hooks
+		$parameters = array();
+		if ($hookmanager instanceof HookManager) {
+			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$from .= $hookmanager->resPrint;
+		}
+
+		$where = " WHERE 1 = 1";
+
+		$searchCategoryContactList = $search_categ ? array($search_categ) : array();
+		$searchCategoryContactOperator = 0;
+		// Search for tag/category ($searchCategoryContactList is an array of ID)
+		if (!empty($searchCategoryContactList)) {
+			$searchCategoryContactSqlList = array();
+			$listofcategoryid = '';
+			foreach ($searchCategoryContactList as $searchCategoryContact) {
+				if (intval($searchCategoryContact) == -2) {
+					$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE ".$sanitizedmember.".rowid = ck.fk_member)";
+				} elseif (intval($searchCategoryContact) > 0) {
+					if ($searchCategoryContactOperator == 0) {
+						$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE ".$sanitizedmember.".rowid = ck.fk_member AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
+					} else {
+						$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+					}
+				}
+			}
+			if ($listofcategoryid) {
+				$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE ".$sanitizedmember.".rowid = ck.fk_member AND ck.fk_categorie IN (".$this->db->sanitize($listofcategoryid)."))";
+			}
+			if ($searchCategoryContactOperator == 1) {
+				if (!empty($searchCategoryContactSqlList)) {
+					$where .= " AND (".implode(' OR ', $searchCategoryContactSqlList).")";
+				}
+			} else {
+				if (!empty($searchCategoryContactSqlList)) {
+					$where .= " AND (".implode(' AND ', $searchCategoryContactSqlList).")";
+				}
+			}
+		}
+
+		$where .= " AND ".$sanitizedmember.".entity IN (".getEntity('adherent').")";
+		if ($search_all) {
+			$where .= natural_search(array_keys($fieldstosearchall), $search_all);
+		}
+		if ($search_type > 0) {
+			$where .= " AND ".$sanitizedtype.".rowid=".((int) $search_type);
+		}
+		if ($search_amount != '') {
+			$where .= natural_search($sanitizedtype.".amount", $search_amount, 1);
+		}
+		if ($search_minimumamount != '') {
+			$where .= natural_search($sanitizedtype.".minimumamount", $search_minimumamount, 1);
+		}
+		if ($search_filter == 'withoutsubscription') {
+			$where .= " AND (datefin IS NULL)";
+		}
+		if ($search_filter == 'waitingsubscription') {
+			$where .= " AND (datefin IS NULL AND ".$sanitizedtype.".subscription = '1')";
+		}
+		if ($search_filter == 'uptodate') {
+			//$where .= " AND (datefin >= '".$this->db->idate($now)."')";
+			// Up to date subscription OR no subscription required
+			$where .= " AND (datefin >= '".$this->db->idate($now)."' OR (datefin IS NULL AND ".$sanitizedtype.".subscription = '0'))";
+		}
+		if ($search_filter == 'outofdate') {
+			$where .= " AND (datefin < '".$this->db->idate($now)."')";
+		}
+		if ($search_status != '') {
+			// Can be a number or comma separated list of numbers
+			$where .= " AND ".$sanitizedmember.".statut in (".$this->db->sanitize($this->db->escape($search_status)).")";
+		}
+		if ($search_morphy != '' && $search_morphy != '-1') {
+			$where .= natural_search($sanitizedmember.".morphy", $search_morphy);
+		}
+		if ($search_id != '') {
+			$where .= natural_search($sanitizedmember.".rowid", $search_id, 1);
+		}
+		if ($search_ref) {
+			$where .= natural_search($sanitizedmember.".ref", $search_ref);
+		}
+		if ($search_civility) {
+			$where .= natural_search($sanitizedmember.".civility", $search_civility);
+		}
+		if ($search_firstname) {
+			$where .= natural_search($sanitizedmember.".firstname", $search_firstname);
+		}
+		if ($search_lastname) {
+			if (empty($arrayfields[$sanitizedmember.'.firstname']['checked'])) {
+				// Firstname is shown into the lastname column, so search on both
+				$where .= natural_search(array($sanitizedmember.".lastname", $sanitizedmember.".firstname"), $search_lastname);
+			} else {
+				$where .= natural_search($sanitizedmember.".lastname", $search_lastname);
+			}
+		}
+		if ($search_gender != '' && $search_gender != '-1') {
+			$where .= natural_search($sanitizedmember.".gender", $search_gender);
+		}
+		if ($search_login) {
+			$where .= natural_search($sanitizedmember.".login", $search_login);
+		}
+		if ($search_company) {
+			$where .= natural_search(array($sanitizedthirdparty.".nom", $sanitizedmember.".societe"), $search_company);
+		}
+		if ($search_email) {
+			$where .= natural_search($sanitizedmember.".email", $search_email);
+		}
+		if ($search_no_email != -1 && $search_no_email > 0) {
+			// The alias is concatenated on the next line: CodingPhpTest reads "xxx = \".$var" as a value
+			// forged without quotes, and it cannot tell it from an alias (same false positive as 5b9b2b83830).
+			$where .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = ";
+			$where .= $sanitizedmember.".email) > 0";
+		}
+		if ($search_no_email != -1 && $search_no_email == 0) {
+			// The alias is concatenated on the next line: CodingPhpTest reads "xxx = \".$var" as a value
+			// forged without quotes, and it cannot tell it from an alias (same false positive as 5b9b2b83830).
+			$where .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = ";
+			$where .= $sanitizedmember.".email) = 0 AND ".$sanitizedmember.".email IS NOT NULL AND ".$sanitizedmember.".email <> ''";
+		}
+		if ($search_address) {
+			$where .= natural_search($sanitizedmember.".address", $search_address);
+		}
+		if ($search_town) {
+			$where .= natural_search($sanitizedmember.".town", $search_town);
+		}
+		if ($search_zip) {
+			$where .= natural_search($sanitizedmember.".zip", $search_zip);
+		}
+		if ($search_state) {
+			$where .= natural_search($sanitizedstate.".nom", $search_state);
+		}
+		if ($search_phone) {
+			$where .= dol_natural_search_phone($db, $sanitizedmember.".phone", $search_phone);
+		}
+		if ($search_phone_perso) {
+			$where .= dol_natural_search_phone($db, $sanitizedmember.".phone_perso", $search_phone_perso);
+		}
+		if ($search_phone_mobile) {
+			$where .= dol_natural_search_phone($db, $sanitizedmember.".phone_mobile", $search_phone_mobile);
+		}
+		if ($search_country) {
+			$where .= " AND ".$sanitizedmember.".country IN (".$this->db->sanitize($search_country).')';
+		}
+		if ($search_import_key) {
+			$where .= natural_search($sanitizedmember.".import_key", $search_import_key);
+		}
+		if ($search_datec_start) {
+			$where .= " AND ".$sanitizedmember.".datec >= '".$this->db->idate($search_datec_start)."'";
+		}
+		if ($search_datec_end) {
+			$where .= " AND ".$sanitizedmember.".datec <= '".$this->db->idate($search_datec_end)."'";
+		}
+		if ($search_datem_start) {
+			$where .= " AND ".$sanitizedmember.".tms >= '".$this->db->idate($search_datem_start)."'";
+		}
+		if ($search_datem_end) {
+			$where .= " AND ".$sanitizedmember.".tms <= '".$this->db->idate($search_datem_end)."'";
+		}
+		if ($search_datefin_start) {
+			$where .= " AND ".$sanitizedmember.".datefin >= '".$this->db->idate($search_datefin_start)."'";
+		}
+		if ($search_datefin_end) {
+			$where .= " AND ".$sanitizedmember.".datefin <= '".$this->db->idate($search_datefin_end)."'";
+		}
+		// Add where from extra fields
+		$extrafieldsobjectprefix = $sanitizedextra.'.';
+		$sql = $where;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+		$where = $sql;
+		// Add where from hooks
+		$parameters = array();
+		if ($hookmanager instanceof HookManager) {
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$where .= $hookmanager->resPrint;
+		}
+
+		return array('sqlselect' => $select, 'sqlfrom' => $from, 'sqlwhere' => $where);
+	}
+
+	/**
 	 *  Return number of mass Emailing received by this member with its email
 	 *
 	 *  @return       int     Number of EMailings
