@@ -499,27 +499,16 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// Check if line exists
-		$lineExists = false;
-		$this->expensereport->fetch_lines();
-		foreach ($this->expensereport->lines as $line) {
-			if ($line->id == $lineid) {
-				$lineExists = true;
-				break;
-			}
-		}
-
-		if (!$lineExists) {
-			throw new RestException(404, 'Line not found');
-		}
-
 		if ($this->expensereport->status != ExpenseReport::STATUS_DRAFT) {
 			throw new RestException(403, 'Expense report must be in draft status to delete lines');
 		}
 
-		$result = $this->expensereport->deleteLine($lineid);
+		// deleteLine() checks that the line belongs to this expense report
+		$result = $this->expensereport->deleteLine($lineid, DolibarrApiAccess::$user);
 		if ($result > 0) {
 			return $this->get($id);
+		} elseif ($this->expensereport->error == 'ErrorLineIDDoesNotMatchWithObjectID') {
+			throw new RestException(404, 'Line not found');
 		} else {
 			throw new RestException(500, 'Error deleting line: '.$this->expensereport->errorsToString());
 		}
