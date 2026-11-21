@@ -49,6 +49,57 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class FichinterTest extends CommonClassTest
 {
 	/**
+	 * Both technician signature layouts remain detectable after the customer's signature.
+	 *
+	 * @return void
+	 */
+	public function testTechnicianSignedPdfIsRecognized()
+	{
+		$intervention = new Fichinter($this->savdb);
+		$intervention->last_main_doc = 'ficheinter/IN2601-0001/IN2601-0001_signed-20261120130000.pdf';
+		$this->assertFalse($intervention->hasTechnicianSignedPdf());
+
+		$intervention->last_main_doc = 'ficheinter/IN2601-0001/IN2601-0001_technician-signed-0123456789abcdef01234567.pdf';
+		$this->assertTrue($intervention->hasTechnicianSignedPdf());
+
+		$intervention->last_main_doc = 'ficheinter/IN2601-0001/IN2601-0001_technician-signed-0123456789abcdef01234567_signed-20261120130000.pdf';
+		$this->assertTrue($intervention->hasTechnicianSignedPdf());
+		$this->assertTrue($intervention->hasTechnicianSignedPdf(true));
+
+		$intervention->last_main_doc = 'ficheinter/IN2601-0001/IN2601-0001_technician-signed-box-0123456789abcdef01234567_signed-20261120130000.pdf';
+		$this->assertTrue($intervention->hasTechnicianSignedPdf());
+		$this->assertFalse($intervention->hasTechnicianSignedPdf(true));
+	}
+
+	/**
+	 * Signing adds the native signature label to the validated status.
+	 *
+	 * @return void
+	 */
+	public function testValidatedSignatureStatusLabels()
+	{
+		global $langs;
+
+		$previousLangs = $langs;
+		$langs = new Translate('', $this->savconf);
+		$langs->setDefaultLang('fr_FR');
+
+		try {
+			$langs->load('main', 0, 0, '', 1);
+			$intervention = new Fichinter($this->savdb);
+			$intervention->status = Fichinter::STATUS_VALIDATED;
+			$intervention->statut = Fichinter::STATUS_VALIDATED;
+			$intervention->signed_status = Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_SENDER'];
+			$this->assertSame('Validé (Signé en interne)', $intervention->getLibStatut());
+
+			$intervention->signed_status = Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_ALL'];
+			$this->assertSame('Validé (Signé en interne et par le tiers)', $intervention->getLibStatut());
+		} finally {
+			$langs = $previousLangs;
+		}
+	}
+
+	/**
 	 * testFichinterCreate
 	 *
 	 * @return	int
