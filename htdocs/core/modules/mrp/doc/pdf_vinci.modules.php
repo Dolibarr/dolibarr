@@ -1112,7 +1112,9 @@ class pdf_vinci extends ModelePDFMo
 			$pdf->SetFont('', 'B', $default_font_size + 3);
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, html_entity_decode($prodToMake->description), '', 'R', false, 1, null, null, true, 0, false, true, 51, 'T', true);
+			$description = $prodToMake->description;
+			if (dol_textishtml($description)) $description = strip_tags($description);
+			$pdf->MultiCell($w, 3, html_entity_decode($description), '', 'R', false, 1, null, null, true, 0, false, true, 51, 'T', true);
 			$posy = $pdf->GetY() - 5;
 
 			// dimensions
