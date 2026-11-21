@@ -858,7 +858,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 		case 19:    // 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
 			if (function_exists('imageavif')) {    // If PHP < 8.1 or AVIF support not available into GD
-				imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
+				imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable,PhanUndeclaredFunction
 			}
 			break;
 	}
