@@ -171,6 +171,7 @@ if (empty($reshook)) {
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
+		$object->sepa_transfer_schema_version = GETPOST("sepa_transfer_schema_version", "aZ09");
 
 		$object->address = trim(GETPOST("account_address", "alphanohtml"));
 
@@ -288,6 +289,7 @@ if (empty($reshook)) {
 		$object->bic = trim(GETPOST("bic"));
 		$object->iban = trim(GETPOST("iban"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
+		$object->sepa_transfer_schema_version = GETPOST("sepa_transfer_schema_version", "aZ09");
 
 		$object->owner_name = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
@@ -395,6 +397,9 @@ $formcompany = new FormCompany($db);
 $formaccounting = new FormAccounting($db);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
+
+$sepatransferschemaversionlabels = array('3' => 'pain.001.001.03 (SEPA)', '9' => 'pain.001.001.09 (Swiss Payment Standards)');
+$sepatransferschemaversions = array('' => $langs->trans("CreditTransferFileFormatOfSetup", $sepatransferschemaversionlabels[getDolGlobalString('PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION') == '9' ? '9' : '3'])) + $sepatransferschemaversionlabels;
 
 $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:Módulo_Bancos_y_Cajas|DE:Modul_Banken_und_Barbestände';
 $title = $langs->trans("BankAccount");
@@ -621,6 +626,8 @@ if ($action == 'create') {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
 				print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. (empty(GETPOST('pti_in_ctti')) ? '' : ' checked ') . '>';
 				print '</td></tr>';
+				print '<tr><td>'.$form->textwithpicto($langs->trans("CreditTransferFileFormat"), $langs->trans("CreditTransferFileFormatHelp")).'</td>';
+				print '<td>'.$form->selectarray('sepa_transfer_schema_version', $sepatransferschemaversions, GETPOST('sepa_transfer_schema_version', 'aZ09')).'</td></tr>';
 			}
 		}
 		print '</table>';
@@ -886,6 +893,9 @@ if ($action == 'create') {
 				if ($mysoc->isInSEPA()) {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td><td>';
 					print(empty($object->pti_in_ctti) ? $langs->trans("No") : $langs->trans("Yes"));
+					print "</td></tr>\n";
+					print '<tr><td>'.$form->textwithpicto($langs->trans("CreditTransferFileFormat"), $langs->trans("CreditTransferFileFormatHelp")).'</td><td>';
+					print $sepatransferschemaversions[$object->sepa_transfer_schema_version] ?? $sepatransferschemaversions[''];
 					print "</td></tr>\n";
 				}
 			}
@@ -1242,6 +1252,8 @@ if ($action == 'create') {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation"), $langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp")).'</td>';
 					print '<td><input type="checkbox" class="flat" name="pti_in_ctti"'. ($object->pti_in_ctti ? ' checked ' : '') . '>';
 					print '</td></tr>';
+					print '<tr><td>'.$form->textwithpicto($langs->trans("CreditTransferFileFormat"), $langs->trans("CreditTransferFileFormatHelp")).'</td>';
+					print '<td>'.$form->selectarray('sepa_transfer_schema_version', $sepatransferschemaversions, GETPOSTISSET('sepa_transfer_schema_version') ? GETPOST('sepa_transfer_schema_version', 'aZ09') : $object->sepa_transfer_schema_version).'</td></tr>';
 				}
 			}
 
