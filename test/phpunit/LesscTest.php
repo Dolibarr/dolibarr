@@ -95,7 +95,7 @@ class LesscTest extends CommonClassTest
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
 
-		$lesscobj = new Lessc();
+		$lesscobj = new lessC();
 
 		$cssfile = "
         a { font-size: 10px; }
@@ -164,7 +164,7 @@ class LesscTest extends CommonClassTest
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
 
-		$lesscobj = new Lessc();
+		$lesscobj = new lessC();
 		try {
 			$result = $lesscobj->compile($source);
 		} catch (Exception $e) {
