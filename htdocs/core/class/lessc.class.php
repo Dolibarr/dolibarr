@@ -1042,7 +1042,7 @@ class Lessc
 		if ($list[0] == "list" && isset($list[2][$idx - 1])) {
 			return $list[2][$idx - 1];
 		}
-		return '';
+		return null;	// null so the function is output unchanged
 	}
 
 	protected function lib_isnumber($value)
@@ -1356,7 +1356,7 @@ class Lessc
 		if (!is_null($color = $this->coerceColor($value))) {
 			return isset($color[4]) ? $color[4] : 1;
 		}
-		return '';
+		return null;	// null so the function is output unchanged (for example "filter: alpha(opacity=50)")
 	}
 
 	// set the alpha of the color
@@ -2012,7 +2012,7 @@ class Lessc
 			array_unshift($strRight[2], $left);
 			return $strRight;
 		}
-		return '';
+		return null;	// Must be null and not '', the caller tests is_null() to know if it is a string concatenation
 	}
 
 
@@ -2036,7 +2036,7 @@ class Lessc
 		if ($op == '+' || $op == '*') {
 			return $this->op_color_number($op, $rgt, $lft);
 		}
-		return array();
+		return null;	// null so the operation is output unchanged
 	}
 
 	protected function op_color_number($op, $lft, $rgt)
@@ -2871,7 +2871,8 @@ class lessc_parser
 
 			// media
 			if ($this->literal('@media')) {
-				if ($this->mediaQueryList($mediaQueries)
+				// Note: "|| true" is used for optional parts (the parse function is called but its result is not required). Do not remove it.
+				if (($this->mediaQueryList($mediaQueries) || true)
 					&& $this->literal('{')
 				) {
 					$media = $this->pushSpecialBlock("media");
@@ -2885,7 +2886,7 @@ class lessc_parser
 
 			if ($this->literal("@", false) && $this->keyword($dirName)) {
 				if ($this->isDirective($dirName, $this->blockDirectives)) {
-					if ($this->openString("{", $dirValue, null, array(";")) &&
+					if (($this->openString("{", $dirValue, null, array(";")) || true) &&	// "|| true" because the value is optional
 						$this->literal("{")
 					) {
 						$dir = $this->pushSpecialBlock("directive");
@@ -2923,7 +2924,7 @@ class lessc_parser
 
 		// opening parametric mixin
 		if ($this->tag($tag, true) && $this->argumentDef($args, $isVararg) &&
-			$this->guards($guards) &&
+			($this->guards($guards) || true) &&	// "|| true" because guards are optional
 			$this->literal('{')
 		) {
 			$block = $this->pushBlock($this->fixTags(array($tag)));
@@ -2986,8 +2987,8 @@ class lessc_parser
 
 		// mixin
 		if ($this->mixinTags($tags) &&
-			$this->argumentDef($argv, $isVararg) &&
-			$this->keyword($suffix)  && $this->end()
+			($this->argumentDef($argv, $isVararg) || true) &&	// "|| true" because arguments are optional
+			($this->keyword($suffix) || true) && $this->end()	// "|| true" because the suffix (!important) is optional
 		) {
 			$tags = $this->fixTags($tags);
 			$this->append(array('mixin', $tags, $argv, $suffix), $s);
@@ -3305,7 +3306,8 @@ class lessc_parser
 		$expressions = null;
 		$parts = array();
 
-		if ((($this->literal("only") && ($only = true)) || ($this->literal("not") && ($not = true))) && $this->keyword($mediaType)) {
+		// "|| true" because "only" and "not" are optional
+		if ((($this->literal("only") && ($only = true)) || ($this->literal("not") && ($not = true)) || true) && $this->keyword($mediaType)) {
 			$prop = array("mediaType");
 			if (isset($only)) {
 				$prop[] = "only";
@@ -3347,7 +3349,7 @@ class lessc_parser
 		$value = null;
 		if ($this->literal("(") &&
 			$this->keyword($feature) &&
-			($this->literal(":") && $this->expression($value)) &&
+			(($this->literal(":") && $this->expression($value)) || true) &&	// "|| true" because the value is optional, for example "(color)"
 			$this->literal(")")
 		) {
 			$out = array("mediaExp", $feature);
