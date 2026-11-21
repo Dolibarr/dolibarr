@@ -376,4 +376,37 @@ class PropalTest extends CommonClassTest
 		print __METHOD__." result=".json_encode($result)."\n";
 		$this->assertEquals(array(1 => 6, 7 => 12, 12 => 12, 13 => 18), $result, 'Quantities rounded to the packaging of 6');
 	}
+
+	/**
+	 * testPropalEmailSentCounter
+	 *
+	 * @return	void
+	 */
+	public function testPropalEmailSentCounter()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Propal($db);
+		$localobject->initAsSpecimen();
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, (string) $localobject->error);
+
+		$resql = $db->query("UPDATE ".$db->prefix()."propal SET email_sent_counter = 3 WHERE rowid = ".((int) $id));
+		$this->assertNotFalse($resql, $db->lasterror());
+
+		$localobject = new Propal($db);
+		$localobject->fetch($id);
+		$this->assertSame(3, $localobject->email_sent_counter, 'fetch() must load email_sent_counter');
+
+		// A copy has never been sent
+		$cloneid = $localobject->createFromClone($user);
+		$this->assertGreaterThan(0, $cloneid, (string) $localobject->error);
+		$clone = new Propal($db);
+		$clone->fetch($cloneid);
+		$this->assertSame(0, $clone->email_sent_counter, 'A clone must not inherit email_sent_counter');
+	}
 }
