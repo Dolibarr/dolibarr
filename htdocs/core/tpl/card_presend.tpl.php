@@ -77,16 +77,22 @@ if ($action == 'presend') {
 	$ref = dol_sanitizeFileName($object->ref);
 	if (!in_array($object->element, array('user', 'member'))) {
 		//$fileparams['fullname'] can be filled from the card
-		//Get also the main_lastdoc field of $object. If not found, try to guess with following code
-		if (!empty($object->last_main_doc) && is_readable(DOL_DATA_ROOT.'/'.$object->last_main_doc) && is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
-			$fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
+		//last_main_doc is not useful in mail action, file is last generated and could be technical or draft
+		//Better to find first if a pdf human readable is present
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		// Special case
+		if ($object->element == 'invoice_supplier') {
+			$fileparamsList = dol_dir_list($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, 'files', 0, preg_quote($ref, '/')>
 		} else {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			// Special case
-			if ($object->element == 'invoice_supplier') {
-				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-			} else {
-				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+			$fileparamsList = dol_dir_list($diroutput.'/'.$ref, 'files', 0, preg_quote($ref, '/').'[^\-]+', array('(\.meta|_preview.*\.png)$', '^\.'), 'date>
+		}
+		if (is_array($fileparamsList)) {
+			//Sort is inverted to get more recent file is any pdf are found
+			//Stop when pdf is found or return more recent file
+			foreach ($fileparamsList as $fileparams) {
+				if (isRealPdf($fileparams["fullname"])) {
+					break;
+				}
 			}
 		}
 
