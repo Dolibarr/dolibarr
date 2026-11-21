@@ -381,7 +381,7 @@ class ToolApiBridge extends McpTool
 
 
 		// Third parties
-		$descriptioncreate = "Create a third party (customer, prospect or supplier). The user must confirms before anything is written.";
+		$descriptioncreate = "Create a third party (customer, prospect or supplier) with what is known of it: address, country, phone, email, VAT number, professional ids. From a supplier document (delivery note, invoice), set fournisseur to 1 and give what its header shows. The customer or supplier code is numbered by Dolibarr unless one is given. A third party that already exists under this name is refused: use it. The user must confirm before anything is written.";
 
 		$descriptionlist = "List third parties (prospects, customers, suppliers,...).";
 		$descriptionlist .= "Use parameter 'mode' to restrict to a nature of third party (0=all, 1=only customers, 2=only prospects, 3=neither customer nor prospect, 4=suppliers).\n";
@@ -412,12 +412,28 @@ class ToolApiBridge extends McpTool
 						'required' => ['name'],
 						'object' => 'Societe',
 						'args' => ['name'],
+						'party_create' => true,
+						// The country is said by its name or code, the REST class stores its rowid.
+						'rename' => ['country' => 'country_id'],
 						'right' => ['societe', 'creer']
 					],
 					'params' => [
 						"name" => "Company or person name.",
 						"client" => "1 customer, 2 prospect, 3 both, 0 none.",
-						"fournisseur" => "1 when the third party is a supplier."
+						"fournisseur" => "1 when the third party is a supplier.",
+						"name_alias" => "Trade name, the name people use.",
+						"address" => "Street address.",
+						"zip" => "Postal code.",
+						"town" => "Town.",
+						"country" => "Country: its ISO code (FR, ES, DE...) or its name. Omit for the country of the company.",
+						"phone" => "Phone.",
+						"email" => "Email of the company.",
+						"url" => "Website.",
+						"tva_intra" => "Intra-community VAT number.",
+						"idprof1" => "First professional id of the country (SIREN in France).",
+						"idprof2" => "Second professional id of the country (SIRET in France).",
+						"code_client" => "Customer code. Omit to let Dolibarr number it.",
+						"code_fournisseur" => "Supplier code. Omit to let Dolibarr number it."
 					]
 				],
 				'index' => [
@@ -1323,7 +1339,7 @@ class ToolApiBridge extends McpTool
 		];
 
 		// Sale orders
-		$descriptioncreate = "Create a product or service in the catalog. The user must confirm before anything is written.";
+		$descriptioncreate = "Create a product or service in the catalog with what is known of it: description, barcode, weight, unit, VAT rate, selling price, lot or serial tracking, default warehouse. It is on sale and on purchase unless said otherwise. A reference or a barcode already used by a product is refused, naming that product: use it. For a product bought from a supplier, record afterwards what the supplier charges and the reference the supplier uses with api_products_purchase_price_create. The user must confirm before anything is written.";
 
 		$descriptionlist = "Search products using the sqlfilters (e.g. \"(t.label:like:'%screw%')\").\n";
 		$descriptionlist .= "Prefer 'properties' (e.g. 'id,ref,label,type,price,price_ttc,tva_tx,status,status_buy') and a small 'limit'.\n";
@@ -1351,11 +1367,25 @@ class ToolApiBridge extends McpTool
 						'required' => ['ref', 'label'],
 						'object' => 'Product',
 						'args' => ['label'],
+						'product_create' => true,
+						// As the creation form proposes: on sale, on purchase, a weight in kilograms.
+						'defaults' => ['status' => 1, 'status_buy' => 1, 'weight_units' => 0],
+						// Said by name, stored by rowid.
+						'rename' => ['unit' => 'fk_unit', 'default_warehouse' => 'fk_default_warehouse'],
 						'right' => ['produit', 'creer']
 					],
 					'params' => [
 						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service.",
-						"tva_tx" => "VAT rate in percent (e.g. 20). Omit it to use the default VAT rate of the company."
+						"tva_tx" => "VAT rate in percent (e.g. 20). Omit it to use the default VAT rate of the company.",
+						"description" => "Description.",
+						"barcode" => "Barcode (EAN, UPC...).",
+						"fk_barcode_type" => "Rowid of the barcode type. Omit for the default type of this Dolibarr.",
+						"weight" => "Weight, in kilograms.",
+						"unit" => "Unit, by name (piece, kg, litre, hour...).",
+						"status" => "On sale: 1 yes (default), 0 no.",
+						"status_buy" => "On purchase: 1 yes (default), 0 no.",
+						"status_batch" => "Tracking: 0 none (default), 1 by lot, 2 by serial number.",
+						"default_warehouse" => "Default warehouse, by name or rowid."
 					]
 				],
 				'index' => [
@@ -2415,6 +2445,8 @@ class ToolApiBridge extends McpTool
 			'email' => "Email of the company.",
 			'url' => "Website.",
 			'tva_intra' => "Intra-community VAT number.",
+			'idprof1' => "First professional id of the country (SIREN in France).",
+			'idprof2' => "Second professional id of the country (SIRET in France).",
 			'note_public' => "Public note.",
 			'note_private' => "Private note.",
 			'client' => "1 customer, 2 prospect, 3 both, 0 none.",
@@ -2428,6 +2460,7 @@ class ToolApiBridge extends McpTool
 			'status' => "On sale: 1 yes, 0 no.",
 			'status_buy' => "On purchase: 1 yes, 0 no.",
 			'weight' => "Weight.",
+			'barcode' => "Barcode (EAN, UPC...).",
 			'note_public' => "Public note.",
 			'note_private' => "Private note."
 		);
@@ -2437,6 +2470,38 @@ class ToolApiBridge extends McpTool
 			$productfields['price'] = "Selling price excl. tax.";
 		}
 		$this->enrichments['products']['methods']['put'] = $this->updateMethod('product', 'Product', array('produit', 'creer'), $productfields, 'ref');
+
+		// What a supplier charges for a product and the reference the supplier knows it by:
+		// the tab "Buying prices" of the product, and what lets a delivery note name the
+		// product by the supplier's own reference. Same right as the REST method.
+		$this->enrichments['products']['methods']['addPurchasePrice'] = array(
+			'suffix' => 'purchase_price_create',
+			'module' => 'fournisseur',
+			'description' => "Record what a supplier charges for a product and the reference the supplier uses for it, as the Buying prices tab of the product does. This is what lets a later delivery note, order or invoice of that supplier name the product by the supplier's own reference. Give 'id' (the product: rowid, or its ref), supplier (name or rowid), ref_fourn (the supplier's reference) and buyprice (unit purchase price excl. tax); qty is the minimum quantity the price applies to (1 by default). The same supplier and quantity again updates the price. The user confirms before anything is written.",
+			'write' => array(
+				'kind' => 'action',
+				'supplier_price' => true,
+				'preview' => 'AIPreviewSupplierPrice',
+				'object' => 'Product',
+				'label' => 'product',
+				'target' => 'id',
+				'lookup' => 'ref',
+				// Whatever its status on sale (0 or 1): a product bought is not always sold.
+				'states' => array(0, 1),
+				'state_error' => 'AIWriteRecordNotFound',
+				'right' => array('produit', 'creer')
+			),
+			'params' => array(
+				'id' => "The product: rowid, or its ref.",
+				'supplier' => "The supplier: its name or its rowid.",
+				'ref_fourn' => "Reference the supplier uses for this product.",
+				'buyprice' => "Unit purchase price excl. tax, for the quantity given.",
+				'qty' => "Minimum quantity this price applies to. 1 by default.",
+				'tva_tx' => "VAT rate of the purchase, in percent. Omit for the default rate with this supplier.",
+				'delivery_time_days' => "Delivery time, in days.",
+				'desc_fourn' => "Description the supplier gives of the product."
+			)
+		);
 
 		$this->enrichments['contacts']['methods']['post'] = array(
 			'suffix' => 'create',
@@ -5221,6 +5286,10 @@ class ToolApiBridge extends McpTool
 		if (is_array($value)) {
 			return '';
 		}
+		// An argument resolved to a rowid (a country, a unit, a warehouse) is shown by the name kept next to it.
+		if (isset($args['_label_'.$argname]) && is_scalar($args['_label_'.$argname]) && (string) $args['_label_'.$argname] !== '') {
+			return (string) $args['_label_'.$argname];
+		}
 		$value = (string) $value;
 		if ($value !== '' && in_array($argname, (array) ($write['hours'] ?? array()), true) && is_numeric($value)) {
 			return convertSecondToTime((int) $value, 'allhourmin');
@@ -5651,7 +5720,7 @@ class ToolApiBridge extends McpTool
 			$parts[] = "'".((string) $wanted)."'".(empty($close) ? '' : ' (close refs: '.implode(', ', $close).')');
 		}
 
-		return "Product ".implode(', ', $parts)." not found, or several products match it. A supplier reference is looked up in the catalogue of the resolved supplier only. Use a close ref if it is the right product, search with api_products_list, or create it with api_products_create first.";
+		return "Product ".implode(', ', $parts)." not found, or several products match it. A supplier reference is looked up in the catalogue of the resolved supplier only. Use a close ref if it is the right product, search with api_products_list, or create it with api_products_create first and record its supplier reference with api_products_purchase_price_create, so that the next document of this supplier finds it.";
 	}
 
 	/**
@@ -6356,6 +6425,10 @@ class ToolApiBridge extends McpTool
 			return $out;
 		}
 
+		if ($kind === 'action' && !empty($write['supplier_price'])) {
+			return $this->normaliseSupplierPrice($args, $out);
+		}
+
 		if ($kind === 'action') {
 			// A value the model may say in words (signed, refused): its code.
 			foreach ((array) ($write['pass_words'] ?? array()) as $name => $words) {
@@ -6735,6 +6808,321 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * A third party to create, as the card would save it: the country by its
+	 * rowid (the one of the company when none is said), a code numbered by
+	 * Dolibarr, and never a second record under a name that exists already.
+	 *
+	 * @param  array<string,mixed> $args Arguments as received.
+	 * @return array<string,mixed>       Arguments for the REST create.
+	 */
+	private function normaliseThirdpartyCreate(array $args)
+	{
+		global $langs, $mysoc;
+
+		$langs->loadLangs(array('other', 'dict'));
+		$aliases = array('alias' => 'name_alias', 'trade_name' => 'name_alias', 'postcode' => 'zip', 'postal_code' => 'zip', 'zipcode' => 'zip', 'cp' => 'zip', 'city' => 'town', 'ville' => 'town', 'country_code' => 'country', 'country_id' => 'country', 'pays' => 'country', 'website' => 'url', 'vat_number' => 'tva_intra', 'vat' => 'tva_intra', 'tva' => 'tva_intra', 'siren' => 'idprof1', 'siret' => 'idprof2', 'supplier_code' => 'code_fournisseur', 'customer_code' => 'code_client');
+		foreach ($aliases as $from => $to) {
+			if (isset($args[$from]) && !isset($args[$to]) && !is_array($args[$from])) {
+				$args[$to] = $args[$from];
+			}
+			unset($args[$from]);
+		}
+
+		// The same company twice is the usual accident of a creation asked from a document.
+		$name = trim((string) ($args['name'] ?? ''));
+		if ($name !== '' && $this->db) {
+			$sql = "SELECT rowid FROM ".$this->db->prefix()."societe";
+			$sql .= " WHERE entity IN (".getEntity('societe').") AND nom = '".$this->db->escape($name)."'";
+			$sql .= " LIMIT 1";
+			$resql = $this->db->query($sql);
+			$obj = $resql ? $this->db->fetch_object($resql) : null;
+			if ($obj) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteThirdpartyExists', $name, $this->userCanReach('Societe', (int) $obj->rowid) ? ' (id '.((int) $obj->rowid).')' : '');
+			}
+		}
+
+		$given = $args['country'] ?? '';
+		if (is_scalar($given) && trim((string) $given) !== '') {
+			$country = $this->resolveCountry((string) $given);
+			if ($country !== null) {
+				$args['country'] = $country['id'];
+				$args['_label_country'] = $country['label'];
+			} else {
+				unset($args['country']);
+			}
+		} elseif (is_object($mysoc) && (int) $mysoc->country_id > 0) {
+			// As the creation form does: the country of the company unless another is said.
+			$args['country'] = (int) $mysoc->country_id;
+			$args['_label_country'] = $langs->transnoentitiesnoconv('Country'.$mysoc->country_code).' ('.$mysoc->country_code.')';
+		} else {
+			unset($args['country']);
+		}
+
+		// A code left empty is refused by most numbering rules: Dolibarr gives the next one.
+		if (!empty($args['client']) && trim((string) ($args['code_client'] ?? '')) === '') {
+			$args['code_client'] = 'auto';
+		}
+		if (!empty($args['fournisseur']) && trim((string) ($args['code_fournisseur'] ?? '')) === '') {
+			$args['code_fournisseur'] = 'auto';
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Country from the words of the user: its rowid, its ISO code or its name.
+	 *
+	 * @param  string $value What was said.
+	 * @return array{id:int,label:string}|null Country, null when none fits (the reason is in writeProblems).
+	 */
+	private function resolveCountry($value)
+	{
+		global $langs;
+
+		$langs->loadLangs(array('dict', 'other'));
+		$value = trim($value);
+		$want = dol_strtolower($value);
+		$found = array();
+		$resql = $this->db ? $this->db->query("SELECT rowid, code, code_iso, label FROM ".$this->db->prefix()."c_country WHERE active = 1") : false;
+		while ($resql && ($obj = $this->db->fetch_object($resql))) {
+			$code = (string) $obj->code;
+			$translated = $langs->transnoentitiesnoconv('Country'.$code);
+			if (in_array($want, array((string) $obj->rowid, dol_strtolower($code), dol_strtolower((string) $obj->code_iso), dol_strtolower((string) $obj->label), dol_strtolower($translated)), true)) {
+				$found[(int) $obj->rowid] = (($translated !== 'Country'.$code) ? $translated : (string) $obj->label).' ('.$code.')';
+			}
+		}
+		if (count($found) === 1) {
+			return array('id' => (int) key($found), 'label' => (string) reset($found));
+		}
+		$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteCountryNotFound', $value);
+
+		return null;
+	}
+
+	/**
+	 * A product to create, as the card would save it: numbers as numbers, the
+	 * unit and the default warehouse by their rowid, and never a reference or a
+	 * barcode another product already has.
+	 *
+	 * @param  array<string,mixed> $args Arguments as received.
+	 * @return array<string,mixed>       Arguments for the REST create.
+	 */
+	private function normaliseProductCreate(array $args)
+	{
+		global $langs;
+
+		$langs->load('other');
+		$aliases = array('reference' => 'ref', 'desc' => 'description', 'ean' => 'barcode', 'ean13' => 'barcode', 'gtin' => 'barcode', 'upc' => 'barcode', 'code_barre' => 'barcode', 'vat_rate' => 'tva_tx', 'vat' => 'tva_tx', 'selling_price' => 'price', 'price_ht' => 'price', 'tosell' => 'status', 'on_sale' => 'status', 'tobuy' => 'status_buy', 'on_purchase' => 'status_buy', 'tobatch' => 'status_batch', 'batch' => 'status_batch', 'lot' => 'status_batch', 'fk_unit' => 'unit', 'warehouse' => 'default_warehouse', 'fk_default_warehouse' => 'default_warehouse');
+		foreach ($aliases as $from => $to) {
+			if (isset($args[$from]) && !isset($args[$to]) && !is_array($args[$from])) {
+				$args[$to] = $args[$from];
+			}
+			unset($args[$from]);
+		}
+		foreach (array('price', 'weight', 'tva_tx') as $num) {
+			// A VAT rate given with its code ("20 (XYZ)") is left as it is.
+			$raw = $args[$num] ?? '';
+			if (is_scalar($raw) && (string) $raw !== '' && strpos((string) $raw, '(') === false) {
+				$args[$num] = (float) price2num(trim(str_replace('%', '', (string) $raw)));
+			}
+		}
+		foreach (array('status', 'status_buy') as $flag) {
+			if (isset($args[$flag]) && is_scalar($args[$flag]) && (string) $args[$flag] !== '') {
+				$args[$flag] = empty($args[$flag]) ? 0 : 1;
+			}
+		}
+
+		// A reference or a barcode another product has: core would refuse it once the
+		// user has approved. Said now, with the product, which is often the one wanted.
+		foreach (array('ref' => 'AIWriteProductRefExists', 'barcode' => 'AIWriteBarcodeExists') as $field => $key) {
+			$value = trim((string) (is_scalar($args[$field] ?? '') ? ($args[$field] ?? '') : ''));
+			if ($value === '' || !$this->db) {
+				continue;
+			}
+			$sql = "SELECT rowid, ref, label FROM ".$this->db->prefix()."product";
+			$sql .= " WHERE entity IN (".getEntity('product').") AND ".$this->db->sanitize($field)." = '".$this->db->escape($value)."'";
+			$sql .= " LIMIT 1";
+			$resql = $this->db->query($sql);
+			$obj = $resql ? $this->db->fetch_object($resql) : null;
+			if ($obj) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv($key, $value, ((string) $obj->ref).' - '.((string) $obj->label));
+			}
+		}
+		if (trim((string) ($args['barcode'] ?? '')) !== '' && empty($args['fk_barcode_type']) && getDolGlobalInt('PRODUIT_DEFAULT_BARCODE_TYPE') > 0) {
+			$args['fk_barcode_type'] = getDolGlobalInt('PRODUIT_DEFAULT_BARCODE_TYPE');
+		}
+
+		if (isset($args['status_batch']) && is_scalar($args['status_batch']) && (string) $args['status_batch'] !== '') {
+			$words = array('none' => 0, 'no' => 0, 'lot' => 1, 'batch' => 1, 'serial' => 2, 'serial number' => 2);
+			$said = dol_strtolower(trim((string) $args['status_batch']));
+			$tracking = isset($words[$said]) ? $words[$said] : (int) $said;
+			if ($tracking > 0 && !isModEnabled('productbatch')) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteLotTrackingOff');
+			}
+			$args['status_batch'] = in_array($tracking, array(0, 1, 2), true) ? $tracking : 0;
+		} else {
+			unset($args['status_batch']);
+		}
+		if (isset($args['unit']) && is_scalar($args['unit']) && trim((string) $args['unit']) !== '') {
+			$said = trim((string) $args['unit']);
+			$unit = ctype_digit($said) ? (int) $said : $this->unitIdFromName($said);
+			if ($unit > 0) {
+				$args['unit'] = $unit;
+				$args['_label_unit'] = $this->unitLabel($unit);
+			} else {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteUnknownUnit', $said);
+				unset($args['unit']);
+			}
+		} else {
+			unset($args['unit']);
+		}
+		if (isset($args['default_warehouse']) && is_scalar($args['default_warehouse']) && trim((string) $args['default_warehouse']) !== '') {
+			$warehouse = $this->resolveWarehouse((string) $args['default_warehouse']);	// says itself when none or several fit
+			if ($warehouse > 0) {
+				$args['default_warehouse'] = $warehouse;
+				$args['_label_default_warehouse'] = $this->warehouseLabel($warehouse);
+			} else {
+				unset($args['default_warehouse']);
+			}
+		} else {
+			unset($args['default_warehouse']);
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Supplier from the words of the user: its rowid, its exact name or code, or
+	 * words that fit one third party only. It must be flagged as a supplier.
+	 *
+	 * @param  mixed $value What was said.
+	 * @return int          Rowid, 0 when none fits (the reason is in writeProblems).
+	 */
+	private function resolveSupplierId($value)
+	{
+		global $langs, $user;
+
+		$langs->load('other');
+		$said = is_scalar($value) ? trim((string) $value) : '';
+		if ($said === '' || !$this->db) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteMissingField', 'supplier');
+			return 0;
+		}
+		$id = 0;
+		if (ctype_digit($said)) {
+			$id = (int) $said;
+		} else {
+			$sql = "SELECT rowid FROM ".$this->db->prefix()."societe";
+			$sql .= " WHERE entity IN (".getEntity('societe').")";
+			$sql .= " AND (nom = '".$this->db->escape($said)."' OR code_fournisseur = '".$this->db->escape($said)."')";
+			$sql .= " LIMIT 2";
+			$resql = $this->db->query($sql);
+			$obj = ($resql && $this->db->num_rows($resql) === 1) ? $this->db->fetch_object($resql) : null;
+			if ($obj) {
+				$id = (int) $obj->rowid;
+			} else {
+				require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
+				$found = aiFindThirdpartiesInText($this->db, $user, $said);
+				if (count($found) === 1 && $found[0]['start'] === 0 && $found[0]['end'] === strlen($said) && count($found[0]['candidates']) === 1) {
+					$id = (int) key($found[0]['candidates']);
+				}
+			}
+		}
+		$soc = ($id > 0) ? $this->fetchRecord('Societe', $id) : null;
+		if (!($soc instanceof Societe) || !$this->userCanReach('Societe', $id)) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteThirdpartyNotFound', $said);
+			return 0;
+		}
+		if (empty($soc->fournisseur)) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteNotASupplier', (string) $soc->name);
+			return 0;
+		}
+
+		return $id;
+	}
+
+	/**
+	 * What a supplier charges for a product: the positional arguments of the REST
+	 * method, the supplier by its rowid, the VAT rate of a purchase from it when
+	 * none is said.
+	 *
+	 * @param  array<string,mixed> $args Arguments as received.
+	 * @param  array<string,mixed> $out  Arguments so far: the product by its rowid.
+	 * @return array<string,mixed>       Arguments for the REST method, and the supplier name for the sentence.
+	 */
+	private function normaliseSupplierPrice(array $args, array $out)
+	{
+		global $conf, $langs;
+
+		$langs->load('other');
+		$aliases = array('supplier_ref' => 'ref_fourn', 'ref_supplier' => 'ref_fourn', 'reference' => 'ref_fourn', 'price' => 'buyprice', 'buy_price' => 'buyprice', 'purchase_price' => 'buyprice', 'cost_price' => 'buyprice', 'unit_price' => 'buyprice', 'quantity' => 'qty', 'min_qty' => 'qty', 'vat_rate' => 'tva_tx', 'socid' => 'supplier', 'fourn_id' => 'supplier', 'thirdparty' => 'supplier', 'delivery_days' => 'delivery_time_days', 'description' => 'desc_fourn');
+		foreach ($aliases as $from => $to) {
+			if (isset($args[$from]) && !isset($args[$to]) && !is_array($args[$from])) {
+				$args[$to] = $args[$from];
+			}
+		}
+		$product = $this->writeTarget;
+		$supplier = $this->resolveSupplierId($args['supplier'] ?? '');
+		$soc = ($supplier > 0) ? $this->fetchRecord('Societe', $supplier) : null;
+		$out['fourn_id'] = $supplier;
+		$out['_supplier'] = ($soc instanceof Societe) ? (string) $soc->name : '';
+		$out['ref_fourn'] = is_scalar($args['ref_fourn'] ?? '') ? trim((string) ($args['ref_fourn'] ?? '')) : '';
+		$qty = $args['qty'] ?? '';
+		$out['qty'] = (is_scalar($qty) && (string) $qty !== '') ? (float) price2num((string) $qty) : 1.0;
+		$price = $args['buyprice'] ?? '';
+		$out['buyprice'] = (is_scalar($price) && (string) $price !== '') ? (float) price2num((string) $price) : -1.0;
+		$out['price_base_type'] = 'HT';
+		$out['availability'] = 0;
+		if (isModEnabled('multicurrency')) {
+			// With several currencies core derives the price from the amount in currency, and stores
+			// zero when none is given: the amount is said in the currency of the company, at rate 1.
+			$out['multicurrency_buyprice'] = max(0.0, $out['buyprice']);
+			$out['multicurrency_price_base_type'] = 'HT';
+			$out['multicurrency_tx'] = 1;
+			$out['multicurrency_code'] = (string) $conf->currency;
+		}
+		$vat = $args['tva_tx'] ?? '';
+		if (is_scalar($vat) && trim((string) $vat) !== '') {
+			$out['tva_tx'] = (float) price2num(trim(str_replace('%', '', (string) $vat)));
+		} else {
+			$out['tva_tx'] = ($product && $supplier > 0) ? $this->defaultVatRate($supplier, (int) $product->id, true) : 0.0;
+		}
+		if (isset($args['delivery_time_days']) && is_numeric($args['delivery_time_days'])) {
+			$out['delivery_time_days'] = (int) $args['delivery_time_days'];
+		}
+		if (isset($args['desc_fourn']) && is_string($args['desc_fourn'])) {
+			$out['desc_fourn'] = $args['desc_fourn'];
+		}
+
+		// What the price cannot go without, asked before the confirmation.
+		if ($supplier > 0 && $out['ref_fourn'] === '') {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteMissingField', 'ref_fourn');
+		}
+		if ($supplier > 0 && $out['buyprice'] < 0) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteMissingField', 'buyprice');
+		}
+		if ($out['qty'] <= 0) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteLineQtyZero');
+		}
+		// The same reference of this supplier on another product: core refuses it, and
+		// that product is usually the one the document meant.
+		if ($supplier > 0 && $out['ref_fourn'] !== '' && $product && $this->db) {
+			$sql = "SELECT p.ref, p.label FROM ".$this->db->prefix()."product_fournisseur_price as pfp, ".$this->db->prefix()."product as p";
+			$sql .= " WHERE p.rowid = pfp.fk_product AND pfp.fk_soc = ".((int) $supplier);
+			$sql .= " AND pfp.ref_fourn = '".$this->db->escape($out['ref_fourn'])."' AND pfp.fk_product <> ".((int) $product->id);
+			$sql .= " AND pfp.entity IN (".getEntity('productsupplierprice').")";
+			$sql .= " LIMIT 1";
+			$resql = $this->db->query($sql);
+			$obj = $resql ? $this->db->fetch_object($resql) : null;
+			if ($obj) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteSupplierRefTaken', $out['_supplier'], $out['ref_fourn'], ((string) $obj->ref).' - '.((string) $obj->label));
+			}
+		}
+
+		return $out;
+	}
+
+	/**
 	 * Arguments of a create that names a project, or gives dates or hours.
 	 *
 	 * @param  array<string,mixed> $args  Arguments, third party already resolved.
@@ -6745,6 +7133,12 @@ class ToolApiBridge extends McpTool
 	{
 		global $langs;
 
+		if (!empty($write['party_create'])) {
+			$args = $this->normaliseThirdpartyCreate($args);
+		}
+		if (!empty($write['product_create'])) {
+			$args = $this->normaliseProductCreate($args);
+		}
 		if (!empty($write['project'])) {
 			$field = (string) $write['project'];
 			$given = $args[$field] ?? ($args['project'] ?? '');
@@ -7267,6 +7661,14 @@ class ToolApiBridge extends McpTool
 			$how = $langs->transnoentitiesnoconv('AIPreviewPaymentHow', ($code !== '' ? $langs->transnoentitiesnoconv('PaymentType'.$code) : ''), $account, dol_print_date(dol_stringtotime((string) $args['datepaye']), 'day'));
 
 			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], price((float) ($args['_amount'] ?? 0)), $what, $how));
+		}
+
+		// A supplier price: who sells it, under which reference, how much and from which quantity.
+		if (!empty($write['supplier_price'])) {
+			// Five values at most in a translated sentence: the quantity and the VAT rate make one.
+			$terms = $langs->transnoentitiesnoconv('AIPreviewSupplierPriceTerms', (string) ((float) ($args['qty'] ?? 1)), (string) ((float) ($args['tva_tx'] ?? 0)));
+
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, (string) ($args['_supplier'] ?? ''), (string) ($args['ref_fourn'] ?? ''), price((float) ($args['buyprice'] ?? 0)), $terms));
 		}
 
 		// Other actions: who the record goes to, or the other way to end it.
