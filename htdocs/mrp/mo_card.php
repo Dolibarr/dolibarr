@@ -485,6 +485,13 @@ if ($action == 'create') {
 			 });
 
 			//jQuery('#fk_bom').trigger('change');
+			$('#selallbomlines').change(function() {
+				if ($(this).prop('checked')) {
+					$('input[name="bomlineid[]"]').prop('checked', true);
+				} else {
+					$('input[name="bomlineid[]"]').prop('checked', false);
+				}	
+			});
 		})
 	</script>
 	<?php

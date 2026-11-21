@@ -131,6 +131,7 @@ BOM=Bill Of Materials
 CollapseBOMHelp=You can define the default display of the details of the nomenclature in the configuration of the BOM module
 MOAndLines=Manufacturing Orders and lines
 MoChildGenerate=Generate Child Mo
+MoAllChildsGenerate=Generate All childs Mo, Whatever the depth of the BOM's childs
 ParentMo=MO Parent
 MOChild=MO Child
 BomCantAddChildBom=The nomenclature %s is already present in the tree leading to the nomenclature %s
