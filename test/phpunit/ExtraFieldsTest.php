@@ -205,6 +205,9 @@ class ExtraFieldsTest extends CommonClassTest
 			'select empty' => array('0', 'select', true),
 			'sellist zero' => array('0', 'sellist', true),
 			'link minus one' => array('-1', 'link', true),
+			'link zero string' => array('0', 'link', true),
+			'link zero' => array(0, 'link', true),
+			'link id' => array('5', 'link', false),
 		);
 	}
 
