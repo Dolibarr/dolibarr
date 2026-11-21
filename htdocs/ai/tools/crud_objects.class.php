@@ -128,20 +128,94 @@ class ToolCrudObjects extends McpTool
 	];
 
 	/**
-	 * Permission map for CRUD operations.
-	 * Maps object types to their required Dolibarr permission (module, permission).
+	 * Permission map for write (create/update) operations.
 	 *
-	 * @var array<string, array{0:string, 1:string}>
+	 * Each object type maps to a list of alternative permissions, given as
+	 * (module, level1[, level2]); holding any of them is enough. Purchase orders and vendor
+	 * invoices need two alternatives because their permissions exist in two namespaces since
+	 * v24: the legacy 'fournisseur' one and the one of the modSupplierOrder / modSupplierInvoice
+	 * modules they have been split into. The core does the same, see the computation of
+	 * $permissiontoadd in fourn/commande/list.php.
+	 *
+	 * @var array<string, array<int, array{0:string, 1:string, 2?:string}>>
 	 */
 	private const PERM_MAP = [
-		'proposal'          => ['propal', 'creer'],
-		'order'             => ['commande', 'creer'],
-		'invoice'           => ['facture', 'creer'],
-		'supplier_proposal' => ['supplier_proposal', 'creer'],
-		'supplier_order'    => ['fournisseur', 'commande'],
-		'supplier_invoice'  => ['fournisseur', 'facture'],
-		'shipment'          => ['expedition', 'creer'],
-		'reception'         => ['reception', 'creer'],
+		'proposal'          => [['propal', 'creer']],
+		'order'             => [['commande', 'creer']],
+		'invoice'           => [['facture', 'creer']],
+		'supplier_proposal' => [['supplier_proposal', 'creer']],
+		'supplier_order'    => [['fournisseur', 'commande', 'creer'], ['supplier_order', 'creer']],
+		'supplier_invoice'  => [['fournisseur', 'facture', 'creer'], ['supplier_invoice', 'creer']],
+		'shipment'          => [['expedition', 'creer']],
+		'reception'         => [['reception', 'creer']],
+	];
+
+	/**
+	 * Permission map for delete operations.
+	 * A write permission must never be enough to delete a record, so deletion is checked
+	 * against its own dedicated permission. Same two namespaces remark as PERM_MAP.
+	 *
+	 * @var array<string, array<int, array{0:string, 1:string, 2?:string}>>
+	 */
+	private const DELETE_PERM_MAP = [
+		'proposal'          => [['propal', 'supprimer']],
+		'order'             => [['commande', 'supprimer']],
+		'invoice'           => [['facture', 'supprimer']],
+		'supplier_proposal' => [['supplier_proposal', 'supprimer']],
+		'supplier_order'    => [['fournisseur', 'commande', 'supprimer'], ['supplier_order', 'supprimer']],
+		'supplier_invoice'  => [['fournisseur', 'facture', 'supprimer'], ['supplier_invoice', 'supprimer']],
+		'shipment'          => [['expedition', 'supprimer']],
+		'reception'         => [['reception', 'supprimer']],
+	];
+
+	/**
+	 * Parameters used to call restrictedArea() on an already fetched object, so that the
+	 * entity and the thirdparty restrictions of the user are enforced on that object.
+	 *
+	 * 'feature' mirrors the restrictedArea() calls made by the matching card.php pages.
+	 * 'tableandshare' must always be provided here: restrictedArea() does not fall back to
+	 * the feature name, and checkUserAccessToObject() needs the table to run its entity
+	 * check when the multicompany module is enabled.
+	 *
+	 * @var array<string, array{feature:string, tableandshare:string}>
+	 */
+	private const ACCESS_MAP = [
+		'proposal'          => ['feature' => 'propal',            'tableandshare' => 'propal'],
+		'order'             => ['feature' => 'commande',          'tableandshare' => 'commande'],
+		'invoice'           => ['feature' => 'facture',           'tableandshare' => 'facture'],
+		'supplier_proposal' => ['feature' => 'supplier_proposal', 'tableandshare' => 'supplier_proposal'],
+		'supplier_order'    => ['feature' => 'fournisseur',       'tableandshare' => 'commande_fournisseur'],
+		'supplier_invoice'  => ['feature' => 'fournisseur',       'tableandshare' => 'facture_fourn'],
+		'shipment'          => ['feature' => 'expedition',        'tableandshare' => 'expedition'],
+		'reception'         => ['feature' => 'reception',         'tableandshare' => 'reception'],
+	];
+
+	/**
+	 * Whitelist of header properties that a caller is allowed to set on a document.
+	 *
+	 * The header comes from an LLM or from an external MCP client, so it must never be
+	 * assigned to the object as-is: properties such as 'id', 'entity', 'ref' or
+	 * 'fk_user_author' would otherwise be attacker controlled. In particular, setting both
+	 * 'id' and 'entity' makes setEntity() (called by every create() method) honor the
+	 * submitted entity, which allows creating a document inside another entity.
+	 *
+	 * Keys listed here are the ones advertised by getDefinitions(), plus every per-type
+	 * date field declared in $this->map.
+	 *
+	 * @var array<int, string>
+	 */
+	private const ALLOWED_HEADER_FIELDS = [
+		'socid',
+		'note',
+		'note_public',
+		'note_private',
+		'duree_validite',
+		// Date fields, generic name and per object type name (see $this->map)
+		'date',
+		'datep',
+		'date_commande',
+		'date_expedition',
+		'date_reception',
 	];
 
 	/**
@@ -408,6 +482,8 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 */
 	private function createDocument(array $args)
 	{
+		global $conf;
+
 		$type = (string) $args['object_type'];
 
 		// Validate type against map
@@ -424,12 +500,45 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		/** @var array{class: string, path: string, card: string, date_field: string, soc_field: string} $confMap */
 		$confMap = $this->map[$type];
 
+		if (empty($args['header']) || ! is_array($args['header'])) {
+			return ["error" => "Missing or invalid header for object type: " . $type];
+		}
+
+		// Drop every header property that is not explicitly allowed. The header is produced by
+		// an LLM or by an external MCP client, so an unfiltered assignment would let the caller
+		// overwrite 'id', 'entity', 'ref', 'fk_user_author', 'total_ttc', ... on the object.
+		$header = array_intersect_key($args['header'], array_flip(self::ALLOWED_HEADER_FIELDS));
+
+		$rejectedfields = array_diff(array_keys($args['header']), array_keys($header));
+		if (! empty($rejectedfields)) {
+			dol_syslog(
+				'[ToolCrudObjects] Ignored non allowed header fields for ' . $type . ': '
+				. implode(', ', array_map('strval', $rejectedfields)),
+				LOG_WARNING
+			);
+		}
+
+		// A thirdparty is always required to build a document
+		if (empty($header['socid'])) {
+			return ["error" => "Missing socid in header for object type: " . $type];
+		}
+
+		// An external user must not be able to create a document for another thirdparty
+		if ($this->user->socid > 0 && $this->user->socid != (int) $header['socid']) {
+			dol_syslog(
+				'[ToolCrudObjects] User id=' . $this->user->id . ' (socid=' . $this->user->socid
+				. ') tried to create a ' . $type . ' for socid=' . ((int) $header['socid']) . '.',
+				LOG_WARNING
+			);
+			return ["error" => "Access denied to this thirdparty."];
+		}
+
 		// Instantiate the specific Dolibarr class (Propal, Commande, etc.)
 		// We treat it as 'mixed' or generic object here to allow dynamic property assignment
 		$obj = $this->instantiate($type);
 
 		// Process Header with Field Mapping
-		foreach ($args['header'] as $k => $v) {
+		foreach ($header as $k => $v) {
 			$key = (string) $k;
 
 			// Map 'date' to specific date field (e.g., date_commande)
@@ -439,7 +548,7 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			// Map 'socid' to specific soc field
 			if ($key === 'socid' && isset($confMap['soc_field'])) {
 				$key = $confMap['soc_field'];
-				$obj->fk_soc = $v; // Standard Dolibarr field for thirdparty linkage
+				$obj->fk_soc = (int) $v; // Standard Dolibarr field for thirdparty linkage
 			}
 
 			// Convert date strings to timestamp if needed
@@ -468,6 +577,13 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		if ($type === 'proposal' && empty($obj->duree_validite)) {
 			$obj->duree_validite = 15;
 		}
+
+		// Belt and braces: the whitelist above already filters them out, but a new document must
+		// never carry an id nor an entity coming from the caller. setEntity(), called by every
+		// create() method, returns $currentobject->entity as soon as the object has both an id
+		// and an entity, which would create the document inside the submitted entity.
+		$obj->id = 0;
+		$obj->entity = $conf->entity;
 
 		// Attempt Creation
 		$id = $obj->create($this->user);
@@ -736,6 +852,13 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 			return ["success" => false, "error" => "Parent document not found with ID: " . $parentId];
 		}
 
+		// fetch() does not filter on the entity, so the parent document must be checked against
+		// the entity and the thirdparty restrictions of the user before adding a line to it.
+		$accessError = $this->checkAccessToObject($type, $obj);
+		if ($accessError !== null) {
+			return ["success" => false, "error" => $accessError['error']];
+		}
+
 		// Map Schema arguments to Helper arguments
 		// The helper expects 'product' (which can be an ID or Ref), but schema sends 'product_id'
 		if (! empty($args['product_id'])) {
@@ -851,8 +974,8 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		$type = (string) $args['object_type'];
 		$id = (int) $args['id'];
 
-		// Check permissions
-		$permError = $this->checkPermission($type);
+		// Check permissions. Deletion requires the delete permission, not the write one.
+		$permError = $this->checkPermission($type, 'delete');
 		if ($permError !== null) {
 			return $permError;
 		}
@@ -863,6 +986,13 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 		// Fetch object
 		if ($obj->fetch($id) <= 0) {
 			return ["error" => "Object not found with ID: " . $id];
+		}
+
+		// fetch() does not filter on the entity, so the loaded object must be checked against
+		// the entity and the thirdparty restrictions of the user before going any further.
+		$accessError = $this->checkAccessToObject($type, $obj);
+		if ($accessError !== null) {
+			return $accessError;
 		}
 
 		// Check Status: Can only delete drafts (statut == 0)
@@ -888,18 +1018,63 @@ If user says 'order' without any qualifier, they mean a SALES ORDER - use this t
 	 * Check if the current user has permission for the given object type.
 	 *
 	 * @param   string $type  Object type key.
+	 * @param   string $mode  'write' to check the create/update permission, 'delete' to check
+	 *                        the dedicated delete permission.
 	 *
 	 * @return  array{error: string}|null  Null if allowed, error array if denied.
 	 */
-	private function checkPermission(string $type): ?array
+	private function checkPermission(string $type, string $mode = 'write'): ?array
 	{
-		if (! isset(self::PERM_MAP[$type])) {
+		$map = ($mode === 'delete' ? self::DELETE_PERM_MAP : self::PERM_MAP);
+
+		if (! isset($map[$type])) {
 			return ["error" => "Unknown type for permission check: " . $type];
 		}
-		[$module, $perm] = self::PERM_MAP[$type];
-		if (! $this->user->hasRight($module, $perm)) {
-			return ["error" => "Permission denied for action on " . $type];
+
+		// Holding any of the listed alternatives is enough
+		foreach ($map[$type] as $perm) {
+			if ($this->user->hasRight($perm[0], $perm[1], $perm[2] ?? '')) {
+				return null;
+			}
 		}
+
+		return ["error" => "Permission denied for action on " . $type];
+	}
+
+	/**
+	 * Check that the current user is allowed to work on an already fetched object.
+	 *
+	 * fetch() selects on the rowid only and does not filter on the entity, so a bare fetch()
+	 * is an IDOR: it happily returns a record of another entity or of a thirdparty the user
+	 * has no access to. restrictedArea() called with $mode = 1 returns 0/1 instead of
+	 * emitting an HTML error page, which is what we need in this JSON API context.
+	 *
+	 * @param   string       $type    Object type key.
+	 * @param   CommonObject $object  Object already loaded with fetch().
+	 *
+	 * @return  array{error: string}|null  Null if allowed, error array if denied.
+	 */
+	private function checkAccessToObject(string $type, CommonObject $object): ?array
+	{
+		if (! isset(self::ACCESS_MAP[$type])) {
+			return ["error" => "Unknown type for access check: " . $type];
+		}
+
+		$access = self::ACCESS_MAP[$type];
+
+		// Pass the object itself (not its id) so restrictedArea() can derive $feature2 from
+		// $object->element for the objects of the 'fournisseur' module.
+		$ok = restrictedArea($this->user, $access['feature'], $object, $access['tableandshare'], '', 'fk_soc', 'rowid', 0, 1);
+
+		if ($ok <= 0) {
+			dol_syslog(
+				'[ToolCrudObjects] Access denied to ' . $type . ' id=' . $object->id
+				. ' for user id=' . $this->user->id . ' (entity or thirdparty restriction).',
+				LOG_WARNING
+			);
+			return ["error" => "Access denied to this " . $type . "."];
+		}
+
 		return null;
 	}
 
