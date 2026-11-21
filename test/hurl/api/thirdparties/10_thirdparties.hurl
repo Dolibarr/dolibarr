@@ -1,6 +1,5 @@
 # test/hurl/api/thirdparties/10_thirdparties.hurl
 # GET-only tests for the thirdparties API.
-# Preconditions: {{hostnport}} and {{apiKey}} in env; at least one third party exists in the instance.
 # Only GET requests in this file — write endpoints (POST/PUT/DELETE) are deliberately
 # not exercised, not even as negative tests, to keep the suite strictly read-only.
 
@@ -42,6 +41,59 @@ HTTP 400
 [Asserts]
 jsonpath "$.error.code" == 400
 jsonpath "$.error.message" contains "Bad syntax of the search string"
+
+# mode=1 — only customers (requires instance data; locked to 200)
+GET http://{{hostnport}}/api/index.php/thirdparties?mode=1&limit=5
+HTTP 200
+[Asserts]
+jsonpath "$" isCollection
+
+# Fuzz: mode=abc — not a long; strictly rejected with 400
+GET http://{{hostnport}}/api/index.php/thirdparties?mode=abc&limit=5
+HTTP 400
+[Asserts]
+jsonpath "$.error.code" == 400
+
+# Fuzz: mode=-1 — documented range is 0-4; unknown modes fall through to "all"
+GET http://{{hostnport}}/api/index.php/thirdparties?mode=-1&limit=5
+HTTP 200
+[Asserts]
+jsonpath "$" isCollection
+
+# Fuzz: mode=999 — same fall-through expectation
+GET http://{{hostnport}}/api/index.php/thirdparties?mode=999&limit=5
+HTTP 200
+[Asserts]
+jsonpath "$" isCollection
+
+# Fuzz: empty mode — coerces to 0
+GET http://{{hostnport}}/api/index.php/thirdparties?mode=&limit=5
+HTTP 200
+[Asserts]
+jsonpath "$" isCollection
+
+# Negative: category filter with a nonexisting category id -> 404
+GET http://{{hostnport}}/api/index.php/thirdparties?category=999999&limit=5
+HTTP 404
+[Asserts]
+jsonpath "$.error.code" == 404
+
+# properties — field reduction returns only requested properties
+GET http://{{hostnport}}/api/index.php/thirdparties?properties=id%2Cname&limit=2
+HTTP 200
+[Asserts]
+jsonpath "$[0].id" exists
+jsonpath "$[0].name" exists
+
+# pagination_data=true — envelope with pagination metadata
+GET http://{{hostnport}}/api/index.php/thirdparties?limit=100&page=1&pagination_data=true
+HTTP 200
+[Asserts]
+jsonpath "$.data" exists
+jsonpath "$.pagination.total" >= 0
+jsonpath "$.pagination.page" >= 0
+jsonpath "$.pagination.page_count" >= 0
+jsonpath "$.pagination.limit" == 100
 
 # ---------------------------------------------------------------- By id
 
@@ -85,12 +137,24 @@ GET http://{{hostnport}}/api/index.php/thirdparties/email/nobody-nonexistent@exa
 HTTP 404
 
 # Lookup by barcode — only meaningful when the instance has barcodes enabled.
-# Negative: unknown barcode -> 404 (works regardless of whether barcodes are in use)
+# Negative: numeric barcode that does not exist -> 404
 GET http://{{hostnport}}/api/index.php/thirdparties/barcode/1234567890
 HTTP 404
 
-# Negative: unknown barcode -> 404 (works regardless of whether barcodes are in use)
+# Negative: alphabetic barcode that does not exist -> 404
 GET http://{{hostnport}}/api/index.php/thirdparties/barcode/NO-SUCH-BARCODE
+HTTP 404
+
+# ---------------------------------------------------------------- Site accounts (negative only — creating data requires POST)
+
+# Unknown site key for the captured third party -> 404 per API docs
+# VERIFY: adjust if your instance answers differently
+GET http://{{hostnport}}/api/index.php/thirdparties/{{thirdparty_id}}/accounts?site=nosuchsite
+HTTP 404
+
+# Global account lookup with unknown site/key -> 404 per API docs
+# VERIFY: adjust if your instance answers differently
+GET http://{{hostnport}}/api/index.php/thirdparties/accounts/nosuchsite/nosuchkey
 HTTP 404
 
 # ---------------------------------------------------------------- Subresources (all expect 200, most often an empty array)
@@ -106,8 +170,20 @@ HTTP 200
 [Asserts]
 jsonpath "$" isCollection
 
+# Representatives with mode=1 — array of ids instead of objects
+GET http://{{hostnport}}/api/index.php/thirdparties/{{thirdparty_id}}/representatives?mode=1
+HTTP 200
+[Asserts]
+jsonpath "$" isCollection
+
 # Customer categories
 GET http://{{hostnport}}/api/index.php/thirdparties/{{thirdparty_id}}/categories
+HTTP 200
+[Asserts]
+jsonpath "$" isCollection
+
+# Customer categories with sort + pagination params
+GET http://{{hostnport}}/api/index.php/thirdparties/{{thirdparty_id}}/categories?sortfield=s.rowid&sortorder=DESC&limit=5&page=0
 HTTP 200
 [Asserts]
 jsonpath "$" isCollection
@@ -118,8 +194,8 @@ HTTP 200
 [Asserts]
 jsonpath "$" isCollection
 
-# Fixed amount discounts
-GET http://{{hostnport}}/api/index.php/thirdparties/{{thirdparty_id}}/fixedamountdiscounts
+# Fixed amount discounts with mode=customer
+GET http://{{hostnport}}/api/index.php/thirdparties/{{thirdparty_id}}/fixedamountdiscounts?mode=customer
 HTTP 200
 [Asserts]
 jsonpath "$" isCollection
@@ -142,6 +218,12 @@ jsonpath "$.error.message" contains "Thirdparty ID is mandatory"
 
 # Outstanding invoices
 GET http://{{hostnport}}/api/index.php/thirdparties/{{thirdparty_id}}/outstandinginvoices
+HTTP 200
+[Asserts]
+jsonpath "$" isCollection
+
+# Outstanding invoices with mode=supplier
+GET http://{{hostnport}}/api/index.php/thirdparties/{{thirdparty_id}}/outstandinginvoices?mode=supplier
 HTTP 200
 [Asserts]
 jsonpath "$" isCollection
