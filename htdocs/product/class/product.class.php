@@ -3189,7 +3189,12 @@ class Product extends CommonObject
 
 				if (!$updatedefaultprice) {
 					// The price of the level is now saved, so we can restore the default price of the product
-					list($this->price, $this->price_label, $this->price_ttc, $this->price_min, $this->price_min_ttc, $this->price_base_type) = $savdefaultprice;
+					$this->price = $savdefaultprice[0];
+					$this->price_label = $savdefaultprice[1];
+					$this->price_ttc = $savdefaultprice[2];
+					$this->price_min = $savdefaultprice[3];
+					$this->price_min_ttc = $savdefaultprice[4];
+					$this->price_base_type = $savdefaultprice[5];
 				}
 
 				$this->level = $level; // Store level of price edited for trigger

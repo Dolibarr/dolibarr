@@ -10017,7 +10017,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 							$isSellist = true;
 							$paramArray = $extrafields->attributes['product']['param'][$extrafieldName]['options'] ?? [];
 							$param = array_key_first($paramArray);
-							list($table, $label, $key) = explode(':', $param);
+							$tmparray = explode(':', $param);
+							$table = $tmparray[0];
+							$label = $tmparray[1];
+							$key = $tmparray[2];
 						}
 					}
 

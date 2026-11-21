@@ -1027,7 +1027,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby);
 			$tmpforloop = explode(',', $arrayofxaxis[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1055,7 +1057,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby[$val]); var_dump($tmpval);
 			$tmpforloop = explode(',', $arrayofgroupby[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1083,7 +1087,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby);
 			$tmpforloop = explode(',', $arrayofmesures[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1119,7 +1125,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 				$tmpval = explode('.', $val);
 				$tmpforloop = explode(',', $arrayoffilterfields[$val]['tablefromt']);
 				foreach ($tmpforloop as $tmptableandalias) {
-					list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+					$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+					$tmptable = $tmparray[0];
+					$tmptablealias = $tmparray[1];
 					if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 						$tmpforexplode = explode('__', $tmptablealias);
 						$endpart = end($tmpforexplode);

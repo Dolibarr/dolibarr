@@ -412,7 +412,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (!is_array($storage)) {
 			return false; // bad type, $this->error already set
 		}
-		list($table, $column) = $storage;
+		$table = $storage[0];
+		$column = $storage[1];
 
 		$sql = "SELECT ".$db->sanitize($column)." as code";
 		$sql .= " FROM ".$db->prefix().$db->sanitize($table);
@@ -480,7 +481,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (!is_array($storage)) {
 			return -1; // bad type, $this->error already set
 		}
-		list($table, $typethirdparty) = $storage;
+		$table = $storage[0];
+		$typethirdparty = $storage[1];
 
 		$sql = "SELECT " . $db->sanitize($typethirdparty) . " FROM " . $db->prefix() . $db->sanitize($table);
 		$sql .= " WHERE " . $db->sanitize($typethirdparty) . " = '" . $db->escape($code) . "'";

@@ -3291,7 +3291,9 @@ abstract class CommonObject
 			if ($this->db->query($sql)) {
 				$this->multicurrency_code = $code;
 
-				list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+				$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+				$fk_multicurrency = $tmparray[0];
+				$rate = $tmparray[1];
 				if ($rate) {
 					$this->setMulticurrencyRate($rate, 2);
 				}
@@ -6195,7 +6197,13 @@ abstract class CommonObject
 		$this->printObjectLineWithHooks($action, $line, $num, $i, $context['dateSelector'], $context['seller'], $context['buyer'], 0, $extrafields, '/core/tpl');
 		$out = ob_get_clean();
 
-		list($object, $form, $extrafields, $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins) = $savedGlobals;
+		$object = $savedGlobals[0];
+		$form = $savedGlobals[1];
+		$extrafields = $savedGlobals[2];
+		$forceall = $savedGlobals[3];
+		$senderissupplier = $savedGlobals[4];
+		$inputalsopricewithtax = $savedGlobals[5];
+		$usemargins = $savedGlobals[6];
 
 		return (string) $out;
 	}
@@ -8741,7 +8749,9 @@ abstract class CommonObject
 					continue;
 				}
 				if (strpos($valb, "|") !== false) {
-					list($valb, $parent) = explode('|', $valb);
+					$tmparray = explode('|', $valb);
+					$valb = $tmparray[0];
+					$parent = $tmparray[1];
 				}
 				$nbchoice++;
 				$tmpselect .= '<option value="'.$keyb.'"';
@@ -8828,7 +8838,9 @@ abstract class CommonObject
 					}
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$tmparray = explode('|', $InfoFieldList[3]);
+					$parentName = $tmparray[0];
+					$parentField = $tmparray[1];
 					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList .= ', main.'.$parentField;
 					} else {
@@ -9074,7 +9086,9 @@ abstract class CommonObject
 					}
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$tmparray = explode('|', $InfoFieldList[3]);
+					$parentName = $tmparray[0];
+					$parentField = $tmparray[1];
 					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList .= ', main.'.$parentField;
 					} else {
@@ -9268,7 +9282,9 @@ abstract class CommonObject
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
 					&& empty($val['disabled']) && empty($nonewbutton)) {	// and to avoid to show the button if the field is protected by a "disabled".
-					list($class, $classfile) = explode(':', $param_list[0]);
+					$tmparray = explode(':', $param_list[0]);
+					$class = $tmparray[0];
+					$classfile = $tmparray[1];
 					if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
 					} else {

@@ -172,7 +172,9 @@ class Lessc
 		$pi = pathinfo($realPath);
 		$dir = $pi["dirname"];
 
-		list($top, $bottom) = $this->sortProps($root->props, true);
+		$tmparray = $this->sortProps($root->props, true);
+		$top = $tmparray[0];
+		$bottom = $tmparray[1];
 		$this->compileImportedProps($top, $parentBlock, $out, $parser, $dir);
 
 		return array(true, $bottom, $parser, $dir);
@@ -525,7 +527,7 @@ class Lessc
 
 		foreach ($selectors as $s) {
 			if (is_array($s)) {
-				list(, $value) = $s;
+				$value = $s[1];
 				$out[] = trim($this->compileValue($this->reduce($value)));
 			} else {
 				$out[] = $s;
@@ -746,7 +748,8 @@ class Lessc
 
 		switch ($prop[0]) {
 			case 'assign':
-				list(, $name, $value) = $prop;
+				$name = $prop[1];
+				$value = $prop[2];
 				if ($name[0] == $this->vPrefix) {
 					$this->set($name, $value);
 				} else {
@@ -757,11 +760,13 @@ class Lessc
 				}
 				break;
 			case 'block':
-				list(, $child) = $prop;
+				$child = $prop[1];
 				$this->compileBlock($child);
 				break;
 			case 'mixin':
-				list(, $path, $args, $suffix) = $prop;
+				$path = $prop[1];
+				$args = $prop[2];
+				$suffix = $prop[3];
 
 				$orderedArgs = array();
 				$keywordArgs = array();
@@ -844,14 +849,16 @@ class Lessc
 				$out->lines[] = $prop[1];
 				break;
 			case "directive":
-				list(, $name, $value) = $prop;
+				$name = $prop[1];
+				$value = $prop[2];
 				$out->lines[] = "@$name ".$this->compileValue($this->reduce($value)).';';
 				break;
 			case "comment":
 				$out->lines[] = $prop[1];
 				break;
 			case "import":
-				list(, $importPath, $importId) = $prop;
+				$importPath = $prop[1];
+				$importId = $prop[2];
 				$importPath = $this->reduce($importPath);
 
 				if (!isset($this->env->imports)) {
@@ -865,14 +872,16 @@ class Lessc
 
 				break;
 			case "import_mixin":
-				list(, $importId) = $prop;
+				$importId = $prop[1];
 				$import = $this->env->imports[$importId];
 				if ($import[0] === false) {
 					if (isset($import[1])) {
 						$out->lines[] = $import[1];
 					}
 				} else {
-					list(, $bottom, $parser, $importDir) = $import;
+					$bottom = $import[1];
+					$parser = $import[2];
+					$importDir = $import[3];
 					$this->compileImportedProps($bottom, $block, $out, $parser, $importDir);
 				}
 
@@ -910,7 +919,8 @@ class Lessc
 				// [1] - the keyword
 				return $value[1];
 			case 'number':
-				list(, $num, $unit) = $value;
+				$num = $value[1];
+				$unit = $value[2];
 				// [1] - the number
 				// [2] - the unit
 				if ($this->numberPrecision !== null) {
@@ -919,7 +929,8 @@ class Lessc
 				return $num.$unit;
 			case 'string':
 				// [1] - contents of string (includes quotes)
-				list(, $delim, $content) = $value;
+				$delim = $value[1];
+				$content = $value[2];
 				foreach ($content as &$part) {
 					if (is_array($part)) {
 						$part = $this->compileValue($part);
@@ -931,7 +942,9 @@ class Lessc
 				// [2] - green component
 				// [3] - blue component
 				// [4] - optional alpha component
-				list(, $r, $g, $b) = $value;
+				$r = $value[1];
+				$g = $value[2];
+				$b = $value[3];
 				$r = round($r);
 				$g = round($g);
 				$b = round($b);
@@ -952,7 +965,8 @@ class Lessc
 				return $h;
 
 			case 'function':
-				list(, $name, $args) = $value;
+				$name = $value[1];
+				$args = $value[2];
 				return $name.'('.$this->compileValue($args).')';
 			default: // assumed to be unit
 				$this->throwError("unknown value type: $value[0]");
@@ -961,7 +975,9 @@ class Lessc
 
 	protected function lib_pow($args)
 	{
-		list($base, $exp) = $this->assertArgs($args, 2, "pow");
+		$tmparray = $this->assertArgs($args, 2, "pow");
+		$base = $tmparray[0];
+		$exp = $tmparray[1];
 		return pow($this->assertNumber($base), $this->assertNumber($exp));
 	}
 
@@ -972,7 +988,9 @@ class Lessc
 
 	protected function lib_mod($args)
 	{
-		list($a, $b) = $this->assertArgs($args, 2, "mod");
+		$tmparray = $this->assertArgs($args, 2, "mod");
+		$a = $tmparray[0];
+		$b = $tmparray[1];
 		return $this->assertNumber($a) % $this->assertNumber($b);
 	}
 
@@ -1016,7 +1034,9 @@ class Lessc
 
 	protected function lib_extract($value)
 	{
-		list($list, $idx) = $this->assertArgs($value, 2, "extract");
+		$tmparray = $this->assertArgs($value, 2, "extract");
+		$list = $tmparray[0];
+		$idx = $tmparray[1];
 		$idx = $this->assertNumber($idx);
 		// 1 indexed
 		if ($list[0] == "list" && isset($list[2][$idx - 1])) {
@@ -1205,7 +1225,9 @@ class Lessc
 	protected function lib_unit($arg)
 	{
 		if ($arg[0] == "list") {
-			list($number, $newUnit) = $arg[2];
+			$tmparray = $arg[2];
+			$number = $tmparray[0];
+			$newUnit = $tmparray[1];
 			return array("number", $this->assertNumber($number),
 				$this->compileValue($this->lib_e($newUnit)));
 		} else {
@@ -1222,7 +1244,9 @@ class Lessc
 		if ($args[0] != 'list' || count($args[2]) < 2) {
 			return array(array('color', 0, 0, 0), 0);
 		}
-		list($color, $delta) = $args[2];
+		$tmparray = $args[2];
+		$color = $tmparray[0];
+		$delta = $tmparray[1];
 		$color = $this->assertColor($color);
 		$delta = (float) $delta[1];
 
@@ -1231,7 +1255,9 @@ class Lessc
 
 	protected function lib_darken($args)
 	{
-		list($color, $delta) = $this->colorArgs($args);
+		$tmparray = $this->colorArgs($args);
+		$color = $tmparray[0];
+		$delta = $tmparray[1];
 
 		$hsl = $this->toHSL($color);
 		$hsl[3] = $this->clamp($hsl[3] - $delta, 100);
@@ -1240,7 +1266,9 @@ class Lessc
 
 	protected function lib_lighten($args)
 	{
-		list($color, $delta) = $this->colorArgs($args);
+		$tmparray = $this->colorArgs($args);
+		$color = $tmparray[0];
+		$delta = $tmparray[1];
 
 		$hsl = $this->toHSL($color);
 		$hsl[3] = $this->clamp($hsl[3] + $delta, 100);
@@ -1249,7 +1277,9 @@ class Lessc
 
 	protected function lib_saturate($args)
 	{
-		list($color, $delta) = $this->colorArgs($args);
+		$tmparray = $this->colorArgs($args);
+		$color = $tmparray[0];
+		$delta = $tmparray[1];
 
 		$hsl = $this->toHSL($color);
 		$hsl[2] = $this->clamp($hsl[2] + $delta, 100);
@@ -1258,7 +1288,9 @@ class Lessc
 
 	protected function lib_desaturate($args)
 	{
-		list($color, $delta) = $this->colorArgs($args);
+		$tmparray = $this->colorArgs($args);
+		$color = $tmparray[0];
+		$delta = $tmparray[1];
 
 		$hsl = $this->toHSL($color);
 		$hsl[2] = $this->clamp($hsl[2] - $delta, 100);
@@ -1267,7 +1299,9 @@ class Lessc
 
 	protected function lib_spin($args)
 	{
-		list($color, $delta) = $this->colorArgs($args);
+		$tmparray = $this->colorArgs($args);
+		$color = $tmparray[0];
+		$delta = $tmparray[1];
 
 		$hsl = $this->toHSL($color);
 
@@ -1281,14 +1315,18 @@ class Lessc
 
 	protected function lib_fadeout($args)
 	{
-		list($color, $delta) = $this->colorArgs($args);
+		$tmparray = $this->colorArgs($args);
+		$color = $tmparray[0];
+		$delta = $tmparray[1];
 		$color[4] = $this->clamp((isset($color[4]) ? $color[4] : 1) - $delta / 100);
 		return $color;
 	}
 
 	protected function lib_fadein($args)
 	{
-		list($color, $delta) = $this->colorArgs($args);
+		$tmparray = $this->colorArgs($args);
+		$color = $tmparray[0];
+		$delta = $tmparray[1];
 		$color[4] = $this->clamp((isset($color[4]) ? $color[4] : 1) + $delta / 100);
 		return $color;
 	}
@@ -1324,7 +1362,9 @@ class Lessc
 	// set the alpha of the color
 	protected function lib_fade($args)
 	{
-		list($color, $alpha) = $this->colorArgs($args);
+		$tmparray = $this->colorArgs($args);
+		$color = $tmparray[0];
+		$alpha = $tmparray[1];
 		$color[4] = $this->clamp($alpha / 100.0);
 		return $color;
 	}
@@ -1398,7 +1438,9 @@ class Lessc
 			$this->throwError("mix expects (color1, color2, weight)");
 		}
 
-		list($first, $second) = $args[2];
+		$tmparray = $args[2];
+		$first = $tmparray[0];
+		$second = $tmparray[1];
 		$first = $this->assertColor($first);
 		$second = $this->assertColor($second);
 
@@ -1471,7 +1513,11 @@ class Lessc
 
 	private function toLuma($color)
 	{
-		list(, $r, $g, $b) = $this->coerceColor($color);
+		// coerceColor() returns null when $color is not a color, so we keep null values without warning (like list() did)
+		$tmparray = $this->coerceColor($color);
+		$r = $tmparray[1] ?? null;
+		$g = $tmparray[2] ?? null;
+		$b = $tmparray[3] ?? null;
 
 		$r = $r / 255;
 		$g = $g / 255;
@@ -1758,7 +1804,7 @@ class Lessc
 				}
 				return $value;
 			case "escape":
-				list(, $inner) = $value;
+				$inner = $value[1];
 				return $this->lib_e($this->reduce($inner));
 			case "function":
 				$color = $this->funcToColor($value);
@@ -1766,7 +1812,8 @@ class Lessc
 					return $color;
 				}
 
-				list(, $name, $args) = $value;
+				$name = $value[1];
+				$args = $value[2];
 				if ($name == "%") {
 					$name = "_sprintf";
 				}
@@ -1801,7 +1848,8 @@ class Lessc
 				$value[2] = $this->reduce($value[2]);
 				return $value;
 			case "unary":
-				list(, $op, $exp) = $value;
+				$op = $value[1];
+				$exp = $value[2];
 				$exp = $this->reduce($exp);
 
 				if ($exp[0] == "number") {
@@ -1896,7 +1944,11 @@ class Lessc
 	// evaluate an expression
 	protected function evaluate($exp)
 	{
-		list(, $op, $left, $right, $whiteBefore, $whiteAfter) = $exp;
+		$op = $exp[1];
+		$left = $exp[2];
+		$right = $exp[3];
+		$whiteBefore = $exp[4];
+		$whiteAfter = $exp[5];
 
 		$left = $this->reduce($left, true);
 		$right = $this->reduce($right, true);

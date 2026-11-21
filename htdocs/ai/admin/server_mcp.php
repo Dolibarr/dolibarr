@@ -459,7 +459,9 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		if (!empty($_SERVER['PHP_AUTH_USER'])) {
 			$credentials = rawurlencode($_SERVER['PHP_AUTH_USER']).':'.rawurlencode(empty($_SERVER['PHP_AUTH_PW']) ? '' : $_SERVER['PHP_AUTH_PW']);
 		} elseif ($decoded !== false && strpos($decoded, ':') !== false) {
-			list($basiclogin, $basicpass) = explode(':', $decoded, 2);
+			$tmparray = explode(':', $decoded, 2);
+			$basiclogin = $tmparray[0];
+			$basicpass = $tmparray[1];
 			$credentials = rawurlencode($basiclogin).':'.rawurlencode($basicpass);
 		}
 		$vibeweburl = preg_replace('/^(https?:\/\/)/i', '${1}'.$credentials.'@', $endpoint);

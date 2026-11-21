@@ -7920,7 +7920,9 @@ class ToolApiBridge extends McpTool
 		if (empty($this->routes[$name])) {
 			return ["error" => "Tool function '$name' not found."];
 		}
-		list($key, $method) = $this->routes[$name];
+		$tmparray = $this->routes[$name];
+		$key = $tmparray[0];
+		$method = $tmparray[1];
 		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);	// REST endpoint the tool group calls
 		$ep = $this->endpoints[$epkey];
 
@@ -8232,7 +8234,9 @@ class ToolApiBridge extends McpTool
 		if (empty($this->routes[$name])) {
 			return null;
 		}
-		list($key, $method) = $this->routes[$name];
+		$tmparray = $this->routes[$name];
+		$key = $tmparray[0];
+		$method = $tmparray[1];
 
 		return array(
 			'endpoint' => (string) $key,
@@ -8255,7 +8259,9 @@ class ToolApiBridge extends McpTool
 		if ($found === null) {
 			return '';
 		}
-		list($epkey, $method, $rm) = $found;
+		$epkey = $found[0];
+		$method = $found[1];
+		$rm = $found[2];
 		if (preg_match('/@url\s+(GET|POST|PUT|PATCH|DELETE)\s+(\S*)/i', (string) $rm->getDocComment(), $reg)) {
 			$path = trim($reg[2], '/');
 			return dol_strtoupper($reg[1]).' /'.$epkey.($path !== '' ? '/'.$path : '');
@@ -8333,7 +8339,9 @@ class ToolApiBridge extends McpTool
 		if (empty($this->routes[$name])) {
 			return null;
 		}
-		list($key, $method) = $this->routes[$name];
+		$tmparray = $this->routes[$name];
+		$key = $tmparray[0];
+		$method = $tmparray[1];
 		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);
 		if (empty($this->endpoints[$epkey]) || !$this->resolveEndpointClass($epkey)) {
 			return null;
