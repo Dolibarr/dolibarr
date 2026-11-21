@@ -2740,7 +2740,16 @@ class ExtraFields
 			if (!empty($value)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 				$dolgeophp = new DolGeoPHP($this->db);
-				$value = $dolgeophp->getXYString($value);
+				if (getDolGlobalBool('MAIN_GEOPHP_ENABLE_VIEWMODE')) {
+					$tmparray = $dolgeophp->parseGeoString($value);
+					$geojson = $tmparray['geojson'];
+					$centroidjson = $tmparray['centroidjson'];
+					require_once DOL_DOCUMENT_ROOT.'/core/class/geomapeditor.class.php';
+					$geomapeditor = new GeoMapEditor();
+					$value = $geomapeditor->getHtml($key, $geojson, $centroidjson, $type, false);
+				} else {
+					$value = $dolgeophp->getXYString($value);
+				}
 			} else {
 				$value = '';
 			}
@@ -2748,7 +2757,16 @@ class ExtraFields
 			if (!empty($value)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 				$dolgeophp = new DolGeoPHP($this->db);
-				$value = $dolgeophp->getPointString($value);
+				if (getDolGlobalBool('MAIN_GEOPHP_ENABLE_VIEWMODE')) {
+					$tmparray = $dolgeophp->parseGeoString($value);
+					$geojson = $tmparray['geojson'];
+					$centroidjson = $tmparray['centroidjson'];
+					require_once DOL_DOCUMENT_ROOT.'/core/class/geomapeditor.class.php';
+					$geomapeditor = new GeoMapEditor();
+					$value = $geomapeditor->getHtml($key, $geojson, $centroidjson, $type, false);
+				} else {
+					$value = $dolgeophp->getPointString($value);
+				}
 			} else {
 				$value = '';
 			}
