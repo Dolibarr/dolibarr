@@ -35,6 +35,7 @@
  * @var int $showImportButton
  * @var CommandeFournisseur[] $linkedObjectBlock
  */
+'@phan-var-force CommonObject $object';
 '@phan-var-force CommandeFournisseur[] $linkedObjectBlock';
 
 // Protection to avoid direct call of template
@@ -79,7 +80,11 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="right"><?php
 		if ($user->hasRight("fournisseur", "commande", "lire")) {
 			$total += $objectlink->total_ht;
-			echo price($objectlink->total_ht);
+			if (isModEnabled('multicurrency') && !empty($objectlink->multicurrency_code) && $objectlink->multicurrency_code != $conf->currency) {
+				echo price($objectlink->multicurrency_total_ht, 0, $langs, 1, -1, -1, $objectlink->multicurrency_code);
+			} else {
+				echo price($objectlink->total_ht);
+			}
 		} ?></td>
 		<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
 		<td class="right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
