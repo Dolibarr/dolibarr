@@ -252,7 +252,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		Dolibarr.log(`tools: fetch: ${upperMethod} ${finalUrl.pathname} -> ${response.status}`);
 
 		if (responseType === 'response') {
-			if (!response.ok) return fail(new DolibarrFetchError(`HTTP ${response.status} ${response.statusText}`.trim(), response.status, null, response));
+			// With the option redirect: 'manual', a redirect is not followed and returned to the caller (response.type 'opaqueredirect')
+			if (!response.ok && response.type !== 'opaqueredirect') return fail(new DolibarrFetchError(`HTTP ${response.status} ${response.statusText}`.trim(), response.status, null, response));
 			return response;
 		}
 

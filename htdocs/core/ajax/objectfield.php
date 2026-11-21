@@ -20,7 +20,8 @@
  *       \brief     Read or update fields of an object from the user interface (ajax edition of cards, kanban views...).
  *                  GET with parameter fields (list of fields separated by a comma) returns the values of the fields
  *                  allowed by CommonObject::isFieldReadableFromUi(), to refresh the values displayed by a page.
- *                  With fields empty, it returns only the date of modification.
+ *                  With fields empty, it returns only the date of modification and the event messages waiting in session
+ *                  (ex: kept by an action of the card posted in ajax).
  *                  With parameter input=1, it also returns the input html of the fields editable from the user interface
  *                  (CommonObject::ajaxInputField()), to open the edition of a field on the card.
  *                  POST with parameter field and the inputs of this field (named ajaxfield_<field>..., read by
@@ -215,6 +216,8 @@ $jsonResponse->data = array(
 	'html' => $fields[$field]['html'],
 	'fields' => $fields,
 	'tms' => empty($object->date_modification) ? null : (int) $object->date_modification,
+	// The document of the object shows the field: the page generates it again, like the cards do after a change
+	'builddoc' => !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE') && method_exists($object, 'generateDocument'),
 );
 
 // Messages set by the update (triggers, hooks...) are displayed now by the ajax caller, not on the next page
