@@ -694,15 +694,19 @@ class FormProjets extends Form
 	 * @param string	$morecss Add more css
 	 * @param int<0,1>	$noadmininfo 0=Add admin info, 1=Disable admin info
 	 * @param int<0,1>	$addcombojs 1=Add a js combo
+	 * @param int<0,1>	$onlywonlost 1=Only list the Won and Lost statuses (used when closing an opportunity)
 	 * @return  int<-1,-1>|string                      The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	public function selectOpportunityStatus($htmlname, $preselected = -1, $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0, $addcombojs = 0)
+	public function selectOpportunityStatus($htmlname, $preselected = -1, $showempty = 1, $useshortlabel = 0, $showallnone = 0, $showpercent = 0, $morecss = '', $noadmininfo = 0, $addcombojs = 0, $onlywonlost = 0)
 	{
 		global $langs, $user;
 
 		$sql = "SELECT rowid, code, label, percent";
 		$sql .= " FROM " . $this->db->prefix() . 'c_lead_status';
 		$sql .= " WHERE active = 1";
+		if ($onlywonlost) {
+			$sql .= " AND code IN ('WON', 'LOST')";
+		}
 		$sql .= " ORDER BY position";
 
 		$resql = $this->db->query($sql);
@@ -726,7 +730,7 @@ class FormProjets extends Form
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 
-					if (($obj->code == 'WON' || $obj->code == 'LOST') && !$separatoradded) {
+					if (($obj->code == 'WON' || $obj->code == 'LOST') && !$separatoradded && !$onlywonlost) {
 						$separatoradded = 1;
 						$sellist .= '<option value="" disabled>--------------------</option>';
 					}
