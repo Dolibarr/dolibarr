@@ -36,6 +36,11 @@ require_once __DIR__."/../../htdocs/expensereport/class/expensereport.class.php"
 class RestAPIExpenseReportTest extends AbstractRestAPITest
 {
 	/**
+	 * @var string[]	API paths of the objects to delete at end of the test, the last created first
+	 */
+	private $objectstodelete = array();
+
+	/**
 	 * setUpBeforeClass
 	 *
 	 * @return void
@@ -44,6 +49,23 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	{
 		self::assertTrue(isModEnabled('expensereport'), 'module expensereport must be enabled');
 		parent::setUpBeforeClass();
+	}
+
+	/**
+	 * Delete objects created by the test. The API server does not see the transaction of the test class,
+	 * so what is created for it is committed and is not removed by the final rollback.
+	 *
+	 * @return void
+	 */
+	protected function tearDown(): void
+	{
+		$objectstodelete = $this->objectstodelete;
+		$this->objectstodelete = array();
+		foreach ($objectstodelete as $path) {
+			$this->getUrl($path, "Delete $path at end of the test", 'DELETE');
+		}
+
+		parent::tearDown();
 	}
 
 	/**
@@ -117,6 +139,80 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$this->assertGreaterThan(0, (int) $result['content'], "$test Id of expense report is not > 0");
 
 		return (int) $result['content'];
+	}
+
+	/**
+	 * Create an internal user whose supervisor is the admin user. It is deleted at end of the test.
+	 *
+	 * @param string							$test	Text to be added to output
+	 * @param array<array{0:string,1:string}>	$rights	List of array(module, perms) to add to the user
+	 * @return array{0:int,1:string}					Id and API key of the user
+	 */
+	private function createUser($test, $rights = array())
+	{
+		global $db, $user;
+
+		$password = 'Ab1-'.bin2hex(random_bytes(8));
+
+		$tmpuser = new User($db);
+		$tmpuser->login = 'testrestexpensereport'.mt_rand(0, 99999999);
+		$tmpuser->lastname = $tmpuser->login;
+		$tmpuser->entity = 1;
+		$tmpuser->fk_user = $user->id;		// So the user is in the hierarchy of the admin user
+
+		// The API server reads the user with its own connection, so it must be committed out of the transaction of the test class
+		$db->commit();
+		$id = $tmpuser->create($user);
+		$resultpassword = ($id > 0 ? $tmpuser->setPassword($user, $password) : '');
+		$tmpuser->addrights(0, 'user', 'self');		// Needed by the login API to generate the API key
+		foreach ($rights as $right) {
+			$tmpuser->addrights(0, $right[0], $right[1]);
+		}
+		$db->begin();
+
+		$this->assertGreaterThan(0, $id, "$test Creation of user failed: ".$tmpuser->error);
+		$this->assertNotEmpty($resultpassword, "$test Password of user not set: ".$tmpuser->error);
+		array_unshift($this->objectstodelete, 'users/'.$id);
+
+		$result = $this->getUrl('login', $test, 'GET', array("login" => $tmpuser->login, "password" => $password));
+
+		return array($id, (string) $result['content']['success']['token']);
+	}
+
+	/**
+	 * Create a draft expense report for a user, with the admin user. It is deleted at end of the test.
+	 *
+	 * @param string	$test				Text to be added to output
+	 * @param int		$fk_user_author		Id of the user the expense report is for
+	 * @return int							Id of the expense report
+	 */
+	private function createExpenseReportForUser($test, $fk_user_author)
+	{
+		$data = array(
+			"fk_user_author" => $fk_user_author,
+			"date_debut" => dol_now() - 86400,
+			"date_fin" => dol_now(),
+		);
+		$result = $this->getUrl('expensereports', $test, 'POST', $data);
+		$id = (int) $result['content'];
+		$this->assertGreaterThan(0, $id, "$test Id of expense report is not > 0");
+		array_unshift($this->objectstodelete, 'expensereports/'.$id);
+
+		return $id;
+	}
+
+	/**
+	 * Read the user an expense report is for, with the admin user
+	 *
+	 * @param string	$test	Text to be added to output
+	 * @param int		$id		Id of the expense report
+	 * @return int				Id of the user the expense report is for
+	 */
+	private function getAuthor($test, $id)
+	{
+		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
+
+		return (int) ($result['content']['fk_user_author'] ?? 0);
 	}
 
 	/**
@@ -286,5 +382,67 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 
 		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
 		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
+	}
+
+	/**
+	 * testRestExpenseReportPutAuthorInHierarchy
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportPutAuthorInHierarchy()
+	{
+		global $user;
+
+		$test = "Move an expense report to a user of the hierarchy";
+
+		list($subordinate_id) = $this->createUser($test);
+		$id = $this->createExpenseReportForUser($test, $user->id);
+
+		$result = $this->getUrl('expensereports/'.$id, $test, 'PUT', array("fk_user_author" => $subordinate_id));
+		$this->assertEquals($subordinate_id, (int) ($result['content']['fk_user_author'] ?? 0), "$test Update must return the new user");
+
+		$this->assertEquals($subordinate_id, $this->getAuthor("$test (read after update)", $id), "$test The new user must be stored");
+	}
+
+	/**
+	 * testRestExpenseReportPutAuthorOutsideHierarchy
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportPutAuthorOutsideHierarchy()
+	{
+		global $user;
+
+		$test = "Move an expense report to a user outside the hierarchy";
+
+		list($restricted_id, $api_key) = $this->createUser($test, array(array('expensereport', 'lire'), array('expensereport', 'creer')));
+		$id = $this->createExpenseReportForUser($test, $restricted_id);
+
+		// The admin user is the supervisor of the restricted user, so not in his hierarchy
+		$this->getUrl('expensereports/'.$id, $test, 'PUT', array("fk_user_author" => $user->id), 403, $api_key);
+		$this->assertEquals($restricted_id, $this->getAuthor("$test (read after refused update)", $id), "$test The user must not change");
+
+		// Sending the current user is not a change, so the update is allowed
+		$note = "Updated note ".mt_rand(0, 99999999);
+		$result = $this->getUrl('expensereports/'.$id, "$test (same user)", 'PUT', array("fk_user_author" => $restricted_id, "note_public" => $note), 0, $api_key);
+		$this->assertEquals($note, $result['content']['note_public'] ?? null, "$test The note must be updated");
+		$this->assertEquals($restricted_id, (int) ($result['content']['fk_user_author'] ?? 0), "$test The user must not change");
+	}
+
+	/**
+	 * testRestExpenseReportPutAuthorNotFound
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportPutAuthorNotFound()
+	{
+		global $user;
+
+		$test = "Move an expense report to a user that does not exist";
+
+		$id = $this->createExpenseReportForUser($test, $user->id);
+
+		$this->getUrl('expensereports/'.$id, $test, 'PUT', array("fk_user_author" => 999999999), 400);
+		$this->assertEquals($user->id, $this->getAuthor("$test (read after refused update)", $id), "$test The user must not change");
 	}
 }
