@@ -1567,6 +1567,14 @@ class CommonObjectTest extends CommonClassTest
 		$this->assertStringNotContainsString('<CLIENT>', $propal->ajaxOutputField('ref_client'), 'Output is escaped');
 		$this->assertStringContainsString('<b>Public note</b>', $propal->ajaxOutputField('note_public'), 'Note (visible = 0) is output');
 
+		// Totals are output with their currency, like on the cards
+		$propal->total_ht = 1234.5;
+		$propal->multicurrency_total_ht = 1500;
+		$propal->multicurrency_code = 'USD';
+		$this->assertSame(price(1234.5, 0, $langs, 1, -1, -1, $conf->currency), $propal->ajaxOutputField('total_ht'), 'Total in main currency');
+		$this->assertSame(price(1500, 0, $langs, 1, -1, -1, 'USD'), $propal->ajaxOutputField('multicurrency_total_ht'), 'Multicurrency total in currency of the object');
+		$this->assertNotSame($propal->ajaxOutputField('multicurrency_total_ht'), price(1500, 0, $langs, 1, -1, -1, $conf->currency), 'Currency of the object is not the main one');
+
 		print __METHOD__." OK\n";
 	}
 
@@ -1868,10 +1876,78 @@ class CommonObjectTest extends CommonClassTest
 		$this->assertNull($form, 'Global $form of the caller must be restored');
 		$this->assertSame(0, $inputalsopricewithtax, 'Global variables of the line templates must be restored');
 
+		// Edit form of the line, the order is a draft. Constants of the editors are defined by main.inc.php only.
+		for ($i = 1; $i <= 10; $i++) {
+			if (!defined('ROWS_'.$i)) {
+				define('ROWS_'.$i, $i);
+			}
+		}
+		$edithtml = $localobject->getObjectLineHtml($lineid, 'editline');
+		$this->assertStringContainsString('name="lineid" value="'.$lineid.'"', $edithtml, 'Edit form of the line');
+		$this->assertStringContainsString('name="save"', $edithtml);
+
 		// Unknown line
 		$this->assertSame('', $localobject->getObjectLineHtml(-1));
 		$this->assertSame('ErrorRecordNotFound', $localobject->error);
 
+		$this->assertGreaterThan(0, $localobject->delete($user));
+
+		print __METHOD__." OK\n";
+	}
+
+	/**
+	 *  testIsAjaxLineEdit
+	 *  Lines of a draft are edited in ajax with MAIN_FEATURES_LEVEL 2 or the hidden option MAIN_USE_AJAX_LINE_EDIT,
+	 *  the edit link of the lines then gets the attributes used by Dolibarr.tools.lineEdit
+	 *
+	 *  @return void
+	 */
+	public function testIsAjaxLineEdit()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savfeatureslevel = getDolGlobalString('MAIN_FEATURES_LEVEL');
+		$savoption = getDolGlobalString('MAIN_USE_AJAX_LINE_EDIT');
+		$savajax = $conf->use_javascript_ajax;
+		$conf->use_javascript_ajax = 1;
+		$conf->global->MAIN_FEATURES_LEVEL = 0;
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '';
+
+		$localobject = new Commande($db);
+		$localobject->initAsSpecimen();
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'create: '.$localobject->error);
+		$localobject = new Commande($db);
+		$localobject->fetch($id);
+		$localobject->fetch_thirdparty();
+		$localobject->getLinesArray();
+		$lineid = $localobject->lines[0]->id;
+
+		$this->assertFalse($localobject->isAjaxLineEdit(), 'Disabled by default');
+		$this->assertStringNotContainsString('data-dol-edit-line', $localobject->getObjectLineHtml($lineid));
+
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '1';
+		$this->assertTrue($localobject->isAjaxLineEdit(), 'Enabled with the hidden option');
+		$linehtml = $localobject->getObjectLineHtml($lineid);
+		$this->assertStringContainsString('data-dol-edit-line="'.$lineid.'"', $linehtml, 'Edit link marked for the ajax edition');
+		$this->assertStringContainsString('data-dol-delete-line="'.$lineid.'"', $linehtml, 'Delete link marked for the ajax deletion');
+
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = '';
+		$conf->global->MAIN_FEATURES_LEVEL = 2;
+		$this->assertTrue($localobject->isAjaxLineEdit(), 'Enabled with MAIN_FEATURES_LEVEL 2');
+
+		$localobject->status = Commande::STATUS_VALIDATED;
+		$this->assertFalse($localobject->isAjaxLineEdit(), 'Only on a draft');
+
+		$conf->use_javascript_ajax = $savajax;
+		$conf->global->MAIN_FEATURES_LEVEL = $savfeatureslevel;
+		$conf->global->MAIN_USE_AJAX_LINE_EDIT = $savoption;
+
+		$localobject->status = Commande::STATUS_DRAFT;
 		$this->assertGreaterThan(0, $localobject->delete($user));
 
 		print __METHOD__." OK\n";
