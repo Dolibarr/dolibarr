@@ -89,6 +89,22 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 				}
 				$sqlMoreWhere .= ")";
 			}
+		} elseif ($crit != '' && in_array($typ, array('sellist', 'chkbxlst')) && preg_match('/(^|,)-2(,|$)/', $crit)) {
+			// Criteria coming from a multiselect search filter (option MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS) with
+			// the special entry -2 = "not defined" selected. We search records with no value set, plus records matching the other selected keys.
+			// An empty sellist/chkbxlst value can be stored as NULL, '' or '0' depending on how the record was saved.
+			$critkeys = array();
+			foreach (explode(',', $crit) as $critvalue) {
+				if ($critvalue !== '' && $critvalue != '0' && $critvalue != '-1' && $critvalue != '-2') {
+					$critkeys[] = $critvalue;
+				}
+			}
+			$sqlMoreWhere .= " AND (".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." IS NULL OR ".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." = '' OR ".$db->sanitize($extrafieldsobjectprefix.$tmpkey)." = '0'";
+			if (count($critkeys)) {
+				$modeforsearch = ($typ == 'chkbxlst' ? 4 : 3); // 4 = search inside a comma separated string, 3 = list of keys (quoted, the column is a varchar)
+				$sqlMoreWhere .= " OR ".natural_search($db->sanitize($extrafieldsobjectprefix.$tmpkey), implode(',', $critkeys), $modeforsearch, 1);
+			}
+			$sqlMoreWhere .= ")";
 		} elseif ($crit != ''
 			&& (!in_array($typ, array('select', 'sellist', 'select', 'link')) || $crit != '0')
 			&& (!in_array($typ, array('link')) || ($crit != '0' && $crit != '-1'))) {
@@ -101,6 +117,11 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 			}
 			if (in_array($typ, array('sellist')) && !is_numeric($crit)) {
 				$mode_search = 0;// Search on a foreign key string
+				if (strpos($crit, ',') !== false || getDolGlobalString('MAIN_EXTRAFIELDS_USE_MULTISELECT_IN_FILTERS')) {
+					// Keys coming from a multiselect search filter: exact match for 1 or n keys, quoted because the column is a varchar
+					// (a list is not gated on the option so saved criteria keep working if the option is disabled later)
+					$mode_search = 3;
+				}
 			}
 			if (in_array($typ, array('chkbxlst', 'checkbox', 'select'))) {
 				$mode_search = 4; // Search on a multiselect field with sql type = text
