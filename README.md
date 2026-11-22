@@ -105,7 +105,7 @@ Dolibarr is also available as a [Docker image](https://hub.docker.com/r/dolibarr
 
 ### Using Podway
 
-[Podway](https://podway.io) runs Dolibarr on its own small server, with HTTPS and nightly backups of the database and documents. Podway creates the admin account at setup, so the installer is never open to strangers, and Dolibarr's public modules (sign-up, tickets, payments, API) start turned off. An AI agent on that server, running on your own Claude or Codex plan, can change settings when you ask, read the logs when something breaks, and apply updates with a snapshot first, then check the migration afterwards. [Start Dolibarr on Podway](https://podway.io/start?app=dolibarr).
+[Podway](https://podway.io) runs Dolibarr on its own small server, with HTTPS and nightly backups of the database and documents. Podway creates the admin account at setup, so the installer is never open to strangers, and Dolibarr's public modules (sign-up, tickets, payments, API) start turned off. An AI agent on that server, running on your own Claude or Codex plan, can change settings when you ask, read the logs when something breaks, and apply updates with a snapshot first, then check the migration afterwards. [Start Dolibarr on Podway](https://podway.io/start?app=dolibarr&ref=docs-dolibarr).
 
 ### Using ready to use SaaS/Cloud offers
 
