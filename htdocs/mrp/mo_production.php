@@ -1989,7 +1989,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '</td>';
 						// Lot
 						if (isModEnabled('productbatch')) {
-							print '<td>';
+							print '<td class="nowraponall">';
 							if ($tmpproduct->status_batch) {
 								$preselected = (GETPOSTISSET('batchtoproduce-'.$line->id.'-'.$i) ? GETPOST('batchtoproduce-'.$line->id.'-'.$i) : '');
 								// $i is always 1 in this scope (this row is never split); show the Generate (autofill picto) button before the field.
