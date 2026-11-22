@@ -800,13 +800,15 @@ function getBrowserInfo($user_agent)
 		}
 	}
 
-	// OS
-	if (preg_match('/linux/i', $user_agent)) {
-		$os = 'linux';
-	} elseif (preg_match('/macintosh/i', $user_agent)) {
-		$os = 'macintosh';
-	} elseif (preg_match('/windows/i', $user_agent)) {
-		$os = 'windows';
+	// OS, when not already found as a mobile OS (the user agent of Android contains "Linux")
+	if ($os == 'unknown') {
+		if (preg_match('/linux/i', $user_agent)) {
+			$os = 'linux';
+		} elseif (preg_match('/macintosh/i', $user_agent)) {
+			$os = 'macintosh';
+		} elseif (preg_match('/windows/i', $user_agent)) {
+			$os = 'windows';
+		}
 	}
 
 	// Name
