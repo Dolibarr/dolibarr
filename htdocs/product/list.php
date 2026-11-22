@@ -2004,7 +2004,9 @@ while ($i < $imaxinloop) {
 			print '<td class="left">';
 			// Since description can be very large (several pages of HTML-
 			// code) we limit to the first two rows
+			print '<div class="twolinesmax-normallineheight minwidth200onall maxwidth300 classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($product_static->description, 25)).'">';
 			print dolGetFirstLineOfText($product_static->description, 2);
+			print '</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

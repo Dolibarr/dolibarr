@@ -429,6 +429,36 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
+	print $langs->trans("Locales");
+	print '</td><td>';
+	print '</td></tr>';
+
+	// First day for weeks
+	print '<tr class="oddeven"><td>' . $langs->trans("WeekStartOnDay") . '</td><td>';
+	print $formother->select_dayofweek(getDolGlobalString('MAIN_START_WEEK', '1'), 'MAIN_START_WEEK', 0);
+	print '</td>';
+	print '</tr>';
+
+	// DefaultWorkingDays
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingDays") . '</td><td>';
+	print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5') . '">';
+	print '</td>';
+	print '</tr>';
+
+	// DefaultWorkingHours
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingHours") . '</td><td>';
+	print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18') . '">';
+	print '</td>';
+	print '</tr>';
+
+	// Firstname/Name
+	print '<tr class="oddeven"><td>' . $langs->trans("FirstnameNamePosition") . '</td><td>';
+	$array = array(0 => $langs->trans("Firstname") . ' ' . $langs->trans("Lastname"), 1 => $langs->trans("Lastname") . ' ' . $langs->trans("Firstname"));
+	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, getDolGlobalInt('MAIN_FIRSTNAME_NAME_POSITION', 0));
+	print '</td>';
+	print '</tr>';
+
 	print '</table>' . "\n";
 	print '</div>';
 
@@ -437,6 +467,7 @@ if ($mode == 'other') {
 	print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 	print '</div>';
 
+	print '<br>';
 	print '<br>';
 	print '<br>';
 
@@ -448,6 +479,12 @@ if ($mode == 'other') {
 	print $langs->trans("Miscellaneous");
 	print '</td>';
 	print '<td></td>';
+	print '</tr>';
+
+	// Show search area in top menu
+	print '<tr class="oddeven"><td>' . img_picto('', 'search', 'class="pictofixedwidth"'). ' '.$langs->trans("ShowSearchAreaInTopMenu") .'</td><td>';
+	print ajax_constantonoff("MAIN_USE_TOP_MENU_SEARCH_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
 	print '</tr>';
 
 	if (!empty($conf->use_javascript_ajax)) {
@@ -493,31 +530,6 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
-	// First day for weeks
-	print '<tr class="oddeven"><td>' . $langs->trans("WeekStartOnDay") . '</td><td>';
-	print $formother->select_dayofweek(getDolGlobalString('MAIN_START_WEEK', '1'), 'MAIN_START_WEEK', 0);
-	print '</td>';
-	print '</tr>';
-
-	// DefaultWorkingDays
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingDays") . '</td><td>';
-	print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5') . '">';
-	print '</td>';
-	print '</tr>';
-
-	// DefaultWorkingHours
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingHours") . '</td><td>';
-	print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="' . getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18') . '">';
-	print '</td>';
-	print '</tr>';
-
-	// Firstname/Name
-	print '<tr class="oddeven"><td>' . $langs->trans("FirstnameNamePosition") . '</td><td>';
-	$array = array(0 => $langs->trans("Firstname") . ' ' . $langs->trans("Lastname"), 1 => $langs->trans("Lastname") . ' ' . $langs->trans("Firstname"));
-	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, getDolGlobalInt('MAIN_FIRSTNAME_NAME_POSITION', 0));
-	print '</td>';
-	print '</tr>';
-
 	// Hide unauthorized menus
 	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("HideUnauthorizedMenu"), $langs->trans("JustGrayedOtherwise")) . '</td><td>';
 	print ajax_constantonoff("MAIN_MENU_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
@@ -539,12 +551,6 @@ if ($mode == 'other') {
 	print '</tr>';
 	*/
 
-
-	// Show search area in top menu
-	print '<tr class="oddeven"><td>' . img_picto('', 'search', 'class="pictofixedwidth"'). ' '.$langs->trans("ShowSearchAreaInTopMenu") .'</td><td>';
-	print ajax_constantonoff("MAIN_USE_TOP_MENU_SEARCH_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	print '</td>';
-	print '</tr>';
 
 	// Show bugtrack link
 	print '<tr class="oddeven"><td>';
@@ -607,80 +613,80 @@ if ($mode == 'dashboard') {
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableGlobal') . '</td><td>';
-	print ajax_constantonoff("MAIN_DISABLE_GLOBAL_WORKBOARD", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+	print ajax_constantonoff("MAIN_DISABLE_GLOBAL_WORKBOARD", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_warning', 'dashboard');
 	print '</td>';
 	print '</tr>';
 
 	if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 		// Block meteo
 		print '<tr class="oddeven"><td>' . $langs->trans('MAIN_DISABLE_METEO') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_METEO", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_METEO", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block agenda
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockAgenda') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_AGENDA", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_AGENDA", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block agenda
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockProject') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_PROJECT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_PROJECT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block customer
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockCustomer') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CUSTOMER", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CUSTOMER", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block supplier
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockSupplier') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_SUPPLIER", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_SUPPLIER", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block contract
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockContract') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CONTRACT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CONTRACT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block ticket
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockTicket') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_TICKET", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_TICKET", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block bank
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockBank') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_BANK", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_BANK", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block adherent
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockAdherent') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_ADHERENT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_ADHERENT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block expense report
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockExpenseReport') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_EXPENSEREPORT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_EXPENSEREPORT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block holiday
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockHoliday') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_HOLIDAY", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_HOLIDAY", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block mrp
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockMrp') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_MRP", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_MRP", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 	}

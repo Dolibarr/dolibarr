@@ -227,3 +227,7 @@ TakeposAmount1=Amount 1
 TakeposAmount2=Amount 2 (auto)
 TakeposCreditSplitSuccess=Credit split successfully
 TakeposCreditSplitError=Error splitting the credit: the sum of the two amounts must equal the original credit amount (%s)
+ErrorSplitSaleNotDraft=This sale is already validated or paid, it can't be split.
+CurrentSale=Current sale
+CashControlTZOffset=Time offset (relative to the server time)
+CashControlTZOffsetHelp=Number of hours the local time of the point of sale is ahead of the time of the server (time zone of the server: %s). Use a negative value if the local time is behind the time of the server. Value must be between -12 and 12. It defines the end of the day of a cash control.<br>For example, with 2, a day ends at 21:59:59 server time (so 23:59:59 local time).<br>With -6, a day ends at 05:59:59 server time the next day (so 23:59:59 local time).

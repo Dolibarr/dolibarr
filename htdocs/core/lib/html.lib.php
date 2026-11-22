@@ -206,8 +206,10 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 	$reg = array();
 	if (preg_match('/^common([a-z,]*)/', $noescapetags, $reg)) {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,ol,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
+		// Add also the other content tags kept by the 'common' list of dol_string_onlythesehtmltags()
+		$noescapetags .= ',abbr,blockquote,cite,dl,dd,dt,ins,pre,q,s,strike,sub,sup,thead,tfoot';
 		// Add also html5 tags
-		$noescapetags .= ',header,footer,nav,section,menu,menuitem';
+		$noescapetags .= ',article,header,footer,nav,section,menu,menuitem';
 		if (!empty($reg[1])) {
 			$noescapetags .= $reg[1];
 		}
@@ -830,7 +832,13 @@ function dol_get_fiche_end($notab = 0)
  */
 function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldid = 'rowid', $fieldref = 'ref', $morehtmlref = '', $moreparam = '', $nodbprefix = 0, $morehtmlleft = '', $morehtmlstatus = '', $onlybanner = 0, $morehtmlright = '')
 {
-	global $conf, $form, $user, $langs, $hookmanager, $action;
+	global $conf, $form, $user, $langs, $hookmanager, $action, $db;
+
+	// $form is created by the top or left menu, so it may not exist when menus are hidden (dol_hide_topmenu and dol_hide_leftmenu)
+	if (!is_object($form)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+		$form = new Form($db);
+	}
 
 	$error = 0;
 
@@ -1671,6 +1679,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'company' => '#6c6aa8',
 				'contact' => '#6c6aa8',
 				'cron' => '#555',
+				'depositslip' => '#a69944',
 				'dynamicprice' => '#a69944',
 				'edit' => '#444',
 				'note' => '#999',
@@ -1839,6 +1848,7 @@ function getImgPictoConv($mode = 'fa')
 			'chevron-double-down' => 'angle-double-down',
 			'chevron-double-top' => 'angle-double-up',
 			'donation' => 'gift',
+			'depositslip' => 'hand-holding-usd',
 			'dynamicprice' => 'hand-holding-usd',
 			'setup' => 'cog',
 			'companies' => 'building',
@@ -1940,6 +1950,7 @@ function getImgPictoConv($mode = 'fa')
 			'reception' => 'dolly',
 			'recruitmentjobposition' => 'id-card-alt',
 			'recruitmentcandidature' => 'id-badge',
+			'recycle' => 'recycle',
 			'resize' => 'crop',
 			'supplier_order' => 'dol-order_supplier',
 			'supplier_proposal' => 'file-signature',
@@ -3039,15 +3050,17 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
 		$picto = 'generic';
 	}
 
-	$return .= "\n";
+	$return .= "<!-- load_fiche_titre -->\n";
 	$return .= '<table ' . ($id ? 'id="' . $id . '" ' : '') . 'class="centpercent notopnoleftnoright table-fiche-title' . ($morecssontable ? ' ' . $morecssontable : '') . '">'; // margin bottom must be same than into print_barre_list
 	$return .= '<tr class="toptitle">';
 	if ($picto) {
-		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">' . img_picto('', $picto, 'class="valignmiddle pictotitle'.($morecssonpicto ? ' '.$morecssonpicto : '').'"', $pictoisfullpath) . '</td>';
+		$return .= '<td class="nobordernopadding widthpictotitle valignmiddle col-picto">';
+		$return .= img_picto('', $picto, 'class="valignbaseline pictotitle'.($morecssonpicto ? ' '.$morecssonpicto : '').'"', $pictoisfullpath);
+		$return .= '</td>';
 	}
 	$return .= '<td class="nobordernopadding valignmiddle col-title">';
 	$return .= '<div class="titre inline-block">';
-	$return .= '<span class="inline-block valignmiddle print-barre-liste">' . $title . '</span>';	// $title is already HTML sanitized content
+	$return .= '<span class="inline-block valignbaseline print-barre-liste">' . $title . '</span>';	// $title is already HTML sanitized content
 	$return .= '</div>';
 	$return .= '</td>';
 	if (dol_strlen($morehtmlcenter)) {
@@ -3686,15 +3699,19 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 					});
 				</script>';
 			} else {
-				// For error and warning messages, close immediately on click without fade
+				// For error and warning messages, close immediately on click anywhere on the message (except when text is selected) without fade
 				$return = '<script nonce="' . getNonce() . '">
 					$(document).ready(function() {
 						$.jnotify(\'' . dol_escape_js($out) . '\', {
 							delay: 3000,
 							type: \'' . dol_escape_js($style) . '\',
 							sticky: true,
+							showClose: false,
 							create: function($note) {
-								$note.find("a.jnotify-close").click(function(e) {
+								$note.css("cursor", "pointer").click(function(e) {
+									if (window.getSelection && window.getSelection().toString() !== "") {
+										return;
+									}
 									e.stopPropagation();
 									$note.remove();
 								});
@@ -5275,7 +5292,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 {
 	dol_syslog('show_actions_messaging::begin', LOG_DEBUG);
 	global $user, $conf;
-	global $form;
+	global $form, $hookmanager;
 
 	global $param, $massactionbutton;
 
@@ -5287,7 +5304,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 	}
 
 	$histo = array();
-	'@phan-var-force array<int,array{type:string,tododone:string,id:string,datestart:int|string,dateend:int|string,fulldayevent:int,note:string,message:string,percent:string,userid:string,login:string,userfirstname:string,userlastname:string,userphoto:string,msg_from?:string,contact_id?:string,socpeopleassigned?:int[],lastname?:string,firstname?:string,fk_element?:int,elementtype?:string,acode:string,alabel?:string,libelle?:string,apicto?:string}> $histo';
+	'@phan-var-force array<int,array{type:string,tododone:string,id:string,datestart:int|string,dateend:int|string,fulldayevent:int,note:string,message:string,percent:string,userid:string,login:string,userfirstname:string,userlastname:string,userphoto:string,msg_from?:string,msg_to?:string,msg_tocc?:string,contact_id?:string,socpeopleassigned?:int[],lastname?:string,firstname?:string,fk_element?:int,elementtype?:string,acode:string,alabel?:string,libelle?:string,apicto?:string}> $histo';
 
 	$numaction = 0;
 	$now = dol_now();
@@ -5316,7 +5333,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		$sql .= " a.percent as percent, 'action' as type,";
 		$sql .= " a.fk_element, a.elementtype,";
 		$sql .= " a.fk_contact, a.fulldayevent,";
-		$sql .= " a.email_from as msg_from,";
+		$sql .= " a.email_from as msg_from, a.email_to as msg_to, a.email_tocc as msg_tocc,";
 		$sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
 		$sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
 		if (is_object($filterobj) && get_class($filterobj) == 'Societe') {
@@ -5578,6 +5595,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 						'userlastname' => $obj->user_lastname,
 						'userphoto' => $obj->user_photo,
 						'msg_from' => $obj->msg_from,
+						'msg_to' => $obj->msg_to,
+						'msg_tocc' => $obj->msg_tocc,
 
 						'contact_id' => $obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
@@ -5978,6 +5997,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$out .=  dolPrintHTML($newmess, 0, array('pre', 'code'));
 				}
 				$out .= '</div>';
+			}
+
+			if (is_object($hookmanager)) {
+				$parameters = array('histo' => $histo[$key]);
+				$reshook = $hookmanager->executeHooks('printActionMessagingAfterMessage', $parameters, $actionstatic);
+				if ($reshook >= 0) {
+					$out .= $hookmanager->resPrint;
+				}
 			}
 
 			// Timeline footer

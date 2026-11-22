@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyreport.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy'));
+$langs->loadLangs(array('compta', 'bills', 'donations', 'salaries', 'accountancy'));
 
 $id_report = GETPOSTINT('id_report');
 if ($id_report <= 0) {
@@ -211,8 +211,8 @@ $description = '';
 
 $form = new Form($db);
 
-$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year - 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_previous().'</a>';
-$textnextyear = ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year + 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_next().'</a>';
+$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year - 1).'&id_report='.((int) $id_report).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_previous().'</a>';
+$textnextyear = ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year + 1).'&id_report='.((int) $id_report).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_next().'</a>';
 
 
 // Affiche en-tete de rapport
@@ -268,7 +268,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 }
 
-report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta' => $modecompta, 'action' => ''), $calcmode);
+report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta' => $modecompta, 'action' => '', 'id_report' => $id_report), $calcmode);
 
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {

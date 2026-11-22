@@ -877,6 +877,7 @@ class Product extends CommonObject
 		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 5),
 		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Reference of object'),
 		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 2, 'position' => 11, 'csslist' => 'tdoverflowmax250'),
+		'fk_product_type' => array('type' => 'integer', 'label' => 'TypeProductOrService', 'langfile' => 'products', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'position' => 12, 'arrayofkeyval' => array(0 => 'Product', 1 => 'Service')),
 		'barcode'       => array('type' => 'varchar(255)', 'label' => 'Barcode', 'enabled' => 'isModEnabled("barcode")', 'position' => 20, 'visible' => -1, 'showoncombobox' => 3, 'cssview' => 'tdwordbreak', 'csslist' => 'tdoverflowmax125'),
 		'fk_barcode_type' => array('type' => 'integer', 'label' => 'BarcodeType', 'enabled' => 1, 'position' => 21, 'notnull' => 0, 'visible' => -1,),
 		'note_public'   => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 61, 'uieditable' => 1),
@@ -3188,10 +3189,28 @@ class Product extends CommonObject
 
 				if (!$updatedefaultprice) {
 					// The price of the level is now saved, so we can restore the default price of the product
-					list($this->price, $this->price_label, $this->price_ttc, $this->price_min, $this->price_min_ttc, $this->price_base_type) = $savdefaultprice;
+					$this->price = $savdefaultprice[0];
+					$this->price_label = $savdefaultprice[1];
+					$this->price_ttc = $savdefaultprice[2];
+					$this->price_min = $savdefaultprice[3];
+					$this->price_min_ttc = $savdefaultprice[4];
+					$this->price_base_type = $savdefaultprice[5];
 				}
 
 				$this->level = $level; // Store level of price edited for trigger
+
+				// The price of a variant is recalculated from its parent at each update of the parent, with its price impact.
+				// So a price set directly on a variant must update its price impact, else the next update of the parent restores the previous price.
+				if (isModEnabled('variants') && empty($this->context['variant_price_set_by_parent'])) {
+					include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+					$prodcomb = new ProductCombination($this->db);
+					if ($prodcomb->setVariationFromChildPrice($this, $level) < 0) {
+						$this->error = $prodcomb->error;
+						$this->errors = array_merge($this->errors, $prodcomb->errors);
+						$this->db->rollback();
+						return -1;
+					}
+				}
 
 				// Call trigger
 				if (!$notrigger) {
@@ -4269,7 +4288,8 @@ class Product extends CommonObject
 			$sql .= " AND cf.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {
-			$sql .= " AND fd.datec <= '".$this->db->idate($dateofvirtualstock)."'";
+			// Same filter as load_stats_commande_fournisseur(): received and ordered qty must cover the same orders
+			$sql .= " AND cf.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
 		}
 		if (!empty($dateofvirtualstockmin)) {
 			// Same window as the supplier order side: both halves of the subtraction must always run on the same population of
@@ -4348,7 +4368,11 @@ class Product extends CommonObject
 			$sql .= " AND COALESCE(m.date_end_planned, m.date_valid) >= '".$this->db->idate($dateofvirtualstockmin)."'";
 			$sql .= " AND COALESCE(m.date_end_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."'";
 		} elseif (!empty($dateofvirtualstock)) {
-			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
+			// Components leave stock when production starts, products enter stock when it ends
+			$sql .= " AND (";
+			$sql .= "(mp.role IN ('toconsume', 'consumed') AND COALESCE(m.date_start_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."')";
+			$sql .= " OR (mp.role IN ('toproduce', 'produced') AND COALESCE(m.date_end_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."')";
+			$sql .= ")";
 		}
 		if (!$serviceStockIsEnabled) {
 			$sql .= "AND EXISTS (SELECT p.rowid FROM ".$this->db->prefix()."product AS p WHERE p.rowid = ".((int) $this->id)." AND p.fk_product_type IN (0))";
@@ -6829,7 +6853,7 @@ class Product extends CommonObject
 		// Include supplier order lines
 		if (isModEnabled("supplier_order")) {
 			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '3,4');
-			if (isset($includedraftpoforvirtual)) {
+			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
 			}
 			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1, $dateofvirtualstock, $dateofvirtualstockmin);
@@ -6841,7 +6865,7 @@ class Product extends CommonObject
 		// Include reception lines
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '4');
-			if (isset($includedraftpoforvirtual)) {
+			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
 			}
 			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock, $dateofvirtualstockmin);

@@ -481,6 +481,16 @@ if ($action == 'set' && $user->admin) {
 				dol_print_error($db);
 			}
 		}
+		// Warn when the activated module, or one of its dependencies, must be configured to work
+		if (!empty($resarray['needsetup'])) {
+			foreach ($resarray['needsetup'] as $modulelabel) {
+				$msg = $langs->trans('WarningModuleNeedSetup', $modulelabel, '{s1}');
+				$msg = str_replace('{s1}', img_picto('', 'setup'), $msg);
+				// Add an empty line to separate the message from the previous warnings shown into the same box
+				$msg = (empty($_SESSION['dol_events']['warnings']) ? '' : '<br>').$msg;
+				setEventMessages($msg, null, 'warnings');
+			}
+		}
 	}
 	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	exit;
@@ -1290,6 +1300,18 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 						}
 					}
 				}
+				// Warn when enabling this module will disable other enabled modules declared in conflict with it
+				if (!empty($objMod->conflictwith) && is_array($objMod->conflictwith)) {
+					$conflictingmodulesenabled = array();
+					foreach ($objMod->conflictwith as $conflictmodname) {
+						if (getDolGlobalString('MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', $conflictmodname)))) {
+							$conflictingmodulesenabled[] = (empty($modules[$conflictmodname]) ? $conflictmodname : $modules[$conflictmodname]->getName());
+						}
+					}
+					if (!empty($conflictingmodulesenabled)) {
+						$warningmessage .= ($warningmessage ? "\n\n" : "").$langs->transnoentitiesnoconv("WarningModuleConflictWillBeDisabled", $objMod->getName(), implode(', ', $conflictingmodulesenabled));
+					}
+				}
 
 				$urltogo = $_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param;
 				$popupWidth = 600;
@@ -1425,36 +1447,15 @@ if ($mode == 'marketplace') {
 	print '</tr>';
 
 
-	// Source Community github
-	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
-
-	print '<tr class="oddeven nohover" height="100">'."\n";
-	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
-	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
-	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
-	print '<td>';
-	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
-	print '</td>';
-	print '<td class="center">';
-	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
-		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
-		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
-		if ($remotestore->githubFileError) {
-			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
-		}
-		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
-	}
-	print '</td>';
-	print '</tr>';
-
-
 	// Sources additional github repositories (defined by MAIN_ADD_EXTERNAL_MODULES_SOURCE)
 	foreach ($remotestore->custom_sources as $customsource) {
 		$url = $customsource['url'];
 
 		print '<tr class="oddeven nohover" height="100">'."\n";
 		print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer external">'.img_picto('', 'fa-code-branch', 'class="size2x"').'</a></td>';
-		print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("AdditionalModulesSourceDesc").'</span><br>';
+		// Show 'Label - Description' of the source, or the generic description if the source was defined with the old format (no label)
+		$customsourcetitle = $customsource['label'].(($customsource['label'] !== '' && $customsource['description'] !== '') ? ' - ' : '').$customsource['description'];
+		print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.($customsourcetitle !== '' ? dolPrintLabel($customsourcetitle) : $langs->trans("AdditionalModulesSourceDesc")).'</span><br>';
 		print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer external">'.dol_escape_htmltag($url).'</a>';
 		if ($customsource['branch']) {
 			print '<!-- &nbsp; '.img_picto($langs->trans("Branch"), 'fa-code-branch', 'class="pictofixedwidth"').dol_escape_htmltag($customsource['branch']).' -->';
@@ -1478,6 +1479,29 @@ if ($mode == 'marketplace') {
 		print '</td>';
 		print '</tr>';
 	}
+
+
+	// Source Community github
+	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
+
+	print '<tr class="oddeven nohover" height="100">'."\n";
+	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
+	print '<td class="minwidth500imp smallonsmartphone"><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td>';
+	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
+	print '</td>';
+	print '<td class="center">';
+	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
+		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' should be in the local cache file '.$remotestore->cache_file;
+		$messagetoadd .= ' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		if ($remotestore->githubFileError) {
+			$messagetoadd .= '<br><span class="error small">'.$remotestore->githubFileError.'</span>';
+		}
+		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
+	}
+	print '</td>';
+	print '</tr>';
 
 
 	// Source Marketplace DoliStore
@@ -1519,16 +1543,16 @@ if ($mode == 'marketplace') {
 	if ($remotestore->numberOfProviders == 0) {
 		// No provider online: explain, just under the providers, why there is no list of modules
 		$unreachablesources = array();
+		foreach ($remotestore->custom_sources as $customsource) {
+			if (getDolGlobalInt($customsource['const_enable'])) {
+				$unreachablesources[] = preg_replace('/^https?:\/\//', '', $customsource['url']);
+			}
+		}
 		if (getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
 			$unreachablesources[] = 'github.com/Dolibarr/dolibarr-community-modules';
 		}
 		if (getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
 			$unreachablesources[] = 'DoliStore';
-		}
-		foreach ($remotestore->custom_sources as $customsource) {
-			if (getDolGlobalInt($customsource['const_enable'])) {
-				$unreachablesources[] = preg_replace('/^https?:\/\//', '', $customsource['url']);
-			}
 		}
 		if (empty($unreachablesources)) {
 			print info_admin($langs->trans("MarketplaceNoProviderEnabled"), 0, 0, '1', '');

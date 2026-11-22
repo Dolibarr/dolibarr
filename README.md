@@ -86,6 +86,23 @@ Dolibarr is also available as a [Docker image](https://hub.docker.com/r/dolibarr
 [easypanel-btn]: https://easypanel.io/img/deploy-on-easypanel-40.svg
 [easypanel-deploy]: https://easypanel.io/templates/dolibarr
 
+### Using RepoCloud
+
+[![Deploy on RepoCloud][repocloud-btn]][repocloud-deploy]
+[![Deploy on Railway][railway-btn]][railway-deploy]
+[![Deploy on Elestio][elestio-btn]][elestio-deploy]
+
+[repocloud-btn]: https://d16t0pc4846x52.cloudfront.net/deploylobe.svg
+[repocloud-deploy]: https://repocloud.io/details/Dolibarr/
+[railway-btn]: https://railway.com/button.svg
+[railway-deploy]: https://railway.com/deploy/dolibarr
+[elestio-btn]: https://elest.io/images/logos/deploy-to-elestio-btn.png
+[elestio-deploy]: https://elest.io/open-source/dolibarr
+
+### Using a Simafri managed VPS
+
+[Simafri](https://www.simafri.com) publishes a [step-by-step guide](https://www.simafri.com/en/guides/self-host-dolibarr/) to run the official Docker image on its managed VPS, with MariaDB, a cron container for scheduled jobs and Caddy for HTTPS. The guide then covers password encryption after the first start, backups with `mariadb-dump` and upgrades. You keep full access to the server, while Simafri handles its system updates, monitoring and encrypted nightly backups.
+
 ### Using ready to use SaaS/Cloud offers
 
 If you lack the time to install it yourself, consider exploring commercial 'ready-to-use' Cloud offerings (refer to https://saas.dolibarr.org). Keep in mind that this third option comes with associated costs.

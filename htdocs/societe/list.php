@@ -62,7 +62,7 @@ if (isModEnabled('category')) {
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
+$langs->loadLangs(array("companies", "commercial", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
@@ -523,6 +523,9 @@ if (empty($reshook)) {
 
 if ($search_status == '' && empty($search_all)) {
 	$search_status = 1; // display active thirdparty only by default
+}
+if ($type == 't' && ($search_type == '' || $search_type == '-1')) {
+	$search_type = '1,2,3'; // No nature (the select sends -1, the purge empties it): keep customers and prospects of the POS list
 }
 
 
@@ -1252,6 +1255,10 @@ if (empty($reshook)) {
 		}
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+		if (empty($user->socid)) {	// Statistics are on all the third parties, so they are not available to external users
+			$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dolBuildUrl(DOL_URL_ROOT.'/societe/stats/geo.php', ['mode' => 'thirdpartybycountry']), '', 1, array('morecss' => 'reposition'));
+		}
+		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight('societe', 'creer'));
 	} elseif ($user->hasRight('societe', 'creer')) {
 		$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
@@ -1848,7 +1855,7 @@ if (!empty($arrayfields['s2.nom']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // IP Address
@@ -2058,7 +2065,7 @@ while ($i < $imaxinloop) {
 		}
 		// Address
 		if (!empty($arrayfields['s.address']['checked'])) {
-			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($companystatic->address).'">'.dolPrintHTML($companystatic->address).'</td>';
+			print '<td title="'.dolPrintHTMLForAttribute($companystatic->address).'"><div class="twolinesmax-normallineheight minwidth200onall maxwidth250">'.dolPrintHTML($companystatic->address).'</div></td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2086,7 +2093,7 @@ while ($i < $imaxinloop) {
 		}
 		// Region
 		if (!empty($arrayfields['region.nom']['checked'])) {
-			print "<td>".dolPrintHTML($obj->region_name)."</td>\n";
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($obj->region_name).'">'.dolPrintHTML($obj->region_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2107,7 +2114,11 @@ while ($i < $imaxinloop) {
 			$labeltypeofcompany = empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
 
 			print '<td class="center tdoverflowmax125" title="'.dolPrintHTMLForAttribute($labeltypeofcompany).'">';
-			print dolPrintHTML($labeltypeofcompany);
+			if (!empty($labeltypeofcompany)) {
+				print '<span class="badge badge-status badge-thirdpartytype">';
+				print dolPrintHTML($labeltypeofcompany);
+				print '</span>';
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2251,7 +2262,7 @@ while ($i < $imaxinloop) {
 		}
 		// Sales Representative
 		if (!empty($arrayfields['sales.representative']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">';
+			print '<td class="nowraponall tdoverflowmax100">';
 			$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 			$nbofsalesrepresentative = count($listsalesrepresentatives);
 			if ($nbofsalesrepresentative > 6) {

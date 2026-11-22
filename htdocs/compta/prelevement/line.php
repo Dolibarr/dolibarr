@@ -103,7 +103,7 @@ if ($action == 'confirm_rejet' && $permissiontoadd) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		} elseif ($daterej > dol_now()) {
 			$error++;
-			$langs->load("error");
+			$langs->load("errors");
 			setEventMessages($langs->transnoentities("ErrorDateMustBeBeforeToday"), null, 'errors');
 		}
 

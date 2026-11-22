@@ -1847,7 +1847,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$sql .= natural_search('t.note', $search_note);
 		}
 		if ($search_task_ref) {
-			$sql .= natural_search('pt.ref', $search_task_ref);
+			if (empty($arrayfields['t.element_label']['checked'])) {
+				// When task label column is not visible, search on task ref searches both ref and label
+				$sql .= natural_search(array('pt.ref', 'pt.label'), $search_task_ref);
+			} else {
+				$sql .= natural_search('pt.ref', $search_task_ref);
+			}
 		}
 		if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 			$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
@@ -2345,7 +2350,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$extrafieldsobjectprefix = 'ef.';
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 		// Hook fields
-		$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+		$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (!$conf->main_checkbox_left_column) {
@@ -2545,14 +2550,22 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Task ref
 			if (!empty($arrayfields['t.element_ref']['checked'])) {
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {   // Not a dedicated task
-					print '<td class="nowrap">';
+					print '<td class="nowrap'.(empty($arrayfields['t.element_label']['checked']) ? ' tdlineheightsmall' : '').'">';
 					if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						$formproject->selectTasks(-1, GETPOSTINT('taskid') ? GETPOSTINT('taskid') : $task_time->fk_element, 'taskid', 0, 0, '1', 1, 0, 0, 'maxwidth250', (string) $projectstatic->id, '');
 					} else {
 						$tasktmp->id = $task_time->fk_element;
 						$tasktmp->ref = $task_time->ref;
 						$tasktmp->label = $task_time->label;
-						print $tasktmp->getNomUrl(1, 'withproject', 'time');
+						if (empty($arrayfields['t.element_label']['checked'])) {
+							// When task label column is not visible, show the label under the ref
+							print '<div class="tdoverflowmax250 inline-block lineheightsmall">';
+							print $tasktmp->getNomUrl(1, 'withproject', 'time');
+							print '<br><span class="spantitle">'.dolPrintHTML($task_time->label).'</span>';
+							print '</div>';
+						} else {
+							print $tasktmp->getNomUrl(1, 'withproject', 'time');
+						}
 					}
 					print '</td>';
 					if (!$i) {

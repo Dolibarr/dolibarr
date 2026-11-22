@@ -109,7 +109,7 @@ jQuery(function() {
 	// Initial page load
 	// --------------------------------
 	jQuery(function() {
-		initTooltipDialogs(document.body);
+		initTooltipDialogs(document.body, footerConst.classfortooltiponclicktextWidth);
 	});
 
 	// --------------------------------
@@ -223,12 +223,12 @@ print '
         if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
         if (page_y > 0) {
 			console.log("page_y found is "+page_y);
-            jQuery("html, body").scrollTop(page_y);
+            jQuery(dolGetMainScrollElement()).scrollTop(page_y);
         }
 
 		/* Set handler to add page_y param on output (click on href links or submit button) */
         jQuery(".reposition").click(function(event) {
-            var page_y = jQuery(document).scrollTop();
+            var page_y = jQuery(dolGetMainScrollElement()).scrollTop();
             if (page_y > 0) {
                 if (this.href) {
 					console.log("We click on tag with .reposition class. this.ref was "+this.href);

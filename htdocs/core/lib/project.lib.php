@@ -796,11 +796,19 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Ref of task
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.ref']['checked'])) {
-					print '<td class="nowraponall">';
+					print '<td class="nowraponall'.(empty($arrayfields['t.label']['checked']) ? ' tdlineheightsmall' : '').'">';
+					if (empty($arrayfields['t.label']['checked'])) {
+						print '<div class="tdoverflowmax250 inline-block lineheightsmall">';
+					}
 					if ($showlineingray) {
 						print '<i>'.img_object('', 'projecttask').' '.$lines[$i]->ref.'</i>';
 					} else {
 						print $taskstatic->getNomUrl(1, 'withproject');
+					}
+					if (empty($arrayfields['t.label']['checked'])) {
+						// When task label column is not visible, show the label under the ref
+						print '<br><span class="spantitle">'.($showlineingray ? '<i>' : '').dolPrintLabel($lines[$i]->label).($showlineingray ? '</i>' : '').'</span>';
+						print '</div>';
 					}
 					print '</td>';
 				}
@@ -1248,7 +1256,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param	int 	   	$inc					Line number (start to 0, then increased by recursive call)
  * @param   int 		$parent					Id of parent task to show (0 to show all)
  * @param	?User		$fuser					Restrict list to user if defined
- * @param   Task[]		$lines					Array of lines
+ * @param   stdClass[]	$lines					Array of time spent lines (see Task::fetchTimeSpentOnTask())
  * @param   int			$level					Level (start to 0, then increased/decrease by recursive call)
  * @param   array<int,string>	$projectsrole	Array of roles user has on project
  * @param   array<int,string>	$tasksrole		Array of roles user has on task
@@ -2774,10 +2782,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$nbcol = 2;
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			if (!in_array('prospectionstatus', $hiddenfields)) {
-				print_liste_field_titre("OpportunityStatus", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'center ');
+				print_liste_field_titre("OpportunityStatusShort", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'center ');
 				$nbcol++;
 			}
-			print_liste_field_titre($form->textwithpicto($langs->trans("Amount"), $langs->trans("OpportunityAmount").' ('.$langs->trans("Tooltip").' = '.$langs->trans("OpportunityWeightedAmount").')'), "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre($form->textwithpicto($langs->trans("Amount"), $langs->trans("OpportunityAmount").' ('.$langs->trans("Tooltip").' = '.$langs->trans("OpportunityWeightedAmount").')'), "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'nowraponall right ');
 			$nbcol++;
 			//print_liste_field_titre('OpportunityWeightedAmount', '', '', '', '', 'align="right"', $sortfield, $sortorder);
 		}
@@ -2789,7 +2797,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				$nbcol++;
 			}
 			if (!in_array('declaredprogress', $hiddenfields)) {
-				print_liste_field_titre("%", "", "", "", "", '', $sortfield, $sortorder, 'right ', $langs->trans("ProgressDeclared"));
+				print_liste_field_titre("%", "", "", "", "", '', $sortfield, $sortorder, 'nowraponall right ', $langs->trans("ProgressDeclared"));
 				$nbcol++;
 			}
 		}
@@ -2832,7 +2840,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 				print '<tr class="oddeven">';
 
-				print '<td class="tdoverflowmax150">';
+				print '<td class="tdlineheightsmall tdoverflowmax150">';
 				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0, -1, 'nowraponall');
 				if (!in_array('projectlabel', $hiddenfields)) {
 					print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->title).'</span>';
@@ -3174,17 +3182,17 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 			if ((float) $progressCalculated > (float) ($task->progress * $warningRatio)) {
 				$badgeClass .= 'badge-danger';
 				if (empty($tooltip)) {
-					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+					$tooltip = $langs->transnoentitiesnoconv("ProgressDeclared").' '.$task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
 			} elseif ((float) $progressCalculated > (float) $task->progress) { // warning if close at 10%
 				$badgeClass .= 'badge-warning';
 				if (empty($tooltip)) {
-					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+					$tooltip = $langs->transnoentitiesnoconv("ProgressDeclared").' '.$task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
 			} else {
 				$badgeClass .= 'badge-success';
 				if (empty($tooltip)) {
-					$tooltip = $task->progress.'% >= '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+					$tooltip = $langs->transnoentitiesnoconv("ProgressDeclared").' '.$task->progress.'% >= '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
 			}
 		}
