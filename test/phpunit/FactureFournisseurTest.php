@@ -32,6 +32,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture.class.php';
 require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.facture-rec.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/paiementfourn.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
@@ -145,6 +146,44 @@ class FactureFournisseurTest extends CommonClassTest
 
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		return $localobject;
+	}
+
+	/**
+	 * Check the supplier payment reference at trigger time and after creation.
+	 *
+	 * @param	FactureFournisseur	$invoice	Validated supplier invoice
+	 * @return	void
+	 *
+	 * @depends testFactureFournisseurValid
+	 */
+	public function testSupplierPaymentCreateReference($invoice)
+	{
+		global $db, $user;
+
+		$triggerRef = null;
+		$payment = $this->createPartialMock(PaiementFourn::class, array('call_trigger'));
+		$payment->db = $db;
+		$payment->expects($this->once())->method('call_trigger')
+			->with('PAYMENT_SUPPLIER_CREATE', $user)
+			->willReturnCallback(function () use ($payment, &$triggerRef) {
+				$triggerRef = $payment->ref;
+				return 0;
+			});
+		$payment->datepaye = dol_now();
+		$payment->amounts = array($invoice->id => $invoice->total_ttc);
+		$payment->paiementid = dol_getIdFromCode($db, 'LIQ', 'c_paiement', 'code', 'id', 1);
+		$paymentid = $payment->create($user);
+		$this->assertGreaterThan(0, $paymentid, $payment->errorsToString());
+
+		try {
+			$storedPayment = new PaiementFourn($db);
+			$this->assertGreaterThan(0, $storedPayment->fetch($paymentid));
+			$this->assertNotEmpty($payment->ref);
+			$this->assertSame($storedPayment->ref, $payment->ref);
+			$this->assertSame($storedPayment->ref, $triggerRef);
+		} finally {
+			$payment->delete($user, 1);
+		}
 	}
 
 	/**
