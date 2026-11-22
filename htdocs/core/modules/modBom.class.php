@@ -288,16 +288,16 @@ class modBom extends DolibarrModules
 		$keyforalias = 'tl';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		unset($this->export_fields_array[$r]['tl.fk_bom']);
-		
+
 		// Add component product reference and name
 		unset($this->export_fields_array[$r]['tl.fk_product']);
-		
+
 		$this->export_fields_array[$r]['p.ref'] = 'Product Ref';
 		$this->export_fields_array[$r]['p.label'] = 'Product Name';
-		
+
 		$this->export_TypeFields_array[$r]['p.ref'] = 'Text';
 		$this->export_TypeFields_array[$r]['p.label'] = 'Text';
-		
+
 		$this->export_entities_array[$r]['p.ref'] = 'product';
 		$this->export_entities_array[$r]['p.label'] = 'product';
 		$keyforselect = 'bom_bom';
