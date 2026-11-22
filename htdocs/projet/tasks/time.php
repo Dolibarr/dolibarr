@@ -657,7 +657,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 					foreach ($data as $fk_product => $timespent_data) {
 						// Define qty per hour
 						$qtyhour = $timespent_data['timespent'] / 3600;
-						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY'));
 
 						// Set the unit price we want to sell the time, for this user
 						if (getDolGlobalInt('PROJECT_USE_REAL_COST_FOR_TIME_INVOICING')) {
@@ -765,7 +765,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 						} else {
 							$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Date") . ': ' . dol_print_date($object->timespent_date));
 						}
-						$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Duration") . ': ' . convertSecondToTime($object->timespent_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY));
+						$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Duration") . ': ' . convertSecondToTime($object->timespent_duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')));
 					}
 					$arrayoftasks[$object->timespent_id]['user'] = $object->timespent_fk_user;
 					$arrayoftasks[$object->timespent_id]['fk_product'] = $object->timespent_fk_product;
@@ -871,7 +871,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 
 					foreach ($data as $fk_product => $timespent_data) {
 						$qtyhour = $timespent_data['timespent'] / 3600;
-						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY'));
 
 						// Add lines
 						$prodDurationHours = $prodDurationHoursBase;
@@ -1031,7 +1031,7 @@ if ($action == 'confirm_generateinter' && $user->hasRight('fichinter', 'creer'))
 				$ftask->fetch($value['id']);
 				// Define qty per hour
 				$qtyhour = $value['timespent'] / 3600;
-				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY'));
 
 				// Add lines
 				$lineid = $tmpinter->addline($user, $tmpinter->id, $ftask->label . (!empty($value['note']) ? ' - ' . $value['note'] : ''), (int) $value['date'], $value['timespent']);

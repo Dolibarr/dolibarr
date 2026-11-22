@@ -312,8 +312,8 @@ class IntracommReport extends CommonObject
 		$date_time->addChild('date', date('Y-m-d'));
 		$date_time->addChild('time', date('H:i:s'));
 		$party = $envelope->addChild('Party');
-		$party->addAttribute('partyType', $conf->global->INTRACOMMREPORT_TYPE_ACTEUR);
-		$party->addAttribute('partyRole', $conf->global->INTRACOMMREPORT_ROLE_ACTEUR);
+		$party->addAttribute('partyType', getDolGlobalString('INTRACOMMREPORT_TYPE_ACTEUR'));
+		$party->addAttribute('partyRole', getDolGlobalString('INTRACOMMREPORT_ROLE_ACTEUR'));
 		$party->addChild('partyId', $party_id);
 		$party->addChild('partyName', $declarant);
 		$envelope->addChild('softwareUsed', 'Dolibarr');
@@ -330,7 +330,7 @@ class IntracommReport extends CommonObject
 		$functionCode = $function->addChild('functionCode', $mode);
 		$declaration->addChild('declarationTypeCode', getDolGlobalString('INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)));
 		$declaration->addChild('flowCode', ($type == 'introduction' ? 'A' : 'D'));
-		$declaration->addChild('currencyCode', $conf->global->MAIN_MONNAIE);
+		$declaration->addChild('currencyCode', getDolGlobalString('MAIN_MONNAIE'));
 
 		// Add lines of invoices
 		$res = $this->addItemsFact($declaration, $type, $period_reference);

@@ -1734,7 +1734,7 @@ foreach ($listofreferent as $key => $value) {
 				if ($tablename == 'fichinter') {
 					'@phan-var-force FichInter $element';
 					print '<td>';
-					print convertSecondToTime($element->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+					print convertSecondToTime($element->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY'));
 					$total_duration += $element->duration;
 					print '</td>';
 				}
@@ -1980,7 +1980,7 @@ foreach ($listofreferent as $key => $value) {
 				//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
 				// If fichinter add the total_duration
 				if ($tablename == 'fichinter') {
-					print '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+					print '<td class="left">'.convertSecondToTime($total_duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')).'</td>';
 				}
 				// Additional total columns from hooks
 				$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename, 'nbelement' => $i);

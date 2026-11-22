@@ -1135,7 +1135,7 @@ if ($action == 'create') {
 		$note_public = GETPOST("note_public", "alpha");
 	}
 
-	if (!$conf->global->FICHEINTER_ADDON) {
+	if (!getDolGlobalString('FICHEINTER_ADDON')) {
 		dol_print_error($db, $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
 		exit;
 	}
@@ -1680,7 +1680,7 @@ if ($action == 'create') {
 	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 		// Duration in time
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
-		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("HourShort").')</td>';
+		print '<td>'.convertSecondToTime($object->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("HourShort").')</td>';
 		print '</tr>';
 	}
 

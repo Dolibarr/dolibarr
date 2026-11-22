@@ -721,7 +721,7 @@ class BonVirementTest extends CommonClassTest
 			'MAIN_INFO_SOCIETE_COUNTRY' => '1:FR:France',
 		);
 		foreach ($values as $name => $value) {
-			$this->savedConstants[$name] = $conf->global->$name ?? null;
+			$this->savedConstants[$name] = isset($conf->global->$name) ? getDolGlobalString($name) : null;
 			$conf->global->$name = $value;
 		}
 	}

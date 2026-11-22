@@ -925,6 +925,7 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 $textlate = '';
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1025,11 +1026,19 @@ while ($i < $imaxinloop) {
 				} elseif ($key == 'country') {
 					if ($managedfor == 'member') {
 						if (!empty($adherent->country_code)) {
-							print  $langs->trans("Country".$adherent->country_code);
+							if ($showcountrylabelinlist) {
+								print $langs->trans("Country".$adherent->country_code);
+							} else {
+								print picto_from_langcode($adherent->country_code, 'title="'.dolPrintHTMLForAttribute($langs->trans("Country".$adherent->country_code)).'"', 1);
+							}
 						}
 					} else {
 						if (!empty($object->thirdparty->country_code)) {
-							print  $langs->trans("Country".$object->thirdparty->country_code);
+							if ($showcountrylabelinlist) {
+								print $langs->trans("Country".$object->thirdparty->country_code);
+							} else {
+								print picto_from_langcode($object->thirdparty->country_code, 'title="'.dolPrintHTMLForAttribute($langs->trans("Country".$object->thirdparty->country_code)).'"', 1);
+							}
 						}
 					}
 				} elseif ($key == 'town') {
