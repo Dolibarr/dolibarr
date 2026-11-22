@@ -140,7 +140,7 @@ foreach ($filesToProcess as $fileToProcess) {
 				continue;
 			}
 
-			$a = mb_split('=', trim($line), 2);
+			$a = explode('=', trim($line), 2);
 			if (count($a) != 2) {
 				print "File $lSecondaryFile:ERROR: ".trim($line)." in line $cnt.\n";
 				continue;
@@ -195,7 +195,7 @@ foreach ($filesToProcess as $fileToProcess) {
 				continue;
 			}
 
-			$a = mb_split('=', trim($line), 2);
+			$a = explode('=', trim($line), 2);
 			if (count($a) != 2) {
 				print "File $lEnglishFile:ERROR: ".trim($line)." in line $cnt.\n";
 				continue;
@@ -265,7 +265,7 @@ foreach ($filesToProcess as $fileToProcess) {
 				continue;
 			}
 
-			$a = mb_split('=', trim($line), 2);
+			$a = explode('=', trim($line), 2);
 			if (count($a) != 2) {
 				print "File $lPrimaryFile:ERROR: ".trim($line)." in line $cnt.\n";
 				continue;
