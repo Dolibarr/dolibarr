@@ -474,6 +474,9 @@ class Members extends DolibarrApi
 		}
 
 		$member = new Adherent($this->db);
+		if (empty($id) || $id < 1) {
+			throw new RestException(400, 'Member id must be a positive integer');
+		}
 		$result = $member->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
@@ -505,6 +508,9 @@ class Members extends DolibarrApi
 		}
 
 		$member = new Adherent($this->db);
+		if (empty($id) || $id < 1) {
+			throw new RestException(400, 'Member id must be a positive integer');
+		}
 		$result = $member->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
