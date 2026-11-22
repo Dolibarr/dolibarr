@@ -977,13 +977,17 @@ if ($id > 0 || !empty($ref)) {
 							print '</td>';
 
 							print '<td>';
+							// Generate button (autofill picto, before the field): fetches the next serial/lot from the configured addon.
+							if (!empty($conf->use_javascript_ajax)) {
+								print '<button type="button" class="btn-low-emphasis --btn-icon generatedispatchbatch"';
+								print ' data-suffix="'.dol_escape_htmltag($suffix).'"';
+								print ' data-fk-product="'.((int) $objp->fk_product).'"';
+								print ' data-status-batch="'.((int) $objp->tobatch).'"';
+								print ' title="'.dol_escape_htmltag($langs->trans('Generate')).'">';
+								print img_picto($langs->trans('Generate'), 'rightarrow.png');
+								print '</button>';
+							}
 							print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.dol_escape_htmltag(GETPOST('lot_number'.$suffix)).'">';
-							// Generate button: clicking the barcode icon fetches the next serial/lot from the configured addon.
-							print ' <a href="#" class="generatedispatchbatch paddingleft"';
-							print ' data-suffix="'.dol_escape_htmltag($suffix).'"';
-							print ' data-fk-product="'.((int) $objp->fk_product).'"';
-							print ' data-status-batch="'.((int) $objp->tobatch).'"';
-							print ' title="'.dol_escape_htmltag($langs->trans('Generate')).'"><span class="fas fa-barcode"></span></a>';
 							print '</td>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print '<td class="nowraponall">';
