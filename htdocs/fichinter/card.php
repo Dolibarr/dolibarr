@@ -2024,7 +2024,7 @@ if ($action == 'create') {
 					$url_button = array();
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element))),
 						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddTitleLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_title_line&token='.newToken()
@@ -2032,7 +2032,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element))),
 						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
@@ -2040,7 +2040,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TEXT_'.strtoupper($object->element))),
 						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddTextLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_text_line&token='.newToken()
