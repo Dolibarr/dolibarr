@@ -682,7 +682,80 @@ class Evaluation extends CommonObject
 			return 0;
 		}
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'HRM_EVALUATION_UNVALIDATE');
+		$oldstatus = $this->status;
+
+		$this->db->begin();
+
+		$result = $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'HRM_EVALUATION_UNVALIDATE');
+		if ($result > 0) {
+			// The job profile may have been modified while the evaluation was not a draft
+			$result = $this->updateLinesFromJob($user, $notrigger);
+		}
+
+		if ($result > 0) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			$this->status = $oldstatus;
+			return -1;
+		}
+	}
+
+	/**
+	 * Align the lines of the evaluation with the skills currently required by its job profile:
+	 * refresh the required rank of the evaluated skills and add the skills added to the job profile since.
+	 * The ranks already given to the employee are kept, and the lines of skills no longer required are not deleted.
+	 *
+	 * @param	User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int<-1,1>				Return integer <0 if KO, >0 if OK
+	 */
+	public function updateLinesFromJob(User $user, $notrigger = 0)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/skillrank.class.php';
+
+		$skillRank = new SkillRank($this->db);
+		$TRequiredRanks = $skillRank->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $this->fk_job).") AND (objecttype:=:'job')");
+		if (!is_array($TRequiredRanks)) {
+			$this->setErrorsFromObject($skillRank);
+			return -1;
+		}
+
+		if ($this->fetchLines() < 0) {
+			return -1;
+		}
+		$TLinesBySkill = array();
+		foreach ($this->lines as $line) {
+			$TLinesBySkill[(int) $line->fk_skill] = $line;
+		}
+
+		foreach ($TRequiredRanks as $required) {
+			if (isset($TLinesBySkill[(int) $required->fk_skill])) {
+				$line = $TLinesBySkill[(int) $required->fk_skill];
+				if ((int) $line->required_rank == (int) $required->rankorder) {
+					continue;
+				}
+				$line->required_rank = $required->rankorder;
+				$result = $line->update($user, $notrigger);
+			} else {
+				$line = new EvaluationLine($this->db);
+				$line->fk_evaluation = $this->id;
+				$line->fk_skill = $required->fk_skill;
+				$line->rankorder = 0;
+				$line->required_rank = $required->rankorder;
+				$result = $line->create($user, $notrigger);
+				if ($result > 0) {
+					$this->lines[] = $line;
+				}
+			}
+			if ($result <= 0) {
+				$this->setErrorsFromObject($line);
+				return -1;
+			}
+		}
+
+		return 1;
 	}
 
 	/**
