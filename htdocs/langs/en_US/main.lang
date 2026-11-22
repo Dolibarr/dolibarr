@@ -886,6 +886,7 @@ CreateDraft=Create draft
 SetToDraft=Back to draft
 ClickToEdit=Click to edit
 ClickToRefresh=Click to refresh
+ClickToHide=Click to hide
 EditWithEditor=Edit with CKEditor
 EditWithTextEditor=Edit with Text editor
 EditHTML=Edit HTML

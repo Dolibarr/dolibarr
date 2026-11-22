@@ -23,9 +23,7 @@ Dolibarr has a large community ready to help you, free forums and [preferred par
 
 Dolibarr is released under the terms of the GNU General Public License as published by the Free Software Foundation; either Version 3 of the License, or (at your option) any later version (GPL-3+).
 
-See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) file for a full copy of the license.
-
-Other licenses apply for some included dependencies. See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) for a full list.
+See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) file for a full copy of the license. Other licenses apply for some included dependencies. See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) for a full list.
 
 
 ## INSTALLING
@@ -86,7 +84,8 @@ A list of official SaaS offers: https://saas.dolibarr.org
 
 ### On a third-party container deployer
 
-The following providers can run the Dolibarr container for you. "Deploy on ..." opens a page to install Dolibarr, "Go to ..." opens an installation guide.
+The following providers can run the Dolibarr container for you. "Deploy on ..." opens a page to install Dolibarr, "Go to ..." opens an installation guide. Support
+on such providers can't be guraranteed.
 
 | Provider | |
 | :---: | --- |

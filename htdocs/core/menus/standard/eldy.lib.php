@@ -948,7 +948,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				//print $paramkey;
 				if (getDolGlobalString($paramkey)) {
 					$link = "/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
-					$newmenu->add($link, dol_trunc($conf->global->$paramkey, 24));
+					$newmenu->add($link, dol_trunc(getDolGlobalString($paramkey), 24));
 				}
 				$i++;
 			}
@@ -1143,7 +1143,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 							print $menu_array[$i]['prefix'];
 						}
 					}
-					print ucfirst($menu_array[$i]['titre']);
+					print dol_ucfirst($menu_array[$i]['titre']);
 					if ($expandonhover && isset($blockswithsubentries[$i])) {	// Arrow shown at the end of line on the right of the left menu, rotated down when the block is expanded
 						print img_picto('', 'fa-chevron-right', '', 0, 0, 0, '', 'menuexpandarrow');
 					}
@@ -1165,7 +1165,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 							print $menu_array[$i]['prefix'];
 						}
 					}
-					print ucfirst($menu_array[$i]['titre']);
+					print dol_ucfirst($menu_array[$i]['titre']);
 					print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'greyed';
@@ -1197,7 +1197,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					} else {
 						print '<span class="vsmenu" title="'.dolPrintHTMLForAttribute($menu_array[$i]['titre']).'">';
 					}
-					print ucfirst($menu_array[$i]['titre']);
+					print dol_ucfirst($menu_array[$i]['titre']);
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -1696,7 +1696,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=17", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=17", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -1732,7 +1732,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=21", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=21", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
