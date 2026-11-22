@@ -144,15 +144,25 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 			}
 			$disabled = 0;
 		} else {
-			print '<textarea name="line_desc" class="marginrightonly width200" rows="3" id="line_desc"';
 			$disabled = 0;
-			if ($line_type == 'subtotal') {
-				print ' readonly="readonly"';
-				$disabled = 1;
+			if (getDolGlobalString("SUBTOTAL_CAN_USE_LONG_TITLE")) {
+				print '<textarea name="line_desc" class="marginrightonly width200" rows="3" id="line_desc"';
+				if ($line_type == 'subtotal') {
+					print ' readonly="readonly"';
+					$disabled = 1;
+				}
+				print '>';
+				print dolPrintHTMLForTextArea(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description);
+				print '</textarea>';
+			} else {
+				print '<input type="text" name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc" value="';
+				print dolPrintHTMLForAttribute(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, 1).'"';
+				if ($line_type == 'subtotal') {
+					print ' readonly="readonly"';
+					$disabled = 1;
+				}
+				print '>';
 			}
-			print '>';
-			print dol_escape_htmltag(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description);
-			print '</textarea>';
 			if ($line_type == 'title') {
 				$predefinedtitles = $this->getPredefinedTitles();  // @phan-suppress-current-line PhanUndeclaredMethod
 				if (!empty($predefinedtitles)) {
