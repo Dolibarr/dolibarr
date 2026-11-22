@@ -77,39 +77,23 @@ You can use any web server supporting PHP (Apache, Nginx, ...) and a supported d
 
 Dolibarr is also available as a [Docker image](https://hub.docker.com/r/dolibarr/dolibarr). Installation instructions are available [here](https://github.com/Dolibarr/dolibarr-docker).
 
-### Using Easypanel
-
-[Easypanel](https://easypanel.io) is a self-hosted Docker deployment platform, and Dolibarr has a one-click deployment template there.
-
-[![Deploy on Easypanel][easypanel-btn]][easypanel-deploy]
-
-[easypanel-btn]: https://easypanel.io/img/deploy-on-easypanel-40.svg
-[easypanel-deploy]: https://easypanel.io/templates/dolibarr
-
-### Using RepoCloud
-
-[![Deploy on RepoCloud][repocloud-btn]][repocloud-deploy]
-[![Deploy on Railway][railway-btn]][railway-deploy]
-[![Deploy on Elestio][elestio-btn]][elestio-deploy]
-
-[repocloud-btn]: https://d16t0pc4846x52.cloudfront.net/deploylobe.svg
-[repocloud-deploy]: https://repocloud.io/details/Dolibarr/
-[railway-btn]: https://railway.com/button.svg
-[railway-deploy]: https://railway.com/deploy/dolibarr
-[elestio-btn]: https://elest.io/images/logos/deploy-to-elestio-btn.png
-[elestio-deploy]: https://elest.io/open-source/dolibarr
-
-### Using a Simafri managed VPS
-
-[Simafri](https://www.simafri.com) publishes a [step-by-step guide](https://www.simafri.com/en/guides/self-host-dolibarr/) to run the official Docker image on its managed VPS, with MariaDB, a cron container for scheduled jobs and Caddy for HTTPS. The guide then covers password encryption after the first start, backups with `mariadb-dump` and upgrades. You keep full access to the server, while Simafri handles its system updates, monitoring and encrypted nightly backups.
-
-### Using Podway
-
-[Podway](https://podway.io) runs Dolibarr on its own small server, with HTTPS and nightly backups of the database and documents. Podway creates the admin account at setup, so the installer is never open to strangers, and Dolibarr's public modules (sign-up, tickets, payments, API) start turned off. An AI agent on that server, running on your own Claude or Codex plan, can change settings when you ask, read the logs when something breaks, and apply updates with a snapshot first, then check the migration afterwards. [Start Dolibarr on Podway](https://podway.io/start?app=dolibarr&ref=docs-dolibarr).
-
-### Using ready to use SaaS/Cloud offers
+### Using ready to use SaaS/Cloud offers (support, upgrades, backups provided)
 
 If you lack the time to install it yourself, consider exploring commercial 'ready-to-use' Cloud offerings (refer to https://saas.dolibarr.org). Keep in mind that this third option comes with associated costs.
+
+
+### Using a ready to use container providers
+
+The following providers can run the Dolibarr container for you. "Deploy on ..." opens a page to install Dolibarr, "Go to ..." opens a documentation to install it.
+
+| Provider | |
+| :---: | --- |
+| <img src="https://www.google.com/s2/favicons?domain=easypanel.io&sz=64" width="24" height="24" alt="Easypanel"> | [Deploy on Easypanel](https://easypanel.io/templates/dolibarr) |
+| <img src="https://www.google.com/s2/favicons?domain=elest.io&sz=64" width="24" height="24" alt="Elestio"> | [Deploy on Elestio](https://elest.io/open-source/dolibarr) |
+| <img src="https://www.google.com/s2/favicons?domain=podway.io&sz=64" width="24" height="24" alt="Podway"> | [Deploy on Podway](https://podway.io/start?app=dolibarr&ref=docs-dolibarr) |
+| <img src="https://www.google.com/s2/favicons?domain=railway.com&sz=64" width="24" height="24" alt="Railway"> | [Deploy on Railway](https://railway.com/deploy/dolibarr) |
+| <img src="https://www.google.com/s2/favicons?domain=repocloud.io&sz=64" width="24" height="24" alt="RepoCloud"> | [Deploy on RepoCloud](https://repocloud.io/details/Dolibarr/) |
+| <img src="https://www.google.com/s2/favicons?domain=simafri.com&sz=64" width="24" height="24" alt="Simafri"> | [Go to Simafri guide](https://www.simafri.com/en/guides/self-host-dolibarr/) |
 
 
 ## UPGRADING
