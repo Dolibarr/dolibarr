@@ -1262,14 +1262,14 @@ while ($i < $imaxinloop) {
 
 		// Phone
 		if (!empty($arrayfields['u.office_phone']['checked'])) {
-			print '<td class="tdoverflowmax125">'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Phone mobile
 		if (!empty($arrayfields['u.user_mobile']['checked'])) {
-			print '<td class="tdoverflowmax125">'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1325,7 +1325,7 @@ while ($i < $imaxinloop) {
 			} elseif ($obj->ldap_sid) {
 				print '<span class="opacitymedium">'.$langs->trans("DomainUser").'</span>';
 			} else {
-				print '<span class="opacitymedium">'.$langs->trans("InternalUser").'</span>';
+				print '<span class="badgeneutral">'.$langs->trans("Internal").'</span>';
 			}
 			print '</td>';
 			if (!$i) {

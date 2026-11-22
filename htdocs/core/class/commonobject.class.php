@@ -9421,8 +9421,8 @@ abstract class CommonObject
 		if (isset($val['type']) && preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
 			$type = 'link';
 			$stringforoptions = $reg[1].':'.$reg[2];
-			// Special case: Force addition of getnomurlparam1 to -1 for users
-			if ($reg[1] == 'User') {
+			// Special case: Force addition of getnomurlparam1 to -1 for users and members (to show photo)
+			if ($reg[1] == 'User' || $reg[1] == 'Adherent') {
 				$stringforoptions .= ':#getnomurlparam1=-1';
 			}
 			$param['options'] = array($stringforoptions => $stringforoptions);

@@ -475,7 +475,8 @@ $sql .= " d.note_private, d.note_public, d.import_key,";
 $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
 $sql .= " t.libelle as type, t.subscription, t.amount, t.minimumamount,";
-$sql .= " state.code_departement as state_code, state.nom as state_name";
+$sql .= " state.code_departement as state_code, state.nom as state_name,";
+$sql .= " country.code as country_code";
 
 if (isModEnabled('mailing')) {
 	$sql .= ", (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = d.email) as unsubscribed";
@@ -1625,8 +1626,8 @@ while ($i < $imaxinloop) {
 		}
 		// Phone pro
 		if (!empty($arrayfields['d.phone']['checked'])) {
-			print '<td class="nocellnopadd">';
-			print dol_print_phone($obj->phone);
+			print '<td class="nowraponall tdoverflowmax150">';
+			print dol_print_phone($obj->phone, $obj->country_code, 0, $obj->socid, 'AC_TEL', ' ', 'phone', '', 0, '', 2);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1634,8 +1635,8 @@ while ($i < $imaxinloop) {
 		}
 		// Phone perso
 		if (!empty($arrayfields['d.phone_perso']['checked'])) {
-			print '<td class="nocellnopadd">';
-			print dol_print_phone($obj->phone_perso);
+			print '<td class="nowraponall tdoverflowmax150">';
+			print dol_print_phone($obj->phone_perso, $obj->country_code, 0, $obj->socid, 'AC_TEL', ' ', 'phone', '', 0, '', 2);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1643,8 +1644,8 @@ while ($i < $imaxinloop) {
 		}
 		// Phone mobile
 		if (!empty($arrayfields['d.phone_mobile']['checked'])) {
-			print '<td class="nocellnopadd">';
-			print dol_print_phone($obj->phone_mobile);
+			print '<td class="nowraponall tdoverflowmax150">';
+			print dol_print_phone($obj->phone_mobile, $obj->country_code, 0, $obj->socid, 'AC_TEL', ' ', 'mobile', '', 0, '', 2);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

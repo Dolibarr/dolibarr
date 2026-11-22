@@ -975,7 +975,7 @@ input.pageplusone {
 	opacity: 0;
 }
 .spantitle {
-	opacity: 0.6;
+	opacity: 0.7;
 	font-size: 0.95em;
 }
 .noopacity {
