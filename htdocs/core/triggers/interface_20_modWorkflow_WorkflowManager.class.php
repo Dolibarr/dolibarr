@@ -6,6 +6,7 @@
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -481,6 +482,15 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						$this->setErrorsFromObject($order);
 						return $ret;
 					}
+					// Ids of the lines of this order. A shipment may also carry lines of another order of the same customer
+					// (or be linked to several orders): only its lines that fulfil a line of this order are counted.
+					$orderlineids = array();
+					if (is_array($order->lines)) {
+						foreach ($order->lines as $orderline) {
+							$orderlineids[(int) $orderline->id] = (int) $orderline->id;
+						}
+					}
+
 					//Build array of quantity shipped by product for an order
 					if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
 						foreach ($order->linkedObjects as $type => $shipping_array) {
@@ -494,6 +504,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 								}
 
 								foreach ($shipping->lines as $shippingline) {
+									if (empty($orderlineids[(int) $shippingline->fk_elementdet])) {
+										continue;	// Line of another order, or free line: it ships nothing of this order
+									}
 									if (isset($qtyshipped[$shippingline->fk_product])) {
 										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
 									} else {
@@ -569,6 +582,15 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						return $ret;
 					}
 
+					// Ids of the lines of this purchase order. A reception may also carry lines of another purchase order of the
+					// same supplier (or be linked to several orders): only its lines that receive a line of this order are counted.
+					$orderlineids = array();
+					if (is_array($order->lines)) {
+						foreach ($order->lines as $orderline) {
+							$orderlineids[(int) $orderline->id] = (int) $orderline->id;
+						}
+					}
+
 					// Build array of quantity received by product for a purchase order
 					if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
 						foreach ($order->linkedObjects as $type => $shipping_array) {
@@ -584,6 +606,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 								}
 
 								foreach ($shipping->lines as $shippingline) {
+									if (empty($orderlineids[(int) $shippingline->fk_elementdet])) {
+										continue;	// Line of another purchase order, or free line: it receives nothing of this order
+									}
 									if (isset($qtyshipped[$shippingline->fk_product])) {
 										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
 									} else {

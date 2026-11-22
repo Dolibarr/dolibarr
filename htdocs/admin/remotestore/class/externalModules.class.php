@@ -470,7 +470,7 @@ class ExternalModules
 		$this->sortby = $this->cleanSortBy($options['sortby'] ?? '');
 		$tmparray = explode('_', $this->sortby);
 		$sortfield = $tmparray[0];
-		$sortorder = $tmparray[1];
+		$sortorder = ($tmparray[1] == 'asc' ? 'asc' : 'desc');
 
 		// Length of $search must be at least 2 characters
 		if (!empty($this->search) && strlen(str_replace(' ', '', (string) $this->search)) < 2) {

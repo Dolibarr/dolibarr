@@ -3379,7 +3379,7 @@ class ExtraFields
 			return empty($v);
 		}
 		if ($type == 'link') {
-			return ($v == '-1');
+			return in_array((string) $v, array('-1', '0'), true);
 		}
 		if ($type == 'sellist') {
 			return ($v == '0');

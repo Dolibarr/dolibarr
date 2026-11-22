@@ -4424,7 +4424,7 @@ class lessc_parser
 				}
 			}
 
-			$tok = $m[2];
+			$tok = (string) $m[2];
 
 			$this->count -= strlen($tok);
 			if ($tok == $end) {
