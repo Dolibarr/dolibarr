@@ -50,7 +50,7 @@ These principles must be followed even before reviewing specific task details. V
 1.  **PHP version:** 7.2+
 2.  **Action/View Separation:** Always clearly separate page action logic (executed on POST) from pure rendering (the HTML view).
 
----
+***
 
 ## Workflow and Tasks Guidance
 
@@ -151,7 +151,7 @@ Before proposing code:
 1.  **Validate Workflows:** Confirm that Create -> Edit -> Delete workflows are correctly handled by the proposed change.
 2.  **Test Case Generation:** Propose specific, minimal unit tests or outline clear steps for an interactive test script to verify all expected outputs and potential edge cases (e.g., null inputs, permissions failure).
 
----
+***
 
 ## Comprehensive Reference Material [Reference]
 
@@ -173,6 +173,8 @@ This section contains detailed standards and constants for reference only. Do no
 ### Core Dolibarr Patterns
 *   **Hooks:** The standard pattern remains: `$hookmanager->executeHooks('actionName', $parameters, $object, $action);`
 *   **Language Keys:** Use PascalCase (e.g., `MyModuleLabel`) for consistency across all locales.
+*   **Functions instead of closures:** To factorize code, declare a normal named function (in a `lib/*.lib.php` file of the module, with its PHPDoc) and call it. Do not use closures (`$myfunc = function (...) use (...) {...}`) or arrow functions for this; use `global $langs, $db, ...` inside the function when needed.
+*   **Lazy loading of lang files:** Load a lang file that is needed only to show an error (for example `errors`) only in the code path that builds the error message (`$langs->load("errors");` just before `$langs->trans("ErrorXxx")`), not at the top of the page.
 *   **Global variables**: Dolibarr uses globals like `$db`, `$conf`, `$lang`, `$user`. Do not remove these without understanding the architecture
 
 
