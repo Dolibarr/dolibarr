@@ -103,6 +103,10 @@ Dolibarr is also available as a [Docker image](https://hub.docker.com/r/dolibarr
 
 [Simafri](https://www.simafri.com) publishes a [step-by-step guide](https://www.simafri.com/en/guides/self-host-dolibarr/) to run the official Docker image on its managed VPS, with MariaDB, a cron container for scheduled jobs and Caddy for HTTPS. The guide then covers password encryption after the first start, backups with `mariadb-dump` and upgrades. You keep full access to the server, while Simafri handles its system updates, monitoring and encrypted nightly backups.
 
+### Using Podway
+
+[Podway](https://podway.io) runs Dolibarr on its own small server, with HTTPS and nightly backups of the database and documents. Podway creates the admin account at setup, so the installer is never open to strangers, and Dolibarr's public modules (sign-up, tickets, payments, API) start turned off. An AI agent on that server, running on your own Claude or Codex plan, can change settings when you ask, read the logs when something breaks, and apply updates with a snapshot first, then check the migration afterwards. [Start Dolibarr on Podway](https://podway.io/start?app=dolibarr&ref=docs-dolibarr).
+
 ### Using ready to use SaaS/Cloud offers
 
 If you lack the time to install it yourself, consider exploring commercial 'ready-to-use' Cloud offerings (refer to https://saas.dolibarr.org). Keep in mind that this third option comes with associated costs.
