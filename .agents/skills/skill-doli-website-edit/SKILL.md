@@ -44,6 +44,7 @@ UPDATE llx_website_page SET content = '...new html...' WHERE rowid = <pageid>;
 * The `type_container` column can be `page` (common page), `banner` if this is just a part of a page included into a main page, `blogpost` if the page is a news article (fulle page or included into another page),
   or `library` if page contains only PHP functions, or `setup` for a page never shown to visitor but used to offer a form to setup the website, or `other` (usually a part of page included into a main `page` type page)
 * The content of each page must be organized using `<section conteneditable="true" id="a unique id">` tags to separate each independant block of content.
+* When generating the text of an article to publish (for example a `blogpost`), add a few emojis to make it livelier (a few only, related to the topic, not one per sentence).
 
 
 ## Regenerating the .tpl.php file
@@ -87,3 +88,10 @@ After an edit, check that:
 3. The previous version exists as `page<pageid>.tpl.php.v<TIMESTAMP>`.
 
 If the site is served through the alias/container mode, also check that the alias file `documents/website/<site-ref>/<pageurl>.php` still points to the right tpl file (it should not need to be regenerated when only the content changes).
+
+
+## Saving website as a template in GIT sources
+
+When saving a website as a template into the sources of the git repository, the content (the columns) of the table `llx_website_page` are saved
+as SQL INSERT instructions int file doctemplates/websites/website_template-<websitekey>/website_pages.sql. The content of the directories medias/(image|js)/websitekey is saved into doctemplates/websites/website_template-<websitekey>/medias
+and all the .html/.txt/.php files that are not pages are saved into doctemplates/websites/website_template-<websitekey>/containers/

@@ -13,7 +13,7 @@ triggers:
   - test script
   - tear down
   - clean up test
-  - interactive test
+  - interactive test  
 ---
 
 # Dolibarr Interactive Test Skill
