@@ -172,7 +172,7 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
-$upload_dir 		= $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
+$upload_dir 		= getMultidirOutput($object, 'societe');
 
 // Security check
 $result = restrictedArea($user, 'societe', $object->id, '&societe', '', 'fk_soc', 'rowid', 0);

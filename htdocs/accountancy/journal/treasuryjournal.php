@@ -818,7 +818,7 @@ if ($resql) {
 				// Payment loan
 				//------------------------------------------
 				$sql = "SELECT l.rowid, l.capital AS loan_capital, l.accountancy_account_capital, l.accountancy_account_interest, l.accountancy_account_insurance, l.label,";
-				$sql .= " pl.amount_capital, pl.amount_interest, pl.amount_insurance,";
+				$sql .= " pl.rowid AS payment_id, pl.amount_capital, pl.amount_interest, pl.amount_insurance,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_loan as pl";
 				$sql .= " INNER JOIN ".$db->prefix()."loan as l ON pl.fk_loan = l.rowid";
@@ -848,10 +848,15 @@ if ($resql) {
 					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_LOAN_REF_PREFIX', 'L');
 
 					while ($obj = $db->fetch_object($resql)) {
-						$object_key = $obj->bu_type.'_'.$obj->rowid;
+						// One object per loan payment, not per loan: each payment has its own split between capital,
+						// interest and insurance, and several payments of a loan can be in the same journal
+						$object_key = $obj->bu_type.'_'.$obj->payment_id;
 
 						// Add object in payment
 						$payment_amount = $obj->amount_capital + $obj->amount_interest + $obj->amount_insurance;
+						if (empty($payment_amount)) {
+							continue;	// Nothing to record
+						}
 						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
 							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
 								'amount' => -$payment_amount,
@@ -866,39 +871,33 @@ if ($resql) {
 							$tabobject[$object_key] = array(
 								'id' => $obj->rowid,
 								'ref' => $prefix_ref.$obj->rowid,
-								'total_ht' => -$obj->loan_capital,
-								'total_ttc' => -$obj->loan_capital,
+								// The object is the payment: its total is the amount paid (not the loan capital)
+								'total_ht' => -$payment_amount,
+								'total_ttc' => -$payment_amount,
 								'url' => $static_loan->getNomUrl(1),
 								'operations' => array(),
 								'vats' => array(),
 							);
 						}
 
-						// Add amount for the accountancy code
+						// Add the amount of each part of the payment on its accountancy code (added, in case two parts use the same account)
 						$accountancy_account_capital = !empty($obj->accountancy_account_capital) ? $obj->accountancy_account_capital : $account_pay_loan_capital;
-						$tabobject[$object_key]['operations'][$accountancy_account_capital] = array(
-							// virtual total = loan_capital * amount_capital / payment_amount
-							'total_ht' => -($obj->loan_capital * $obj->amount_capital / $payment_amount),
-							'label' => $obj->label.' '.$langs->trans('LoanCapital'),
-						);
-
-						// Add amount for the accountancy code
 						$accountancy_account_interest = !empty($obj->accountancy_account_interest) ? $obj->accountancy_account_interest : $account_pay_loan_interest;
-						$tabobject[$object_key]['operations'][$accountancy_account_interest] = array(
-							// virtual total = loan_capital * amount_interest / payment_amount
-							'total_ht' => -($obj->loan_capital * $obj->amount_interest / $payment_amount),
-							'label' => $obj->label.' '.$langs->trans('Interest'),
-						);
-
-						// 526,23 = 569,74 * x / 15 000,00
-
-						// Add amount for the accountancy code
 						$accountancy_account_insurance = !empty($obj->accountancy_account_insurance) ? $obj->accountancy_account_insurance : $account_pay_loan_insurance;
-						$tabobject[$object_key]['operations'][$accountancy_account_insurance] = array(
-							// virtual total = loan_capital * amount_insurance / payment_amount
-							'total_ht' => -($obj->loan_capital * $obj->amount_insurance / $payment_amount),
-							'label' => $obj->label.' '.$langs->trans('Insurance'),
+						$parts = array(
+							array($accountancy_account_capital, $obj->amount_capital, $langs->trans('LoanCapital')),
+							array($accountancy_account_interest, $obj->amount_interest, $langs->trans('Interest')),
+							array($accountancy_account_insurance, $obj->amount_insurance, $langs->trans('Insurance')),
 						);
+						foreach ($parts as $part) {
+							if (!isset($tabobject[$object_key]['operations'][$part[0]])) {
+								$tabobject[$object_key]['operations'][$part[0]] = array(
+									'total_ht' => 0,
+									'label' => $obj->label.' '.$part[2],
+								);
+							}
+							$tabobject[$object_key]['operations'][$part[0]]['total_ht'] -= $part[1];
+						}
 					}
 				} else {
 					dol_print_error($db);
@@ -1186,7 +1185,7 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 			}
 
 			// Operations
-			$payment_total_vat = (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT');
+			$payment_total_vat = (empty($objectInfos['total_ttc']) ? 0.0 : (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT'));	// No division by zero for an object with a total of 0
 			$payment_total_ht = $object_data['amount'] - $payment_total_vat;
 			$total_operation = 0;
 			$idx = 1;
@@ -1209,7 +1208,7 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 					}
 					$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
 					if ($idx < $nb_operation) {
-						$amount = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
+						$amount = (empty($objectInfos['total_ht']) ? 0 : price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT'));
 						$total_operation += (float) $amount;
 					} else {
 						$amount = $payment_total_ht - $total_operation;
@@ -1471,7 +1470,7 @@ if (empty($action) || $action == 'view') {
 			}
 
 			// Operations
-			$payment_total_vat = (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT');
+			$payment_total_vat = (empty($objectInfos['total_ttc']) ? 0.0 : (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT'));	// No division by zero for an object with a total of 0
 			$payment_total_ht = $object_data['amount'] - $payment_total_vat;
 			$total_operation = 0;
 			$idx = 1;
@@ -1487,7 +1486,7 @@ if (empty($action) || $action == 'view') {
 				$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
 				if (!empty($operation['total_ht'])) {
 					if ($idx < $nb_operation) {
-						$value = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
+						$value = (empty($objectInfos['total_ht']) ? 0 : price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT'));
 						$total_operation += (float) $value;
 					} else {
 						$value = $payment_total_ht - $total_operation;
