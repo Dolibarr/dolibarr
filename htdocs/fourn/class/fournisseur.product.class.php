@@ -9,6 +9,7 @@
  * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -471,7 +472,11 @@ class ProductFournisseur extends Product
 				$multicurrency_tx = 1;
 			}
 			if (empty($multicurrency_buyprice)) {
-				$multicurrency_buyprice = 0;
+				// No price in currency was given: the caller only knows the price in the currency of the company (the REST
+				// API with its default values, for example). The price in currency is then deduced from this price, which
+				// is already excluding tax here, instead of rewriting the price with 0.
+				$multicurrency_buyprice = (float) $buyprice * $multicurrency_tx;
+				$multicurrency_price_base_type = 'HT';
 			}
 			if ($multicurrency_price_base_type == 'TTC') {
 				$ttx = $tva_tx;
