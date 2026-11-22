@@ -286,7 +286,22 @@ if (empty($reshook) && !empty($massaction)) {
 	}
 
 	if (isset($percent)) {
+		$permissiontoupdateall = $user->hasRight('agenda', 'allactions', 'create');
+		$permissiontoupdatemyown = $user->hasRight('agenda', 'myactions', 'create');
 		foreach ($toselect as $toselectid) {
+			// Check user has the permission to change the status of this event
+			// Permission is the same than the one required to edit an event on the event card page.
+			$canupdatepercent = $permissiontoupdateall;
+			if (empty($canupdatepercent)) {
+				$resultfetch = $object->fetch($toselectid);
+				if ($resultfetch > 0 && ($object->authorid == $user->id || $object->userownerid == $user->id) && $permissiontoupdatemyown) {
+					$canupdatepercent = 1;
+				}
+			}
+			if (empty($canupdatepercent)) {
+				setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
+				continue;
+			}
 			$result = $object->updatePercent($toselectid, $percent);
 			if ($result < 0) {
 				dol_print_error($db);
@@ -978,7 +993,7 @@ if (!empty($arrayfields['a.fk_element']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

@@ -291,6 +291,7 @@ class HookManager
 		// Init return properties
 		$localResPrint = '';
 		$localResArray = array();
+		$this->resPrint = '';	// Hooks must not see the output of a previous call
 
 		$this->resNbOfHooks = 0;
 
@@ -404,6 +405,9 @@ class HookManager
 							}
 						}
 					}
+
+					// Give the result so far to the next hooks, so they can complete it (example: setContentSecurityPolicy)
+					$this->resPrint = $localResPrint;
 
 					//print "After hook context=".$context." ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
 

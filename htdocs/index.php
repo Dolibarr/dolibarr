@@ -369,6 +369,14 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
+	// Number of interventions to validate or process
+	if (isModEnabled('intervention') && !getDolGlobalString('MAIN_DISABLE_BLOCK_FICHINTER') && $user->hasRight('ficheinter', 'lire') && !$user->socid) {
+		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+		$board = new Fichinter($db);
+		$dashboardlines[$board->element.'_draft'] = $board->load_board($user, 'draft');
+		$dashboardlines[$board->element.'_validated'] = $board->load_board($user, 'validated');
+	}
+
 	if (isModEnabled('mrp')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_MRP')) {
 		include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 		$board = new Mo($db);
@@ -483,6 +491,12 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				'globalStatsKey' => 'holidays',
 				'stats' =>
 					array('holiday'),
+			),
+		'intervention' =>
+			array(
+				'lang' => 'interventions',
+				'groupName' => 'Interventions',
+				'stats' => array('fichinter_draft', 'fichinter_validated'),
 			),
 		'cubes' =>
 			array(
@@ -610,6 +624,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					'member' => dol_buildpath('/adherents/card.php?action=create', 1),
 					'expensereport' => dol_buildpath('/expensereport/card.php?action=create', 1),
 					'holiday' => dol_buildpath('/holiday/card.php?action=create', 1),
+					'intervention' => dol_buildpath('/fichinter/card.php?action=create', 1),
 					'cubes' => dol_buildpath('/mrp/mo_card.php?action=create', 1),
 
 				);

@@ -331,8 +331,10 @@ function dol_print_object_info($object, $usetable = 0)
 		if (!empty($object->date_approve) || !empty($object->date_approval)) {
 			print ' - ';
 			print '<div class="valignmiddle inline-block">';
+			// date_approve and date_approval are not defined in all Dolibarr objects @phan-suppress-next-line PhanUndeclaredProperty
 			print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
+				// date_approve and date_approval are not defined in all Dolibarr objects @phan-suppress-next-line PhanUndeclaredProperty
 				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 			}
 			print '</div>';
@@ -383,7 +385,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Signature
-	if (!empty($object->user_signature) || !empty($object->user_signature_id) || !empty($object->date_signature)) {
+	if (!empty($object->user_signature_id) || !empty($object->date_signature)) {
 		'@phan-var-force Propal $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
@@ -394,20 +396,14 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_signature)) {
-			if ($object->user_signature->id) {
-				print $object->user_signature->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans('Unknown');
-			}
+		$userstatic = new User($db);
+		if (!empty($object->user_signature_id)) {
+			$userstatic->fetch($object->user_signature_id);
+		}
+		if ($userstatic->id) {
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
-			$userstatic = new User($db);
-			$userstatic->fetch($object->user_signature_id ? $object->user_signature_id : $object->user_signature);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans('Unknown');
-			}
+			print $langs->trans('Unknown');
 		}
 
 		if (!empty($object->date_signature)) {
@@ -564,7 +560,9 @@ function dolAddEmailTrackId($email, $trackingid)
  */
 function isValidMailDomain($mail)
 {
-	list($user, $domain) = explode("@", $mail, 2);
+	$tmparray = explode("@", $mail, 2);
+	$user = $tmparray[0];
+	$domain = $tmparray[1];
 	return ($domain ? isValidMXRecord($domain) : 0);
 }
 
@@ -643,7 +641,7 @@ function isValidVATID($company)
 		elseif ($vatprefix == 'MC') $vatprefix = 'FR';	// Monaco is using french VAT numbers
 		else $vatprefix = preg_quote($vatprefix, '/');*/
 		$vatprefix = '[a-zA-Z][a-zA-Z]';
-		if (!preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', $company->tva_intra))) {
+		if (!preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', (string) $company->tva_intra))) {
 			return 0;
 		}
 	}
@@ -2116,7 +2114,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$module = 'commande';
 		$myobject = 'commande';
 	} elseif ($objecttype == 'mailing') {
-		$langs->load('mailing');
+		$langs->load('mails');
 		$classpath = 'comm/mailing/class';
 	} elseif ($objecttype == 'propal') {
 		$langs->load('propal');

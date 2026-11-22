@@ -146,7 +146,8 @@ foreach ($filesToProcess as $fileToProcess) {
 				continue;
 			}
 
-			list($key, $value) = $a;
+			$key = $a[0];
+			$value = $a[1];
 
 			// key is redundant
 			if (array_key_exists($key, $aSecondary)) {
@@ -200,7 +201,8 @@ foreach ($filesToProcess as $fileToProcess) {
 				continue;
 			}
 
-			list($key, $value) = $a;
+			$key = $a[0];
+			$value = $a[1];
 
 			// key is redundant
 			if (array_key_exists($key, $aEnglish)) {
@@ -269,7 +271,8 @@ foreach ($filesToProcess as $fileToProcess) {
 				continue;
 			}
 
-			list($key, $value) = $a;
+			$key = $a[0];
+			$value = $a[1];
 
 			// key is redundant
 			if (array_key_exists($key, $aPrimary)) {

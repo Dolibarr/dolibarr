@@ -386,7 +386,7 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t ON t.fk_projet = p.rowid";
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype = 'task')";
 }
@@ -394,13 +394,17 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 if ($search_project_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ecp ON ecp.element_id = p.rowid AND ecp.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttype))).") AND ecp.fk_socpeople = ".((int) $search_project_user);
 }
 if ($search_task_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ect";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ect ON ect.element_id = t.rowid AND ect.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listoftaskcontacttype))).") AND ect.fk_socpeople = ".((int) $search_task_user);
 }
-$sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND p.entity IN (".getEntity('project').')';
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+$sql .= " WHERE p.entity IN (".getEntity('project').')';
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
 }
@@ -412,7 +416,12 @@ if ($socid) {
 	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
 if ($search_project_ref) {
-	$sql .= natural_search('p.ref', $search_project_ref);
+	// When the project label column is not displayed, the project label is shown under the project ref, so we search into both
+	if (empty($arrayfields['p.title']['checked'])) {
+		$sql .= natural_search(array('p.ref', 'p.title'), $search_project_ref);
+	} else {
+		$sql .= natural_search('p.ref', $search_project_ref);
+	}
 }
 if ($search_project_title) {
 	$sql .= natural_search('p.title', $search_project_title);
@@ -474,12 +483,6 @@ if ($search_projectstatus >= 0) {
 	} else {
 		$sql .= " AND p.fk_statut = ".((int) $search_projectstatus);
 	}
-}
-if ($search_project_user > 0) {
-	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".((int) $search_project_user);
-}
-if ($search_task_user > 0) {
-	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $search_task_user);
 }
 if ($search_task_status > -1) {
 	$sql .= " AND t.fk_statut = ".((int) $search_task_status);
@@ -1340,10 +1343,15 @@ while ($i < $imaxinloop) {
 			}
 			// Project ref
 			if (!empty($arrayfields['p.ref']['checked'])) {
-				print '<td class="nowraponall tdoverflowmax150">';
+				// When the project label column is not displayed, we show the project label under the project ref
+				$showprojectlabelunderref = (empty($arrayfields['p.title']['checked']) && (string) $obj->projecttitle !== '');
+				print '<td class="nowraponall tdoverflowmax150'.($showprojectlabelunderref ? ' tdlineheightsmall' : '').'">';
 				print $projectstatic->getNomUrl(1, 'task');
 				if ($projectstatic->hasDelay()) {
 					print img_warning("Late");
+				}
+				if ($showprojectlabelunderref) {
+					print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->projecttitle).'"><span class="opacitymedium">'.dolPrintLabel($obj->projecttitle).'</span></div>';
 				}
 				print '</td>';
 				if (!$i) {
@@ -1353,7 +1361,7 @@ while ($i < $imaxinloop) {
 			// Project title
 			if (!empty($arrayfields['p.title']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->projecttitle).'">';
-				print dol_escape_htmltag($obj->projecttitle);
+				print '<span class="opacitymedium">'.dol_escape_htmltag($obj->projecttitle).'</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

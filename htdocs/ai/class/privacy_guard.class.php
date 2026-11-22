@@ -441,7 +441,9 @@ class PrivacyGuard
 		}
 		// Right to left, so the offsets of the earlier codes stay valid.
 		foreach (array_reverse($m) as $hit) {
-			list($code, $pos) = $hit[0];
+			$tmparray = $hit[0];
+			$code = $tmparray[0];
+			$pos = $tmparray[1];
 			$tail = $hit[1][0].(isset($hit[2]) ? $hit[2][0] : '');
 			$start = max(0, $pos - 30);
 			$before = substr($text, $start, $pos - $start);

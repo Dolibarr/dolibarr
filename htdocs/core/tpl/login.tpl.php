@@ -150,8 +150,17 @@ $php_self = preg_replace('/(&amp;)+/', '&amp;', $php_self);
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array(
-	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
+	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(getDolVersionForUrl()))
 );
+
+// Javascript code for the login with a passkey. Not while a two-factor authentication code is asked.
+require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+// The button is not shown if the setup is wrong: the reason is shown only to administrators on the setup page, not to visitors.
+$passkeytotppending = !empty($_SESSION['dol_totp_pending']);
+$passkeyenabled = (passkeyIsEnabled() && !empty($conf->use_javascript_ajax) && !$passkeytotppending && passkeyCheckSetup() === '');
+if ($passkeyenabled) {
+	$arrayofjs[] = '/core/js/passkey.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(getDolVersionForUrl()));
+}
 
 // We display application title
 $application = constant('DOL_APPLICATION_TITLE');
@@ -335,7 +344,7 @@ if ($totppending) {
 	} ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
-<input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150 input-nobottom" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" autocapitalize="off" autocomplete="on" spellcheck="false" />
+<input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150 input-nobottom" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" autocapitalize="off" autocomplete="<?php echo $passkeyenabled ? 'username webauthn' : 'on'; ?>" spellcheck="false" />
 </div>
 </div>
 
@@ -543,6 +552,20 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 	print '<div class="loginbuttonexternal">';
 	print img_picto('', 'google', 'class="pictofixedwidth"');
 	print $langs->trans("LoginWith", "Google");
+	print '</div>';
+	print '</a>';
+	print '</div>';
+}
+
+if ($passkeyenabled) {
+	$langs->load("users");
+
+	// The button is managed by core/js/passkey.js. It is hidden if the browser does not support passkeys.
+	echo '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
+	print '<a class="alogin" href="#" id="passkeylogin" data-url="'.dol_escape_htmltag(DOL_URL_ROOT.'/core/ajax/passkeylogin.php').'" data-msg-error="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyLoginFailed")).'">';
+	print '<div class="loginbuttonexternal">';
+	print img_picto('', 'fa-fingerprint', 'class="pictofixedwidth"');
+	print $langs->trans("LoginWithPasskey");
 	print '</div>';
 	print '</a>';
 	print '</div>';

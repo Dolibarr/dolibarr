@@ -317,14 +317,14 @@ if ($object->status == $object::STATUS_DRAFT) {
 }
 
 // Show the timezone used to show dates and hours
-print '<div class="center opacitymedium" id="bookcaltimezone">'.img_picto('', 'fa-globe', 'class="pictofixedwidth"').$langs->trans("BookCalTimezoneOfDates", dolPrintLabel(bookcalGetTimezoneLabel($tzvisitor))).'</div>';
+print '<div class="center opacitymedium marginbottomonly" id="bookcaltimezone">'.img_picto('', 'fa-globe', 'class="pictofixedwidth"').$langs->trans("BookCalTimezoneOfDates", dolPrintLabel(bookcalGetTimezoneLabel($tzvisitor))).'</div>';
 
 // Detect the timezone of the visitor and reload the page with it if it differs from the server timezone
 if ($tzparam === '' && empty($action)) {
 	print '<script>
 	try {
 		var bookcaltz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		if (bookcaltz && bookcaltz != "'.dol_escape_js($tzvisitor).'") {
+		if (bookcaltz && bookcaltz != \''.dol_escape_js($tzvisitor).'\') {
 			var bookcalurl = new URL(window.location.href);
 			bookcalurl.searchParams.set("tz", bookcaltz);
 			window.location.replace(bookcalurl.toString());
@@ -600,7 +600,7 @@ if ($action == 'afteradd') {
 					action: "verifyavailability",
 					id: '.((int) $id).',
 					datetocheck: $(this).children("div").data("datetime"),
-					tz: "'.dol_escape_js($tzvisitor).'",
+					tz: \''.dol_escape_js($tzvisitor).'\',
 					token: "'.currentToken().'",
 				}
 			}).done(function (data) {

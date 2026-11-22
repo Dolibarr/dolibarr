@@ -445,6 +445,7 @@ class Cronjob extends CommonObject
 		$sql .= "unitfrequency,";
 		$sql .= "frequency,";
 		$sql .= "status,";
+		$sql .= "email_alert,";
 		$sql .= "fk_user_author,";
 		$sql .= "fk_user_mod,";
 		$sql .= "note,";
@@ -475,6 +476,7 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->unitfrequency) ? 'NULL' : "'".$this->db->escape($this->unitfrequency)."'").",";
 		$sql .= " ".(!isset($this->frequency) ? '0' : ((int) $this->frequency)).",";
 		$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
+		$sql .= " ".(!isset($this->email_alert) ? 'NULL' : "'".$this->db->escape($this->email_alert)."'").",";
 		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
 		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
 		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'").",";
@@ -1419,7 +1421,12 @@ class Cronjob extends CommonObject
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob";
-			$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
+			if (getDolGlobalInt('CRON_DISABLE_AUTO_UNLOCK')) {
+				// Keep the job locked (no automatic rerun), only record the error
+				$sql .= " SET lastoutput = '".$dbs->escape($lastoutput)."'";
+			} else {
+				$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
+			}
 			$sql .= " WHERE rowid = ".((int) $cronjobid)." AND processing = 1 AND datelastresult IS NULL";
 			$dbs->query($sql);
 		});

@@ -481,6 +481,16 @@ if ($action == 'set' && $user->admin) {
 				dol_print_error($db);
 			}
 		}
+		// Warn when the activated module, or one of its dependencies, must be configured to work
+		if (!empty($resarray['needsetup'])) {
+			foreach ($resarray['needsetup'] as $modulelabel) {
+				$msg = $langs->trans('WarningModuleNeedSetup', $modulelabel, '{s1}');
+				$msg = str_replace('{s1}', img_picto('', 'setup'), $msg);
+				// Add an empty line to separate the message from the previous warnings shown into the same box
+				$msg = (empty($_SESSION['dol_events']['warnings']) ? '' : '<br>').$msg;
+				setEventMessages($msg, null, 'warnings');
+			}
+		}
 	}
 	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	exit;
@@ -1288,6 +1298,18 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 								}
 							}
 						}
+					}
+				}
+				// Warn when enabling this module will disable other enabled modules declared in conflict with it
+				if (!empty($objMod->conflictwith) && is_array($objMod->conflictwith)) {
+					$conflictingmodulesenabled = array();
+					foreach ($objMod->conflictwith as $conflictmodname) {
+						if (getDolGlobalString('MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', $conflictmodname)))) {
+							$conflictingmodulesenabled[] = (empty($modules[$conflictmodname]) ? $conflictmodname : $modules[$conflictmodname]->getName());
+						}
+					}
+					if (!empty($conflictingmodulesenabled)) {
+						$warningmessage .= ($warningmessage ? "\n\n" : "").$langs->transnoentitiesnoconv("WarningModuleConflictWillBeDisabled", $objMod->getName(), implode(', ', $conflictingmodulesenabled));
 					}
 				}
 

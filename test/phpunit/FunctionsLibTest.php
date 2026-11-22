@@ -1809,7 +1809,8 @@ class FunctionsLibTest extends CommonClassTest
 	public function testVerifCond()
 	{
 		foreach ($this->verifCondDataProvider() as $case) {
-			list($cond, $expected) = $case;
+			$cond = $case[0];
+			$expected = $case[1];
 			if ($expected) {
 				$this->assertTrue(verifCond($cond));
 			} else {
