@@ -6864,6 +6864,9 @@ class Product extends CommonObject
 		}
 		// Include reception lines
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+			// Same option as the supplier order side above: both halves of the subtraction must run on the
+			// same population of supplier orders, otherwise orders are counted while their receptions are
+			// not and the virtual stock comes out too high. The historical default of this side is kept.
 			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '4');
 			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
