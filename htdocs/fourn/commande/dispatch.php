@@ -976,7 +976,7 @@ if ($id > 0 || !empty($ref)) {
 
 							print '</td>';
 
-							print '<td>';
+							print '<td class="nowraponall">';
 							// Generate button (autofill picto, before the field): fetches the next serial/lot from the configured addon.
 							if (!empty($conf->use_javascript_ajax)) {
 								print '<button type="button" class="btn-low-emphasis --btn-icon generatedispatchbatch"';
@@ -987,7 +987,7 @@ if ($id > 0 || !empty($ref)) {
 								print img_picto($langs->trans('Generate'), 'rightarrow.png');
 								print '</button>';
 							}
-							print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.dol_escape_htmltag(GETPOST('lot_number'.$suffix)).'">';
+							print '<input type="text" class="inputlotnumber maxwidth125" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.dol_escape_htmltag(GETPOST('lot_number'.$suffix)).'">';
 							print '</td>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print '<td class="nowraponall">';
