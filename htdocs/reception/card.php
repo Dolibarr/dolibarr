@@ -15,7 +15,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Nick Fragoulis
- * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -984,7 +984,7 @@ if (empty($reshook)) {
 					$productsupplier = new ProductFournisseur($db);
 					$idprod = $productsupplier->get_buyprice((int) $ipfp, (float) price2num(GETPOST('qty', 'alpha'), 'MS'));
 					if ($idprod > 0) {
-						$cost_price_from_pfp = price2num($productsupplier->fourn_unitprice);
+						$cost_price_from_pfp = price2num($productsupplier->fourn_pu);	// get_buyprice() fills fourn_pu (unit price), never fourn_unitprice
 						$reffourn_from_pfp = $productsupplier->ref_supplier;
 					}
 				}
