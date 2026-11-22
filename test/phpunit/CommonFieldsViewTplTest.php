@@ -116,7 +116,9 @@ class CommonFieldsViewTplTest extends CommonClassTest
 	 */
 	public function testPrintFieldViewHook()
 	{
-		list($out, $received) = $this->showFieldsWithHook(0);
+		$tmparray = $this->showFieldsWithHook(0);
+		$out = $tmparray[0];
+		$received = $tmparray[1];
 		$this->assertSame(array('label', 'note'), array_column($received, 'key'), 'The hook is called once per shown field');
 		$this->assertSame(array('left', 'right'), array_column($received, 'column'));
 		$this->assertSame('MyNoteValue', $received[1]['value']);
@@ -125,7 +127,8 @@ class CommonFieldsViewTplTest extends CommonClassTest
 		$this->assertStringContainsString('MyLabelValue', $out);
 		$this->assertStringContainsString('MyNoteValue', $out);
 
-		list($out) = $this->showFieldsWithHook(1);
+		$tmparray = $this->showFieldsWithHook(1);
+		$out = $tmparray[0];
 		$this->assertStringContainsString('hooked_label', $out, 'Hook returning 1 replaces the line of the field');
 		$this->assertStringContainsString('hooked_note', $out);
 		$this->assertStringNotContainsString('MyLabelValue', $out);

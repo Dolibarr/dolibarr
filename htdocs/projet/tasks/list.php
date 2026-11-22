@@ -416,7 +416,12 @@ if ($socid) {
 	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
 if ($search_project_ref) {
-	$sql .= natural_search('p.ref', $search_project_ref);
+	// When the project label column is not displayed, the project label is shown under the project ref, so we search into both
+	if (empty($arrayfields['p.title']['checked'])) {
+		$sql .= natural_search(array('p.ref', 'p.title'), $search_project_ref);
+	} else {
+		$sql .= natural_search('p.ref', $search_project_ref);
+	}
 }
 if ($search_project_title) {
 	$sql .= natural_search('p.title', $search_project_title);
@@ -1338,10 +1343,15 @@ while ($i < $imaxinloop) {
 			}
 			// Project ref
 			if (!empty($arrayfields['p.ref']['checked'])) {
-				print '<td class="nowraponall tdoverflowmax150">';
+				// When the project label column is not displayed, we show the project label under the project ref
+				$showprojectlabelunderref = (empty($arrayfields['p.title']['checked']) && (string) $obj->projecttitle !== '');
+				print '<td class="nowraponall tdoverflowmax150'.($showprojectlabelunderref ? ' tdlineheightsmall' : '').'">';
 				print $projectstatic->getNomUrl(1, 'task');
 				if ($projectstatic->hasDelay()) {
 					print img_warning("Late");
+				}
+				if ($showprojectlabelunderref) {
+					print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->projecttitle).'"><span class="opacitymedium">'.dolPrintLabel($obj->projecttitle).'</span></div>';
 				}
 				print '</td>';
 				if (!$i) {
@@ -1351,7 +1361,7 @@ while ($i < $imaxinloop) {
 			// Project title
 			if (!empty($arrayfields['p.title']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->projecttitle).'">';
-				print dol_escape_htmltag($obj->projecttitle);
+				print '<span class="opacitymedium">'.dol_escape_htmltag($obj->projecttitle).'</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

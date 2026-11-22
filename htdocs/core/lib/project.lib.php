@@ -1142,7 +1142,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			$totalCalculatedProgress = round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2);
 
 			// this conf is actually hidden, by default we use 10% for "be careful or warning"
-			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
+			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + getDolGlobalFloat('PROJECT_TIME_SPEND_WARNING_PERCENT') / 100) : 1.10;
 
 			// define progress color according to time spend vs workload
 			$progressBarClass = 'progress-bar-info';
@@ -2782,10 +2782,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$nbcol = 2;
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			if (!in_array('prospectionstatus', $hiddenfields)) {
-				print_liste_field_titre("OpportunityStatus", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'center ');
+				print_liste_field_titre("OpportunityStatusShort", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'center ');
 				$nbcol++;
 			}
-			print_liste_field_titre($form->textwithpicto($langs->trans("Amount"), $langs->trans("OpportunityAmount").' ('.$langs->trans("Tooltip").' = '.$langs->trans("OpportunityWeightedAmount").')'), "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre($form->textwithpicto($langs->trans("Amount"), $langs->trans("OpportunityAmount").' ('.$langs->trans("Tooltip").' = '.$langs->trans("OpportunityWeightedAmount").')'), "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'nowraponall right ');
 			$nbcol++;
 			//print_liste_field_titre('OpportunityWeightedAmount', '', '', '', '', 'align="right"', $sortfield, $sortorder);
 		}
@@ -2797,7 +2797,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				$nbcol++;
 			}
 			if (!in_array('declaredprogress', $hiddenfields)) {
-				print_liste_field_titre("%", "", "", "", "", '', $sortfield, $sortorder, 'right ', $langs->trans("ProgressDeclared"));
+				print_liste_field_titre("%", "", "", "", "", '', $sortfield, $sortorder, 'nowraponall right ', $langs->trans("ProgressDeclared"));
 				$nbcol++;
 			}
 		}
@@ -2840,7 +2840,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 				print '<tr class="oddeven">';
 
-				print '<td class="tdoverflowmax150">';
+				print '<td class="tdlineheightsmall tdoverflowmax150">';
 				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0, -1, 'nowraponall');
 				if (!in_array('projectlabel', $hiddenfields)) {
 					print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->title).'</span>';
@@ -3177,22 +3177,22 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 			$progressCalculated = round(100 * (float) $task->duration_effective / (float) $task->planned_workload, 2);
 
 			// this conf is actually hidden, by default we use 10% for "be careful or warning"
-			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
+			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + getDolGlobalFloat('PROJECT_TIME_SPEND_WARNING_PERCENT') / 100) : 1.10;
 
 			if ((float) $progressCalculated > (float) ($task->progress * $warningRatio)) {
 				$badgeClass .= 'badge-danger';
 				if (empty($tooltip)) {
-					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+					$tooltip = $langs->transnoentitiesnoconv("ProgressDeclared").' '.$task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
 			} elseif ((float) $progressCalculated > (float) $task->progress) { // warning if close at 10%
 				$badgeClass .= 'badge-warning';
 				if (empty($tooltip)) {
-					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+					$tooltip = $langs->transnoentitiesnoconv("ProgressDeclared").' '.$task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
 			} else {
 				$badgeClass .= 'badge-success';
 				if (empty($tooltip)) {
-					$tooltip = $task->progress.'% >= '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+					$tooltip = $langs->transnoentitiesnoconv("ProgressDeclared").' '.$task->progress.'% >= '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
 			}
 		}

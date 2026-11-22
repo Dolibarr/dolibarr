@@ -281,8 +281,8 @@ $fontsizesmaller     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getD
 $heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (getDolGlobalString('THEME_ELDY_USECOMOACTROW') ? '300%' : '155%') : (getDolUserString('THEME_ELDY_USECOMOACTROW') ? '300%' : '155%');
 
 // Hover color
-$colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || getDolGlobalString('THEME_ELDY_USE_HOVER') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_HOVER') === '1' ? 'edf4fb' : getDolGlobalString('THEME_ELDY_USE_HOVER')));
-$colorbacklinepairchecked = ((!isset($conf->global->THEME_ELDY_USE_CHECKED) || getDolGlobalString('THEME_ELDY_USE_CHECKED') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_CHECKED') === '1' ? 'edf4fb' : getDolGlobalString('THEME_ELDY_USE_CHECKED')));
+$colorbacklinepairhover = ((getDolGlobalString('THEME_ELDY_USE_HOVER', '255,255,255') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_HOVER') === '1' ? 'edf4fb' : getDolGlobalString('THEME_ELDY_USE_HOVER')));
+$colorbacklinepairchecked = ((getDolGlobalString('THEME_ELDY_USE_CHECKED', '255,255,255') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_CHECKED') === '1' ? 'edf4fb' : getDolGlobalString('THEME_ELDY_USE_CHECKED')));
 if (!empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)) {
 	$colorbacklinepairhover = ((!isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : (getDolUserString('THEME_ELDY_USE_HOVER') === '1' ? 'edf4fb' : getDolUserString('THEME_ELDY_USE_HOVER')));
 	$colorbacklinepairchecked = ((!isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255') ? '' : (getDolUserString('THEME_ELDY_USE_CHECKED') === '1' ? 'edf4fb' : getDolUserString('THEME_ELDY_USE_CHECKED')));
@@ -467,6 +467,7 @@ $leftmenuwidth = 254;
 	--colorblack: #000;
 	--colorwhite: #fff;
 	--colorwhitelight: #eee;
+	--colorphone: rgba(68, 68, 0, 0.7);		/* Same color than the phone picto: #440 with opacity 0.7 */
 	--heightrow: <?php print $heightrow; ?>;
 }
 
@@ -524,6 +525,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 				--colorblack: #fff;
 				--colorwhite: #000;
 				--colorwhitelight: #333;
+				--colorphone: rgb(195, 195, 125);
 	      }
 
 		body, button {
@@ -3337,8 +3339,8 @@ img.photoref, div.photoref {
 	border: 1px solid #CCC;
 	box-shadow: 3px 3px 4px #DDD;
 	padding: 4px;
-	height: 80px;
-	width: 80px;
+	height: 100px;
+	width: 100px;
 	object-fit: contain;
 }
 img.photokanban, div.photokanban {
@@ -5144,7 +5146,19 @@ div.refidno form {
 }
 div.refaddress div.address {
 	line-height: 1.2em;
-	font-size: 0.9em;
+	font-size: 0.92em;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+div.refaddress .phone-border {
+	font-size: 0.92em;
+}
+div.refaddress div.emailurl {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.banner-object-name-alias {		/* Label or alias of object shown under the ref into the banner */
+	opacity: 0.6;
 }
 
 div.pagination {
@@ -6512,7 +6526,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1007 !important;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005) */
+	z-index: 1007;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005). No !important, so jquery-ui can raise a modal opened over another one */
 }
 .ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
 	z-index: 1008 !important; 		/* To always be over the dialog box */

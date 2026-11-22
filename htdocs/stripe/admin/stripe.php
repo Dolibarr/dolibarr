@@ -234,7 +234,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('STRIPE_LIVE');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("STRIPE_LIVE", $arrval, $conf->global->STRIPE_LIVE);
+	print $form->selectarray("STRIPE_LIVE", $arrval, getDolGlobalString('STRIPE_LIVE'));
 }
 print '</td><td></td></tr>';
 
@@ -436,7 +436,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		print ajax_constantonoff('STRIPE_CARD_PRESENT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_CARD_PRESENT", $arrval, $conf->global->STRIPE_CARD_PRESENT);
+		print $form->selectarray("STRIPE_CARD_PRESENT", $arrval, getDolGlobalString('STRIPE_CARD_PRESENT'));
 	}
 	print '</td></tr>';
 }
@@ -522,7 +522,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		print ajax_constantonoff('STRIPE_KLARNA');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_KLARNA", $arrval, $conf->global->STRIPE_KLARNA);
+		print $form->selectarray("STRIPE_KLARNA", $arrval, getDolGlobalString('STRIPE_KLARNA'));
 	}
 	print '</td></tr>';
 }
@@ -535,7 +535,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		print ajax_constantonoff('STRIPE_BANCONTACT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_BANCONTACT", $arrval, $conf->global->STRIPE_BANCONTACT);
+		print $form->selectarray("STRIPE_BANCONTACT", $arrval, getDolGlobalString('STRIPE_BANCONTACT'));
 	}
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForBECustomers").'</span>';
 	print '</td></tr>';
@@ -549,7 +549,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		print ajax_constantonoff('STRIPE_IDEAL');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_IDEAL", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
+		print $form->selectarray("STRIPE_IDEAL", $arrval, getDolGlobalString('STRIPE_IDEAL'));
 	}
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForNLCustomers").'</span>';
 	print '</td></tr>';
@@ -563,7 +563,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		print ajax_constantonoff('STRIPE_GIROPAY');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_GIROPAY", $arrval, $conf->global->STRIPE_GIROPAY);
+		print $form->selectarray("STRIPE_GIROPAY", $arrval, getDolGlobalString('STRIPE_GIROPAY'));
 	}
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForDECustomers").'</span>';
 	print '</td></tr>';
@@ -577,7 +577,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		print ajax_constantonoff('STRIPE_SOFORT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STRIPE_SOFORT", $arrval, $conf->global->STRIPE_SOFORT);
+		print $form->selectarray("STRIPE_SOFORT", $arrval, getDolGlobalString('STRIPE_SOFORT'));
 	}
 	print ' &nbsp; <span class="opacitymedium">'.$langs->trans("ExampleOnlyForATBEDEITNLESCustomers").'</span>';
 	print '</td></tr>';

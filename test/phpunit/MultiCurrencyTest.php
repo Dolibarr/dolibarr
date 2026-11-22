@@ -208,11 +208,15 @@ class MultiCurrencyTest extends CommonClassTest
 		$this->assertEquals($localobject->id, MultiCurrency::getIdFromCode($db, self::TEST_CODE));
 		$this->assertEquals(0, MultiCurrency::getIdFromCode($db, 'NOTACURRENCYCODE'));
 
-		list($id, $rate) = MultiCurrency::getIdAndTxFromCode($db, self::TEST_CODE);
+		$tmparray = MultiCurrency::getIdAndTxFromCode($db, self::TEST_CODE);
+		$id = $tmparray[0];
+		$rate = $tmparray[1];
 		$this->assertEquals($localobject->id, $id);
 		$this->assertEqualsWithDelta(1.30, (float) $rate, 0.00001);
 
-		list($idnotfound, $ratenotfound) = MultiCurrency::getIdAndTxFromCode($db, 'NOTACURRENCYCODE');
+		$tmparray = MultiCurrency::getIdAndTxFromCode($db, 'NOTACURRENCYCODE');
+		$idnotfound = $tmparray[0];
+		$ratenotfound = $tmparray[1];
 		$this->assertEquals(0, $idnotfound);
 		$this->assertEqualsWithDelta(1.0, (float) $ratenotfound, 0.00001, 'getIdAndTxFromCode() must fall back to a neutral 1:1 rate when the code is unknown');
 

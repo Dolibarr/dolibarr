@@ -423,8 +423,8 @@ class modPropale extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'c.ref' => array(
 				'rule' => 'getrefifauto',
-				'class' => (!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON),
-				'path' => "/core/modules/propale/".(!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON).'.php',
+				'class' => (!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : getDolGlobalString('PROPALE_ADDON')),
+				'path' => "/core/modules/propale/".(!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : getDolGlobalString('PROPALE_ADDON')).'.php',
 				'classobject' => 'Propal',
 				'pathobject' => '/comm/propal/class/propal.class.php',
 			),

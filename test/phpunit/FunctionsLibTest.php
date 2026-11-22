@@ -1809,7 +1809,8 @@ class FunctionsLibTest extends CommonClassTest
 	public function testVerifCond()
 	{
 		foreach ($this->verifCondDataProvider() as $case) {
-			list($cond, $expected) = $case;
+			$cond = $case[0];
+			$expected = $case[1];
 			if ($expected) {
 				$this->assertTrue(verifCond($cond));
 			} else {
@@ -3239,7 +3240,7 @@ class FunctionsLibTest extends CommonClassTest
 
 		$savedconsts = array();
 		foreach (array('MAIN_MAXTABS_IN_CARD', 'MAIN_OPTIMIZEFORTEXTBROWSER') as $constname) {
-			$savedconsts[$constname] = (property_exists($conf->global, $constname) ? $conf->global->$constname : null);
+			$savedconsts[$constname] = (property_exists($conf->global, $constname) ? getDolGlobalString($constname) : null);
 		}
 		$conf->global->MAIN_MAXTABS_IN_CARD = 2;
 		$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 0;

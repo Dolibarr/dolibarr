@@ -1403,7 +1403,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Title
-		$morehtmlref .= dol_escape_htmltag($object->title);
+		$morehtmlref .= '<span class="banner-object-name-alias">'.dol_escape_htmltag($object->title).'</span>';
 		$morehtmlref .= '<br>';
 		// Thirdparty
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
