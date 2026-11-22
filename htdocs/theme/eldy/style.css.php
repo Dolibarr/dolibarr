@@ -491,6 +491,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--colorblack: #000;
 	--colorwhite: #fff;
 	--colorwhitelight: #eee;
+	--colorphone: rgba(68, 68, 0, 0.7);		/* Same color than the phone picto: #440 with opacity 0.7 */
 	--heightrow: <?php print $heightrow; ?>;
 }
 
@@ -548,6 +549,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 				--colorblack: #fff;
 				--colorwhite: #000;
 				--colorwhitelight: #333;
+				--colorphone: rgb(195, 195, 125);
 	      }
 
 		body, button {
@@ -3629,8 +3631,8 @@ img.photoref, div.photoref {
 	/* border: 1px solid #DDD; */
 	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
 	padding: 4px;
-	height: 80px;
-	width: 80px;
+	height: 100px;
+	width: 100px;
 	object-fit: contain;
 }
 
@@ -5483,7 +5485,7 @@ a.refid {
 	color: var(--colortexttitlenotab) !important;
 }
 div.refidno  {
-	padding-top: 3px;
+	padding-bottom: 3px;
 	font-weight: normal;
 	color: var(--refidnocolor);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
@@ -5491,7 +5493,19 @@ div.refidno  {
 }
 div.refaddress div.address {
 	line-height: 1.2em;
-	font-size: 0.95em;
+	font-size: 0.92em;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+div.refaddress .phone-border {
+	font-size: 0.92em;
+}
+div.refaddress div.emailurl {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.banner-object-name-alias {		/* Label or alias of object shown under the ref into the banner */
+	opacity: 0.6;
 }
 div.refidno form {
 	display: inline-block;

@@ -1166,7 +1166,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (!empty($object->name_alias)) {
 		/** @var Societe $object */
 		'@phan-var-force Societe $object';
-		$morehtmlref .= '<div class="refidno opacitymedium banner-object-name-alias">' . dol_escape_htmltag($object->name_alias) . '</div>';
+		$morehtmlref .= '<div class="refidno banner-object-name-alias">' . dol_escape_htmltag($object->name_alias) . '</div>';
 	}
 
 	// Add label

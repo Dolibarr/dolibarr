@@ -288,49 +288,49 @@ trait CommonPeople
 		$outphonedone = 0;
 		if (!empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
 			// $out .= ($outphonedone ? ' ' : '');
-			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
+			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"), 0, '', 1);
 			$outdone++;
 			$outphonedone++;
 		}
 		if (!empty($this->phone_pro)) {
 			$out .= ($outphonedone ? ' ' : '');
-			$out .= dol_print_phone($this->phone_pro, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
+			$out .= dol_print_phone($this->phone_pro, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"), 0, '', 1);
 			$outdone++;
 			$outphonedone++;
 		}
 		if (!empty($this->phone_mobile)) {
 			$out .= ($outphonedone ? ' ' : '');
-			$out .= dol_print_phone($this->phone_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"));
+			$out .= dol_print_phone($this->phone_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"), 0, '', 1);
 			$outdone++;
 			$outphonedone++;
 		}
 		if (!empty($this->phone_perso)) {
 			$out .= ($outphonedone ? ' ' : '');
-			$out .= dol_print_phone($this->phone_perso, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePerso"));
+			$out .= dol_print_phone($this->phone_perso, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePerso"), 0, '', 1);
 			$outdone++;
 			$outphonedone++;
 		}
 		if (!empty($this->office_phone)) {
 			$out .= ($outphonedone ? ' ' : '');
-			$out .= dol_print_phone($this->office_phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
+			$out .= dol_print_phone($this->office_phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"), 0, '', 1);
 			$outdone++;
 			$outphonedone++;
 		}
 		if (!empty($this->user_mobile)) {
 			$out .= ($outphonedone ? ' ' : '');
-			$out .= dol_print_phone($this->user_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"));
+			$out .= dol_print_phone($this->user_mobile, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'mobile', $langs->trans("PhoneMobile"), 0, '', 1);
 			$outdone++;
 			$outphonedone++;
 		}
 		if (!empty($this->fax)) {
 			$out .= ($outphonedone ? ' ' : '');
-			$out .= dol_print_phone($this->fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"));
+			$out .= dol_print_phone($this->fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"), 0, '', 1);
 			$outdone++;
 			$outphonedone++;
 		}
 		if (!empty($this->office_fax)) {
 			$out .= ($outphonedone ? ' ' : '');
-			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"));
+			$out .= dol_print_phone($this->office_fax, $this->country_code, $contactid, $thirdpartyid, 'AC_FAX', '&nbsp;', 'fax', $langs->trans("Fax"), 0, '', 1);
 			$outdone++;
 			$outphonedone++;
 		}
@@ -339,17 +339,21 @@ trait CommonPeople
 			$out .= '<div style="clear: both;"></div>';
 		}
 		$outdone = 0;
+		$outemailurl = '';
 		if (!empty($this->email)) {
-			$out .= dol_print_email($this->email, $this->id, $object->id, 1, 0, 1, 1);
+			$outemailurl .= dol_print_email($this->email, $this->id, $object->id, 1, 0, 1, 1);
 			$outdone++;
 		}
 		if (!empty($this->url)) {
 			//$out.=dol_print_url($this->url,'_goout',0,1);//steve changed to blank
 			if (!empty($this->email)) {
-				$out .= ' ';
+				$outemailurl .= ' ';
 			}
-			$out .= dol_print_url($this->url, '_blank', 0, 1);
+			$outemailurl .= dol_print_url($this->url, '_blank', 0, 1);
 			$outdone++;
+		}
+		if ($outemailurl) {
+			$out .= '<div class="emailurl">'.$outemailurl.'</div>';
 		}
 
 		if (isModEnabled('socialnetworks')) {

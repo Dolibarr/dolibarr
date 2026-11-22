@@ -1438,7 +1438,7 @@ if (!empty($arrayfields['p.customcode']['checked'])) {
 // Country
 if (!empty($arrayfields['p.fk_country']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $form->select_country($search_country, 'search_country', '', 0);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125');
 	print '</td>';
 }
 // State
@@ -1706,7 +1706,7 @@ if (!empty($arrayfields['p.customcode']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fk_country']['checked'])) {
-	print_liste_field_titre($arrayfields['p.fk_country']['label'], $_SERVER["PHP_SELF"], "p.fk_country", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.fk_country']['label'], $_SERVER["PHP_SELF"], "p.fk_country", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fk_state']['checked'])) {
@@ -2471,7 +2471,7 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['p.fk_country']['checked'])) {
-			print '<td>';
+			print '<td class="center">';
 			$tmparray = getCountry($obj->fk_country, 'all', $db);
 			if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
 				print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);

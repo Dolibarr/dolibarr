@@ -1810,7 +1810,7 @@ while ($i < $imaxinloop) {
 
 		// Phone pro
 		if (!empty($arrayfields['p.phone']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone', '', 0, '', 2).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1818,7 +1818,7 @@ while ($i < $imaxinloop) {
 
 		// Phone perso
 		if (!empty($arrayfields['p.phone_perso']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone', '', 0, '', 2).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1826,7 +1826,7 @@ while ($i < $imaxinloop) {
 
 		// Phone mobile
 		if (!empty($arrayfields['p.phone_mobile']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
+			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile', '', 0, '', 2).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1834,7 +1834,7 @@ while ($i < $imaxinloop) {
 
 		// Fax
 		if (!empty($arrayfields['p.fax']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
+			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax', '', 0, '', 2).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
