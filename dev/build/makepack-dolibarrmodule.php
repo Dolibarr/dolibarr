@@ -167,7 +167,10 @@ if (class_exists($class)) {
 		/** @var DolibarrModules $moduleobj */
 	} catch (Exception $e) {
 		$error++;
-		print $e->getMessage();
+		print $e->getMessage()."\n";
+		echo "$PROG.$Extension aborted.\n";
+		echo "\n";
+		exit(1);
 	}
 } else {
 	$error++;
@@ -195,7 +198,7 @@ if (count($arrayversion)) {
 	if ($result > 0) {
 		print "Zip file generated into ".$outputfilezip."\n";
 		print "\n";
-		exit(1);
+		exit(0);
 	} else {
 		$error++;
 		print "Error: Failed to build the zip file ".$outputfilezip."\n";
