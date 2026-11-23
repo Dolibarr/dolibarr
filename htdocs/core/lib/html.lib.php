@@ -4678,7 +4678,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		$class = "dropdown-item";
 	} else {
 		$class = 'butAction';
-		if (!empty(getDolGlobalString('MAIN_BUTTON_SHOW_FULL_TITLE'))) {
+		if (!getDolGlobalString('MAIN_BUTTON_SHOW_FULL_TITLE')) {
 			if ($actionType == 'edit') {
 				$class = 'butAction butActionEdit';
 			} elseif ($actionType == 'email') {
