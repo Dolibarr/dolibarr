@@ -10034,7 +10034,7 @@ abstract class CommonObject
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 					$productFournisseur = new ProductFournisseur($this->db);
 					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0) {
-						$buyPrice = $productFournisseur->fourn_unitprice;
+						$buyPrice = $productFournisseur->fourn_unitprice_with_discount;
 					} elseif ($result < 0) {
 						$this->errors[] = $productFournisseur->error;
 						return -2;
