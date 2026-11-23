@@ -754,7 +754,8 @@ AIError=AI Error
 AIPdfReport=PDF report
 AISessionExpiredReload=Your session has expired: please reload the page and sign in again
 AIContextCounter=Statistics: %s exchange(s), %s message(s) =~ %s tokens
-AIContextLabel=Number of last exchanges resent as context:
+AIContextLabel=Number of last exchanges resent:
+AIContextLabelHelp=Number of the last exchanges (question + answer) of the conversation sent back to the AI with your next question. More exchanges increase the context size and may cost more tokens, but the answers take the previous conversation into account.
 AIContextTokens=~%s tokens
 AIContextClear=Clear
 AIContextClearTitle=Send nothing back with the next question (recent exchanges excluded, pins removed)

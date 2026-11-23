@@ -1274,6 +1274,7 @@ function getAiChatAssistantConfig()
 		'AIContextPinOff',
 		'AIContextCounter',
 		'AIContextLabel',
+		'AIContextLabelHelp',
 		'AIContextTokens',
 		'AIContextAuto',
 		'AIContextAutoTitle',
