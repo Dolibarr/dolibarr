@@ -976,7 +976,8 @@ class CodingPhpTest extends CommonClassTest
 
 		foreach ($this->vardumpTesterProvider() as $name => $casedata) {
 			print 'Check var_dump in php file for case '.$name."\n";
-			list($filecontent, $hasVardump) = $casedata;
+			$filecontent = $casedata[0];
+			$hasVardump = $casedata[1];
 
 			// Fake file name for reporting
 			$filename = $name;
@@ -1133,7 +1134,8 @@ class CodingPhpTest extends CommonClassTest
 
 		foreach ($this->commentRemovalTestProvider() as $name => $casedata) {
 			print 'Test removePhpComments for comment type '.$name."\n";
-			list($source, $expected) = $casedata;
+			$source = $casedata[0];
+			$expected = $casedata[1];
 
 			$this->assertEquals($expected, $this->removePhpComments($source), "Comments not removed as expected for test case '$name'");
 		}

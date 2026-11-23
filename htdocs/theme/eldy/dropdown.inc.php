@@ -335,8 +335,9 @@ a.top-menu-dropdown-link {
 }
 
 /* Any element (picto of a module added into the group of tools of the top right menu via the hook
- * printTopRightMenu) can apply the class topmenu-any to get the same padding as the pictos of the core. */
-.topmenu-any,
+ * printTopRightMenu) can apply the class topmenu-any to get the same padding as the pictos of the core.
+ * The :hover is required, else .atoplogin:hover of the reduction 3 wins and the picto moves on hover. */
+.topmenu-any, .topmenu-any:hover,
 #topmenu-tool,
 #topmenu-global-search-dropdown,
 #topmenu-ai-dropdown,

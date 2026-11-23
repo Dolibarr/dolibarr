@@ -232,14 +232,14 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 					if ($email) {
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
-						$application = ($conf->global->MAIN_APPLICATION_TITLE ? $conf->global->MAIN_APPLICATION_TITLE : 'Dolibarr ERP/CRM');
+						$application = (getDolGlobalString('MAIN_APPLICATION_TITLE') ? getDolGlobalString('MAIN_APPLICATION_TITLE') : 'Dolibarr ERP/CRM');
 
 						$link = getUrlSondage($numsondage, true);
 						$link = '<a href="'.$link.'">'.$link.'</a>';
 						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, $link));
 						//var_dump($body);exit;
 
-						$cmailfile = new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->title, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body, null, null, null, '', '', 0, -1);
+						$cmailfile = new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->title, $email, getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), $body, null, null, null, '', '', 0, -1);
 						$result = $cmailfile->sendfile();
 					}
 				}

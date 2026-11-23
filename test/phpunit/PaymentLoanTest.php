@@ -130,7 +130,8 @@ class PaymentLoanTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($id, $loanid) = $data;
+		$id = $data[0];
+		$loanid = $data[1];
 
 		$localobject = new PaymentLoan($db);
 		$result = $localobject->fetch($id);

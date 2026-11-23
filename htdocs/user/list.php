@@ -1074,6 +1074,7 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array('val' => array('u.salary' => 0));
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1261,14 +1262,14 @@ while ($i < $imaxinloop) {
 
 		// Phone
 		if (!empty($arrayfields['u.office_phone']['checked'])) {
-			print '<td class="tdoverflowmax125">'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Phone mobile
 		if (!empty($arrayfields['u.user_mobile']['checked'])) {
-			print '<td class="tdoverflowmax125">'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1283,7 +1284,14 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['co.label']['checked'])) {
-			print '<td class="tdoverflowmax150">'.$obj->country_label."</td>\n";
+			$labelcountry = ($obj->country_code && ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)) ? $langs->trans("Country".$obj->country_code) : $obj->country_label;
+			print '<td class="tdoverflowmax150">';
+			if (!empty($obj->country_code) && !$showcountrylabelinlist) {
+				print picto_from_langcode($obj->country_code, 'title="'.dolPrintHTMLForAttribute($labelcountry).'"', 1);
+			} else {
+				print dolPrintHTML($labelcountry);
+			}
+			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1317,7 +1325,7 @@ while ($i < $imaxinloop) {
 			} elseif ($obj->ldap_sid) {
 				print '<span class="opacitymedium">'.$langs->trans("DomainUser").'</span>';
 			} else {
-				print '<span class="opacitymedium">'.$langs->trans("InternalUser").'</span>';
+				print '<span class="badgeneutral">'.$langs->trans("Internal").'</span>';
 			}
 			print '</td>';
 			if (!$i) {

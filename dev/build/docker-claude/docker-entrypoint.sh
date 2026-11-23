@@ -249,6 +249,30 @@ if [ "$REMOTE_CONTROL" = "1" ]; then
     else
         CLAUDE_OPTIONS="remote-control --permission-mode auto"
     fi
+
+    # Always use the spawn mode same-dir, so claude does not ask to choose between same-dir and worktree at launch.
+    # Not added when --spawn is already provided, nor with --continue or --session-id (claude refuses them with --spawn).
+    ADD_SPAWN=1
+    for arg in "${CLAUDE_ARGS[@]}"; do
+        case "$arg" in
+            --spawn|--spawn=*|-c|--continue|--session-id|--session-id=*)
+                ADD_SPAWN=0
+                ;;
+        esac
+    done
+    if [ "$ADD_SPAWN" = "1" ]; then
+        CLAUDE_OPTIONS="$CLAUDE_OPTIONS --spawn same-dir"
+    fi
+
+    # Launching with --rc is the consent to Remote Control: mark its dialog as seen into the state file, otherwise
+    # claude asks "Enable Remote Control? (y/n)" at each launch (the state file is copied from the host by claudes.sh).
+    # The file is rewritten by the user with an atomic move, as other containers may read it at the same time.
+    CLAUDE_STATE_FILE="/home/$USER_NAME/.claude/.claude.json"
+    if [ -f "$CLAUDE_STATE_FILE" ] && ! jq -e '.remoteDialogSeen == true' "$CLAUDE_STATE_FILE" >/dev/null 2>&1; then
+        echo "Set remoteDialogSeen into $CLAUDE_STATE_FILE"
+        # shellcheck disable=SC2016  # $1 and $$ must expand in the bash of runuser, not here
+        runuser -u "$USER_NAME" -- bash -c 'umask 077; jq ".remoteDialogSeen = true" "$1" > "$1.tmp.$$" && mv -f "$1.tmp.$$" "$1" || rm -f "$1.tmp.$$"' bash "$CLAUDE_STATE_FILE"
+    fi
 fi
 
 echo "CLAUDE_OPTIONS=$CLAUDE_OPTIONS ${CLAUDE_ARGS[*]}"

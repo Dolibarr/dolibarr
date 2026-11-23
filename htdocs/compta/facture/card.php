@@ -2210,6 +2210,22 @@ if (empty($reshook)) {
 								}
 
 								$descline .= ' - '.$srcobject->ref;
+
+								// Cost price of the line: cost of the source lines with the same vat rate (all lines for a fixed amount), prorated
+								// to the amount of the line, like a down payment from a percent of all lines that keeps the cost price of each line.
+								$totalhtofsource = 0;
+								$totalcostofsource = 0;
+								foreach ((is_array($srcobject->lines) ? $srcobject->lines : array()) as $srcline) {
+									if (empty($srcline->qty) || !empty($srcline->special_code)) {
+										continue;
+									}
+									if (($typeamount == 'amount' && !getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) || price2num($srcline->tva_tx) == price2num(preg_replace('/\s*\(.*\)/', '', (string) $tva))) {
+										$totalhtofsource += (float) $srcline->total_ht;
+										$totalcostofsource += (float) $srcline->qty * (float) $srcline->pa_ht;
+									}
+								}
+								$pa_ht = ($totalhtofsource != 0 ? (float) price2num($amount * $totalcostofsource / $totalhtofsource, 'MU') : 0);
+
 								$result = $object->addline(
 									$descline,
 									(float) $amount, // subprice
@@ -6017,7 +6033,11 @@ if ($action == 'create') {
 				print '<input type="submit" class="button" name="submitposinfo" value="'.$langs->trans("Submit").'">';
 			} else {
 				if ($object->module_source) {
-					print '<span class="opacitymediumbycolor paddingleft">'.dolPrintHTML(ucfirst($object->module_source).' - '.$langs->transnoentitiesnoconv("Terminal").' '.$object->pos_source).'</span>';
+					$posinfo = dol_ucfirst($object->module_source);
+					if ((string) $object->pos_source !== '') {
+						$posinfo .= ' - '.$langs->transnoentitiesnoconv("Terminal").' '.$object->pos_source;
+					}
+					print '<span class="opacitymediumbycolor paddingleft">'.dolPrintHTML($posinfo).'</span>';
 				}
 			}
 			print '</form>';

@@ -84,7 +84,11 @@ function updateCopyrightNotice($filename, $fileType, $name, $email)
 	}
 
 	// Get configuration for the filetype
-	list($prefix0, $prefix1, $prefix2, $prefix3) = PREFIXES[$fileType];
+	$tmparray = PREFIXES[$fileType];
+	$prefix0 = $tmparray[0];
+	$prefix1 = $tmparray[1];
+	$prefix2 = $tmparray[2];
+	$prefix3 = $tmparray[3];
 	$r_prefix0 = preg_quote($prefix0);
 	$r_prefix1 = preg_quote($prefix1);
 	$r_prefix3 = preg_quote($prefix3);

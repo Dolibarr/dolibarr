@@ -835,7 +835,7 @@ while ($i < $imaxinloop) {
 
 		// Note
 		if (!empty($arrayfields['c.note']['checked'])) {
-			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->note_private).'">';
+			print '<td class="tdlineheightsmall" title="'.dolPrintHTMLForAttribute($obj->note_private).'">';
 			print '<div class="twolinesmax-normallineheight minwidth200onall">';
 			print '<span class="spantitle">';
 			print dolPrintHTML(dolGetFirstLineOfText($obj->note_private));
