@@ -1890,6 +1890,8 @@ class Contact extends CommonObject
 
 	/**
 	 * Function used to replace a thirdparty id with another one.
+	 * The roles of llx_societe_contacts that the new thirdparty already has are deleted before the update,
+	 * so the update cannot violate the unique index of the table.
 	 *
 	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
 	 * @param 	int 	$origin_id 	Old thirdparty id
@@ -1898,6 +1900,19 @@ class Contact extends CommonObject
 	 */
 	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
+		// llx_societe_contacts: UNIQUE(entity, fk_soc, fk_c_type_contact, fk_socpeople).
+		// Delete the roles of the old thirdparty that the new thirdparty already has, then move the remaining ones.
+		$sql = 'DELETE FROM '.$dbs->prefix().'societe_contacts WHERE rowid IN (';
+		$sql .= ' SELECT x.rowid FROM (';
+		$sql .= '  SELECT origin.rowid FROM '.$dbs->prefix().'societe_contacts as origin';
+		$sql .= '  INNER JOIN '.$dbs->prefix().'societe_contacts as dest ON dest.entity = origin.entity';
+		$sql .= '   AND dest.fk_c_type_contact = origin.fk_c_type_contact AND dest.fk_socpeople = origin.fk_socpeople';
+		$sql .= '  WHERE origin.fk_soc = '.((int) $origin_id).' AND dest.fk_soc = '.((int) $dest_id);
+		$sql .= ' ) as x)';
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
 		$tables = array(
 			'socpeople', 'societe_contacts'
 		);
