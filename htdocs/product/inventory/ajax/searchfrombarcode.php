@@ -61,7 +61,7 @@ $objectreturn = array();
 
 top_httphead('application/json');
 
-if ($action == "existbarcode" && !empty($barcode)) {
+if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'lire')) {
 	if (!empty($mode) && $mode == "lotserial") {
 		$sql = "SELECT ps.fk_entrepot, ps.fk_product, p.barcode, ps.reel, pb.batch";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
@@ -109,10 +109,21 @@ if ($action == "existbarcode" && !empty($barcode)) {
 	$response = array('status'=>'error','errorcode'=>'ActionError','message'=>"Error on action");
 }
 
-if ($action == "addnewlineproduct") {
+if ($action == "addnewlineproduct" && $user->hasRight('stock', 'creer')) {
 	require_once DOL_DOCUMENT_ROOT."/product/inventory/class/inventory.class.php";
 	$inventoryline = new InventoryLine($db);
-	if (!empty($fk_inventory)) {
+	// Same permission and status as the counting form of the inventory page
+	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+		$permissiontoupdatestock = $user->hasRight('stock', 'mouvement', 'creer');
+	} else {
+		$permissiontoupdatestock = $user->hasRight('stock', 'inventory_advance', 'write');
+	}
+	$inventory = new Inventory($db);
+	if (!$permissiontoupdatestock) {
+		$response = array('status' => 'error', 'errorcode' => 'NotEnoughPermissions', 'message' => "Not enough permissions");
+	} elseif (!empty($fk_inventory) && ($inventory->fetch($fk_inventory) <= 0 || $inventory->status != $inventory::STATUS_VALIDATED)) {
+		$response = array('status' => 'error', 'errorcode' => 'BadStatus', 'message' => "Inventory not found or not in a status that allows counting");
+	} elseif (!empty($fk_inventory)) {
 		$inventoryline->fk_inventory = $fk_inventory;
 
 		$inventoryline->fk_warehouse = $fk_entrepot;
