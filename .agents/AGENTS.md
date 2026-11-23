@@ -218,7 +218,7 @@ Before any modification, verify:
 
 - If making a major change or adding an important function, add or update PHPUnit test files into `test/phpunit/` (check to have the entry into file `test/phpunit/AllTests.php`).
 - If code validation with `phpstan` is expected, you must add the parameter `-a dev/build/phpstan/bootstrap_action.php` to the phpstan command line. For example:
-	`phpstan analyse --allow-older --no-progress -a dev/build/phpstan/bootstrap_action.php  [list_of_modified_file.php ...]`
+	`phpstan analyse --no-progress -a dev/build/phpstan/bootstrap_action.php  [list_of_modified_file.php ...]`
 - Do not validate the code with `phan` as it is too slow, except if it is explicitly requested. In this case, you must add the parameter `-k .phan/config.php -B dev/tools/phan/baseline.txt --quick` to the phan command line. For example:
 	`phan -k .phan/config.php -B dev/tools/phan/baseline.txt --minimum-target-php-version 7.2 [list_of_modified_file.php ...]`
 
@@ -254,6 +254,15 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
 - When fixing a security vulnerability, start PR title with `SEC` and if you know the name of the vulnerability reporter or a tracking number, mention them in the PR title.
 - A pull request can contain database structure change only, or one new feature, or one bug fix, or a refactoring but never a mix of these. 
 - For code contribution on stable branches (non develop), PR must contains 1 and only 1 bug fix at once. Never introduce new features or refactoring if the target branch is not develop.
+
+---
+
+## Documents produced for the user
+
+- Files produced as deliverables for the user, that are not code changes of the project (reports, slides, graphs, exports, test artifacts, ...), must be written into `/tmp/agents_documents/` (directory shared between the host and all the AI agent containers, see `dev/build/docker-vibe/vibes.sh` and `dev/build/docker-claude/claudes.sh`).
+- That directory is shared by several agents: write into the subdirectory named after the agent (`/tmp/agents_documents/vibe/` for Vibe, `/tmp/agents_documents/claude/` for Claude Code), never directly at its root, and never into the subdirectory of another agent.
+- Inside a git repository, never place such documents into the git working directory: keep the code changes and the documents for the user separated.
+- `/tmp` is purged at reboot: warn the user that the documents must be taken out of the directory before a reboot of the host.
 
 ---
 
