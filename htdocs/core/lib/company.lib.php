@@ -767,17 +767,20 @@ function getState($id, $withcode = '0', $dbtouse = null, $withregion = 0, $outpu
 				}
 			}
 
+			// The key is prefixed by 'State' so a state code (like 'OK') is not mixed with a generic key of the language files.
+			$statelabel = ($obj->code && $langs->trans('State' . $obj->code) != 'State' . $obj->code) ? $langs->trans('State' . $obj->code) : ($obj->name != '-' ? $obj->name : '');
+
 			if ($withcode == 1) {
 				if ($withregion == 1) {
-					return $label = $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $obj->region_name . ' - ' . $obj->code . ' - ' . $statelabel;
 				} else {
-					return $label = $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $obj->code . ' - ' . $statelabel;
 				}
 			} elseif ($withcode == 2) {
 				if ($withregion == 1) {
-					return $label = $obj->region_name . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $obj->region_name . ' - ' . $statelabel;
 				} else {
-					return $label = ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $statelabel;
 				}
 			} elseif ($withcode === 'all') {
 				if ($withregion == 1) {
