@@ -576,4 +576,36 @@ class FilesLibTest extends CommonClassTest
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'move of directory with directory without rename needed in directory');
 	}
+
+	/**
+	 * testCompleteFileArrayWithDatabaseInfoIndexesWithTableElement
+	 *
+	 * @return	void
+	 */
+	public function testCompleteFileArrayWithDatabaseInfoIndexesWithTableElement()
+	{
+		global $db;
+
+		require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+
+		// deleteEcmFiles(1) removes index rows by table_element: an auto-indexed file must carry it too.
+		$object = new Mo($db);
+		$object->id = 999999999;
+		$object->ref = 'PHPUNITAUTOINDEX';
+
+		$dir = DOL_DATA_ROOT.'/mrp/PHPUNITAUTOINDEX';
+		dol_mkdir($dir);
+		file_put_contents($dir.'/PHPUNITAUTOINDEX.pdf', 'test');
+
+		$filearray = dol_dir_list($dir, 'files');
+		completeFileArrayWithDatabaseInfo($filearray, 'mrp/PHPUNITAUTOINDEX', $object);
+
+		$ecmfile = new EcmFiles($db);
+		$result = $ecmfile->fetch(0, '', 'mrp/PHPUNITAUTOINDEX/PHPUNITAUTOINDEX.pdf');
+		dol_delete_dir_recursive($dir);
+
+		$this->assertGreaterThan(0, $result, 'auto-indexed file not found in index');
+		$this->assertSame('mrp_mo', $ecmfile->src_object_type);
+	}
 }
