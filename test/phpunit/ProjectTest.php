@@ -233,6 +233,68 @@ class ProjectTest extends CommonClassTest
 	}
 
 	/**
+	 * testTaskAddTimeSpentStatus: adding time spent sets a draft, validated or ongoing task to ongoing
+	 * (or closed when progress is 100%), and never changes the status of a closed or canceled task.
+	 *
+	 * @return	void
+	 */
+	public function testTaskAddTimeSpentStatus()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$project = new Project($db);
+		$project->initAsSpecimen();
+		$project->ref = 'PJTIMESPENT'.dol_print_date(dol_now(), 'dayhourlog').mt_rand(100, 999);
+		$projectid = $project->create($user);
+		$this->assertGreaterThan(0, $projectid, 'Project create: '.$project->error);
+
+		$task = new Task($db);
+		$task->initAsSpecimen();
+		$task->ref = 'TKTIMESPENT'.mt_rand(100, 999);
+		$task->fk_project = $projectid;
+		$taskid = $task->create($user);
+		$this->assertGreaterThan(0, $taskid, 'Task create: '.$task->error);
+
+		// array(status before, progress submitted or null to keep the stored one, expected status after)
+		$cases = array(
+			'draft becomes ongoing' => array(Task::STATUS_DRAFT, 0, Task::STATUS_ONGOING),
+			'validated becomes ongoing' => array(Task::STATUS_VALIDATED, 0, Task::STATUS_ONGOING),
+			'ongoing stays ongoing with progress 0' => array(Task::STATUS_ONGOING, 0, Task::STATUS_ONGOING),
+			'ongoing stays ongoing without progress' => array(Task::STATUS_ONGOING, null, Task::STATUS_ONGOING),
+			'ongoing becomes closed with progress 100' => array(Task::STATUS_ONGOING, 100, Task::STATUS_CLOSED),
+			'closed stays closed' => array(Task::STATUS_CLOSED, 50, Task::STATUS_CLOSED),
+			'canceled stays canceled' => array(Task::STATUS_CANCELED, 0, Task::STATUS_CANCELED),
+		);
+		foreach ($cases as $label => $case) {
+			list($statusbefore, $progress, $statusexpected) = $case;
+
+			$resql = $db->query("UPDATE ".MAIN_DB_PREFIX."projet_task SET fk_statut = ".((int) $statusbefore).", progress = 0 WHERE rowid = ".((int) $taskid));
+			$this->assertNotFalse($resql, $label.': '.$db->lasterror());
+
+			$task = new Task($db);
+			$task->fetch($taskid);
+			if ($progress !== null) {
+				$task->progress = $progress;
+			}
+			$task->timespent_date = dol_now();
+			$task->timespent_withhour = 0;
+			$task->timespent_duration = 3600;
+			$task->timespent_fk_user = $user->id;
+			$result = $task->addTimeSpent($user);
+			$this->assertGreaterThan(0, $result, $label.': '.$task->error);
+			$this->assertEquals($statusexpected, $task->status, $label.' (object)');
+
+			$task = new Task($db);
+			$task->fetch($taskid);
+			$this->assertEquals($statusexpected, $task->status, $label.' (database)');
+		}
+	}
+
+	/**
 	 * testProjectOdtTemplateWithoutOptionalBlocks: the ODT generator accepts a template without the blocks tasks, projectfiles and projectcontacts
 	 *
 	 * @return	void
