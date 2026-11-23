@@ -2316,7 +2316,10 @@ if (empty($reshook)) {
 			$action = 'create';
 			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
 			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
-			setEventMessages($object->error, $object->errors, 'errors');
+			// A failed form check has already shown its own message and left $object->error empty
+			if (!empty($object->error) || !empty($object->errors)) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && (GETPOST('alldate_start', 'alpha') || GETPOST('alldate_end', 'alpha')) && $usercancreate) {
 		// Define date start and date end for all line
