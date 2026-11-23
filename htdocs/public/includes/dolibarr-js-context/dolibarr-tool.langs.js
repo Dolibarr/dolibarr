@@ -5,6 +5,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * Manage translations in JS context with IndexedDB cache, multi-locale support and fallback.
 	 * Parallel loading of language files for performance.
 	 * Automatic cache invalidation if Dolibarr version changes.
+	 * The cache is checked again in background every few minutes (HTTP ETag, 304 when unchanged): the translations
+	 * of a module change with its files, without any change of the Dolibarr version.
 	 *
 	 * Require Dolibarr context vars
 	 * DOL_LANG_INTERFACE_URL, MAIN_LANG_DEFAULT, DOL_VERSION
@@ -13,6 +15,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	const langs = function() {
 
 		const CACHE_MSTIME = 86400000;
+		const REVALIDATE_MSTIME = 300000;
+		let revalidating = new Set(); // domain@locale being checked in background
 		let currentLocale = Dolibarr.getContextVar('MAIN_LANG_DEFAULT', 'en_US');
 		let translations = {}; // { en_US: {KEY: TEXT}, fr_FR: {...} }
 		let domainsLoaded = {}; // { en_US: Set(['main','other']), fr_FR: Set([...]) }
@@ -227,22 +231,68 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 			if (cache && cache.data && (now - cache.timestamp < CACHE_MSTIME) && cache.dolibarrVersion === dolibarrVersion) {
 				Dolibarr.log('tools: langs: Load lang from cache');
+				if (now - cache.timestamp > REVALIDATE_MSTIME) {
+					revalidateLocale(domain, locale);
+				}
 				return cache.data;
 			}
 
+			Dolibarr.log('tools: langs: Load lang from interface');
+			const data = await fetchLocale(domain, locale);
+			if (data) {
+				await setCache(domain, locale, data);
+			}
+			return data || {};
+		}
+
+		/**
+		 * Get the translations of a domain from the server
+		 * The browser checks its HTTP copy each time (no-cache): unchanged translations come back as a 304 without body.
+		 * @param {string} domain
+		 * @param {string} locale
+		 * @returns {Promise<Object|null>} translation object, null if error
+		 */
+		async function fetchLocale(domain, locale) {
 			const langInterfaceUrl = Dolibarr.getContextVar('DOL_LANG_INTERFACE_URL', false);
 			if(!langInterfaceUrl) {
 				console.error('Dolibarr: tools: langs missing DOL_LANG_INTERFACE_URL')
-				return;
+				return null;
 			}
 
-			Dolibarr.log('tools: langs: Load lang from interface');
-			const params = new URLSearchParams({ domain, local: locale });
-			const resp = await fetch(`${langInterfaceUrl}?${params.toString()}`);
-			const json = await resp.json();
-			const data = json[locale] || {};
-			await setCache(domain, locale, data);
-			return data;
+			try {
+				const params = new URLSearchParams({ domain, local: locale });
+				const resp = await fetch(`${langInterfaceUrl}?${params.toString()}`, { cache: 'no-cache' });
+				if (!resp.ok) {
+					return null;
+				}
+				const json = await resp.json();
+				return json[locale] || {};
+			} catch (err) {
+				Dolibarr.log('tools: langs: Load lang from interface fail');
+				return null;
+			}
+		}
+
+		/**
+		 * Check a cached domain in background: new translations are saved and used at once in memory
+		 * @param {string} domain
+		 * @param {string} locale
+		 */
+		async function revalidateLocale(domain, locale) {
+			const key = `${domain}@${locale}`;
+			if (revalidating.has(key)) return;
+			revalidating.add(key);
+			try {
+				const data = await fetchLocale(domain, locale);
+				if (data) {
+					await setCache(domain, locale, data);
+					if (!translations[locale]) translations[locale] = {};
+					Object.assign(translations[locale], data);
+					Dolibarr.log('tools: langs: Lang checked again from interface');
+				}
+			} finally {
+				revalidating.delete(key);
+			}
 		}
 
 		/**

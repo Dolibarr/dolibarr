@@ -52,15 +52,9 @@ require '../../main.inc.php';
  * INTERFACE FOR JS CONTEXT LANG
  */
 
-if (empty($dolibarr_nocache)) {
-	$delaycache = '86400';
-	header('Cache-Control: max-age=' . $delaycache . ', public, must-revalidate');
-	header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-	header('Expires: ' . gmdate('D, d M Y H:i:s', time() + (int) $delaycache) . ' GMT');    // This is to avoid to have Expires set by proxy or web server
-} else {
-	// If any cache on files were disable by config file (for test purpose)
-	header('Cache-Control: no-cache');
-}
+// The browser may keep the answer but must check it each time (ETag below): translations of a module change
+// with its files, without any change of the Dolibarr version, and a max-age kept new keys hidden up to 24 h.
+header('Cache-Control: no-cache, public');
 header('Content-Type: application/json; charset=utf-8');
 
 
@@ -107,4 +101,19 @@ foreach ($locals as $langCode) {
 	}
 }
 
-print json_encode($json, JSON_PRETTY_PRINT);
+$output = json_encode($json, JSON_PRETTY_PRINT);
+
+// Same translations as the copy of the browser: no body
+$etag = '"'.md5($output).'"';
+header('ETag: '.$etag);
+// Apache mod_deflate may send it back as W/"...-gzip"
+$sentTags = array();
+foreach (explode(',', isset($_SERVER['HTTP_IF_NONE_MATCH']) ? (string) $_SERVER['HTTP_IF_NONE_MATCH'] : '') as $tag) {
+	$sentTags[] = preg_replace('/-(gzip|br|deflate)"$/', '"', trim(str_replace('W/', '', $tag)));
+}
+if (in_array($etag, $sentTags, true)) {
+	http_response_code(304);
+	exit;
+}
+
+print $output;
