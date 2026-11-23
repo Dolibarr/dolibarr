@@ -2496,6 +2496,20 @@ class User extends CommonObject
 		if ($resql) {
 			$nbrowsaffected += $this->db->affected_rows($resql);
 
+			// A clear password may remain in database from the time before the encryption of passwords was enabled.
+			// When it matches the encrypted one, it is of no use for the login: we remove it.
+			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED') && !empty($this->pass_indatabase) && !empty($this->pass_indatabase_crypted) && dol_verifyHash($this->pass_indatabase, $this->pass_indatabase_crypted)) {
+				dol_syslog(get_class($this)."::update remove the clear password that matches the encrypted one", LOG_DEBUG);
+				$sql = "UPDATE ".$this->db->prefix()."user SET pass = NULL WHERE rowid = ".((int) $this->id);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->error = $this->db->error();
+					$this->db->rollback();
+					return -5;
+				}
+				$this->pass_indatabase = '';
+			}
+
 			// Update password
 			if (!empty($this->pass)) {
 				if ($this->pass != $this->pass_indatabase && !dol_verifyHash($this->pass, $this->pass_indatabase_crypted)) {
