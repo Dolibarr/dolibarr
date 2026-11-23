@@ -23,7 +23,7 @@
  * Copyright (C) 2026		Vincent de Grandpré			<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Joachim Küter				<git-jk@bloxera.com>
  * Copyright (C) 2026		Lionel Vessiller			<lvessiller@open-dsi.fr>
- * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2069,9 +2069,8 @@ if (empty($reshook)) {
 						$exp->fetch($object->origin_id);
 						$exp->fetchObjectLinked();
 						if (!empty($exp->linkedObjectsIds['commande']) && is_array($exp->linkedObjectsIds['commande'])) {	// A shipment without sales order (SHIPMENT_STANDALONE) has no linked order
-							foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
-								$object->linked_objects['commande'] = $value;
-							}
+							// A shipment may be linked to several sales orders: link the invoice to all of them, not only to the last one
+							$object->linked_objects['commande'] = array_values($exp->linkedObjectsIds['commande']);
 						}
 					}
 
