@@ -3189,7 +3189,12 @@ class Product extends CommonObject
 
 				if (!$updatedefaultprice) {
 					// The price of the level is now saved, so we can restore the default price of the product
-					list($this->price, $this->price_label, $this->price_ttc, $this->price_min, $this->price_min_ttc, $this->price_base_type) = $savdefaultprice;
+					$this->price = $savdefaultprice[0];
+					$this->price_label = $savdefaultprice[1];
+					$this->price_ttc = $savdefaultprice[2];
+					$this->price_min = $savdefaultprice[3];
+					$this->price_min_ttc = $savdefaultprice[4];
+					$this->price_base_type = $savdefaultprice[5];
 				}
 
 				$this->level = $level; // Store level of price edited for trigger
@@ -6859,6 +6864,9 @@ class Product extends CommonObject
 		}
 		// Include reception lines
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+			// Same option as the supplier order side above: both halves of the subtraction must run on the
+			// same population of supplier orders, otherwise orders are counted while their receptions are
+			// not and the virtual stock comes out too high. The historical default of this side is kept.
 			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '4');
 			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;

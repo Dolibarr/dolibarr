@@ -754,6 +754,7 @@ $param = '';
 
 
 if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
+	print '<br>';
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" autocomplete="off">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="viewgraph">';
@@ -761,7 +762,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 
 	$viewmode = '';
 
-	$viewmode .= '<div class="divadvancedsearchfield">';
+	$viewmode .= '<div class="divadvancedsearchfield floatnone inline-block">';
 	$arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
 	$viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
 	// The class onrightofpage allows to align the popup list on the right of the select component (so it can't go out of screen on the right).
@@ -777,7 +778,8 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	$newcardbutton = '';
 	$limit = 0;
 
-	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, 'nomarginbottom', $limit, 1, 0, 1, $viewmode);
+	// The title bar is empty now that the selection of graph type is shown below the filters, so we do not output it
+	//print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, 'nomarginbottom', $limit, 1, 0, 1, '');
 
 
 	foreach ($newarrayoftype as $tmpkey => $tmpval) {
@@ -938,6 +940,22 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	}
 
 	print '</div>';
+
+	// Selection of the type of graph, centered below the filter section.
+	// With javascript, it stays hidden (but still posted) until a graph is shown (see the section to show the result).
+	print '<div class="center customreportsgraphtype'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').'">';
+	print $viewmode;
+	print '</div>';
+	if (!empty($conf->use_javascript_ajax)) {
+		// A change of the type of graph submits the form like a click on the Refresh button (if there is one)
+		print '<script nonce="'.getNonce().'">jQuery(document).ready(function() {
+			jQuery("#search_graph").change(function() {
+				console.log("Change of graph type, we click on the refresh button");
+				jQuery(".customreportsrefresh").trigger("click");
+			});
+		});</script>';
+	}
+
 	print '</form>';
 }
 
@@ -1027,7 +1045,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby);
 			$tmpforloop = explode(',', $arrayofxaxis[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1055,7 +1075,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby[$val]); var_dump($tmpval);
 			$tmpforloop = explode(',', $arrayofgroupby[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1083,7 +1105,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby);
 			$tmpforloop = explode(',', $arrayofmesures[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1119,7 +1143,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 				$tmpval = explode('.', $val);
 				$tmpforloop = explode(',', $arrayoffilterfields[$val]['tablefromt']);
 				foreach ($tmpforloop as $tmptableandalias) {
-					list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+					$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+					$tmptable = $tmparray[0];
+					$tmptablealias = $tmparray[1];
 					if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 						$tmpforexplode = explode('__', $tmptablealias);
 						$endpart = end($tmpforexplode);
@@ -1470,6 +1496,11 @@ if ($mode == 'graph') {
 		}
 
 		print $px1->show($totalnbofrecord ? 0 : $texttoshow);
+
+		// A graph is shown, so we can show the selection of the type of graph (done before document ready so select2 is initialized on a visible component)
+		if ($totalnbofrecord && !empty($conf->use_javascript_ajax) && !defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
+			print '<script nonce="'.getNonce().'">jQuery(".customreportsgraphtype").removeClass("hideobject");</script>';
+		}
 	}
 }
 

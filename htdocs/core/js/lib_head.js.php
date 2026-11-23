@@ -1092,6 +1092,17 @@ function document_preview(file, type, title)
 
 	console.log("document_preview A click was done: file="+file+", type="+type+", title="+title);
 
+	/* If we are into an iframe (like the media manager opened into a dialog popup), we show the preview into the parent window so the modal overlay covers the whole screen */
+	try {
+		if (window.parent && window.parent !== window && typeof window.parent.document_preview === 'function' && window.parent.jQuery && window.parent.jQuery("#dialogforpopup").length > 0) {
+			console.log("document_preview We are into an iframe, so we show the preview into the parent window");
+			window.parent.document_preview(new URL(file, window.location.href).href, type, title);
+			return;
+		}
+	} catch (e) {
+		console.log("document_preview Parent window is not reachable, so we show the preview into the current window");
+	}
+
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
 		var object_width = '100%';

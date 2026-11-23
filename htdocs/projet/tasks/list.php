@@ -1351,7 +1351,7 @@ while ($i < $imaxinloop) {
 					print img_warning("Late");
 				}
 				if ($showprojectlabelunderref) {
-					print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->projecttitle).'"><span class="opacitymedium">'.dolPrintLabel($obj->projecttitle).'</span></div>';
+					print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->projecttitle).'"><span class="spantitle">'.dolPrintLabel($obj->projecttitle).'</span></div>';
 				}
 				print '</td>';
 				if (!$i) {
@@ -1361,7 +1361,7 @@ while ($i < $imaxinloop) {
 			// Project title
 			if (!empty($arrayfields['p.title']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->projecttitle).'">';
-				print '<span class="opacitymedium">'.dol_escape_htmltag($obj->projecttitle).'</span>';
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->projecttitle).'</span>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

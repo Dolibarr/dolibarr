@@ -22,6 +22,7 @@ use Luracast\Restler\RestException;
 dol_include_once('/recruitment/class/recruitmentjobposition.class.php');
 dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+dol_include_once('/societe/class/societe.class.php');
 
 
 
@@ -91,6 +92,9 @@ class Recruitments extends DolibarrApi
 			throw new RestException(403, 'Access to instance id='.$this->jobposition->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Check access to the thirdparty of the job position, if there is one
+		$this->_checkAccessToThirdpartyOfJobPosition($this->jobposition->fk_soc);
+
 		return $this->_cleanObjectDatas($this->jobposition);
 	}
 
@@ -121,6 +125,9 @@ class Recruitments extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('recruitment', $this->candidature->id, 'recruitment_recruitmentcandidature')) {
 			throw new RestException(403, 'Access to instance id='.$this->candidature->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
+		// Check access to the job position, and so to its thirdparty, the candidature is linked to
+		$this->_checkAccessToJobPositionOfCandidature($this->candidature->fk_recruitmentjobposition);
 
 		return $this->_cleanObjectDatas($this->candidature);
 	}
@@ -391,6 +398,9 @@ class Recruitments extends DolibarrApi
 		// Clean data
 		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
+		// Check access to the thirdparty the job position is located at, if there is one
+		$this->_checkAccessToThirdpartyOfJobPosition($this->jobposition->fk_soc);
+
 		if ($this->jobposition->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating jobposition", array_merge(array($this->jobposition->error), $this->jobposition->errors));
 		}
@@ -433,6 +443,9 @@ class Recruitments extends DolibarrApi
 		// Clean data
 		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
+		// Check access to the job position, and so to its thirdparty, the candidature is linked to
+		$this->_checkAccessToJobPositionOfCandidature($this->candidature->fk_recruitmentjobposition);
+
 		if ($this->candidature->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating candidature", array_merge(array($this->candidature->error), $this->candidature->errors));
 		}
@@ -467,6 +480,10 @@ class Recruitments extends DolibarrApi
 			throw new RestException(403, 'Access to instance id='.$this->jobposition->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Check access to the current thirdparty of the job position, if there is one
+		$oldfk_soc = $this->jobposition->fk_soc;
+		$this->_checkAccessToThirdpartyOfJobPosition($oldfk_soc);
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -478,6 +495,11 @@ class Recruitments extends DolibarrApi
 			}
 
 			$this->jobposition->$field = $this->_checkValForAPI($field, $value, $this->jobposition);
+		}
+
+		// Check access to the new thirdparty when the thirdparty is changed
+		if ($this->jobposition->fk_soc != $oldfk_soc) {
+			$this->_checkAccessToThirdpartyOfJobPosition($this->jobposition->fk_soc);
 		}
 
 		// Clean data
@@ -518,6 +540,10 @@ class Recruitments extends DolibarrApi
 			throw new RestException(403, 'Access to instance id='.$this->candidature->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Check access to the job position, and so to its thirdparty, the candidature is currently linked to
+		$oldfk_recruitmentjobposition = $this->candidature->fk_recruitmentjobposition;
+		$this->_checkAccessToJobPositionOfCandidature($oldfk_recruitmentjobposition);
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -529,6 +555,11 @@ class Recruitments extends DolibarrApi
 			}
 
 			$this->candidature->$field = $this->_checkValForAPI($field, $value, $this->candidature);
+		}
+
+		// Check access to the new job position when the job position is changed
+		if ($this->candidature->fk_recruitmentjobposition != $oldfk_recruitmentjobposition) {
+			$this->_checkAccessToJobPositionOfCandidature($this->candidature->fk_recruitmentjobposition);
 		}
 
 		// Clean data
@@ -568,6 +599,9 @@ class Recruitments extends DolibarrApi
 			throw new RestException(403, 'Access to instance id='.$this->jobposition->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Check access to the thirdparty of the job position, if there is one
+		$this->_checkAccessToThirdpartyOfJobPosition($this->jobposition->fk_soc);
+
 		if (!$this->jobposition->delete(DolibarrApiAccess::$user)) {
 			throw new RestException(500, 'Error when deleting jobposition : '.$this->jobposition->errorsToString());
 		}
@@ -605,6 +639,9 @@ class Recruitments extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('recruitment', $this->candidature->id, 'recruitment_recruitmentcandidature')) {
 			throw new RestException(403, 'Access to instance id='.$this->candidature->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
+		// Check access to the job position, and so to its thirdparty, the candidature is linked to
+		$this->_checkAccessToJobPositionOfCandidature($this->candidature->fk_recruitmentjobposition);
 
 		if (!$this->candidature->delete(DolibarrApiAccess::$user)) {
 			throw new RestException(500, 'Error when deleting candidature : '.$this->candidature->errorsToString());
@@ -683,6 +720,64 @@ class Recruitments extends DolibarrApi
 		}
 
 		return $object;
+	}
+
+	/**
+	 * Check that the current API user has access to the thirdparty of a job position.
+	 * External users are limited to their own thirdparty, sales representatives without
+	 * the "societe > client > voir" right are limited to the thirdparties they are assigned to.
+	 * A job position not linked to a thirdparty stays accessible to internal users.
+	 *
+	 * @param   int     $socid      Id of thirdparty of the job position (0 if not linked to a thirdparty)
+	 * @return  void
+	 *
+	 * @throws RestException 403 Access to object not allowed
+	 * @throws RestException 404 Thirdparty not found
+	 */
+	private function _checkAccessToThirdpartyOfJobPosition($socid)
+	{
+		if (empty($socid)) {
+			// A job position is not necessarily located at a thirdparty: it stays visible to internal
+			// users, but a record not linked to any thirdparty can not belong to an external user
+			if (!empty(DolibarrApiAccess::$user->socid)) {
+				throw new RestException(403, 'Access to object not linked to any thirdparty not allowed for external login '.DolibarrApiAccess::$user->login);
+			}
+			return;
+		}
+
+		$thirdpartytmp = new Societe($this->db);
+		$thirdparty_result = $thirdpartytmp->fetch((int) $socid);
+		if ($thirdparty_result < 1) {
+			throw new RestException(404, 'Thirdparty with id='.((int) $socid).' not found or not allowed');
+		}
+		if (!DolibarrApi::_checkAccessToResource('societe', $thirdpartytmp->id)) {
+			throw new RestException(403, 'Access to thirdparty id='.((int) $socid).' of object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+	}
+
+	/**
+	 * Check that the current API user has access to the job position of a candidature
+	 * (the customer scope of a candidature is the one of its parent job position).
+	 *
+	 * @param   int     $jobpositionid     Id of the job position of the candidature (0 if not linked to a job position)
+	 * @return  void
+	 *
+	 * @throws RestException 403 Access to object not allowed
+	 */
+	private function _checkAccessToJobPositionOfCandidature($jobpositionid)
+	{
+		if (((int) $jobpositionid) > 0) {
+			$jobpositiontmp = new RecruitmentJobPosition($this->db);
+			if ($jobpositiontmp->fetch((int) $jobpositionid) > 0) {
+				$this->_checkAccessToThirdpartyOfJobPosition($jobpositiontmp->fk_soc);
+				return;
+			}
+		}
+		// Parent job position not found (can have been deleted): no link to any customer to
+		// check for internal users, but a record without job position can not belong to an external user
+		if (!empty(DolibarrApiAccess::$user->socid)) {
+			throw new RestException(403, 'Access to object not linked to any job position not allowed for external login '.DolibarrApiAccess::$user->login);
+		}
 	}
 
 	/**

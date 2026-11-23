@@ -1135,7 +1135,7 @@ if ($action == 'create') {
 		$note_public = GETPOST("note_public", "alpha");
 	}
 
-	if (!$conf->global->FICHEINTER_ADDON) {
+	if (!getDolGlobalString('FICHEINTER_ADDON')) {
 		dol_print_error($db, $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
 		exit;
 	}
@@ -1680,7 +1680,7 @@ if ($action == 'create') {
 	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 		// Duration in time
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
-		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("HourShort").')</td>';
+		print '<td>'.convertSecondToTime($object->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("HourShort").')</td>';
 		print '</tr>';
 	}
 
@@ -2024,7 +2024,7 @@ if ($action == 'create') {
 					$url_button = array();
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element))),
 						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddTitleLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_title_line&token='.newToken()
@@ -2032,7 +2032,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element))),
 						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
@@ -2040,7 +2040,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TEXT_'.strtoupper($object->element))),
 						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddTextLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_text_line&token='.newToken()

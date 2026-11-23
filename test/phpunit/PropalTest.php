@@ -178,7 +178,8 @@ class PropalTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($localobject, $lineid) = $params;
+		$localobject = $params[0];
+		$lineid = $params[1];
 		$beforelinecount = count($localobject->lines);
 		$beforetotalht = (float) $localobject->total_ht;
 
@@ -212,7 +213,8 @@ class PropalTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($localobject, $lineid) = $params;
+		$localobject = $params[0];
+		$lineid = $params[1];
 		$beforelinecount = count($localobject->lines);
 		$beforetotalht = (float) $localobject->total_ht;
 

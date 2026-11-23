@@ -276,6 +276,10 @@ if ($action == 'update') {
 			dolibarr_set_const($db, "MAIN_CHECKBOX_LEFT_COLUMN", GETPOSTINT("MAIN_CHECKBOX_LEFT_COLUMN"), 'chaine', 0, '', $conf->entity);
 		}
 
+		if (GETPOSTISSET("MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST")) {
+			dolibarr_set_const($db, "MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST", GETPOSTINT("MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST"), 'chaine', 0, '', $conf->entity);
+		}
+
 		if (GETPOSTISSET("MAIN_ROW_SINGLECLICK_TOSELECT")) {
 			dolibarr_set_const($db, "MAIN_ROW_SINGLECLICK_TOSELECT", GETPOSTINT("MAIN_ROW_SINGLECLICK_TOSELECT"), 'chaine', 0, '', $conf->entity);
 		}
@@ -521,6 +525,13 @@ if ($mode == 'other') {
 	// Display checkboxes and fields menu left / right
 	print '<tr class="oddeven"><td>' . $langs->trans("MAIN_CHECKBOX_LEFT_COLUMN") . '</td><td>';
 	print ajax_constantonoff("MAIN_CHECKBOX_LEFT_COLUMN", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Display country as a flag or as a label in lists
+	print '<tr class="oddeven"><td>' . $langs->trans("CountryDisplayModeInLists") . '</td><td>';
+	$array = array(0 => $langs->trans("CountryFlag"), 1 => $langs->trans("CountryLabel"));
+	print $form->selectarray('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST', $array, getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST'));
 	print '</td>';
 	print '</tr>';
 

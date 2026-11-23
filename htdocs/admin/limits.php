@@ -246,18 +246,18 @@ if ($action == 'edit') {
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td align="right">'.(isset($conf->global->$mainmaxdecimalsunit) ? $conf->global->$mainmaxdecimalsunit : getDolGlobalString("MAIN_MAX_DECIMALS_UNIT")).'</td></tr>';
+	print '</td><td align="right">'.getDolGlobalString($mainmaxdecimalsunit, getDolGlobalString("MAIN_MAX_DECIMALS_UNIT")).'</td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td align="right">'.(isset($conf->global->$mainmaxdecimalstot) ? $conf->global->$mainmaxdecimalstot : getDolGlobalString("MAIN_MAX_DECIMALS_TOT")).'</td></tr>';
+	print '</td><td align="right">'.getDolGlobalString($mainmaxdecimalstot, getDolGlobalString("MAIN_MAX_DECIMALS_TOT")).'</td></tr>';
 
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td>';
-	print '<td align="right">'.(isset($conf->global->$mainmaxdecimalsshown) ? $conf->global->$mainmaxdecimalsshown : getDolGlobalString("MAIN_MAX_DECIMALS_SHOWN")).'</td></tr>';
+	print '<td align="right">'.getDolGlobalString($mainmaxdecimalsshown, getDolGlobalString("MAIN_MAX_DECIMALS_SHOWN")).'</td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td align="right">'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : getDolGlobalString('MAIN_ROUNDING_RULE_TOT')).'</td></tr>';
+	print '</td><td align="right">'.getDolGlobalString($mainroundingruletot, getDolGlobalString('MAIN_ROUNDING_RULE_TOT')).'</td></tr>';
 
 	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans('MAIN_WEIGHT_DEFAULT_ROUND'), $langs->trans('WeightVolumeRoundingHelp')) . '</td>';
 	print '<td class="right">' . getDolGlobalInt('MAIN_WEIGHT_DEFAULT_ROUND', -1) . '</td></tr>';

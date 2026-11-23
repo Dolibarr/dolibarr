@@ -1903,6 +1903,7 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -2102,7 +2103,12 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center tdoverflowmax100">';
 			$labelcountry = ($companystatic->country_code && ($langs->trans("Country".$companystatic->country_code) != "Country".$companystatic->country_code)) ? $langs->trans("Country".$companystatic->country_code) : $obj->country_label;
-			print $labelcountry;
+			if ($companystatic->country_code && !$showcountrylabelinlist) {
+				// Show flag, with country label as tooltip
+				print picto_from_langcode($companystatic->country_code, 'title="'.dolPrintHTMLForAttribute($labelcountry).'"', 1);
+			} else {
+				print dolPrintHTML($labelcountry);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2177,19 +2183,19 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.phone']['checked'])) {
-			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['s.phone_mobile']['checked'])) {
-			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['s.fax']['checked'])) {
-			print '<td class="nowraponall">'.dol_print_phone($obj->fax, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->fax, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

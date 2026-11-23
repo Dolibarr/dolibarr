@@ -220,7 +220,7 @@ class DolibarrApiAccess implements iAuthenticate
 							$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
 						}
 						if ($fmysoc->country_code == 'FR' && !isset($conf->global->INVOICE_CATEGORY_OF_OPERATION)) {
-							// For FR, default value of option to show category of operations is on by default. Decret n°2099-1299 2022-10-07
+							// For FR, default value of option to show category of operations is on by default. Decret n°2022-1299 2022-10-07
 							$conf->global->INVOICE_CATEGORY_OF_OPERATION = 1;
 						}
 						if ($fmysoc->country_code == 'FR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
