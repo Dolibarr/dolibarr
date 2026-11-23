@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2026	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2026   Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Charlene Benke			<charlene@patas.ch>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4682,18 +4683,20 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		$class = "dropdown-item";
 	} else {
 		$class = 'butAction';
-		if ($actionType == 'edit') {
-			$class = 'butAction butActionEdit';
-		} elseif ($actionType == 'email') {
-			$class = 'butAction butActionEmail';
-		} elseif ($actionType == 'clone') {
-			$class = 'butAction butActionClone';
-		} elseif ($actionType == 'cancel') {
-			$class = 'butAction butActionDelete';
-		} elseif ($actionType == 'danger' || $actionType == 'delete') {
-			$class = 'butAction butActionDelete';
-			if (!empty($url) && strpos($url, 'token=') === false) {
-				$url .= '&token=' . newToken();
+		if (!getDolGlobalString('MAIN_BUTTON_SHOW_FULL_TITLE')) {
+			if ($actionType == 'edit') {
+				$class = 'butAction butActionEdit';
+			} elseif ($actionType == 'email') {
+				$class = 'butAction butActionEmail';
+			} elseif ($actionType == 'clone') {
+				$class = 'butAction butActionClone';
+			} elseif ($actionType == 'cancel') {
+				$class = 'butAction butActionDelete';
+			} elseif ($actionType == 'danger' || $actionType == 'delete') {
+				$class = 'butAction butActionDelete';
+				if (!empty($url) && strpos($url, 'token=') === false) {
+					$url .= '&token=' . newToken();
+				}
 			}
 		}
 	}
