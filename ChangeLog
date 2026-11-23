@@ -605,6 +605,17 @@ The following changes may create regressions for some external modules, but were
 * The load of hook context productdao has been removed before calling loadvirtualstock. Modules must use the context of main parent page or 'all' for all cases.
 
 
+***** ChangeLog for 18.0.10 compared to 18.0.9 *****
+
+FIX: autofill price with multicurrency on supplier doc (backport commit 391aca5) (#38028)
+FIX: calculate the files count on ECM when add multiple files in one time (#31866)
+FIX: #GHSA-hq5j-39f9-qxcv (#37812)
+FIX: SQL Injection via Operator Injection in Contract Service List
+FIX: #GHSA-crgg-h74r-2m8r (#37636)
+FIX: do not print Extrafields in PDF if printable is 0
+FIX: a param must not come from end user entry.
+
+
 ***** ChangeLog for 18.0.9 compared to 18.0.8 *****
 100 files changed, 2283 insertions(+), 591 deletions(-)
 

@@ -426,7 +426,10 @@ class DoliDBPgsql extends DoliDB
 		if ((!empty($host) && $host == "socket") && !defined('NOLOCALSOCKETPGCONNECT')) {
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'"; // $name may be empty
 			try {
-				$this->db = @pg_connect($con_string);
+				// PGSQL_CONNECT_FORCE_NEW is required: pg_connect() otherwise returns the connection already
+				// opened for the same connection string, so a second handle would share the main one and
+				// closing it would close the connection still in use by the caller.
+				$this->db = @pg_connect($con_string, PGSQL_CONNECT_FORCE_NEW);
 			} catch (Exception $e) {
 				// No message
 			}
@@ -443,7 +446,7 @@ class DoliDBPgsql extends DoliDB
 
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
 			try {
-				$this->db = @pg_connect($con_string);
+				$this->db = @pg_connect($con_string, PGSQL_CONNECT_FORCE_NEW);
 			} catch (Exception $e) {
 				print $e->getMessage();
 			}

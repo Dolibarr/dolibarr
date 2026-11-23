@@ -1301,7 +1301,7 @@ class Form
 	/**
 	 *  Output html form to select a third party
 	 *
-	 * @param string 	$selected 			Preselected type
+	 * @param int|string 	$selected 			Preselected ID
 	 * @param string 	$htmlname 			Name of field in form
 	 * @param string 	$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>()] are allowed here (example: 's.rowid <> x', 's.client IN (1,3)'). Do not use a filter coming from input of users.
 	 * @param string 	$showempty 			Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
@@ -3814,7 +3814,7 @@ class Form
 					$optstart .= ' data-supplier-ref="' . dol_escape_htmltag($objp->ref_fourn) . '"';
 					if (isModEnabled('multicurrency')) {
 						$optstart .= ' data-multicurrency-code="' . dol_escape_htmltag($objp->multicurrency_code) . '"';
-						$optstart .= ' data-multicurrency-unitprice="' . dol_escape_htmltag($objp->multicurrency_unitprice) . '"';
+						$optstart .= ' data-multicurrency-unitprice="' . dol_escape_htmltag(price2num($objp->multicurrency_unitprice)) . '"';	// the price with numeric international format
 					}
 				}
 				$optstart .= ' data-description="' . dol_escape_htmltag($objp->description, 0, 1) . '"';
@@ -4884,7 +4884,7 @@ class Form
 	/**
 	 *  Return a HTML select list of bank accounts
 	 *
-	 * @param string 	$selected 		Id account pre-selected
+	 * @param int|string 	$selected 		Id account pre-selected
 	 * @param string 	$htmlname 		Name of select zone
 	 * @param int 		$status 		Status of searched accounts (0=open, 1=closed, 2=both)
 	 * @param string 	$filtre 		To filter list. This parameter must not come from input of users

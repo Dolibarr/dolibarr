@@ -1,0 +1,115 @@
+---
+# Check the title (label) of a PR starts with a valid keyword (Fix|Close|New|Perf|Doc|Qual|Sec|UXUI)
+# and that the description of the PR does not contain the mention @eldy.
+# If this is not the case, the CI fails, so the PR is refused.
+# If the PR targets a branch other than develop, the keyword must also be restricted to (Fix|Sec|Doc).
+# Note: the keyword can be in upper or lower case (use upper case to see the PR into the ChangeLog)
+# and must be followed by a space, a '#' or a ':' (for example: "Fix #456 Short description", "Fix: Short description", "New Short description").
+# Draft PRs are skipped (they are not analyzed until they are ready for review).
+# The second job "Check PR screenshot" checks that a PR that changes the User Interface contains at least one
+# screenshot pasted into the description of the PR or into one of its comments. A PR is considered as a change of
+# User Interface if its title starts with the keyword UXUI or it modifies UI files (.tpl, .css, .scss, .html,
+# .js, .vue and htdocs/theme/, except into htdocs/includes and dev directories). The second job runs only when
+# the first job is green.
+name: Check PR title and description
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, ready_for_review, synchronize]
+
+permissions: {}
+
+jobs:
+  check-pr:
+    name: Check PR title and description syntax
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read # to get the list of files of the PR
+      issues: read # to get the comments of the PR
+    steps:
+      - name: Check PR title prefix
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if echo "$PR_TITLE" | grep -Eiq '^(Fix|Close|New|Perf|Doc|Qual|Sec|UXUI)[ #:]'; then
+            echo "Title of PR is valid: '$PR_TITLE'"
+            exit 0
+          fi
+
+          echo "::error::The title of the PR must start with one of the keywords (FIX|CLOSE|NEW|PERF|DOC|QUAL|SEC|UXUI) followed by a space or ':', then a description (Description can be free or '#ID' with ID of issue). Current title: '$PR_TITLE'"
+          exit 1
+
+      - name: Check PR type compatibility with branch other than develop
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
+        run: |
+          if [ "$PR_TARGET_BRANCH" = "develop" ] || [ "$PR_TARGET_BRANCH" = "main" ] || [ "$PR_TARGET_BRANCH" = "master" ]; then
+            echo "The PR targets the branch develop, so any type of PR is allowed."
+            exit 0
+          fi
+
+          if echo "$PR_TITLE" | grep -Eiq '^(Fix|Sec|Doc)[ #:]'; then
+            echo "Type of PR is valid for the branch '$PR_TARGET_BRANCH': '$PR_TITLE'"
+            exit 0
+          fi
+
+          echo "::error::The PR targets the branch '$PR_TARGET_BRANCH' which is not the branch develop, so only bugfix or security PR are allowed. Quality, log, perf or refactoring must be done in develop branch."
+          exit 1
+
+      - name: Check PR description mentions
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if echo "$PR_BODY" | grep -Eiq '@eldy\b'; then
+            echo "::error::The description of the PR must not contain the mention of the maintener (@eldy). This is useless as the maintener is already watching and notified for PR."
+            exit 1
+          fi
+
+          echo "Description of PR is valid."
+
+      - name: Check PR has a screenshot if UI is changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          UI_RELATED=0
+          REASON=""
+
+          # Detection 1: the title of the PR starts with the keyword UXUI
+          if printf '%s' "$PR_TITLE" | grep -Eiq '^(UXUI|Uxui)[ #:]'; then
+            UI_RELATED=1
+            REASON="the title of the PR starts with the keyword UXUI"
+          fi
+
+          # Detection 2: the PR modifies files related to the UI
+          FILES=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" --jq '.[].filename')
+          UI_FILES=$(printf '%s\n' "$FILES" | grep -Ei '(^htdocs/theme/|\.(tpl|css|scss|html|js|vue)$)' | grep -Ev '^(htdocs/includes/|dev/|.*node_modules/)' || true)
+          if [ -n "$UI_FILES" ]; then
+            UI_RELATED=1
+            REASON="${REASON:+$REASON and }the PR modifies files related to the UI"
+            echo "UI files modified:"
+            printf '%s\n' "$UI_FILES" | head -n 10
+          fi
+
+          if [ "$UI_RELATED" = "0" ]; then
+            echo "The PR does not seem to change the User Interface. No screenshot required."
+            exit 0
+          fi
+
+          # Search for a screenshot into the description of the PR and its comments
+          COMMENTS=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" --jq '.[].body')
+          CONTENT="${PR_BODY}
+          ${COMMENTS}"
+
+          if printf '%s' "$CONTENT" | grep -Eiq '!\[[^]]*\]\(|user-attachments' \
+            || printf '%s' "$CONTENT" | grep -Eiq '\.(png|jpe?g|gif|webp|bmp)([?#)]|[[:space:]]|$)'; then
+            echo "Screenshot found into the description or the comments of the PR."
+            exit 0
+          fi
+
+          echo "::error::This PR changes the User Interface ($REASON), but no screenshot was found into the description or the comments of the PR. Please paste at least one screenshot (before and after if possible) into the description of the PR. See the contributing guidelines: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/develop/.github/CONTRIBUTING.md"
+          exit 1

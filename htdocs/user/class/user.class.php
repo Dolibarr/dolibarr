@@ -752,7 +752,7 @@ class User extends CommonObject
 	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
 	 *  It replaces old syntax: if ($user->rights->module->level1)
 	 *
-	 * 	@param	int		$module			Module of permission to check
+	 * 	@param	string	$module			Module of permission to check
 	 *  @param  string	$permlevel1		Permission level1 (Example: 'read', 'write', 'delete')
 	 *  @param  string	$permlevel2		Permission level2
 	 *  @return int						1 if user has permission, 0 if not.
@@ -3789,7 +3789,7 @@ class User extends CommonObject
 			$childids = $this->cache_childids[$this->id];
 		} else {
 			// Init this->users
-			$this->get_full_tree();
+			$treeresult = $this->get_full_tree();
 
 			$idtoscan = $this->id;
 
@@ -3799,6 +3799,14 @@ class User extends CommonObject
 				if (preg_match('/_'.$idtoscan.'_/', $val['fullpath'])) {
 					$childids[$val['id']] = $val['id'];
 				}
+			}
+
+			// A loop anywhere in the hierarchy aborts get_full_tree(), leaving the branches it had not
+			// walked yet with an empty fullpath, so they silently drop out of the list above. Do not
+			// cache such a truncated result, it would be reused for the whole request.
+			if ($treeresult < 0) {
+				dol_syslog(get_class($this)."::getAllChildIds got a truncated tree: ".$this->error, LOG_WARNING);
+				return $addcurrentuser ? array($this->id => $this->id) : $childids;
 			}
 		}
 		$this->cache_childids[$this->id] = $childids;

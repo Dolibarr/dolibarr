@@ -42,13 +42,17 @@ $id		= GETPOST('id', 'int');
 $ref	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$object = new SupplierProposal($db);
+$object->fetch($id, $ref);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal', '');
-
-$object = new SupplierProposal($db);
 
 $permissiontoedit = $user->hasRight('supplier_proposal', 'creer');
 

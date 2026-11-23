@@ -756,7 +756,7 @@ class EmailCollector extends CommonObject
 	{
 		$this->actions = array();
 
-		$sql = 'SELECT rowid, type, actionparam, status';
+		$sql = 'SELECT rowid, type, actionparam, status, position';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'emailcollector_emailcollectoraction';
 		$sql .= ' WHERE fk_emailcollector = '.((int) $this->id);
 		$sql .= ' ORDER BY position';
@@ -767,7 +767,7 @@ class EmailCollector extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$this->actions[$obj->rowid] = array('id'=>$obj->rowid, 'type'=>$obj->type, 'actionparam'=>$obj->actionparam, 'status'=>$obj->status);
+				$this->actions[$obj->rowid] = array('id'=>$obj->rowid, 'type'=>$obj->type, 'actionparam'=>$obj->actionparam, 'status'=>$obj->status, 'position'=>$obj->position);
 				$i++;
 			}
 			$this->db->free($resql);
@@ -2808,7 +2808,7 @@ class EmailCollector extends CommonObject
 									include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 									$hookmanager = new HookManager($this->db);
 								}
-								$hookmanager->initHooks(array('emailcolector'));
+								$hookmanager->initHooks(['emailcolector', 'emailcollector']);
 								$parameters = array('arrayobject' => $arrayobject);
 								$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
 								if ($reshook > 0) {
@@ -3241,7 +3241,7 @@ class EmailCollector extends CommonObject
 							if (!is_object($hookmanager)) {
 								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 								$hookmanager = new HookManager($this->db);
-								$hookmanager->initHooks(['emailcolector']);
+								$hookmanager->initHooks(['emailcolector', 'emailcollector']);
 							}
 
 							$parameters = array(
