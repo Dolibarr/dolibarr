@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyreport.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy'));
+$langs->loadLangs(array('compta', 'bills', 'donations', 'salaries', 'accountancy'));
 
 $id_report = GETPOSTINT('id_report');
 if ($id_report <= 0) {

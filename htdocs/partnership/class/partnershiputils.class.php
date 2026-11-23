@@ -88,7 +88,7 @@ class PartnershipUtils
 		$partnership = new Partnership($this->db);
 		$MAXPERCALL = getDolGlobalInt('PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL', 25); // Limit to 25 per call
 
-		$langs->loadLangs(array("partnership", "member"));
+		$langs->loadLangs(array("partnership", "members"));
 
 		$error = 0;
 		$erroremail = '';
@@ -115,7 +115,7 @@ class PartnershipUtils
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d on (d.rowid = p.fk_member)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
 		$sql .= " WHERE fk_member > 0";
-		$sql .= " AND (d.datefin < '".$this->db->idate($datetotest)."' AND dty.subscription = 1)";
+		$sql .= " AND (d.datefin < '".$this->db->idate($datetotest)."' AND dty.subscription = '1')";
 		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted not yet canceled
 		$sql .= $this->db->order('d.rowid', 'ASC');
 		// Limit is managed into loop later
@@ -184,7 +184,7 @@ class PartnershipUtils
 							if (!empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
-								$outputlangs->loadLangs(array('main', 'member', 'partnership'));
+								$outputlangs->loadLangs(array('main', 'members', 'partnership'));
 							}
 
 							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
@@ -300,7 +300,7 @@ class PartnershipUtils
 			$maxpercall = getDolGlobalInt('PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL', 10);
 		}
 
-		$langs->loadLangs(array("partnership", "member"));
+		$langs->loadLangs(array("partnership", "members"));
 
 		$error = 0;
 		$erroremail = '';
@@ -410,7 +410,7 @@ class PartnershipUtils
 									if (!empty($newlang)) {
 										$outputlangs = new Translate("", $conf);
 										$outputlangs->setDefaultLang($newlang);
-										$outputlangs->loadLangs(array('main', 'member', 'partnership'));
+										$outputlangs->loadLangs(array('main', 'members', 'partnership'));
 									}
 
 									$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);

@@ -182,10 +182,10 @@ print '</th>';
 // Fields for situation invoice
 if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
-		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
+		print '<th class="linecolcycleref2 right" title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv('SituationInvoiceProgressCurrent')).'">' . $langs->trans('SituationInvoiceProgressCurrentShort') . '</th>';
 	}
-	print '<th class="linecolcycleref right">';
-	print $langs->trans('CumulativeProgression');
+	print '<th class="linecolcycleref right" title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv('CumulativeProgression')).'">';
+	print $langs->trans('CumulativeProgressionShort');
 
 	// @phan-suppress-next-line PhanUndeclaredConstantOfClass,PhanUndeclaredProperty
 	if ($object->element == 'facture' && $object->status == $object::STATUS_DRAFT && $object->type != $object::TYPE_CREDIT_NOTE) {	// No mass update of progress on a credit note

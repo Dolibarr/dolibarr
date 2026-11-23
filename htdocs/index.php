@@ -182,7 +182,9 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 
 	if (!empty($securitywarnings)) {
 		// Each warning has its own picto (info_admin called with nodiv), all wrapped into the same div as the one built by info_admin()
-		$messagetoshow .= '<div class="wordbreak warning info_admin clearboth">'.implode('<br><br>', $securitywarnings).'</div>';
+		$messagetoshow .= '<div class="wordbreak warning info_admin clearboth securitywarnings'.(empty($conf->use_javascript_ajax) ? '' : ' cursorpointer').'"';
+		$messagetoshow .= (empty($conf->use_javascript_ajax) ? '' : ' title="'.dolPrintHTMLForAttribute($langs->transnoentities("ClickToHide")).'"').'>';
+		$messagetoshow .= implode('<br><br>', $securitywarnings).'</div>';
 	}
 
 	$tmpobject = new stdClass();
@@ -194,6 +196,28 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	if ($messagetoshow) {	// $message is an HTML string.
 		print '<!-- show security warning -->';
 		print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('div', 'span', 'b', 'br'));
+		if (!empty($securitywarnings) && !empty($conf->use_javascript_ajax)) {
+			// Hide the security warnings for the current page view when user clicks on them, but not when user selects text
+			// (by dragging, or with a double/triple click: so hiding is delayed to know if another click follows).
+			print '<script nonce="'.getNonce().'" type="text/javascript">
+			jQuery(document).ready(function() {
+				var securitywarningstimer = null;
+				jQuery(".securitywarnings").click(function(event) {
+					var securitywarningsdiv = jQuery(this);
+					clearTimeout(securitywarningstimer);
+					if (event.detail > 1) {
+						return;
+					}
+					securitywarningstimer = setTimeout(function() {
+						if (window.getSelection().toString() === "") {
+							console.log("Click on .securitywarnings, we hide it");
+							securitywarningsdiv.hide();
+						}
+					}, 300);
+				});
+			});
+			</script>';
+		}
 	}
 }
 
@@ -624,6 +648,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					'member' => dol_buildpath('/adherents/card.php?action=create', 1),
 					'expensereport' => dol_buildpath('/expensereport/card.php?action=create', 1),
 					'holiday' => dol_buildpath('/holiday/card.php?action=create', 1),
+					'intervention' => dol_buildpath('/fichinter/card.php?action=create', 1),
 					'cubes' => dol_buildpath('/mrp/mo_card.php?action=create', 1),
 
 				);

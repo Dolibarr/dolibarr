@@ -36,12 +36,12 @@ CREATE TABLE llx_pos_cash_fence(
 	status INTEGER,
 	date_creation DATETIME NOT NULL,
 	date_valid DATETIME,
-	day_close INTEGER,
-	month_close INTEGER,
-	year_close INTEGER,
-	hour_close INTEGER DEFAULT null,
-	min_close INTEGER DEFAULT null,
-	sec_close INTEGER DEFAULT null,
+	day_close INTEGER,					-- day of the period chosen by the user (null for a monthly or yearly period)
+	month_close INTEGER,				-- month of the period chosen by the user (null for a yearly period)
+	year_close INTEGER,					-- year of the period chosen by the user
+	hour_close INTEGER DEFAULT null,	-- hour of the end of the period, in UTC, relative to 00:00:00 UTC of the last day of the period (may be < 0 or > 23)
+	min_close INTEGER DEFAULT null,		-- minute of the end of the period, in UTC
+	sec_close INTEGER DEFAULT null,		-- second of the end of the period, in UTC
 	posmodule VARCHAR(30),
 	posnumber VARCHAR(30),
 	fk_user_creat integer,

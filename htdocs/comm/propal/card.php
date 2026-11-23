@@ -79,9 +79,6 @@ if (isModEnabled('variants')) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'sendings', 'other'));
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 if (isModEnabled('margin')) {
 	$langs->load('margins');
 }

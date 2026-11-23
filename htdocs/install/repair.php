@@ -1459,13 +1459,13 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 							}
 							if ($key == 'js') {
 								$value = $obj->value;
-								$valuearray = (array) json_decode($value);	// Force cast into array because sometimes it is a stdClass
+								$valuearray = (array) json_decode($value, true);	// Decode into array because sometimes the json is an object
 								$reloffile = $valuearray[0];
 								$reloffile = preg_replace('/^\//', '', $valuearray[0]);
 							}
 							if ($key == 'css') {
 								$value = $obj->value;
-								$valuearray = (array) json_decode($value);	// Force cast into array because sometimes it is a stdClass
+								$valuearray = (array) json_decode($value, true);	// Decode into array because sometimes the json is an object
 								if ($value && (!is_array($valuearray) || count($valuearray) == 0)) {
 									$valuearray = array();
 									$valuearray[0] = $value; // If value was not a json array but a string

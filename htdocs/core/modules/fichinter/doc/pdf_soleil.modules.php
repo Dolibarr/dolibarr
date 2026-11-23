@@ -286,7 +286,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetXY($this->marge_gauche, $tab_top + 5);
 				$text = $object->description;
 				if ($object->duration > 0) {
-					$totaltime = convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+					$totaltime = convertSecondToTime($object->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY'));
 					$text .= ($text ? ' - ' : '').$langs->trans("Total").": ".$totaltime;
 				}
 				$desc = dol_htmlentitiesbr($text, 1);
@@ -720,7 +720,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

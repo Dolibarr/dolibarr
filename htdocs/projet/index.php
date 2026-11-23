@@ -279,7 +279,7 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
-			print '<td class="minwidth100onall">';
+			print '<td class="tdlineheightsmall minwidth100onall">';
 
 			$projectstatic->id = $obj->rowid;
 			$projectstatic->ref = $obj->ref;

@@ -560,7 +560,9 @@ function dolAddEmailTrackId($email, $trackingid)
  */
 function isValidMailDomain($mail)
 {
-	list($user, $domain) = explode("@", $mail, 2);
+	$tmparray = explode("@", $mail, 2);
+	$user = $tmparray[0];
+	$domain = $tmparray[1];
 	return ($domain ? isValidMXRecord($domain) : 0);
 }
 
@@ -2112,7 +2114,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$module = 'commande';
 		$myobject = 'commande';
 	} elseif ($objecttype == 'mailing') {
-		$langs->load('mailing');
+		$langs->load('mails');
 		$classpath = 'comm/mailing/class';
 	} elseif ($objecttype == 'propal') {
 		$langs->load('propal');
@@ -2870,11 +2872,11 @@ function price2fec($amount)
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occurred when amount value = o (letter) instead 0 (number)
 
 	// Output decimal number by default
-	$nbdecimal = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_LENGTH') ? 2 : $conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH);
+	$nbdecimal = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_LENGTH') ? 2 : getDolGlobalString('ACCOUNTING_FEC_DECIMAL_LENGTH'));
 
 	// Output separators by default
-	$dec = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_SEPARATOR') ? ',' : $conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR);
-	$thousand = (!getDolGlobalString('ACCOUNTING_FEC_THOUSAND_SEPARATOR') ? '' : $conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR);
+	$dec = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_SEPARATOR') ? ',' : getDolGlobalString('ACCOUNTING_FEC_DECIMAL_SEPARATOR'));
+	$thousand = (!getDolGlobalString('ACCOUNTING_FEC_THOUSAND_SEPARATOR') ? '' : getDolGlobalString('ACCOUNTING_FEC_THOUSAND_SEPARATOR'));
 
 	// Format number
 	$output = number_format($amount, $nbdecimal, $dec, $thousand);
