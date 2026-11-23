@@ -1911,7 +1911,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$titletoshow = dol_htmlentities($appli);
 		}
 
-		$parameters = array('title' => $titletoshow);
+		// Name of some modules are added into title of login and home pages only (used by native applications to detect them)
+		$showmodulesintitle = ((!empty($disableforlogin) || $_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') ? 1 : 0);
+
+		$parameters = array('title' => $titletoshow, 'showmodulesintitle' => $showmodulesintitle);
 		$result = $hookmanager->executeHooks('setHtmlTitle', $parameters); // Note that $action and $object may have been modified by some hooks
 		if ($result > 0) {
 			$titletoshow = $hookmanager->resPrint; // Replace Title to show
@@ -1919,8 +1922,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			$titletoshow .= $hookmanager->resPrint; // Concat to Title to show
 		}
 
-		// Add ' + ai' to the title if the AI module is enabled (like multicompany module does with its own hook)
-		if (isModEnabled('ai')) {
+		// Add ' + ai' to the title of login and home pages if the AI module is enabled (like multicompany module does with its own hook)
+		if ($showmodulesintitle && isModEnabled('ai')) {
 			$titletoshow .= ' + ai';
 		}
 

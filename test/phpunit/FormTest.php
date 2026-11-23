@@ -135,7 +135,8 @@ class FormTest extends CommonClassTest
 			'price_by_qty_rowid' => '',
 		);
 
-		list($option) = $form->buildProductOption($product);
+		$tmparray = $form->buildProductOption($product);
+		$option = $tmparray[0];
 
 		$htmlMatches = array();
 		$textMatches = array();

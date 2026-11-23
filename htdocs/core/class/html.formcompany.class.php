@@ -344,21 +344,23 @@ class FormCompany extends Form
 							$out .= '<option value="' . $obj->rowid . '">';
 						}
 
-						// If a translation exists, we use it, else we take the default label
+						// If a translation exists, we use it, else we take the default label.
+						// The key is prefixed by 'State' so a state code (like 'OK') is not mixed with a generic key of the language files.
+						$statelabel = ($obj->code && $langs->trans('State' . $obj->code) != 'State' . $obj->code) ? $langs->trans('State' . $obj->code) : ($obj->name != '-' ? $obj->name : '');
 						if (
 							getDolGlobalString('MAIN_SHOW_STATE_CODE') &&
 							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || getDolGlobalString('MAIN_SHOW_STATE_CODE') === 'all')
 						) {
 							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {
-								$out .= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+								$out .= $obj->region_name . ' - ' . $obj->code . ' - ' . $statelabel;
 							} else {
-								$out .= $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+								$out .= $obj->code . ' - ' . $statelabel;
 							}
 						} else {
 							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {
-								$out .= $obj->region_name . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+								$out .= $obj->region_name . ' - ' . $statelabel;
 							} else {
-								$out .= ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+								$out .= $statelabel;
 							}
 						}
 
@@ -675,7 +677,7 @@ class FormCompany extends Form
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 			// Use Ajax search
-			$minLength = (is_numeric(getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) ? $conf->global->COMPANY_USE_SEARCH_TO_SELECT : 2);
+			$minLength = (is_numeric(getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) ? getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT') : 2);
 
 			$socid = 0;
 			$name = '';

@@ -3093,7 +3093,9 @@ function migrate_element_time($db, $langs, $conf)
 				if ($obj->element_duration > 0) {
 					// convert to second
 					// only for int time and float time ex: 1.75 for 1h45
-					list($hour, $min) = explode('.', $obj->element_duration);
+					$tmparray = explode('.', $obj->element_duration);
+					$hour = $tmparray[0];
+					$min = $tmparray[1];
 					$hour = (int) $hour * 60 * 60;
 					$min = (int) ((float) ('.'.$min)) * 3600;
 					$newtime = $hour + $min;

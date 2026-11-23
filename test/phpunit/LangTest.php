@@ -196,7 +196,7 @@ class LangTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 
 		foreach ($this->langDataProvider() as $case) {
-			list($code) = $case;
+			$code = $case[0];
 			$prefix = __METHOD__."($code) ";
 			$tmplangs = new Translate('', $conf);
 			$langcode = $code;
@@ -316,7 +316,14 @@ class LangTest extends CommonClassTest
 		$db = $this->savdb;
 
 		foreach ($this->transDataProvider() as $casename => $case) {
-			list($description, $langcode, $dict, $expected, $key, $param1, $param2) = array_pad($case, 7, '');
+			$tmparray = array_pad($case, 7, '');
+			$description = $tmparray[0];
+			$langcode = $tmparray[1];
+			$dict = $tmparray[2];
+			$expected = $tmparray[3];
+			$key = $tmparray[4];
+			$param1 = $tmparray[5];
+			$param2 = $tmparray[6];
 
 			$tmplangs = new Translate('', $conf);
 			$tmplangs->setDefaultLang($langcode);

@@ -443,7 +443,7 @@ if (isModEnabled('reception')) {
 		print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("SUPPLIER_ORDER_USE_DISPATCH_STATUS", $arrval, $conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS);
+		print $form->selectarray("SUPPLIER_ORDER_USE_DISPATCH_STATUS", $arrval, getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS'));
 	}
 }
 print "</td>\n";

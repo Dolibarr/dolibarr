@@ -2364,7 +2364,7 @@ class Task extends CommonObjectLine
 		$clone_task->date_c = $datec;	// Set the new creation date before computing the ref, else the numbering mask uses the source task year
 
 		$defaultref = '';
-		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : getDolGlobalString('PROJECT_TASK_ADDON');
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
 			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 			$modTask = new $obj();

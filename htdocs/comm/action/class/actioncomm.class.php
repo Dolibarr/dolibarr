@@ -8,6 +8,7 @@
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -885,6 +886,7 @@ class ActionComm extends CommonObject
 		$this->fetchResources();
 
 		$this->id = 0;
+		$this->uid = '';	// The clone is a new event, create() gives it its own uid (the uid column is unique)
 		$this->recurid = '';
 		$this->recurrule = '';
 		$this->recurdateend = '';
