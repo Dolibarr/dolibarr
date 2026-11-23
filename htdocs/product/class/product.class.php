@@ -2975,7 +2975,7 @@ class Product extends CommonObject
 		$id = $this->id;
 
 		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr." newdefaultvatcode=".$newdefaultvatcode);
-		
+
 		if (is_null($this->oldcopy) || (is_object($this->oldcopy) && empty($this->oldcopy->id))) {
 			$this->oldcopy = dol_clone($this, 1);
 		}
