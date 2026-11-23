@@ -226,7 +226,7 @@ class MyObject extends CommonObject
 	/**
 	 * @var string    Name of subtable class that manage subtable lines
 	 */
-	public $class_element_line = 'MyObjectline';
+	public $class_element_line = 'MyObjectLine';
 
 	/**
 	 * @var array<array<string>|string>		List of child tables. To test if we can delete object.
@@ -239,6 +239,7 @@ class MyObject extends CommonObject
 	 *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
 	//protected $childtablesoncascade = array('mymodule_myobjectdet');
+	protected $childtablesoncascade = array('mymodule_myobjectline');	// Lines are deleted with the object
 
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
@@ -337,9 +338,12 @@ class MyObject extends CommonObject
 			$object->fetchLines();
 		}
 
-		// get lines so they will be clone
+		// get lines so they will be clone (they are created by createCommon())
 		foreach ($object->lines as $line) {
 			$line->fetch_optionals();
+			$line->date_creation = null;
+			$line->fk_user_creat = $user->id;
+			$line->fk_user_modif = null;
 		}
 		//END MODULEBUILDER LINES
 
@@ -572,12 +576,83 @@ class MyObject extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
-		if ($this->status < 0) {
+		if ($this->status != self::STATUS_DRAFT) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 
 		return $this->deleteLineCommon($user, $idline, $notrigger);
+	}
+
+	/**
+	 *  Add a line to the object. Object must be a draft.
+	 *
+	 *	@param	User		$user			User that adds
+	 *  @param	string		$desc			Description of line
+	 *  @param	float		$qty			Quantity
+	 *  @param	int			$fk_product		Id of product or service (0 if none)
+	 *  @param	int<0,1>	$notrigger		0=launch triggers after, 1=disable triggers
+	 *  @return	int							Id of new line if OK, <0 if KO
+	 */
+	public function addLine(User $user, $desc, $qty, $fk_product = 0, $notrigger = 0)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			$this->error = 'ErrorAddOrModifyLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		$line = new MyObjectLine($this->db);
+		$line->fk_myobject = $this->id;
+		$line->fk_product = ($fk_product > 0 ? $fk_product : 0);
+		$line->description = $desc;
+		$line->qty = $qty;
+		$line->rang = $this->line_max() + 1;
+
+		$result = $line->insert($user, $notrigger);
+		if ($result < 0) {
+			$this->setErrorsFromObject($line);
+			return -1;
+		}
+
+		return $result;
+	}
+
+	/**
+	 *  Update a line of the object. Object must be a draft.
+	 *
+	 *	@param	User		$user			User that modifies
+	 *  @param	int			$idline			Id of line to update
+	 *  @param	string		$desc			Description of line
+	 *  @param	float		$qty			Quantity
+	 *  @param	int			$fk_product		Id of product or service (0 if none)
+	 *  @param	int<0,1>	$notrigger		0=launch triggers after, 1=disable triggers
+	 *  @return	int							>0 if OK, <0 if KO
+	 */
+	public function updateLine(User $user, $idline, $desc, $qty, $fk_product = 0, $notrigger = 0)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			$this->error = 'ErrorAddOrModifyLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		$line = new MyObjectLine($this->db);
+		$result = $line->fetch($idline);
+		if ($result <= 0 || $line->fk_myobject != $this->id) {	// The line must belong to this object
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
+		}
+
+		$line->fk_product = ($fk_product > 0 ? $fk_product : 0);
+		$line->description = $desc;
+		$line->qty = $qty;
+
+		$result = $line->update($user, $notrigger);
+		if ($result < 0) {
+			$this->setErrorsFromObject($line);
+			return -1;
+		}
+
+		return 1;
 	}
 	//END MODULEBUILDER LINES
 
@@ -1137,19 +1212,12 @@ class MyObject extends CommonObject
 	 */
 	public function getLinesArray()
 	{
-		$this->lines = array();
-
-		$objectline = new MyObjectLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_myobject:=:'.((int) $this->id).')');
-
-		if (is_numeric($result)) {
-			$this->setErrorsFromObject($objectline);
+		$result = $this->fetchLines();
+		if ($result < 0) {
 			return $result;
-		} else {
-			/** @phpstan-ignore-next-line */
-			$this->lines = $result;
-			return $this->lines;
 		}
+
+		return $this->lines;
 	}
 	//END MODULEBUILDER LINES
 
@@ -1304,20 +1372,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
  */
 class MyObjectLine extends CommonObjectLine
 {
-	// To complete with content of an object MyObjectLine
-	// We should have a field rowid, fk_myobject and position
+	// Lines are stored into table llx_mymodule_myobjectline (see sql/llx_mymodule_myobjectline.sql)
+
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'myobjectline';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'mymodule_myobjectline';
+
+	/**
+	 * @var string Will be used to build trigger keys 'MYMODULE_MYOBJECTLINE_CREATE', ...
+	 */
+	public $TRIGGER_PREFIX = 'MYMODULE_MYOBJECTLINE';
 
 	/**
 	 * To overload
 	 * @see CommonObjectLine
 	 */
-	public $parent_element = '';		// Example: '' or 'myobject'
+	public $parent_element = 'myobject';
 
 	/**
 	 * To overload
 	 * @see CommonObjectLine
 	 */
-	public $fk_parent_attribute = '';	// Example: '' or 'fk_myobject'
+	public $fk_parent_attribute = 'fk_myobject';
 
 	/**
 	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
@@ -1330,6 +1412,34 @@ class MyObjectLine extends CommonObjectLine
 	 */
 	public $ismultientitymanaged = 0;
 
+	/**
+	 * @inheritdoc
+	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'position' => 1, 'notnull' => 1, 'index' => 1),
+		'fk_myobject' => array('type' => 'integer:MyObject:mymodule/class/myobject.class.php', 'label' => 'MyObject', 'enabled' => 1, 'visible' => 0, 'position' => 10, 'notnull' => 1, 'index' => 1),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'enabled' => 1, 'visible' => 1, 'position' => 20, 'notnull' => -1, 'index' => 1),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'notnull' => -1),
+		'qty' => array('type' => 'double(24,8)', 'label' => 'Qty', 'enabled' => 1, 'visible' => 1, 'position' => 40, 'notnull' => 1, 'default' => '1', 'isameasure' => 1),
+		'rang' => array('type' => 'integer', 'label' => 'Position', 'enabled' => 1, 'visible' => 0, 'position' => 50, 'notnull' => 1, 'default' => '0'),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 500, 'notnull' => 1),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'position' => 501, 'notnull' => 0),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'position' => 510, 'notnull' => 1),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'position' => 511, 'notnull' => -1),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000, 'notnull' => -1),
+	);
+
+	/**
+	 * @var int		Id of parent object MyObject
+	 */
+	public $fk_myobject;
+
+	/**
+	 * @var int		Position of line
+	 */
+	public $rang;
+
 
 	/**
 	 * Constructor
@@ -1339,6 +1449,53 @@ class MyObjectLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+	}
+
+	/**
+	 * Load a line in memory from the database
+	 *
+	 * @param	int		$id		Id of line
+	 * @return	int				Return integer <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id)
+	{
+		return $this->fetchCommon($id);
+	}
+
+	/**
+	 * Create a line in database
+	 *
+	 * @param	User		$user		User that creates
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						Return integer <0 if KO, Id of created line if OK
+	 */
+	public function insert(User $user, $notrigger = 0)
+	{
+		return $this->createCommon($user, $notrigger);
+	}
+
+	/**
+	 * Update a line in database
+	 *
+	 * @param	User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = 0)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete a line in database
+	 *
+	 * @param	User		$user		User that deletes
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = 0)
+	{
+		return $this->deleteCommon($user, $notrigger);
 	}
 }
 //END MODULEBUILDER LINES
