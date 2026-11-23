@@ -3443,6 +3443,14 @@ abstract class CommonObject
 			// The goal of this part is to reorder all lines, with all children lines sharing the same counter that parents.
 			$rows = array();
 
+			// Some line tables have no fk_parent_line field (contratdet, expensereport_det, receptiondet_batch...)
+			if ($fk_parent_line) {
+				$resql = $this->db->DDLDescTable($this->db->prefix().$this->table_element_line, 'fk_parent_line');
+				if ($resql && $this->db->num_rows($resql) == 0) {
+					$fk_parent_line = false;
+				}
+			}
+
 			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
 			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);

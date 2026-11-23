@@ -360,7 +360,7 @@ if (empty($reshook)) {
 
 						$fk_parent_line = 0;
 						$num = count($lines);
-						$rang = 0;
+						$rang = 1;	// Position of the first line, positions start at 1
 
 						for ($i = 0; $i < $num; $i++) {
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
