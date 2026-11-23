@@ -279,7 +279,8 @@ if (empty($reshook)) {
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 		$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
-		$paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
+		$paiement->paiementcode = GETPOST('paiementcode', 'alpha');
+		$paiement->paiementid   = dol_getIdFromCode($db, $paiement->paiementcode, 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 		$paiement->note_private = GETPOST('comment', 'alpha');
 		$paiement->fk_account   = GETPOSTINT('accountid');

@@ -1820,6 +1820,22 @@ if (empty($reshook)) {
 								}
 
 								$descline .= ' - '.$srcobject->ref;
+
+								// Cost price of the line: cost of the source lines with the same vat rate (all lines for a fixed amount), prorated
+								// to the amount of the line, like a down payment from a percent of all lines that keeps the cost price of each line.
+								$totalhtofsource = 0;
+								$totalcostofsource = 0;
+								foreach ((is_array($srcobject->lines) ? $srcobject->lines : array()) as $srcline) {
+									if (empty($srcline->qty) || !empty($srcline->special_code)) {
+										continue;
+									}
+									if (($typeamount == 'amount' && !getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) || price2num($srcline->tva_tx) == price2num(preg_replace('/\s*\(.*\)/', '', (string) $tva))) {
+										$totalhtofsource += (float) $srcline->total_ht;
+										$totalcostofsource += (float) $srcline->qty * (float) $srcline->pa_ht;
+									}
+								}
+								$pa_ht = ($totalhtofsource != 0 ? (float) price2num($amount * $totalcostofsource / $totalhtofsource, 'MU') : 0);
+
 								$result = $object->addline(
 									$descline,
 									(float) $amount, // subprice
@@ -1843,7 +1859,7 @@ if (empty($reshook)) {
 									0,
 									0,
 									0,
-									0,
+									$pa_ht, // pa_ht
 									'',
 									array(), // array_options
 									100,
@@ -3041,7 +3057,7 @@ if (empty($reshook)) {
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
 
-		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 
 		// Define info_bits
 		$info_bits = 0;

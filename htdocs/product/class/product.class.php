@@ -3938,7 +3938,8 @@ class Product extends CommonObject
 			$sql .= " AND cf.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {
-			$sql .= " AND fd.datec <= '".$this->db->idate($dateofvirtualstock)."'";
+			// Same filter as load_stats_commande_fournisseur(): received and ordered qty must cover the same orders
+			$sql .= " AND cf.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
 		}
 
 		$result = $this->db->query($sql);
@@ -3999,7 +4000,11 @@ class Product extends CommonObject
 			$sql .= " AND m.status IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {
-			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
+			// Components leave stock when production starts, products enter stock when it ends
+			$sql .= " AND (";
+			$sql .= "(mp.role IN ('toconsume', 'consumed') AND COALESCE(m.date_start_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."')";
+			$sql .= " OR (mp.role IN ('toproduce', 'produced') AND COALESCE(m.date_end_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."')";
+			$sql .= ")";
 		}
 		if (!$serviceStockIsEnabled) {
 			$sql .= "AND EXISTS (SELECT p.rowid FROM ".$this->db->prefix()."product AS p WHERE p.rowid = ".((int) $this->id)." AND p.fk_product_type IN (0))";
@@ -6401,7 +6406,7 @@ class Product extends CommonObject
 		// Include supplier order lines
 		if (isModEnabled("supplier_order")) {
 			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '3,4');
-			if (isset($includedraftpoforvirtual)) {
+			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
 			}
 			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1, $dateofvirtualstock);
@@ -6412,8 +6417,11 @@ class Product extends CommonObject
 		}
 		// Include reception lines
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-			$filterStatus = '4';
-			if (isset($includedraftpoforvirtual)) {
+			// Same option as the supplier order side above: both halves of the subtraction must run on the
+			// same population of supplier orders, otherwise orders are counted while their receptions are
+			// not and the virtual stock comes out too high. The historical default of this side is kept.
+			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '4');
+			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
 			}
 			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock);
