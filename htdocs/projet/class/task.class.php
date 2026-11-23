@@ -1711,7 +1711,7 @@ class Task extends CommonObjectLine
 			// so time can still be recorded on it without reopening it.
 			$statusestokeep = array(Task::STATUS_CLOSED, Task::STATUS_TRANSFERRED, Task::STATUS_CANCELED);
 			$newstatus = ((isset($this->progress) && $this->progress == 100) ? Task::STATUS_CLOSED : Task::STATUS_ONGOING);
-			$sql .= ", fk_statut = CASE WHEN fk_statut IN (".$this->db->sanitize(implode(',', $statusestokeep)).") THEN fk_statut ELSE ".((int) $newstatus)." END";
+			$sql .= ", fk_statut = ".$this->db->ifsql("fk_statut IN (".$this->db->sanitize(implode(',', $statusestokeep)).")", "fk_statut", (string) ((int) $newstatus));
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			if (!in_array((int) $this->status, $statusestokeep)) {
 				$this->status = $newstatus;
