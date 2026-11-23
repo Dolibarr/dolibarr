@@ -2759,6 +2759,9 @@ class Propal extends CommonObject
 				$outputlangs = $langs;
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$outputlangs = new Translate("", $conf);
+					if (empty($this->thirdparty)) {
+						$this->fetch_thirdparty();
+					}
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
 				}
@@ -2857,6 +2860,9 @@ class Propal extends CommonObject
 				$outputlangs = $langs;
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$outputlangs = new Translate("", $conf);
+					if (empty($this->thirdparty)) {
+						$this->fetch_thirdparty();
+					}
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
 				}
