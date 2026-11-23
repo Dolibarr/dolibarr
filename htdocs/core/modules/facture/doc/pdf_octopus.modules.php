@@ -1573,10 +1573,10 @@ class pdf_octopus extends ModelePDFFactures
 				$posy = $pdf->GetY();
 			}
 
-			// Show if Option VAT debit option is on also if transmitter is french
-			// Decret n°2099-1299 2022-10-07
+			// Show if Option VAT debit option is on also if transmitter is french and subject to VAT
+			// Decret n°2022-1299 2022-10-07
 			// French legal mention: "Option pour le paiement de la taxe d'apres les debits"
-			if ($this->emetteur->country_code == 'FR') {
+			if ($this->emetteur->country_code == 'FR' && !empty($this->emetteur->tva_assuj)) {
 				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, null, null, $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
@@ -2303,7 +2303,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

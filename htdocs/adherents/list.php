@@ -475,7 +475,8 @@ $sql .= " d.note_private, d.note_public, d.import_key,";
 $sql .= " s.nom,";
 $sql .= " ".$db->ifsql("d.societe IS NULL", "s.nom", "d.societe")." as companyname,";
 $sql .= " t.libelle as type, t.subscription, t.amount, t.minimumamount,";
-$sql .= " state.code_departement as state_code, state.nom as state_name";
+$sql .= " state.code_departement as state_code, state.nom as state_name,";
+$sql .= " country.code as country_code";
 
 if (isModEnabled('mailing')) {
 	$sql .= ", (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = d.email) as unsubscribed";
@@ -1074,15 +1075,15 @@ if (!empty($arrayfields['t.libelle']['checked'])) {
 
 // Amount
 if (!empty($arrayfields['t.amount']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
+	print '<td class="liste_titre right">';
+	print '<input class="flat right" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 	print '</td>';
 }
 
 // Minimum amount
 if (!empty($arrayfields['t.minimumamount']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" size="4" name="search_minimumamount" value="'.dol_escape_htmltag($search_minimumamount).'">';
+	print '<td class="liste_titre right">';
+	print '<input class="flat right" type="text" size="4" name="search_minimumamount" value="'.dol_escape_htmltag($search_minimumamount).'">';
 	print '</td>';
 }
 
@@ -1288,11 +1289,11 @@ if (!empty($arrayfields['t.libelle']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.amount']['checked'])) {
-	print_liste_field_titre($arrayfields['t.amount']['label'], $_SERVER["PHP_SELF"], 't.amount', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['t.amount']['label'], $_SERVER["PHP_SELF"], 't.amount', '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.minimumamount']['checked'])) {
-	print_liste_field_titre($arrayfields['t.minimumamount']['label'], $_SERVER["PHP_SELF"], 't.minimumamount', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['t.minimumamount']['label'], $_SERVER["PHP_SELF"], 't.minimumamount', '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['d.address']['checked'])) {
@@ -1380,6 +1381,7 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1556,8 +1558,8 @@ while ($i < $imaxinloop) {
 		}
 		// Amount
 		if (!empty($arrayfields['t.amount']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax100">';
-			print price($obj->amount);
+			print '<td class="nowraponall right tdoverflowmax100">';
+			print '<span class="amount">'.price($obj->amount).'</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1565,8 +1567,8 @@ while ($i < $imaxinloop) {
 		}
 		// Minimum amount
 		if (!empty($arrayfields['t.minimumamount']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax100">';
-			print price($obj->minimumamount);
+			print '<td class="nowraponall right tdoverflowmax100">';
+			print '<span class="amount">'.price($obj->minimumamount).'</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1612,7 +1614,11 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			$tmparray = getCountry($obj->country, 'all');
 			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($tmparray['label']).'">';
-			print dolPrintHTML($tmparray['label']);
+			if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
+				print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);
+			} else {
+				print dolPrintHTML($tmparray['label']);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1620,8 +1626,8 @@ while ($i < $imaxinloop) {
 		}
 		// Phone pro
 		if (!empty($arrayfields['d.phone']['checked'])) {
-			print '<td class="nocellnopadd">';
-			print dol_print_phone($obj->phone);
+			print '<td class="nowraponall tdoverflowmax150">';
+			print dol_print_phone($obj->phone, $obj->country_code, 0, $obj->socid, 'AC_TEL', ' ', 'phone', '', 0, '', 2);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1629,8 +1635,8 @@ while ($i < $imaxinloop) {
 		}
 		// Phone perso
 		if (!empty($arrayfields['d.phone_perso']['checked'])) {
-			print '<td class="nocellnopadd">';
-			print dol_print_phone($obj->phone_perso);
+			print '<td class="nowraponall tdoverflowmax150">';
+			print dol_print_phone($obj->phone_perso, $obj->country_code, 0, $obj->socid, 'AC_TEL', ' ', 'phone', '', 0, '', 2);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1638,8 +1644,8 @@ while ($i < $imaxinloop) {
 		}
 		// Phone mobile
 		if (!empty($arrayfields['d.phone_mobile']['checked'])) {
-			print '<td class="nocellnopadd">';
-			print dol_print_phone($obj->phone_mobile);
+			print '<td class="nowraponall tdoverflowmax150">';
+			print dol_print_phone($obj->phone_mobile, $obj->country_code, 0, $obj->socid, 'AC_TEL', ' ', 'mobile', '', 0, '', 2);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

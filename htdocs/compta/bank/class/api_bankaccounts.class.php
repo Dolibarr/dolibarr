@@ -862,7 +862,9 @@ class BankAccounts extends DolibarrApi
 		}
 
 		$this->db->begin();
-		foreach ($toupdate as list($accountLine, $linecat)) {
+		foreach ($toupdate as $tmparray) {
+			$accountLine = $tmparray[0];
+			$linecat = $tmparray[1];
 			$accountLine->num_releve = $num_releve;
 			if ($accountLine->update_conciliation(DolibarrApiAccess::$user, $linecat, $conciliated) < 0) {
 				$errors = array_merge(array($accountLine->error, $this->db->lasterror()), $accountLine->errors);

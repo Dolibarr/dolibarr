@@ -120,7 +120,8 @@ class Functions2LibTest extends CommonClassTest
 	public function testJsUnEscape()
 	{
 		foreach ($this->unescapeProvider() as $case) {
-			list($input, $expected) = $case;
+			$input = $case[0];
+			$expected = $case[1];
 			$result = jsUnEscape($input);
 			print __METHOD__." result=".$result."\n";
 			$this->assertEquals($result, $expected);
@@ -282,7 +283,10 @@ class Functions2LibTest extends CommonClassTest
 	public function testGetStringBetween()
 	{
 		foreach ($this->stringBetweenDataProvider() as $case) {
-			list($string, $start, $end, $expected) = $case;
+			$string = $case[0];
+			$start = $case[1];
+			$end = $case[2];
+			$expected = $case[3];
 			$this->assertEquals($expected, get_string_between($string, $start, $end));
 		}
 	}
@@ -319,7 +323,8 @@ class Functions2LibTest extends CommonClassTest
 	public function testNumeroSemaine()
 	{
 		foreach ($this->numeroSemaineDataProvider() as $case) {
-			list($time_str, $expected_week) = $case;
+			$time_str = $case[0];
+			$expected_week = $case[1];
 			$time = strtotime($time_str);
 			$str = date(DATE_ATOM, $time).PHP_EOL;
 			print __METHOD__." time=".$time."\n";

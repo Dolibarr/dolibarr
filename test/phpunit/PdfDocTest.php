@@ -123,7 +123,7 @@ class PdfDocTest extends CommonClassTest
 		global $conf, $db, $langs;
 
 		$hasAllowOtherSoc = isset($conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC);
-		$savedAllowOtherSoc = $hasAllowOtherSoc ? $conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC : null;
+		$savedAllowOtherSoc = $hasAllowOtherSoc ? getDolGlobalString('PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC') : null;
 		$conf->global->PDF_ALLOW_DISPLAY_LINKED_OBJECT_FOR_OTHER_SOC = 0;
 
 		$supplierProposal = new SupplierProposal($db);

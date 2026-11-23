@@ -626,7 +626,7 @@ print '<tr><td>'.$langs->trans('Country').'</td><td>';
 print img_picto('', 'country', 'class="pictofixedwidth"');
 $country_id = GETPOSTINT('country_id');
 if (!$country_id && getDolGlobalString('PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE')) {
-	$country_id = getCountry($conf->global->PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
+	$country_id = getCountry(getDolGlobalString('PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE'), '2', $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	$country_code = dol_user_country();

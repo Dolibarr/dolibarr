@@ -1090,7 +1090,9 @@ class SupplierProposal extends CommonObject
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if no rate was provided)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
-			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
+			$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
+			$this->fk_multicurrency = $tmparray[0];
+			$this->multicurrency_tx = $tmparray[1];
 		} elseif (!empty($this->multicurrency_code)) {
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
@@ -1988,7 +1990,9 @@ class SupplierProposal extends CommonObject
 				$ref_fourn = $product->ref_supplier;
 			}
 			if (isModEnabled("multicurrency") && !empty($product->multicurrency_code)) {
-				list($fk_multicurrency, $multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
+				$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
+				$fk_multicurrency = $tmparray[0];
+				$multicurrency_tx = $tmparray[1];
 			}
 			$productsupplier->id = $product->fk_product;
 

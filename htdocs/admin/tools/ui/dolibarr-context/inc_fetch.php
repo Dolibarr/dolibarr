@@ -43,6 +43,7 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 			Use <code>'json'</code> when you expect JSON: if the session has expired, Dolibarr returns the login page and you get a clear error.</li>
 		<li><code>showErrors</code>: display errors with <code>setEventMessage</code>, <code>true</code> by default.</li>
 		<li><code>timeout</code>: abort after this delay in ms, <code>0</code> (default) to wait without limit.</li>
+		<li><code>showEventMessages</code>: for a <code>JsonResponse</code>, display its <code>eventMessages</code>, <code>true</code> by default.</li>
 		<li><code>unwrap</code>: for a <code>JsonResponse</code>, return only its <code>data</code> property, <code>false</code> by default.</li>
 		<li>Any other option (<code>signal</code>, <code>cache</code>...) is passed to the native <code>fetch()</code>.</li>
 	</ul>
@@ -83,6 +84,7 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		<li><code>result</code> to <code>0</code> is an error, even if the HTTP status could not be set to 400 because something was already printed.</li>
 		<li><code>msg</code> is used as error message.</li>
 		<li>On success, the whole response is returned, or only <code>data</code> with option <code>unwrap: true</code>. A success <code>msg</code> is not displayed automatically.</li>
+		<li><code>eventMessages</code> are displayed, unless option <code>showEventMessages: false</code>. Call <code>$jsonResponse->addSessionEventMessages()</code> to move into the response the messages set with <code>setEventMessages()</code> during the request: they are displayed now instead of on the next loaded page.</li>
 		<li><code>newToken</code> is not used: with <code>NOTOKENRENEWAL</code> the token to use stays the one of the meta tag <code>anti-csrf-currenttoken</code>.</li>
 	</ul>
 	<?php
@@ -106,9 +108,12 @@ if ($documentation === null || !($documentation instanceof Documentation)) { ret
 		'	exit;',
 		'}',
 		'',
-		'// ... do your stuff',
+		'// ... do your stuff, messages can be set as in a card',
+		'setEventMessages($langs->trans(\'RecordSaved\'), null, \'mesgs\');',
+		'',
 		'$jsonResponse->result = 1;',
 		'$jsonResponse->data = [\'id\' => $object->id, \'ref\' => $object->ref];',
+		'$jsonResponse->addSessionEventMessages(); // displayed by Dolibarr.tools.fetch',
 		'print $jsonResponse->getResponse();',
 	);
 	$documentation->showCode($lines, 'php'); ?>
