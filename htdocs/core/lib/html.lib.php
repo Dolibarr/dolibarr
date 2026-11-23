@@ -1237,7 +1237,7 @@ function fieldLabel($langkey, $fieldkey, $fieldrequired = 0)
 /**
  * Print decorated date-hour
  *
- * @param	int			$datep			Date
+ * @param	int|''|null	$datep			Date ('' or null when there is no start date, as $db->jdate() of an empty field)
  * @param	int|null	$datef			Second date
  * @param	int			$fullday		Set to 1 for full day (hours are hidden)
  * @param	int			$addseconds		Add also seconds
@@ -1251,6 +1251,11 @@ function fieldLabel($langkey, $fieldkey, $fieldrequired = 0)
  */
 function dolOutputDates($datep, $datef = null, $fullday = 0, $addseconds = 0, $pictotoadd = '', $tzoutput = 'tzuserrel', $reduceformat = 0)
 {
+	// An event may have no start date (a to-do, for example): dol_getdate() would return an empty array to compare
+	if ($datep === '' || $datep === null) {
+		return $pictotoadd;
+	}
+
 	$tmpa = dol_getdate($datep);
 	if (empty($datef)) {
 		$tmpb = $tmpa;
