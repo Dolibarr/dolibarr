@@ -160,6 +160,7 @@ if ($enablepermissioncheck) {
 	$permissionnote = 1;
 	$permissiondellink = 1;
 }
+$permissiontoedit = $permissiontoadd; // Used by the include of actions_lineupdown.inc.php
 
 $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1].'/myobject';
 
@@ -367,7 +368,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// END MODULEBUILDER ACTION DELETE
 	//BEGIN MODULEBUILDER LINES
 	// Confirmation to delete line
-	if ($action == 'deleteline') {
+	if ($action == 'deleteline' || $action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 	//END MODULEBUILDER LINES
@@ -605,8 +606,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_VALIDATED) {
 					print dolGetButtonAction('', $langs->trans('Cancel'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken(), '', $permissiontoadd);
-				} else {
-					print dolGetButtonAction('', $langs->trans('Re-Open'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken(), '', $permissiontoadd);
+				} elseif ($object->status == $object::STATUS_CANCELED) {
+					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken(), '', $permissiontoadd);
 				}
 			}
 			END COMMENTED STATUSCHANGE */
@@ -692,7 +693,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Presend form
 	$modelmail = 'myobject';
 	$defaulttopic = 'InformationMessage';
-	$diroutput = $conf->mymodule->dir_output;
+	$diroutput = $conf->mymodule->dir_output.'/'.$object->element;
 	$trackid = 'myobject'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

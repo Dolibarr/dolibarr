@@ -761,8 +761,8 @@ if ($dirins && $action == 'inithook' && !empty($module) /* && $user->hasRight("m
 if ($dirins && $action == 'inittrigger' && !empty($module) /* && $user->hasRight("modulebuilder", "run") // already checked */) {
 	dol_mkdir($dirins.'/'.dol_strtolower($module).'/core/triggers');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
-	$srcfile = $srcdir.'/core/triggers/interface_99_modMyModule_MyModuleTriggers.class.php';
-	$destfile = $dirins.'/'.dol_strtolower($module).'/core/triggers/interface_99_mod'.$module.'_'.$module.'Triggers.class.php';
+	$srcfile = $srcdir.'/core/triggers/interface_50_modMyModule_MyModuleTriggers.class.php';
+	$destfile = $dirins.'/'.dol_strtolower($module).'/core/triggers/interface_50_mod'.$module.'_'.$module.'Triggers.class.php';
 	$result = dol_copy($srcfile, $destfile, '0', 0);
 
 	if ($result > 0) {

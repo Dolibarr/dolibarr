@@ -231,14 +231,14 @@ class MyObject extends CommonObject
 	/**
 	 * @var array<array<string>|string>		List of child tables. To test if we can delete object.
 	 */
-	protected $childtables = array('mychildtable' => array('name' => 'MyObject', 'fk_element' => 'fk_myobject'));
+	//protected $childtables = array('mychildtable' => array('name' => 'MyObject', 'fk_element' => 'fk_myobject'));
 
 	/**
 	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
-	protected $childtablesoncascade = array('mymodule_myobjectdet');
+	//protected $childtablesoncascade = array('mymodule_myobjectdet');
 
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
@@ -338,7 +338,7 @@ class MyObject extends CommonObject
 		}
 
 		// get lines so they will be clone
-		foreach ($this->lines as $line) {
+		foreach ($object->lines as $line) {
 			$line->fetch_optionals();
 		}
 		//END MODULEBUILDER LINES
@@ -392,15 +392,15 @@ class MyObject extends CommonObject
 
 		if (!$error) {
 			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0) {
+			if ($object->copy_linked_contact($this, 'internal') < 0) {
 				$error++;
 			}
 		}
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (!empty($object->socid) && ((property_exists($this, 'fk_soc') && ($this->fk_soc == $object->socid)) || (property_exists($this, 'socid') && ($this->socid == $object->socid)))) {	// @phpstan-ignore-line
-				if ($this->copy_linked_contact($object, 'external') < 0) {
+			if (!empty($object->fk_soc) && ((property_exists($this, 'fk_soc') && ($this->fk_soc == $object->fk_soc)) || (property_exists($this, 'socid') && ($this->socid == $object->fk_soc)))) {	// @phpstan-ignore-line
+				if ($object->copy_linked_contact($this, 'external') < 0) {
 					$error++;
 				}
 			}
@@ -655,6 +655,8 @@ class MyObject extends CommonObject
 				}
 				// End call triggers
 			}
+		} else {
+			$error++;	// Failed to get a new ref (error is set by getNextNumRef())
 		}
 
 		if (!$error) {
@@ -663,15 +665,15 @@ class MyObject extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
-				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(dol_strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(dol_strlen($this->ref) + 1).")), filepath = 'mymodule/myobject/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'mymodule/myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
-				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'mymodule/myobject/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'mymodule/myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -776,7 +778,7 @@ class MyObject extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED) {
+		if ($this->status != self::STATUS_CANCELED) {
 			return 0;
 		}
 
@@ -814,7 +816,7 @@ class MyObject extends CommonObject
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
 		if (property_exists($this, 'label')) {
-			$datas['label'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
+			$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 
 		return $datas;
@@ -917,8 +919,6 @@ class MyObject extends CommonObject
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
 					}
-
-					$result .= '</div>';
 				} else {
 					$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 				}
@@ -1233,7 +1233,7 @@ class MyObject extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} else {
-				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF', 'standard_myobject');
+				$modele = getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF', 'standard_myobject');
 			}
 		}
 
