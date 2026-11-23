@@ -4933,7 +4933,8 @@ function migrate_holiday_path()
 			if ($entity > 1) {
 				$dir = DOL_DATA_ROOT.'/'.$entity.'/holiday';
 			} else {
-				$dir = $conf->holiday->multidir_output[$entity]; // $conf->user->multidir_output[] for each entity is construct by the multicompany module
+				// $conf->holiday is not set when the Leave module is disabled: its files, if any, are still in the default directory
+				$dir = empty($conf->holiday->multidir_output[$entity]) ? DOL_DATA_ROOT.'/holiday' : $conf->holiday->multidir_output[$entity];
 			}
 
 			if ($dir) {
