@@ -468,7 +468,9 @@ class ExternalModules
 		$this->per_page = 11;	// We fix number of products per page to 11
 
 		$this->sortby = $this->cleanSortBy($options['sortby'] ?? '');
-		list($sortfield, $sortorder) = explode('_', $this->sortby);
+		$tmparray = explode('_', $this->sortby);
+		$sortfield = $tmparray[0];
+		$sortorder = ($tmparray[1] == 'asc' ? 'asc' : 'desc');
 
 		// Length of $search must be at least 2 characters
 		if (!empty($this->search) && strlen(str_replace(' ', '', (string) $this->search)) < 2) {

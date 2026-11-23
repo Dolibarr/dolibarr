@@ -1619,6 +1619,7 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1819,7 +1820,11 @@ while ($i < $imaxinloop) {
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center">';
-			print dolPrintHTML($effectiveaddressfields['country']);
+			if (!empty($effectiveaddressfields['country_code']) && !$showcountrylabelinlist) {
+				print picto_from_langcode($effectiveaddressfields['country_code'], 'title="'.dolPrintHTMLForAttribute($effectiveaddressfields['country']).'"', 1);
+			} else {
+				print dolPrintHTML($effectiveaddressfields['country']);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1828,7 +1833,7 @@ while ($i < $imaxinloop) {
 
 		// Phone pro
 		if (!empty($arrayfields['p.phone']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_pro, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone', '', 0, '', 2).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1836,7 +1841,7 @@ while ($i < $imaxinloop) {
 
 		// Phone perso
 		if (!empty($arrayfields['p.phone_perso']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone').'</td>';
+			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_perso, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'phone', '', 0, '', 2).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1844,7 +1849,7 @@ while ($i < $imaxinloop) {
 
 		// Phone mobile
 		if (!empty($arrayfields['p.phone_mobile']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile').'</td>';
+			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->phone_mobile, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'mobile', '', 0, '', 2).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1852,7 +1857,7 @@ while ($i < $imaxinloop) {
 
 		// Fax
 		if (!empty($arrayfields['p.fax']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax').'</td>';
+			print '<td class="nowraponall tdoverflowmax150">'.dol_print_phone($obj->fax, $obj->country_code, $obj->rowid, $obj->socid, 'AC_TEL', ' ', 'fax', '', 0, '', 2).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

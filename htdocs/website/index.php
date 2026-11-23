@@ -1113,7 +1113,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 						// We try to convert the CSS we got by adding a prefix .bodywebsite with lessc to avoid conflict with CSS of Dolibarr.
 						include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
-						$lesscobj = new Lessc();
+						$lesscobj = new lessC();
 						try {
 							$contentforlessc = ".bodywebsite {\n".$tmpgeturl['content']."\n}\n";
 							//print '<pre>'.$contentforlessc.'</pre>';
@@ -2369,7 +2369,7 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 		$db->begin();
 
 		$objectnew = new Website($db);
-		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOST('siteref'), (GETPOSTINT('newlang') ? GETPOSTINT('newlang') : ''));
+		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOST('siteref'), GETPOST('newlang'));
 
 		if ($result < 0) {
 			$error++;
@@ -5384,7 +5384,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ? GETPOST('grabimagesinto') : 'root', 0, 0, 0, '', 0, 0, 0, '', 'minwidth75 valignmiddle', 1);
 		print '</div>';
 
-		print '<input class="button small" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
+		print '<input class="button small nomarginleft" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
 		print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</td></tr>';

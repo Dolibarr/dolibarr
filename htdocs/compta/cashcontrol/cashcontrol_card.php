@@ -129,42 +129,25 @@ $dateend = null;
 $syear = (GETPOSTISSET('closeyear') ? GETPOSTINT('closeyear') : dol_print_date($now, "%Y", 'tzuserrel'));
 $smonth = (GETPOSTISSET('closemonth') ? GETPOSTINT('closemonth') : dol_print_date($now, "%m", 'tzuserrel'));
 $sday = (GETPOSTISSET('closeday') ? GETPOSTINT('closeday') : dol_print_date($now, "%d", 'tzuserrel'));
-// TODO Add a global option to allow to enter the end hours when doing a cash control (currently only end of hours 23:59:59 for local hour so :xx::xx for UTC is supported)
-$shour = 0;
-$smin = 0;
-$ssec = 0;
+// Offset in seconds of the local time of the point of sale ahead of the time of the server. Used to define the start and end of a new period.
+$tzoffset = (int) round((float) getDolGlobalString('TAKEPOS_CASHCONTROL_TZ_OFFSET', '0') * 3600);
 
 if ($object->id > 0) {
-	// When object is known, we must define first the end date (stored in database with different components) and deduct the start date
-	if (empty($object->day_close) && !empty($object->month_close)) {		// Full day
-		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, 1, $object->year_close, 'gmt');
-		$dateend = dol_time_plus_duree($dateend, +1, 'm', 0);
-		$dateend = dol_time_plus_duree($dateend, -1, 'd', 0);
-
-		$datestart = dol_time_plus_duree($dateend, -1, 'm', 0);
-	} elseif (empty($object->day_close) && empty($object->month_close)) {	// Full year
-		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, 12, 31, $object->year_close, 'gmt');
-		$datestart = dol_time_plus_duree($dateend, -1, 'y', 0);
-	} else {
-		$dateend = dol_mktime((int) $object->hour_close, (int) $object->min_close, (int) $object->sec_close, $object->month_close, $object->day_close, $object->year_close, 'gmt');
-		$datestart = dol_time_plus_duree($dateend, -1, 'd', 0);
-	}
-	$datestart += 1;	// Add 1 second
+	// When object is known, the period is deduced from the end date stored in UTC in the 6 components year, month, day, hour, min and sec
+	$tmparray = $object->getPeriodStartAndEnd();
+	$datestart = $tmparray[0];
+	$dateend = $tmparray[1];
 } else {
-	if ($syear && !$smonth) {
-		$datestart = dol_get_first_day($syear, 1, 'tzserver');
-		$dateend = dol_get_last_day($syear, 12, 'tzserver');
-	} elseif ($syear && $smonth && !$sday) {
-		$datestart = dol_get_first_day($syear, $smonth, 'tzserver');
-		$dateend = dol_get_last_day($syear, $smonth, 'tzserver');
-	} elseif ($syear && $smonth && $sday) {
-		$datestart = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, 'tzserver');
-		$dateend = dol_mktime(23, 59, 59, $smonth, $sday, $syear, 'tzserver');
+	if ($syear) {
+		// The period is defined in the time zone of the server, shifted by the offset of the point of sale
+		$tmparray = CashControl::getPeriodDates((int) $syear, (int) $smonth, (int) $sday, $tzoffset);
+		$datestart = $tmparray[0];
+		$dateend = $tmparray[1];
 	} else {
 		setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 	}
 }
-$sqlfilteronopdate .= " AND dateo < '".$db->idate((int) $datestart)."'";
+$sqlfilteronopdate .= " AND dateo < '".$db->idate((int) $datestart, 'tzserver')."'";		// Date in llx_bank, so in the time zone of the server
 //var_dump(dol_print_date($datestart, 'dayhour', 'gmt'), dol_print_date($dateend, 'dayhour', 'gmt'));
 
 
@@ -270,6 +253,15 @@ if ($action == "start" && $permissiontoadd) {
 		$object->hour_close = $tmparray['hours'];
 		$object->min_close = $tmparray['minutes'];
 		$object->sec_close = $tmparray['seconds'];
+		if (!GETPOSTISSET('closehour')) {
+			// By default, the period ends at $dateend (end of the day of the server, shifted by the offset of the point of sale).
+			// It is stored relatively to 00:00:00 UTC of the last day of the period, so the hour may be < 0 or > 23.
+			$secondsfromlastday = (int) $dateend - CashControl::getLastDayOfPeriod((int) $object->year_close, (int) $object->month_close, (int) $object->day_close);
+			$object->hour_close = (int) floor($secondsfromlastday / 3600);
+			$object->min_close = (int) floor(($secondsfromlastday - $object->hour_close * 3600) / 60);
+			$object->sec_close = $secondsfromlastday - $object->hour_close * 3600 - $object->min_close * 60;
+			dol_syslog('The closing date with the offset of the point of sale will be '.dol_print_date((int) $dateend, 'standard', 'gmt').' UTC');
+		}
 
 		$object->opening = (float) price2num(GETPOST('opening', 'alpha'));
 		$object->posmodule = GETPOST('posmodule', 'alpha');
@@ -318,6 +310,7 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	//$dates = $datestart;
 	$datee = $dateend;
 	$datefilter = 'p.datep';
+	$datefiltertz = 'tzserver';		// Dates of llx_paiement are stored in the time zone of the server
 	$modulesourcefilter = 'f.module_source';
 	$amountfield = 'pf.amount';
 	$possource = 'f.pos_source';
@@ -325,6 +318,7 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	$joinleft = 'LEFT ';
 	if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 		$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
+		$datefiltertz = 'gmt';			// Dates of llx_blockedlog are stored in UTC
 		$modulesourcefilter = 'bl.module_source';
 		$amountfield = 'bl.amounts';
 		$possource = 'bl.pos_source';
@@ -354,7 +348,7 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 		$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 		$sql .= " AND ".$db->sanitize($possource)." = '".$db->escape($terminalid)."'";
 		$sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
-		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate((int) $datee)."'";
+		$sql .= " AND ".$db->sanitize($datefilter)." <= '".$db->idate((int) $datee, $datefiltertz)."'";
 		if ($key == 'cash') {
 			$sql .= " AND cp.code = 'LIQ'";
 		} elseif ($key == 'cheque') {
@@ -406,7 +400,8 @@ if ($action == "valid" && $permissiontoadd) {	// validate = close
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$firstrecorddate = $db->jdate($obj->date_creation);
+			// Dates of llx_blockedlog are stored in UTC, except for the old format V1 that used the time zone of the server
+			$firstrecorddate = $db->jdate($obj->date_creation, ((empty($obj->object_format) || $obj->object_format == 'V1') ? 'tzserver' : 'gmt'));
 		}
 	}
 	if ($firstrecorddate) {
@@ -568,11 +563,13 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		$dates = $datestart;
 		$datee = $dateend;
 		$datefilter = 'p.datep';
+		$datefiltertz = 'tzserver';		// Dates of llx_paiement are stored in the time zone of the server
 		$modulesourcefilter = 'f.module_source';
 		$amountfield = 'pf.amount';
 		$joinleft = 'LEFT ';
 		if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
 			$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
+			$datefiltertz = 'gmt';			// Dates of llx_blockedlog are stored in UTC
 			$modulesourcefilter = 'bl.module_source';
 			$amountfield = 'bl.amounts';
 			$joinleft = '';
@@ -600,7 +597,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 			$sql .= " AND f.pos_source = '".$db->escape($terminalid)."'";
 			$sql .= " AND p.entity = ".((int) $conf->entity); // Never share entities for features related to accountancy
-			$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate((int) $dates)."' AND '".$db->idate((int) $datee)."'";
+			$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate((int) $dates, $datefiltertz)."' AND '".$db->idate((int) $datee, $datefiltertz)."'";
 			if ($key == 'cash') {
 				$sql .= " AND cp.code = 'LIQ'";
 			} elseif ($key == 'cheque') {
@@ -631,14 +628,15 @@ if ($action == "create" || $action == "start") {
 	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 	if ($action == 'start') {
+		// The period ($datestart and $dateend) was defined with the offset of the point of sale
 		if (empty(GETPOSTINT('closeday'))) {
-			$endperiod = dol_get_last_day(GETPOSTINT('closeyear'), GETPOSTINT('closemonth') ? GETPOSTINT('closemonth') : 12, 'gmt');
+			$endperiod = $dateend;
 			if ($endperiod >= dol_now()) {
 				setEventMessages($langs->trans("CashControlEndDateMustBeBeforeNow"), null, 'errors');
 				$action = 'create';
 			}
 		} else {
-			$endperiod = dol_get_first_hour(GETPOSTDATE('close', 'getpostend'));
+			$endperiod = $datestart;
 			if ($endperiod >= dol_now() && $mysoc->country_code == 'FR') {	// For other countries we may need to make 2 cash control in the same day (one at opening and one at closing)
 				setEventMessages($langs->trans("CashControlEndDayMustNotBeInPast"), null, 'errors');
 				$action = 'create';
@@ -669,6 +667,7 @@ if ($action == "create" || $action == "start") {
 	print '<td>'.$langs->trans("Year").'</td>';
 	print '<td>'.$langs->trans("Month").'</td>';
 	print '<td>'.$langs->trans("Day").'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans("CashControlTZOffset"), $langs->trans("CashControlTZOffsetHelp", getServerTimeZoneString())).'</td>';
 	print '<td></td>';
 	print "</tr>\n";
 
@@ -732,6 +731,11 @@ if ($action == "create" || $action == "start") {
 	$retstring .= "</select>";
 	print $retstring;
 	print ' '.$form->textwithpicto('', $langs->trans("KeepEmptyForAMonthlyControl"));
+	print '</td>';
+
+	// Offset relative to the time of the server (defined into the setup of the TakePOS module, so not editable here)
+	print '<td class="nowraponall">';
+	print ($tzoffset < 0 ? '-' : '+').intdiv(abs($tzoffset), 3600).((abs($tzoffset) % 3600) ? ':'.sprintf("%02d", intdiv(abs($tzoffset) % 3600, 60)) : '');
 	print '</td>';
 
 	// Button Start

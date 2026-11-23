@@ -371,7 +371,7 @@ $moretitle = '';
 if ($socid > 0) {
 	$socstatic->fetch($socid);
 	$moretitle = $langs->trans("ThirdParty") . ' - ';
-	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $socstatic->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $socstatic->name) {
 		$moretitle = $socstatic->name . ' - ';
 	}
 }

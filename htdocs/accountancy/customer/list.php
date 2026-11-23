@@ -702,7 +702,7 @@ if ($result) {
 		$totalarray['nbfield']++;
 	}
 	// Hook fields
-	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -722,6 +722,7 @@ if ($result) {
 	$suggestedaccountingaccountfor = '';  // Initialise (for static analysis)
 	$suggestedaccountingaccountbydefaultfor = '';
 
+	$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
@@ -909,7 +910,11 @@ if ($result) {
 		if (!empty($arrayfields['co.label']['checked'])) {
 			$labelcountry = ($objp->country_code && ($langs->trans("Country".$objp->country_code) != "Country".$objp->country_code)) ? $langs->trans("Country".$objp->country_code) : $objp->country_label;
 			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labelcountry).'">';
-			print dol_escape_htmltag($labelcountry);
+			if (!empty($objp->country_code) && !$showcountrylabelinlist) {
+				print picto_from_langcode($objp->country_code, 'title="'.dolPrintHTMLForAttribute($labelcountry).'"', 1);
+			} else {
+				print dolPrintHTML($labelcountry);
+			}
 			print '</td>';
 			$totalarray['nbfield']++;
 		}

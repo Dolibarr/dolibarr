@@ -667,7 +667,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Title
-	$morehtmlref .= $object->title;
+	$morehtmlref .= '<span class="banner-object-name-alias">'.$object->title.'</span>';
 	// Thirdparty
 	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
