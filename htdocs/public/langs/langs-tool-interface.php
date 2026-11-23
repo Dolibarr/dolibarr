@@ -38,6 +38,12 @@ if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');					// If thi
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+// Nothing is written into the session: release its lock at once, the JS langs tool calls this page in background
+// while other requests of the same user may be running.
+if (session_status() === PHP_SESSION_ACTIVE) {
+	session_write_close();
+}
+
 
 /**
  * @var Conf $conf

@@ -107,20 +107,26 @@ document.addEventListener('Dolibarr:Init', function(e) {
 
 		/**
 		 * Get cached translation for a domain + locale
+		 * The date of the last check is kept in a small record of its own ("checked"), so that a check without any
+		 * change does not write the translations again.
 		 * @param {string} domain
 		 * @param {string} locale
-		 * @returns {Promise<Object|null>}
+		 * @returns {Promise<Object|null>} { key, data, timestamp, dolibarrVersion, etag, checked }
 		 */
 		async function getCache(domain, locale) {
 			try {
 				const db = await getDB();
 				const tx = db.transaction('langs', 'readonly');
 				const store = tx.objectStore('langs');
-				return new Promise((resolve, reject) => {
-					const request = store.get(`${domain}@${locale}`);
+				const read = (key) => new Promise((resolve, reject) => {
+					const request = store.get(key);
 					request.onsuccess = () => resolve(request.result);
 					request.onerror = () => reject(request.error);
 				});
+				const [cache, meta] = await Promise.all([read(`${domain}@${locale}`), read(`${domain}@${locale}|checked`)]);
+				if (!cache) return null;
+				cache.checked = Math.max(cache.timestamp || 0, (meta && meta.etag === cache.etag && meta.checked) || 0);
+				return cache;
 			} catch (err) {
 				return null;
 			}
@@ -131,17 +137,36 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * @param {string} domain
 		 * @param {string} locale
 		 * @param {Object} data
+		 * @param {string|null} etag ETag of the answer of the translations interface
 		 */
-		async function setCache(domain, locale, data) {
+		async function setCache(domain, locale, data, etag = null) {
 			try {
 				const db = await getDB();
 				const tx = db.transaction('langs', 'readwrite');
 				const store = tx.objectStore('langs');
 				const dolibarrVersion = Dolibarr.getContextVar('DOL_VERSION', 0);
-				await store.put({ key: `${domain}@${locale}`, data, timestamp: Date.now(), dolibarrVersion }, `${domain}@${locale}`);
+				await store.put({ key: `${domain}@${locale}`, data, timestamp: Date.now(), dolibarrVersion, etag }, `${domain}@${locale}`);
 			} catch (err) {
 				// fail silently
 				Dolibarr.log('Save langs in cache fail');
+			}
+		}
+
+		/**
+		 * Save the date of a check that found the cached translations unchanged
+		 * @param {string} domain
+		 * @param {string} locale
+		 * @param {string} etag
+		 */
+		async function setCacheChecked(domain, locale, etag) {
+			try {
+				const db = await getDB();
+				const tx = db.transaction('langs', 'readwrite');
+				const store = tx.objectStore('langs');
+				await store.put({ checked: Date.now(), etag }, `${domain}@${locale}|checked`);
+			} catch (err) {
+				// fail silently
+				Dolibarr.log('Save langs check date in cache fail');
 			}
 		}
 
@@ -229,30 +254,37 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			const now = Date.now();
 			const dolibarrVersion = Dolibarr.getContextVar('DOL_VERSION', 0);
 
-			if (cache && cache.data && (now - cache.timestamp < CACHE_MSTIME) && cache.dolibarrVersion === dolibarrVersion) {
+			if (cache && cache.data && (now - cache.checked < CACHE_MSTIME) && cache.dolibarrVersion === dolibarrVersion) {
 				Dolibarr.log('tools: langs: Load lang from cache');
-				if (now - cache.timestamp > REVALIDATE_MSTIME) {
-					revalidateLocale(domain, locale);
+				if (now - cache.checked > REVALIDATE_MSTIME) {
+					revalidateLocale(domain, locale, cache.etag);
 				}
 				return cache.data;
 			}
 
 			Dolibarr.log('tools: langs: Load lang from interface');
-			const data = await fetchLocale(domain, locale);
-			if (data) {
-				await setCache(domain, locale, data);
+			const result = await fetchLocale(domain, locale, cache && cache.dolibarrVersion === dolibarrVersion ? cache.etag : null);
+			if (!result) {
+				return (cache && cache.dolibarrVersion === dolibarrVersion && cache.data) || {};
 			}
-			return data || {};
+			if (result.unchanged) {
+				await setCacheChecked(domain, locale, result.etag);
+				return cache.data;
+			}
+			await setCache(domain, locale, result.data, result.etag);
+			return result.data;
 		}
 
 		/**
 		 * Get the translations of a domain from the server
-		 * The browser checks its HTTP copy each time (no-cache): unchanged translations come back as a 304 without body.
+		 * The browser checks its HTTP copy each time (no-cache): unchanged translations come back as a 304 without body,
+		 * and when the ETag is the one of the cached translations, the body is not even read.
 		 * @param {string} domain
 		 * @param {string} locale
-		 * @returns {Promise<Object|null>} translation object, null if error
+		 * @param {string|null} knownEtag ETag of the cached translations
+		 * @returns {Promise<Object|null>} { data, etag } or { unchanged: true, etag }, null if error
 		 */
-		async function fetchLocale(domain, locale) {
+		async function fetchLocale(domain, locale, knownEtag = null) {
 			const langInterfaceUrl = Dolibarr.getContextVar('DOL_LANG_INTERFACE_URL', false);
 			if(!langInterfaceUrl) {
 				console.error('Dolibarr: tools: langs missing DOL_LANG_INTERFACE_URL')
@@ -265,8 +297,13 @@ document.addEventListener('Dolibarr:Init', function(e) {
 				if (!resp.ok) {
 					return null;
 				}
+				const etag = resp.headers.get('ETag');
+				if (knownEtag && etag === knownEtag) {
+					resp.body?.cancel?.();
+					return { unchanged: true, etag };
+				}
 				const json = await resp.json();
-				return json[locale] || {};
+				return { data: json[locale] || {}, etag };
 			} catch (err) {
 				Dolibarr.log('tools: langs: Load lang from interface fail');
 				return null;
@@ -277,18 +314,22 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * Check a cached domain in background: new translations are saved and used at once in memory
 		 * @param {string} domain
 		 * @param {string} locale
+		 * @param {string|null} knownEtag ETag of the cached translations
 		 */
-		async function revalidateLocale(domain, locale) {
+		async function revalidateLocale(domain, locale, knownEtag) {
 			const key = `${domain}@${locale}`;
 			if (revalidating.has(key)) return;
 			revalidating.add(key);
 			try {
-				const data = await fetchLocale(domain, locale);
-				if (data) {
-					await setCache(domain, locale, data);
+				const result = await fetchLocale(domain, locale, knownEtag);
+				if (result && result.unchanged) {
+					await setCacheChecked(domain, locale, result.etag);
+					Dolibarr.log('tools: langs: Lang checked again from interface, unchanged');
+				} else if (result) {
+					await setCache(domain, locale, result.data, result.etag);
 					if (!translations[locale]) translations[locale] = {};
-					Object.assign(translations[locale], data);
-					Dolibarr.log('tools: langs: Lang checked again from interface');
+					Object.assign(translations[locale], result.data);
+					Dolibarr.log('tools: langs: Lang checked again from interface, updated');
 				}
 			} finally {
 				revalidating.delete(key);
