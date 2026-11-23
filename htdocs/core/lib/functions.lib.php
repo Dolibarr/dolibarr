@@ -11936,7 +11936,7 @@ function dolForgeSQLCriteriaCallback($matches)
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'
 				// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
-				if (!empty($newforbiddenfields) && in_array(dol_strtolower($tmpelemarray[$tmpkey]), $newforbiddenfields)) {
+				if (!empty($newforbiddenfields) && in_array(dol_strtolower($tmpelemarray[$tmpkey]), (array) $newforbiddenfields)) {
 					return '1=1';
 				}
 			}
@@ -11965,7 +11965,7 @@ function dolForgeSQLCriteriaCallback($matches)
 		} else {
 			$tmpescaped = preg_replace('/[^a-z0-9_]/i', '', $tmpescaped);	// it can be a name of field or a substitution variable like '__NOW__'
 			// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
-			if (!empty($newforbiddenfields) && in_array(dol_strtolower($tmpescaped), $newforbiddenfields)) {
+			if (!empty($newforbiddenfields) && in_array(dol_strtolower($tmpescaped), (array) $newforbiddenfields)) {
 				return '1=1';
 			}
 		}
