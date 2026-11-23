@@ -44,8 +44,9 @@ if (!empty($user->conf->$tmpvar)) {        // A list of fields was already custo
 		if (isset($tmparray[$key])) {
 			$arrayfields[$key]['position'] = $tmparray[$key];
 			// Set the position of the field, only if it is a real object field, to avoid creating phantom entries
-			$fieldkey = explode('.', $key)[1];
-			if (isset($object->fields[$fieldkey])) {
+			// Keys without prefix (like 'author') are not object fields
+			$fieldkey = (strpos($key, '.') !== false) ? explode('.', $key)[1] : '';
+			if ($fieldkey !== '' && isset($object->fields[$fieldkey])) {
 				$object->fields[$fieldkey]['position'] = $tmparray[$key];
 			}
 		}

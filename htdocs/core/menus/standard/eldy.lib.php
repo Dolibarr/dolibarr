@@ -768,7 +768,8 @@ function print_end_menu_array()
 
 /**
  * Return if the left menu must show the entries under a level 0 title only when the mouse is over this title.
- * This needs option MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER, javascript and a left menu shown as a column on a large screen.
+ * This needs javascript and a left menu shown as a column on a large screen.
+ * Enabled by default, it can be disabled with option MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER.
  *
  * @return	bool		True if entries of the left menu are expanded on hover of their title
  */
@@ -776,7 +777,7 @@ function isLeftMenuExpandOnHover()
 {
 	global $conf;
 
-	return (getDolGlobalString('MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER')
+	return (!getDolGlobalString('MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER')
 		&& !empty($conf->use_javascript_ajax)
 		&& empty($conf->dol_optimize_smallscreen)
 		&& !getDolGlobalString('MAIN_MENU_INVERT')
@@ -818,7 +819,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	global $usemenuhider;
 	$usemenuhider = 0;
 
-	// With MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER, sub entries of all blocks are loaded, then shown only when mouse is over their title
+	// When the left menu is expanded on hover, sub entries of all blocks are loaded, then shown only when mouse is over their title
 	$expandonhover = (empty($noout) && isLeftMenuExpandOnHover());
 	if ($expandonhover) {
 		$usemenuhider = 1;
