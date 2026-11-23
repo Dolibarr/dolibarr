@@ -100,10 +100,10 @@ $search_task_label = GETPOST('search_task_label', 'alpha');
 $search_user = GETPOST('search_user', 'intcomma');
 $search_valuebilled = GETPOST('search_valuebilled', 'intcomma');
 $search_product_ref = GETPOST('search_product_ref', 'alpha');
-$search_company = GETPOST('$search_company', 'alpha');
-$search_company_alias = GETPOST('$search_company_alias', 'alpha');
-$search_project_ref = GETPOST('$search_project_ref', 'alpha');
-$search_project_label = GETPOST('$search_project_label', 'alpha');
+$search_company = GETPOST('search_company', 'alpha');
+$search_company_alias = GETPOST('search_company_alias', 'alpha');
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_project_label = GETPOST('search_project_label', 'alpha');
 $search_timespent_starthour = GETPOSTINT("search_timespent_duration_starthour");
 $search_timespent_startmin = GETPOSTINT("search_timespent_duration_startmin");
 $search_timespent_endhour = GETPOSTINT("search_timespent_duration_endhour");
@@ -2179,21 +2179,21 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					break;
 				// Thirdparty
 				case 'p.fk_soc':
-					print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_company" value="' . dol_escape_htmltag($search_company) . '"></td>';
+					print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_company" value="' . dol_escape_htmltag($search_company) . '"></td>';
 					break;
 
 				// Thirdparty alias
 				case 's.name_alias':
-					print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_company_alias" value="' . dol_escape_htmltag($search_company_alias) . '"></td>';
+					print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_company_alias" value="' . dol_escape_htmltag($search_company_alias) . '"></td>';
 					break;
 
 				// Project ref
 				case 'p.project_ref':
-					print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_ref" value="' . dol_escape_htmltag($search_project_ref) . '"></td>';
+					print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_project_ref" value="' . dol_escape_htmltag($search_project_ref) . '"></td>';
 					break;
 				// Project label
 				case 'p.project_label':
-					print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_label" value="' . dol_escape_htmltag($search_project_label) . '"></td>';
+					print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_project_label" value="' . dol_escape_htmltag($search_project_label) . '"></td>';
 					break;
 				// Task ref
 				case 't.element_ref':
