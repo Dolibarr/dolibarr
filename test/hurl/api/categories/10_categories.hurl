@@ -33,11 +33,25 @@
 #     type=contact). Resource-wide falsy-id 500. NEW camp in the cross-
 #     module id=0 tally: 200-specimen (thirdparties, members), 400
 #     (invoices), 404 (memberstypes, objectlinks, expensereports,
-#     interventions), 500 (categories). Top upstream-report candidate.
+#     interventions), 500 (categories).
+#     UPSTREAM ISSUE: Dolibarr/dolibarr#43307
 #   FINDING 2 (OBSERVED 2026-11-23): unknown types on /categories/{id}/objects
 #     are IGNORED (200 + []) — but on /categories/object/{type}/... (see
-#     20_categories_object.hurl) they are REJECTED with 400. Inconsistent
+#     10_categories_object.hurl) they are REJECTED with 400. Inconsistent
 #     unknown-type handling between the two subresources.
+#     UPSTREAM ISSUE: Dolibarr/dolibarr#43308
+#   FINDING 3 (OBSERVED 2026-11-23): the reverse-lookup dispatch supports a
+#     smaller type set than the enabled modules suggest — expensereport
+#     answers 400 even with the Expense Reports module enabled and full
+#     rights granted. Pinned in the CLASS 1 section at the bottom of this
+#     file.
+#     UPSTREAM ISSUE: Dolibarr/dolibarr#43309
+#   FINDING 4 (OBSERVED 2026-11-23, INCOMPLETE): the permission-dependent
+#     reverse-lookup split (product/member -> 403 vs customer/supplier/... ->
+#     200) does NOT follow the personal-vs-inherited rights boundary, and
+#     user answered 200 without any user-read right. Deferred to the
+#     6-profile permission matrix (see 10_categories_object.hurl) before an
+#     upstream issue is filed — currently held in a local uncommitted file.
 #   OBSERVED: include_childs junk value -> 400 (strict boolean validation);
 #     missing type on /{id}/objects -> 400 (required constraint enforced).
 #
