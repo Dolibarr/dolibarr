@@ -2712,21 +2712,20 @@ class AccountancyExport
 	 */
 	private static function toFixedWidthAscii($str)
 	{
-		$str = strtr((string) $str, array(
-			"\u{2018}" => "'", "\u{2019}" => "'", "\u{201A}" => "'", "\u{2032}" => "'",
-			"\u{201C}" => '"', "\u{201D}" => '"', "\u{201E}" => '"', "\u{00AB}" => '"', "\u{00BB}" => '"',
-			"\u{2013}" => '-', "\u{2014}" => '-', "\u{2026}" => '...',
-			"\u{0153}" => 'oe', "\u{0152}" => 'OE', "\u{00E6}" => 'ae', "\u{00C6}" => 'AE', "\u{00DF}" => 'ss',
-			"\u{20AC}" => 'EUR', "\u{00A0}" => ' ', "\u{202F}" => ' ',
-		));
+		// "°" has no ASCII equivalent and iconv would turn it into "?" ("n° 12" -> "n? 12")
+		$str = str_replace('°', ' ', (string) $str);
 
-		// Replace any other non printable ASCII character by a space (one space per character when string is valid UTF-8)
-		$result = preg_replace('/[^\x20-\x7E]/u', ' ', $str);
-		if ($result === null) {
-			$result = preg_replace('/[^\x20-\x7E]/', ' ', $str);
+		// Transliterate to ASCII, as done by dolSlugify() ("’" -> "'", "Œ" -> "OE", "€" -> "EUR"...)
+		if (function_exists('iconv')) {
+			$result = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+			if ($result !== false) {
+				$str = $result;
+			}
 		}
 
-		return (string) $result;
+		// The result of the transliteration depends on the iconv implementation of the server,
+		// so remove any byte still outside printable ASCII.
+		return (string) preg_replace('/[^\x20-\x7E]/', '', $str);
 	}
 
 	/**
