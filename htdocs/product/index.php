@@ -653,6 +653,7 @@ $boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft"
 $boxlist .= $graph;
 $boxlist .= $graphcat;
 $boxlist .= $activity;
+$boxlist .= $latestmovement;
 $boxlist .= '<br>';
 $boxlist .= $resultboxes['boxlista'];
 $boxlist .= "</div>\n";
@@ -660,7 +661,6 @@ $boxlist .= "</div>\n";
 $boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 $boxlist .= $lastmodified;
 $boxlist .= $latestwarehouse;
-$boxlist .= $latestmovement;
 $boxlist .= $resultboxes['boxlistb'];
 $boxlist .= '</div>'."\n";
 

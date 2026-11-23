@@ -315,7 +315,7 @@ function member_stats_prepare_head($object)
 	// Tab with the custom reports tool (not available to external users)
 	if (empty($user->socid)) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/geo.php', ['tabfamily' => 'memberstats']);
-		$head[$h][1] = $langs->trans("Custom");
+		$head[$h][1] = $langs->trans("CustomReport");
 		$head[$h][2] = 'customreports';
 		$h++;
 	}
@@ -353,7 +353,7 @@ function membership_stats_prepare_head($object)
 	// Tab with the custom reports tool (not available to external users)
 	if (empty($user->socid)) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/adherents/stats/index.php', ['tabfamily' => 'membershipstats']);
-		$head[$h][1] = $langs->trans("Custom");
+		$head[$h][1] = $langs->trans("CustomReport");
 		$head[$h][2] = 'customreports';
 		$h++;
 	}

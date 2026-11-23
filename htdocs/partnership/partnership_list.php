@@ -186,6 +186,13 @@ $permissiontodelete = $user->hasRight('partnership', 'delete');
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
+// External user is limited to his own thirdparty, and has no access to partnerships of members
+if ($user->socid > 0) {
+	if ($managedfor == 'member') {
+		accessforbidden();
+	}
+	$socid = $user->socid;
+}
 //restrictedArea($user, 'partnership', $object->id);
 if (empty($conf->partnership->enabled)) {
 	accessforbidden();
@@ -397,6 +404,11 @@ if ($managedfor == 'member') {
 	} else {
 		$sql .= " AND t.fk_soc > 0";
 	}
+}
+// If internal user has no permission to see all thirdparties, restrict on thirdparties he is sale representative for
+// (not in member mode: a partnership of a member has no thirdparty to restrict on)
+if ($managedfor != 'member' && empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 }
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
@@ -925,6 +937,7 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 $textlate = '';
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1025,11 +1038,19 @@ while ($i < $imaxinloop) {
 				} elseif ($key == 'country') {
 					if ($managedfor == 'member') {
 						if (!empty($adherent->country_code)) {
-							print  $langs->trans("Country".$adherent->country_code);
+							if ($showcountrylabelinlist) {
+								print $langs->trans("Country".$adherent->country_code);
+							} else {
+								print picto_from_langcode($adherent->country_code, 'title="'.dolPrintHTMLForAttribute($langs->trans("Country".$adherent->country_code)).'"', 1);
+							}
 						}
 					} else {
 						if (!empty($object->thirdparty->country_code)) {
-							print  $langs->trans("Country".$object->thirdparty->country_code);
+							if ($showcountrylabelinlist) {
+								print $langs->trans("Country".$object->thirdparty->country_code);
+							} else {
+								print picto_from_langcode($object->thirdparty->country_code, 'title="'.dolPrintHTMLForAttribute($langs->trans("Country".$object->thirdparty->country_code)).'"', 1);
+							}
 						}
 					}
 				} elseif ($key == 'town') {

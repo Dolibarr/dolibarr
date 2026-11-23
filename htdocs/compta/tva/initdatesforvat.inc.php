@@ -52,19 +52,19 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), 'tzserver');
 		} else {
 			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) { // quaterly vat, we take last past complete quarter
-				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
+				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - getDolGlobalInt('SOCIETE_FISCAL_MONTH_START')) % 3), 'm');
 				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
 			} elseif (getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 3) { // yearly vat
-				if ($current_date['mon'] < $conf->global->SOCIETE_FISCAL_MONTH_START) {
-					if (($conf->global->SOCIETE_FISCAL_MONTH_START - $current_date['mon']) > 6) {	// If period started from less than 6 years, we show past year
+				if ($current_date['mon'] < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START')) {
+					if ((getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') - $current_date['mon']) > 6) {	// If period started from less than 6 years, we show past year
 						$year_start--;
 					}
 				} else {
-					if (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) < 6) {	// If perdio started from less than 6 years, we show past year
+					if (($current_date['mon'] - getDolGlobalInt('SOCIETE_FISCAL_MONTH_START')) < 6) {	// If perdio started from less than 6 years, we show past year
 						$year_start--;
 					}
 				}
-				$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, 'tzserver');
+				$date_start = dol_get_first_day($year_start, getDolGlobalInt('SOCIETE_FISCAL_MONTH_START'), 'tzserver');
 				$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
 			} elseif (getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 1) {	// monthly vat, we take last past complete month
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -1, 'm');

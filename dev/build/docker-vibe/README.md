@@ -156,20 +156,22 @@ Known limits (this is a protection against accidental emails, not a security san
 - Only the sendmail path is intercepted into the image itself. The Dolibarr send modes "SMTP socket" and "SwiftMailer" (see `htdocs/core/class/smtps.class.php`) use the network: they are closed by the block of the outbound SMTP ports of the VM, installed at each container start (see next section).
 - The emails sent through HTTP APIs (SendGrid, Mailjet, ...) on the port 443 are not concerned: they are indistinguishable from any other HTTPS call.
 
-### Block the outbound SMTP ports of the VM
+### Block the outbound SMTP ports of the container
 
-The containers are run with `--network=host`, so their network connections are the ones of the machine that runs them: the image can not block them itself, it must be done at the level of the machine (the VM) with iptables. The script `smtpblock.sh` does it. It is installed into the image (`/usr/local/bin/smtpblock.sh`) and called by `docker-entrypoint.sh` at the start of each container, so the protection is always active and nothing has to be remembered:
+The containers are run with `--network=host` (and `--cgroupns=host`), so their network connections are the ones of the machine that runs them: the image can not block them itself, it must be done at the level of the machine with iptables. The script `smtpblock.sh` does it. It is installed into the image (`/usr/local/bin/smtpblock.sh`) and called by `docker-entrypoint.sh` at the start of each container, so the protection is always active and nothing has to be remembered:
 
 ````
-sudo dev/build/docker-vibe/smtpblock.sh            Install the block (also done automatically at each container start)
-sudo dev/build/docker-vibe/smtpblock.sh --status   Show the state
-sudo dev/build/docker-vibe/smtpblock.sh --remove   Remove the block
+sudo dev/build/docker-vibe/smtpblock.sh                        Install the block (also done automatically at each container start)
+sudo dev/build/docker-vibe/smtpblock.sh --status               Show the state
+sudo dev/build/docker-vibe/smtpblock.sh --remove               Remove the block
 ````
 
-The script rejects the connections to the ports 25, 465 and 587 for the whole VM (IPv4 and IPv6), inserted at the top of the OUTPUT chain so they take precedence over any existing ACCEPT rule. The connections fail immediately (REJECT) instead of hanging.
+The script rejects the connections to the ports 25, 465 and 587 (IPv4 and IPv6), inserted at the top of the OUTPUT chain so they take precedence over any existing ACCEPT rule. The connections fail immediately (REJECT) instead of hanging.
+
+On a machine with the unified cgroup v2 hierarchy (the default on the current distributions, Ubuntu 21.10+), the block installed at the container start is **scoped to the only container** (`--cgroup`, with the cgroup path seen from the host thanks to `--cgroupns=host`): the other processes of the machine can still connect to these ports. Without the unified hierarchy (cgroup v1 on the VM), the block used at the start is the one of the whole machine, and the same is then true when the script is run by hand without `--cgroup`.
 
 Requirements and notes:
 - The container must be run with the capability `--cap-add=NET_ADMIN` (done by `vibes.sh`), otherwise the block can not be installed and the container refuses to start. To start a container that is allowed to send emails (for example to test the SMTP features of Dolibarr), run it with `DOCKER_ALLOW_SMTP=1 vibes` (the variable is passed to the container by `vibes.sh`).
-- The block stays on the VM when the container stops (it is reinstalled at the next start anyway). Use `--remove` to remove it.
-- The rules are not persistent: they are lost at the next reboot of the VM (and reinstalled at the next container start). To have them permanent, save them with `iptables-persistent` (`sudo apt-get install iptables-persistent` then `sudo netfilter-persistent save`).
-- The block applies to all the processes of the VM, not only to the containers: an MTA running on the VM can no longer deliver its queue either, and the local submission to a MTA of the VM through the port 25 is also blocked (this is one of the paths to close).
+- The container must be run with `--cgroupns=host` (done by `vibes.sh`) so the scoped block can identify its cgroup, otherwise it refuses to start (there is no safe way to scope the block when the cgroup of the container is not seen from inside as the kernel sees it).
+- The rules are not persistent: they are lost at the next reboot of the VM (and the scoped one reinstalled at the next container start). A scoped rule left behind by a stopped container does not match anything anymore (its cgroup no longer exists), it can be cleaned with `--remove`. To have a block of the whole machine permanent, save it with `iptables-persistent` (`sudo apt-get install iptables-persistent` then `sudo netfilter-persistent save`).
+- On cgroup v1, the block applies to all the processes of the machine, not only to the containers (this is one of the paths to close).

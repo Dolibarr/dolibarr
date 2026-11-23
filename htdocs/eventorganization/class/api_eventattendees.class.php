@@ -362,7 +362,10 @@ class EventAttendees extends DolibarrApi
 			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
 		}
 
-		// we can now check for access to the project the attendee is attached to
+		// we can now check for access to the project the attendee is attached to (a project is mandatory, 0 would skip the project check)
+		if ((int) $this->event_attendees->fk_project < 1) {
+			throw new RestException(400, 'fk_project must be a valid project id');
+		}
 		$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied access to the project of Event attendee');
@@ -431,6 +434,9 @@ class EventAttendees extends DolibarrApi
 
 		// Check access also to the new project when it was changed
 		if ($this->event_attendees->fk_project != $previous_project_id) {
+			if ((int) $this->event_attendees->fk_project < 1) {
+				throw new RestException(400, 'fk_project must be a valid project id');
+			}
 			$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
 			if (!$allowaccess) {
 				throw new RestException(403, 'denied access to the project of Event attendee');
@@ -501,6 +507,9 @@ class EventAttendees extends DolibarrApi
 
 		// Check access also to the new project when it was changed
 		if ($this->event_attendees->fk_project != $previous_project_id) {
+			if ((int) $this->event_attendees->fk_project < 1) {
+				throw new RestException(400, 'fk_project must be a valid project id');
+			}
 			$allowaccess = $this->_checkAccessRights('write', $this->event_attendees->fk_project);
 			if (!$allowaccess) {
 				throw new RestException(403, 'denied access to the project of Event attendee');
@@ -698,18 +707,13 @@ class EventAttendees extends DolibarrApi
 				$event_project = new Project($this->db);
 				$result = $event_project->fetch($project_id);
 				if (0 < $result) {
-					$public = $event_project->public;
-					if ( 1 == $public) {
+					// Array (id => ref) of projects the user can access (public or user is a contact), restricted to allowed entities
+					$userProjectAccessListId = $event_project->getProjectsAuthorizedForUser(DolibarrApiAccess::$user, 0, 0);
+					if (is_array($userProjectAccessListId) && array_key_exists((int) $event_project->id, $userProjectAccessListId)) {
 						$singleprojectaccess = true;
 					} else {
-						$userProjectAccessListId = $event_project->getProjectsAuthorizedForUser(DolibarrApiAccess::$user, 0, 0);
-						$project_title = $event_project->title;
-						if (in_array($project_title, $userProjectAccessListId)) {
-							$singleprojectaccess = true;
-						} else {
-							dol_syslog("project_title ".$project_title." is NOT in array from getProjectsAuthorizedForUser()", LOG_DEBUG);
-							return false;
-						}
+						dol_syslog("project id ".((int) $event_project->id)." is NOT in array from getProjectsAuthorizedForUser()", LOG_DEBUG);
+						return false;
 					}
 				} elseif (0 == $result) {
 					throw new RestException(500, 'Project id '.$project_id.' not found');
