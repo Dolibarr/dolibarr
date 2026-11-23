@@ -735,7 +735,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					if ($this->getColumnStatus('unit_order') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
-						$this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString((int) $object->lines[$i]->fk_unit));
+						$this->printStdColumnContent($pdf, $curY, 'unit_order', pdf_getlineunit($object, $i, $outputlangs, $hidedetails));
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 

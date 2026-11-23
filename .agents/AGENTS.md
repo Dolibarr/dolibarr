@@ -226,6 +226,7 @@ Before any modification, verify:
 
 You can find the URL of an online instance into file `htdocs/conf/conf.php` in parameter `$dolibarr_main_url_root`. 
 You can ignore and bypass the warning about HTTPS certificate. Ask the password if you need one without trying to get it from database.
+If the environment variables `DOL_CTI_ADMIN_LOGIN` and `DOL_CTI_ADMIN_PASSWORD` are defined, use them as login and password instead of asking them (never print the password value).
 
 Dolibarr requires a CSRF token and a session cookie. To access any authenticated page:
 
@@ -233,7 +234,7 @@ Dolibarr requires a CSRF token and a session cookie. To access any authenticated
    - The CSRF token: extract the `name="token" value="..."` field from the HTML.
    - The session cookie: the `DOLSESSID_*` cookie set in the response headers.
 2. **POST the login form** to `index.php` with `token`, `username`, `password`, and `actionlogin=dologin`
-	- Ask the password if you need one (don't try to guess it from database).
+	- Use `DOL_CTI_ADMIN_LOGIN` / `DOL_CTI_ADMIN_PASSWORD` if defined, otherwise ask the password if you need one (don't try to guess it from database).
 	- Keep the cookie for subsequent requests.
 3. **Reuse the session cookie** on all subsequent page requests — the session is now authenticated.
 

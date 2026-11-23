@@ -843,13 +843,15 @@ function getBrowserInfo($user_agent)
 		}
 	}
 
-	// OS
-	if (preg_match('/linux/i', $user_agent)) {
-		$os = 'linux';
-	} elseif (preg_match('/macintosh/i', $user_agent)) {
-		$os = 'macintosh';
-	} elseif (preg_match('/windows/i', $user_agent)) {
-		$os = 'windows';
+	// OS, when not already found as a mobile OS (the user agent of Android contains "Linux")
+	if ($os == 'unknown') {
+		if (preg_match('/linux/i', $user_agent)) {
+			$os = 'linux';
+		} elseif (preg_match('/macintosh/i', $user_agent)) {
+			$os = 'macintosh';
+		} elseif (preg_match('/windows/i', $user_agent)) {
+			$os = 'windows';
+		}
 	}
 
 	// Name
@@ -11864,6 +11866,14 @@ function dolForgeSQLCriteriaCallback($matches)
 	$newforbiddenfields[] = 'pass_crypted';
 	$newforbiddenfields[] = 'pass_temp';
 	$newforbiddenfields[] = 'api_key';
+	// SQL keywords that return server information without parenthesis (mysql/mariadb/pgsql), so they could be guessed by comparison
+	$newforbiddenfields[] = 'current_user';
+	$newforbiddenfields[] = 'session_user';
+	$newforbiddenfields[] = 'system_user';
+	$newforbiddenfields[] = 'user';
+	$newforbiddenfields[] = 'current_role';
+	$newforbiddenfields[] = 'current_schema';
+	$newforbiddenfields[] = 'current_catalog';
 
 	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
@@ -11918,8 +11928,17 @@ function dolForgeSQLCriteriaCallback($matches)
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
 			} elseif (!empty($dolibarr_allow_unsecured_select_in_extrafields_filter)) {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest (should be removed in a future as it allows blind SQL injection)
+				// No word of the subrequest must be a forbidden field (it could be guessed by comparison)
+				$tmpwords = preg_split('/[^a-z0-9_]+/', dol_strtolower($tmpelemarray[$tmpkey]), -1, PREG_SPLIT_NO_EMPTY);
+				if (is_array($tmpwords) && !empty($newforbiddenfields) && count(array_intersect($tmpwords, (array) $newforbiddenfields)) > 0) {
+					return '1=1';
+				}
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'
+				// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
+				if (!empty($newforbiddenfields) && in_array(dol_strtolower($tmpelemarray[$tmpkey]), (array) $newforbiddenfields)) {
+					return '1=1';
+				}
 			}
 		}
 		$tmpescaped2 .= implode(',', $tmpelemarray);
@@ -11945,6 +11964,10 @@ function dolForgeSQLCriteriaCallback($matches)
 			$tmpescaped = (float) $tmpescaped;
 		} else {
 			$tmpescaped = preg_replace('/[^a-z0-9_]/i', '', $tmpescaped);	// it can be a name of field or a substitution variable like '__NOW__'
+			// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
+			if (!empty($newforbiddenfields) && in_array(dol_strtolower($tmpescaped), (array) $newforbiddenfields)) {
+				return '1=1';
+			}
 		}
 	}
 

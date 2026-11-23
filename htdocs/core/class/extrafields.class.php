@@ -2069,6 +2069,9 @@ class ExtraFields
 								// Replace '$ID$ = column' by "word"
 								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
 								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
