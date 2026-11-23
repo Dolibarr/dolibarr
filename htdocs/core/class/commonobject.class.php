@@ -3208,7 +3208,10 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
 		$sql .= ' WHERE rowid = '.((int) $rowid);
-		if ($this->id > 0 && !empty($this->fk_element)) {
+		if ($this->id > 0 && $this->table_element_line == 'ecm_files') {
+			// ecm_files has no fk_element column (fk_product, fk_soc...): a file is linked to its object by src_object_id
+			$sql .= " AND src_object_id = ".((int) $this->id);
+		} elseif ($this->id > 0 && !empty($this->fk_element)) {
 			// The line must belong to the object we reorder lines of
 			$sql .= " AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
 		}
