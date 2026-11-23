@@ -10781,7 +10781,8 @@ function getElementProperties($elementType)
 		$element = 'chequereceipt';
 		$subelement = 'cheque';
 		$table_element = 'bordereau_cheque';
-	} elseif ($elementType == 'category') {
+	} elseif ($elementType == 'category' || $elementType == 'categorie') {	// 'categorie': old name, used by link extrafields
+		$element = 'category';
 		$classpath = 'categories/class';
 		$module = 'categorie';
 		$subelement = 'categorie';

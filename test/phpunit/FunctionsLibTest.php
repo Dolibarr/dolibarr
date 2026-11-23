@@ -3282,6 +3282,29 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testFetchObjectByElementOfTheOldCategorieName
+	 *
+	 * @return void
+	 */
+	public function testFetchObjectByElementOfTheOldCategorieName()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savmodules = $conf->modules;
+		$conf->modules['categorie'] = 'categorie';
+
+		// selectForForms() asks for strtolower() of the class name of a link extrafield, 'Categorie'
+		$this->assertSame(getElementProperties('category'), getElementProperties('categorie'));
+		$this->assertInstanceOf('Categorie', fetchObjectByElement(0, 'categorie'));
+
+		$conf->modules = $savmodules;
+	}
+
+	/**
 	 * testDolGetFicheHeadMoreTabsIsAccessible
 	 *
 	 * @return void
