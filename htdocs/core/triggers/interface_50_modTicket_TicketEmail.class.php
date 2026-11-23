@@ -444,7 +444,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 */
 	private function composeAndSendCustomerMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs, $filepaths = array(), $mimetypes = array(), $filenames = array())
 	{
-		global $conf, $extrafields, $mysoc, $user;
+		global $conf, $mysoc, $user;
 
 		$appli = $mysoc->name;
 
@@ -454,38 +454,6 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$message_customer .= '<li>'.$langs->trans('Type').' : '.$langs->getLabelFromKey($this->db, 'TicketTypeShort'.$object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code).'</li>';
 		$message_customer .= '<li>'.$langs->trans('TicketCategory').' : '.$langs->getLabelFromKey($this->db, 'TicketCategoryShort'.$object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code).'</li>';
 		$message_customer .= '<li>'.$langs->trans('Severity').' : '.$langs->getLabelFromKey($this->db, 'TicketSeverityShort'.$object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code).'</li>';
-
-		// Extrafields
-		// master.inc.php creates the global $extrafields object, but its attributes stay empty
-		// until a fetch_name_optionals_label() call, which nothing guarantees for the ticket
-		// table on the paths reaching this trigger.
-		// A table holding no extrafield at all leaves its key unset even after the fetch, so the
-		// test below also has to tolerate a missing entry.
-		$extrafields->fetch_name_optionals_label($object->table_element);
-		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
-			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $value) {
-				$enabled = 1;
-				if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key])) {
-					$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['list'][$key], 1);
-				}
-				$perms = 1;
-				if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key])) {
-					$perms = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][$key], 1);
-				}
-
-				$qualified = true;
-				if (empty($enabled)) {
-					$qualified = false;
-				}
-				if (empty($perms)) {
-					$qualified = false;
-				}
-
-				if ($qualified) {
-					$message_customer .= '<li>' . $langs->trans($key) . ' : ' . $value . '</li>';
-				}
-			}
-		}
 
 		$message_customer .= '</ul>';
 

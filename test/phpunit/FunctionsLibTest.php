@@ -582,6 +582,20 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('tablet', $tmp['layout']);
 		$this->assertEquals('iphone', $tmp['phone']);
 
+		// Android phone : its user agent contains "Linux", the OS stays android
+		$user_agent = 'Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36';
+		$tmp = getBrowserInfo($user_agent);
+		$this->assertEquals('chrome', $tmp['browsername']);
+		$this->assertEquals('android', $tmp['browseros']);
+		$this->assertEquals('phone', $tmp['layout']);
+		$this->assertEquals('android', $tmp['phone']);
+
+		// Linux desktop : still linux
+		$user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+		$tmp = getBrowserInfo($user_agent);
+		$this->assertEquals('linux', $tmp['browseros']);
+		$this->assertEquals('classic', $tmp['layout']);
+
 		// Lynx
 		$user_agent = 'Lynx/2.8.8dev.3 libwww‑FM/2.14 SSL‑MM/1.4.1';
 		$tmp = getBrowserInfo($user_agent);

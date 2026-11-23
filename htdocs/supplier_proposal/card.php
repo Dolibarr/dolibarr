@@ -1604,7 +1604,7 @@ if ($action == 'create') {
 		print '</table>';
 		print '</div>';
 	}
-} else {
+} elseif ($object->id > 0) {
 	/*
 	 * Show object in view mode
 	 */
