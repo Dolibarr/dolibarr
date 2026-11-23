@@ -510,7 +510,7 @@ li.liinputsearch span.deletepositionfields_dropdownselectedfields::after {
 	height: 100%;
 	pointer-events: none;
 	background-image:
-		linear-gradient(160deg, transparent calc(50% - 0.5px), currentColor calc(50% - 0.5px), currentColor calc(50% + 0.5px), transparent calc(50% + 0.5px));
+		linear-gradient(135deg, transparent calc(50% - 0.5px), currentColor calc(50% - 0.5px), currentColor calc(50% + 0.5px), transparent calc(50% + 0.5px));
 }
 
 /* Column selector: the label of each field fills the row and the picto of

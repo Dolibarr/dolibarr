@@ -12215,6 +12215,8 @@ abstract class CommonObject
 		}
 		if (isset($objectline->fields['position'])) {
 			$sql .= $this->db->order('position', 'ASC');
+		} elseif (isset($objectline->fields['rang'])) {
+			$sql .= $this->db->order('rang', 'ASC');	// 'rang' is the position field used by line_up(), line_down() and line_max()
 		}
 
 		$resql = $this->db->query($sql);

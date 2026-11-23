@@ -299,34 +299,6 @@ class ActionsMyModule extends CommonHookActions
 
 
 	/**
-	 * Overload the restrictedArea function : check permission on an object
-	 *
-	 * @param	array<string,mixed>	$parameters		Hook metadata (context, etc...)
-	 * @param   CommonObject    	$object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-	 * @param	string				$action			Current action (if set). Generally create or edit or null
-	 * @param	HookManager			$hookmanager	Hook manager propagated to allow calling another hook
-	 * @return	int									Return integer <0 if KO,
-	 *												=0 if OK but we want to process standard actions too,
-	 *												>0 if OK and we want to replace standard actions.
-	 */
-	public function restrictedArea($parameters, $object, &$action, $hookmanager)
-	{
-		global $user;
-
-		if ($parameters['features'] == 'myobject') {
-			if ($user->hasRight('mymodule', 'myobject', 'read')) {
-				$this->results['result'] = 1;
-				return 1;
-			} else {
-				$this->results['result'] = 0;
-				return 1;
-			}
-		}
-
-		return 0;
-	}
-
-	/**
 	 * Execute action completeTabsHead
 	 *
 	 * @param	array<string,mixed>	$parameters		Array of parameters

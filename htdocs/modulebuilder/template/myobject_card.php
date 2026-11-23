@@ -218,6 +218,36 @@ if (empty($reshook)) {
 	//BEGIN MODULEBUILDER LINES
 	// Action to move up and down lines of object
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+
+	// Actions to add or update a line of object
+	if (($action == 'addline' || $action == 'updateline') && $permissiontoadd) {
+		$linedesc = GETPOST('linedesc', 'restricthtml');
+		$lineqty = GETPOST('lineqty', 'alpha');
+		$lineproductid = GETPOSTINT('lineproductid');
+
+		if ($lineqty === '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
+		if (empty($linedesc) && $lineproductid <= 0) {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
+			$error++;
+		}
+
+		if (!$error) {
+			if ($action == 'addline') {
+				$result = $object->addLine($user, $linedesc, (float) price2num($lineqty, 'MS'), $lineproductid);
+			} else {
+				$result = $object->updateLine($user, $lineid, $linedesc, (float) price2num($lineqty, 'MS'), $lineproductid);
+			}
+			if ($result > 0) {
+				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+				exit;
+			}
+			setEventMessages($langs->trans($object->error), $object->errors, 'errors');
+		}
+		$action = ($action == 'updateline' ? 'editline' : '');
+	}
 	//END MODULEBUILDER LINES
 
 	// Action to build doc
@@ -496,50 +526,149 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!empty($object->table_element_line)) {
 		// Show object lines
 		$result = $object->getLinesArray();
-
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
-		<input type="hidden" name="token" value="' . newToken().'">
-		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
-		<input type="hidden" name="mode" value="">
-		<input type="hidden" name="page_y" value="">
-		<input type="hidden" name="id" value="' . $object->id.'">
-		';
-
-		if (!empty($conf->use_javascript_ajax) && $object->status == 0) {
-			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+		if (!is_array($result)) {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
-		print '<div class="div-table-responsive-no-min">';
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '<table id="tablelines" class="noborder noshadow" width="100%">';
-		}
+		$caneditlines = ($object->status == $object::STATUS_DRAFT && $permissiontoadd);
+		$showproduct = (isModEnabled('product') || isModEnabled('service'));
 
-		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1);
-		}
-
-		// Form to add new line
-		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines') {
-			if ($action != 'editline') {
-				// Add products/services form
-
-				$parameters = array();
-				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) {
-					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		// Load the products used by the lines with one request
+		$productsoflines = array();
+		if ($showproduct) {
+			$langs->load('products');
+			$listofproductids = array();
+			foreach ($object->lines as $line) {
+				if ($line->fk_product > 0) {
+					$listofproductids[(int) $line->fk_product] = (int) $line->fk_product;
 				}
-				if (empty($reshook)) {
-					$object->formAddObjectLine(1, $mysoc, $soc);
+			}
+			if (count($listofproductids)) {
+				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+				$sql = "SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.entity, p.tosell, p.tobuy";
+				$sql .= " FROM ".$db->prefix()."product as p";
+				$sql .= " WHERE p.rowid IN (".$db->sanitize(implode(',', $listofproductids)).")";
+				$resql = $db->query($sql);
+				if ($resql) {
+					while ($obj = $db->fetch_object($resql)) {
+						$tmpproduct = new Product($db);
+						$tmpproduct->id = (int) $obj->rowid;
+						$tmpproduct->ref = $obj->ref;
+						$tmpproduct->label = $obj->label;
+						$tmpproduct->type = (int) $obj->fk_product_type;
+						$tmpproduct->entity = (int) $obj->entity;
+						$tmpproduct->status = (int) $obj->tosell;
+						$tmpproduct->status_buy = (int) $obj->tobuy;
+						$productsoflines[(int) $obj->rowid] = $tmpproduct;
+					}
+					$db->free($resql);
+				} else {
+					dol_print_error($db);
 				}
 			}
 		}
 
-		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
-			print '</table>';
-		}
-		print '</div>';
+		if (!empty($object->lines) || $caneditlines) {
+			print '<form name="formlines" id="formlines" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="'.($action == 'editline' ? 'updateline' : 'addline').'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			if ($action == 'editline') {
+				print '<input type="hidden" name="lineid" value="'.((int) $lineid).'">';
+			}
 
-		print "</form>\n";
+			if (!empty($conf->use_javascript_ajax) && $caneditlines) {
+				include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';	// To move lines with drag and drop
+			}
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table id="tablelines" class="noborder noshadow centpercent">';
+
+			// Title of lines
+			print '<tr class="liste_titre nodrag nodrop">';
+			if ($showproduct) {
+				print '<td>'.$langs->trans('Product').'</td>';
+			}
+			print '<td>'.$langs->trans('Description').'</td>';
+			print '<td class="right">'.$langs->trans('Qty').'</td>';
+			if ($caneditlines) {
+				print '<td></td>';
+				print '<td class="linecolmove"></td>';
+			}
+			print '</tr>';
+
+			$nboflines = count($object->lines);
+			$iline = 0;
+			foreach ($object->lines as $line) {
+				print '<tr class="oddeven" id="row-'.((int) $line->id).'">';
+				if ($action == 'editline' && $line->id == $lineid) {
+					// Line in edit mode
+					if ($showproduct) {
+						print '<td>';
+						$form->select_produits((int) $line->fk_product, 'lineproductid', '', getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth200 maxwidth300');
+						print '</td>';
+					}
+					print '<td><textarea name="linedesc" class="flat centpercent" rows="'.ROWS_2.'">'.dolPrintHTMLForTextArea(GETPOSTISSET('linedesc') ? GETPOST('linedesc', 'restricthtml') : $line->description).'</textarea></td>';
+					print '<td class="right"><input type="text" name="lineqty" class="flat right width50" value="'.dolPrintHTMLForAttribute(GETPOSTISSET('lineqty') ? GETPOST('lineqty', 'alpha') : price($line->qty, 0, '', 0, 0)).'"></td>';
+					print '<td class="center nowraponall">';
+					print '<input type="submit" class="button buttongen button-save marginbottomonly" name="save" value="'.dolPrintHTMLForAttribute($langs->trans('Save')).'"><br>';
+					print '<a class="button buttongen button-cancel" href="'.dolPrintHTMLForAttributeUrl($_SERVER['PHP_SELF'].'?id='.$object->id.'#row-'.$line->id).'">'.$langs->trans('Cancel').'</a>';
+					print '</td>';
+					print '<td class="linecolmove"></td>';
+				} else {
+					if ($showproduct) {
+						print '<td class="tdoverflowmax200">';
+						if ($line->fk_product > 0 && isset($productsoflines[$line->fk_product])) {
+							print $productsoflines[$line->fk_product]->getNomUrl(1);
+						}
+						print '</td>';
+					}
+					print '<td>'.dolPrintHTML($line->description).'</td>';
+					print '<td class="right nowraponall">'.price($line->qty, 0, '', 0, 0).'</td>';	// price() is used only to format the quantity
+					if ($caneditlines) {
+						print '<td class="center nowraponall">';
+						if ($action != 'editline') {
+							print '<a class="editfielda reposition marginrightonly" href="'.dolPrintHTMLForAttributeUrl($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'#row-'.$line->id).'">'.img_edit().'</a>';
+							print '<a class="reposition" href="'.dolPrintHTMLForAttributeUrl($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id).'">'.img_delete().'</a>';
+						}
+						print '</td>';
+						// Move up and down (replaced by a drag and drop handle by ajaxrow.tpl.php when javascript is on)
+						print '<td class="linecolmove tdlineupdown center nowraponall">';
+						if ($action != 'editline') {
+							if ($iline > 0) {
+								print '<a class="lineupdown reposition" href="'.dolPrintHTMLForAttributeUrl($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=up&token='.newToken().'&rowid='.$line->id).'">'.img_up('default', 0, 'imgupforline').'</a>';
+							}
+							if ($iline < $nboflines - 1) {
+								print '<a class="lineupdown reposition" href="'.dolPrintHTMLForAttributeUrl($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=down&token='.newToken().'&rowid='.$line->id).'">'.img_down('default', 0, 'imgdownforline').'</a>';
+							}
+						}
+						print '</td>';
+					}
+				}
+				print '</tr>';
+				$iline++;
+			}
+
+			// Form to add a new line
+			if ($caneditlines && $action != 'editline') {
+				print '<tr class="liste_titre nodrag nodrop"><td colspan="'.($showproduct ? 5 : 4).'">'.$langs->trans('AddNewLine').'</td></tr>';
+				print '<tr class="oddeven nodrag nodrop">';
+				if ($showproduct) {
+					print '<td>';
+					$form->select_produits(GETPOSTINT('lineproductid'), 'lineproductid', '', getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, -1, 2, '', 0, array(), 0, '1', 0, 'minwidth200 maxwidth300');
+					print '</td>';
+				}
+				print '<td><textarea name="linedesc" class="flat centpercent" rows="'.ROWS_2.'">'.dolPrintHTMLForTextArea(GETPOST('linedesc', 'restricthtml')).'</textarea></td>';
+				print '<td class="right"><input type="text" name="lineqty" class="flat right width50" value="'.dolPrintHTMLForAttribute(GETPOSTISSET('lineqty') ? GETPOST('lineqty', 'alpha') : '1').'"></td>';
+				print '<td class="center"><input type="submit" class="button reposition" name="addlinebutton" value="'.dolPrintHTMLForAttribute($langs->trans('Add')).'"></td>';
+				print '<td class="linecolmove"></td>';
+				print '</tr>';
+			}
+
+			print '</table>';
+			print '</div>';
+			print '</form>'."\n";
+		}
 	}
 	//END MODULEBUILDER LINES
 	// Buttons for actions
