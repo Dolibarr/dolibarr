@@ -68,7 +68,7 @@ class FunctionsBELibTest extends CommonClassTest
 	{
 		global $conf, $db, $mysoc;
 
-		$oldvalue = isset($conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION) ? $conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION : null;
+		$oldvalue = isset($conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION) ? getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') : null;
 
 		$invoice = new class($db) extends CommonInvoice {
 			/**

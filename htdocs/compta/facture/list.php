@@ -198,6 +198,9 @@ $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
+$search_situation_cycle_ref = GETPOST('search_situation_cycle_ref', 'alpha');
+$search_situation_counter = GETPOST('search_situation_counter', 'alpha');
+$search_situation_final = GETPOST('search_situation_final', 'intcomma');
 
 $search_option = GETPOST('search_option');
 if ($search_option == 'late') {
@@ -330,6 +333,11 @@ if ($user->socid) {
 }
 if (getDolGlobalString("INVOICE_USE_SITUATION") && getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 	$arrayfields['f.retained_warranty'] = array('label' => $langs->trans("RetainedWarranty"), 'checked' => '0', 'position' => 86);
+}
+if (getDolGlobalString("INVOICE_USE_SITUATION")) {
+	$arrayfields['f.situation_cycle_ref'] = array('label' => "SituationCycleRef", 'checked' => '0', 'position' => 230);
+	$arrayfields['f.situation_counter'] = array('label' => "SituationCounter", 'checked' => '0', 'position' => 235);
+	$arrayfields['f.situation_final'] = array('label' => "SituationFinal", 'checked' => '0', 'position' => 240);
 }
 
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
@@ -496,6 +504,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_fac_rec_source_title = '';
 	$search_option = '';
 	$search_import_key = '';
+	$search_situation_cycle_ref = '';
+	$search_situation_counter = '';
+	$search_situation_final = '';
 	$search_categ_cus = 0;
 
 	$search_all = '';
@@ -1080,6 +1091,17 @@ if ($search_fk_fac_rec_source) {
 if ($search_import_key) {
 	$sql .= natural_search("f.import_key", $search_import_key);
 }
+if ($search_situation_cycle_ref != '') {
+	$sql .= natural_search('f.situation_cycle_ref', $search_situation_cycle_ref, 1);
+}
+if ($search_situation_counter != '') {
+	$sql .= natural_search('f.situation_counter', $search_situation_counter, 1);
+}
+if ($search_situation_final == '1') {
+	$sql .= ' AND f.situation_final = 1';
+} elseif ($search_situation_final == '0') {
+	$sql .= ' AND f.situation_cycle_ref > 0 AND (f.situation_final IS NULL OR f.situation_final = 0)';
+}
 // Search on user
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
@@ -1512,6 +1534,15 @@ if ($search_fk_fac_rec_source) {
 if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
+if ($search_situation_cycle_ref != '') {
+	$param .= '&search_situation_cycle_ref='.urlencode($search_situation_cycle_ref);
+}
+if ($search_situation_counter != '') {
+	$param .= '&search_situation_counter='.urlencode($search_situation_counter);
+}
+if ($search_situation_final != '' && $search_situation_final >= 0) {
+	$param .= '&search_situation_final='.urlencode($search_situation_final);
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1906,6 +1937,21 @@ if (!empty($arrayfields['u.login']['checked'])) {
 if (!empty($arrayfields['sale_representative']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
+if (!empty($arrayfields['f.situation_cycle_ref']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_situation_cycle_ref" value="'.dolPrintHTMLForAttribute($search_situation_cycle_ref).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['f.situation_counter']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_situation_counter" value="'.dolPrintHTMLForAttribute($search_situation_counter).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['f.situation_final']['checked'])) {
+	print '<td class="liste_titre center">';
+	print $form->selectyesno('search_situation_final', $search_situation_final, 1, false, 1, 1);
+	print '</td>';
+}
 if (!empty($arrayfields['f.retained_warranty']['checked'])) {
 	print '<td class="liste_titre" align="right">';
 	print '</td>';
@@ -2207,6 +2253,18 @@ if (!empty($arrayfields['sale_representative']['checked'])) {
 	print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['f.situation_cycle_ref']['checked'])) {
+	print_liste_field_titre($arrayfields['f.situation_cycle_ref']['label'], $_SERVER['PHP_SELF'], 'f.situation_cycle_ref', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['f.situation_counter']['checked'])) {
+	print_liste_field_titre($arrayfields['f.situation_counter']['label'], $_SERVER['PHP_SELF'], 'f.situation_counter', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['f.situation_final']['checked'])) {
+	print_liste_field_titre($arrayfields['f.situation_final']['label'], $_SERVER['PHP_SELF'], 'f.situation_final', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['f.retained_warranty']['checked'])) {
 	print_liste_field_titre($arrayfields['f.retained_warranty']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
@@ -2355,6 +2413,7 @@ if ($num > 0) {
 	$total_margin = 0;
 
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 		if (empty($obj)) {
@@ -2739,7 +2798,11 @@ if ($num > 0) {
 			if (!empty($arrayfields['country.code_iso']['checked'])) {
 				$tmparray = getCountry($obj->fk_pays, 'all');
 				print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($tmparray['label']).'">';
-				print dolPrintLabel($tmparray['label']);
+				if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
+					print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);
+				} else {
+					print dolPrintHTML($tmparray['label']);
+				}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2965,6 +3028,25 @@ if ($num > 0) {
 					//else print $langs->trans("NoSalesRepresentativeAffected");
 				}
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			if (!empty($arrayfields['f.situation_cycle_ref']['checked'])) {
+				print '<td class="center">'.(!empty($obj->situation_cycle_ref) ? ((int) $obj->situation_cycle_ref) : '').'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			if (!empty($arrayfields['f.situation_counter']['checked'])) {
+				print '<td class="center">'.(!empty($obj->situation_cycle_ref) ? ((int) $obj->situation_counter) : '').'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			if (!empty($arrayfields['f.situation_final']['checked'])) {
+				print '<td class="center">'.(!empty($obj->situation_cycle_ref) ? yn($obj->situation_final) : '').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

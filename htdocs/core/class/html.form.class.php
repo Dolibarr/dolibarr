@@ -6380,10 +6380,11 @@ class Form
 	 *
 	 * @param string $selected Preselected ID
 	 * @param int $socid Company ID
+	 * @param int<0,1> $showfirstsituation 1=After an empty option (value -1), add the choice to create the first situation invoice of a new cycle (value 0)
 	 *
 	 * @return    string                     HTML select
 	 */
-	public function selectSituationInvoices($selected = '', $socid = 0)
+	public function selectSituationInvoices($selected = '', $socid = 0, $showfirstsituation = 0)
 	{
 		global $langs;
 
@@ -6402,7 +6403,9 @@ class Form
 
 		$nbSituationInvoiceForThirdparty = 0;
 
-		if ($resql && $this->db->num_rows($resql) > 0) {
+		if (!$resql) {
+			dol_syslog("Error sql=" . $sql . ", error=" . $this->db->lasterror(), LOG_ERR);
+		} elseif ($this->db->num_rows($resql) > 0) {
 			// Last seen cycle
 			$ref = 0;
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -6425,11 +6428,11 @@ class Form
 					}
 				}
 			}
-		} else {
-			dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 		}
 
-		if ($nbSituationInvoiceForThirdparty > 0) {
+		if ($showfirstsituation) {
+			$opt = '<option class="minwidth100" value="-1">&nbsp;</option><option class="minwidth100" value="0">'.$langs->trans('InvoiceFirstSituationAsk').'</option>'.$opt;
+		} elseif ($nbSituationInvoiceForThirdparty > 0) {
 			$opt = '<option class="minwidth100" value="" selected>&nbsp;</option>'.$opt;
 		} else {
 			$opt = '<option class="minwidth100" value="-1" selected>'.$langs->trans('NoSituations').'</option>';
@@ -7612,7 +7615,7 @@ class Form
 
 		$formproject = new FormProjets($this->db);
 
-		$langs->load("project");
+		$langs->load("projects");
 		if ($htmlname != "none") {
 			$out .= '<form method="post" action="' . $page . '">';
 			$out .= '<input type="hidden" name="action" value="classin">';
@@ -9522,7 +9525,7 @@ class Form
 			}
 
 			$urloption = '';
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/ticket/ajax/tickets.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/ticket/ajax/tickets.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 1, $ajaxoptions);
 
 			if (empty($hidelabel)) {
 				$out .= $langs->trans("RefOrLabel") . ' : ';
@@ -9748,7 +9751,7 @@ class Form
 			}
 
 			$urloption = '';
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/projet/ajax/projects.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/projet/ajax/projects.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 1, $ajaxoptions);
 
 			if (empty($hidelabel)) {
 				$out .= $langs->trans("RefOrLabel") . ' : ';
@@ -9981,7 +9984,7 @@ class Form
 
 			$urloption = '';
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/adherents/ajax/adherents.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/adherents/ajax/adherents.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 1, $ajaxoptions);
 
 			if (empty($hidelabel)) {
 				$out .= $langs->trans("RefOrLabel") . ' : ';
@@ -10349,7 +10352,9 @@ class Form
 
 			// Set url and param to call to get json of the search results
 			$urlforajaxcall = DOL_URL_ROOT . '/core/ajax/selectobject.php';
-			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . (is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
+			// Sign objectdesc so ajax/selectobject.php can refuse a filter or sort field forged by the client
+			$objectdeschash = hash_hmac('sha256', 'selectobject'.sanitizeVal($objectdescorig, 'alphanohtml'), $conf->file->instance_unique_id);
+			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . '&objectdeschash=' . urlencode($objectdeschash) . (is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 			//$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1'.(is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 
 			// Hook 'selectForFormsListUrl' - Added to allow modules to modify the AJAX URL
@@ -11341,7 +11346,8 @@ class Form
 				$listoffieldsforselection .= dolPrintHTML(dol_string_nohtmltag($langs->trans($val['label'])));
 				$listoffieldsforselection .= '</label>';
 				if (!empty($draganddrop)) {
-					$listoffieldsforselection .= img_picto($langs->trans("MoveField", !empty($key) ? $key : 'none'), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove marginleftonly"');
+					// Picto of drag and drop, at the end of the line
+					$listoffieldsforselection .= img_picto($langs->trans("MoveField", !empty($key) ? $key : 'none'), 'fa-arrows-alt-v', 'class="opacitymedium boxhandle hideonsmartphone cursormove"');
 				}
 				$listoffieldsforselection .= '</li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
@@ -11361,7 +11367,9 @@ class Form
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul class="'.$htmlname.(((string) $pos == '1' || (string) $pos == 'left') ? 'left' : '').(!empty($draganddrop) ? ' sortable' : '').'">
                     <li class="liinputsearch">
-						<input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'">
+						<input type="checkbox" class="opacitymedium checkall_dropdownselectedfields" title="'.dolPrintHTMLForAttribute($langs->trans('SelectAll')).'">
+						<input class="nopaddingleftimp inputsearch_dropdownselectedfields" type="text" placeholder="'.$langs->trans('Search').'">
+						'.(!empty($draganddrop) ? '<span class="fas fa-arrows-alt-v opacitymedium cursorpointer deletepositionfields_dropdownselectedfields" title="'.dolPrintHTMLForAttribute($langs->trans('DeleteFieldPositioning')).'"></span>' : '').'
 					</li>
                     '.$listoffieldsforselection.'
                     </ul>
@@ -11382,11 +11390,14 @@ class Form
 				});
 			}
 			$( ".sortable" ).sortable({
+				axis: \'y\',
 				handle: \'.boxhandle\',
 				revert: \'invalid\',
 				items: \'.fieldsortable\',
-				stop: function(event, ui) {
-					console.log("We moved box so we call updateBoxOrder with ajax actions");
+				// The event update and not stop: the refresh is done only when the position of the
+				// dragged field has really changed, not when it is dropped at the same place
+				update: function(event, ui) {
+					console.log("We moved the field to another position so we call updateFieldOrder with ajax action");
 					updateFieldOrder();  /* 1 to avoid message after a move */
 				}
 			});
@@ -11394,7 +11405,7 @@ class Form
 
         <script nonce="' . getNonce() . '" type="text/javascript">
 			jQuery(document).ready(function () {
-				$(\'.multiselectcheckbox' . $htmlname . ' input[type="checkbox"]\').on("click", function () {
+				$(\'.multiselectcheckbox' . $htmlname . ' input[type="checkbox"]:not(.checkall_dropdownselectedfields)\').on("click", function () {
                   console.log("A new field was added/removed, we edit field input[name=formfilteraction]");
 
                   $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\');	// Update field so we know we changed something on selected fields after POST
@@ -11409,6 +11420,30 @@ class Form
                   // Now, we submit page
                   //$(this).parents(\'form:first\').submit();
               	});
+
+				// Checkbox on the line of the search area: check or uncheck all the other checkboxes
+				$(\'.multiselectcheckbox' . $htmlname . ' .checkall_dropdownselectedfields\').on("click", function () {
+					console.log("Click on the checkbox to check/uncheck all the fields");
+					var checked = $(this).is(\':checked\');
+					$(\'.multiselectcheckbox' . $htmlname . ' li:not(.liinputsearch) input[type="checkbox"]\').each(function () {
+						if ($(this).is(\':checked\') != checked) {
+							$(this).trigger("click");
+						}
+					});
+				});
+
+				// Cross to delete the personalization of the position of the fields, shown only on pages that manage it
+				$(\'.multiselectcheckbox' . $htmlname . ' .deletepositionfields_dropdownselectedfields\').on("click", function () {
+					console.log("Click on the trash picto to delete the personalization of the position, so we call ajax action deletepositionfields");
+					$.ajax({
+						url: \''.DOL_URL_ROOT.'/core/ajax/changepositionfields.php?token='.newToken().'&action=deletepositionfields&contextpage='.$varpage.'&userid='.$user->id.'\',
+						async: false,
+						success: function () {
+							// reload page
+							window.location.href = "'.$_SERVER["PHP_SELF"].'";
+						}
+					});
+				});
 
 				$("input.inputsearch_dropdownselectedfields").on("keyup", function() {
 					console.log("keyup on inputsearch_dropdownselectedfields");
@@ -11811,7 +11846,7 @@ class Form
 					'enabled' => isModEnabled('intervention'),
 					'perms' => 1,
 					'label' => 'LinkToIntervention',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('intervention') . ')',
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('fichinter') . ')',
 				),
 				'supplier_proposal' => array(
 					'enabled' => isModEnabled('supplier_proposal'),

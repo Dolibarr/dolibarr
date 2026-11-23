@@ -73,7 +73,7 @@ class modDon extends DolibarrModules
 			[
 				"DON_ADDON_MODEL",
 				"chaine",
-				"html_cerfafr",
+				"pdf_standard_donation",
 				'Nom du gestionnaire de generation de recu de dons',
 				0,
 			],

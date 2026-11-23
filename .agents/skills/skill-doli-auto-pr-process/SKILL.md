@@ -58,18 +58,21 @@ and uses `skill-doli-code-review` for the code review.
      `- Diff des fichiers (3) : [https://github.com/Dolibarr/dolibarr/pull/N/files](https://github.com/Dolibarr/dolibarr/pull/N/files)`
 
    Then, in this order: the author, the creation date of the PR (`createdAt`, e.g. `2026-11-10`),
-   the mergeable status and the CI status.
+   the mergeable status and the CI status. When the PR is not mergeable, or the CI is in error,
+   put the ❌ emoji at the start of the value of that line (e.g. `- CI : ❌ erreur`).
 
    End the message with the choices below and wait for the user to reply with a letter:
    - **a) Code review**
    - **b) Merge** → only proposed when the PR is mergeable and the CI is OK. Run the action
      **Merge**, then go back to step 3 with the next PR.
    - **c) Next one** → go back to step 3 with the next PR.
-   - **d) Stop** → go back to the initial branch if needed and give a short summary of the
-     session (PRs processed and actions done).
+   - **🟢 r) Re-run the CI** → only proposed when it is useful, and always displayed with the 🟢
+     emoji in front of it (Markdown has no color). Run the action **Re-run the CI**, then display
+     the same PR again with its choices.
 
-   When **b) Merge** is not proposed, keep the same letters (a, c, d) so that a letter always
-   means the same choice.
+   When **b)** or **r)** is not proposed, keep the same letters (a, c) so that a letter always
+   means the same choice. There is no Stop choice: when the user asks to stop, go back to the
+   initial branch if needed and give a short summary of the session (PRs processed and actions done).
 4. If **a)**, run the "Process a PR" procedure below, then go back to step 3 with the next PR.
 5. When the list is empty, say so and stop.
 
@@ -160,6 +163,18 @@ gh api -X PUT repos/Dolibarr/dolibarr/pulls/N/update-branch -f expected_head_sha
 
 If GitHub refuses because of a merge conflict, do not try to resolve it here: report it to the user
 and propose the action **Comment** to ask the author to rebase and resolve the conflict.
+
+### Re-run the CI (the choice r) is the confirmation)
+
+Propose the choice **r)** only in one of these cases (runs of the head commit:
+`gh run list -R Dolibarr/dolibarr --commit HEADREFOID --json databaseId,workflowName,status,conclusion`):
+
+- Workflows waiting for the approval of a maintainer (conclusion `action_required`, first-time
+  contributor), and the PR modifies no file of `.github/`. Approve each run:
+  `gh api -X POST repos/Dolibarr/dolibarr/actions/runs/RUNID/approve`
+- Failed jobs whose cause is gone (e.g. the PR title was fixed, so `Wait for the cheap PR checks to
+  be green` can pass now): `gh run rerun RUNID --failed -R Dolibarr/dolibarr`. A Travis build can
+  not be restarted from here: give its link to the user.
 
 ### Push a complementary commit (confirmation required)
 

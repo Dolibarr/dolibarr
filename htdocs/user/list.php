@@ -169,6 +169,17 @@ if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => '0', 'position' => 110);
 }
 
+// Number of passkeys of each user, to find the users who did not create one yet.
+// Same permission than to see the passkeys of another user (see user/passkeys.php).
+require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/userpasskey.class.php';
+$permissiontoseepasskeys = (passkeyIsEnabled() && !empty($user->admin) && $user->hasRight("user", "user", "password") && empty($user->socid));
+if ($permissiontoseepasskeys) {
+	$arrayfields['nb_passkeys'] = array('label' => "Passkeys", 'checked' => '0', 'position' => 120);
+} elseif ($sortfield == 'nb_passkeys') {
+	$sortfield = "u.login";
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -404,6 +415,9 @@ $sql .= " GREATEST(u.tms, COALESCE(ef.tms, u.tms)) as date_modification, u.datec
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas,";
 $sql .= " co.code as country_code, co.label as country_label";
+if ($permissiontoseepasskeys) {
+	$sql .= ", (SELECT COUNT(pk.rowid) FROM ".MAIN_DB_PREFIX."oauth_token as pk WHERE pk.fk_user = u.rowid AND pk.service = '".$db->escape(UserPasskey::SERVICE)."') as nb_passkeys";
+}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -866,6 +880,9 @@ if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_
 if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print '<td class="liste_titre"></td>';
 }
+if (!empty($arrayfields['nb_passkeys']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
@@ -1001,6 +1018,10 @@ if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('M
 	print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['nb_passkeys']['checked'])) {
+	print_liste_field_titre($arrayfields['nb_passkeys']['label'], $_SERVER['PHP_SELF'], "nb_passkeys", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -1053,6 +1074,7 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array('val' => array('u.salary' => 0));
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1240,14 +1262,14 @@ while ($i < $imaxinloop) {
 
 		// Phone
 		if (!empty($arrayfields['u.office_phone']['checked'])) {
-			print '<td class="tdoverflowmax125">'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Phone mobile
 		if (!empty($arrayfields['u.user_mobile']['checked'])) {
-			print '<td class="tdoverflowmax125">'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1262,7 +1284,14 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['co.label']['checked'])) {
-			print '<td class="tdoverflowmax150">'.$obj->country_label."</td>\n";
+			$labelcountry = ($obj->country_code && ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)) ? $langs->trans("Country".$obj->country_code) : $obj->country_label;
+			print '<td class="tdoverflowmax150">';
+			if (!empty($obj->country_code) && !$showcountrylabelinlist) {
+				print picto_from_langcode($obj->country_code, 'title="'.dolPrintHTMLForAttribute($labelcountry).'"', 1);
+			} else {
+				print dolPrintHTML($labelcountry);
+			}
+			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1296,7 +1325,7 @@ while ($i < $imaxinloop) {
 			} elseif ($obj->ldap_sid) {
 				print '<span class="opacitymedium">'.$langs->trans("DomainUser").'</span>';
 			} else {
-				print '<span class="opacitymedium">'.$langs->trans("InternalUser").'</span>';
+				print '<span class="badgeneutral">'.$langs->trans("Internal").'</span>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1391,6 +1420,15 @@ while ($i < $imaxinloop) {
 		// Date previous login
 		if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 			print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Number of passkeys
+		if (!empty($arrayfields['nb_passkeys']['checked'])) {
+			print '<td class="center">';
+			print '<a href="'.DOL_URL_ROOT.'/user/passkeys.php?id='.((int) $obj->rowid).'"><span class="badge badge-info">'.((int) $obj->nb_passkeys).'</span></a>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

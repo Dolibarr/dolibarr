@@ -80,7 +80,7 @@ class WorkflowManagerTest extends CommonClassTest
 
 		foreach (array('SHIPMENT_STANDALONE' => 1, 'WORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE' => $classifybilled) as $key => $value) {
 			if (!array_key_exists($key, $this->savedconsts)) {
-				$this->savedconsts[$key] = isset($conf->global->$key) ? $conf->global->$key : null;
+				$this->savedconsts[$key] = isset($conf->global->$key) ? getDolGlobalString($key) : null;
 			}
 			$conf->global->$key = $value;
 		}

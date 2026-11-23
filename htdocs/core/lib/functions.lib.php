@@ -29,6 +29,7 @@
  * Copyright (C) 2026		Benjamin Falière			<benjamin@faliere.com>
  * Copyright (C) 2026		Pierre Ardoin				<developpeur@lesmetiersdubatiment.fr>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -379,6 +380,21 @@ function getDolGlobalFloat($key, $default = 0)
 }
 
 /**
+ * Return the version to add into URLs of CSS and JS files.
+ * With MAIN_HIDE_VERSION, a hash of the version is returned: the version is not disclosed but the browser cache is still refreshed after an upgrade.
+ *
+ * @return string		Version or hash of version
+ */
+function getDolVersionForUrl()
+{
+	global $conf;
+	if (getDolGlobalInt('MAIN_HIDE_VERSION')) {
+		return substr(hash('sha256', DOL_VERSION.(empty($conf->file->instance_unique_id) ? '' : $conf->file->instance_unique_id)), 0, 8);
+	}
+	return DOL_VERSION;
+}
+
+/**
  * Return a Dolibarr global constant boolean value.
  * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
  *
@@ -686,6 +702,9 @@ function getEntity($element, $shared = 1, $currentobject = null)
 		case 'facturerec':
 			$element = 'invoice';
 			break; // "/compta/facture/class/facture-rec.class.php", template invoices are shared like invoices
+		case 'fichinter':
+			$element = 'intervention';
+			break; // "/fichinter/class/fichinter.class.php", interventions are shared with name 'intervention'
 	}
 
 	if (is_object($mc)) {
@@ -824,13 +843,15 @@ function getBrowserInfo($user_agent)
 		}
 	}
 
-	// OS
-	if (preg_match('/linux/i', $user_agent)) {
-		$os = 'linux';
-	} elseif (preg_match('/macintosh/i', $user_agent)) {
-		$os = 'macintosh';
-	} elseif (preg_match('/windows/i', $user_agent)) {
-		$os = 'windows';
+	// OS, when not already found as a mobile OS (the user agent of Android contains "Linux")
+	if ($os == 'unknown') {
+		if (preg_match('/linux/i', $user_agent)) {
+			$os = 'linux';
+		} elseif (preg_match('/macintosh/i', $user_agent)) {
+			$os = 'macintosh';
+		} elseif (preg_match('/windows/i', $user_agent)) {
+			$os = 'windows';
+		}
 	}
 
 	// Name
@@ -1695,6 +1716,7 @@ function dol_include_once($relpath, $classname = '')
  *  											1=Used for an URL path (output relative),
  *  											2=Used for an URL path (output full path using same host that current url),
  *  											3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file, for an access from internet)
+ *  											-1=Used for an URL path (output relative to DOL_URL_ROOT, so without the DOL_URL_ROOT part, whatever the file is into main or alternate root)
  *  @param	int		$returnemptyifnotfound		0:If $type==0 and if file was not found into alternate dir, return default path into main dir (no test on it)
  *  											1:If $type==0 and if file was not found into alternate dir, return empty string
  *  											2:If $type==0 and if file was not found into alternate dir, test into main dir, return default path if found, empty string if not found
@@ -1736,6 +1758,9 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 		// works only for some web server and some setup. This is bugged when
 		// using proxy, rewriting, virtual path, etc...
 		$res = '';
+		if ($type == -1) {
+			$res = '/' . $path; // Standard value without the DOL_URL_ROOT part (url is relative to it)
+		}
 		if ($type == 1) {
 			$res = DOL_URL_ROOT . '/' . $path; // Standard value
 		}
@@ -1766,8 +1791,8 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				//print $key.' - '.$dirroot.' - '.$path.' - '.$conf->file->dol_url_root[$key].' - '.$regs[1].'<br>'."\n";
 				//if (file_exists($dirroot.'/'.$regs[1])) {
 				if (@file_exists($dirroot . '/' . $regs[1])) {	// avoid [php:warn]
-					if ($type == 1) {
-						$res = (preg_match('/^http/i', $conf->file->dol_url_root[$key]) ? '' : DOL_URL_ROOT) . $conf->file->dol_url_root[$key] . '/' . $path;
+					if ($type == 1 || $type == -1) {
+						$res = (($type == -1 || preg_match('/^http/i', $conf->file->dol_url_root[$key])) ? '' : DOL_URL_ROOT) . $conf->file->dol_url_root[$key] . '/' . $path;
 					} elseif ($type == 2) {
 						$res = (preg_match('/^http/i', $conf->file->dol_url_root[$key]) ? '' : DOL_MAIN_URL_ROOT) . $conf->file->dol_url_root[$key] . '/' . $path;
 					} elseif ($type == 3) {
@@ -3710,9 +3735,10 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  *  @param	string	$titlealt	    Text to show on alt
  *  @param  int     $adddivfloat    Add div float around phone.
  *  @param	string	$morecss		Add more css
+ *  @param	int		$showasbadge	1=Show picto and number into a bordered badge, 2=Same but formatted number is shortened to its 5 first and 2 last chars and full number is into tooltip
  * 	@return string 				    Formatted phone number
  */
-function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0, $morecss = 'paddingright')
+function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0, $morecss = 'paddingright', $showasbadge = 0)
 {
 	global $conf, $user, $langs, $mysoc, $hookmanager;
 
@@ -3939,6 +3965,16 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 		}
 	}
 
+	// Shorten the formatted number (only if this makes it shorter), the full formatted number is kept for the tooltip
+	$newphonefull = '';
+	if ($showasbadge == 2 && $separ != 'hidenum') {
+		$newphonefull = $newphone;
+		$newphonedecoded = dol_html_entity_decode($newphone, ENT_QUOTES | ENT_HTML5);	// So a separator like &nbsp; counts as 1 char
+		if (dol_strlen($newphonedecoded) > 10) {
+			$newphone = dol_escape_htmltag(dol_substr($newphonedecoded, 0, 5) . '...' . dol_substr($newphonedecoded, -2));
+		}
+	}
+
 	$newphoneastart = $newphoneaend = '';
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 		if ($addlink == 'tel' || $conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'))) {	// If phone or option for, we use link of phone
@@ -4030,16 +4066,25 @@ function dol_print_phone($phone, $countrycode = '', $contactid = 0, $socid = 0, 
 				$picto = '';
 			}
 		}
+		// In badge mode, the wrapper is a bordered badge. When number is shortened, the tooltip of the badge shows the full number.
+		$moreattrforwrapper = '';
+		if ($showasbadge && $separ != 'hidenum') {
+			$morecss .= ($morecss ? ' ' : '') . 'phone-border';
+		}
+		if ($newphonefull !== '') {
+			$morecss .= ' classfortooltip';
+			$moreattrforwrapper = ' title="' . dolPrintHTMLForAttribute($newphonefull) . '"';
+		}
 		if ($adddivfloat == 1) {
-			$rep .= '<div class="nospan float' . ($morecss ? ' ' . $morecss : '') . '">';
+			$rep .= '<div class="nospan float' . ($morecss ? ' ' . $morecss : '') . '"' . $moreattrforwrapper . '>';
 		} elseif (empty($adddivfloat)) {
-			$rep .= '<span' . ($morecss ? ' class="' . $morecss . '"' : '') . '>';
+			$rep .= '<span' . ($morecss ? ' class="' . $morecss . '"' : '') . $moreattrforwrapper . '>';
 		}
 
 		$rep .= $newphoneastart;
-		$rep .= ($withpicto ? img_picto($titlealt, $picto) : '');
+		$rep .= ($withpicto ? img_picto($titlealt, $picto, ($separ != 'hidenum' ? 'class="pictofixedwidth"' : ''), 0, 0, ($newphonefull !== '' ? 1 : 0)) : '');	// The fixed width picto replaces the space before the number
 		if ($separ != 'hidenum') {
-			$rep .= ($withpicto ? ' ' : '') . $newphone;
+			$rep .= $newphone;
 		}
 		$rep .= $newphoneaend;
 
@@ -4210,6 +4255,51 @@ function getUserRemoteIP($trusted = 0)
 }
 
 /**
+ * 	Return the DolGeoIP object to resolve IPs, or null if the GeoIP module is not enabled or has no datafile.
+ *  The object is kept in cache so the GeoIP database is opened only once per page, even when called for each line of a list.
+ *
+ * 	@return ?DolGeoIP			DolGeoIP object, or null
+ */
+function dolGetGeoIPObject()
+{
+	global $conf;
+
+	if (!isModEnabled('geoipmaxmind')) {
+		return null;
+	}
+
+	if (getDolGlobalString('GEOIP_VERSION') == 'php') {
+		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
+	} else {
+		$datafileembedded = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
+		if ($datafileembedded === '') {
+			return null;	// Module enabled but no datafile uploaded yet
+		}
+		$diroffile = getMultidirOutput(null, 'geoipmaxmind');
+		$datafile = $diroffile . '/' . $datafileembedded;
+	}
+	//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
+	if ($datafile === '') {
+		return null;
+	}
+
+	if (!isset($conf->cache['geoip']) || !is_array($conf->cache['geoip'])) {
+		$conf->cache['geoip'] = array();
+	}
+	if (!array_key_exists($datafile, $conf->cache['geoip'])) {
+		$conf->cache['geoip'][$datafile] = null;
+		try {
+			include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
+			$conf->cache['geoip'][$datafile] = new DolGeoIP('country', $datafile);
+		} catch (Exception $e) {
+			//print 'Error with GeoIP database: '.$e->getMessage();
+		}
+	}
+
+	return $conf->cache['geoip'][$datafile];
+}
+
+/**
  * 	Return a country code from IP. Empty string if not found.
  *
  * 	@param	string	$ip			IP
@@ -4219,24 +4309,14 @@ function dolGetCountryCodeFromIp($ip)
 {
 	$countrycode = '';
 
-	if (isModEnabled('geoipmaxmind')) {
-		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
-			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
-		} else {
-			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
-			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
-		}
-		//$ip='24.24.24.24';
-		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
-		if ($datafile) {
-			try {
-				include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
-				$geoip = new DolGeoIP('country', $datafile);
-				//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
-				$countrycode = $geoip->getCountryCodeFromIP($ip);
-			} catch (Exception $e) {
-				//print 'Error with GeoIP database: '.$e->getMessage();
-			}
+	//$ip='24.24.24.24';
+	$geoip = dolGetGeoIPObject();
+	if ($geoip) {
+		try {
+			//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
+			$countrycode = $geoip->getCountryCodeFromIP($ip);
+		} catch (Exception $e) {
+			//print 'Error with GeoIP database: '.$e->getMessage();
 		}
 	}
 
@@ -4254,21 +4334,12 @@ function dolGetCityFromIp($ip)
 {
 	$cityname = '';
 
-	if (isModEnabled('geoipmaxmind')) {
-		if (getDolGlobalString('GEOIP_VERSION') == 'php') {
-			$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
-		} else {
-			$diroffile = getMultidirOutput(null, 'geoipmaxmind');
-			$datafile = $diroffile . '/' . getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE_EMBEDDED');
-		}
-		if ($datafile) {
-			try {
-				include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
-				$geoip = new DolGeoIP('country', $datafile);
-				$cityname = $geoip->getCityNameFromIP($ip);
-			} catch (Exception $e) {
-				//print 'Error with GeoIP database: '.$e->getMessage();
-			}
+	$geoip = dolGetGeoIPObject();
+	if ($geoip) {
+		try {
+			$cityname = $geoip->getCityNameFromIP($ip);
+		} catch (Exception $e) {
+			//print 'Error with GeoIP database: '.$e->getMessage();
 		}
 	}
 
@@ -4313,7 +4384,7 @@ function dol_user_country()
  */
 function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $charfornl = '')
 {
-	global $hookmanager;
+	global $hookmanager, $langs;
 
 	$out = '';
 
@@ -4357,12 +4428,17 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 				$showomap = 1;
 			}
 			if ($showgmap) {
-				$url = dol_buildpath('/google/gmaps.php?mode=' . $element . '&id=' . $id, 1);
-				$out .= ' <a href="' . $url . '" target="_gmaps"><img id="' . $htmlid . '" class="valigntextbottom" src="' . DOL_URL_ROOT . '/theme/common/gmap.png"></a>';
+				// dol_buildpath(..., -1) returns the url relative to DOL_URL_ROOT (dolButtonToOpenUrlInDialogPopup() will add the DOL_URL_ROOT part)
+				$url = dol_buildpath('/google/gmaps.php?mode=' . $element . '&id=' . $id, -1);
+				$picto = '<img id="' . $htmlid . '" class="valigntextbottom" src="' . DOL_URL_ROOT . '/theme/common/gmap.png">';
+				// Open the map page into a dialog popup (fallback on a new tab if javascript is disabled)
+				$out .= ' ' . dolButtonToOpenUrlInDialogPopup('showongmap' . $element . $id, $langs->trans("ShowOnMap"), $picto, $url, '', 'valignmiddle');
 			}
 			if ($showomap) {
-				$url = dol_buildpath('/openstreetmap/maps.php?mode=' . $element . '&id=' . $id, 1);
-				$out .= ' <a href="' . $url . '" target="_gmaps"><img id="' . $htmlid . '_openstreetmap" class="valigntextbottom" src="' . DOL_URL_ROOT . '/theme/common/gmap.png"></a>';
+				$url = dol_buildpath('/openstreetmap/maps.php?mode=' . $element . '&id=' . $id, -1);
+				$picto = '<img id="' . $htmlid . '_openstreetmap" class="valigntextbottom" src="' . DOL_URL_ROOT . '/theme/common/gmap.png">';
+				// Open the map page into a dialog popup (fallback on a new tab if javascript is disabled)
+				$out .= ' ' . dolButtonToOpenUrlInDialogPopup('showonomap' . $element . $id, $langs->trans("ShowOnMap"), $picto, $url, '', 'valignmiddle');
 			}
 		}
 	}
@@ -5519,8 +5595,8 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforco
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
  *   VATRULE 0: If we are in mode SERVICE_ARE_ECOMMERCE_200238EC and customer is not a company with a vat id, we use default product VAT in buyer country
  *   VATRULE 1: If seller does not use VAT, default VAT is 0. End of rule.
- *   VATRULE 2: If buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
- *	 VATRULE 3: If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
+ *   VATRULE 2: If (seller country = buyer country) and buyer department has a VAT rule from vat rates dictionary then it's the default VAT rate. End of rule.
+ *	 VATRULE 3: If (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
  *	 VATRULE 4: If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
  *	 VATRULE 5: If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
  *	 VATRULE 6: If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
@@ -5595,8 +5671,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$vatrule = 'VATRULE 1';
 	}
 
-	// 'VATRULE 2' - Force VAT if a buyer department is defined on vat rates dictionary
-	if (empty($vatrule) && !empty($thirdparty_buyer->state_id)) {
+	// 'VATRULE 2' - Force VAT if seller and buyer are in the same country and a buyer department is defined on vat rates dictionary
+	if (empty($vatrule) && !empty($thirdparty_buyer->state_id) && $seller_country_code == $buyer_country_code) {
 		$sql = "SELECT d.rowid, t.taux as vat_default_rate, t.code as vat_default_code ";
 		$sql .= " FROM " . $db->prefix() . "c_tva as t";
 		$sql .= " INNER JOIN " . $db->prefix() . "c_departements as d ON t.fk_department_buyer = d.rowid";
@@ -7732,31 +7808,36 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				$extrafields->fetch_name_optionals_label($object->table_element, true);
 
-				if ($object->fetch_optionals() > 0) {	// @FIXME: Remove this, the fetch should have been done already, by the caller of getCommonSubstitutionArray()
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+				// Use the extrafields already loaded into the object by the caller: no SQL access here, this function
+				// can be called thousands of times. Fetching them here also discarded values set by the caller but not
+				// saved yet (an object validated by an API or a connector inside the same write fires the notification
+				// triggers before its extrafields are stored).
+				if (!empty($object->array_options) && is_array($object->array_options)) {
+					if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
+							$optionvalue = $object->array_options['options_' . $key] ?? null;	// Extrafields set by the caller may be partial
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($object->array_options['options_' . $key], 'day');
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($object->array_options['options_' . $key], 'day', 'tzserver', $outputlangs);
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($object->array_options['options_' . $key], 'dayrfc');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_date($optionvalue, 'day');
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = dol_print_date($optionvalue, 'day', 'tzserver', $outputlangs);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = dol_print_date($optionvalue, 'dayrfc');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'datetime') {
-								$datetime = $object->array_options['options_' . $key];
+								$datetime = $optionvalue;
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour') : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhour', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_DAY_LOCALE__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'day', 'tzserver', $outputlangs) : '');
 								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_RFC__'] = ($datetime != "0000-00-00 00:00:00" ? dol_print_date($datetime, 'dayhourrfc') : '');
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'phone') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = dol_print_phone($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'price') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($object->array_options['options_' . $key]);	// For compatibility
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($object->array_options['options_' . $key]);
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $optionvalue;
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATED__'] = price($optionvalue);	// For compatibility
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '_FORMATTED__'] = price($optionvalue);
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
-								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]] ?? $object->array_options['options_'.$key];
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
+								$val = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$optionvalue] ?? $optionvalue;
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'_LABEL__'] = $val;
 							} elseif ($extrafields->attributes[$object->table_element]['type'][$key] != 'separator') {
-								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($object->array_options['options_' . $key]) ? $object->array_options['options_' . $key] : '';
+								$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = !empty($optionvalue) ? $optionvalue : '';
 							}
 						}
 					}
@@ -9967,7 +10048,10 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 							$isSellist = true;
 							$paramArray = $extrafields->attributes['product']['param'][$extrafieldName]['options'] ?? [];
 							$param = array_key_first($paramArray);
-							list($table, $label, $key) = explode(':', $param);
+							$tmparray = explode(':', $param);
+							$table = $tmparray[0];
+							$label = $tmparray[1];
+							$key = $tmparray[2];
 						}
 					}
 
@@ -10615,7 +10699,7 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string $elementType       Element type (Value of $object->element or value of $object->element@$object->module). Example:
  *                                    'action', 'facture', 'project', 'project_task' or
  *                                    'myobject@mymodule' (or old syntax 'mymodule_myobject' like 'project_task')
- * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string,dir_temp:string,parent_element:string}		array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>, 'dir_temp'=>)
+ * @return  array{module:string,element:string,table_element:string,subelement:string,classpath:string,classfile:string,classname:string,dir_output:string,dir_temp:string,parent_element:string}		Return an array('module'=>, 'classpath'=>, 'element'=>, 'subelement'=>, 'table_element'=>, 'classfile'=>, 'classname'=>, 'dir_output'=>, 'dir_temp'=>)
  * @see fetchObjectByElement(), getMultidirOutput()
  */
 function getElementProperties($elementType)
@@ -10805,9 +10889,10 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
-		$element = 'supplierproposal';
+		$element = 'supplier_proposal';
 		$classfile = 'supplier_proposal';
 		$subelement = 'supplierproposal';
+		$table_element = 'supplier_proposal';
 	} elseif ($elementType == 'supplier_proposaldet') {
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
@@ -10869,6 +10954,7 @@ function getElementProperties($elementType)
 	} elseif ($elementType == 'fichinter' || $elementType == 'ficheinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
+		$element = 'fichinter';
 		$subelement = 'fichinter';
 		$table_element = 'fichinter';
 	} elseif ($elementType == 'dolresource' || $elementType == 'resource') {
@@ -10897,7 +10983,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn' || $elementType == 'facture_fournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -11780,6 +11866,14 @@ function dolForgeSQLCriteriaCallback($matches)
 	$newforbiddenfields[] = 'pass_crypted';
 	$newforbiddenfields[] = 'pass_temp';
 	$newforbiddenfields[] = 'api_key';
+	// SQL keywords that return server information without parenthesis (mysql/mariadb/pgsql), so they could be guessed by comparison
+	$newforbiddenfields[] = 'current_user';
+	$newforbiddenfields[] = 'session_user';
+	$newforbiddenfields[] = 'system_user';
+	$newforbiddenfields[] = 'user';
+	$newforbiddenfields[] = 'current_role';
+	$newforbiddenfields[] = 'current_schema';
+	$newforbiddenfields[] = 'current_catalog';
 
 	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
 
@@ -11834,8 +11928,17 @@ function dolForgeSQLCriteriaCallback($matches)
 				$tmpelemarray[$tmpkey] = (float) $tmpelem;
 			} elseif (!empty($dolibarr_allow_unsecured_select_in_extrafields_filter)) {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest (should be removed in a future as it allows blind SQL injection)
+				// No word of the subrequest must be a forbidden field (it could be guessed by comparison)
+				$tmpwords = preg_split('/[^a-z0-9_]+/', dol_strtolower($tmpelemarray[$tmpkey]), -1, PREG_SPLIT_NO_EMPTY);
+				if (is_array($tmpwords) && !empty($newforbiddenfields) && count(array_intersect($tmpwords, $newforbiddenfields)) > 0) {
+					return '1=1';
+				}
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'
+				// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
+				if (!empty($newforbiddenfields) && in_array(dol_strtolower($tmpelemarray[$tmpkey]), $newforbiddenfields)) {
+					return '1=1';
+				}
 			}
 		}
 		$tmpescaped2 .= implode(',', $tmpelemarray);
@@ -11861,6 +11964,10 @@ function dolForgeSQLCriteriaCallback($matches)
 			$tmpescaped = (float) $tmpescaped;
 		} else {
 			$tmpescaped = preg_replace('/[^a-z0-9_]/i', '', $tmpescaped);	// it can be a name of field or a substitution variable like '__NOW__'
+			// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
+			if (!empty($newforbiddenfields) && in_array(dol_strtolower($tmpescaped), $newforbiddenfields)) {
+				return '1=1';
+			}
 		}
 	}
 
@@ -12157,7 +12264,7 @@ function dolRemoveDefaultParameters(array $parameters): array
  *
  * @param string $context The current page context name
  *
- * @return void
+ * @return void No return value, the page is redirected and exits when the request can be sent as GET
  */
 function dolRedirectPostSearchListRequestToGetIfPossible(string $context): void
 {

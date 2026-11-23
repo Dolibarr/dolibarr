@@ -1741,7 +1741,9 @@ class CommandeFournisseur extends CommonOrder
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
-			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
+			$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
+			$this->fk_multicurrency = $tmparray[0];
+			$this->multicurrency_tx = $tmparray[1];
 		} else {
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
@@ -2255,6 +2257,7 @@ class CommandeFournisseur extends CommonOrder
 
 						// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
 						// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
+						// fk_soc is not declared but an API call or a module may set it: @phan-suppress-next-line PhanUndeclaredProperty
 						$result = $prod->get_buyprice($fk_prod_fourn_price, (float) $qty, $fk_product, 'none', (isset($this->fk_soc) ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
 
 						// If supplier order created from sales order, we take best supplier price
@@ -2299,6 +2302,7 @@ class CommandeFournisseur extends CommonOrder
 				// Predefine quantity according to packaging
 				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$prod = new Product($this->db);
+					// fk_soc is not declared but an API call or a module may set it: @phan-suppress-next-line PhanUndeclaredProperty
 					$prod->get_buyprice($fk_prod_fourn_price, (float) $qty, $fk_product, 'none', (empty($this->fk_soc) ? $this->socid : $this->fk_soc));
 
 					// Align messaging, type and float-safety with the customer-order path at commande.class.php:1720

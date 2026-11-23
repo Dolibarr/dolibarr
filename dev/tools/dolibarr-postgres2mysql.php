@@ -414,7 +414,9 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 			if (substr($line, -3, -1) == ");") {
 				// we have a complete insert on one line
-				list($before, $after) = explode(" VALUES ", $line, 2);
+				$tmparray = explode(" VALUES ", $line, 2);
+				$before = $tmparray[0];
+				$after = $tmparray[1];
 				// we only replace the " with ` in what comes BEFORE the VALUES
 				// (ie, field names, like INSERT INTO table ("bla","bla2") VALUES ('s:4:"test"','bladata2');
 				// should convert to INSERT INTO table (`bla`,`bla2`) VALUES ('s:4:"test"','bladata2');
@@ -434,7 +436,9 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 				// this insert spans multiple lines, so keep dumping the lines until we reach a line
 				// that ends with ");"
 
-				list($before, $after) = explode(" VALUES ", $line, 2);
+				$tmparray = explode(" VALUES ", $line, 2);
+				$before = $tmparray[0];
+				$after = $tmparray[1];
 				// we only replace the " with ` in what comes BEFORE the VALUES
 				// (ie, field names, like INSERT INTO table ("bla","bla2") VALUES ('s:4:"test"','bladata2');
 				// should convert to INSERT INTO table (`bla`,`bla2`) VALUES ('s:4:"test"','bladata2');

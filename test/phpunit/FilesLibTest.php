@@ -482,6 +482,15 @@ class FilesLibTest extends CommonClassTest
 		$result = dol_check_secure_access_document('facture', $filename, 0, '', '', 'write');
 		$this->assertEquals(0, $result['accessallowed']);
 
+		// Check that a faked path with '.', empty segments or a mix resolves to the same file than the clean path,
+		// so the reference extracted from the subdirectory to check the permission can not be faked ('REF/./file').
+		$user->rights->facture->lire = 1;
+		$user->rights->facture->creer = 1;
+		foreach (array('FA010101/./FA010101.pdf', 'FA010101//FA010101.pdf', 'FA010101/././FA010101.pdf', 'FA010101/.//FA010101.pdf') as $filename) {
+			$result = dol_check_secure_access_document('facture', $filename, 0, '', '', 'read');
+			$this->assertEquals(1, $result['accessallowed'], "Check access allowed to '$filename'".json_encode($result));
+			$this->assertStringEndsWith('/FA010101/FA010101.pdf', $result['original_file'], "Path of '$filename' must be normalized");
+		}
 
 		// We restore user properties
 		$user->rights->facture->lire = $savpermlire;
@@ -640,6 +649,35 @@ class FilesLibTest extends CommonClassTest
 			unset($conf->mytestmodule);
 		} else {
 			$conf->mytestmodule = $savconfmodule;
+		}
+	}
+
+	/**
+	 * testDolCheckSecureAccessDocumentEntity
+	 *
+	 * @return void
+	 */
+	public function testDolCheckSecureAccessDocumentEntity()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// An entity not visible from the entity of the session must be replaced with the entity of the session
+		$entitynotvisible = (int) $conf->entity + 1000;
+
+		$filename = 'FA010101/FA010101.pdf';
+		$result = dol_check_secure_access_document('facture', $filename, (int) $conf->entity, '', '', 'read');
+		$this->assertEquals($conf->invoice->dir_output.'/'.$filename, $result['original_file'], "Check path of '$filename' for the entity of the session");
+		$result = dol_check_secure_access_document('facture', $filename, $entitynotvisible, '', '', 'read');
+		$this->assertEquals($conf->invoice->dir_output.'/'.$filename, $result['original_file'], "Check path of '$filename' for an entity not visible");
+
+		if (!empty($conf->product->dir_temp)) {
+			$filename = 'graph.png';
+			$result = dol_check_secure_access_document('graph_product', $filename, $entitynotvisible, '', '', 'read');
+			$this->assertEquals($conf->product->multidir_temp[$conf->entity].'/'.$filename, $result['original_file'], "Check path of '$filename' for an entity not visible");
 		}
 	}
 

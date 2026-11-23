@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('facture', 'propal', 'orders', 'sendings', 'companies'));
+$langs->loadLangs(array('bills', 'propal', 'orders', 'sendings', 'companies'));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');

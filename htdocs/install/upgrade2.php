@@ -701,6 +701,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_ACCOUNTING' => 'newboxdefonly',
 				'MAIN_MODULE_AGENDA' => 'newboxdefonly',
 				'MAIN_MODULE_BOM' => 'menuonly',
+				'MAIN_MODULE_BOOKCAL' => 'menuonly',
 				'MAIN_MODULE_BANQUE' => 'menuonly',
 				'MAIN_MODULE_BARCODE' => 'newboxdefonly',
 				'MAIN_MODULE_CRON' => 'newboxdefonly',
@@ -714,6 +715,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
 				'MAIN_MODULE_FICHEINTER' => 'newboxdefonly',
 				'MAIN_MODULE_HOLIDAY' => 'newboxdefonly',
+				'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => 'newboxdefonly',
 				'MAIN_MODULE_LOAN' => 'newboxdefonly',
 				'MAIN_MODULE_MARGIN' => 'menuonly',
 				'MAIN_MODULE_MRP' => 'menuonly',
@@ -721,6 +723,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_PARTNERSHIP' => 'newboxdefonly',
 				'MAIN_MODULE_PRINTING' => 'newboxdefonly',
 				'MAIN_MODULE_PRODUIT' => 'newboxdefonly',
+				'MAIN_MODULE_QUICKMEMO' => 'menuonly',
 				'MAIN_MODULE_RECRUITMENT' => 'menuonly',
 				'MAIN_MODULE_RESOURCE' => 'noboxes',
 				'MAIN_MODULE_SALARIES' => 'newboxdefonly',
@@ -734,6 +737,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_USER' => 'newboxdefonly', //This one must be always done and only into last targeted version)
 				'MAIN_MODULE_VARIANTS' => 'newboxdefonly',
 				'MAIN_MODULE_WEBSITE' => 'newboxdefonly',
+				'MAIN_MODULE_WORKSTATION' => 'newboxdefonly',
 			);
 
 			$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);
@@ -3089,7 +3093,9 @@ function migrate_element_time($db, $langs, $conf)
 				if ($obj->element_duration > 0) {
 					// convert to second
 					// only for int time and float time ex: 1.75 for 1h45
-					list($hour, $min) = explode('.', $obj->element_duration);
+					$tmparray = explode('.', $obj->element_duration);
+					$hour = $tmparray[0];
+					$min = $tmparray[1];
 					$hour = (int) $hour * 60 * 60;
 					$min = (int) ((float) ('.'.$min)) * 3600;
 					$newtime = $hour + $min;
@@ -4544,6 +4550,8 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_API' => array('class' => 'modApi'),
 		'MAIN_MODULE_BARCODE' => array('class' => 'modBarcode', 'remove' => 1),
 		'MAIN_MODULE_BLOCKEDLOG' => array('class' => 'modBlockedLog', 'deleteinsertmenus' => 1),
+		'MAIN_MODULE_BOOKCAL' => array('class' => 'modBookCal', 'deleteinsertmenus' => 1),
+		'MAIN_MODULE_QUICKMEMO' => array('class' => 'modQuickMemo', 'deleteinsertmenus' => 1),
 		'MAIN_MODULE_CRON' => array('class' => 'modCron', 'remove' => 1),
 		'MAIN_MODULE_SOCIETE' => array('class' => 'modSociete', 'remove' => 1),
 		'MAIN_MODULE_PRODUIT' => array('class' => 'modProduct'),

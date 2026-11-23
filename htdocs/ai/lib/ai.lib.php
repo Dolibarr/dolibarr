@@ -300,6 +300,33 @@ function testAIConnection(string $service, string $key, string $url): array
 
 
 /**
+ * Return whether chat attachments must be converted into text in the browser, so the
+ * obfuscation applies on their content (binary attachments are then refused).
+ * Default follows AI_PRIVACY_REDACTION, which blocked binary attachments before this option.
+ * Always 0 unless AI_SUPPORT_PRIVACY_ON_ALL_TYPE_OF_UPLOADED_FILES is set (conversion uses external JS libraries).
+ *
+ * @return int 0=sent as is, 1=converted into text except binaries > ai_attachment_convert_to_text_max_bytes(), 2=always converted into text
+ */
+function ai_attachment_convert_to_text()
+{
+	if (!getDolGlobalInt('AI_SUPPORT_PRIVACY_ON_ALL_TYPE_OF_UPLOADED_FILES')) {
+		return 0;
+	}
+
+	return min(2, max(0, getDolGlobalInt('AI_ATTACHMENT_CONVERT_TO_TEXT', getDolGlobalInt('AI_PRIVACY_REDACTION', 0) ? 2 : 0)));
+}
+
+/**
+ * Return the size above which a binary attachment is sent as is when AI_ATTACHMENT_CONVERT_TO_TEXT is 1.
+ *
+ * @return int Size in bytes
+ */
+function ai_attachment_convert_to_text_max_bytes()
+{
+	return 1500000;
+}
+
+/**
  * Validate chat attachments before they reach any LLM provider.
  *
  * The MIME type comes from the browser's File.type (client-controlled), so it
@@ -307,9 +334,9 @@ function testAIConnection(string $service, string $key, string $url): array
  * provider can natively consume (images and PDF). Size is bounded per
  * attachment and in total: base64 travels inside the JSON POST body and is
  * re-sent to the provider, so an unbounded payload is both a memory and a
- * billing hazard. When the privacy redaction policy is enforced, attachments
- * are refused entirely: text is masked by PrivacyGuard before a cloud call,
- * but a document's content cannot be, so sending it would bypass the policy.
+ * billing hazard. When attachments must be converted into text (see
+ * ai_attachment_convert_to_text()), binary attachments are refused (except above the size
+ * threshold in mode 1): text is masked by PrivacyGuard, but a binary content cannot be.
  *
  * @param array<int,array{mime:string,data:string}> $attachments Parsed attachments
  * @param string $error Set to a client-safe message when validation fails
@@ -325,8 +352,9 @@ function ai_validate_attachments(array $attachments, &$error)
 	}
 	$langs->load("other");	// owns the AIAttachment* keys; callers load it later or not at all
 
-	if (getDolGlobalInt('AI_PRIVACY_REDACTION', 0)) {
-		$error = $langs->trans("AIAttachmentBlockedByPrivacy");
+	$converttotext = ai_attachment_convert_to_text();
+	if ($converttotext == 2) {
+		$error = $langs->trans("AIAttachmentMustBeConvertedToText");
 
 		return false;
 	}
@@ -364,9 +392,370 @@ function ai_validate_attachments(array $attachments, &$error)
 
 			return false;
 		}
+		// Text conversion with exception: only a binary above the threshold may be sent as is (padding excluded from the size)
+		if ($converttotext == 1 && ($bytes - substr_count(substr($att['data'], -2), '=')) <= ai_attachment_convert_to_text_max_bytes()) {
+			$error = $langs->trans("AIAttachmentMustBeConvertedToText");
+
+			return false;
+		}
 	}
 
 	return true;
+}
+
+/**
+ * Convert an office document attached to a chat message (docx, odt, xlsx, xls, ods) into text,
+ * on server side with the bundled libraries, so it can be sent to the LLM and obfuscated like the prompt.
+ *
+ * @param string $mime		MIME type sent by the browser
+ * @param string $base64	Base64 content of the file
+ * @param string $error		Set to a client-safe message when conversion fails
+ * @return string|false		Text of the document, or false on error
+ */
+function ai_convert_office_attachment_to_text($mime, $base64, &$error)
+{
+	global $conf, $langs;
+
+	$error = '';
+	$langs->loadLangs(array("other", "errors"));
+
+	$types = array(
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+		'application/vnd.oasis.opendocument.text' => 'odt',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Xlsx',
+		'application/vnd.ms-excel' => 'Xls',
+		'application/vnd.oasis.opendocument.spreadsheet' => 'Ods',
+	);
+	if (empty($types[$mime])) {
+		$error = $langs->trans("AIAttachmentTypeNotAllowed", $mime);
+		return false;
+	}
+	$type = $types[$mime];
+
+	$base64 = preg_replace('/\s+/', '', $base64);
+	if ((int) (dol_strlen($base64) * 3 / 4) > getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10) * 1024 * 1024) {
+		$error = $langs->trans("AIAttachmentTooLarge", (string) getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10));
+		return false;
+	}
+	$content = base64_decode($base64, true);
+	if ($content === false || $content === '') {
+		$error = $langs->trans("AIAttachmentConversionFailed", $mime);
+		return false;
+	}
+	if (!class_exists('ZipArchive')) {	// All these formats, except xls, are zip files
+		$error = $langs->trans("ErrorPHPNeedModule", 'zip');
+		return false;
+	}
+
+	// The readers need a file on disk
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+	$tmpdir = ai_temp_dir();
+	dol_mkdir($tmpdir);
+	$tmpfile = $tmpdir.'/attachment_'.dol_now().'_'.getRandomPassword(true).'.'.dol_strtolower($type);
+	if (file_put_contents($tmpfile, $content) === false) {
+		$error = $langs->trans("AIAttachmentConversionFailed", $mime);
+		return false;
+	}
+
+	$text = '';
+	$maxsize = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000);
+	try {
+		if ($type == 'docx' || $type == 'odt') {
+			// Text is in one XML entry of the zip: paragraph ends and tabs are kept, other tags are removed
+			$entry = ($type == 'docx' ? 'word/document.xml' : 'content.xml');
+			$zip = new ZipArchive();
+			if ($zip->open($tmpfile) !== true) {
+				throw new Exception('Not a valid zip file');
+			}
+			$stat = $zip->statName($entry);
+			if (!is_array($stat) || $stat['size'] > 50 * 1024 * 1024) {	// Missing entry or zip bomb
+				$zip->close();
+				throw new Exception('Entry '.$entry.' not found or too large');
+			}
+			$xml = (string) $zip->getFromName($entry);
+			$zip->close();
+			$xml = str_replace(array('</w:p>', '</text:p>', '</text:h>', '<w:br/>', '<text:line-break/>'), "\n", $xml);
+			$xml = str_replace(array('<w:tab/>', '<text:tab/>'), "\t", $xml);
+			$xml = preg_replace('/<text:s(\s[^>]*)?\/>/', ' ', $xml);
+			$text = dol_html_entity_decode(strip_tags($xml), ENT_QUOTES | ENT_XML1);
+		} else {
+			// Spreadsheets: one line per row, cells separated by tabs, for each sheet
+			require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
+			$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($type);
+			$reader->setReadDataOnly(true);
+			$spreadsheet = $reader->load($tmpfile);
+			foreach ($spreadsheet->getWorksheetIterator() as $sheet) {
+				$text .= '# '.$sheet->getTitle()."\n";
+				foreach ($sheet->toArray(null, true, false, false) as $row) {
+					$line = rtrim(implode("\t", array_map('strval', $row)));
+					if ($line !== '') {
+						$text .= $line."\n";
+					}
+				}
+				$text .= "\n";
+				if ($maxsize > 0 && dol_strlen($text) > $maxsize) {
+					break;
+				}
+			}
+		}
+	} catch (Throwable $e) {
+		dol_syslog("ai_convert_office_attachment_to_text Failed to convert ".$mime.": ".$e->getMessage(), LOG_WARNING);
+		$text = false;
+	}
+	dol_delete_file($tmpfile);
+
+	if ($text === false || trim($text) === '') {
+		$error = $langs->trans("AIAttachmentConversionFailed", $mime);
+		return false;
+	}
+	$text = trim(preg_replace("/\n{3,}/", "\n\n", $text));
+	if ($maxsize > 0 && dol_strlen($text) > $maxsize) {
+		$text = dol_substr($text, 0, $maxsize);
+	}
+
+	return $text;
+}
+
+/**
+ * Return the temporary directory of the AI module for the current entity.
+ *
+ * @return string	Directory path
+ */
+function ai_temp_dir()
+{
+	global $conf;
+
+	if (!empty($conf->ai->multidir_temp[$conf->entity])) {
+		return $conf->ai->multidir_temp[$conf->entity];
+	}
+	if (!empty($conf->ai->dir_temp)) {
+		return $conf->ai->dir_temp;
+	}
+
+	return DOL_DATA_ROOT.'/ai/temp';
+}
+
+/**
+ * Split the type part of a chat attachment marker "__FILE_ATTACHMENT__[mime;name=urlencodedname]::base64".
+ *
+ * @param string $type	Content between the brackets of the marker
+ * @return array{mime:string,name:string}	MIME type and original file name (may be empty)
+ */
+function ai_attachment_parse_marker_type($type)
+{
+	$parts = explode(';name=', (string) $type, 2);
+	$mime = trim($parts[0]);
+
+	return array(
+		'mime' => ($mime !== '' ? $mime : 'application/octet-stream'),
+		'name' => (isset($parts[1]) ? rawurldecode($parts[1]) : '')
+	);
+}
+
+/**
+ * Number of minutes a file attached to a chat message is kept on server side, so a tool can use it later.
+ *
+ * @return int Minutes
+ */
+function ai_attachment_keep_minutes()
+{
+	return max(1, getDolGlobalInt('AI_ATTACHMENT_KEEP_MINUTES', 60));
+}
+
+/**
+ * Delete the kept attachments that expired: entries of the session, and files of any session older than one day.
+ *
+ * @return void
+ */
+function ai_attachment_prune()
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	$limit = dol_now() - ai_attachment_keep_minutes() * 60;
+	if (!empty($_SESSION['ai_attachments']) && is_array($_SESSION['ai_attachments'])) {
+		foreach ($_SESSION['ai_attachments'] as $ref => $info) {
+			if (!is_array($info) || (int) $info['date'] < $limit || !dol_is_file($info['file'])) {
+				if (is_array($info) && dol_is_file($info['file'])) {
+					dol_delete_file($info['file']);
+				}
+				unset($_SESSION['ai_attachments'][$ref]);
+			}
+		}
+	}
+	// Files of sessions that ended without cleaning
+	$files = dol_dir_list(ai_temp_dir().'/attachments', 'files', 0, '', '', 'date', SORT_ASC);
+	foreach ($files as $file) {
+		if ($file['date'] < (dol_now() - 86400 - ai_attachment_keep_minutes() * 60)) {
+			dol_delete_file($file['fullname']);
+		}
+	}
+}
+
+/**
+ * Keep aside, on server side, a file attached to a chat message, so a tool (an upload) can use it
+ * later by its reference (@attachmentN), even in a next request, without the model copying its content.
+ *
+ * @param string $mime		MIME type
+ * @param string $name		Original file name (may be empty)
+ * @param string $base64	Base64 content of the file
+ * @return array{ref:string,name:string,mime:string,size:int}|null	Kept file, or null on error
+ */
+function ai_attachment_store($mime, $name, $base64)
+{
+	global $user;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+	ai_attachment_prune();
+
+	$base64 = preg_replace('/\s+/', '', (string) $base64);
+	$hash = dol_hash($base64, 'sha256');
+	if (!isset($_SESSION['ai_attachments']) || !is_array($_SESSION['ai_attachments'])) {
+		$_SESSION['ai_attachments'] = array();
+	}
+	// Same file sent again (in the same or a next message): same reference
+	foreach ($_SESSION['ai_attachments'] as $ref => $info) {
+		if ($info['hash'] === $hash) {
+			$_SESSION['ai_attachments'][$ref]['date'] = dol_now();
+			return array('ref' => '@'.$ref, 'name' => $info['name'], 'mime' => $info['mime'], 'size' => $info['size']);
+		}
+	}
+
+	$content = base64_decode($base64, true);
+	if ($content === false || $content === '') {
+		return null;
+	}
+	$dir = ai_temp_dir().'/attachments';
+	dol_mkdir($dir);
+	$file = $dir.'/'.((int) $user->id).'_'.getRandomPassword(true);
+	if (file_put_contents($file, $content) === false) {
+		dol_syslog("ai_attachment_store Failed to write ".$file, LOG_WARNING);
+		return null;
+	}
+	dolChmod($file);
+
+	$name = dol_sanitizeFileName(dol_basename((string) $name));
+	if ($name === '') {
+		$name = 'file'.(preg_match('/^image\/(png|jpeg|gif|webp)$/', $mime, $reg) ? '.'.str_replace('jpeg', 'jpg', $reg[1]) : ($mime === 'application/pdf' ? '.pdf' : ''));
+	}
+	$_SESSION['ai_attachment_seq'] = (empty($_SESSION['ai_attachment_seq']) ? 0 : (int) $_SESSION['ai_attachment_seq']) + 1;
+	$ref = 'attachment'.$_SESSION['ai_attachment_seq'];
+	$_SESSION['ai_attachments'][$ref] = array('file' => $file, 'name' => $name, 'mime' => (string) $mime, 'size' => dol_strlen($content, 'UTF-8', 1), 'hash' => $hash, 'date' => dol_now());
+
+	return array('ref' => '@'.$ref, 'name' => $name, 'mime' => (string) $mime, 'size' => $_SESSION['ai_attachments'][$ref]['size']);
+}
+
+/**
+ * Text given to the model in place of an attachment, with the reference to pass to a tool.
+ *
+ * @param array{ref:string,name:string,mime:string,size:int}|null $info	Kept file (ai_attachment_store())
+ * @return string	Description
+ */
+function ai_attachment_describe($info)
+{
+	if (empty($info)) {
+		return '[attached document]';
+	}
+
+	return '[attached document '.$info['ref'].': '.$info['name'].', '.$info['mime'].', '.max(1, (int) round($info['size'] / 1024)).' KB]';
+}
+
+/**
+ * Note listing the files kept from earlier messages, still usable by their reference.
+ *
+ * @param string[] $excludedrefs	References already described in the message (e.g. '@attachment3')
+ * @return string	Note for the model, or '' when there is none
+ */
+function ai_attachment_list_note(array $excludedrefs)
+{
+	ai_attachment_prune();
+
+	$lines = array();
+	foreach ((empty($_SESSION['ai_attachments']) ? array() : $_SESSION['ai_attachments']) as $ref => $info) {
+		if (!in_array('@'.$ref, $excludedrefs, true)) {
+			$lines[] = '- '.ai_attachment_describe(array('ref' => '@'.$ref, 'name' => $info['name'], 'mime' => $info['mime'], 'size' => $info['size']));
+		}
+	}
+	if (empty($lines)) {
+		return '';
+	}
+
+	return "(Files attached to earlier messages, still available: to store one of them with an upload tool, give its reference (e.g. @attachment1) as filecontent.)\n".implode("\n", $lines);
+}
+
+/**
+ * Replace the reference of a kept attachment (e.g. '@attachment1') given as filecontent of a tool
+ * by the content of the file, base64-encoded. The file name is used when the tool has no filename.
+ *
+ * @param array<string,mixed>	$args	Tool arguments
+ * @param string				$error	Set to a client-safe message when the reference is unknown or expired
+ * @return array<string,mixed>|false	Arguments with the file content, or false on error
+ */
+function ai_attachment_resolve_args(array $args, &$error)
+{
+	global $langs;
+
+	$error = '';
+	$reg = array();
+	if (!isset($args['filecontent']) || !is_string($args['filecontent']) || !preg_match('/^\s*@?(attachment\d+)\s*$/', $args['filecontent'], $reg)) {
+		return $args;
+	}
+
+	ai_attachment_prune();
+	$info = (empty($_SESSION['ai_attachments'][$reg[1]]) ? null : $_SESSION['ai_attachments'][$reg[1]]);
+	$content = ($info ? file_get_contents($info['file']) : false);
+	if ($content === false) {
+		$langs->load("other");
+		$error = $langs->trans("AIAttachmentExpired", '@'.$reg[1], (string) ai_attachment_keep_minutes());
+		return false;
+	}
+	$args['filecontent'] = base64_encode($content);
+	$args['fileencoding'] = 'base64';
+	if (empty($args['filename'])) {
+		$args['filename'] = $info['name'];
+	}
+
+	return $args;
+}
+
+/**
+ * Remove the attachments the model is known to reject (images or PDF), as the provider answered
+ * before in this session: they are not sent again, the model gets only their description.
+ *
+ * @param array<int,array{mime:string,data:string}>	$attachments	Attachments of the request
+ * @param string									$service		AI service key
+ * @param string									$model			Model name
+ * @return array<int,array{mime:string,data:string}>	Attachments the model may read
+ */
+function ai_attachment_filter_for_model(array $attachments, $service, $model)
+{
+	$rejected = (empty($_SESSION['ai_model_rejected_attachments'][$service.'|'.$model]) ? array() : $_SESSION['ai_model_rejected_attachments'][$service.'|'.$model]);
+	$kept = array();
+	foreach ($attachments as $att) {
+		if (empty($rejected[($att['mime'] === 'application/pdf' ? 'pdf' : 'image')])) {
+			$kept[] = $att;
+		}
+	}
+
+	return $kept;
+}
+
+/**
+ * Remember, for the session, that the model rejected the kinds of attachments (image, pdf) of a request.
+ *
+ * @param array<int,array{mime:string,data:string}>	$attachments	Attachments the provider rejected
+ * @param string									$service		AI service key
+ * @param string									$model			Model name
+ * @return void
+ */
+function ai_attachment_mark_rejected_by_model(array $attachments, $service, $model)
+{
+	foreach ($attachments as $att) {
+		$_SESSION['ai_model_rejected_attachments'][$service.'|'.$model][($att['mime'] === 'application/pdf' ? 'pdf' : 'image')] = 1;
+	}
 }
 
 /**
@@ -823,7 +1212,7 @@ function getAiChatAssistantConfig()
 
 	$keys = array(
 		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
-		'AIAttachmentBlockedByPrivacy', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
+		'AIAttachmentBlockedByPrivacy', 'AIAttachmentMustBeConvertedToText', 'AIAttachmentTypeNotAllowed', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
 		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
@@ -866,9 +1255,6 @@ function getAiChatAssistantConfig()
 		'OcrProgress',
 		'SwitchingAIModel',
 		'OcrFailed',
-		'ReadingWord',
-		'ReadingExcel',
-		'ReadingOdf',
 
 		// Errors
 		'MicError',
@@ -1026,6 +1412,11 @@ function getAiChatAssistantConfig()
 		// Presentation context for tool results: money, date and label
 		// formatting happen client-side on raw API data.
 		'privacyRedaction' => getDolGlobalInt('AI_PRIVACY_REDACTION', 0),
+		// Attachments converted into text in the browser (OCR for images) instead of sent as binary files
+		'attachmentToText' => ai_attachment_convert_to_text(),
+		'attachmentToTextMaxBytes' => ai_attachment_convert_to_text_max_bytes(),
+		// Conversion of attachments with external JS libraries (pdf.js, Tesseract...) allowed
+		'attachmentConvertSupport' => (getDolGlobalInt('AI_SUPPORT_PRIVACY_ON_ALL_TYPE_OF_UPLOADED_FILES') ? 1 : 0),
 		// Attachment count cap, so the client mirrors the server-side guard
 		// of ai_validate_attachments() instead of hardcoding its own.
 		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
@@ -1631,7 +2022,8 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$exactIds = array();
 			$firstIds = array();
 			foreach ($wordlists as $wl) {
-				list($id, $ws) = $wl;
+				$id = $wl[0];
+				$ws = $wl[1];
 				if (count($ws) < $len) {
 					continue;
 				}
@@ -1682,7 +2074,11 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$i++;
 			continue;
 		}
-		list($len, $ids, $key, $exact, $first) = $hit;
+		$len = $hit[0];
+		$ids = $hit[1];
+		$key = $hit[2];
+		$exact = $hit[3];
+		$first = $hit[4];
 		$start = $words[$i][1];
 		$end = $words[$i + $len - 1][2];
 		$cands = array();

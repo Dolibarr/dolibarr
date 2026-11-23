@@ -385,7 +385,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Signature
-	if (!empty($object->user_signature) || !empty($object->user_signature_id) || !empty($object->date_signature)) {
+	if (!empty($object->user_signature_id) || !empty($object->date_signature)) {
 		'@phan-var-force Propal $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
@@ -396,20 +396,14 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_signature)) {
-			if ($object->user_signature->id) {
-				print $object->user_signature->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans('Unknown');
-			}
+		$userstatic = new User($db);
+		if (!empty($object->user_signature_id)) {
+			$userstatic->fetch($object->user_signature_id);
+		}
+		if ($userstatic->id) {
+			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
-			$userstatic = new User($db);
-			$userstatic->fetch($object->user_signature_id ? $object->user_signature_id : $object->user_signature);
-			if ($userstatic->id) {
-				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
-			} else {
-				print $langs->trans('Unknown');
-			}
+			print $langs->trans('Unknown');
 		}
 
 		if (!empty($object->date_signature)) {
@@ -566,7 +560,9 @@ function dolAddEmailTrackId($email, $trackingid)
  */
 function isValidMailDomain($mail)
 {
-	list($user, $domain) = explode("@", $mail, 2);
+	$tmparray = explode("@", $mail, 2);
+	$user = $tmparray[0];
+	$domain = $tmparray[1];
 	return ($domain ? isValidMXRecord($domain) : 0);
 }
 
@@ -645,7 +641,7 @@ function isValidVATID($company)
 		elseif ($vatprefix == 'MC') $vatprefix = 'FR';	// Monaco is using french VAT numbers
 		else $vatprefix = preg_quote($vatprefix, '/');*/
 		$vatprefix = '[a-zA-Z][a-zA-Z]';
-		if (!preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', $company->tva_intra))) {
+		if (!preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', (string) $company->tva_intra))) {
 			return 0;
 		}
 	}
@@ -2118,7 +2114,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$module = 'commande';
 		$myobject = 'commande';
 	} elseif ($objecttype == 'mailing') {
-		$langs->load('mailing');
+		$langs->load('mails');
 		$classpath = 'comm/mailing/class';
 	} elseif ($objecttype == 'propal') {
 		$langs->load('propal');
@@ -2876,11 +2872,11 @@ function price2fec($amount)
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occurred when amount value = o (letter) instead 0 (number)
 
 	// Output decimal number by default
-	$nbdecimal = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_LENGTH') ? 2 : $conf->global->ACCOUNTING_FEC_DECIMAL_LENGTH);
+	$nbdecimal = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_LENGTH') ? 2 : getDolGlobalString('ACCOUNTING_FEC_DECIMAL_LENGTH'));
 
 	// Output separators by default
-	$dec = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_SEPARATOR') ? ',' : $conf->global->ACCOUNTING_FEC_DECIMAL_SEPARATOR);
-	$thousand = (!getDolGlobalString('ACCOUNTING_FEC_THOUSAND_SEPARATOR') ? '' : $conf->global->ACCOUNTING_FEC_THOUSAND_SEPARATOR);
+	$dec = (!getDolGlobalString('ACCOUNTING_FEC_DECIMAL_SEPARATOR') ? ',' : getDolGlobalString('ACCOUNTING_FEC_DECIMAL_SEPARATOR'));
+	$thousand = (!getDolGlobalString('ACCOUNTING_FEC_THOUSAND_SEPARATOR') ? '' : getDolGlobalString('ACCOUNTING_FEC_THOUSAND_SEPARATOR'));
 
 	// Format number
 	$output = number_format($amount, $nbdecimal, $dec, $thousand);

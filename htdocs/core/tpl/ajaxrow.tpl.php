@@ -126,7 +126,7 @@ Dolibarr.on('Ready', function() {
 		// TODO : replace old tableDnD with modern SortableJS
 		tableDnDInstance = $("#" + jsConf.tagIdForTableDND).tableDnD({
 			onDrop: function (table, row) {
-				var page_y = jQuery(document).scrollTop();
+				var page_y = jQuery(dolGetMainScrollElement()).scrollTop();
 				var reloadpage = jsConf.forceReloadPage;
 				Dolibarr.log("tableDND onDrop");
 				Dolibarr.log(decodeURI($("#" + jsConf.tagIdForTableDND).tableDnDSerialize()));

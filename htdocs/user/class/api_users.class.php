@@ -89,6 +89,34 @@ class Users extends DolibarrApi
 			throw new RestException(403, "You are not allowed to read list of users");
 		}
 
+		// List of properties we can't filter or sort on (to avoid guess by search binary attack)
+		$forbiddenfilterfields = array(
+			'pass',
+			'pass_crypted',
+			'pass_temp',
+			'api_key',
+			'openid'
+		);
+		$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+		if (!$canreadsalary) {
+			$forbiddenfilterfields[] = 'salary';
+			$forbiddenfilterfields[] = 'salaryextra';
+			$forbiddenfilterfields[] = 'thm';
+			$forbiddenfilterfields[] = 'tjm';
+		}
+		$canreadhrpersonalinformation = (isModEnabled('hrm') && (DolibarrApiAccess::$user->hasRight('hrm', 'read_personal_information', 'read') || DolibarrApiAccess::$user->hasRight('hrm', 'write_personal_information', 'write')));
+		if (!$canreadhrpersonalinformation) {
+			$forbiddenfilterfields[] = 'national_registration_number';
+		}
+
+		// Test that sort fields are not forbidden fields
+		foreach (explode(',', (string) $sortfield) as $tmpsortfield) {
+			$tmpsortfield = preg_replace('/^.*\./', '', preg_replace('/[^a-z0-9_\.]/i', '', $tmpsortfield));	// Remove prefix like t. or ef.
+			if (in_array(dol_strtolower($tmpsortfield), $forbiddenfilterfields)) {
+				throw new RestException(403, 'Sorting on field '.$tmpsortfield.' is not allowed');
+			}
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $societe param is ignored and replaced by user's socid
@@ -112,22 +140,6 @@ class Users extends DolibarrApi
 
 		// Add sql filters
 		if ($sqlfilters) {
-			// List of properties we can't filter on, whatever are permissions (to avoid guess by search binary attack)
-			$forbiddenfilterfields = array(
-				'pass',
-				'pass_crypted',
-				'pass_temp',
-				'api_key',
-				'openid'
-			);
-			$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
-			if (!$canreadsalary) {
-				$forbiddenfilterfields[] = 'salary';
-				$forbiddenfilterfields[] = 'salaryextra';
-				$forbiddenfilterfields[] = 'thm';
-				$forbiddenfilterfields[] = 'tjm';
-			}
-
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage, 0, 0, 0, $forbiddenfilterfields);
 			if ($errormessage) {
@@ -406,6 +418,11 @@ class Users extends DolibarrApi
 				}
 			}
 
+			// The national registration number is an HR personal information
+			if ($field == 'national_registration_number' && !empty($value) && !(isModEnabled('hrm') && DolibarrApiAccess::$user->hasRight('hrm', 'write_personal_information', 'write'))) {
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without permission to write HR personal information");
+			}
+
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -488,6 +505,11 @@ class Users extends DolibarrApi
 					// This properties can't be set/modified with API
 					throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs with permission on salaries");
 				}
+			}
+
+			// The national registration number is an HR personal information. We refuse only a change, so sending back unchanged value is ok.
+			if ($field == 'national_registration_number' && (string) $value !== (string) $this->useraccount->national_registration_number && !(isModEnabled('hrm') && DolibarrApiAccess::$user->hasRight('hrm', 'write_personal_information', 'write'))) {
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without permission to write HR personal information");
 			}
 
 			if ($field == 'id') {
@@ -1417,6 +1439,12 @@ class Users extends DolibarrApi
 			unset($object->salaryextra);
 			unset($object->thm);
 			unset($object->tjm);
+		}
+
+		// The national registration number is an HR personal information
+		$canreadhrpersonalinformation = (isModEnabled('hrm') && (DolibarrApiAccess::$user->hasRight('hrm', 'read_personal_information', 'read') || DolibarrApiAccess::$user->hasRight('hrm', 'write_personal_information', 'write')));
+		if (!$canreadhrpersonalinformation) {
+			unset($object->national_registration_number);
 		}
 
 		return $object;

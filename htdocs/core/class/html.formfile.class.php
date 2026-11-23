@@ -249,8 +249,8 @@ class FormFile
 		$out .= (!empty($capture) ? ' capture="capture"' : '');
 		$out .= '>';
 		$out .= ' ';
-		if ($sectionid) {	// Show overwrite if exists for ECM module only
-			$langs->load('link');
+		// Show overwrite if exists for ECM module, and everywhere when the replaced files are kept as previous versions
+		if ($sectionid || getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS') > 0) {
 			$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1">';
 			$out .= '<label for="overwritefile" class="opacitylow paddingleft paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
 			$out .= '</span>';
@@ -325,7 +325,6 @@ class FormFile
 		// Section to generate the form to upload a new file
 		if ($linkfiles) {
 			$out2 .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
-			$langs->load('link');
 
 			if ($nooutput != 2) {
 				$title = $langs->trans("LinkANewFile");
@@ -1619,6 +1618,30 @@ class FormFile
 						print '</div>';
 					}
 
+					// Previous versions of the file, kept when it was replaced by an upload (see MAIN_DOCUMENT_KEEP_VERSIONS)
+					if (!$editline && !empty($file['fullname']) && is_dir(dol_osencode(dirname($file['fullname']).'/.versions'))) {
+						$versions = dol_dir_list(dirname($file['fullname']).'/.versions', 'files', 0, '^'.preg_quote($file['name'], '/').'\.v\d+$', null, 'name', SORT_DESC, 1, 1);
+						if (count($versions)) {
+							print '<details class="documentversions">';
+							print '<summary class="opacitymedium small">'.$langs->trans("PreviousVersionsOfFile", count($versions)).'</summary>';
+							foreach ($versions as $version) {
+								$versiontimestamp = (int) preg_replace('/^.*\.v/', '', $version['name']);
+								print '<div class="small paddingleft">';
+								print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart);
+								if (!empty($object->entity)) {
+									print '&entity='.((int) $object->entity);
+								}
+								print '&file='.urlencode((dirname($filepath) != '.' ? dirname($filepath).'/' : '').'.versions/'.$version['name']).'">';
+								print img_picto('', 'download', 'class="paddingright"');
+								print dol_print_date($versiontimestamp, 'dayhour', 'tzuser');
+								print '</a>';
+								print ' <span class="opacitymedium">'.dol_print_size($version['size'], 1, 1).'</span>';
+								print '</div>';
+							}
+							print '</details>';
+						}
+					}
+
 					print "</td>\n";
 
 					// Size
@@ -2409,7 +2432,6 @@ class FormFile
 		global $conf, $langs;
 		global $sortfield, $sortorder;
 
-		$langs->load("link");
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($this->db);

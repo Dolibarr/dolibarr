@@ -381,7 +381,7 @@ class ToolApiBridge extends McpTool
 
 
 		// Third parties
-		$descriptioncreate = "Create a third party (customer, prospect or supplier). The user must confirms before anything is written.";
+		$descriptioncreate = "Create a third party (customer, prospect or supplier) with what is known of it: address, country, phone, email, VAT number, professional ids. From a supplier document (delivery note, invoice), set fournisseur to 1 and give what its header shows. The customer or supplier code is numbered by Dolibarr unless one is given. A third party that already exists under this name is refused: use it. The user must confirm before anything is written.";
 
 		$descriptionlist = "List third parties (prospects, customers, suppliers,...).";
 		$descriptionlist .= "Use parameter 'mode' to restrict to a nature of third party (0=all, 1=only customers, 2=only prospects, 3=neither customer nor prospect, 4=suppliers).\n";
@@ -412,12 +412,28 @@ class ToolApiBridge extends McpTool
 						'required' => ['name'],
 						'object' => 'Societe',
 						'args' => ['name'],
+						'party_create' => true,
+						// The country is said by its name or code, the REST class stores its rowid.
+						'rename' => ['country' => 'country_id'],
 						'right' => ['societe', 'creer']
 					],
 					'params' => [
 						"name" => "Company or person name.",
 						"client" => "1 customer, 2 prospect, 3 both, 0 none.",
-						"fournisseur" => "1 when the third party is a supplier."
+						"fournisseur" => "1 when the third party is a supplier.",
+						"name_alias" => "Trade name, the name people use.",
+						"address" => "Street address.",
+						"zip" => "Postal code.",
+						"town" => "Town.",
+						"country" => "Country: its ISO code (FR, ES, DE...) or its name. Omit for the country of the company.",
+						"phone" => "Phone.",
+						"email" => "Email of the company.",
+						"url" => "Website.",
+						"tva_intra" => "Intra-community VAT number.",
+						"idprof1" => "First professional id of the country (SIREN in France).",
+						"idprof2" => "Second professional id of the country (SIRET in France).",
+						"code_client" => "Customer code. Omit to let Dolibarr number it.",
+						"code_fournisseur" => "Supplier code. Omit to let Dolibarr number it."
 					]
 				],
 				'index' => [
@@ -1323,7 +1339,7 @@ class ToolApiBridge extends McpTool
 		];
 
 		// Sale orders
-		$descriptioncreate = "Create a product or service in the catalog. The user must confirm before anything is written.";
+		$descriptioncreate = "Create a product or service in the catalog with what is known of it: description, barcode, weight, unit, VAT rate, selling price, lot or serial tracking, default warehouse. It is on sale and on purchase unless said otherwise. A reference or a barcode already used by a product is refused, naming that product: use it. For a product bought from a supplier, record afterwards what the supplier charges and the reference the supplier uses with api_products_purchase_price_create. The user must confirm before anything is written.";
 
 		$descriptionlist = "Search products using the sqlfilters (e.g. \"(t.label:like:'%screw%')\").\n";
 		$descriptionlist .= "Prefer 'properties' (e.g. 'id,ref,label,type,price,price_ttc,tva_tx,status,status_buy') and a small 'limit'.\n";
@@ -1351,11 +1367,25 @@ class ToolApiBridge extends McpTool
 						'required' => ['ref', 'label'],
 						'object' => 'Product',
 						'args' => ['label'],
+						'product_create' => true,
+						// As the creation form proposes: on sale, on purchase, a weight in kilograms.
+						'defaults' => ['status' => 1, 'status_buy' => 1, 'weight_units' => 0],
+						// Said by name, stored by rowid.
+						'rename' => ['unit' => 'fk_unit', 'default_warehouse' => 'fk_default_warehouse'],
 						'right' => ['produit', 'creer']
 					],
 					'params' => [
 						"ref" => "Internal reference.", "label" => "Product label.", "price" => "Selling price excl. tax.", "type" => "0 product, 1 service.",
-						"tva_tx" => "VAT rate in percent (e.g. 20). Omit it to use the default VAT rate of the company."
+						"tva_tx" => "VAT rate in percent (e.g. 20). Omit it to use the default VAT rate of the company.",
+						"description" => "Description.",
+						"barcode" => "Barcode (EAN, UPC...).",
+						"fk_barcode_type" => "Rowid of the barcode type. Omit for the default type of this Dolibarr.",
+						"weight" => "Weight, in kilograms.",
+						"unit" => "Unit, by name (piece, kg, litre, hour...).",
+						"status" => "On sale: 1 yes (default), 0 no.",
+						"status_buy" => "On purchase: 1 yes (default), 0 no.",
+						"status_batch" => "Tracking: 0 none (default), 1 by lot, 2 by serial number.",
+						"default_warehouse" => "Default warehouse, by name or rowid."
 					]
 				],
 				'index' => [
@@ -1427,7 +1457,7 @@ class ToolApiBridge extends McpTool
 		// they all call, 'fixed_params' the arguments forced on the call.
 		$uploadParams = [
 			'filename' => "Name of the file to create (e.g. 'photo.jpg').",
-			'filecontent' => "Content of the file. Omit to create an empty file.",
+			'filecontent' => "Content of the file. For a file the user attached to the chat, give only its reference (e.g. '@attachment1'), never its content: the file is put on execution. Omit to create an empty file.",
 			'fileencoding' => "'base64' when filecontent is base64-encoded, empty (default) for plain text.",
 			'overwriteifexists' => "1 to overwrite a file that already exists with the same name, 0 (default) to fail instead.",
 			'createdirifnotexists' => "1 (default) to create the subdirectories when they do not exist, 0 to fail."
@@ -1460,7 +1490,7 @@ class ToolApiBridge extends McpTool
 				// Dolibarr right covers every area (an invoice needs facture/...).
 				'post' => [
 					'suffix' => 'upload',
-					'description' => "Attach a file to a business object. Give modulepart (the object type), the ref of the object (its directory is derived from it; for a third party or a contact use the rowid instead), and filecontent base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
+					'description' => "Attach a file to a business object. Give modulepart (the object type), the ref of the object (its directory is derived from it; for a third party or a contact use the rowid instead), and filecontent: the reference of a file attached to the chat (e.g. '@attachment1'), or a content base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewUploadDocument',
 						'required' => ['filename', 'modulepart', 'ref'],
@@ -1507,7 +1537,7 @@ class ToolApiBridge extends McpTool
 					'suffix' => 'upload',
 					'module' => 'ecm',
 					'fixed_params' => ['modulepart' => 'ecm'],
-					'description' => "Upload a file into the DMS (ECM module) manual area, the free directory tree where users file documents not linked to a business object. Give subdir (the directory inside the tree, preferably an existing one) and filecontent base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
+					'description' => "Upload a file into the DMS (ECM module) manual area, the free directory tree where users file documents not linked to a business object. Give subdir (the directory inside the tree, preferably an existing one) and filecontent: the reference of a file attached to the chat (e.g. '@attachment1'), or a content base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewUploadDocument',
 						'required' => ['filename'],
@@ -1552,7 +1582,7 @@ class ToolApiBridge extends McpTool
 				'post' => [
 					'suffix' => 'upload',
 					'fixed_params' => ['modulepart' => 'medias'],
-					'description' => "Upload a file into the public medias directory, where the images, videos and documents of the websites of the website module are stored: the file becomes publicly reachable. Give subdir (e.g. 'image/mywebsite' for the images of the website mywebsite) and filecontent base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
+					'description' => "Upload a file into the public medias directory, where the images, videos and documents of the websites of the website module are stored: the file becomes publicly reachable. Give subdir (e.g. 'image/mywebsite' for the images of the website mywebsite) and filecontent: the reference of a file attached to the chat (e.g. '@attachment1'), or a content base64-encoded with fileencoding='base64'. The user confirms before anything is written.",
 					'write' => [
 						'preview' => 'AIPreviewUploadDocument',
 						'required' => ['filename', 'subdir'],
@@ -1572,6 +1602,7 @@ class ToolApiBridge extends McpTool
 
 		$this->addReadEndpoints();
 		$this->addWritesOnExistingRecords();
+		$this->addStatusChanges($this->setupValue('MAIN_USE_ADVANCED_PERMS'));
 		$this->addCreateFields();
 		// Modules answer last so their enrichment keys can never shadow a core one.
 		$this->loadExternalEnrichments();
@@ -1654,7 +1685,7 @@ class ToolApiBridge extends McpTool
 	 */
 	private function addReadEndpoints()
 	{
-		global $mysoc;
+		global $mysoc, $dolibarr_website_allow_custom_php;
 
 		$pagination = "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many records match.";
 
@@ -1891,6 +1922,11 @@ class ToolApiBridge extends McpTool
 
 		// Websites of the website module, with their pages and blog posts. The page content is
 		// left out of the lists (it can be large): read one page with api_websites_pages_get (by the page rowid only).
+		// PHP code in pages can be added or changed through the API only if $dolibarr_website_allow_custom_php is 3.
+		$websitephpallowed = (!empty($dolibarr_website_allow_custom_php) && (int) $dolibarr_website_allow_custom_php >= 3);
+		$websitephpcreate = ($websitephpallowed ? "PHP code (<?php ... ?>) only if the user has the permission to edit PHP content" : "no PHP code");
+		$websitephprule = ($websitephpallowed ? "PHP blocks (<?php ... ?>) can be added or changed only if the user has the permission to edit PHP content, and dangerous PHP functions are refused." : "PHP blocks (<?php ... ?>) of the current content must stay unchanged, or the change is refused.");
+		$websitephpcontent = ($websitephpallowed ? "PHP code (<?php ... ?>) is allowed only if the user has the permission to edit PHP content." : "Never add or change PHP code: keep the existing PHP blocks (<?php ... ?>) exactly as they are.");
 		$this->enrichments['websites'] = array(
 			'label' => 'websites (website module)',
 			'methods' => array(
@@ -1910,12 +1946,12 @@ class ToolApiBridge extends McpTool
 				),
 				'getPageById' => array(
 					'suffix' => 'pages_get',
-					'description' => "One page or blog post of a website, with its HTML content, by the rowid of the page.",
+					'description' => "Read one page or blog post of a website, with its HTML content, by the rowid of the page.",
 					'params' => array('pageid' => "Rowid of the page or blog post.")
 				),
 				'postPage' => array(
 					'suffix' => 'pages_create',
-					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, no PHP code). It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
+					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, ".$websitephpcreate."). It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
 					'write' => array(
 						'preview' => 'AIPreviewCreateWebsitePage',
 						'required' => array('id', 'pageurl', 'title'),
@@ -1929,7 +1965,7 @@ class ToolApiBridge extends McpTool
 						'pageurl' => "Alias of the page, used in its URL: only a-z, 0-9, - and _.",
 						'title' => "Title of the page.",
 						'type_container' => "Kind of page: 'page' (default) or 'blogpost' for an article of a blog.",
-						'content' => "HTML content of the page, inside a <section> tag. No PHP code.",
+						'content' => "HTML content of the page, inside a <section> tag. ".dol_ucfirst($websitephpcreate).".",
 						'description' => "Short description (meta description), 255 characters max.",
 						'keywords' => "Keywords, separated by commas.",
 						'lang' => "Language code of the page, e.g. 'en' or 'fr'. Omit for the website language.",
@@ -1939,7 +1975,7 @@ class ToolApiBridge extends McpTool
 				),
 				'putPage' => array(
 					'suffix' => 'pages_update',
-					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change only parts of the content (move, add, remove or fix elements), read the page first with api_websites_pages_get, then give content_replacements: a list of {old, new} applied in order in ONE call, where 'old' is an exact fragment of the content (long enough to be found only once) and 'new' its replacement (empty to remove it). To MOVE an element, give 2 replacements in the same call: one that removes it, one that adds it at its new place. Do not send the whole content for that. Give 'content' only to replace the whole content (HTML, inside a <section> tag). Never give both. PHP blocks (<?php ... ?>) of the current content must stay unchanged, or the change is refused. The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
+					'description' => "Change fields of an existing page or blog post of a website. Give 'pageid' (rowid of the page, from api_websites_pages_list) and ONLY the fields to change, with their new value: title, description, keywords, content, lang, author_alias, status. To change only parts of the content (move, add, remove or fix elements), read the page first with api_websites_pages_get, then give content_replacements: a list of {old, new} applied in order in ONE call, where 'old' is an exact fragment of the content (long enough to be found only once) and 'new' its replacement (empty to remove it). To MOVE an element, give 2 replacements in the same call: one that removes it, one that adds it at its new place. Do not send the whole content for that. Give 'content' only to replace the whole content (HTML, inside a <section> tag). Never give both. ".$websitephprule." The alias (pageurl) cannot be changed here. The user confirms before anything is written.",
 					'write' => array(
 						'kind' => 'update',
 						'preview' => 'AIPreviewChangeRecord',
@@ -1964,8 +2000,8 @@ class ToolApiBridge extends McpTool
 						'title' => "New title of the page.",
 						'description' => "New short description (meta description), 255 characters max.",
 						'keywords' => "New keywords, separated by commas.",
-						'content' => "New full HTML content of the page, inside a <section> tag. Never add or change PHP code: keep the existing PHP blocks (<?php ... ?>) exactly as they are.",
-						'content_replacements' => "Partial changes of the content, applied in order in one call (all or nothing): list of {\"old\": exact fragment of the current content copied character for character and found only once, \"new\": its replacement, empty string to remove it}. To move an element: [{\"old\": element, \"new\": \"\"}, {\"old\": fragment where to put it, \"new\": same fragment + element}]. Never with content. Never add or change PHP code.",
+						'content' => "New full HTML content of the page, inside a <section> tag. ".$websitephpcontent,
+						'content_replacements' => "Partial changes of the content, applied in order in one call (all or nothing): list of {\"old\": exact fragment of the current content copied character for character and found only once, \"new\": its replacement, empty string to remove it}. To move an element: [{\"old\": element, \"new\": \"\"}, {\"old\": fragment where to put it, \"new\": same fragment + element}]. Never with content. ".($websitephpallowed ? "PHP code allowed only with the permission to edit PHP content." : "Never add or change PHP code."),
 						'lang' => "New language code of the page, e.g. 'en' or 'fr'.",
 						'author_alias' => "New name of the author to show.",
 						'status' => "0 offline, 1 online."
@@ -2409,6 +2445,8 @@ class ToolApiBridge extends McpTool
 			'email' => "Email of the company.",
 			'url' => "Website.",
 			'tva_intra' => "Intra-community VAT number.",
+			'idprof1' => "First professional id of the country (SIREN in France).",
+			'idprof2' => "Second professional id of the country (SIRET in France).",
 			'note_public' => "Public note.",
 			'note_private' => "Private note.",
 			'client' => "1 customer, 2 prospect, 3 both, 0 none.",
@@ -2422,6 +2460,7 @@ class ToolApiBridge extends McpTool
 			'status' => "On sale: 1 yes, 0 no.",
 			'status_buy' => "On purchase: 1 yes, 0 no.",
 			'weight' => "Weight.",
+			'barcode' => "Barcode (EAN, UPC...).",
 			'note_public' => "Public note.",
 			'note_private' => "Private note."
 		);
@@ -2431,6 +2470,38 @@ class ToolApiBridge extends McpTool
 			$productfields['price'] = "Selling price excl. tax.";
 		}
 		$this->enrichments['products']['methods']['put'] = $this->updateMethod('product', 'Product', array('produit', 'creer'), $productfields, 'ref');
+
+		// What a supplier charges for a product and the reference the supplier knows it by:
+		// the tab "Buying prices" of the product, and what lets a delivery note name the
+		// product by the supplier's own reference. Same right as the REST method.
+		$this->enrichments['products']['methods']['addPurchasePrice'] = array(
+			'suffix' => 'purchase_price_create',
+			'module' => 'fournisseur',
+			'description' => "Record what a supplier charges for a product and the reference the supplier uses for it, as the Buying prices tab of the product does. This is what lets a later delivery note, order or invoice of that supplier name the product by the supplier's own reference. Give 'id' (the product: rowid, or its ref), supplier (name or rowid), ref_fourn (the supplier's reference) and buyprice (unit purchase price excl. tax); qty is the minimum quantity the price applies to (1 by default). The same supplier and quantity again updates the price. The user confirms before anything is written.",
+			'write' => array(
+				'kind' => 'action',
+				'supplier_price' => true,
+				'preview' => 'AIPreviewSupplierPrice',
+				'object' => 'Product',
+				'label' => 'product',
+				'target' => 'id',
+				'lookup' => 'ref',
+				// Whatever its status on sale (0 or 1): a product bought is not always sold.
+				'states' => array(0, 1),
+				'state_error' => 'AIWriteRecordNotFound',
+				'right' => array('produit', 'creer')
+			),
+			'params' => array(
+				'id' => "The product: rowid, or its ref.",
+				'supplier' => "The supplier: its name or its rowid.",
+				'ref_fourn' => "Reference the supplier uses for this product.",
+				'buyprice' => "Unit purchase price excl. tax, for the quantity given.",
+				'qty' => "Minimum quantity this price applies to. 1 by default.",
+				'tva_tx' => "VAT rate of the purchase, in percent. Omit for the default rate with this supplier.",
+				'delivery_time_days' => "Delivery time, in days.",
+				'desc_fourn' => "Description the supplier gives of the product."
+			)
+		);
 
 		$this->enrichments['contacts']['methods']['post'] = array(
 			'suffix' => 'create',
@@ -2620,7 +2691,7 @@ class ToolApiBridge extends McpTool
 		$supplierOrderDeleteLine['write']['access'] = array('fournisseur', 'commande_fournisseur', 'commande');
 		$this->enrichments['supplier_orders']['methods']['deleteLine'] = $supplierOrderDeleteLine;
 		// The REST postLine() of a contract reads every field: none is left unset.
-		$this->enrichments['contracts']['methods']['postLine'] = $this->addLineMethod('contract', 'api_contracts_list', 'Contrat', array('contrat', 'creer'), false, array(), array('price_base_type' => 'HT', 'localtax1_tx' => 0, 'localtax2_tx' => 0, 'remise_percent' => 0, 'date_start' => '', 'date_end' => '', 'subprice_excl_tax' => 0, 'info_bits' => 0, 'fk_fournprice' => null, 'pa_ht' => 0, 'array_options' => array(), 'fk_unit' => null, 'rang' => -1));
+		$this->enrichments['contracts']['methods']['postLine'] = $this->addLineMethod('contract', 'api_contracts_list', 'Contrat', array('contrat', 'creer'), false, array(), array('price_base_type' => 'HT', 'localtax1_tx' => 0, 'localtax2_tx' => 0, 'remise_percent' => 0, 'date_start' => '', 'date_end' => '', 'subprice_inc_tax' => 0, 'info_bits' => 0, 'fk_fournprice' => null, 'pa_ht' => 0, 'array_options' => array(), 'fk_unit' => null, 'rang' => -1));
 		$this->enrichments['interventions']['methods']['postLine'] = $this->lineMethod('add', 'intervention', 'Fichinter', array('ficheinter', 'creer'), 'intervention');
 
 		// Header of a draft: the fields a user corrects, by their old and new value.
@@ -2757,6 +2828,106 @@ class ToolApiBridge extends McpTool
 				'date_start' => "Start date YYYY-MM-DD.",
 				'date_end' => "End date YYYY-MM-DD."
 			)
+		);
+	}
+
+	/**
+	 * Status changes of the sale documents, as the buttons of their cards: each
+	 * one is refused before the confirmation when the card would not offer it
+	 * (status, setup, rights and the other conditions of the button).
+	 *
+	 * @param  string $advanced Value of MAIN_USE_ADVANCED_PERMS.
+	 * @return void
+	 */
+	private function addStatusChanges($advanced)
+	{
+		// Commercial proposals.
+		$this->enrichments['proposals']['methods']['settodraft'] = $this->statusMethod(
+			'set_draft', 'commercial proposal', 'Propal', 'AIPreviewProposalToDraft',
+			array(1), 'AIWriteNotValidatedToDraft', array(), array('propal', 'creer'), array(),
+			"Set a VALIDATED commercial proposal back to draft, so its lines and header can be edited again, as the Modify button of the proposal does."
+		);
+		// Signed or refused: the confirmation says which, and the model may say it in words.
+		$this->enrichments['proposals']['methods']['close'] = $this->statusMethod(
+			'close', 'commercial proposal', 'Propal', 'AIPreviewProposalSigned',
+			array(1), 'AIWriteProposalNotOpen', array('close_status'),
+			$advanced ? array('propal', 'propal_advance', 'close') : array('propal', 'creer'), $advanced ? array('propal', 'creer') : array(),
+			"Close a VALIDATED commercial proposal as signed (status 2) or refused (status 3), as the \"Accept/Refuse\" button of the proposal does. Give 'status' (2 or 3, or the words signed or refused), and 'note_private' for a note on why.",
+			array(
+				'status' => "2 signed (accepted), 3 refused (not signed).",
+				'note_private' => "Private note on the closing, optional."
+			),
+			array('status', 'note_private'),
+			array('notrigger' => 0, 'note_public' => ''),
+			array('PROPAL_SKIP_ACCEPT_REFUSE'), '',
+			array(
+				'preview_by' => array('status' => array(3 => 'AIPreviewProposalRefused')),
+				'pass_words' => array('status' => array('signed' => 2, 'accepted' => 2, 'refused' => 3, 'notsigned' => 3, 'not signed' => 3))
+			)
+		);
+		$this->enrichments['proposals']['methods']['setinvoiced'] = $this->statusMethod(
+			'set_billed', 'commercial proposal', 'Propal', 'AIPreviewProposalBilled',
+			array(2), 'AIWriteProposalNotSignedToBill', array('proposal_invoice'),
+			$advanced ? array('propal', 'propal_advance', 'close') : array('propal', 'creer'), $advanced ? array('propal', 'creer') : array(),
+			"Classify a SIGNED commercial proposal as billed, as the \"Classify billed\" button of the proposal does.",
+			array(), array(), array(),
+			array('PROPOSAL_ARE_NOT_BILLABLE')
+		);
+
+		// Sale orders.
+		$this->enrichments['orders']['methods']['settodraft'] = $this->statusMethod(
+			'set_draft', 'sale order', 'Commande', 'AIPreviewOrderToDraft',
+			array(1, 2), 'AIWriteNotValidatedToDraft', array('order_editable'), array('commande', 'creer'), array(),
+			"Set a VALIDATED sale order back to draft, so its lines and header can be edited again, as the Modify button of the order does. When validating the order moved stock, the stock goes back: give 'warehouse' (name or rowid) unless there is only one.",
+			array('warehouse' => "Warehouse the stock goes back into: name or rowid. Only needed when the order moved stock and there are several warehouses."),
+			array(), array(), array(), 'STOCK_CALCULATE_ON_VALIDATE_ORDER'
+		);
+		$this->enrichments['orders']['methods']['close'] = $this->statusMethod(
+			'close', 'sale order', 'Commande', 'AIPreviewOrderDelivered',
+			array(1, 2), 'AIWriteOrderNotDeliverable', array(),
+			$advanced ? array('commande', 'order_advance', 'close') : array('commande', 'creer'), $advanced ? array('commande', 'creer') : array(),
+			"Classify a VALIDATED or in-process sale order as delivered (closed), as the \"Classify delivered\" button of the order does.",
+			array(), array(), array('notrigger' => 0)
+		);
+		$this->enrichments['orders']['methods']['setinvoiced'] = $this->statusMethod(
+			'set_billed', 'sale order', 'Commande', 'AIPreviewOrderBilled',
+			array(1, 2, 3), 'AIWriteOrderNotBillableStatus', array('not_billed', 'not_negative'), array('commande', 'creer'), array(),
+			"Classify a validated sale order not billed yet as billed, as the \"Classify billed\" button of the order does.",
+			array(), array(), array(),
+			array('ORDER_DISABLE_CLASSIFY_BILLED_FROM_ORDER', 'WORKFLOW_BILL_ON_SHIPMENT')
+		);
+		$this->enrichments['orders']['methods']['reopen'] = $this->statusMethod(
+			'reopen', 'sale order', 'Commande', 'AIPreviewOrderReopen',
+			array(3, -1), 'AIWriteOrderNotClosed', array('order_reopen'), array('commande', 'creer'), array(),
+			"Reopen a delivered (closed) or canceled sale order, as the ReOpen button of the order does: it is validated again and no longer classified billed.",
+			array(), array(), array(),
+			array('ORDER_REOPEN_TO_DRAFT')
+		);
+
+		// Customer invoices. Paid here means nothing is left to pay: closing an
+		// invoice partially paid or abandoned needs a reason and stays on its card.
+		$this->enrichments['invoices']['methods']['settodraft'] = $this->statusMethod(
+			'set_draft', 'customer invoice', 'Facture', 'AIPreviewInvoiceToDraft',
+			array(1), 'AIWriteNotValidatedToDraft', array('invoice_editable'),
+			$advanced ? array('facture', 'invoice_advance', 'unvalidate') : array('facture', 'creer'), $advanced ? array('facture', 'creer') : array(),
+			"Set a VALIDATED customer invoice with no payment back to draft, so it can be edited again, as the Modify button of the invoice does. When validating the invoice moved stock, the stock goes back: give 'warehouse' (name or rowid) unless there is only one.",
+			array('warehouse' => "Warehouse the stock goes back into: name or rowid. Only needed when the invoice moved stock and there are several warehouses."),
+			array(), array(),
+			array('INVOICE_CAN_NEVER_BE_EDITED'), 'STOCK_CALCULATE_ON_BILL'
+		);
+		$this->enrichments['invoices']['methods']['settopaid'] = $this->statusMethod(
+			'set_paid', 'customer invoice', 'Facture', 'AIPreviewInvoicePaid',
+			array(1), 'AIWriteInvoiceNotOpen', array('invoice_settled'), array('facture', 'paiement'), array('facture', 'creer'),
+			"Classify paid a VALIDATED customer invoice on which nothing is left to pay, as the \"Classify paid\" button of the invoice does. To record a payment, use the payment tool instead.",
+			array(), array(), array('close_code' => '', 'close_note' => '')
+		);
+		$this->enrichments['invoices']['methods']['settounpaid'] = $this->statusMethod(
+			'reopen', 'customer invoice', 'Facture', 'AIPreviewInvoiceReopen',
+			array(1, 2, 3), 'AIWriteInvoiceNotClosed', array('invoice_reopen'),
+			$advanced ? array('facture', 'invoice_advance', 'reopen') : array('facture', 'creer'), $advanced ? array('facture', 'creer') : array(),
+			"Reopen a paid or abandoned customer invoice, as the ReOpen button of the invoice does: it is unpaid again.",
+			array(), array(), array(),
+			array('INVOICE_DISALLOW_REOPEN')
 		);
 	}
 
@@ -2930,6 +3101,63 @@ class ToolApiBridge extends McpTool
 				'right' => $right
 			),
 			'params' => array('id' => "The draft ".$label.": rowid, or its ref.")
+		);
+	}
+
+	/**
+	 * Enrichment of a status change of a document (back to draft, signed,
+	 * billed, delivered, paid, reopened), refused before the confirmation when
+	 * the card of the document would not offer its button.
+	 *
+	 * @param  string               $suffix      Tool name suffix.
+	 * @param  string               $label       Document name, as the model reads it.
+	 * @param  string               $class       Business class of the document.
+	 * @param  string               $preview     Translation key of the confirmation.
+	 * @param  int[]                $states      Statuses in which the card offers the button.
+	 * @param  string               $stateError  Translation key of the refusal in another status.
+	 * @param  string[]             $card        Other conditions of the button, checked by precheckStatusChange().
+	 * @param  string[]             $right       Right the card asks for.
+	 * @param  string[]             $readright   Right the REST method checks too, when not the same.
+	 * @param  string               $description Description for the model.
+	 * @param  array<string,string> $params      Arguments other than the document.
+	 * @param  string[]             $pass        Arguments given to the REST method as the model sends them.
+	 * @param  array<string,mixed>  $fixed       Arguments the call always carries, whatever the model sends.
+	 * @param  string[]             $setupOff    Setup constants that remove the button from the card, so the tool too.
+	 * @param  string               $stock       Constant that makes the validation move stock (the stock goes back), '' for none.
+	 * @param  array<string,mixed>  $extra       Other keys of the write: 'preview_by' (a confirmation per value of an argument), 'pass_words' (values said in words).
+	 * @return array<string,mixed>               Method enrichment.
+	 */
+	private function statusMethod($suffix, $label, $class, $preview, array $states, $stateError, array $card, array $right, array $readright, $description, array $params = array(), array $pass = array(), array $fixed = array(), array $setupOff = array(), $stock = '', array $extra = array())
+	{
+		$write = array(
+			'kind' => 'action',
+			'preview' => $preview,
+			'object' => $class,
+			'label' => $label,
+			'target' => 'id',
+			'lookup' => 'ref',
+			'states' => $states,
+			'state_error' => $stateError,
+			'card' => $card,
+			'pass' => $pass,
+			'fixed' => $fixed,
+			'right' => $right
+		);
+		if ($readright) {
+			$write['read_right'] = $readright;
+		}
+		if ($stock !== '') {
+			$write['stock'] = $stock;
+			$write['stock_back'] = true;
+		}
+		$write = array_merge($write, $extra);
+
+		return array(
+			'suffix' => $suffix,
+			'setup_off' => $setupOff,
+			'description' => $description." Give 'id' (the ".$label.": rowid, or its ref). The user confirms before anything is written.",
+			'write' => $write,
+			'params' => array_merge(array('id' => "The ".$label.": rowid, or its ref."), $params)
 		);
 	}
 
@@ -3340,6 +3568,10 @@ class ToolApiBridge extends McpTool
 				if (!empty($meta['setup']) && !$this->setupAllows((array) $meta['setup'])) {
 					continue;
 				}
+				// A button the setup removes from the card: no tool either.
+				if (!empty($meta['setup_off']) && $this->setupAllows((array) $meta['setup_off'])) {
+					continue;
+				}
 				if (!method_exists($ep['class'], $method)) {
 					continue;	// whitelisted method absent in this Dolibarr version
 				}
@@ -3594,10 +3826,10 @@ class ToolApiBridge extends McpTool
 		foreach (array('MAIN_USE_ADVANCED_PERMS', 'PRODUCT_PRICE_UNIQ', 'PRODUIT_CUSTOMER_PRICES') as $const) {
 			$signature .= '|'.$const.'='.getDolGlobalString($const);
 		}
-		// The setup modes some methods depend on: turning one on shows its tools at once.
+		// The setup modes some methods depend on: turning one on (or off) shows or hides its tools at once.
 		foreach ($this->enrichments as $meta) {
 			foreach (($meta['methods'] ?? array()) as $mmeta) {
-				foreach ((array) ($mmeta['setup'] ?? array()) as $const) {
+				foreach (array_merge((array) ($mmeta['setup'] ?? array()), (array) ($mmeta['setup_off'] ?? array())) as $const) {
 					$signature .= '|'.$const.'='.getDolGlobalString($const);
 				}
 			}
@@ -5054,6 +5286,10 @@ class ToolApiBridge extends McpTool
 		if (is_array($value)) {
 			return '';
 		}
+		// An argument resolved to a rowid (a country, a unit, a warehouse) is shown by the name kept next to it.
+		if (isset($args['_label_'.$argname]) && is_scalar($args['_label_'.$argname]) && (string) $args['_label_'.$argname] !== '') {
+			return (string) $args['_label_'.$argname];
+		}
 		$value = (string) $value;
 		if ($value !== '' && in_array($argname, (array) ($write['hours'] ?? array()), true) && is_numeric($value)) {
 			return convertSecondToTime((int) $value, 'allhourmin');
@@ -5484,7 +5720,7 @@ class ToolApiBridge extends McpTool
 			$parts[] = "'".((string) $wanted)."'".(empty($close) ? '' : ' (close refs: '.implode(', ', $close).')');
 		}
 
-		return "Product ".implode(', ', $parts)." not found, or several products match it. A supplier reference is looked up in the catalogue of the resolved supplier only. Use a close ref if it is the right product, search with api_products_list, or create it with api_products_create first.";
+		return "Product ".implode(', ', $parts)." not found, or several products match it. A supplier reference is looked up in the catalogue of the resolved supplier only. Use a close ref if it is the right product, search with api_products_list, or create it with api_products_create first and record its supplier reference with api_products_purchase_price_create, so that the next document of this supplier finds it.";
 	}
 
 	/**
@@ -6189,7 +6425,17 @@ class ToolApiBridge extends McpTool
 			return $out;
 		}
 
+		if ($kind === 'action' && !empty($write['supplier_price'])) {
+			return $this->normaliseSupplierPrice($args, $out);
+		}
+
 		if ($kind === 'action') {
+			// A value the model may say in words (signed, refused): its code.
+			foreach ((array) ($write['pass_words'] ?? array()) as $name => $words) {
+				if (isset($args[$name]) && !is_array($args[$name]) && isset($words[dol_strtolower(trim((string) $args[$name]))])) {
+					$args[$name] = $words[dol_strtolower(trim((string) $args[$name]))];
+				}
+			}
 			// An action taking more than its record (who to assign it to, cancel).
 			foreach ((array) ($write['pass'] ?? array()) as $name) {
 				if (array_key_exists($name, $args) && !is_array($args[$name])) {
@@ -6562,6 +6808,321 @@ class ToolApiBridge extends McpTool
 	}
 
 	/**
+	 * A third party to create, as the card would save it: the country by its
+	 * rowid (the one of the company when none is said), a code numbered by
+	 * Dolibarr, and never a second record under a name that exists already.
+	 *
+	 * @param  array<string,mixed> $args Arguments as received.
+	 * @return array<string,mixed>       Arguments for the REST create.
+	 */
+	private function normaliseThirdpartyCreate(array $args)
+	{
+		global $langs, $mysoc;
+
+		$langs->loadLangs(array('other', 'dict'));
+		$aliases = array('alias' => 'name_alias', 'trade_name' => 'name_alias', 'postcode' => 'zip', 'postal_code' => 'zip', 'zipcode' => 'zip', 'cp' => 'zip', 'city' => 'town', 'ville' => 'town', 'country_code' => 'country', 'country_id' => 'country', 'pays' => 'country', 'website' => 'url', 'vat_number' => 'tva_intra', 'vat' => 'tva_intra', 'tva' => 'tva_intra', 'siren' => 'idprof1', 'siret' => 'idprof2', 'supplier_code' => 'code_fournisseur', 'customer_code' => 'code_client');
+		foreach ($aliases as $from => $to) {
+			if (isset($args[$from]) && !isset($args[$to]) && !is_array($args[$from])) {
+				$args[$to] = $args[$from];
+			}
+			unset($args[$from]);
+		}
+
+		// The same company twice is the usual accident of a creation asked from a document.
+		$name = trim((string) ($args['name'] ?? ''));
+		if ($name !== '' && $this->db) {
+			$sql = "SELECT rowid FROM ".$this->db->prefix()."societe";
+			$sql .= " WHERE entity IN (".getEntity('societe').") AND nom = '".$this->db->escape($name)."'";
+			$sql .= " LIMIT 1";
+			$resql = $this->db->query($sql);
+			$obj = $resql ? $this->db->fetch_object($resql) : null;
+			if ($obj) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteThirdpartyExists', $name, $this->userCanReach('Societe', (int) $obj->rowid) ? ' (id '.((int) $obj->rowid).')' : '');
+			}
+		}
+
+		$given = $args['country'] ?? '';
+		if (is_scalar($given) && trim((string) $given) !== '') {
+			$country = $this->resolveCountry((string) $given);
+			if ($country !== null) {
+				$args['country'] = $country['id'];
+				$args['_label_country'] = $country['label'];
+			} else {
+				unset($args['country']);
+			}
+		} elseif (is_object($mysoc) && (int) $mysoc->country_id > 0) {
+			// As the creation form does: the country of the company unless another is said.
+			$args['country'] = (int) $mysoc->country_id;
+			$args['_label_country'] = $langs->transnoentitiesnoconv('Country'.$mysoc->country_code).' ('.$mysoc->country_code.')';
+		} else {
+			unset($args['country']);
+		}
+
+		// A code left empty is refused by most numbering rules: Dolibarr gives the next one.
+		if (!empty($args['client']) && trim((string) ($args['code_client'] ?? '')) === '') {
+			$args['code_client'] = 'auto';
+		}
+		if (!empty($args['fournisseur']) && trim((string) ($args['code_fournisseur'] ?? '')) === '') {
+			$args['code_fournisseur'] = 'auto';
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Country from the words of the user: its rowid, its ISO code or its name.
+	 *
+	 * @param  string $value What was said.
+	 * @return array{id:int,label:string}|null Country, null when none fits (the reason is in writeProblems).
+	 */
+	private function resolveCountry($value)
+	{
+		global $langs;
+
+		$langs->loadLangs(array('dict', 'other'));
+		$value = trim($value);
+		$want = dol_strtolower($value);
+		$found = array();
+		$resql = $this->db ? $this->db->query("SELECT rowid, code, code_iso, label FROM ".$this->db->prefix()."c_country WHERE active = 1") : false;
+		while ($resql && ($obj = $this->db->fetch_object($resql))) {
+			$code = (string) $obj->code;
+			$translated = $langs->transnoentitiesnoconv('Country'.$code);
+			if (in_array($want, array((string) $obj->rowid, dol_strtolower($code), dol_strtolower((string) $obj->code_iso), dol_strtolower((string) $obj->label), dol_strtolower($translated)), true)) {
+				$found[(int) $obj->rowid] = (($translated !== 'Country'.$code) ? $translated : (string) $obj->label).' ('.$code.')';
+			}
+		}
+		if (count($found) === 1) {
+			return array('id' => (int) key($found), 'label' => (string) reset($found));
+		}
+		$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteCountryNotFound', $value);
+
+		return null;
+	}
+
+	/**
+	 * A product to create, as the card would save it: numbers as numbers, the
+	 * unit and the default warehouse by their rowid, and never a reference or a
+	 * barcode another product already has.
+	 *
+	 * @param  array<string,mixed> $args Arguments as received.
+	 * @return array<string,mixed>       Arguments for the REST create.
+	 */
+	private function normaliseProductCreate(array $args)
+	{
+		global $langs;
+
+		$langs->load('other');
+		$aliases = array('reference' => 'ref', 'desc' => 'description', 'ean' => 'barcode', 'ean13' => 'barcode', 'gtin' => 'barcode', 'upc' => 'barcode', 'code_barre' => 'barcode', 'vat_rate' => 'tva_tx', 'vat' => 'tva_tx', 'selling_price' => 'price', 'price_ht' => 'price', 'tosell' => 'status', 'on_sale' => 'status', 'tobuy' => 'status_buy', 'on_purchase' => 'status_buy', 'tobatch' => 'status_batch', 'batch' => 'status_batch', 'lot' => 'status_batch', 'fk_unit' => 'unit', 'warehouse' => 'default_warehouse', 'fk_default_warehouse' => 'default_warehouse');
+		foreach ($aliases as $from => $to) {
+			if (isset($args[$from]) && !isset($args[$to]) && !is_array($args[$from])) {
+				$args[$to] = $args[$from];
+			}
+			unset($args[$from]);
+		}
+		foreach (array('price', 'weight', 'tva_tx') as $num) {
+			// A VAT rate given with its code ("20 (XYZ)") is left as it is.
+			$raw = $args[$num] ?? '';
+			if (is_scalar($raw) && (string) $raw !== '' && strpos((string) $raw, '(') === false) {
+				$args[$num] = (float) price2num(trim(str_replace('%', '', (string) $raw)));
+			}
+		}
+		foreach (array('status', 'status_buy') as $flag) {
+			if (isset($args[$flag]) && is_scalar($args[$flag]) && (string) $args[$flag] !== '') {
+				$args[$flag] = empty($args[$flag]) ? 0 : 1;
+			}
+		}
+
+		// A reference or a barcode another product has: core would refuse it once the
+		// user has approved. Said now, with the product, which is often the one wanted.
+		foreach (array('ref' => 'AIWriteProductRefExists', 'barcode' => 'AIWriteBarcodeExists') as $field => $key) {
+			$value = trim((string) (is_scalar($args[$field] ?? '') ? ($args[$field] ?? '') : ''));
+			if ($value === '' || !$this->db) {
+				continue;
+			}
+			$sql = "SELECT rowid, ref, label FROM ".$this->db->prefix()."product";
+			$sql .= " WHERE entity IN (".getEntity('product').") AND ".$this->db->sanitize($field)." = '".$this->db->escape($value)."'";
+			$sql .= " LIMIT 1";
+			$resql = $this->db->query($sql);
+			$obj = $resql ? $this->db->fetch_object($resql) : null;
+			if ($obj) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv($key, $value, ((string) $obj->ref).' - '.((string) $obj->label));
+			}
+		}
+		if (trim((string) ($args['barcode'] ?? '')) !== '' && empty($args['fk_barcode_type']) && getDolGlobalInt('PRODUIT_DEFAULT_BARCODE_TYPE') > 0) {
+			$args['fk_barcode_type'] = getDolGlobalInt('PRODUIT_DEFAULT_BARCODE_TYPE');
+		}
+
+		if (isset($args['status_batch']) && is_scalar($args['status_batch']) && (string) $args['status_batch'] !== '') {
+			$words = array('none' => 0, 'no' => 0, 'lot' => 1, 'batch' => 1, 'serial' => 2, 'serial number' => 2);
+			$said = dol_strtolower(trim((string) $args['status_batch']));
+			$tracking = isset($words[$said]) ? $words[$said] : (int) $said;
+			if ($tracking > 0 && !isModEnabled('productbatch')) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteLotTrackingOff');
+			}
+			$args['status_batch'] = in_array($tracking, array(0, 1, 2), true) ? $tracking : 0;
+		} else {
+			unset($args['status_batch']);
+		}
+		if (isset($args['unit']) && is_scalar($args['unit']) && trim((string) $args['unit']) !== '') {
+			$said = trim((string) $args['unit']);
+			$unit = ctype_digit($said) ? (int) $said : $this->unitIdFromName($said);
+			if ($unit > 0) {
+				$args['unit'] = $unit;
+				$args['_label_unit'] = $this->unitLabel($unit);
+			} else {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteUnknownUnit', $said);
+				unset($args['unit']);
+			}
+		} else {
+			unset($args['unit']);
+		}
+		if (isset($args['default_warehouse']) && is_scalar($args['default_warehouse']) && trim((string) $args['default_warehouse']) !== '') {
+			$warehouse = $this->resolveWarehouse((string) $args['default_warehouse']);	// says itself when none or several fit
+			if ($warehouse > 0) {
+				$args['default_warehouse'] = $warehouse;
+				$args['_label_default_warehouse'] = $this->warehouseLabel($warehouse);
+			} else {
+				unset($args['default_warehouse']);
+			}
+		} else {
+			unset($args['default_warehouse']);
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Supplier from the words of the user: its rowid, its exact name or code, or
+	 * words that fit one third party only. It must be flagged as a supplier.
+	 *
+	 * @param  mixed $value What was said.
+	 * @return int          Rowid, 0 when none fits (the reason is in writeProblems).
+	 */
+	private function resolveSupplierId($value)
+	{
+		global $langs, $user;
+
+		$langs->load('other');
+		$said = is_scalar($value) ? trim((string) $value) : '';
+		if ($said === '' || !$this->db) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteMissingField', 'supplier');
+			return 0;
+		}
+		$id = 0;
+		if (ctype_digit($said)) {
+			$id = (int) $said;
+		} else {
+			$sql = "SELECT rowid FROM ".$this->db->prefix()."societe";
+			$sql .= " WHERE entity IN (".getEntity('societe').")";
+			$sql .= " AND (nom = '".$this->db->escape($said)."' OR code_fournisseur = '".$this->db->escape($said)."')";
+			$sql .= " LIMIT 2";
+			$resql = $this->db->query($sql);
+			$obj = ($resql && $this->db->num_rows($resql) === 1) ? $this->db->fetch_object($resql) : null;
+			if ($obj) {
+				$id = (int) $obj->rowid;
+			} else {
+				require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
+				$found = aiFindThirdpartiesInText($this->db, $user, $said);
+				if (count($found) === 1 && $found[0]['start'] === 0 && $found[0]['end'] === strlen($said) && count($found[0]['candidates']) === 1) {
+					$id = (int) key($found[0]['candidates']);
+				}
+			}
+		}
+		$soc = ($id > 0) ? $this->fetchRecord('Societe', $id) : null;
+		if (!($soc instanceof Societe) || !$this->userCanReach('Societe', $id)) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteThirdpartyNotFound', $said);
+			return 0;
+		}
+		if (empty($soc->fournisseur)) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteNotASupplier', (string) $soc->name);
+			return 0;
+		}
+
+		return $id;
+	}
+
+	/**
+	 * What a supplier charges for a product: the positional arguments of the REST
+	 * method, the supplier by its rowid, the VAT rate of a purchase from it when
+	 * none is said.
+	 *
+	 * @param  array<string,mixed> $args Arguments as received.
+	 * @param  array<string,mixed> $out  Arguments so far: the product by its rowid.
+	 * @return array<string,mixed>       Arguments for the REST method, and the supplier name for the sentence.
+	 */
+	private function normaliseSupplierPrice(array $args, array $out)
+	{
+		global $conf, $langs;
+
+		$langs->load('other');
+		$aliases = array('supplier_ref' => 'ref_fourn', 'ref_supplier' => 'ref_fourn', 'reference' => 'ref_fourn', 'price' => 'buyprice', 'buy_price' => 'buyprice', 'purchase_price' => 'buyprice', 'cost_price' => 'buyprice', 'unit_price' => 'buyprice', 'quantity' => 'qty', 'min_qty' => 'qty', 'vat_rate' => 'tva_tx', 'socid' => 'supplier', 'fourn_id' => 'supplier', 'thirdparty' => 'supplier', 'delivery_days' => 'delivery_time_days', 'description' => 'desc_fourn');
+		foreach ($aliases as $from => $to) {
+			if (isset($args[$from]) && !isset($args[$to]) && !is_array($args[$from])) {
+				$args[$to] = $args[$from];
+			}
+		}
+		$product = $this->writeTarget;
+		$supplier = $this->resolveSupplierId($args['supplier'] ?? '');
+		$soc = ($supplier > 0) ? $this->fetchRecord('Societe', $supplier) : null;
+		$out['fourn_id'] = $supplier;
+		$out['_supplier'] = ($soc instanceof Societe) ? (string) $soc->name : '';
+		$out['ref_fourn'] = is_scalar($args['ref_fourn'] ?? '') ? trim((string) ($args['ref_fourn'] ?? '')) : '';
+		$qty = $args['qty'] ?? '';
+		$out['qty'] = (is_scalar($qty) && (string) $qty !== '') ? (float) price2num((string) $qty) : 1.0;
+		$price = $args['buyprice'] ?? '';
+		$out['buyprice'] = (is_scalar($price) && (string) $price !== '') ? (float) price2num((string) $price) : -1.0;
+		$out['price_base_type'] = 'HT';
+		$out['availability'] = 0;
+		if (isModEnabled('multicurrency')) {
+			// With several currencies core derives the price from the amount in currency, and stores
+			// zero when none is given: the amount is said in the currency of the company, at rate 1.
+			$out['multicurrency_buyprice'] = max(0.0, $out['buyprice']);
+			$out['multicurrency_price_base_type'] = 'HT';
+			$out['multicurrency_tx'] = 1;
+			$out['multicurrency_code'] = (string) $conf->currency;
+		}
+		$vat = $args['tva_tx'] ?? '';
+		if (is_scalar($vat) && trim((string) $vat) !== '') {
+			$out['tva_tx'] = (float) price2num(trim(str_replace('%', '', (string) $vat)));
+		} else {
+			$out['tva_tx'] = ($product && $supplier > 0) ? $this->defaultVatRate($supplier, (int) $product->id, true) : 0.0;
+		}
+		if (isset($args['delivery_time_days']) && is_numeric($args['delivery_time_days'])) {
+			$out['delivery_time_days'] = (int) $args['delivery_time_days'];
+		}
+		if (isset($args['desc_fourn']) && is_string($args['desc_fourn'])) {
+			$out['desc_fourn'] = $args['desc_fourn'];
+		}
+
+		// What the price cannot go without, asked before the confirmation.
+		if ($supplier > 0 && $out['ref_fourn'] === '') {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteMissingField', 'ref_fourn');
+		}
+		if ($supplier > 0 && $out['buyprice'] < 0) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteMissingField', 'buyprice');
+		}
+		if ($out['qty'] <= 0) {
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteLineQtyZero');
+		}
+		// The same reference of this supplier on another product: core refuses it, and
+		// that product is usually the one the document meant.
+		if ($supplier > 0 && $out['ref_fourn'] !== '' && $product && $this->db) {
+			$sql = "SELECT p.ref, p.label FROM ".$this->db->prefix()."product_fournisseur_price as pfp, ".$this->db->prefix()."product as p";
+			$sql .= " WHERE p.rowid = pfp.fk_product AND pfp.fk_soc = ".((int) $supplier);
+			$sql .= " AND pfp.ref_fourn = '".$this->db->escape($out['ref_fourn'])."' AND pfp.fk_product <> ".((int) $product->id);
+			$sql .= " AND pfp.entity IN (".getEntity('productsupplierprice').")";
+			$sql .= " LIMIT 1";
+			$resql = $this->db->query($sql);
+			$obj = $resql ? $this->db->fetch_object($resql) : null;
+			if ($obj) {
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteSupplierRefTaken', $out['_supplier'], $out['ref_fourn'], ((string) $obj->ref).' - '.((string) $obj->label));
+			}
+		}
+
+		return $out;
+	}
+
+	/**
 	 * Arguments of a create that names a project, or gives dates or hours.
 	 *
 	 * @param  array<string,mixed> $args  Arguments, third party already resolved.
@@ -6572,6 +7133,12 @@ class ToolApiBridge extends McpTool
 	{
 		global $langs;
 
+		if (!empty($write['party_create'])) {
+			$args = $this->normaliseThirdpartyCreate($args);
+		}
+		if (!empty($write['product_create'])) {
+			$args = $this->normaliseProductCreate($args);
+		}
 		if (!empty($write['project'])) {
 			$field = (string) $write['project'];
 			$given = $args[$field] ?? ($args['project'] ?? '');
@@ -7038,6 +7605,13 @@ class ToolApiBridge extends McpTool
 		$what = $obj ? $this->describeRecord($obj) : (string) ($args[$write['target'] ?? 'id'] ?? '');
 		$kind = (string) $write['kind'];
 
+		// A status change saying which way it goes (signed or refused).
+		foreach ((array) ($write['preview_by'] ?? array()) as $name => $keys) {
+			if (isset($args[$name]) && !is_array($args[$name]) && isset($keys[(int) $args[$name]])) {
+				$write['preview'] = $keys[(int) $args[$name]];
+			}
+		}
+
 		if (!empty($write['supplier_workflow'])) {
 			if ($write['supplier_workflow'] === 'makeOrder') {
 				return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, dol_print_date($args['date'], 'dayhour', 'tzuser'), $args['_method_label'], $args['comment']));
@@ -7089,6 +7663,14 @@ class ToolApiBridge extends McpTool
 			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], price((float) ($args['_amount'] ?? 0)), $what, $how));
 		}
 
+		// A supplier price: who sells it, under which reference, how much and from which quantity.
+		if (!empty($write['supplier_price'])) {
+			// Five values at most in a translated sentence: the quantity and the VAT rate make one.
+			$terms = $langs->transnoentitiesnoconv('AIPreviewSupplierPriceTerms', (string) ((float) ($args['qty'] ?? 1)), (string) ((float) ($args['tva_tx'] ?? 0)));
+
+			return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what, (string) ($args['_supplier'] ?? ''), (string) ($args['ref_fourn'] ?? ''), price((float) ($args['buyprice'] ?? 0)), $terms));
+		}
+
 		// Other actions: who the record goes to, or the other way to end it.
 		if (array_key_exists('fk_user_assign', $args) && !empty($write['preview_unassign'])) {
 			if ((int) $args['fk_user_assign'] <= 0) {
@@ -7108,6 +7690,10 @@ class ToolApiBridge extends McpTool
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$wh = new Entrepot($this->db);
 			if ($wh->fetch((int) $args['idwarehouse']) > 0) {
+				if (!empty($write['stock_back'])) {
+					// Back to draft: the stock the validation took goes back.
+					return dol_escape_htmltag($langs->transnoentitiesnoconv($write['preview'], $what).' '.$langs->transnoentitiesnoconv('AIPreviewStockBackTo', (string) $wh->ref));
+				}
 				$what .= ', '.$langs->transnoentitiesnoconv('AIPreviewStockFrom', (string) $wh->ref);
 			}
 		}
@@ -7273,7 +7859,7 @@ class ToolApiBridge extends McpTool
 				}
 			}
 
-			return '';
+			return $this->precheckStatusChange($write, $obj, $args);
 		}
 		if ($kind === 'line') {
 			if ((int) $obj->status !== 0) {
@@ -7333,6 +7919,94 @@ class ToolApiBridge extends McpTool
 		$meta = $this->methodMetaFor($toolName);
 
 		return isset($meta['write']) ? $meta['write'] : array();
+	}
+
+	/**
+	 * The conditions besides its status that the card puts on the button of a
+	 * status change, as listed in the 'card' of the write.
+	 *
+	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
+	 * @param  CommonObject        $obj   The document.
+	 * @param  array<string,mixed> $args  Normalised arguments.
+	 * @return string                     Why the status cannot change, or '' when it can.
+	 */
+	private function precheckStatusChange(array $write, $obj, array $args)
+	{
+		global $langs;
+
+		$label = (string) $write['label'];
+		$ref = (string) $obj->ref;
+		foreach ((array) ($write['card'] ?? array()) as $check) {
+			if ($check === 'close_status' && !in_array((int) ($args['status'] ?? 0), array(2, 3), true)) {
+				return $langs->transnoentitiesnoconv('AIWriteProposalCloseHow', $ref);
+			}
+			if ($check === 'proposal_invoice' && $obj instanceof Propal && getDolGlobalString('WORKFLOW_PROPAL_NEED_INVOICE_TO_BE_CLASSIFIED_BILLED')) {
+				$invoices = $obj->getInvoiceArrayList();
+				if (!is_array($invoices) || count($invoices) === 0) {
+					return $langs->transnoentitiesnoconv('AIWriteProposalNoInvoice', $ref);
+				}
+			}
+			if ($check === 'order_editable' && (int) $obj->status === 2 && !getDolGlobalString('EDIT_ORDER_SHIPMENT_ON_PROCESS')) {
+				return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, $ref);
+			}
+			if ($check === 'not_billed' && !empty($obj->billed)) {
+				return $langs->transnoentitiesnoconv('AIWriteStatusAlreadyBilled', $label, $ref);
+			}
+			if ($check === 'not_negative' && (float) $obj->total_ttc < 0) {
+				return $langs->transnoentitiesnoconv('AIWriteStatusNegativeTotal', $label, $ref);
+			}
+			if ($check === 'order_reopen' && !empty($obj->billed) && getDolGlobalInt('ORDER_DONT_REOPEN_BILLED')) {
+				return $langs->transnoentitiesnoconv('AIWriteOrderBilledNoReopen', $ref);
+			}
+			if (!$obj instanceof Facture) {
+				continue;
+			}
+			if ($check === 'invoice_editable') {
+				// The Modify button: not in accounting, no payment, last of its cycle, not replaced.
+				if ($obj->getVentilExportCompta() != 0) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceInAccounting', $ref);
+				}
+				if (!getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') && (price2num($obj->getRemainToPay(), 'MT') != price2num($obj->total_ttc, 'MT', 1) || !empty($obj->paye))) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceHasPayment', $ref);
+				}
+				if (!$obj->is_last_in_cycle()) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceNotLastInCycle', $ref);
+				}
+				if ($obj->getIdReplacingInvoice() > 0) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceReplaced', $ref);
+				}
+			}
+			if ($check === 'invoice_settled') {
+				// Nothing left to pay. A balance closed without its payment needs a reason, on the card.
+				$remain = (float) price2num($obj->getRemainToPay(), 'MT');
+				if (!empty($obj->paye) || ((int) $obj->type === Facture::TYPE_DEPOSIT && (float) $obj->total_ttc <= 0)) {
+					return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, $ref);
+				}
+				if ($remain != 0) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceRemainToPay', $ref, price($remain));
+				}
+			}
+			if ($check === 'invoice_reopen') {
+				if ((int) $obj->status === 1 && empty($obj->paye)) {
+					return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, $ref);
+				}
+				if ((string) $obj->close_code === Facture::CLOSECODE_REPLACED && $obj->getIdReplacingInvoice() > 0) {
+					return $langs->transnoentitiesnoconv('AIWriteInvoiceReplaced', $ref);
+				}
+				if (in_array((int) $obj->type, array(Facture::TYPE_CREDIT_NOTE, Facture::TYPE_DEPOSIT, Facture::TYPE_SITUATION), true)) {
+					// Turned into a discount: reopening it would count the money twice.
+					require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+					$discount = new DiscountAbsolute($this->db);
+					if ($discount->fetch(0, (int) $obj->id) > 0) {
+						return $langs->transnoentitiesnoconv('AIWriteInvoiceDiscountUsed', $ref);
+					}
+				} elseif (!in_array((int) $obj->type, array(Facture::TYPE_STANDARD, Facture::TYPE_REPLACEMENT), true)) {
+					return $langs->transnoentitiesnoconv((string) $write['state_error'], $label, $ref);
+				}
+			}
+		}
+
+		return '';
 	}
 
 	/**
@@ -7648,7 +8322,9 @@ class ToolApiBridge extends McpTool
 		if (empty($this->routes[$name])) {
 			return ["error" => "Tool function '$name' not found."];
 		}
-		list($key, $method) = $this->routes[$name];
+		$tmparray = $this->routes[$name];
+		$key = $tmparray[0];
+		$method = $tmparray[1];
 		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);	// REST endpoint the tool group calls
 		$ep = $this->endpoints[$epkey];
 
@@ -7960,7 +8636,9 @@ class ToolApiBridge extends McpTool
 		if (empty($this->routes[$name])) {
 			return null;
 		}
-		list($key, $method) = $this->routes[$name];
+		$tmparray = $this->routes[$name];
+		$key = $tmparray[0];
+		$method = $tmparray[1];
 
 		return array(
 			'endpoint' => (string) $key,
@@ -7983,7 +8661,9 @@ class ToolApiBridge extends McpTool
 		if ($found === null) {
 			return '';
 		}
-		list($epkey, $method, $rm) = $found;
+		$epkey = $found[0];
+		$method = $found[1];
+		$rm = $found[2];
 		if (preg_match('/@url\s+(GET|POST|PUT|PATCH|DELETE)\s+(\S*)/i', (string) $rm->getDocComment(), $reg)) {
 			$path = trim($reg[2], '/');
 			return dol_strtoupper($reg[1]).' /'.$epkey.($path !== '' ? '/'.$path : '');
@@ -8061,7 +8741,9 @@ class ToolApiBridge extends McpTool
 		if (empty($this->routes[$name])) {
 			return null;
 		}
-		list($key, $method) = $this->routes[$name];
+		$tmparray = $this->routes[$name];
+		$key = $tmparray[0];
+		$method = $tmparray[1];
 		$epkey = (string) ($this->enrichments[$key]['endpoint'] ?? $key);
 		if (empty($this->endpoints[$epkey]) || !$this->resolveEndpointClass($epkey)) {
 			return null;

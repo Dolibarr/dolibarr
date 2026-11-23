@@ -159,9 +159,11 @@ class Interventions extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -169,7 +171,7 @@ class Interventions extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter AS t";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
-		$sql .= ' WHERE t.entity IN ('.getEntity('intervention').')';
+		$sql .= ' WHERE t.entity IN ('.getEntity('fichinter').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
@@ -256,7 +258,7 @@ class Interventions extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -311,7 +313,10 @@ class Interventions extends DolibarrApi
 	 * @phpstan-param	?array<string,string>	$request_data
 	 * @return			Object					Updated object
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Empty request body
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when retrieving or updating the intervention
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -328,6 +333,9 @@ class Interventions extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		if (!is_array($request_data) || empty($request_data)) {
+			throw new RestException(400, 'A non-empty object of intervention changes is required');
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {

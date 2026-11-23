@@ -105,7 +105,7 @@ $h++;
 
 // The custom reports tool is not available to external users, but external users can't access this page
 $head[$h][0] = DOL_URL_ROOT.'/bom/stats/index.php?tabfamily=bomstats';
-$head[$h][1] = $langs->trans("Custom");
+$head[$h][1] = $langs->trans("CustomReport");
 $head[$h][2] = 'customreports';
 $h++;
 

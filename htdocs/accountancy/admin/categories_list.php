@@ -32,6 +32,7 @@ require '../../main.inc.php';
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var Societe $mysoc
  * @var User $user
  */
 
@@ -81,6 +82,9 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_country_id = GETPOST('search_country_id', 'int');
+if (!GETPOSTISSET('search_country_id')) {
+	$search_country_id = $mysoc->country_id;	// Default filter on the country of the company
+}
 
 // Report filter (Multi report)
 $search_report = GETPOSTINT('search_report');
@@ -526,7 +530,7 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT')) {
 
 // Confirmation of the deletion of the line
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id.($search_country_id > 0 ? '&search_country_id='.$search_country_id : ''), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id.'&search_country_id='.($search_country_id > 0 ? $search_country_id : -1), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 // Complete search query with sorting criteria
@@ -567,6 +571,8 @@ $fieldlist = explode(',', $tabfield[$id]);
 $param = '&id='.$id;
 if ($search_country_id > 0) {
 	$param .= '&search_country_id='.urlencode((string) ($search_country_id));
+} else {
+	$param .= '&search_country_id=-1';	// To keep the "no country filter" choice instead of the default country
 }
 if (getDolGlobalInt('ACCOUNTING_ENABLE_MULTI_REPORT') && $search_report > 0) {
 	$param .= '&search_report='.urlencode((string) ($search_report));
@@ -647,6 +653,9 @@ if ($tabname[$id]) {
 		if ($fieldlist[$field] == 'category_type') {
 			$valuetoshow = $langs->trans("Calculated");
 		}
+		if ($fieldlist[$field] == 'position') {
+			$class = 'right';
+		}
 
 		if ($valuetoshow != '') {
 			print '<td class="'.$class.'">';
@@ -680,6 +689,7 @@ if ($tabname[$id]) {
 	}
 
 	$obj = new stdClass();
+	$obj->position = 0;	// Default value of position for a new group
 	// If data was already input, we define them in obj to populate input fields.
 	if (GETPOST('actionadd', 'alpha')) {
 		foreach ($fieldlist as $key => $val) {
@@ -866,6 +876,9 @@ if ($resql) {
 		if ($fieldlist[$field] == 'category_type') {
 			$valuetoshow = $langs->trans("Calculated");
 		}
+		if ($fieldlist[$field] == 'position') {
+			$class = 'right';
+		}
 		// Affiche nom du champ
 		if ($showfield) {
 			print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "", $sortfield, $sortorder, $class.' ');
@@ -983,6 +996,8 @@ if ($resql) {
 							$title = $valuetoshow;
 						} elseif ($fieldlist[$field] == 'region_id' || $fieldlist[$field] == 'country_id') {
 							$showfield = 0;
+						} elseif ($fieldlist[$field] == 'position') {
+							$class .= ' right';
 						}
 
 						// Show value for field
@@ -1101,7 +1116,7 @@ function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $
 		} elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
 			print '<td><input type="text" class="flat minwidth100" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'"></td>';
 		} else {
-			print '<td>';
+			print '<td'.($fieldlist[$field] == 'position' ? ' class="right"' : '').'>';
 			$class = '';
 			if (in_array($fieldlist[$field], array('code', 'formula'))) {
 				$class = 'maxwidth75';
@@ -1110,7 +1125,7 @@ function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $
 				$class = 'maxwidth150';
 			}
 			if ($fieldlist[$field] == 'position') {
-				$class = 'maxwidth50';
+				$class = 'maxwidth50 right';
 			}
 			print '<input type="text" class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'">';
 			print '</td>';

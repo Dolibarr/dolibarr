@@ -466,7 +466,7 @@ function noteLoadProjet()
 	$notemorehtmlref = function (Project $object, Form $form, string $action): string {
 		$morehtmlref = '<div class="refidno">';
 		// Title
-		$morehtmlref .= $object->title;
+		$morehtmlref .= '<span class="banner-object-name-alias">'.$object->title.'</span>';
 		// Thirdparty
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
@@ -2024,7 +2024,7 @@ function noteLoadMailing()
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
 	// Load translation files required by the page
-	$langs->loadLangs(array("mails", "mailing", "companies"));
+	$langs->loadLangs(array("mails", "companies"));
 
 	// Get parameters
 	$id = GETPOSTINT('id');
@@ -2051,7 +2051,7 @@ function noteLoadMailing()
 
 	// Security check
 	$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-	restrictedArea($user, $object->module, $object->id, $object->table_element, '', '', 'rowid', $isdraft);
+	restrictedArea($user, 'mailing', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 	$notemorehtmlref = function (Mailing $object, Form $form, string $action) use ($user): string {
 		$morehtmlref = '<div class="refidno">';
@@ -3537,7 +3537,7 @@ function noteLoadTriggerHistory()
 	require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_triggerhistory.lib.php';
 
 	// Load translation files required by the page
-	$langs->loadLangs(array("webhook@webhook", "companies", "admin"));
+	$langs->loadLangs(array("companies", "admin"));
 
 	// Get parameters
 	$id = GETPOSTINT('id');
