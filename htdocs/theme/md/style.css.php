@@ -5441,9 +5441,12 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre
 	border-bottom: 1px solid #aaa;
 }
 /* TODO Once the title line is moved under title search, make th border bottoms black and force to white when it's the first tr */
+/* Disabled: the title line is now under the search line, and it made a different border on th.liste_titre than on other th of the line */
+/*
 tr:first-child th.liste_titre, tr:first-child th.liste_titre_sel {
 	border-bottom: 1px solid #FFF ! important;
 }
+*/
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
 	font-family: <?php print $fontlist ?>;
