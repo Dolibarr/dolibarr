@@ -247,7 +247,8 @@ HTTP 200
 jsonpath "$" isCollection
 
 # Behavior pinned to 503 on members: unknown column parses fine but
-# produces invalid SQL. VERIFY: if categories whitelists columns, 400.
+# produces invalid SQL. VERIFY: if categories validates column names against
+# a known-columns list, this answers 400.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/categories?sqlfilters=(t.nosuchcolumn%3A%3D%3A%271%27)&limit=10
 HTTP 503
@@ -257,7 +258,7 @@ jsonpath "$.error" exists
 # Negative: sqlfilters with invalid syntax is rejected with 400 ("Bad syntax
 # of the search string" on members). Contrast: the unknown-column case above
 # still reaches the SQL engine (503), so syntax IS validated but column
-# names are not whitelisted.
+# names are not checked against a known-column list.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/categories?sqlfilters=(t.datec%20%3E%3A%20%272000-01-01%27)&limit=10
 HTTP 400
