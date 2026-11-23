@@ -4915,7 +4915,7 @@ table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:fi
 	background: var(--colorbacktitle1) !important;
 }
 table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type:not(:hover,.highlight) {
-	background: inherit;
+	/* background: inherit; */
 }
 table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type:not(:hover,.highlight) td {
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
