@@ -657,7 +657,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 					foreach ($data as $fk_product => $timespent_data) {
 						// Define qty per hour
 						$qtyhour = $timespent_data['timespent'] / 3600;
-						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY'));
 
 						// Set the unit price we want to sell the time, for this user
 						if (getDolGlobalInt('PROJECT_USE_REAL_COST_FOR_TIME_INVOICING')) {
@@ -765,7 +765,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 						} else {
 							$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Date") . ': ' . dol_print_date($object->timespent_date));
 						}
-						$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Duration") . ': ' . convertSecondToTime($object->timespent_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY));
+						$arrayoftasks[$object->timespent_id]['note'] = dol_concatdesc($arrayoftasks[$object->timespent_id]['note'], $langs->trans("Duration") . ': ' . convertSecondToTime($object->timespent_duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')));
 					}
 					$arrayoftasks[$object->timespent_id]['user'] = $object->timespent_fk_user;
 					$arrayoftasks[$object->timespent_id]['fk_product'] = $object->timespent_fk_product;
@@ -871,7 +871,7 @@ if ($action == 'confirm_generateinvoice' && $user->hasRight('facture', 'creer'))
 
 					foreach ($data as $fk_product => $timespent_data) {
 						$qtyhour = $timespent_data['timespent'] / 3600;
-						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY'));
 
 						// Add lines
 						$prodDurationHours = $prodDurationHoursBase;
@@ -1031,7 +1031,7 @@ if ($action == 'confirm_generateinter' && $user->hasRight('fichinter', 'creer'))
 				$ftask->fetch($value['id']);
 				// Define qty per hour
 				$qtyhour = $value['timespent'] / 3600;
-				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+				$qtyhourtext = convertSecondToTime($value['timespent'], 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY'));
 
 				// Add lines
 				$lineid = $tmpinter->addline($user, $tmpinter->id, $ftask->label . (!empty($value['note']) ? ' - ' . $value['note'] : ''), (int) $value['date'], $value['timespent']);
@@ -1144,7 +1144,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			$morehtmlref = '<div class="refidno">';
 			// Title
-			$morehtmlref .= $projectstatic->title;
+			$morehtmlref .= '<span class="banner-object-name-alias">'.$projectstatic->title.'</span>';
 			// Thirdparty
 			if (!empty($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 				$morehtmlref .= '<br>' . $projectstatic->thirdparty->getNomUrl(1, 'project');
@@ -1847,7 +1847,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$sql .= natural_search('t.note', $search_note);
 		}
 		if ($search_task_ref) {
-			$sql .= natural_search('pt.ref', $search_task_ref);
+			if (empty($arrayfields['t.element_label']['checked'])) {
+				// When task label column is not visible, search on task ref searches both ref and label
+				$sql .= natural_search(array('pt.ref', 'pt.label'), $search_task_ref);
+			} else {
+				$sql .= natural_search('pt.ref', $search_task_ref);
+			}
 		}
 		if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 			$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
@@ -2345,7 +2350,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$extrafieldsobjectprefix = 'ef.';
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 		// Hook fields
-		$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+		$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (!$conf->main_checkbox_left_column) {
@@ -2545,14 +2550,22 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Task ref
 			if (!empty($arrayfields['t.element_ref']['checked'])) {
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {   // Not a dedicated task
-					print '<td class="nowrap">';
+					print '<td class="nowrap'.(empty($arrayfields['t.element_label']['checked']) ? ' tdlineheightsmall' : '').'">';
 					if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						$formproject->selectTasks(-1, GETPOSTINT('taskid') ? GETPOSTINT('taskid') : $task_time->fk_element, 'taskid', 0, 0, '1', 1, 0, 0, 'maxwidth250', (string) $projectstatic->id, '');
 					} else {
 						$tasktmp->id = $task_time->fk_element;
 						$tasktmp->ref = $task_time->ref;
 						$tasktmp->label = $task_time->label;
-						print $tasktmp->getNomUrl(1, 'withproject', 'time');
+						if (empty($arrayfields['t.element_label']['checked'])) {
+							// When task label column is not visible, show the label under the ref
+							print '<div class="tdoverflowmax250 inline-block lineheightsmall">';
+							print $tasktmp->getNomUrl(1, 'withproject', 'time');
+							print '<br><span class="spantitle">'.dolPrintHTML($task_time->label).'</span>';
+							print '</div>';
+						} else {
+							print $tasktmp->getNomUrl(1, 'withproject', 'time');
+						}
 					}
 					print '</td>';
 					if (!$i) {

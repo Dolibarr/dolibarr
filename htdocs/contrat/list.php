@@ -1323,6 +1323,7 @@ $typenArray = array();
 $cacheCountryIDCode = array();
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 $showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1508,7 +1509,11 @@ while ($i < $imaxinloop) {
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($socstatic->country).'">';
-			print dol_escape_htmltag($socstatic->country);
+			if (!empty($socstatic->country_code) && !$showcountrylabelinlist) {
+				print picto_from_langcode($socstatic->country_code, 'title="'.dolPrintHTMLForAttribute($socstatic->country).'"', 1);
+			} else {
+				print dolPrintHTML($socstatic->country);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

@@ -306,10 +306,18 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+// Load the user setup of visible columns into $arrayfields (needed to build the search filters)
+Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);
+
 $morewherefilterarray = array();
 
 if (!empty($search_taskref)) {
-	$morewherefilterarray[] = natural_search('t.ref', $search_taskref, 0, 1);
+	if (empty($arrayfields['t.label']['checked'])) {
+		// When task label column is not visible, search on task ref searches both ref and label
+		$morewherefilterarray[] = natural_search(array('t.ref', 't.label'), $search_taskref, 0, 1);
+	} else {
+		$morewherefilterarray[] = natural_search('t.ref', $search_taskref, 0, 1);
+	}
 }
 
 if (!empty($search_tasklabel)) {
@@ -659,7 +667,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Title
-	$morehtmlref .= $object->title;
+	$morehtmlref .= '<span class="banner-object-name-alias">'.$object->title.'</span>';
 	// Thirdparty
 	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');

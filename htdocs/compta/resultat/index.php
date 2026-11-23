@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'accountancy', 'salaries'));
+$langs->loadLangs(array('compta', 'bills', 'donations', 'accountancy', 'salaries'));
 
 $date_startday = GETPOSTINT('date_startday');
 $date_startmonth = GETPOSTINT('date_startmonth');
@@ -1070,7 +1070,7 @@ print '</tr>';
 
 
 // Loop on each month
-$nb_mois_decalage = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START - 1) : 0;
+$nb_mois_decalage = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') - 1) : 0;
 for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 	$mois_modulo = $mois;
 	if ($mois > 12) {

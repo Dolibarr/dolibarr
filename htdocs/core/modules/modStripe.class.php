@@ -75,6 +75,7 @@ class modStripe extends DolibarrModules
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(5, 0); // Minimum version of Dolibarr required by module
+		$this->need_setup = 1; // The module can't work without a setup of the Stripe API keys
 		$this->langfiles = array("stripe");
 
 		// Constants
@@ -130,7 +131,7 @@ class modStripe extends DolibarrModules
 			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
 			'type' => 'left',
 			'titre' => 'StripeChargeList',
-			'url' => '/stripe/charge.php',
+			'url' => '/stripe/charge.php?leftmenu=stripe',
 			'langs' => 'stripe',
 			'position' => 102,
 			'enabled' => 'isModEnabled("stripe") && isModEnabled("bank") && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 1',
@@ -144,7 +145,7 @@ class modStripe extends DolibarrModules
 			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
 			'type' => 'left',
 			'titre' => 'StripeTransactionList',
-			'url' => '/stripe/transaction.php',
+			'url' => '/stripe/transaction.php?leftmenu=stripe',
 			'langs' => 'stripe',
 			'position' => 102,
 			'enabled' => 'isModEnabled("stripe") && isModEnabled("bank") && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 2',
@@ -158,7 +159,7 @@ class modStripe extends DolibarrModules
 			'fk_menu' => 'fk_mainmenu=bank,fk_leftmenu=stripe',
 			'type' => 'left',
 			'titre' => 'StripePayoutList',
-			'url' => '/stripe/payout.php',
+			'url' => '/stripe/payout.php?leftmenu=stripe',
 			'langs' => 'stripe',
 			'position' => 103,
 			'enabled' => 'isModEnabled("stripe") && isModEnabled("bank")',
