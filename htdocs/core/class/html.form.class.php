@@ -9525,7 +9525,7 @@ class Form
 			}
 
 			$urloption = '';
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/ticket/ajax/tickets.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/ticket/ajax/tickets.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 1, $ajaxoptions);
 
 			if (empty($hidelabel)) {
 				$out .= $langs->trans("RefOrLabel") . ' : ';
@@ -9751,7 +9751,7 @@ class Form
 			}
 
 			$urloption = '';
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/projet/ajax/projects.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/projet/ajax/projects.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 1, $ajaxoptions);
 
 			if (empty($hidelabel)) {
 				$out .= $langs->trans("RefOrLabel") . ' : ';
@@ -9984,7 +9984,7 @@ class Form
 
 			$urloption = '';
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/adherents/ajax/adherents.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/adherents/ajax/adherents.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 1, $ajaxoptions);
 
 			if (empty($hidelabel)) {
 				$out .= $langs->trans("RefOrLabel") . ' : ';

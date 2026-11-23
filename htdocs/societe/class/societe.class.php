@@ -3370,31 +3370,31 @@ class Societe extends CommonObject
 		} elseif (!empty($this->country_code)) {
 			$datas['address'] = '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
 		}
-		if (!empty($this->tva_intra) || (getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP') && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'vatnumber') !== false)) {
+		if (!empty($this->tva_intra) || (getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP') && strpos(getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP'), 'vatnumber') !== false)) {
 			$datas['vatintra'] = '<br><b>'.$langs->trans('VATIntra').':</b> '.dol_escape_htmltag($this->tva_intra);
 		}
 
-		if (!empty($this->euid) || (getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP') && strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'euid') !== false)) {
+		if (!empty($this->euid) || (getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP') && strpos(getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP'), 'euid') !== false)) {
 			$datas['euid'] = '<br><b>'.$langs->trans('EUIDShort').':</b> '.dol_escape_htmltag($this->euid);
 		}
 
 		if (getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP')) {
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid1') !== false && $langs->trans('ProfId1'.$this->country_code) != '-') {
+			if (strpos(getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP'), 'profid1') !== false && $langs->trans('ProfId1'.$this->country_code) != '-') {
 				$datas['profid1'] = '<br><b>'.$langs->trans('ProfId1'.$this->country_code).':</b> '.$this->idprof1;
 			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid2') !== false && $langs->trans('ProfId2'.$this->country_code) != '-') {
+			if (strpos(getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP'), 'profid2') !== false && $langs->trans('ProfId2'.$this->country_code) != '-') {
 				$datas['profid2'] = '<br><b>'.$langs->trans('ProfId2'.$this->country_code).':</b> '.$this->idprof2;
 			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid3') !== false && $langs->trans('ProfId3'.$this->country_code) != '-') {
+			if (strpos(getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP'), 'profid3') !== false && $langs->trans('ProfId3'.$this->country_code) != '-') {
 				$datas['profid3'] = '<br><b>'.$langs->trans('ProfId3'.$this->country_code).':</b> '.$this->idprof3;
 			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid4') !== false && $langs->trans('ProfId4'.$this->country_code) != '-') {
+			if (strpos(getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP'), 'profid4') !== false && $langs->trans('ProfId4'.$this->country_code) != '-') {
 				$datas['profid4'] = '<br><b>'.$langs->trans('ProfId4'.$this->country_code).':</b> '.$this->idprof4;
 			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid5') !== false && $langs->trans('ProfId5'.$this->country_code) != '-') {
+			if (strpos(getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP'), 'profid5') !== false && $langs->trans('ProfId5'.$this->country_code) != '-') {
 				$datas['profid5'] = '<br><b>'.$langs->trans('ProfId5'.$this->country_code).':</b> '.$this->idprof5;
 			}
-			if (strpos($conf->global->SOCIETE_SHOW_FIELD_IN_TOOLTIP, 'profid6') !== false && $langs->trans('ProfId6'.$this->country_code) != '-') {
+			if (strpos(getDolGlobalString('SOCIETE_SHOW_FIELD_IN_TOOLTIP'), 'profid6') !== false && $langs->trans('ProfId6'.$this->country_code) != '-') {
 				$datas['profid6'] = '<br><b>'.$langs->trans('ProfId6'.$this->country_code).':</b> '.$this->idprof6;
 			}
 		}
@@ -5121,8 +5121,8 @@ class Societe extends CommonObject
 		$this->tva_assuj = getDolGlobalInt('FACTURE_TVAOPTION');
 
 		// Define if company use local taxes
-		$this->localtax1_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on')) ? 1 : 0);
-		$this->localtax2_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on')) ? 1 : 0);
+		$this->localtax1_assuj = ((getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on') ? 1 : 0);
+		$this->localtax2_assuj = ((getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on') ? 1 : 0);
 
 		$this->termsofsale = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE');
 	}

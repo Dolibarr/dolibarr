@@ -65,7 +65,7 @@ $langs->load("main");
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 
-if (!isModEnabled('multicompany')) {
+if (!isModEnabled('multicompany') && $action) {
 	httponly_accessforbidden('No multicompany module enabled');
 }
 
@@ -107,8 +107,7 @@ $multicompanyList = '';
 
 $bookmarkList = '';
 if (!isModEnabled('multicompany')) {
-	$langs->load("admin");
-	$multicompanyList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
+	$multicompanyList .= '<br><div class="center opacitymedium">'.$langs->trans("FeatureNeedMulticompanyModuleInstalled").'</div>';
 	$multicompanyList .= '<br><br>';
 } elseif (!empty($user->entity) && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) { // Should not be accessible if the option to centralize users on the main entity is not activated
 	$langs->load("errors");

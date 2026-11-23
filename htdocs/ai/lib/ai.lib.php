@@ -2022,7 +2022,8 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$exactIds = array();
 			$firstIds = array();
 			foreach ($wordlists as $wl) {
-				list($id, $ws) = $wl;
+				$id = $wl[0];
+				$ws = $wl[1];
 				if (count($ws) < $len) {
 					continue;
 				}
@@ -2073,7 +2074,11 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$i++;
 			continue;
 		}
-		list($len, $ids, $key, $exact, $first) = $hit;
+		$len = $hit[0];
+		$ids = $hit[1];
+		$key = $hit[2];
+		$exact = $hit[3];
+		$first = $hit[4];
 		$start = $words[$i][1];
 		$end = $words[$i + $len - 1][2];
 		$cands = array();

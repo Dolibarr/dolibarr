@@ -23,27 +23,25 @@ Dolibarr has a large community ready to help you, free forums and [preferred par
 
 Dolibarr is released under the terms of the GNU General Public License as published by the Free Software Foundation; either Version 3 of the License, or (at your option) any later version (GPL-3+).
 
-See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) file for a full copy of the license.
-
-Other licenses apply for some included dependencies. See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) for a full list.
+See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) file for a full copy of the license. Other licenses apply for some included dependencies. See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) for a full list.
 
 
 ## INSTALLING
 
-There is a lot of different solutions to install Dolibarr.
+There are many different solutions to install Dolibarr.
 
-### Using packages 
+### On your own server: Using auto-installer packages 
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just a few clicks, you can use one of the packaged versions (see next chapter if you have IT knowledge):
 
 - [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
 - [DoliDeb for Debian, Ubuntu](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
 - DoliRpm for Red Hat, Fedora, openSUSE, Mandriva or Mageia
-- The Docker image (see chapter "Using Docker")
+- The Docker image (see chapter "Using a Docker image")
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
-### Using the generic step by step setup (recommended for IT users)
+### On your own server: Using the generic step-by-step setup (recommended for IT users)
 
 You can use any web server supporting PHP (Apache, Nginx, ...) and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version:
 
@@ -73,35 +71,30 @@ You can use any web server supporting PHP (Apache, Nginx, ...) and a supported d
 
 - Follow the installer instructions
 
-### Using Docker images
+### On your own server: Using a Docker image
 
 Dolibarr is also available as a [Docker image](https://hub.docker.com/r/dolibarr/dolibarr). Installation instructions are available [here](https://github.com/Dolibarr/dolibarr-docker).
 
-### Using Easypanel
+### On a SaaS offer: Using ready-to-use commercial offers (support, upgrades, backups provided)
 
-[Easypanel](https://easypanel.io) is a self-hosted Docker deployment platform, and Dolibarr has a one-click deployment template there.
+If you lack the time to install and maintain it yourself, consider exploring commercial 'ready-to-use' Cloud offerings. Keep in mind that this option comes with associated costs.
 
-[![Deploy on Easypanel][easypanel-btn]][easypanel-deploy]
+A list of official SaaS offers: https://saas.dolibarr.org
 
-[easypanel-btn]: https://easypanel.io/img/deploy-on-easypanel-40.svg
-[easypanel-deploy]: https://easypanel.io/templates/dolibarr
 
-### Using RepoCloud
+### On a third-party container deployer
 
-[![Deploy on RepoCloud][repocloud-btn]][repocloud-deploy]
-[![Deploy on Railway][railway-btn]][railway-deploy]
-[![Deploy on Elestio][elestio-btn]][elestio-deploy]
+The following providers can run the Dolibarr container for you. "Deploy on ..." opens a page to install Dolibarr, "Go to ..." opens an installation guide. Support
+on such providers can't be guraranteed.
 
-[repocloud-btn]: https://d16t0pc4846x52.cloudfront.net/deploylobe.svg
-[repocloud-deploy]: https://repocloud.io/details/Dolibarr/
-[railway-btn]: https://railway.com/button.svg
-[railway-deploy]: https://railway.com/deploy/dolibarr
-[elestio-btn]: https://elest.io/images/logos/deploy-to-elestio-btn.png
-[elestio-deploy]: https://elest.io/open-source/dolibarr
-
-### Using ready to use SaaS/Cloud offers
-
-If you lack the time to install it yourself, consider exploring commercial 'ready-to-use' Cloud offerings (refer to https://saas.dolibarr.org). Keep in mind that this third option comes with associated costs.
+| Provider | |
+| :---: | --- |
+| <img src="https://www.google.com/s2/favicons?domain=easypanel.io&sz=64" width="24" height="24" alt="Easypanel"> | <a href="https://easypanel.io/templates/dolibarr" rel="nofollow">Deploy on Easypanel</a> |
+| <img src="https://www.google.com/s2/favicons?domain=elest.io&sz=64" width="24" height="24" alt="Elestio"> | <a href="https://elest.io/open-source/dolibarr" rel="nofollow">Deploy on Elestio</a> |
+| <img src="https://www.google.com/s2/favicons?domain=podway.io&sz=64" width="24" height="24" alt="Podway"> | <a href="https://podway.io/start?app=dolibarr&amp;ref=docs-dolibarr" rel="nofollow">Deploy on Podway</a> |
+| <img src="https://www.google.com/s2/favicons?domain=railway.com&sz=64" width="24" height="24" alt="Railway"> | <a href="https://railway.com/deploy/dolibarr" rel="nofollow">Deploy on Railway</a> |
+| <img src="https://www.google.com/s2/favicons?domain=repocloud.io&sz=64" width="24" height="24" alt="RepoCloud"> | <a href="https://repocloud.io/details/Dolibarr/" rel="nofollow">Deploy on RepoCloud</a> |
+| <img src="https://www.google.com/s2/favicons?domain=simafri.com&sz=64" width="24" height="24" alt="Simafri"> | <a href="https://www.simafri.com/en/guides/self-host-dolibarr/" rel="nofollow">Go to Simafri guide</a> |
 
 
 ## UPGRADING

@@ -688,7 +688,12 @@ if ($search_id != '') {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
 if ($search_ref) {
-	$sql .= natural_search('p.ref', $search_ref);
+	// When the label column is not displayed, the label is shown under the ref, so we search into both
+	if (empty($arrayfields['p.title']['checked'])) {
+		$sql .= natural_search(array('p.ref', 'p.title'), $search_ref);
+	} else {
+		$sql .= natural_search('p.ref', $search_ref);
+	}
 }
 if ($search_label) {
 	$sql .= natural_search('p.title', $search_label);
@@ -1906,6 +1911,7 @@ $totalarray = array(
 	'val' => array()
 );
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -2182,10 +2188,15 @@ while ($i < $imaxinloop) {
 		}
 		// Project ref url
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax200">';
+			// When the label column is not displayed, we show the label under the ref
+			$showlabelunderref = (empty($arrayfields['p.title']['checked']) && (string) $obj->title !== '');
+			print '<td class="nowraponall tdoverflowmax200'.($showlabelunderref ? ' tdlineheightsmall' : '').'">';
 			print $object->getNomUrl(1, (!empty(GETPOSTINT('search_usage_event_organization')) ? 'eventorganization' : ''), 0, '', ' - ', 0, -1, '', '', 1);
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
+			}
+			if ($showlabelunderref) {
+				print '<div class="tdoverflowmax200 lineheightsmall" title="'.dolPrintHTMLForAttribute($obj->title).'"><span class="spantitle">'.dolPrintHTML($obj->title).'</span></div>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2285,7 +2296,11 @@ while ($i < $imaxinloop) {
 		// Country code
 		if (!empty($arrayfields['co.country_code']['checked'])) {
 			print '<td class="tdoverflowmax125 center">';
-			print $obj->country_code;
+			if ($showcountrylabelinlist) {
+				print dolPrintHTML($obj->country_code);
+			} elseif (!empty($obj->country_code)) {
+				print picto_from_langcode($obj->country_code, 'title="'.dolPrintHTMLForAttribute($langs->trans("Country".$obj->country_code)).'"', 1);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
