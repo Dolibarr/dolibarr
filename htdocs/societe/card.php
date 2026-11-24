@@ -2095,7 +2095,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							cookieState = !items.is(":visible");
 							document.cookie = "DOLUSER_MOREFIELDS_SHOW=" + (cookieState ? "true" : "false") + "; path=/; SameSite=Strict";
 						} else {
-							cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true"));
+							const cookie = document.cookie.split(";").map((item) => item.trim()).find((item) => item.startsWith("DOLUSER_MOREFIELDS_SHOW="));
+							cookieState = (cookie === undefined) ? '.(getDolGlobalInt('THIRDPARTY_SHOW_MORE_FIELDS_BY_DEFAULT') ? 'true' : 'false').' : (cookie === "DOLUSER_MOREFIELDS_SHOW=true");
 						}
 
 						if (cookieState) {
@@ -2995,7 +2996,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							cookieState = !items.is(":visible");
 							document.cookie = "DOLUSER_MOREFIELDS_SHOW=" + (cookieState ? "true" : "false") + "; path=/; SameSite=Strict";
 						} else {
-							cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_MOREFIELDS_SHOW=true"));
+							const cookie = document.cookie.split(";").map((item) => item.trim()).find((item) => item.startsWith("DOLUSER_MOREFIELDS_SHOW="));
+							cookieState = (cookie === undefined) ? '.(getDolGlobalInt('THIRDPARTY_SHOW_MORE_FIELDS_BY_DEFAULT') ? 'true' : 'false').' : (cookie === "DOLUSER_MOREFIELDS_SHOW=true");
 						}
 
 						if (cookieState) {
