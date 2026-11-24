@@ -917,7 +917,9 @@ while ($i < $imaxinloop) {
 				if ($key == 'statut') {
 					print $object->getLibStatut(5);
 				}
-				if ($key == 'phone') {
+				if ($key == 'rowid') {
+					print (int) $object->id;	// Not showOutputField() that returns nothing when the Technical ID is hidden by the object (MAIN_SHOW_TECHNICAL_ID off)
+				} elseif ($key == 'phone') {
 					print dol_print_phone($object->phone, '', 0, $object->id, 'AC_TEL');
 				} elseif ($key == 'fax') {
 					print dol_print_phone($object->fax, '', 0, $object->id, 'AC_FAX');
