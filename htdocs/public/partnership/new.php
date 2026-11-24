@@ -277,35 +277,54 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$errmsg = $langs->trans("TwoRecordsOfCompanyName");
 		} else {
 			$partnership->fk_soc = $company->id;
-			// update thirdparty fields
-			if (empty($company->address)) {
-				$company->address = GETPOST('address');
-			}
-			if (empty($company->zip)) {
-				$company->zip = GETPOST('zipcode');
-			}
-			if (empty($company->town)) {
-				$company->town = GETPOST('town');
-			}
-			if (empty($company->country_id)) {
-				$company->country_id = GETPOSTINT('country_id');
-			}
-			if (empty($company->email)) {
-				$company->email = GETPOST('email');
-			}
-			if (empty($company->url)) {
-				$company->url = GETPOST('url');
-			}
-			if (empty($company->state_id)) {
-				$company->state_id = GETPOSTINT('state_id');
-			}
-			if (empty($company->name_alias)) {
-				$company->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
-			}
 
-			$res = $company->update(0, $user);
-			if ($res < 0) {
-				setEventMessages($company->error, $company->errors, 'errors');
+			// Existing thirdparty found: we do not update its record from this anonymous form.
+			// Visitor is not authenticated and we have no proof he belongs to this thirdparty,
+			// so we keep the submitted data into the partnership private note, a user will
+			// be able to record it manually if the information is confirmed.
+			$infolines = '';
+			if (GETPOST('email')) {
+				$infolines .= $langs->transnoentitiesnoconv("Email").' : '.GETPOST('email')."\n";
+			}
+			if (GETPOST('url')) {
+				$infolines .= $langs->transnoentitiesnoconv("Url").' : '.GETPOST('url')."\n";
+			}
+			if (GETPOST('address')) {
+				$infolines .= $langs->transnoentitiesnoconv("Address").' : '.GETPOST('address')."\n";
+			}
+			if (GETPOST('zipcode')) {
+				$infolines .= $langs->transnoentitiesnoconv("Zip").' : '.GETPOST('zipcode')."\n";
+			}
+			if (GETPOST('town')) {
+				$infolines .= $langs->transnoentitiesnoconv("Town").' : '.GETPOST('town')."\n";
+			}
+			if (GETPOSTINT('country_id') > 0) {
+				$infolines .= $langs->transnoentitiesnoconv("Country").' : '.getCountry(GETPOSTINT('country_id'), '', $db, $langs, 0)."\n";
+			}
+			if (GETPOSTINT('state_id') > 0) {
+				$infolines .= $langs->transnoentitiesnoconv("State").' : '.getState(GETPOSTINT('state_id'), '2', $db, 0, $langs, 0)."\n";
+			}
+			if (GETPOST('firstname') || GETPOST('lastname')) {
+				$infolines .= $langs->transnoentitiesnoconv("Name").' : '.dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'))."\n";
+			}
+			if ($infolines) {
+				$tagdaydate = dol_print_date(dol_now(), '%Y%m%d', 'tzserver');
+				$tagstart = '--- '.$tagdaydate.' info sent from partnership public page ---';
+				$tagend = '--- '.$tagdaydate.' info end ---';
+				$section = $tagstart."\n".rtrim($infolines)."\n".$tagend;
+
+				// If a section for the same day is already into the note, we replace it
+				// instead of adding a new one, to avoid duplicated content when the
+				// form is submitted several times during the same day.
+				$pattern = '/'.preg_quote($tagstart, '/').'.*?'.preg_quote($tagend, '/').'/s';
+				if (!empty($partnership->note_private) && preg_match($pattern, $partnership->note_private)) {
+					$newnote = preg_replace($pattern, $section, $partnership->note_private);
+					if (is_string($newnote)) {
+						$partnership->note_private = $newnote;
+					}
+				} else {
+					$partnership->note_private = dol_concatdesc($partnership->note_private, $section);
+				}
 			}
 		}
 
