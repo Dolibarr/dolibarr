@@ -315,7 +315,8 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			break;
 	}
 
-	if ($img === null) {
+	// The GD loaders return false (not null) on a file they cannot read (truncated or corrupted)
+	if ($img === null || $img === false) {
 		return "Error: Could not create Image from '$filetoread'";
 	}
 
@@ -447,6 +448,10 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 			$orientation = $exif['Orientation'];
 			if ($orientation != 1) {
 				$img = imagecreatefromjpeg($fileSource);
+				// The GD loaders return false on a file they cannot read (truncated or corrupted)
+				if ($img === false) {
+					return false;
+				}
 				$deg = 0;
 				switch ($orientation) {
 					case 3:
