@@ -77,7 +77,9 @@ and uses `skill-doli-code-review` for the code review.
    When **m)** or **r)** is not proposed, keep the same letters (a, n) so that a letter always
    means the same choice. There is no Stop choice: when the user asks to stop, go back to the
    initial branch if needed and give a short summary of the session (PRs processed and actions done).
-4. If **a)**, run the "Process a PR" procedure below, then go back to step 3 with the next PR.
+4. If **a)**, run the "Process a PR" procedure below. At its end, after the verdict, do not move
+   to the next PR on your own: propose again the choices for the same PR, **m) Merge** (only if it
+   is still mergeable with the CI OK) and **n) Next one**, and wait for the user's answer.
 5. When the list is empty, say so and stop.
 
 
@@ -111,12 +113,12 @@ run the action **Update branch** (no confirmation).
     `curl -s https://api.travis-ci.com/v3/job/JOBID/log.txt`.
   - Tell apart: error introduced by the PR (to fix), error already existing on the base branch,
     infrastructure error (timeout, network). Fix only the errors introduced by the PR. For other
-    cases, report them to the user and go to the next PR.
+    cases, report them to the user.
   - Make the smallest fix possible, respecting the rules of `AGENTS.md`. Do not change the
     behaviour intended by the PR.
 - **Other failing checks** (e.g. `Check PR quota per user`, PR description check, pre-commit):
   report them to the user, propose the action **Comment** if the author must do something,
-  otherwise go to the next PR.
+  otherwise end the procedure.
 
 ### Case 3 - No CI error: review
 
@@ -144,7 +146,7 @@ run the action **Update branch** (no confirmation).
 5. Give the user a short verdict: OK / minor remarks / **serious problem**.
 6. If a **serious problem** is found (security vulnerability, blocking bug, data loss, regression,
    broken upgrade): run the action **Comment** to describe the problem.
-   For minor remarks, only report them to the user and go to the next PR.
+   For minor remarks, only report them to the user.
 
 
 ## Actions
