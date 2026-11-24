@@ -919,6 +919,24 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	// Remove the LEFT JOIN on a unique key (they do not change the number of records) when the alias is not used elsewhere (filters, hooks).
+	// Order matters: region must be tested before state because the join on region uses state.
+	$arrayofjoinsforcount = array(
+		'region' => " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)",
+		'state' => " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)",
+		'country' => " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)",
+		'typent' => " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)",
+		'staff' => " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)",
+		'st' => " LEFT JOIN ".MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id",
+		's2' => " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid",
+		'ef' => " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)",
+	);
+	foreach ($arrayofjoinsforcount as $aliasforcount => $sqljoinforcount) {
+		$sqltmpforcount = str_replace($sqljoinforcount, '', $sqlforcount);
+		if (!preg_match('/\b'.preg_quote($aliasforcount, '/').'\./', $sqltmpforcount)) {
+			$sqlforcount = $sqltmpforcount;
+		}
+	}
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -2350,7 +2368,7 @@ while ($i < $imaxinloop) {
 			$prospectid = $obj->rowid;
 			$statusprospect = $obj->stcomm_id;
 
-			$formcompany->selectProspectStatus('status_prospect', $prospectstatic, $statusprospect, $prospectid);
+			$formcompany->selectProspectStatus('status_prospect', $prospectstatic, $statusprospect, $prospectid, "htmlnojs");
 
 			print '</td>';
 			if (!$i) {
