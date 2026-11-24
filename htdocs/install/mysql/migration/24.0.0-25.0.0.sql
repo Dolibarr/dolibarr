@@ -601,6 +601,7 @@ ALTER TABLE llx_oauth_token ADD COLUMN passkey_aaguid varchar(36) NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_eligible smallint NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
 ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
+ALTER TABLE llx_oauth_token ADD INDEX idx_oauth_token_fk_user (fk_user);
 
 -- RF or national reference the supplier provides to accept payments
 ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
