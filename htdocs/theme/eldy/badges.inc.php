@@ -65,7 +65,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 .badge-thirdpartytype {
 	border-width: 1px;
-	border-color: darkmagenta;
+	border-color: #844c84;
+	color: #844c84;
 }
 .tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
 	font-size: 1.1em;

@@ -55,6 +55,8 @@ Environment variables:
   DOCKER_ALLOW_SMTP=1      Start the container without the block of the outbound SMTP ports.
   DOL_CTI_ADMIN_LOGIN      Login used by the Dolibarr PHPUnit REST API and login tests.
   DOL_CTI_ADMIN_PASSWORD   Password used by the Dolibarr PHPUnit REST API and login tests.
+  DOLISTORE_API_KEY        API key used to call the DoliStore API.
+  DOLISTORE_API_URL        URL of the DoliStore API.
 EOF
 }
 
@@ -314,9 +316,10 @@ fi
 # Pass the Dolibarr PHPUnit credentials to the container: the REST API tests
 # (test/phpunit/AbstractRestAPITest.php) and SecurityLoginTest.php use them to
 # log in with a dedicated account instead of the admin/admin default.
+# The DoliStore API key and URL are also passed, to call the DoliStore API from the container.
 # Nothing is added when the variables are not set on the host.
 TEST_ARGS=()
-for VAR in DOL_CTI_ADMIN_LOGIN DOL_CTI_ADMIN_PASSWORD; do
+for VAR in DOL_CTI_ADMIN_LOGIN DOL_CTI_ADMIN_PASSWORD DOLISTORE_API_KEY DOLISTORE_API_URL; do
     VAR_VALUE=$(printenv "$VAR" || true)
     if [ -n "$VAR_VALUE" ]; then
         TEST_ARGS+=(-e "$VAR=$VAR_VALUE")

@@ -400,7 +400,7 @@ print '<table id="dolpaymenttable" summary="Job position offer" class="center">'
 $text = '';
 if (getDolGlobalString('RECRUITMENT_NEWFORM_TEXT')) {
 	$reg = array();
-	if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) {
+	if (preg_match('/^\((.*)\)$/', getDolGlobalString('RECRUITMENT_NEWFORM_TEXT'), $reg)) {
 		$text .= $langs->trans($reg[1])."<br>\n";
 	} else {
 		$text .= getDolGlobalString('RECRUITMENT_NEWFORM_TEXT') . "<br>\n";

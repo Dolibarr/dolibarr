@@ -3291,7 +3291,9 @@ abstract class CommonObject
 			if ($this->db->query($sql)) {
 				$this->multicurrency_code = $code;
 
-				list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+				$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+				$fk_multicurrency = $tmparray[0];
+				$rate = $tmparray[1];
 				if ($rate) {
 					$this->setMulticurrencyRate($rate, 2);
 				}
@@ -6195,7 +6197,13 @@ abstract class CommonObject
 		$this->printObjectLineWithHooks($action, $line, $num, $i, $context['dateSelector'], $context['seller'], $context['buyer'], 0, $extrafields, '/core/tpl');
 		$out = ob_get_clean();
 
-		list($object, $form, $extrafields, $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins) = $savedGlobals;
+		$object = $savedGlobals[0];
+		$form = $savedGlobals[1];
+		$extrafields = $savedGlobals[2];
+		$forceall = $savedGlobals[3];
+		$senderissupplier = $savedGlobals[4];
+		$inputalsopricewithtax = $savedGlobals[5];
+		$usemargins = $savedGlobals[6];
 
 		return (string) $out;
 	}
@@ -7718,7 +7726,7 @@ abstract class CommonObject
 					$InfoFieldList = explode(":", $param_list[0]);
 					dol_include_once($InfoFieldList[1]);
 					if ($InfoFieldList[0] && class_exists($InfoFieldList[0])) {
-						if ($value == '-1') {	// -1 is key for no defined in combo list of objects
+						if (ExtraFields::isEmptyValue($value, 'link')) {	// -1 from a combo list, 0 from an autocomplete hidden input
 							$new_array_options[$key] = '';
 						} elseif ($value) {
 							$object = new $InfoFieldList[0]($this->db);
@@ -8071,7 +8079,7 @@ abstract class CommonObject
 			// Similar code than into insertExtraFields
 			if ($attributeRequired) {	// If attribute is "Mandatory", then it is also in database as "Not null", so we must check even if attribute is not 'enabled'.
 				$mandatorypb = false;
-				if ($attributeType == 'link' && $this->array_options["options_".$key] == '-1') {
+				if ($attributeType == 'link' && ExtraFields::isEmptyValue($this->array_options["options_".$key], 'link')) {
 					$mandatorypb = true;
 				}
 				if ($this->array_options["options_".$key] === '') {
@@ -8219,7 +8227,7 @@ abstract class CommonObject
 					}
 					break;
 				case 'link':
-					if ($this->array_options["options_".$key] === '') {
+					if (ExtraFields::isEmptyValue($this->array_options["options_".$key], 'link')) {
 						$new_array_options["options_".$key] = null;
 
 						$this->array_options["options_".$key] = $new_array_options["options_".$key];
@@ -8741,7 +8749,9 @@ abstract class CommonObject
 					continue;
 				}
 				if (strpos($valb, "|") !== false) {
-					list($valb, $parent) = explode('|', $valb);
+					$tmparray = explode('|', $valb);
+					$valb = $tmparray[0];
+					$parent = $tmparray[1];
 				}
 				$nbchoice++;
 				$tmpselect .= '<option value="'.$keyb.'"';
@@ -8828,7 +8838,9 @@ abstract class CommonObject
 					}
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$tmparray = explode('|', $InfoFieldList[3]);
+					$parentName = $tmparray[0];
+					$parentField = $tmparray[1];
 					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList .= ', main.'.$parentField;
 					} else {
@@ -9074,7 +9086,9 @@ abstract class CommonObject
 					}
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$tmparray = explode('|', $InfoFieldList[3]);
+					$parentName = $tmparray[0];
+					$parentField = $tmparray[1];
 					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList .= ', main.'.$parentField;
 					} else {
@@ -9268,7 +9282,9 @@ abstract class CommonObject
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
 					&& empty($val['disabled']) && empty($nonewbutton)) {	// and to avoid to show the button if the field is protected by a "disabled".
-					list($class, $classfile) = explode(':', $param_list[0]);
+					$tmparray = explode(':', $param_list[0]);
+					$class = $tmparray[0];
+					$classfile = $tmparray[1];
 					if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
 					} else {
@@ -9405,8 +9421,8 @@ abstract class CommonObject
 		if (isset($val['type']) && preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
 			$type = 'link';
 			$stringforoptions = $reg[1].':'.$reg[2];
-			// Special case: Force addition of getnomurlparam1 to -1 for users
-			if ($reg[1] == 'User') {
+			// Special case: Force addition of getnomurlparam1 to -1 for users and members (to show photo)
+			if ($reg[1] == 'User' || $reg[1] == 'Adherent') {
 				$stringforoptions .= ':#getnomurlparam1=-1';
 			}
 			$param['options'] = array($stringforoptions => $stringforoptions);
@@ -11043,7 +11059,7 @@ abstract class CommonObject
 
 		$buyPrice = 0;
 
-		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && getDolGlobalInt('ForceBuyingPriceIfNull') > 0)) {
+		if (($unitPrice > 0) && (getDolGlobalInt('ForceBuyingPriceIfNull') > 0)) {
 			// When ForceBuyingPriceIfNull is set
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
@@ -12199,6 +12215,8 @@ abstract class CommonObject
 		}
 		if (isset($objectline->fields['position'])) {
 			$sql .= $this->db->order('position', 'ASC');
+		} elseif (isset($objectline->fields['rang'])) {
+			$sql .= $this->db->order('rang', 'ASC');	// 'rang' is the position field used by line_up(), line_down() and line_max()
 		}
 
 		$resql = $this->db->query($sql);

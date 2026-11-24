@@ -774,18 +774,27 @@ class FormFile
 					$modellist = ModelePDFUserGroup::liste_modeles($this->db);
 				}
 			} else {
+				// For external modules, modulepart can also be 'myobject@mymodule'
+				$modulepartformodel = $modulepart;
+				$submodulepartformodel = $submodulepart;
+				$reg = array();
+				if (preg_match('/^(\w+)@(\w+)$/', $modulepart, $reg)) {
+					$modulepartformodel = $reg[2];
+					$submodulepartformodel = $reg[1];
+				}
+
 				// For normalized standard modules
-				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
+				$file = dol_buildpath('/core/modules/'.$modulepartformodel.'/modules_'.strtolower($submodulepartformodel).'.php', 0);
 
 				if (file_exists($file)) {
 					$res = include_once $file;
 				} else {
 					// For normalized external modules.
-					$file = dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
+					$file = dol_buildpath('/'.$modulepartformodel.'/core/modules/'.$modulepartformodel.'/modules_'.strtolower($submodulepartformodel).'.php', 0);
 					$res = include_once $file;
 				}
 
-				$class = 'ModelePDF'.ucfirst($submodulepart);
+				$class = 'ModelePDF'.ucfirst($submodulepartformodel);
 
 				if (class_exists($class)) {
 					$modellist = call_user_func($class.'::liste_modeles', $this->db);

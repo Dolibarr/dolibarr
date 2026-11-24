@@ -573,7 +573,14 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
 }
 //$sql .= ' MIN(pfp.unitprice) as bestpurchaseprice';
-$sql .= '(SELECT MIN(pfp.unitprice) FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE p.rowid = pfp.fk_product) as bestpurchaseprice';
+if (!empty($arrayfields['p.minbuyprice']['checked'])) {
+	$sql .= '(SELECT MIN(pfp.unitprice) FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE p.rowid = pfp.fk_product) as bestpurchaseprice';
+} else {
+	$sql .= 'NULL as bestpurchaseprice';	// Subquery is useless when column is not visible
+}
+if (getDolGlobalInt('MAIN_MULTILANGS')) {
+	$sql .= ', pl.label as label_translated';	// Table product_lang is already joined, so no need of a request per line
+}
 if (isModEnabled('variants')) {
 	$sql .= ', pac.rowid as prod_comb_id';
 	$sql .= ', pac.fk_product_parent';
@@ -1438,7 +1445,7 @@ if (!empty($arrayfields['p.customcode']['checked'])) {
 // Country
 if (!empty($arrayfields['p.fk_country']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $form->select_country($search_country, 'search_country', '', 0);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125');
 	print '</td>';
 }
 // State
@@ -1706,7 +1713,7 @@ if (!empty($arrayfields['p.customcode']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fk_country']['checked'])) {
-	print_liste_field_titre($arrayfields['p.fk_country']['label'], $_SERVER["PHP_SELF"], "p.fk_country", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.fk_country']['label'], $_SERVER["PHP_SELF"], "p.fk_country", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fk_state']['checked'])) {
@@ -1778,6 +1785,8 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
+$stockisvisible = ($mode == 'kanban' || !empty($arrayfields['p.stock']['checked']) || !empty($arrayfields['stock_virtual']['checked']));
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1786,18 +1795,9 @@ while ($i < $imaxinloop) {
 
 	// Multilangs
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {  // If multilang is enabled
-		$sql = "SELECT label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-		$sql .= " WHERE fk_product = ".((int) $obj->rowid);
-		$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
-		$sql .= " LIMIT 1";
-
-		$result = $db->query($sql);
-		if ($result) {
-			$objtp = $db->fetch_object($result);
-			if (!empty($objtp->label)) {
-				$obj->label = $objtp->label;
-			}
+		// Translated label is retrieved by the main request with the join on product_lang
+		if (!empty($obj->label_translated)) {
+			$obj->label = $obj->label_translated;
 		}
 	}
 
@@ -1847,8 +1847,8 @@ while ($i < $imaxinloop) {
 		}
 		$product_static->import_key = $obj->import_key;
 
-		// STOCK_DISABLE_OPTIM_LOAD can be set to force load_stock whatever is permissions on stock.
-		if ((isModEnabled('stock') && $user->hasRight('stock', 'lire') && $search_type != 1) || getDolGlobalString('STOCK_DISABLE_OPTIM_LOAD')) {	// To optimize call of load_stock
+		// STOCK_DISABLE_OPTIM_LOAD can be set to force load_stock whatever is permissions on stock or visible columns.
+		if ((isModEnabled('stock') && $user->hasRight('stock', 'lire') && $search_type != 1 && $stockisvisible) || getDolGlobalString('STOCK_DISABLE_OPTIM_LOAD')) {	// To optimize call of load_stock
 			if ($product_static->type != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {    // Not a service
 				$option = 'nobatch';
 				if (empty($arrayfields['stock_virtual']['checked'])) {
@@ -2004,7 +2004,9 @@ while ($i < $imaxinloop) {
 			print '<td class="left">';
 			// Since description can be very large (several pages of HTML-
 			// code) we limit to the first two rows
+			print '<div class="twolinesmax-normallineheight minwidth200onall maxwidth300 classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($product_static->description, 25)).'">';
 			print dolGetFirstLineOfText($product_static->description, 2);
+			print '</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2468,7 +2470,17 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['p.fk_country']['checked'])) {
-			print '<td>'.getCountry($obj->fk_country, '', $db).'</td>';
+			print '<td class="center">';
+			if (!isset($conf->cache['country'][(int) $obj->fk_country])) {	// Cache to avoid a request per line
+				$conf->cache['country'][(int) $obj->fk_country] = getCountry($obj->fk_country, 'all', $db);
+			}
+			$tmparray = $conf->cache['country'][(int) $obj->fk_country];
+			if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
+				print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);
+			} else {
+				print dolPrintHTML($tmparray['label']);
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

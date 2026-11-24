@@ -751,6 +751,14 @@ ALTER TABLE llx_categorie_skill ADD INDEX idx_categorie_skill_fk_skill (fk_skill
 ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_fk_skill_rowid FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill (rowid);
 
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN doc_date_hour datetime NULL AFTER doc_date;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN doc_date_hour datetime NULL AFTER doc_date;
+-- Hour of source document is unknown for existing records, so we use doc_date at 12:00:00
+-- VMYSQL4.1 UPDATE llx_accounting_bookkeeping SET doc_date_hour = TIMESTAMP(doc_date, '12:00:00') WHERE doc_date_hour IS NULL;
+-- VMYSQL4.1 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = TIMESTAMP(doc_date, '12:00:00') WHERE doc_date_hour IS NULL;
+-- VPGSQL8.2 UPDATE llx_accounting_bookkeeping SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
+-- VPGSQL8.2 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
+
 -- Optional second approval for leave requests and expense reports
 ALTER TABLE llx_holiday ADD COLUMN fk_validator_secondary integer DEFAULT NULL;
 ALTER TABLE llx_holiday ADD COLUMN fk_user_approve_secondary integer DEFAULT NULL;

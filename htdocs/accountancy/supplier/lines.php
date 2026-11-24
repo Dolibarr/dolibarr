@@ -650,6 +650,7 @@ if ($result) {
 	$totalarray['nbfield'] = 0;
 
 	$i = 0;
+	$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
@@ -774,7 +775,11 @@ if ($result) {
 		if (!empty($arrayfields['co.label']['checked'])) {
 			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')').'">';
 			if ($objp->country_code) {
-				print $langs->trans("Country".$objp->country_code);
+				if ($showcountrylabelinlist) {
+					print $langs->trans("Country".$objp->country_code);
+				} else {
+					print picto_from_langcode($objp->country_code, 'title="'.dolPrintHTMLForAttribute($langs->trans("Country".$objp->country_code)).'"', 1);
+				}
 				//print ' ('.$objp->country_code.')';
 			}
 			print '</td>';

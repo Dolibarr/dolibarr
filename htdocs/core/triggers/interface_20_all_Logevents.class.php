@@ -97,7 +97,7 @@ class InterfaceLogevents extends DolibarrTriggers
 		}
 
 		$key = 'MAIN_LOGEVENTS_'.$action;
-		if (empty($conf->global->$key)) {
+		if (!getDolGlobalString($key)) {
 			return 0; // Log events not enabled for this action
 		}
 

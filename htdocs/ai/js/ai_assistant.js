@@ -2723,7 +2723,7 @@ export function initAiAssistant(container) {
         // The question being answered is the query itself, never context: it
         // waits outside the window until its answer arrives.
         const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
-        if (pending) { pending.classList.remove('ctx-pinned'); pending.dataset.ctxWindow = ''; }
+        if (pending) { pending.classList.remove('ctx-pinned', 'ctx-excluded'); pending.dataset.ctxWindow = ''; }
         let windowStart = msgs.length;
         if (AUTO_CONTEXT > 0) {
             let questions = 0;
@@ -2738,6 +2738,8 @@ export function initAiAssistant(container) {
             const on = state === 'on' || (state === '' && inWindow && !m.dataset.aiError);
             m.dataset.ctxWindow = inWindow ? '1' : '';
             m.classList.toggle('ctx-pinned', on);
+            // Bubbles left out of the context are dimmed (see .ctx-excluded in CSS).
+            m.classList.toggle('ctx-excluded', !on);
             const pin = m.querySelector('.ctx-pin');
             if (pin) {
                 // Two glyphs: a planted blue pin (travels with the next question)
@@ -2782,7 +2784,7 @@ export function initAiAssistant(container) {
     }
 
     // Small bar above the input: how many exchanges are pinned and their rough
-    // token weight (chars/4) - the cost of the selected context stays visible.
+    // token weight (chars/4) - the cost of the selected context is in the label tooltip.
     function updateContextBar() {
         let bar = container.querySelector('#ai-ctx-bar');
         // Past exchanges the user can act on (the pending question is not one).
@@ -2802,11 +2804,11 @@ export function initAiAssistant(container) {
         // "Auto (3)" is lit as long as every bubble simply follows the window
         // (no manual pin, no exclusion): one glance says which mode is on.
         const isDefault = !contextAllMode && past.every((m) => !m.dataset.ctx);
-        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' + escapeHtml(t('AIContextLabel')) +
+        const counter = t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens));
+        bar.innerHTML = '<span class="ai-ctx-label" title="' + escapeHtml(t('AIContextLabelHelp') + '\n' + counter) + '"><span class="fas fa-thumbtack"></span> ' + escapeHtml(t('AIContextLabel')) + '</span>' +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
             ' <a href="#" id="ai-ctx-all" class="' + (contextAllMode ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
-            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('None') + '</a>' +
-            ' <span class="opacitymedium marginleftonly" title="' + escapeHtml(t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens))) + '">(' + escapeHtml(t('AIContextTokens').replace('%s', String(tokens))) + ')</span>';
+            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('None') + '</a>';
         const auto = bar.querySelector('#ai-ctx-auto');
         if (auto) {
             auto.onclick = (ev) => {

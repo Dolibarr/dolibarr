@@ -1657,7 +1657,9 @@ class ExtraFields
 						}
 					}
 					if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-						list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+						$tmparray = explode('|', $InfoFieldList[3]);
+						$parentName = $tmparray[0];
+						$parentField = $tmparray[1];
 						if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 							$keyList .= ', main.'.$parentField;
 						} else {
@@ -2007,7 +2009,9 @@ class ExtraFields
 						}
 					}
 					if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-						list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+						$tmparray = explode('|', $InfoFieldList[3]);
+						$parentName = $tmparray[0];
+						$parentField = $tmparray[1];
 						if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 							$keyList .= ', main.'.$parentField;
 						} else {
@@ -2065,6 +2069,9 @@ class ExtraFields
 								// Replace '$ID$ = column' by "word"
 								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
 								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
@@ -3375,7 +3382,7 @@ class ExtraFields
 			return empty($v);
 		}
 		if ($type == 'link') {
-			return ($v == '-1');
+			return in_array((string) $v, array('-1', '0'), true);
 		}
 		if ($type == 'sellist') {
 			return ($v == '0');
