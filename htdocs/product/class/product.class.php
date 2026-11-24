@@ -1603,7 +1603,7 @@ class Product extends CommonObject
 			$sql .= ", localtax2_type = ".($this->localtax2_type != '' ? "'".$this->db->escape($this->localtax2_type)."'" : "'0'");
 
 			$sql .= ", barcode = ".(empty($this->barcode) ? "null" : "'".$this->db->escape($this->barcode)."'");
-			$sql .= ", fk_barcode_type = ".(empty($this->barcode_type) ? "null" : $this->db->escape((string) $this->barcode_type));
+			$sql .= ", fk_barcode_type = ".(empty($this->barcode_type) ? "null" : ((int) $this->barcode_type));
 
 			$sql .= ", tosell = ".(int) $this->status;
 			$sql .= ", tobuy = ".(int) $this->status_buy;
@@ -2852,18 +2852,27 @@ class Product extends CommonObject
 
 			// Ne pas mettre de quote sur les numeriques decimaux.
 			// Ceci provoque des stockages avec arrondis en base au lieu des valeurs exactes.
+			// The price columns of the table product hold the default price of the product, that is the price of the level 1
+			// when multiprices are enabled (level is 0 when they are not). So they must not be overwritten by another level.
+			// The vat columns are however shared by all levels, so they are always updated.
+			$updatedefaultprice = (empty($level) || $level == 1);
+
 			$sql = "UPDATE ".$this->db->prefix()."product SET";
-			$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
-			$sql .= " price = ".(float) $price.",";
-			$sql .= " price_ttc = ".(float) $price_ttc.",";
-			$sql .= " price_min = ".(float) $price_min.",";
-			$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+			if ($updatedefaultprice) {
+				$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
+				$sql .= " price = ".(float) $price.",";
+				$sql .= " price_ttc = ".(float) $price_ttc.",";
+				$sql .= " price_min = ".(float) $price_min.",";
+				$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+			}
 			$sql .= " localtax1_tx = ".($localtax1 >= 0 ? (float) $localtax1 : 'NULL').",";
 			$sql .= " localtax2_tx = ".($localtax2 >= 0 ? (float) $localtax2 : 'NULL').",";
 			$sql .= " localtax1_type = ".($localtaxtype1 != '' ? "'".$this->db->escape($localtaxtype1)."'" : "'0'").",";
 			$sql .= " localtax2_type = ".($localtaxtype2 != '' ? "'".$this->db->escape($localtaxtype2)."'" : "'0'").",";
 			$sql .= " default_vat_code = ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
-			$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
+			if ($updatedefaultprice) {
+				$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
+			}
 			$sql .= " tva_tx = ".(float) price2num($newvat).",";
 			$sql .= " recuperableonly = '".$this->db->escape((string) $newnpr)."'";
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -3938,7 +3947,8 @@ class Product extends CommonObject
 			$sql .= " AND cf.fk_statut IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {
-			$sql .= " AND fd.datec <= '".$this->db->idate($dateofvirtualstock)."'";
+			// Same filter as load_stats_commande_fournisseur(): received and ordered qty must cover the same orders
+			$sql .= " AND cf.date_livraison <= '".$this->db->idate($dateofvirtualstock)."'";
 		}
 
 		$result = $this->db->query($sql);
@@ -3999,7 +4009,11 @@ class Product extends CommonObject
 			$sql .= " AND m.status IN (".$this->db->sanitize($filtrestatut).")";
 		}
 		if (!empty($dateofvirtualstock)) {
-			$sql .= " AND m.date_valid <= '".$this->db->idate($dateofvirtualstock)."'"; // better date to code ? end of production ?
+			// Components leave stock when production starts, products enter stock when it ends
+			$sql .= " AND (";
+			$sql .= "(mp.role IN ('toconsume', 'consumed') AND COALESCE(m.date_start_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."')";
+			$sql .= " OR (mp.role IN ('toproduce', 'produced') AND COALESCE(m.date_end_planned, m.date_valid) <= '".$this->db->idate($dateofvirtualstock)."')";
+			$sql .= ")";
 		}
 		if (!$serviceStockIsEnabled) {
 			$sql .= "AND EXISTS (SELECT p.rowid FROM ".$this->db->prefix()."product AS p WHERE p.rowid = ".((int) $this->id)." AND p.fk_product_type IN (0))";
@@ -6401,7 +6415,7 @@ class Product extends CommonObject
 		// Include supplier order lines
 		if (isModEnabled("supplier_order")) {
 			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '3,4');
-			if (isset($includedraftpoforvirtual)) {
+			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,1,2,'.$filterStatus;	// 1,2 may have already been inside $filterStatus but it is better to have twice than missing $filterStatus does not include them
 			}
 			$result = $this->load_stats_commande_fournisseur(0, $filterStatus, 1, $dateofvirtualstock);
@@ -6412,8 +6426,11 @@ class Product extends CommonObject
 		}
 		// Include reception lines
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-			$filterStatus = '4';
-			if (isset($includedraftpoforvirtual)) {
+			// Same option as the supplier order side above: both halves of the subtraction must run on the
+			// same population of supplier orders, otherwise orders are counted while their receptions are
+			// not and the virtual stock comes out too high. The historical default of this side is kept.
+			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '4');
+			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
 			}
 			$result = $this->load_stats_reception(0, $filterStatus, 1, $dateofvirtualstock);
@@ -6597,9 +6614,12 @@ class Product extends CommonObject
 	{
 		$result = array();
 
-		$sql = "SELECT pb.batch, pb.eatby, pb.sellby, SUM(pb.qty) AS qty FROM ".$this->db->prefix()."product_batch as pb, ".$this->db->prefix()."product_stock as ps";
-		$sql .= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".((int) $this->id)." AND pb.batch = '".$this->db->escape($batch)."'";
-		$sql .= " GROUP BY pb.batch, pb.eatby, pb.sellby";
+		// The dates of the lot are read from llx_product_lot (eatby and sellby of llx_product_batch are deprecated and not updated when the lot is modified)
+		$sql = "SELECT pb.batch, pl.eatby, pl.sellby, SUM(pb.qty) AS qty FROM ".$this->db->prefix()."product_batch as pb";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product_stock as ps ON pb.fk_product_stock = ps.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_lot as pl ON pl.fk_product = ps.fk_product AND pl.batch = pb.batch";
+		$sql .= " WHERE ps.fk_product = ".((int) $this->id)." AND pb.batch = '".$this->db->escape($batch)."'";
+		$sql .= " GROUP BY pb.batch, pl.eatby, pl.sellby";
 		dol_syslog(get_class($this)."::loadBatchInfo load first entry found for lot/serial = ".$batch, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {

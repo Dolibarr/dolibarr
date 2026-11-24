@@ -1548,15 +1548,15 @@ class ExtraFields
 							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
-								// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list
+								// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list. Written '1:=:1' because a '1 = 1' is rejected by forgeSQLFromUniversalSearchCriteria()
 								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
-								$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 								// Replace '$ID$ = column' by an always true test
 								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
-								$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 								// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
 								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
-								$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
@@ -1822,15 +1822,15 @@ class ExtraFields
 						} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
 							// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 							// Do nothing if condition is using 'IN' keyword
-							// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list
+							// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list. Written '1:=:1' because a '1 = 1' is rejected by forgeSQLFromUniversalSearchCriteria()
 							$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
-							$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+							$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							// Replace '$ID$ = column' by an always true test
 							$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
-							$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+							$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
 							$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
-							$InfoFieldList[4] = preg_replace($word, '1 = 1', $InfoFieldList[4]);
+							$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
@@ -2460,10 +2460,11 @@ class ExtraFields
 		} elseif ($type == 'password') {
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		} elseif ($type == 'stars') {
-			$objectid = (int) $object->id;
+			// Called without object, for example from CommonObject::getTooltipContentArray()
+			$objectid = is_object($object) ? (int) $object->id : 0;
 			$nbstars = (int) $value;
 			if ($showValueInsteadOfInputField == 1) {
-				$value = '<span style="display:none;" id="'.$key.$object->id.'">'.dol_escape_htmltag($value).'</span>';
+				$value = '<span style="display:none;" id="'.$key.$objectid.'">'.dol_escape_htmltag($value).'</span>';
 			} else {
 				$value = '<input type="hidden" class="flat" name="'.$key.'" id="'.$key.$objectid.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 			}

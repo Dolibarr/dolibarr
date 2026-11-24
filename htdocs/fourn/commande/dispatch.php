@@ -110,6 +110,19 @@ if (!isModEnabled('stock')) {
 	accessforbidden();
 }
 
+// A dispatched line linked to a reception can be updated or deleted only while the reception is a draft
+if (($action == 'confirm_deleteline' || ($action == 'updateline' && empty($cancel))) && $lineid > 0) {
+	$tmpdispatchline = new CommandeFournisseurDispatch($db);
+	if ($tmpdispatchline->fetch($lineid) > 0 && $tmpdispatchline->fk_reception > 0) {
+		require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+		$tmpreception = new Reception($db);
+		if ($tmpreception->fetch($tmpdispatchline->fk_reception) > 0 && $tmpreception->status != Reception::STATUS_DRAFT) {
+			setEventMessages($langs->trans('StatusOfRefMustBe', $langs->transnoentitiesnoconv('Reception'), $langs->transnoentitiesnoconv('StatusReceptionDraftShort')), null, 'errors');
+			$action = '';
+		}
+	}
+}
+
 $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
@@ -477,8 +490,9 @@ if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 		$product = $supplierorderdispatch->fk_product;
 		$price = GETPOSTFLOAT('price');
 		$comment = $supplierorderdispatch->comment;
-		$eatby = $supplierorderdispatch->eatby;
-		$sellby = $supplierorderdispatch->sellby;
+		// Dates are not given to the stock movements: those of the lot are used (the copy on the line may be outdated)
+		$eatby = '';
+		$sellby = '';
 		$batch = $supplierorderdispatch->batch;
 
 		$supplierorderdispatch->qty = GETPOSTFLOAT('qty', 'MS');

@@ -273,7 +273,7 @@ if ($search_date_limit_end) {
 if ($search_typeid > 0) {
 	$sql .= " AND cs.fk_type = ".((int) $search_typeid);
 }
-$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code";
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, cs.note_public, cs.note_private, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code";
 if (isModEnabled('project')) {
 	$sql .= ", p.rowid, p.ref, p.title";
 }

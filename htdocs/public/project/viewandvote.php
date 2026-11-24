@@ -84,7 +84,7 @@ $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
-if ($securekeytocompare != $securekeyreceived) {
+if (!hash_equals($securekeytocompare, (string) $securekeyreceived)) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }
