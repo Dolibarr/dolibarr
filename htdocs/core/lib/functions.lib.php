@@ -1897,15 +1897,22 @@ function dol_string_nounprintableascii($str, $removetabcrlf = 1, $allnonascii = 
 	if ($allnonascii) {
 		// Convert each non ASCII char into its ASCII equivalent, or remove it when there is none.
 		// Done char by char because iconv returns "?" for a char it can't convert ("°"), and it can't be distinguished from a real "?".
-		$result = preg_replace_callback('/[^\x00-\x7F]/u', function ($matches) {
-			$ascii = function_exists('iconv') ? @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $matches[0]) : false;
-			if ($ascii === false || strpos($ascii, '?') !== false) {
-				return '';
+		$chars = preg_split('//u', (string) $str, -1, PREG_SPLIT_NO_EMPTY);
+		if ($chars === false) {
+			// String is not valid UTF8: remove all non ASCII bytes
+			$str = preg_replace('/[\x80-\xFF]/', '', (string) $str);
+		} else {
+			$str = '';
+			foreach ($chars as $char) {
+				if (ord($char) > 0x7F) {
+					$char = function_exists('iconv') ? @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $char) : false;
+					if ($char === false || strpos($char, '?') !== false) {
+						$char = '';
+					}
+				}
+				$str .= $char;
 			}
-			return $ascii;
-		}, (string) $str);
-		// When string is not valid UTF8, preg_replace_callback() returns null: remove all non ASCII bytes
-		$str = ($result === null ? preg_replace('/[\x80-\xFF]/', '', (string) $str) : $result);
+		}
 	}
 
 	if ($removetabcrlf) {
