@@ -3160,7 +3160,7 @@ class Societe extends CommonObject
 		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
 		$sql .= ", u.office_fax, u.user_mobile, u.personal_mobile";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
-		// Condition here should be the same than into select_dolusers()
+		// Condition here should be the same than into select_dolusers() and getSalesRepresentativesOfThirdparties()
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 			$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 		} else {
@@ -3210,6 +3210,70 @@ class Societe extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 *  Return sales representatives of several third parties with one request (to use into lists instead of a getSalesRepresentatives() on each line)
+	 *
+	 *  @param	int[]		$socids			Array of IDs of third parties
+	 *	@return	int<-1,-1>|array<int,array<int,array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>>	Array (ID of third party => array of its sales representatives, sorted on lastname and firstname) or <0 if KO
+	 */
+	public function getSalesRepresentativesOfThirdparties(array $socids)
+	{
+		global $conf;
+
+		$reparray = array();
+
+		$listofsocids = array();
+		foreach ($socids as $socid) {
+			if ((int) $socid > 0) {
+				$listofsocids[(int) $socid] = (int) $socid;
+			}
+		}
+		if (empty($listofsocids)) {
+			return $reparray;
+		}
+
+		$sql = "SELECT sc.fk_soc, u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
+		$sql .= ", u.office_fax, u.user_mobile, u.personal_mobile";
+		$sql .= " FROM ".$this->db->prefix()."societe_commerciaux as sc, ".$this->db->prefix()."user as u";
+		// Condition here should be the same than into getSalesRepresentatives()
+		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+			$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
+		} else {
+			$sql .= " WHERE u.entity IN (0, ".((int) $conf->entity).")";
+		}
+		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc IN (".$this->db->sanitize(implode(',', $listofsocids)).")";
+		$sql .= $this->db->order('u.lastname,u.firstname', 'ASC,ASC');
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_print_error($this->db);
+			return -1;
+		}
+		while ($obj = $this->db->fetch_object($resql)) {
+			$reparray[(int) $obj->fk_soc][] = array(
+				'id' => (int) $obj->rowid,
+				'lastname' => $obj->lastname,
+				'firstname' => $obj->firstname,
+				'email' => $obj->email,
+				'phone' => $obj->office_phone,
+				'office_phone' => $obj->office_phone,			// Pro phone
+				'office_fax' => $obj->office_fax,
+				'user_mobile' => $obj->user_mobile,				// Pro mobile
+				'personal_mobile' => $obj->personal_mobile,		// Personal mobile
+				'job' => $obj->job,
+				'statut' => $obj->status, // deprecated
+				'status' => $obj->status,
+				'entity' => $obj->entity,
+				'login' => $obj->login,
+				'photo' => $obj->photo,
+				'gender' => $obj->gender,
+			);
+		}
+		$this->db->free($resql);
+
+		return $reparray;
 	}
 
 	/**
