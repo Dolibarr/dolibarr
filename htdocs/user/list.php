@@ -262,7 +262,11 @@ if (isModEnabled('salaries') && $contextpage == 'employeelist' && $search_employ
 	}
 }
 
-$childids = $user->getAllChildIds(1);
+// List of subordinates is used only to restrict access to salaries, so we load the full user tree only if needed
+$childids = array();
+if (isModEnabled('salaries') && !$user->hasRight("salaries", "readall")) {
+	$childids = $user->getAllChildIds(1);
+}
 
 
 /*
