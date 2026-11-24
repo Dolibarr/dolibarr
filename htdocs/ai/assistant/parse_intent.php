@@ -1885,7 +1885,8 @@ function classifyIntentUniversal(string $query, Translate $langs)
 			// Intervention: interventions tools are ['project', 'commercial'].
 			// WebSite/WebsitePage/BlogPost: websites tools (pages, blog posts) are ['commercial'].
 			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft', 'Reception', 'Shipment', 'Delivery', 'Intervention', 'WebSite', 'WebsitePage', 'BlogPost'],
-			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive', 'intervention', 'website', 'webpage', 'blog']
+			// 'Proposal' translates to a 2-word label ("commercial proposal"), so the short words users type are listed too.
+			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive', 'intervention', 'website', 'webpage', 'blog', 'proposal', 'propal', 'propale', 'proposition', 'devis']
 		],
 		'thirdparty' => [
 			// Ticket and agenda-event tools are ['thirdparty', 'project'];

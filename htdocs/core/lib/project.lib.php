@@ -2900,8 +2900,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 				print '<td class="tdlineheightsmall tdoverflowmax150">';
 				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0, -1, 'nowraponall');
-				if (!in_array('projectlabel', $hiddenfields)) {
-					print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->title).'</span>';
+				if (!in_array('projectlabel', $hiddenfields) && (string) $objp->title !== '') {
+					print '<br><span class="spantitle">'.dol_escape_htmltag($objp->title).'</span>';
 				}
 				print '</td>';
 

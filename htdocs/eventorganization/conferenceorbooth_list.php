@@ -1153,6 +1153,12 @@ while ($i < $imaxinloop) {
 			}
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
+			// When the project label column is not displayed, we show the project label under the project ref
+			$showprojectlabelunderref = ($key == 'fk_project' && empty($arrayfields['prj.title']['checked']) && (string) $obj->projecttitle !== '');
+			if ($showprojectlabelunderref) {
+				$cssforfield .= ' tdlineheightsmall';
+			}
+
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !is_numeric($object->$key)) {
@@ -1161,6 +1167,11 @@ while ($i < $imaxinloop) {
 				print '>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
+				} elseif ($key == 'fk_project') {
+					print $object->showOutputField($val, $key, (string) $object->$key, '');
+					if ($showprojectlabelunderref) {
+						print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->projecttitle).'"><span class="spantitle">'.dolPrintLabel($obj->projecttitle).'</span></div>';
+					}
 				} elseif ($key == 'ref') {
 					if (empty($arrayfields['t.label']['checked'])) {
 						// Show label under the ref when label column is not enabled

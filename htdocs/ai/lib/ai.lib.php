@@ -2713,7 +2713,9 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 				// from the prompt entirely. This saves massive amounts of tokens
 				// on list/search functions (limit, sortorder, sqlfilters, etc).
 				// -----------------------------------------------------------
-				if (!$isRequired && isset($propData['default'])) {
+				// Paging, sort and filter params of list tools are kept (without description): without them,
+				// the model can't answer "the last 5 ..." or filter a list, and gets the 25 first records.
+				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters'))) {
 					continue;
 				}
 

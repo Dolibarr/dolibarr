@@ -2742,6 +2742,8 @@ class ExtraFields
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 					return 'Error bad setup of extrafield';
 				}
+			} else {
+				$value = '';	// No linked object (id 0 or empty), so we show nothing instead of the raw id
 			}
 		} elseif ($type == 'point') {
 			if (!empty($value)) {
