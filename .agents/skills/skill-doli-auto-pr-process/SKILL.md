@@ -73,8 +73,17 @@ and uses `skill-doli-code-review` for the code review.
    - **r) 🟢 Re-run the CI** → only proposed when it is useful, and always displayed with the 🟢
      emoji in front of it (Markdown has no color). Run the action **Re-run the CI**, then display
      the same PR again with its choices.
+   - **b) 🟢 Update branch** → displayed with the 🟢 emoji like **r)**, only proposed in one of
+     these cases:
+     - the Travis status is `ACTION_REQUIRED` (it can not be restarted from here) and all the
+       other checks are OK;
+     - no CI ran at all on the head commit (empty `statusCheckRollup` and no run returned by
+       `gh run list --commit HEADREFOID`).
 
-   When **m)** or **r)** is not proposed, keep the same letters (a, n) so that a letter always
+     Updating the branch pushes a new commit, so the whole CI, Travis included, runs again.
+     Run the action **Update branch**, then display the same PR again with its choices.
+
+   When **m)**, **r)** or **b)** is not proposed, keep the same letters (a, n) so that a letter always
    means the same choice. There is no Stop choice: when the user asks to stop, go back to the
    initial branch if needed and give a short summary of the session (PRs processed and actions done).
 4. If **a)**, run the "Process a PR" procedure below. At its end, after the verdict, do not move
@@ -195,6 +204,8 @@ gh api -X PUT repos/Dolibarr/dolibarr/pulls/N/update-branch -f expected_head_sha
 
 If GitHub refuses because of a merge conflict, do not try to resolve it here: report it to the user
 and propose the action **Comment** to ask the author to rebase and resolve the conflict.
+If GitHub refuses because the branch is already up to date with its base branch (no new commit on the
+base branch), tell the user: no new CI run can be started this way.
 
 ### Re-run the CI (the choice r) is the confirmation)
 
