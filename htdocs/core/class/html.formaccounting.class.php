@@ -458,9 +458,34 @@ class FormAccounting extends Form
 		}
 
 
-		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty) : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
-
 		$this->nbaccounts = count($options) - ($showempty == 2 ? 1 : 0);
+
+		// The preselected account may be disabled, so not in the list of active accounts. Add it anyway, so it is
+		// still selected and saving the form does not silently erase it (for example the accounting codes of a product).
+		if ($active === '1' && (string) $selectid !== '' && (string) $selectid !== '-1' && (string) $selectid !== '0' && !isset($options[$selected])) {
+			$sql = "SELECT aa.rowid, aa.account_number, aa.label, aa.labelshort";
+			$sql .= " FROM ".$this->db->prefix()."accounting_account as aa";
+			$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+			$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
+			$sql .= " WHERE aa.entity = ".((int) $conf->entity);
+			if ($select_in == 1) {
+				$sql .= " AND aa.account_number = '".$this->db->escape((string) $selectid)."'";
+			} else {
+				$sql .= " AND aa.rowid = ".((int) $selectid);
+			}
+			$resql = $this->db->query($sql);
+			if ($resql && ($obj = $this->db->fetch_object($resql))) {
+				$select_value_out = ($select_out == 1 ? $obj->account_number : $obj->rowid);
+				if (!isset($options[$select_value_out])) {
+					$labeltoshow = (empty($obj->labelshort) ? $obj->label : $obj->labelshort);
+					$label = dol_trunc(length_accountg($obj->account_number).' - '.$labeltoshow, getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', 50));
+					$options[$select_value_out] = $label.' ('.$langs->trans("Disabled").')';
+				}
+				$selected = $select_value_out;
+			}
+		}
+
+		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty) : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;
 	}
