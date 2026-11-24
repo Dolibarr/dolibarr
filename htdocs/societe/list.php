@@ -168,7 +168,7 @@ $search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $se
 $type = GETPOST('type', 'alpha');
 $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is string id of table for Bar or Restaurant
 
-$diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = isModEnabled('societe') ? $conf->societe->dir_output.'/temp/massgeneration/'.$user->id : '';
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

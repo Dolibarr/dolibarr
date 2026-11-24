@@ -664,13 +664,15 @@ function getBrowserInfo($user_agent)
 		}
 	}
 
-	// OS
-	if (preg_match('/linux/i', $user_agent)) {
-		$os = 'linux';
-	} elseif (preg_match('/macintosh/i', $user_agent)) {
-		$os = 'macintosh';
-	} elseif (preg_match('/windows/i', $user_agent)) {
-		$os = 'windows';
+	// OS, when not already found as a mobile OS (the user agent of Android contains "Linux")
+	if ($os == 'unknown') {
+		if (preg_match('/linux/i', $user_agent)) {
+			$os = 'linux';
+		} elseif (preg_match('/macintosh/i', $user_agent)) {
+			$os = 'macintosh';
+		} elseif (preg_match('/windows/i', $user_agent)) {
+			$os = 'windows';
+		}
 	}
 
 	// Name
@@ -2158,7 +2160,9 @@ function dol_escape_all($stringtoescape)
  */
 function dol_escape_xml($stringtoescape)
 {
-	return $stringtoescape;
+	$stringtoescape = (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string) $stringtoescape);	// Characters not allowed in XML 1.0
+
+	return htmlspecialchars($stringtoescape, ENT_XML1 | ENT_QUOTES, 'UTF-8');
 }
 
 /**
@@ -8010,12 +8014,12 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			// Special case for india.
 			//print 'VATRULE 3b';
 			$reg = array();
-			if (preg_match('/C+S-(\d+)/', $tmpvat, $reg) && $thirdparty_seller->state_id != $thirdparty_buyer->state_id) {
-				// we must revert the C+S into I
-				$tmpvat = str_replace("C+S", "I", $tmpvat);
-			} elseif (preg_match('/I-(\d+)/', $tmpvat, $reg) && $thirdparty_seller->state_id == $thirdparty_buyer->state_id) {
-				// we must revert the I into C+S
-				$tmpvat = str_replace("I", "C+S", $tmpvat);
+			if (preg_match('/\(C\+S-(\d+(?:\.\d+)?)\)/', $tmpvat, $reg) && $thirdparty_seller->state_id != $thirdparty_buyer->state_id) {
+				// we must revert the C+S into I (rate of I-xx is xx)
+				$tmpvat = $reg[1].' (I-'.$reg[1].')';
+			} elseif (preg_match('/\(I-(\d+(?:\.\d+)?)\)/', $tmpvat, $reg) && $thirdparty_seller->state_id == $thirdparty_buyer->state_id) {
+				// we must revert the I into C+S (rate of C+S-xx is 0, xx is shared between localtax1 and localtax2)
+				$tmpvat = '0 (C+S-'.$reg[1].')';
 			}
 		}
 

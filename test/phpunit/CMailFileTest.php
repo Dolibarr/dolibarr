@@ -192,4 +192,41 @@ class CMailFileTest extends CommonClassTest
 
 		return $result;
 	}
+
+	/**
+	 * testCMailFileHTMLWithDataImageMimeParameters
+	 * A pasted screenshot may have MIME parameters (like ;filename=) before ;base64. It must be converted into a cid image too.
+	 *
+	 * @return 	int
+	 */
+	public function testCMailFileHTMLWithDataImageMimeParameters()
+	{
+		global $conf, $user, $langs, $db;
+
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS = 0;
+		$conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
+
+		$msg = '<html><body>';
+		$msg .= '<p>Pasted screenshot</p> <img src="data:image/png;filename=Capture%20d%E2%80%99%C3%A9cran%202024-10-09.png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />';
+		$msg .= '</body></html>';
+
+		$tmp_dir = $conf->admin->dir_temp.'/'.__FUNCTION__.getmypid().'_tmp';
+		$localobject = new CMailFile('Test', 'test@test.com', 'from@from.com', $msg, array(), array(), array(), '', '', 0, -1, '', '', '', '', 'standard', '', $tmp_dir);
+
+		$result = count($localobject->html_images);
+		print __METHOD__ . " result count image detected in the mail=" . $result . "\n";
+		$this->assertEquals(1, $result);
+		$this->assertEquals('cidfromdata', $localobject->html_images[0]['type']);
+		$this->assertEquals('image/png', $localobject->html_images[0]['content_type']);
+		$this->assertEquals(85, dol_filesize($localobject->html_images[0]['fullpath']));
+		$this->assertStringNotContainsString('data:image', $localobject->html);
+		$this->assertStringContainsString('src="cid:'.$localobject->html_images[0]['cid'].'"', $localobject->html);
+
+		return $result;
+	}
 }

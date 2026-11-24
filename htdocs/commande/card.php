@@ -1133,7 +1133,9 @@ if (empty($reshook)) {
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 						$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
-						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+						// A price level with no price row leaves multiprices_base_type empty (null or ''), and an empty
+						// value is not 'HT' for addline(), which then takes the price as TTC and stores it with the VAT added.
+						$price_base_type = (empty($prod->multiprices_base_type[$object->thirdparty->price_level]) ? 'HT' : $prod->multiprices_base_type[$object->thirdparty->price_level]);
 						if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 							if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
 								$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
@@ -1148,7 +1150,9 @@ if (empty($reshook)) {
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 					$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+					// A price level with no price row leaves multiprices_base_type empty (null or ''), and an empty
+					// value is not 'HT' for addline(), which then takes the price as TTC and stores it with the VAT added.
+					$price_base_type = (empty($prod->multiprices_base_type[$object->thirdparty->price_level]) ? 'HT' : $prod->multiprices_base_type[$object->thirdparty->price_level]);
 					if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) {
 							$tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
@@ -1476,6 +1480,9 @@ if (empty($reshook)) {
 
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
+			} else {
+				// A check before the insert failed (e.g. price lower than minimum price): close the transaction opened above
+				$db->rollback();
 			}
 		}
 	} elseif ($action == 'updatetitleline' && GETPOSTISSET("save") && $usercancreate && !GETPOST('cancel', 'alpha')) {
@@ -1591,7 +1598,7 @@ if (empty($reshook)) {
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
 
-		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 
 		// Prepare a price equivalent for minimum price check
 		$pu_equivalent = $pu_ht;
@@ -1724,7 +1731,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+			$qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 
 			$result = $object->updateline(GETPOSTINT('lineid'), $description, (float) $pu, (float) $qty, $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOSTINT('units'), (float) $pu_ht_devise);
 
@@ -1931,7 +1938,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanvalidate) {
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercancancel) {
 		$idwarehouse = GETPOSTINT('idwarehouse');
 
 		$qualified_for_stock_change = 0;

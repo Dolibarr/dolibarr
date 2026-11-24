@@ -76,7 +76,7 @@ $securitykey = GETPOST('securitykey');
 
 dol_syslog("public/emailing/mailing-unsubscribe.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-".$tag."-".$email."-".$mtid, 'md5')) {
+if (!hash_equals(dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-".$tag."-".$email."-".$mtid, 'md5'), (string) $securitykey)) {
 	print 'Bad security key value.';
 	exit;
 }

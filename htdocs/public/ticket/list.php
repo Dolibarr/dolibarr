@@ -315,7 +315,7 @@ if ($action == "view_ticketlist") {
 			$param .= '&search_fk_status='.urlencode($search_fk_status);
 		}
 		if (isset($search_fk_status) && $search_fk_status == 'non_closed') {
-			$filter['t.fk_statut'] = array(0, 1, 3, 4, 5, 6);
+			$filter['t.fk_statut'] = array(Ticket::STATUS_NOT_READ, Ticket::STATUS_READ, Ticket::STATUS_ASSIGNED, Ticket::STATUS_IN_PROGRESS, Ticket::STATUS_NEED_MORE_INFO, Ticket::STATUS_WAITING);
 			$param .= '&search_fk_statut=openall';
 		}
 
