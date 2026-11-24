@@ -3515,6 +3515,10 @@ abstract class CommonObject
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
 		$sql .= ' WHERE rowid = '.((int) $rowid);
+		if ($this->id > 0 && !empty($this->fk_element)) {
+			// The line must belong to the object we reorder lines of
+			$sql .= " AND ".$this->db->sanitize($this->fk_element)." = ".((int) $this->id);
+		}
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -4431,7 +4435,7 @@ abstract class CommonObject
 									$object = new $className($this->db);
 									'@phan-var-force CommonObject $object';
 									$ret = $object->fetch($objectid);
-									if ($ret >= 0) {
+									if ($ret > 0) {
 										$this->linkedObjects[$objecttype][$i] = $object;
 									}
 								}
@@ -7370,17 +7374,7 @@ abstract class CommonObject
 			}
 
 			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql); exit;
-			if (!$linealreadyfound) {
-				// Create an empty line, so we update only this field. Calling insertExtraFields() here would check
-				// all other mandatory fields, which may still be empty (record created before they became mandatory).
-				$sql = "INSERT INTO ".$this->db->prefix().$table_element."_extrafields (fk_object) VALUES (".((int) $this->id).")";
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++;
-					$this->error = $this->db->lasterror();
-				}
-			}
-			if (!$error) {
+			if ($linealreadyfound) {
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = null";
 				} else {
@@ -7392,6 +7386,11 @@ abstract class CommonObject
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
+				}
+			} else {
+				$result = $this->insertExtraFields('', $user);
+				if ($result < 0) {
+					$error++;
 				}
 			}
 
@@ -10394,7 +10393,7 @@ abstract class CommonObject
 
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
-			$this->date_creation = $this->db->idate($now);
+			$this->date_creation = $now;
 		}
 		// For backward compatibility, if a property ->fk_user_creat exists and not filled.
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
