@@ -1885,12 +1885,29 @@ function dol_string_nospecial($str, $newstr = '_', $badcharstoreplace = '', $bad
  *                                 4 bytes are: byte 1 \xf0-\xf7, byte 2 = \x80-\xbf, byte 3 = \x80-\xbf, byte 4 = \x80-\xbf
  *	@param	string	$str            	String to clean
  *  @param	int		$removetabcrlf		Remove also CR-LF
+ *  @param	int<0,1>	$allnonascii	0=Keep UTF8 chars (default), 1=Remove also all chars that are not ASCII, after converting
+ *                                      them into their ASCII equivalent when there is one ("’" -> "'", "Œ" -> "OE", "€" -> "EUR"...).
+ *                                      Useful for fixed-width formats, where a multibyte char shifts the next fields.
  * 	@return string          			Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_unaccent(), dol_string_nospecial()
  */
-function dol_string_nounprintableascii($str, $removetabcrlf = 1)
+function dol_string_nounprintableascii($str, $removetabcrlf = 1, $allnonascii = 0)
 {
+	if ($allnonascii) {
+		// Convert each non ASCII char into its ASCII equivalent, or remove it when there is none.
+		// Done char by char because iconv returns "?" for a char it can't convert ("°"), and it can't be distinguished from a real "?".
+		$result = preg_replace_callback('/[^\x00-\x7F]/u', function ($matches) {
+			$ascii = function_exists('iconv') ? @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $matches[0]) : false;
+			if ($ascii === false || strpos($ascii, '?') !== false) {
+				return '';
+			}
+			return $ascii;
+		}, (string) $str);
+		// When string is not valid UTF8, preg_replace_callback() returns null: remove all non ASCII bytes
+		$str = ($result === null ? preg_replace('/[\x80-\xFF]/', '', (string) $str) : $result);
+	}
+
 	if ($removetabcrlf) {
 		return preg_replace('/[\x00-\x1F\x7F]/u', '', $str); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
 	} else {

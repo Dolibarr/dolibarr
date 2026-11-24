@@ -919,13 +919,13 @@ class AccountancyExport
 			$line->subledger_label = dol_string_unaccent($line->subledger_label);
 
 			// Quadratus is a fixed-width format: keep only printable ASCII so multibyte chars do not shift the next fields
-			$line->doc_ref = self::toFixedWidthAscii($line->doc_ref);
-			$line->label_operation = self::toFixedWidthAscii($line->label_operation);
-			$line->numero_compte = self::toFixedWidthAscii($line->numero_compte);
-			$line->label_compte = self::toFixedWidthAscii($line->label_compte);
-			$line->subledger_account = self::toFixedWidthAscii($line->subledger_account);
-			$line->subledger_label = self::toFixedWidthAscii($line->subledger_label);
-			$line->code_journal = self::toFixedWidthAscii($line->code_journal);
+			$line->doc_ref = dol_string_nounprintableascii($line->doc_ref, 1, 1);
+			$line->label_operation = dol_string_nounprintableascii($line->label_operation, 1, 1);
+			$line->numero_compte = dol_string_nounprintableascii($line->numero_compte, 1, 1);
+			$line->label_compte = dol_string_nounprintableascii($line->label_compte, 1, 1);
+			$line->subledger_account = dol_string_nounprintableascii($line->subledger_account, 1, 1);
+			$line->subledger_label = dol_string_nounprintableascii($line->subledger_label, 1, 1);
+			$line->code_journal = dol_string_nounprintableascii($line->code_journal, 1, 1);
 
 			$code_compta = $line->numero_compte;
 			if (!empty($line->subledger_account)) {
@@ -2699,33 +2699,6 @@ class AccountancyExport
 	public static function trunc($str, $size)
 	{
 		return dol_trunc($str, $size, 'right', 'UTF-8', 1);
-	}
-
-	/**
-	 * Convert a string into printable ASCII for fixed-width formats (Quadratus).
-	 * Every character remaining outside printable ASCII after dol_string_unaccent() (typographic
-	 * apostrophe, quotes, dashes, ligatures, euro sign...) is several bytes long in UTF-8 and is
-	 * counted as several characters by str_pad(), so it shifts all the next fields of the line.
-	 *
-	 * @param 	string	$str 	String (already unaccented)
-	 * @return 	string			String with printable ASCII characters only
-	 */
-	private static function toFixedWidthAscii($str)
-	{
-		// "°" has no ASCII equivalent and iconv would turn it into "?" ("n° 12" -> "n? 12")
-		$str = str_replace('°', ' ', (string) $str);
-
-		// Transliterate to ASCII, as done by dolSlugify() ("’" -> "'", "Œ" -> "OE", "€" -> "EUR"...)
-		if (function_exists('iconv')) {
-			$result = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
-			if ($result !== false) {
-				$str = $result;
-			}
-		}
-
-		// The result of the transliteration depends on the iconv implementation of the server,
-		// so remove any byte still outside printable ASCII.
-		return (string) preg_replace('/[^\x20-\x7E]/', '', $str);
 	}
 
 	/**
