@@ -4478,10 +4478,10 @@ div.tabBar {
 	padding-bottom: 23px;
 	margin: 0px 0px 20px 0px;
 	border-radius: 3px;
-	border-right: 1px solid #CCC;
-	border-left: 1px solid #CCC;
-	border-top: 1px solid #CCC;
-	border-bottom: 1px solid #CCC;
+	border-right: 1px solid #DDD;
+	border-left: 1px solid #DDD;
+	border-top: 1px solid #DDD;
+	border-bottom: 1px solid #DDD;
 	width: auto;
 	background: var(--colorbacktabcard1);
 }
@@ -7746,7 +7746,7 @@ ul.filedirelem li {
 }
 
 ul.ecmjqft {
-	line-height: 16px;
+	line-height: 32px;
 	padding: 0px;
 	margin: 0px;
 	font-weight: normal;
@@ -7788,6 +7788,7 @@ div.ecmjqft {
 	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
+	height: 16px;
 }
 #ecm-layout-north {
 	min-height: 40px;
@@ -7798,14 +7799,21 @@ div#ecm-layout-west {
 	width: 380px;
 	vertical-align: top;
 }
+/* ECM filemanager: same height of 49px for the 3 first lines of the 2 panels: the td of data lines
+ * are 32px high (rule on td of table.liste), so the title lines of the panels "Répertoires" and
+ * "Documents" use the same height of content of 32px to stay aligned */
+#ecm-layout-west table.liste tr.liste_titre:first-of-type th.liste_titre,
+#ecmfileview #tablelines tr.liste_titre.nodrag > th {
+	height: 32px;
+}
 div#ecm-layout-center {
 	width: calc(100% - 405px);
 	vertical-align: top;
 	float: <?php echo $right; ?>;
 }
 
-.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; }
-.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png', 1); ?>) left top no-repeat; }
+.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
+.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
 .ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/'.$theme.'/img/working.gif', 1); ?>) left top no-repeat; }
 
 
