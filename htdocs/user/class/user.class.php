@@ -1664,7 +1664,8 @@ class User extends CommonObject
 				'hrm_skillrank' => array('label' => 'Skill', 'filter' => "objecttype = 'user' AND fk_object = ".((int) $this->id)),
 			);
 			foreach ($hrmtables as $hrmtable => $hrminfo) {
-				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$hrmtable." WHERE ".$hrminfo['filter'];
+				$sanitizedfilter = $hrminfo['filter'];	// Built above from the id of the user only
+				$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$this->db->sanitize($hrmtable)." WHERE ".$sanitizedfilter;
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
@@ -2400,7 +2401,7 @@ class User extends CommonObject
 					$tmpobj = new Contact($this->db);
 					$result = $tmpobj->fetch($this->contact_id);
 
-					if ($result >= 0) {
+					if ($result > 0) {
 						$tmpobj->civility_code = $this->civility_code;
 						$tmpobj->firstname = $this->firstname;
 						$tmpobj->lastname = $this->lastname;

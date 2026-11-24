@@ -1126,6 +1126,8 @@ class CMailFile
 					$loginpass = getDolGlobalString($keyforsmtppw);
 					$this->smtps->setPW($loginpass);
 				}
+				// Authentication method of the send context (MAIN_MAIL_SMTPS_AUTH_TYPE_xxx when the context has its own setup)
+				$this->smtps->setAuthType(getDolGlobalString($keyforsmtpauthtype));
 
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array

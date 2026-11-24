@@ -1465,6 +1465,7 @@ class AccountancyExport
 				$tab[] = dol_string_unaccent($line->subledger_label);
 
 				// FEC:PieceRef
+				$line->doc_ref = str_replace(array("\t", "\n", "\r"), " ", $line->doc_ref);
 				$tab[] = $line->doc_ref;
 
 				// FEC:PieceDate
@@ -1689,6 +1690,7 @@ class AccountancyExport
 				$tab[] = dol_string_unaccent($line->subledger_label);
 
 				// FEC:PieceRef
+				$line->doc_ref = str_replace(array("\t", "\n", "\r"), " ", $line->doc_ref);
 				$tab[] = $line->doc_ref;
 
 				// FEC:PieceDate

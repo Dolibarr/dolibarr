@@ -57,7 +57,8 @@ if (is_numeric($type)) {
 	$type = Categorie::$MAP_ID_TO_CODE[(int) $type]; // For backward compatibility
 }
 
-if (!$user->hasRight('categorie', 'lire')) {
+// Security check
+if (!$user->admin) {
 	accessforbidden();
 }
 

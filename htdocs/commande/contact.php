@@ -65,6 +65,7 @@ $result = restrictedArea($user, 'commande', $id, '');
 
 $usercancreate  =  $user->hasRight("commande", "creer");
 
+
 /*
  * Actions
  */
