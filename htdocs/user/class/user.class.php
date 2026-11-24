@@ -3230,6 +3230,24 @@ class User extends CommonObject
 	}
 
 	/**
+	 * Return the thirdparty of an external user. A cache is used so each thirdparty is fetched only once per page.
+	 *
+	 * @return	Societe		Thirdparty of the user
+	 */
+	private function getThirdpartyWithCache()
+	{
+		global $conf;
+
+		if (empty($conf->cache['thirdparty'][$this->socid]) || !($conf->cache['thirdparty'][$this->socid] instanceof Societe)) {
+			$thirdparty = new Societe($this->db);
+			$thirdparty->fetch($this->socid);
+			$conf->cache['thirdparty'][$this->socid] = $thirdparty;
+		}
+
+		return $conf->cache['thirdparty'][$this->socid];
+	}
+
+	/**
 	 * getTooltipContentArray
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
@@ -3285,8 +3303,7 @@ class User extends CommonObject
 		}
 		$company = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users
-			$thirdpartystatic = new Societe($this->db);
-			$thirdpartystatic->fetch($this->socid);
+			$thirdpartystatic = $this->getThirdpartyWithCache();
 			$companyimg = '';
 			if (empty($params['hidethirdpartylogo'])) {
 				$companyimg = ' '.$thirdpartystatic->getNomUrl(2, 'nolink', 0, 1); // picto only of company
@@ -3372,12 +3389,9 @@ class User extends CommonObject
 		}
 
 		$companylink = '';
-		if (!empty($this->socid)) {	// Add thirdparty for external users
-			$thirdpartystatic = new Societe($this->db);
-			$thirdpartystatic->fetch($this->socid);
-			if (empty($hidethirdpartylogo)) {
-				$companylink = ' '.$thirdpartystatic->getNomUrl(2, 'nolink', 0, 1); // picto only of company
-			}
+		if (!empty($this->socid) && empty($hidethirdpartylogo)) {	// Add thirdparty for external users. The fetch is useless if logo is hidden.
+			$thirdpartystatic = $this->getThirdpartyWithCache();
+			$companylink = ' '.$thirdpartystatic->getNomUrl(2, 'nolink', 0, 1); // picto only of company
 		}
 
 		if ($infologin < 0) {
