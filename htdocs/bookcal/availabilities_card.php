@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_availabilities.lib.php';
 
 // Load translation files required by the page
@@ -106,10 +107,23 @@ if ($enablepermissioncheck) {
 $upload_dir = $conf->bookcal->multidir_output[isset($object->entity) ? $object->entity : 1].'/availabilities';
 
 // Security check (enable the most restrictive one)
-//if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
+// Check the user is allowed to access the thirdparty of the parent calendar, whose customer is the
+// thirdparty boundary of the record, and the thirdparty of the target calendar on add or update
+// (a sales representative not allowed to see all customers is limited to his own customers)
+if ($object->id > 0 || (in_array($action, array('add', 'update')) && GETPOSTINT('fk_bookcal_calendar') > 0)) {
+	$calendaridforcheck = ((in_array($action, array('add', 'update')) && GETPOSTINT('fk_bookcal_calendar') > 0) ? GETPOSTINT('fk_bookcal_calendar') : $object->fk_bookcal_calendar);
+	$calendarstatic = new Calendar($db);
+	if ($calendarstatic->fetch($calendaridforcheck) <= 0
+		|| !checkUserAccessToObject($user, array($calendarstatic->element), $calendarstatic->id, $calendarstatic->table_element, '', 'fk_soc', 'rowid')) {
+		accessforbidden();
+	}
+}
 if (!isModEnabled("bookcal")) {
 	accessforbidden();
 }
@@ -365,6 +379,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	$object->showtimezoneofhours = 1;	// Show the timezone of the start and end hours
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -446,7 +461,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle');
 			}
 
 			// Back to draft

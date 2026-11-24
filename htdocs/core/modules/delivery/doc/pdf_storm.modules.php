@@ -632,11 +632,11 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$larg_sign = ($this->page_largeur - $this->marge_gauche - $this->marge_droite) / 3;
 		$pdf->RoundedRect($this->marge_gauche, $posy + 1, $larg_sign, 25, $this->corner_radius, '1234', 'D');
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$pdf->MultiCell($larg_sign, 2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":", '', 'L');
+		$pdf->MultiCell($larg_sign, 2, $outputlangs->transnoentities("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":", '', 'L');
 
 		$pdf->RoundedRect(2 * $larg_sign + $this->marge_gauche, $posy + 1, $larg_sign, 25, $this->corner_radius, '1234', 'D');
 		$pdf->SetXY(2 * $larg_sign + $this->marge_gauche + 2, $posy + 2);
-		$pdf->MultiCell($larg_sign, 2, $outputlangs->trans("ForCustomer").':', '', 'L');
+		$pdf->MultiCell($larg_sign, 2, $outputlangs->transnoentities("ForCustomer").':', '', 'L');
 	}
 
 
@@ -822,7 +822,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

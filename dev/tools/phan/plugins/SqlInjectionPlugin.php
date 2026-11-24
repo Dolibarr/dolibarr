@@ -470,7 +470,8 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 					// For standalone calls, parent will be null
 					if ($parent !== null && $parent->kind === \ast\AST_BINARY_OP && ($parent->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
 						// Check if properly wrapped in the required quotes
-						if (!$this->isFunctionCallProperlyWrappedInQuotes($node, $parent, $requiredQuote)) {
+						if (!$this->isFunctionCallProperlyWrappedInQuotes($node, $parent, $requiredQuote)
+							&& !$this->isFunctionCallInsideQuotedString($node, $requiredQuote)) {
 							$methodDisplay = $this->getNodeVarForMethodCall($node);
 							// @phpstan-ignore-next-line method.notFound
 							$this->emitPluginIssue(
@@ -485,6 +486,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 						// This case contains a lot of false positive, for example when the quote is in javascript world,
 						// for example with javascript like: console.log('<php code>');
 
+						/*
 						// Standalone call - always flag it as it needs wrapping
 						$methodDisplay = $this->getNodeVarForMethodCall($node);
 						// @phpstan-ignore-next-line method.notFound
@@ -495,6 +497,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 							'Function %s output (standalone PHP code) must be wrapped in %s quotes (may be false positive if quote is in javascript world)',
 							[$methodDisplay, $requiredQuote === "'" ? 'single' : 'double']
 						);
+						*/
 					}
 				} else {
 					// No quote requirement (e.g., mode 3 for dol_escape_js), so don't flag
@@ -679,6 +682,79 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 
 		// Both sides must be OK
 		return $leftOk && $rightOk;
+	}
+
+	/**
+	 * Check if a function call is inside a string delimited by the specified quote, in the text
+	 * built by the whole concatenation it belongs to. For example in
+	 * 'alert(\''.dol_escape_js($msg).' "\'+mode+\'"\');' the quote next to the call is not the
+	 * delimiter, but the call is between the two single quotes of the javascript string.
+	 *
+	 * @param Node $functionCall The function call node to check
+	 * @param string $quote The quote that must delimit the string
+	 * @return bool True if the string around the call is opened and closed by $quote
+	 */
+	private function isFunctionCallInsideQuotedString(Node $functionCall, string $quote): bool
+	{
+		// Get the outermost concatenation that contains the call
+		$top = null;
+		$parentNodes = $this->parent_node_list;
+		for ($i = count($parentNodes) - 1; $i >= 0; $i--) {
+			$candidate = $parentNodes[$i];
+			if (!($candidate instanceof Node) || $candidate->kind !== \ast\AST_BINARY_OP || ($candidate->flags ?? 0) !== \ast\flags\BINARY_CONCAT) {
+				break;
+			}
+			$top = $candidate;
+		}
+		if ($top === null) {
+			return false;
+		}
+
+		// Scan the literal parts in order, the other parts are values that do not change the quoting
+		$state = null;	// Quote of the string we are in, null when outside of a string
+		$callFound = false;
+		foreach ($this->flattenConcatenation($top) as $part) {
+			if ($part === $functionCall) {
+				if ($state !== $quote) {
+					return false;
+				}
+				$callFound = true;
+				continue;
+			}
+			if (!is_string($part)) {
+				continue;
+			}
+			$length = strlen($part);
+			for ($j = 0; $j < $length; $j++) {
+				$char = $part[$j];
+				if ($state !== null && $char === '\\') {
+					$j++;	// Escaped character inside a string
+				} elseif ($state === null && ($char === "'" || $char === '"')) {
+					$state = $char;
+				} elseif ($char === $state) {
+					if ($callFound) {
+						return true;	// The string around the call is closed
+					}
+					$state = null;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the operands of a concatenation, in order, as a flat list.
+	 *
+	 * @param mixed $node The node of the concatenation
+	 * @return array<mixed> The operands: strings for the literals, nodes for the other values
+	 */
+	private function flattenConcatenation($node): array
+	{
+		if ($node instanceof Node && $node->kind === \ast\AST_BINARY_OP && ($node->flags ?? 0) === \ast\flags\BINARY_CONCAT) {
+			return array_merge($this->flattenConcatenation($node->children['left'] ?? null), $this->flattenConcatenation($node->children['right'] ?? null));
+		}
+		return array($node);
 	}
 
 	/**

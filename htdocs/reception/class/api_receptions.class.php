@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 /**
  * API class for receptions
@@ -119,9 +120,11 @@ class Receptions extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -196,7 +199,7 @@ class Receptions extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -234,21 +237,21 @@ class Receptions extends DolibarrApi
 			foreach ($request_data["lines"] as $line) {
 				$receptionline = new ReceptionLineBatch($this->db);
 
-				$receptionline->fk_product = $line['fk_product'];
-				$receptionline->fk_entrepot = $line['fk_entrepot'];
-				$receptionline->fk_element = $line['fk_element'] ?? $line['origin_id'];				// example: purchase order id.  this->origin is 'supplier_order'
-				$receptionline->origin_line_id = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order id
-				$receptionline->fk_elementdet = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order line id
-				$receptionline->origin_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
-				$receptionline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
-				$receptionline->qty = $line['qty'];
+				$receptionline->fk_product = $line['fk_product'] ?? null;
+				$receptionline->fk_entrepot = $line['fk_entrepot'] ?? null;
+				$receptionline->fk_element = $line['fk_element'] ?? ($line['origin_id'] ?? null);				// example: purchase order id.  this->origin is 'supplier_order'
+				$receptionline->origin_line_id = $line['fk_elementdet'] ?? ($line['origin_line_id'] ?? null);	// example: purchase order id
+				$receptionline->fk_elementdet = $line['fk_elementdet'] ?? ($line['origin_line_id'] ?? null);	// example: purchase order line id
+				$receptionline->origin_type = $line['element_type'] ?? ($line['origin_type'] ?? null);		// example 'supplier_order'
+				$receptionline->element_type = $line['element_type'] ?? ($line['origin_type'] ?? null);		// example 'supplier_order'
+				$receptionline->qty = $line['qty'] ?? null;
 				//$receptionline->rang = $line['rang'];
-				$receptionline->array_options = $line['array_options'];
-				$receptionline->batch = $line['batch'];
-				$receptionline->eatby = $line['eatby'];
-				$receptionline->sellby = $line['sellby'];
-				$receptionline->cost_price = $line['cost_price'];
-				$receptionline->status = $line['status'];
+				$receptionline->array_options = $line['array_options'] ?? array();
+				$receptionline->batch = $line['batch'] ?? null;
+				$receptionline->eatby = $line['eatby'] ?? null;
+				$receptionline->sellby = $line['sellby'] ?? null;
+				$receptionline->cost_price = $line['cost_price'] ?? null;
+				$receptionline->status = $line['status'] ?? null;
 
 				$lines[] = $receptionline;
 			}
@@ -562,6 +565,19 @@ class Receptions extends DolibarrApi
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->reception->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
+			}
+
+			if ($field == 'socid' && (int) $value != $this->reception->socid) {
+				// Check access to the new thirdparty to avoid a cross-customer reception reassignment
+				$new_socid = (int) $value;
+				$thirdparty = new Societe($this->db);
+				$result = $thirdparty->fetch($new_socid);
+				if ($result < 1) {
+					throw new RestException(404, 'Thirdparty with id='.$new_socid.' not found or not allowed');
+				}
+				if (!DolibarrApi::_checkAccessToResource('societe', $new_socid)) {
+					throw new RestException(403, 'Access to new thirdparty='.$new_socid.' is not allowed for login '.DolibarrApiAccess::$user->login);
+				}
 			}
 
 			if ($field == 'array_options' && is_array($value)) {

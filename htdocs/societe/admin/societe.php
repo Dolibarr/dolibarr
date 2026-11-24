@@ -175,6 +175,45 @@ if ($action == 'setdoc') {
 	}
 }
 
+if ($action == 'specimen') {
+	$modele = GETPOST('module', 'alpha');
+
+	$object = new Societe($db);
+	$object->initAsSpecimen();
+
+	// Search template files
+	$file = '';
+	$classname = '';
+	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir) {
+		$file = dol_buildpath($reldir."core/modules/societe/doc/pdf_".$modele.".modules.php", 0);
+		if (file_exists($file)) {
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($classname !== '') {
+		require_once $file;
+
+		$module = new $classname($db);
+		'@phan-var-force ModeleThirdPartyDoc $module';
+		/** @var ModeleThirdPartyDoc $module */
+
+		if ($module->write_file($object, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=societe&file=SPECIMEN.pdf");
+			return;
+		} else {
+			setEventMessages($module->error, $module->errors, 'errors');
+			dol_syslog($module->error, LOG_ERR);
+		}
+	} else {
+		$langs->load('errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
+}
+
 //Activate Set accountancy code customer invoice mandatory
 if ($action == "setaccountancycodecustomerinvoicemandatory") {
 	$setaccountancycodecustomerinvoicemandatory = GETPOSTINT('value');
@@ -581,9 +620,9 @@ foreach ($profid as $key => $val) {
 		$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
 		$idprof_invoice_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
 
-		$verif = !empty($conf->global->$idprof_unique);
-		$mandatory = !empty($conf->global->$idprof_mandatory);
-		$invoice_mandatory = !empty($conf->global->$idprof_invoice_mandatory);
+		$verif = getDolGlobalBool($idprof_unique);
+		$mandatory = getDolGlobalBool($idprof_mandatory);
+		$invoice_mandatory = getDolGlobalBool($idprof_invoice_mandatory);
 
 		if ($verif) {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';

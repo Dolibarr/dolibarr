@@ -295,15 +295,6 @@ class SkillRank extends CommonObject
 			}
 		}
 
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
-			}
-		}
-
 		unset($object->context['createfromclone']);
 
 		// End
@@ -349,7 +340,7 @@ class SkillRank extends CommonObject
 	 *  Clone skillrank Object linked to job with user id
 	 *  The skillrank table is a join table that is marked for multiple objects
 	 *
-	 * @param SkillRank $currentSkill line of evaluation (skill) we need to clone and add to user skills list
+	 * @param EvaluationLine $currentSkill line of evaluation (skill) we need to clone and add to user skills list
 	 * @param int $fk_user id of user linked to skillrank
 	 * @return int > 0 if ok, < 0 if ko
 	 */
@@ -760,7 +751,9 @@ class SkillRank extends CommonObject
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				list($class, $module) = explode('@', $this->picto);
+				$tmparray = explode('@', $this->picto);
+				$class = $tmparray[0];
+				$module = $tmparray[1];
 				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];

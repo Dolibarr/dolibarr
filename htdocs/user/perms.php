@@ -73,6 +73,10 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$caneditselfperms = ($user->id == $id && $user->hasRight("user", "self_advance", "writeperms"));
 	$caneditperms = (($caneditperms || $caneditselfperms) ? 1 : 0);
 }
+// Permissions are given by user groups only: read only
+if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+	$caneditperms = 0;
+}
 
 // Security check
 $socid = 0;
@@ -182,7 +186,7 @@ $excludedModules = getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD') ? array('modFourn
 // every disabled module found on disk. If we are looking at our own entity, $conf->global already
 // has this cached from bootstrap and no query is needed at all.
 if ($entity == $conf->entity) {
-	$enabledmoduleconst = (array) $conf->global;
+	$enabledmoduleconst = get_object_vars($conf->global);
 } else {
 	$enabledmoduleconst = array();
 	$sql = "SELECT ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value";
@@ -417,7 +421,7 @@ if ($user->hasRight("user", "user", "read") || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" rel="noopener">';
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid valignmiddle" tabindex="-1" rel="noopener">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 $morehtmlref .= '</a>';
 
@@ -487,6 +491,9 @@ if ($user->admin) {
 		$s .= $langs->trans("YouAreUsingTheSimplePermissionsMode");
 	}
 	print info_admin($s);
+}
+if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+	print info_admin($langs->trans("PermissionsManagedByGroupsOnly").' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/user/card.php', ['id' => $object->id]).'">'.$langs->trans("ListOfGroupsForUser").'</a>', 0, 0, '0');
 }
 // If edited user is an extern user, we show warning for external users
 if (!empty($object->socid)) {
@@ -612,6 +619,13 @@ foreach ($arrayofpermission as $i => $obj) {
 			continue;
 		}
 		if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
+			$i++;
+			continue;
+		}
+	}
+	if (!getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+		// Permissions on delivery receipts are hidden when the delivery receipt feature is disabled
+		if ($obj->module == 'expedition' && in_array($obj->perms, array('delivery', 'delivery_advance'))) {
 			$i++;
 			continue;
 		}
@@ -758,7 +772,7 @@ foreach ($arrayofpermission as $i => $obj) {
 		}
 		print '<td>';
 		print '</td>';
-	} elseif (isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero)) {
+	} elseif (!empty($permsgroupbyentitypluszero)) {
 		print '<!-- permsgroupbyentitypluszero -->';
 		if (in_array($obj->id, $permsgroupbyentitypluszero)) {	// Permission granted by group
 			print '<td class="center nowrap">';
@@ -831,7 +845,7 @@ foreach ($arrayofpermission as $i => $obj) {
 	if ($obj->module == 'user' && $obj->perms == 'user' && $obj->subperms == 'password') {
 		if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
 			in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
-			(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+			(!empty($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
 			print ' '.img_warning($langs->trans("AllowPasswordResetBySendingANewPassByEmail"));
 		}
 	}
@@ -839,7 +853,7 @@ foreach ($arrayofpermission as $i => $obj) {
 	if ($obj->module == 'user' && $obj->perms == 'user' && ($obj->subperms == 'creer' || $obj->subperms == 'create')) {
 		if ((!empty($object->admin) && !empty($objMod->rights_admin_allowed)) ||
 			in_array($obj->id, $permsuser) /* if edited user owns this permissions */ ||
-			(isset($permsgroupbyentitypluszero) && is_array($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
+			(!empty($permsgroupbyentitypluszero) && in_array($obj->id, $permsgroupbyentitypluszero))) {
 			print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 		}
 	}

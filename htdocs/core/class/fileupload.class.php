@@ -45,6 +45,11 @@ class FileUpload
 	protected $fk_element;
 
 	/**
+	 * @var ?CommonObject	Object the files are uploaded for (null when the upload_dir is given in the options)
+	 */
+	protected $object = null;
+
+	/**
 	 * @var string object element
 	 */
 	protected $element;
@@ -80,8 +85,8 @@ class FileUpload
 
 		$object_ref = 'UndefinedReference';
 		$object = null;
-		// If pathname and filename are null then we can still upload files if we have specified upload_dir on $options
-		if ($pathname !== null && $filename !== null) {
+		// If pathname and filename are empty then we can still upload files if we have specified upload_dir on $options
+		if ($pathname !== '' && $filename !== '') {
 			// Get object from its id and type
 			$object = fetchObjectByElement($fk_element, $element);
 
@@ -92,6 +97,7 @@ class FileUpload
 				dol_syslog(get_class($this)."::__construct object ".$element." with id ".((int) $fk_element)." was not found", LOG_WARNING);
 				throw new Exception('objectnotfound');
 			}
+			$this->object = $object;
 
 			// Directory of the module, including the sub directory used by some elements (/sending for a shipment,
 			// /commande for a supplier order, /<project ref> for a task, ...). We must use the same directory than
@@ -306,7 +312,10 @@ class FileUpload
 		$new_file_path = $options['upload_dir'].$file_name;
 
 		if (dol_mkdir($options['upload_dir']) >= 0) {
-			list($img_width, $img_height) = @getimagesize($file_path);
+			$imagesize = @getimagesize($file_path);	// false if the file is not an image, and destructuring false raises a warning since PHP 8.5
+			$tmparray = (is_array($imagesize) ? $imagesize : array(null, null));
+			$img_width = $tmparray[0];
+			$img_height = $tmparray[1];
 			if (!$img_width || !$img_height) {
 				return false;
 			}
@@ -375,7 +384,11 @@ class FileUpload
 			$file->error = 'maxNumberOfFiles';
 			return false;
 		}
-		list($img_width, $img_height) = @getimagesize($uploaded_file);
+		// getimagesize() throws a ValueError on an empty path since PHP 8, so it is not called when the file was not found
+		$imagesize = (empty($uploaded_file) ? false : @getimagesize($uploaded_file));	// false if the file is not an image, and destructuring false raises a warning since PHP 8.5
+		$tmparray = (is_array($imagesize) ? $imagesize : array(null, null));
+		$img_width = $tmparray[0];
+		$img_height = $tmparray[1];
 		if (is_numeric($img_width)) {
 			if ($this->options['max_width'] && $img_width > $this->options['max_width'] ||
 					$this->options['max_height'] && $img_height > $this->options['max_height']) {
@@ -465,7 +478,9 @@ class FileUpload
 
 		// Sanitize to avoid stream execution when calling file_size(). Not that this is a second security because
 		// most streams are already disabled by stream_wrapper_unregister() in filefunc.inc.php
-		$uploaded_file = preg_replace('/\s*(http|ftp|sftp|)s?:/i', '', $uploaded_file);
+		// A scheme has at least 2 characters (http:, phar:, data:...), so the drive letter of a Windows path
+		// (C:\wamp64\tmp\php1A2.tmp) is kept: removing it made realpath() fail and every upload fail on Windows.
+		$uploaded_file = preg_replace('/\s*[a-z][a-z0-9+.\-]+:/i', '', (string) $uploaded_file);
 		$uploaded_file = realpath($uploaded_file);	// A hack to be sure the file point to an existing file on disk (and is not a SSRF attack)
 
 		$validate = $this->validate($uploaded_file, $file, $error, $index);
@@ -516,13 +531,37 @@ class FileUpload
 						}
 					}
 				} else {
-					// Non-multipart uploads (PUT method support)
-					file_put_contents($file_path, fopen('php://input', 'r'), $append_file ? FILE_APPEND : 0);
+					// Non-multipart uploads (file sent as the body of the request) are refused: the file would be written
+					// without the checks done by dol_move_uploaded_file() on an uploaded file (antivirus, .noexe suffix on
+					// an executable file, file name). The drag and drop of a file sends a multipart upload.
+					$file->error = 'notmultipartupload';
+					return $file;
 				}
 				dolChmod($file_path);
 
 				$file_size = dol_filesize($file_path);
 				if ($file_size === $file->size) {
+					// Update index table of files (llx_ecm_files), as dol_add_file_process() does for the files added
+					// from the "Attached files" tab. The name with its .noexe suffix is given, it is removed by
+					// addFileIntoDatabaseIndex() as for any uploaded file.
+					$sharefile = 0;
+					if (dol_mimetype($file->name) == 'application/pdf' && $this->element == 'product' && getDolGlobalString('PRODUCT_ALLOW_EXTERNAL_DOWNLOAD')) {
+						$sharefile = 1;
+					}
+					// The directory is given with no trailing slash, as by the tab: with it, the test of a temporary
+					// directory done by addFileIntoDatabaseIndex() would match an object whose directory is named 'temp'.
+					$indexdir = rtrim(dol_sanitizePathName($this->options['upload_dir']), '/');
+					$indexfile = dol_sanitizeFileName($file->name);
+					// When aborted uploads are not discarded, an existing file with the same name was overwritten, so
+					// its index is removed first, as dol_add_file_process() does when it allows overwriting.
+					if (!$this->options['discard_aborted_uploads']) {
+						deleteFilesIntoDatabaseIndex($indexdir, $indexfile, '', $this->object);
+					}
+					$resultindex = addFileIntoDatabaseIndex($indexdir, $indexfile, $name, 'uploaded', $sharefile, $this->object);
+					if (!is_numeric($resultindex) || $resultindex < 0) {	// An array is returned when the extraction of the text failed
+						dol_syslog(get_class($this)."::handleFileUpload failed to add file ".$file->name." into the index of files", LOG_WARNING);
+					}
+
 					$file->url = $this->options['upload_url'].urlencode($file->name);
 					foreach ($this->options['image_versions'] as $version => $options) {
 						if ($this->createScaledImage($file->name, $options)) {	// Creation of thumbs mini and small is ok

@@ -150,6 +150,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -656,6 +659,9 @@ if (!empty($project->id)) {
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, '', 0, '', 'reposition');
 }
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
+
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
@@ -709,7 +715,12 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			if ($key == 'ref' && empty($arrayfields['t.label']['checked'])) {
+				// Label is shown into the ref column, so search on both
+				$sql .= natural_search(array('t.ref', 't.label'), $search[$key]);
+			} else {
+				$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			}
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
@@ -915,8 +926,6 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1104,7 +1113,7 @@ while ($i < $imaxinloop) {
 			if (in_array($val['type'], array('timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			} elseif ($key == 'ref') {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
+				$cssforfield .= ($cssforfield ? ' ' : '').(empty($arrayfields['t.label']['checked']) ? 'tdlineheightsmall' : 'nowraponall');
 			}
 
 			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {
@@ -1121,7 +1130,19 @@ while ($i < $imaxinloop) {
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'ref') {
-					print $object->getNomUrl(1, 0, '', (($projectid > 0) ? 'withproject' : ''));
+					if (empty($arrayfields['t.label']['checked'])) {
+						// Show label under the ref when label column is not enabled
+						print '<div class="tdoverflowmax150 inline-block lineheightsmall">';
+						print $object->getNomUrl(1, 0, '', (($projectid > 0) ? 'withproject' : ''));
+						if (!empty($object->label)) {
+							print '<br><span class="spantitle">'.dolPrintHTML($object->label).'</span>';
+						}
+						print '</div>';
+					} else {
+						print $object->getNomUrl(1, 0, '', (($projectid > 0) ? 'withproject' : ''));
+					}
+				} elseif ($key == 'label') {
+					print '<span class="spantitle">'.$object->showOutputField($val, $key, (string) $object->$key, '').'</span>';
 				} else {
 					print $object->showOutputField($val, $key, (string) $object->$key, '');
 				}

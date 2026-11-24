@@ -226,19 +226,20 @@ class MyObject extends CommonObject
 	/**
 	 * @var string    Name of subtable class that manage subtable lines
 	 */
-	public $class_element_line = 'MyObjectline';
+	public $class_element_line = 'MyObjectLine';
 
 	/**
 	 * @var array<array<string>|string>		List of child tables. To test if we can delete object.
 	 */
-	protected $childtables = array('mychildtable' => array('name' => 'MyObject', 'fk_element' => 'fk_myobject'));
+	//protected $childtables = array('mychildtable' => array('name' => 'MyObject', 'fk_element' => 'fk_myobject'));
 
 	/**
 	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
-	protected $childtablesoncascade = array('mymodule_myobjectdet');
+	//protected $childtablesoncascade = array('mymodule_myobjectdet');
+	protected $childtablesoncascade = array('mymodule_myobjectline');	// Lines are deleted with the object
 
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
@@ -331,16 +332,23 @@ class MyObject extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
+
 		//BEGIN MODULEBUILDER LINES
 		if ($result > 0 && !empty($object->table_element_line)) {
 			$object->fetchLines();
 		}
 
-		// get lines so they will be clone
-		foreach ($this->lines as $line) {
+		// get lines so they will be clone (they are created by createCommon())
+		foreach ($object->lines as $line) {
 			$line->fetch_optionals();
+			$line->date_creation = null;
+			$line->fk_user_creat = $user->id;
+			$line->fk_user_modif = null;
 		}
 		//END MODULEBUILDER LINES
+
+		$fromref = (property_exists($object, 'ref') ? $object->ref : '');	// Save ref of source object before it is overwritten
+
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
@@ -378,6 +386,8 @@ class MyObject extends CommonObject
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
+		$object->context['createfromclone_fromid'] = $fromid;
+		$object->context['createfromclone_fromref'] = $fromref;
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
@@ -386,21 +396,23 @@ class MyObject extends CommonObject
 
 		if (!$error) {
 			// copy internal contacts
-			if ($this->copy_linked_contact($object, 'internal') < 0) {
+			if ($object->copy_linked_contact($this, 'internal') < 0) {
 				$error++;
 			}
 		}
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (!empty($object->socid) && ((property_exists($this, 'fk_soc') && ($this->fk_soc == $object->socid)) || (property_exists($this, 'socid') && ($this->socid == $object->socid)))) {	// @phpstan-ignore-line
-				if ($this->copy_linked_contact($object, 'external') < 0) {
+			if (!empty($object->fk_soc) && ((property_exists($this, 'fk_soc') && ($this->fk_soc == $object->fk_soc)) || (property_exists($this, 'socid') && ($this->socid == $object->fk_soc)))) {	// @phpstan-ignore-line
+				if ($object->copy_linked_contact($this, 'external') < 0) {
 					$error++;
 				}
 			}
 		}
 
 		unset($object->context['createfromclone']);
+		unset($object->context['createfromclone_fromid']);
+		unset($object->context['createfromclone_fromref']);
 
 		// End
 		if (!$error) {
@@ -564,12 +576,83 @@ class MyObject extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
-		if ($this->status < 0) {
+		if ($this->status != self::STATUS_DRAFT) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 
 		return $this->deleteLineCommon($user, $idline, $notrigger);
+	}
+
+	/**
+	 *  Add a line to the object. Object must be a draft.
+	 *
+	 *	@param	User		$user			User that adds
+	 *  @param	string		$desc			Description of line
+	 *  @param	float		$qty			Quantity
+	 *  @param	int			$fk_product		Id of product or service (0 if none)
+	 *  @param	int<0,1>	$notrigger		0=launch triggers after, 1=disable triggers
+	 *  @return	int							Id of new line if OK, <0 if KO
+	 */
+	public function addLine(User $user, $desc, $qty, $fk_product = 0, $notrigger = 0)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			$this->error = 'ErrorAddOrModifyLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		$line = new MyObjectLine($this->db);
+		$line->fk_myobject = $this->id;
+		$line->fk_product = ($fk_product > 0 ? $fk_product : 0);
+		$line->description = $desc;
+		$line->qty = $qty;
+		$line->rang = $this->line_max() + 1;
+
+		$result = $line->insert($user, $notrigger);
+		if ($result < 0) {
+			$this->setErrorsFromObject($line);
+			return -1;
+		}
+
+		return $result;
+	}
+
+	/**
+	 *  Update a line of the object. Object must be a draft.
+	 *
+	 *	@param	User		$user			User that modifies
+	 *  @param	int			$idline			Id of line to update
+	 *  @param	string		$desc			Description of line
+	 *  @param	float		$qty			Quantity
+	 *  @param	int			$fk_product		Id of product or service (0 if none)
+	 *  @param	int<0,1>	$notrigger		0=launch triggers after, 1=disable triggers
+	 *  @return	int							>0 if OK, <0 if KO
+	 */
+	public function updateLine(User $user, $idline, $desc, $qty, $fk_product = 0, $notrigger = 0)
+	{
+		if ($this->status != self::STATUS_DRAFT) {
+			$this->error = 'ErrorAddOrModifyLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		$line = new MyObjectLine($this->db);
+		$result = $line->fetch($idline);
+		if ($result <= 0 || $line->fk_myobject != $this->id) {	// The line must belong to this object
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
+		}
+
+		$line->fk_product = ($fk_product > 0 ? $fk_product : 0);
+		$line->description = $desc;
+		$line->qty = $qty;
+
+		$result = $line->update($user, $notrigger);
+		if ($result < 0) {
+			$this->setErrorsFromObject($line);
+			return -1;
+		}
+
+		return 1;
 	}
 	//END MODULEBUILDER LINES
 
@@ -647,6 +730,8 @@ class MyObject extends CommonObject
 				}
 				// End call triggers
 			}
+		} else {
+			$error++;	// Failed to get a new ref (error is set by getNextNumRef())
 		}
 
 		if (!$error) {
@@ -655,15 +740,15 @@ class MyObject extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
-				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(dol_strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(dol_strlen($this->ref) + 1).")), filepath = 'mymodule/myobject/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'mymodule/myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
-				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'mymodule/myobject/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filepath = 'mymodule/myobject/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -768,7 +853,7 @@ class MyObject extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED) {
+		if ($this->status != self::STATUS_CANCELED) {
 			return 0;
 		}
 
@@ -806,7 +891,7 @@ class MyObject extends CommonObject
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}
 		if (property_exists($this, 'label')) {
-			$datas['label'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
+			$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 
 		return $datas;
@@ -894,7 +979,9 @@ class MyObject extends CommonObject
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				list($class, $module) = explode('@', $this->picto);
+				$tmparray = explode('@', $this->picto);
+				$class = $tmparray[0];
+				$module = $tmparray[1];
 				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];
@@ -907,8 +994,6 @@ class MyObject extends CommonObject
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
 					}
-
-					$result .= '</div>';
 				} else {
 					$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 				}
@@ -1127,19 +1212,12 @@ class MyObject extends CommonObject
 	 */
 	public function getLinesArray()
 	{
-		$this->lines = array();
-
-		$objectline = new MyObjectLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_myobject:=:'.((int) $this->id).')');
-
-		if (is_numeric($result)) {
-			$this->setErrorsFromObject($objectline);
+		$result = $this->fetchLines();
+		if ($result < 0) {
 			return $result;
-		} else {
-			/** @phpstan-ignore-next-line */
-			$this->lines = $result;
-			return $this->lines;
 		}
+
+		return $this->lines;
 	}
 	//END MODULEBUILDER LINES
 
@@ -1223,7 +1301,7 @@ class MyObject extends CommonObject
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} else {
-				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF', 'standard_myobject');
+				$modele = getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF', 'standard_myobject');
 			}
 		}
 
@@ -1294,20 +1372,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
  */
 class MyObjectLine extends CommonObjectLine
 {
-	// To complete with content of an object MyObjectLine
-	// We should have a field rowid, fk_myobject and position
+	// Lines are stored into table llx_mymodule_myobjectline (see sql/llx_mymodule_myobjectline.sql)
+
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'myobjectline';
+
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'mymodule_myobjectline';
+
+	/**
+	 * @var string Will be used to build trigger keys 'MYMODULE_MYOBJECTLINE_CREATE', ...
+	 */
+	public $TRIGGER_PREFIX = 'MYMODULE_MYOBJECTLINE';
 
 	/**
 	 * To overload
 	 * @see CommonObjectLine
 	 */
-	public $parent_element = '';		// Example: '' or 'myobject'
+	public $parent_element = 'myobject';
 
 	/**
 	 * To overload
 	 * @see CommonObjectLine
 	 */
-	public $fk_parent_attribute = '';	// Example: '' or 'fk_myobject'
+	public $fk_parent_attribute = 'fk_myobject';
 
 	/**
 	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
@@ -1320,6 +1412,34 @@ class MyObjectLine extends CommonObjectLine
 	 */
 	public $ismultientitymanaged = 0;
 
+	/**
+	 * @inheritdoc
+	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'position' => 1, 'notnull' => 1, 'index' => 1),
+		'fk_myobject' => array('type' => 'integer:MyObject:mymodule/class/myobject.class.php', 'label' => 'MyObject', 'enabled' => 1, 'visible' => 0, 'position' => 10, 'notnull' => 1, 'index' => 1),
+		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php', 'label' => 'Product', 'enabled' => 1, 'visible' => 1, 'position' => 20, 'notnull' => -1, 'index' => 1),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'notnull' => -1),
+		'qty' => array('type' => 'double(24,8)', 'label' => 'Qty', 'enabled' => 1, 'visible' => 1, 'position' => 40, 'notnull' => 1, 'default' => '1', 'isameasure' => 1),
+		'rang' => array('type' => 'integer', 'label' => 'Position', 'enabled' => 1, 'visible' => 0, 'position' => 50, 'notnull' => 1, 'default' => '0'),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 500, 'notnull' => 1),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'position' => 501, 'notnull' => 0),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'position' => 510, 'notnull' => 1),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'position' => 511, 'notnull' => -1),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000, 'notnull' => -1),
+	);
+
+	/**
+	 * @var int		Id of parent object MyObject
+	 */
+	public $fk_myobject;
+
+	/**
+	 * @var int		Position of line
+	 */
+	public $rang;
+
 
 	/**
 	 * Constructor
@@ -1329,6 +1449,53 @@ class MyObjectLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+	}
+
+	/**
+	 * Load a line in memory from the database
+	 *
+	 * @param	int		$id		Id of line
+	 * @return	int				Return integer <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id)
+	{
+		return $this->fetchCommon($id);
+	}
+
+	/**
+	 * Create a line in database
+	 *
+	 * @param	User		$user		User that creates
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						Return integer <0 if KO, Id of created line if OK
+	 */
+	public function insert(User $user, $notrigger = 0)
+	{
+		return $this->createCommon($user, $notrigger);
+	}
+
+	/**
+	 * Update a line in database
+	 *
+	 * @param	User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = 0)
+	{
+		return $this->updateCommon($user, $notrigger);
+	}
+
+	/**
+	 * Delete a line in database
+	 *
+	 * @param	User		$user		User that deletes
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int						Return integer <0 if KO, >0 if OK
+	 */
+	public function delete(User $user, $notrigger = 0)
+	{
+		return $this->deleteCommon($user, $notrigger);
 	}
 }
 //END MODULEBUILDER LINES

@@ -182,13 +182,17 @@ class SupplierProposal extends CommonObject
 	 * @var string
 	 */
 	public $cond_reglement_doc;		// label doc
+	/**
+	 * @var string 	Label of the payment terms, used when there is no label for documents
+	 */
+	public $cond_reglement_label;
 
 	/**
 	 * @var string
 	 */
 	public $mode_reglement_code;
 	/**
-	 * @deprecated Use $mode_reglement_code
+	 * @deprecated 	Use $mode_reglement_code
 	 * @var string	Mode reglement
 	 */
 	public $mode_reglement;
@@ -256,8 +260,46 @@ class SupplierProposal extends CommonObject
 	public $multicurrency_total_ttc;
 
 	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref' => array('type' => 'varchar(255)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 25, 'searchall' => 1),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 40),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'position' => 45),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 50),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 52),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 70),
+		'date_cloture' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 75),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 85),
+		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'fk_user_cloture' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserClosing', 'enabled' => 1, 'visible' => -1, 'position' => 95),
+		'price' => array('type' => 'double', 'label' => 'Price', 'enabled' => 1, 'visible' => -1, 'position' => 105),
+		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 125, 'isameasure' => 1),
+		'total_tva' => array('type' => 'double(24,8)', 'label' => 'VAT', 'enabled' => 1, 'visible' => -1, 'position' => 130, 'isameasure' => 1),
+		'localtax1' => array('type' => 'double(24,8)', 'label' => 'LocalTax1', 'enabled' => 1, 'visible' => -1, 'position' => 135, 'isameasure' => 1),
+		'localtax2' => array('type' => 'double(24,8)', 'label' => 'LocalTax2', 'enabled' => 1, 'visible' => -1, 'position' => 140, 'isameasure' => 1),
+		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 145, 'isameasure' => 1),
+		'fk_account' => array('type' => 'integer', 'label' => 'BankAccount', 'enabled' => 'isModEnabled("bank")', 'visible' => -1, 'position' => 150),
+		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 155),
+		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'PaymentTerm', 'enabled' => 1, 'visible' => -1, 'position' => 160),
+		'deposit_percent' => array('type' => 'varchar(63)', 'label' => 'DepositPercent', 'enabled' => 1, 'visible' => -1, 'position' => 161),
+		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'PaymentMode', 'enabled' => 1, 'visible' => -1, 'position' => 165),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 170),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 180),
+		'date_livraison' => array('type' => 'date', 'label' => 'DateDeliveryPlanned', 'enabled' => 1, 'visible' => -1, 'position' => 185),
+		'fk_shipping_method' => array('type' => 'integer', 'label' => 'ShippingMethod', 'enabled' => 1, 'visible' => -1, 'position' => 190),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 215),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'MulticurrencyID', 'enabled' => 1, 'visible' => -1, 'position' => 230),
+		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'MulticurrencyCurrency', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 235),
+		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyRate', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 240, 'isameasure' => 1),
+		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountHT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 245, 'isameasure' => 1),
+		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountVAT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 250, 'isameasure' => 1),
+		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 255, 'isameasure' => 1),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -1, 'position' => 260),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 750, 'searchall' => 1),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 900),
 	);
 
 	/**
@@ -630,7 +672,8 @@ class SupplierProposal extends CommonObject
 				$localtaxes_type,
 				100,
 				(float) $this->multicurrency_tx,
-				$pu_ht_devise
+				$pu_ht_devise,
+				$this->multicurrency_code
 			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -860,7 +903,8 @@ class SupplierProposal extends CommonObject
 				$localtaxes_type,
 				100,
 				(float) $this->multicurrency_tx,
-				$pu_ht_devise
+				$pu_ht_devise,
+				$this->multicurrency_code
 			);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1044,9 +1088,13 @@ class SupplierProposal extends CommonObject
 		// Set tmp vars
 		$delivery_date = $this->delivery_date;
 
-		// Multicurrency
-		if (!empty($this->multicurrency_code)) {
-			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
+		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if no rate was provided)
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
+			$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
+			$this->fk_multicurrency = $tmparray[0];
+			$this->multicurrency_tx = $tmparray[1];
+		} elseif (!empty($this->multicurrency_code)) {
+			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
 		if (empty($this->fk_multicurrency)) {
 			$this->multicurrency_code = getDolCurrency();
@@ -1423,6 +1471,7 @@ class SupplierProposal extends CommonObject
 				$this->cond_reglement_id    = $obj->fk_cond_reglement;
 				$this->cond_reglement_code  = $obj->cond_reglement_code;
 				$this->cond_reglement       = $obj->cond_reglement;
+				$this->cond_reglement_label = $obj->cond_reglement;
 				$this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
 
 				$this->extraparams = (array) (!empty($obj->extraparams) ? json_decode($obj->extraparams, true) : array());
@@ -1542,6 +1591,65 @@ class SupplierProposal extends CommonObject
 			$this->error = $this->db->error();
 			return -1;
 		}
+	}
+
+	/**
+	 *  Update the header fields of the price request that can be edited without a dedicated action
+	 *
+	 *  @param	User	$user		Object user that modify
+	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *  @return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function update($user, $notrigger = 0)
+	{
+		$error = 0;
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal SET";
+		$sql .= " fk_projet = ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
+		$sql .= ", fk_cond_reglement = ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
+		$sql .= ", fk_mode_reglement = ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "null");
+		$sql .= ", fk_account = ".($this->fk_account > 0 ? ((int) $this->fk_account) : "null");
+		$sql .= ", fk_shipping_method = ".($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : "null");
+		$sql .= ", date_livraison = ".($this->delivery_date ? "'".$this->db->idate($this->delivery_date)."'" : "null");
+		$sql .= ", note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
+		$sql .= ", note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
+		$sql .= ", model_pdf = ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
+		$sql .= ", fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error) {
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('PROPOSAL_SUPPLIER_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		if ($error) {
+			$this->error = implode(', ', $this->errors);
+			$this->db->rollback();
+			return -1 * $error;
+		}
+
+		$this->db->commit();
+		return 1;
 	}
 
 	/**
@@ -1882,7 +1990,9 @@ class SupplierProposal extends CommonObject
 				$ref_fourn = $product->ref_supplier;
 			}
 			if (isModEnabled("multicurrency") && !empty($product->multicurrency_code)) {
-				list($fk_multicurrency, $multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
+				$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
+				$fk_multicurrency = $tmparray[0];
+				$multicurrency_tx = $tmparray[1];
 			}
 			$productsupplier->id = $product->fk_product;
 
@@ -1896,7 +2006,7 @@ class SupplierProposal extends CommonObject
 	 *	Update ProductFournisseur
 	 *
 	 * 	@param		int 	$idProductFournPrice	id of llx_product_fournisseur_price
-	 * 	@param		Product $product				contain information to update
+	 * 	@param		SupplierProposalLine	$product	Line of the price request with the price to save
 	 *	@param      User	$user					Object user
 	 *	@return     int         					Return integer <0 if KO, >0 if OK
 	 */
@@ -1919,7 +2029,7 @@ class SupplierProposal extends CommonObject
 	/**
 	 *	Create Price Fournisseur
 	 *
-	 *	@param		ProductFournisseur 	$product	Object Product TODO: Determine the correct type
+	 *	@param		SupplierProposalLine	$product	Line of the price request with the price to save
 	 *	@param      User				$user		Object user
 	 *	@return     int								Return integer <0 if KO, >0 if OK
 	 */
@@ -2741,6 +2851,30 @@ class SupplierProposal extends CommonObject
 			$result .= $hookmanager->resPrint;
 		}
 		return $result;
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *	On supplier documents, the supplier is the seller.
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		$context = parent::getObjectLinesDisplayContext();
+		// The supplier is the seller, an empty third party is used if it is not loaded (same as a failed fetch in the card)
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$context['seller'] = (is_object($this->thirdparty) ? $this->thirdparty : new Societe($this->db));
+		$context['buyer'] = $mysoc;
+		$context['dateSelector'] = 0;
+		$context['forceall'] = 1;
+		$context['inputalsopricewithtax'] = 1;
+		// 2 is same than 1 but disable test on minimum qty
+		$context['senderissupplier'] = (getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY') ? getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY') : 2);
+
+		return $context;
 	}
 
 	/**

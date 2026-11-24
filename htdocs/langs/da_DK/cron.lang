@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
 # Admin
 CronSetup=Planlagt opsætning af jobstyring
 URLToLaunchCronJobs=URL til at kontrollere og starte kvalificerede cron-job fra en browser
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=På Unix systemer skal du bruge den følgende crontab in
 CronExplainHowToRunWin=På Microsoft (tm) Windows-miljø kan du bruge Scheduled Task-værktøjer til at køre kommandolinjen hvert 5. minut
 CronMethodDoesNotExists=Klasse %s indeholder ikke nogen metode %s
 CronMethodNotAllowed=Metoden %s af klassen %s er på bloklisten over forbudte metoder
-CronJobDefDesc=Cron-jobprofiler er defineret i modulbeskrivelsesfilen. Når modulet er aktiveret, er de indlæst og tilgængeligt, så du kan administrere jobene fra adminværktøjsmenuen %s.
+CronJobDefDesc=Cron-jobprofiler er defineret i modulbeskrivelsesfilen. Når modulet aktiveres, indlæses de og er tilgængelige, så du kan administrere jobbene fra menuen med administratorværktøjer %s.
 CronJobProfiles=Liste over forud definerede cron jobprofiler
 # Menu
 EnabledAndDisabled=Enabled and disabled
@@ -27,7 +22,7 @@ CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Start nu
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
-CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronInfo=Modulet Planlagte job giver dig mulighed for at planlægge job til at udføre dem automatisk. Job kan også startes manuelt.
 CronTask=Job
 CronNone=Næste kørsel af planlagt opgave
 CronNotYetRan=Aldrig køre

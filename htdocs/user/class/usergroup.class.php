@@ -768,7 +768,7 @@ class UserGroup extends CommonObject
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : '')));
 		}
 
 		$ret = '';
@@ -1044,7 +1044,7 @@ class UserGroup extends CommonObject
 	{
 		global $conf, $user, $langs;
 
-		$langs->load("user");
+		$langs->load("users");
 
 		// Set the model to the name of the model to use
 		if (!dol_strlen($modele)) {

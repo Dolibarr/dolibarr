@@ -15,6 +15,7 @@ DROP table llx_prelevement_notifications;
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
 ALTER TABLE llx_c_methode_commande_fournisseur RENAME TO llx_c_input_method;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_c_methode_commande_fournisseur_rowid_seq RENAME TO llx_c_input_method_rowid_seq;
 
 ALTER TABLE llx_adherent MODIFY login varchar(50);
 
@@ -440,9 +441,11 @@ ALTER TABLE llx_societe_extrafields ADD INDEX idx_societe_extrafields (fk_object
 
 alter table llx_adherent_options_label drop index uk_adherent_options_label_name;
 alter table llx_adherent_options_label rename to llx_extrafields;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_label_rowid_seq RENAME TO llx_extrafields_rowid_seq;
 ALTER TABLE llx_extrafields ADD COLUMN elementtype varchar(64) NOT NULL DEFAULT 'member' AFTER entity;
 ALTER TABLE llx_extrafields ADD UNIQUE INDEX uk_extrafields_name (name, entity, elementtype);
 ALTER TABLE llx_adherent_options rename to llx_adherent_extrafields;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_rowid_seq RENAME TO llx_adherent_extrafields_rowid_seq;
 ALTER TABLE llx_adherent_extrafields CHANGE COLUMN fk_member fk_object integer NOT NULL;
 alter table llx_extrafields add column type varchar(8);
 

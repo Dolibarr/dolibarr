@@ -513,13 +513,14 @@ if (empty($reshook)) {
 		if ($object->id > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-			$langs->load("other");
 			$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			$file = $upload_dir.'/'.GETPOST('file');
 			$ret = dol_delete_file($file, 1, 0, 0, $object);
 			if ($ret) {
+				$langs->load("other");
 				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 			} else {
+				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 			}
 			$action = '';
@@ -1402,7 +1403,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Title
-		$morehtmlref .= dol_escape_htmltag($object->title);
+		$morehtmlref .= '<span class="banner-object-name-alias">'.dol_escape_htmltag($object->title).'</span>';
 		$morehtmlref .= '<br>';
 		// Thirdparty
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {

@@ -780,7 +780,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 	print $langs->trans("Download");
 	print '</a><br>';
 
-	$param .= '&action=searchfiles';
+	$param .= '&action=searchfiles&token='.newToken();
 
 	/*
 	print '<input type="hidden" name="token" value="'.currentToken().'">';
@@ -808,17 +808,16 @@ if (!empty($date_start) && !empty($date_stop)) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "item", "", $param, '', $sortfield, $sortorder, 'nowrap ');
-	print_liste_field_titre($arrayfields['date']['label'], $_SERVER["PHP_SELF"], "date", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
-	print_liste_field_titre($arrayfields['date_due']['label'], $_SERVER["PHP_SELF"], "date_due", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	print_liste_field_titre($arrayfields['ref']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
 	print '<th>'.$langs->trans("Document").'</th>';
+	print_liste_field_titre($arrayfields['date']['label'], $_SERVER["PHP_SELF"], "date", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['date_due']['label'], $_SERVER["PHP_SELF"], "date_due", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	print '<th>'.$langs->trans("Paid").'</th>';
 	print '<th class="right">'.$langs->trans("TotalHT").(isModEnabled('multicurrency') ? ' ('.$langs->getCurrencySymbol($conf->currency).')' : '').'</th>';
 	print '<th class="right">'.$langs->trans("TotalTTC").(isModEnabled('multicurrency') ? ' ('.$langs->getCurrencySymbol($conf->currency).')' : '').'</th>';
 	print '<th class="right">'.$langs->trans("TotalVAT").(isModEnabled('multicurrency') ? ' ('.$langs->getCurrencySymbol($conf->currency).')' : '').'</th>';
 
 	print '<th>'.$langs->trans("ThirdParty").'</th>';
-	print '<th class="center">'.$langs->trans("Code").'</th>';
 	print '<th class="center">'.$langs->trans("Country").'</th>';
 	print '<th class="center">'.$langs->trans("VATIntra").'</th>';
 	if (isModEnabled('multicurrency')) {
@@ -827,7 +826,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 	print '</tr>';
 
 	if (empty($TData)) {
-		print '<tr class="oddeven"><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td>';
+		print '<tr class="oddeven"><td colspan="12"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td>';
 		if (isModEnabled('multicurrency')) {
 			print '<td></td>';
 		}
@@ -851,16 +850,6 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 			// Type
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans($data['item'])).'">'.$langs->trans($data['item']).'</td>';
-
-			// Date
-			print '<td class="center">';
-			print dol_print_date($data['date'], 'day');
-			print "</td>\n";
-
-			// Date due
-			print '<td class="center">';
-			print dol_print_date($data['date_due'], 'day');
-			print "</td>\n";
 
 			// Ref
 			print '<td class="nowraponall tdoverflowmax150">';
@@ -920,19 +909,22 @@ if (!empty($date_start) && !empty($date_stop)) {
 			print '<td class="tdoverflowmax150">';
 			if (!empty($data['files'])) {
 				foreach ($data['files'] as $id => $filecursor) {
-					$tmppreview = $formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name'], 0);
-					if ($tmppreview) {
-						print $tmppreview;
-					}
 					$filename = ($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']);
-					print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer" title="'.dol_escape_htmltag($filename).'">';
-					if (empty($tmppreview)) {
-						print img_picto('', 'generic', '', 0, 0, 0, '', 'pictonopreview pictofixedwidth paddingright');
-					}
-					print $filename;
-					print '</a><br>';
+					print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer" title="'.dolPrintHTMLForAttribute($filename).'">';
+					print img_mime($filecursor['subdir'].'/'.$filecursor['name'], $filename, 'pictofixedwidth');
+					print '</a>';
 				}
 			}
+			print "</td>\n";
+
+			// Date
+			print '<td class="center">';
+			print dol_print_date($data['date'], 'day');
+			print "</td>\n";
+
+			// Date due
+			print '<td class="center">';
+			print dol_print_date($data['date_due'], 'day');
 			print "</td>\n";
 
 			// Paid
@@ -957,9 +949,11 @@ if (!empty($date_start) && !empty($date_stop)) {
 			// Total VAT
 			print '<td class="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</span></td>\n";
 
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($data['thirdparty_name']).'">'.dol_escape_htmltag($data['thirdparty_name'])."</td>\n";
-
-			print '<td class="center">'.$data['thirdparty_code']."</td>\n";
+			print '<td class="tdlineheightsmall tdoverflowmax150" title="'.dol_escape_htmltag($data['thirdparty_name']).'">'.dol_escape_htmltag($data['thirdparty_name']);
+			if (!empty($data['thirdparty_code'])) {
+				print '<br><span class="opacitymedium small">'.dol_escape_htmltag($data['thirdparty_code']).'</span>';
+			}
+			print "</td>\n";
 
 			print '<td class="center">'.$data['country_code']."</td>\n";
 
@@ -989,7 +983,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td class="right">'.price(price2num($totalET_credit, 'MT')).'</td>';
 		print '<td class="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
 		print '<td class="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
-		print '<td colspan="4"></td>';
+		print '<td colspan="3"></td>';
 		if (isModEnabled('multicurrency')) {
 			print '<td></td>';
 		}
@@ -1000,7 +994,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td class="right">'.price(price2num($totalET_debit, 'MT')).'</td>';
 		print '<td class="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
 		print '<td class="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
-		print '<td colspan="4"></td>';
+		print '<td colspan="3"></td>';
 		if (isModEnabled('multicurrency')) {
 			print '<td></td>';
 		}
@@ -1011,7 +1005,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 		print '<td class="right">'.price(price2num($totalET_credit + $totalET_debit, 'MT')).'</td>';
 		print '<td class="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
 		print '<td class="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
-		print '<td colspan="4"></td>';
+		print '<td colspan="3"></td>';
 		if (isModEnabled('multicurrency')) {
 			print '<td></td>';
 		}

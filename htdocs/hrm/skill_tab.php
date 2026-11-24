@@ -360,7 +360,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$listLink = dol_buildpath('/hrm/job_list.php', 1);
 	} elseif ($objecttype == "user") {  // Always true - @phpstan-ignore equal.alwaysTrue
 		require_once DOL_DOCUMENT_ROOT . "/core/lib/usergroups.lib.php";
-		$object->getRights();
 		$head = user_prepare_head($object);
 		$listLink = dol_buildpath('/user/list.php', 1);
 	} else {
@@ -409,7 +408,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	} elseif ($listLink !== null) {
 		$linkback = '<a href="' . $listLink . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
+		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" tabindex="-1" rel="noopener">';
 		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 		$morehtmlref .= '</a>';
 

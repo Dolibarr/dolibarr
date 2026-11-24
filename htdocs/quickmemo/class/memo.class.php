@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023-2026  Frédéric France          <frederic.france@free.fr>
+/* Copyright (C) 2017       Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		John BOTELLA
- * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ class Memo extends CommonObject
 	 * @var int<0,1>|string		Does this object support multicompany module ?
 	 * 							0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 1;
 
 
 
@@ -132,6 +133,7 @@ class Memo extends CommonObject
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", 'enabled' => 1, 'position' => 1, 'notnull' => 1, "visible" => 0, 'noteditable' => 1, 'index' => 1, "css" => "left", "comment" => "Id"),
+		"entity" => array("type" => "integer", "label" => "Entity", 'enabled' => 1, 'position' => 2, 'notnull' => 1, "visible" => 0, 'default' => '1', 'index' => 1),
 		"quick_note" => array("type" => "text", "label" => "Note", 'enabled' => 1, 'position' => 61, 'notnull' => 0, "visible" => -1, "cssview" => "wordbreak", "validate" => 1,),
 		"date_creation" => array("type" => "datetime", "label" => "DateCreation", 'enabled' => 1, 'position' => 500, 'notnull' => 1, "visible" => -2,),
 		"tms" => array("type" => "timestamp", "label" => "DateModification", 'enabled' => 1, 'position' => 501, 'notnull' => 0, "visible" => -2,),
@@ -579,6 +581,12 @@ class Memo extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		// fetch() does not filter on entity, so an id of a memo of another entity may be provided (mass delete...)
+		if (!$this->isInCurrentEntity()) {
+			$this->error = 'ErrorRecordNotFound';
+			return -1;
+		}
+
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
@@ -1419,6 +1427,14 @@ class Memo extends CommonObject
 		self::completeMemoContextMapping($contextTabMapping, 'index');
 		self::completeMemoContextMapping($contextTabMapping, 'card', 'globalcard');
 
+		// List and index pages, after card so a card page that also inits a list context keeps its card memos
+		foreach (self::getListIndexContexts() as $listIndexContext => $listIndexProperties) {
+			if ($onlyActiveModules && !self::canAccessListIndexContext($listIndexProperties)) {
+				continue;
+			}
+			self::completeMemoContextMapping($contextTabMapping, $listIndexContext);
+		}
+
 		$staticMemo = new self($db);
 		$hookmanager->initHooks(array($staticMemo->element.'dao'));
 		$parameters = array(
@@ -1476,6 +1492,162 @@ class Memo extends CommonObject
 		return $result;
 	}
 
+	/**
+	 * List and index pages supporting memos.
+	 * Key is the Dolibarr hook context, also used as memo context. Memos of these pages are not linked to an object.
+	 * 'modules': modules separated by '|', one must be enabled.
+	 * 'rights': permissions (array of levels as for hasRight()), one is enough to read the page.
+	 *
+	 * @return array<string, array{modules:string, rights:array<string[]>}>
+	 */
+	public static function getListIndexContexts()
+	{
+		return array(
+			// Index pages
+			'accountancyindex' => array('modules' => 'accounting|comptabilite|asset|intracommreport', 'rights' => array(array('compta', 'resultat', 'lire'), array('accounting', 'comptarapport', 'lire'), array('accounting', 'mouvements', 'lire'), array('asset', 'read'), array('intracommreport', 'read'))),
+			'activityindex' => array('modules' => 'project', 'rights' => array(array('projet', 'lire'))),
+			'categoryindex' => array('modules' => 'category', 'rights' => array(array('categorie', 'lire'))),
+			'commercialindex' => array('modules' => 'societe', 'rights' => array(array('societe', 'lire'))),
+			'contractindex' => array('modules' => 'contract', 'rights' => array(array('contrat', 'lire'))),
+			'donationindex' => array('modules' => 'don', 'rights' => array(array('don', 'lire'))),
+			'expensereportindex' => array('modules' => 'expensereport', 'rights' => array(array('expensereport', 'lire'))),
+			'hrmindex' => array('modules' => 'hrm|holiday|expensereport|recruitment', 'rights' => array(array('hrm', 'all', 'read'), array('holiday', 'read'), array('expensereport', 'lire'), array('recruitment', 'recruitmentjobposition', 'read'))),
+			'interventionindex' => array('modules' => 'intervention', 'rights' => array(array('ficheinter', 'lire'))),
+			'invoiceindex' => array('modules' => 'invoice|supplier_invoice', 'rights' => array(array('facture', 'lire'), array('fournisseur', 'facture', 'lire'), array('supplier_invoice', 'lire'))),
+			'mailingindex' => array('modules' => 'mailing', 'rights' => array(array('mailing', 'lire'))),
+			'membersindex' => array('modules' => 'member', 'rights' => array(array('adherent', 'lire'))),
+			'mrpindex' => array('modules' => 'mrp|bom', 'rights' => array(array('mrp', 'read'), array('bom', 'read'))),
+			'opensurveyindex' => array('modules' => 'opensurvey', 'rights' => array(array('opensurvey', 'read'))),
+			'ordersindex' => array('modules' => 'order', 'rights' => array(array('commande', 'lire'))),
+			'orderssuppliersindex' => array('modules' => 'supplier_order', 'rights' => array(array('fournisseur', 'commande', 'lire'), array('supplier_order', 'lire'))),
+			'productindex' => array('modules' => 'product|service', 'rights' => array(array('produit', 'lire'), array('service', 'lire'))),
+			'projectsindex' => array('modules' => 'project', 'rights' => array(array('projet', 'lire'))),
+			'proposalindex' => array('modules' => 'propal', 'rights' => array(array('propal', 'lire'))),
+			'receptionindex' => array('modules' => 'reception', 'rights' => array(array('reception', 'lire'))),
+			'sendingindex' => array('modules' => 'shipping', 'rights' => array(array('expedition', 'lire'))),
+			'specialexpensesindex' => array('modules' => 'tax|salaries', 'rights' => array(array('tax', 'charges', 'lire'), array('salaries', 'read'))),
+			'stockindex' => array('modules' => 'stock', 'rights' => array(array('stock', 'lire'))),
+			'suppliersproposalsindex' => array('modules' => 'supplier_proposal', 'rights' => array(array('supplier_proposal', 'lire'))),
+			'thirdpartiesindex' => array('modules' => 'societe', 'rights' => array(array('societe', 'lire'), array('societe', 'contact', 'lire'))),
+			'ticketsindex' => array('modules' => 'ticket|knowledgemanagement', 'rights' => array(array('ticket', 'read'), array('knowledgemanagement', 'knowledgerecord', 'read'))),
+			// List pages
+			'accountancycustomerlist' => array('modules' => 'accounting', 'rights' => array(array('accounting', 'bind', 'write'))),
+			'accountancyexpensereportlist' => array('modules' => 'accounting', 'rights' => array(array('accounting', 'bind', 'write'))),
+			'accountancysupplierlist' => array('modules' => 'accounting', 'rights' => array(array('accounting', 'bind', 'write'))),
+			'agendalist' => array('modules' => 'agenda', 'rights' => array(array('agenda', 'myactions', 'read'))),
+			'assetmodellist' => array('modules' => 'asset', 'rights' => array(array('asset', 'read'), array('asset', 'model_advance', 'read'))),
+			'bankaccountlist' => array('modules' => 'bank', 'rights' => array(array('banque', 'lire'))),
+			'banktransactionlist' => array('modules' => 'bank', 'rights' => array(array('banque', 'lire'))),
+			'bomlist' => array('modules' => 'bom', 'rights' => array(array('bom', 'read'))),
+			'bookkeepinglist' => array('modules' => 'accounting', 'rights' => array(array('accounting', 'mouvements', 'lire'))),
+			'bookmarklist' => array('modules' => 'bookmark', 'rights' => array(array('bookmark', 'lire'))),
+			'cabyprodservlist' => array('modules' => 'accounting|comptabilite', 'rights' => array(array('compta', 'resultat', 'lire'), array('accounting', 'comptarapport', 'lire'))),
+			'casoclist' => array('modules' => 'accounting|comptabilite', 'rights' => array(array('compta', 'resultat', 'lire'), array('accounting', 'comptarapport', 'lire'))),
+			'checkmarginlist' => array('modules' => 'margin', 'rights' => array(array('margins', 'liretous'))),
+			'chequelist' => array('modules' => 'bank', 'rights' => array(array('banque', 'lire'), array('banque', 'cheque'))),
+			'comptafileslist' => array('modules' => 'accounting|comptabilite', 'rights' => array(array('compta', 'resultat', 'lire'), array('accounting', 'comptarapport', 'lire'))),
+			'contactlist' => array('modules' => 'societe', 'rights' => array(array('societe', 'contact', 'lire'))),
+			'contractlist' => array('modules' => 'contract', 'rights' => array(array('contrat', 'lire'))),
+			'contractservicelist' => array('modules' => 'contract', 'rights' => array(array('contrat', 'lire'))),
+			'defineholidaylist' => array('modules' => 'holiday', 'rights' => array(array('holiday', 'read'))),
+			'directdebitcredittransferlist' => array('modules' => 'bank', 'rights' => array(array('banque', 'lire'))),
+			'donationlist' => array('modules' => 'don', 'rights' => array(array('don', 'lire'))),
+			'donlist' => array('modules' => 'don', 'rights' => array(array('don', 'lire'))),
+			'evaluationlist' => array('modules' => 'hrm', 'rights' => array(array('hrm', 'evaluation', 'read'))),
+			'expensereportlist' => array('modules' => 'expensereport', 'rights' => array(array('expensereport', 'lire'))),
+			'holidaylist' => array('modules' => 'holiday', 'rights' => array(array('holiday', 'read'))),
+			'interventionlist' => array('modules' => 'intervention', 'rights' => array(array('ficheinter', 'lire'))),
+			'intracommreportlist' => array('modules' => 'intracommreport', 'rights' => array(array('intracommreport', 'read'))),
+			'inventorylist' => array('modules' => 'stock', 'rights' => array(array('stock', 'lire'))),
+			'invoicelist' => array('modules' => 'invoice', 'rights' => array(array('facture', 'lire'))),
+			'invoicereclist' => array('modules' => 'invoice', 'rights' => array(array('facture', 'lire'))),
+			'joblist' => array('modules' => 'hrm', 'rights' => array(array('hrm', 'all', 'read'))),
+			'knowledgerecordlist' => array('modules' => 'knowledgemanagement', 'rights' => array(array('knowledgemanagement', 'knowledgerecord', 'read'))),
+			'leavemovementlist' => array('modules' => 'holiday', 'rights' => array(array('holiday', 'read'))),
+			'marginagentlist' => array('modules' => 'margin', 'rights' => array(array('margins', 'liretous'))),
+			'margincustomerlist' => array('modules' => 'margin', 'rights' => array(array('margins', 'liretous'))),
+			'marginproductlist' => array('modules' => 'margin', 'rights' => array(array('margins', 'liretous'))),
+			'memberlist' => array('modules' => 'member', 'rights' => array(array('adherent', 'lire'))),
+			'mrpmolist' => array('modules' => 'mrp', 'rights' => array(array('mrp', 'read'))),
+			'orderlist' => array('modules' => 'order', 'rights' => array(array('commande', 'lire'))),
+			'paymentexpensereportlist' => array('modules' => 'expensereport', 'rights' => array(array('expensereport', 'lire'))),
+			'paymentlist' => array('modules' => 'invoice', 'rights' => array(array('facture', 'lire'))),
+			'paymentsupplierlist' => array('modules' => 'supplier_invoice', 'rights' => array(array('fournisseur', 'facture', 'lire'), array('supplier_invoice', 'lire'))),
+			'positionlist' => array('modules' => 'hrm', 'rights' => array(array('hrm', 'all', 'read'))),
+			'product_lotlist' => array('modules' => 'productbatch', 'rights' => array(array('produit', 'lire'), array('service', 'lire'))),
+			'productattributelist' => array('modules' => 'variants', 'rights' => array(array('variants', 'read'))),
+			'productreassortlist' => array('modules' => 'product|service', 'rights' => array(array('produit', 'lire'), array('service', 'lire'))),
+			'productservicelist' => array('modules' => 'product|service', 'rights' => array(array('produit', 'lire'), array('service', 'lire'))),
+			'projectlist' => array('modules' => 'project', 'rights' => array(array('projet', 'lire'))),
+			'propallist' => array('modules' => 'propal', 'rights' => array(array('propal', 'lire'))),
+			'reassortlotlist' => array('modules' => 'productbatch', 'rights' => array(array('produit', 'lire'), array('service', 'lire'))),
+			'receptionlist' => array('modules' => 'reception', 'rights' => array(array('reception', 'lire'))),
+			'recruitmentjobpositionlist' => array('modules' => 'recruitment', 'rights' => array(array('recruitment', 'recruitmentjobposition', 'read'))),
+			'resourcelist' => array('modules' => 'resource', 'rights' => array(array('resource', 'read'))),
+			'salarieslist' => array('modules' => 'salaries', 'rights' => array(array('salaries', 'read'))),
+			'salestaxeslist' => array('modules' => 'tax', 'rights' => array(array('tax', 'charges', 'lire'))),
+			'sclist' => array('modules' => 'tax', 'rights' => array(array('tax', 'charges', 'lire'))),
+			'shipmentlist' => array('modules' => 'shipping', 'rights' => array(array('expedition', 'lire'))),
+			'skilllist' => array('modules' => 'hrm', 'rights' => array(array('hrm', 'all', 'read'))),
+			'stocklist' => array('modules' => 'stock', 'rights' => array(array('stock', 'lire'))),
+			'stockreplenishlist' => array('modules' => 'stock', 'rights' => array(array('produit', 'lire'), array('service', 'lire'))),
+			'stocktransferlist' => array('modules' => 'stocktransfer', 'rights' => array(array('stocktransfer', 'stocktransfer', 'read'))),
+			'subscriptionlist' => array('modules' => 'member', 'rights' => array(array('adherent', 'cotisation', 'lire'))),
+			'supplier_proposallist' => array('modules' => 'supplier_proposal', 'rights' => array(array('supplier_proposal', 'lire'))),
+			'supplierbalencelist' => array('modules' => 'societe', 'rights' => array(array('societe', 'lire'))),
+			'supplierinvoicelist' => array('modules' => 'supplier_invoice', 'rights' => array(array('fournisseur', 'facture', 'lire'), array('supplier_invoice', 'lire'))),
+			'supplierinvoicereclist' => array('modules' => 'supplier_invoice', 'rights' => array(array('fournisseur', 'facture', 'lire'), array('supplier_invoice', 'lire'))),
+			'supplierorderlist' => array('modules' => 'supplier_order', 'rights' => array(array('fournisseur', 'commande', 'lire'), array('supplier_order', 'lire'))),
+			'supplierpricelist' => array('modules' => 'product|service', 'rights' => array(array('produit', 'lire'), array('service', 'lire'))),
+			'supplierturnoverbyprodservlist' => array('modules' => 'accounting|comptabilite', 'rights' => array(array('compta', 'resultat', 'lire'), array('accounting', 'comptarapport', 'lire'))),
+			'supplierturnoverbythirdpartylist' => array('modules' => 'accounting|comptabilite', 'rights' => array(array('compta', 'resultat', 'lire'), array('accounting', 'comptarapport', 'lire'))),
+			'surveylist' => array('modules' => 'opensurvey', 'rights' => array(array('opensurvey', 'read'))),
+			'tasklist' => array('modules' => 'project', 'rights' => array(array('projet', 'lire'))),
+			'thirdpartylist' => array('modules' => 'societe', 'rights' => array(array('societe', 'lire'))),
+			'ticketlist' => array('modules' => 'ticket', 'rights' => array(array('ticket', 'read'))),
+			'userlist' => array('modules' => 'user', 'rights' => array(array('user', 'user', 'lire'))),
+			'withdrawalsreceiptslineslist' => array('modules' => 'prelevement|paymentbybanktransfer', 'rights' => array(array('prelevement', 'bons', 'lire'), array('paymentbybanktransfer', 'read'))),
+			'withdrawalsreceiptslist' => array('modules' => 'prelevement|paymentbybanktransfer', 'rights' => array(array('prelevement', 'bons', 'lire'), array('paymentbybanktransfer', 'read'))),
+			'withdrawalsreceiptsrejectedlist' => array('modules' => 'prelevement|paymentbybanktransfer', 'rights' => array(array('prelevement', 'bons', 'lire'), array('paymentbybanktransfer', 'read'))),
+			'withdrawalstodolist' => array('modules' => 'prelevement|paymentbybanktransfer', 'rights' => array(array('prelevement', 'bons', 'lire'), array('paymentbybanktransfer', 'read'))),
+			'workstationlist' => array('modules' => 'workstation', 'rights' => array(array('workstation', 'workstation', 'read'))),
+		);
+	}
+
+	/**
+	 * Check that a list or index page context is enabled and readable by current user
+	 *
+	 * @param array{modules:string, rights:array<string[]>} $properties Properties of context from getListIndexContexts()
+	 * @return bool
+	 */
+	public static function canAccessListIndexContext($properties)
+	{
+		global $user;
+
+		if (empty($user) || empty($user->id)) {
+			return false;
+		}
+
+		$moduleEnabled = false;
+		foreach (explode('|', $properties['modules']) as $module) {
+			if (isModEnabled($module)) {
+				$moduleEnabled = true;
+				break;
+			}
+		}
+		if (!$moduleEnabled) {
+			return false;
+		}
+
+		foreach ($properties['rights'] as $right) {
+			if ($user->hasRight($right[0], $right[1] ?? '', $right[2] ?? '')) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 
 	/**
 	 * Count archived memo query
@@ -1493,7 +1665,8 @@ class Memo extends CommonObject
 
 		$sql = 'SELECT COUNT(m.rowid) nb
 			FROM '.MAIN_DB_PREFIX.$this->table_element.' m
-			WHERE m.element_type = \''.$this->db->escape($element_type).'\'
+			WHERE m.entity IN ('.getEntity(self::getEntityElementKey($element_type)).')
+			  AND m.element_type = \''.$this->db->escape($element_type).'\'
 			  AND ( m.fk_element = '.(int) $element_id.' OR m.shared_on_element = 1 )
 			  AND m.context_tab = \''.$this->db->escape($context).'\'
 			  AND m.status = '.Memo::STATUS_ARCHIVED.'
@@ -1532,7 +1705,8 @@ class Memo extends CommonObject
         LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_user mu
             ON mu.fk_memo = m.rowid
             AND mu.fk_user = '.(int) $user->id.'
-        WHERE m.element_type = \''.$this->db->escape($element_type).'\'
+        WHERE m.entity IN ('.getEntity(self::getEntityElementKey($element_type)).')
+          AND m.element_type = \''.$this->db->escape($element_type).'\'
           AND ( m.fk_element = '.(int) $element_id.' OR m.shared_on_element = 1 )
           AND m.context_tab = \''.$this->db->escape($context).'\'
           AND m.status = '.self::STATUS_VALIDATED.'
@@ -1568,7 +1742,8 @@ class Memo extends CommonObject
         LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_user mu
             ON mu.fk_memo = m.rowid
             AND mu.fk_user = '.(int) $user->id.'
-        WHERE m.element_type IN (\''.$this->db->escape($element_type).'\', \'\')
+        WHERE m.entity IN ('.getEntity($this->element).')
+          AND m.element_type IN (\''.$this->db->escape($element_type).'\', \'\')
           AND m.status = '.self::STATUS_TPL.'
           AND (COALESCE(m.private_tpl, 0) = 0 OR m.fk_user_creat = '.(int) $user->id.')
        ';
@@ -1640,6 +1815,14 @@ class Memo extends CommonObject
 
 		if (!$user->hasRight('quickmemo', 'memo', 'read')) {
 			return false;
+		}
+
+		// Do not show memos of an object the user is not allowed to read
+		if (!empty($jsConfVars['elementType'])) {
+			require_once __DIR__.'/../lib/quickmemo.lib.php';
+			if (!quickMemoInterfaceCanAccessElement((string) $jsConfVars['elementType'], (int) ($jsConfVars['elementId'] ?? 0))) {
+				return false;
+			}
 		}
 
 		$autoResizeFontMin = getDolGlobalFloat('QUICKMEMO_AUTO_RESIZE_MIN_FONT_SIZE', 1);
@@ -1744,6 +1927,36 @@ class Memo extends CommonObject
 		}
 
 		return $memo;
+	}
+
+	/**
+	 * Check that the memo (loaded with fetch(), which does not filter on entity) belongs to an entity visible from current entity
+	 *
+	 * @return bool
+	 */
+	public function isInCurrentEntity()
+	{
+		// Without multicompany, field entity is removed by constructor and all memos are in entity 1
+		if (!isModEnabled('multicompany')) {
+			return true;
+		}
+
+		$entityKey = ($this->status == self::STATUS_TPL ? $this->element : self::getEntityElementKey((string) $this->element_type));
+
+		return in_array((int) $this->entity, array_map('intval', explode(',', getEntity($entityKey))), true);
+	}
+
+	/**
+	 * Element key to use with getEntity() for memos of an element type.
+	 * Memos linked to an object follow the multicompany sharing of this type of object,
+	 * global memos (home page...) and templates use the sharing of memos.
+	 *
+	 * @param string $element_type Element type of the linked object ('' for global memos)
+	 * @return string
+	 */
+	public static function getEntityElementKey($element_type)
+	{
+		return empty($element_type) ? 'memo' : $element_type;
 	}
 
 	/**

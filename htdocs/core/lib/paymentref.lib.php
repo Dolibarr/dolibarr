@@ -58,6 +58,7 @@ function dolPayRefGetSchemeForCountry($country_code)
  *
  *  - greek references are printed unbroken, all 25 characters
  *  - a belgian structured communication already carries its own separators
+ *  - a finnish national reference is grouped in fives from the right
  *  - everything else is grouped in fours, the ISO 11649 convention
  *
  * @param	string	$ref			Stored payment reference
@@ -75,6 +76,9 @@ function dolPayRefFormatForDisplay($ref, $country_code = '')
 
 	if (dolPayRefDetectScheme($ref) == 'BBA') {
 		return $ref;
+	}
+	if (dolPayRefDetectScheme($ref) == 'FI') {
+		return strrev(wordwrap(strrev(dolPayRefStrip($ref)), 5, ' ', true));
 	}
 	if (dolPayRefGetSchemeForCountry($country_code) == 'GR') {
 		return dolPayRefStrip($ref);
@@ -111,8 +115,9 @@ function dolPayRefGetSetupWarning($country_code, $mode = '')
 		$alreadycomplete = ($mode == 'company'
 			&& dolCreditorRefIsValid(getDolGlobalString('MAIN_INFO_SOCIETE_PAYMENT_ID')));
 
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';
 		$diascode = preg_replace('/[^0-9]/', '', getDolGlobalString('MAIN_INFO_SOCIETE_DIAS_CODE'));
-		if (!$alreadycomplete && dol_strlen($diascode) != 5) {
+		if (!$alreadycomplete && !dolGRIsValidDiasCode($diascode)) {
 			// References already written on a third party keep working without the
 			// code, only a third party that has none yet needs one generated.
 			if ($mode == 'thirdparty') {
@@ -124,6 +129,15 @@ function dolPayRefGetSetupWarning($country_code, $mode = '')
 
 	if ($mode == 'company' && !getDolGlobalString('MAIN_INFO_SOCIETE_PAYMENT_ID')) {
 		return 'WarningPaymentRefPaymentIdMissing';
+	}
+
+	// The company reference is printed on every invoice, so it must not ask the bank
+	// to check one fixed amount.
+	if ($mode == 'company' && dolPayRefGetSchemeForCountry($country_code) == 'GR') {
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';
+		if (dolGRIsAmountCheckedReference(getDolGlobalString('MAIN_INFO_SOCIETE_PAYMENT_ID'))) {
+			return 'ErrorDIASReferenceAmountChecked';
+		}
 	}
 
 	return '';
@@ -152,6 +166,15 @@ function dolPayRefBuild($payment_id, $statut, $country_code, $invoice_type = 0)
 	// one its customers already pay against.
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_creditorref.lib.php';
 	if (dolCreditorRefIsValid((string) $payment_id) || strpos((string) $payment_id, '+++') === 0) {
+		// A greek reference that checks one fixed amount would be refused by the bank
+		// for any other amount, so it is never reused on several invoices.
+		if (dolPayRefGetSchemeForCountry($country_code) == 'GR') {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';
+			if (dolGRIsAmountCheckedReference((string) $payment_id)) {
+				dol_syslog('dolPayRefBuild: greek reference '.$payment_id.' checks a fixed amount, not used', LOG_WARNING);
+				return '';
+			}
+		}
 		return dolPayRefStrip((string) $payment_id);
 	}
 
@@ -175,8 +198,11 @@ function dolPayRefBuild($payment_id, $statut, $country_code, $invoice_type = 0)
 			// Finnish RF is accepted for both domestic and cross border payments.
 			// Since 18 november 2024 a plain ISO 11649 reference is also valid in
 			// Finland, but the RF form built on the national reference stays the
-			// most widely supported, so it is the default here.
-			return dolPayRefStrip(dolFICalculatePaymentReference((string) $payment_id, $statut, 1));
+			// most widely supported, so it is the default here. A company whose
+			// customers already pay against national references can keep them
+			// with INVOICE_PAYMENT_REF_FI_FORMAT set to 'national'.
+			$use_rf = (getDolGlobalString('INVOICE_PAYMENT_REF_FI_FORMAT') == 'national') ? 0 : 1;
+			return dolPayRefStrip(dolFICalculatePaymentReference((string) $payment_id, $statut, $use_rf));
 
 		case 'GR':
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_gr.lib.php';

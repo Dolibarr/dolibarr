@@ -214,7 +214,7 @@ function isALNEQualifiedVersion($ignoredev = 0, $ignoremodule = 0)
 	if (!$ignoredev && preg_match('/\-/', DOL_VERSION)) {	// This is not a stable version (dev version), it can't be the certified versions.
 		return '';
 	}
-	if ($mysoc->country_code != 'FR') {
+	if (empty($mysoc) || $mysoc->country_code != 'FR') {
 		return '';
 	}
 	if (!defined('CERTIF_LNE') || (int) constant('CERTIF_LNE') === 0) {

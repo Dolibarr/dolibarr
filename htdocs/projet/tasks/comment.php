@@ -89,15 +89,13 @@ if ($id > 0 || $ref) {
 
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
-// include comment actions (after security check to prevent IDOR)
-include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
-
 
 /*
  * Actions
  */
 
-// None
+// include comment actions (after security check to prevent IDOR)
+include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
 
 
 /*
@@ -145,7 +143,7 @@ if ($id > 0 || !empty($ref)) {
 
 			$morehtmlref = '<div class="refidno">';
 			// Title
-			$morehtmlref .= $projectstatic->title;
+			$morehtmlref .= '<span class="banner-object-name-alias">'.$projectstatic->title.'</span>';
 			// Thirdparty
 			if ($projectstatic->thirdparty->id > 0) {
 				$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');

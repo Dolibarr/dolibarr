@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
@@ -55,8 +56,6 @@ FillFieldFirst=پہلے ملازم کی فیلڈ کو بھریں۔
 UpdateAmountWithLastSalary=آخری تنخواہ کی رقم مقرر کریں۔
 MakeTransferRequest=منتقلی کی درخواست کریں۔
 VirementOrder=کریڈٹ ٹرانسفر کی درخواست
-WithdrawalReceipt=کریڈٹ ٹرانسفر آرڈر
-OrderWaiting=زیر التواء آرڈر
 FillEndOfMonth=End of month
 
 # Shortcuts

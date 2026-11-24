@@ -28,10 +28,9 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_be.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/commoninvoice.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 
 /**
@@ -69,7 +68,7 @@ class FunctionsBELibTest extends CommonClassTest
 	{
 		global $conf, $db, $mysoc;
 
-		$oldvalue = isset($conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION) ? $conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION : null;
+		$oldvalue = isset($conf->global->INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION) ? getDolGlobalString('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION') : null;
 
 		$invoice = new class($db) extends CommonInvoice {
 			/**

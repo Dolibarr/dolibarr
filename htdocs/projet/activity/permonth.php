@@ -149,6 +149,9 @@ $extrafieldsobjectkey = 'projet_task';
 $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $search_array_options = array();
@@ -199,13 +202,24 @@ if (GETPOST('submitdateselect')) {
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
+// Entering time or assigning a task requires permission to enter time, and the user to process must be me or one of my subordinates
+if ($action == 'addtime' && GETPOST('formfilteraction') != 'listafterchangingselectedfields') {	// Test on permission done later
+	$childids = $user->getAllChildIds(1);
+	if (!$user->hasRight('projet', 'time') || (!in_array($usertoprocess->id, $childids) && !$user->hasRight('projet', 'all', 'creer'))) {
+		accessforbidden();
+	}
+}
+
 if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('assigntask') && GETPOST('formfilteraction') != 'listafterchangingselectedfields') {
 	$action = 'assigntask';
 
 	if ($taskid > 0) {
 		$result = $object->fetch($taskid);
-		if ($result < 0) {
+		if ($result <= 0) {
 			$error++;
+		} else {
+			// Check that I can read the project of the task
+			restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 		}
 	} else {
 		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), null, 'errors');
@@ -286,7 +300,11 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 					}
 
 					if ($newduration > 0) {
-						$object->fetch($tmptaskid);
+						if ($object->fetch($tmptaskid) <= 0) {
+							accessforbidden();
+						}
+						// Check that I can read the project of the task
+						restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 						if (GETPOSTISSET($tmptaskid.'progress')) {
 							$object->progress = GETPOSTINT($tmptaskid.'progress');
@@ -313,7 +331,11 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 			}
 
 			if (!$updateoftaskdone) {  // Check to update progress if no update were done on task.
-				$object->fetch($tmptaskid);
+				if ($object->fetch($tmptaskid) <= 0) {
+					accessforbidden();
+				}
+				// Check that I can read the project of the task
+				restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 				//var_dump($object->progress);
 				//var_dump(GETPOST($tmptaskid . 'progress', 'int')); exit;
 				if ($object->progress != GETPOSTINT($tmptaskid.'progress')) {
@@ -419,7 +441,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 $tasksarraywithoutfilter = array();  // Default
 
-$tasksarray = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, $search_project_ref, (string) $onlyopenedproject, $morewherefilter, ($search_usertoprocessid ? $search_usertoprocessid : 0), 0, $extrafields); // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+$tasksarray = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, $search_project_ref, (string) $onlyopenedproject, $morewherefilter, ($search_usertoprocessid ? $search_usertoprocessid : 0), 0, $extrafields, 0, array(), 1); // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 if ($morewherefilter) {	// Get all task without any filter, so we can show total of time spent for not visible tasks
 	$tasksarraywithoutfilter = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, '', (string) $onlyopenedproject, '', ($search_usertoprocessid ? $search_usertoprocessid : 0)); // We want to see all tasks of open project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 }
@@ -565,7 +587,7 @@ if (!empty($moreforfilter)) {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, '', 1); // This also change content of $arrayfields
 
 // This must be after the $selectedfields
 $addcolspan = 0;
@@ -598,15 +620,23 @@ $search_options_pattern = 'search_task_options_';
 $extrafieldsobjectkey = 'projet_task';
 $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-if (!empty($arrayfields['t.planned_workload']['checked'])) {
-	print '<td class="liste_titre"></td>';
-}
-if (!empty($arrayfields['t.progress']['checked'])) {
-	print '<td class="liste_titre right"><input type="text" class="width50" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
-}
-if (!empty($arrayfields['timeconsumed']['checked'])) {
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
+// Fields with position ordered by user setup
+foreach ($arrayfields as $key => $val) {
+	if (empty($val['checked'])) {
+		continue;
+	}
+	switch ($key) {
+		case 't.planned_workload':
+			print '<td class="liste_titre"></td>';
+			break;
+		case 't.progress':
+			print '<td class="liste_titre right"><input type="text" class="width50" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+			break;
+		case 'timeconsumed':
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
+			break;
+	}
 }
 foreach ($TWeek as $week_number) {
 	print '<td class="liste_titre"></td>';
@@ -632,20 +662,28 @@ $extrafieldsobjectkey = 'projet_task';
 $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
-if (!empty($arrayfields['t.planned_workload']['checked'])) {
-	print '<th class="leftborder plannedworkload maxwidth75 maxwidth100 right">'.$form->textwithpicto($langs->trans("PlannedWorkloadShort"), $langs->trans("PlannedWorkload")).'</th>';
-}
-if (!empty($arrayfields['t.progress']['checked'])) {
-	print '<th class="right maxwidth75">'.$langs->trans("ProgressDeclared").'</th>';
-}
-if (!empty($arrayfields['timeconsumed']['checked'])) {
-	print '<th class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
-	print '<span class="nowraponall">';
-	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphotosmall" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
-	print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
-	print '</span>';
-	print '</th>';
-	print '<th class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-3).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
+// Fields with position ordered by user setup
+foreach ($arrayfields as $key => $val) {
+	if (empty($val['checked'])) {
+		continue;
+	}
+	switch ($key) {
+		case 't.planned_workload':
+			print '<th class="leftborder plannedworkload maxwidth75 maxwidth100 right">'.$form->textwithpicto($langs->trans("PlannedWorkloadShort"), $langs->trans("PlannedWorkload")).'</th>';
+			break;
+		case 't.progress':
+			print '<th class="right maxwidth75">'.$langs->trans("ProgressDeclared").'</th>';
+			break;
+		case 'timeconsumed':
+			print '<th class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
+			print '<span class="nowraponall">';
+			print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphotosmall" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
+			print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
+			print '</span>';
+			print '</th>';
+			print '<th class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-3).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
+			break;
+	}
 }
 foreach ($TWeek as $week_number) {
 	print '<th width="6%" class="center bold hide"><a href="'.DOL_URL_ROOT.'/projet/activity/perweek.php?year='.$year.'&month='.$month.'&day='.$TFirstDays[$week_number].'">'.$langs->trans("WeekShort").' '.$week_number.'<br>('.$TFirstDays[$week_number].'...'.$TLastDays[$week_number].')</a></th>';
@@ -656,7 +694,7 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 
 print "</tr>\n";
 
-$colspan = 1;
+$colspan = 1 + (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT') ? 0 : 2);
 
 
 // Get if user is available or not for each day
@@ -714,15 +752,9 @@ if (count($tasksarray) > 0) {
 	// There is a diff between total shown on screen and total spent by user, so we add a line with all other cumulated time of user
 	if ($isdiff) {
 		print '<tr class="oddeven othertaskwithtime">';
-		print '<td colspan="'.$colspan.'" class="opacitymedium">';
+		print '<td colspan="'.($colspan + $addcolspan).'" class="opacitymedium">';
 		print $langs->trans("OtherFilteredTasks");
 		print '</td>';
-		if (!empty($arrayfields['t.planned_workload']['checked'])) {
-			print '<td class="liste_total"></td>';
-		}
-		if (!empty($arrayfields['t.progress']['checked'])) {
-			print '<td class="liste_total"></td>';
-		}
 		if (!empty($arrayfields['timeconsumed']['checked'])) {
 			print '<td class="liste_total"></td>';
 			print '<td class="liste_total"></td>';

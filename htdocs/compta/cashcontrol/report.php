@@ -63,9 +63,14 @@ $summaryonly = GETPOSTINT('summaryonly');		// May be used for ticket Z
 $object = new CashControl($db);
 $object->fetch($id);
 
-//$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortorder = 'ASC';
-$sortfield = 'b.datev,b.dateo,b.rowid';
+//$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
+// The SQL request always reads the lines by date then rowid (see below), the sort only applies to the display.
+$sortfields = array('f.ref', 'p.datep', 'ba.ref', 'cp.code', 'amount');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = (strtolower(GETPOST('sortorder', 'aZ09comma')) == 'desc' ? 'DESC' : 'ASC');
+if (!in_array($sortfield, $sortfields)) {
+	$sortfield = 'p.datep';
+}
 
 $arrayfields = array(
 	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1),
@@ -110,23 +115,25 @@ print '<!-- Begin div id-container --><div id="id-container" class="id-container
 
 $dates = $datee = 0;
 
-if ($syear && !$smonth) {
-	$dates = dol_get_first_day($syear, 1); $datee = dol_get_last_day($syear, 12);
-} elseif ($syear && $smonth && !$sday) {
-	$dates = dol_get_first_day($syear, $smonth); $datee = dol_get_last_day($syear, $smonth);
-} elseif ($syear && $smonth && $sday) {
-	$dates = dol_mktime(0, 0, 0, $smonth, $sday, $syear); $datee = dol_mktime(23, 59, 59, $smonth, $sday, $syear);
+if ($syear) {
+	// The period is deduced from the end date stored in UTC in the 6 components year, month, day, hour, min and sec (same as cashcontrol_card.php)
+	$tmparray = $object->getPeriodStartAndEnd();
+	$dates = $tmparray[0];
+	$datee = $tmparray[1];
 } else {
 	dol_print_error(null, 'Year not defined');
 }
 $datefilter = 'p.datep';
+$datefiltertz = 'tzserver';		// Dates of llx_paiement are stored in the time zone of the server
 $modulesourcefilter = 'f.module_source';
 $amountfield = 'pf.amount';
 $possource = 'f.pos_source';
 $fieldentity = 'p.entity';
 $joinleft = 'LEFT ';
 if (isALNERunningVersion() && $mysoc->country_code == 'FR') {
+	// In this cases we are using dates stored in UTC in db.
 	$datefilter = 'bl.date_creation';	// By using this as a filter, it is like the LEFT JOIN is an INNER JOIN
+	$datefiltertz = 'gmt';			// Dates of llx_blockedlog are stored in UTC
 	$modulesourcefilter = 'bl.module_source';
 	$amountfield = 'bl.amounts';
 	$possource = 'bl.pos_source';
@@ -148,7 +155,7 @@ $sql .= " ".MAIN_DB_PREFIX."c_paiement as cp";
 $sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
 $sql .= " AND ".$db->sanitize($modulesourcefilter)." = '".$db->escape($posmodule)."'";
 $sql .= " AND ".$db->sanitize($possource)." = '".$db->escape($terminalid)."'";
-$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
+$sql .= " AND ".$db->sanitize($datefilter)." BETWEEN '".$db->idate($dates, $datefiltertz)."' AND '".$db->idate($datee, $datefiltertz)."'";
 $sql .= " AND ".$db->sanitize($fieldentity)." = ".((int) $conf->entity); // Never share entities for features related to accountancy
 $sql .= " ORDER BY ".$db->sanitize($datefilter)." ASC, rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
@@ -193,7 +200,10 @@ if ($resql) {
 		print '<br>';
 	}
 
-	$param = '';
+	$param = '&id='.((int) $id);
+	if (GETPOST('contextpage', 'aZ09')) {
+		$param .= '&contextpage='.urlencode(GETPOST('contextpage', 'aZ09'));
+	}
 
 	if (!$summaryonly) {
 		print '<div class="div-table-responsive">';
@@ -201,12 +211,12 @@ if ($resql) {
 
 		// Fields title
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
-		print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '"', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'f.ref', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'p.datep', '', $param, '"', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder, '');
 		print_liste_field_titre($arrayfields['cp.code']['label'], $_SERVER['PHP_SELF'], 'cp.code', '', $param, '', $sortfield, $sortorder, 'right ');
-		print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
-		print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'amount', '', $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'amount', '', $param, '', $sortfield, $sortorder, 'right ');
 		print "</tr>\n";
 	}
 
@@ -225,6 +235,7 @@ if ($resql) {
 	$amountpertype = array();
 
 	$totalarray = array('nbfield' => 0, 'pos' => array(), 'val' => array('totaldebfield' => 0, 'totalcredfield' => 0));
+	$rowstoprint = array();
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 
@@ -315,6 +326,7 @@ if ($resql) {
 
 		// List of all invoices
 		if (!$summaryonly) {
+			ob_start();
 			print '<tr class="oddeven">';
 
 			// Ref
@@ -379,12 +391,36 @@ if ($resql) {
 			}
 
 			print "</tr>";
+			$rowstoprint[] = array('html' => ob_get_clean(), 'pos' => $i, 'f.ref' => (string) $invoicetmp->ref, 'p.datep' => (int) $db->jdate($objp->datep),
+				'ba.ref' => (string) $bankaccount->ref, 'cp.code' => (string) $objp->code, 'amount' => (float) $objp->amount);
 		}
 
 		$i++;
 	}
 
 	if (!$summaryonly) {
+		// Lines sorted for the display only. Equal values keep the order of the request (chronological).
+		usort(
+			$rowstoprint,
+			/**
+			 * Compare two lines to print
+			 *
+			 * @param	array<string,mixed>	$a	First line
+			 * @param	array<string,mixed>	$b	Second line
+			 * @return	int						Result of the comparison
+			 */
+			function (array $a, array $b) use ($sortfield, $sortorder): int {
+				$cmp = is_string($a[$sortfield]) ? strnatcasecmp($a[$sortfield], $b[$sortfield]) : ($a[$sortfield] <=> $b[$sortfield]);
+				if ($sortorder == 'DESC') {
+					$cmp = -$cmp;
+				}
+				return $cmp ? $cmp : ($a['pos'] <=> $b['pos']);
+			}
+		);
+		foreach ($rowstoprint as $rowtoprint) {
+			print $rowtoprint['html'];
+		}
+
 		// Show total line
 		$moreinfoontotal = ' ('.$num.' '.$langs->trans($num > 1 ? "Invoices" : "Invoice").')';		// Used in the .tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

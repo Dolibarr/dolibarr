@@ -91,11 +91,10 @@ function init(){
 	console.log("init() Prepare tableDnd for #<?php echo $tagidfortablednd; ?>");
 
 	$(".tdlineupdown").each(function (tdindex, tdline) {
-		var gripimg = tdline.dataset.gripimg ?? 'grip.png';
-
-		$(tdline).css("background-image",'url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'; ?>' + gripimg + ')');
-		$(tdline).css("background-repeat","no-repeat");
-		$(tdline).css("background-position","center center");
+		var gripimg = tdline.dataset.gripimg ?? 'grip';
+		<?php $gripHtml = img_picto('', 'grip', '', 0, 0, 0, '', 'linegripimg opacitymedium'); ?>
+		<?php $gripTitleHtml = img_picto('', 'grip_title', '', 0, 0, 0, '', 'linegripimg opacitymedium'); ?>
+		$(tdline).html(gripimg == 'grip_title.png' ? '<?php echo dol_escape_js($gripTitleHtml); ?>' : '<?php echo dol_escape_js($gripHtml); ?>');
 		/* console.log($(".tdlineupdown")[tdindex], tdline); */
 	})
 
@@ -146,6 +145,10 @@ function init(){
 				checkLinePosition(row, inital_table);
 			}
 			inital_table = $("#<?php echo $tagidfortablednd; ?> .drag").map((_, el) => $(el)[0]).get();
+
+			if (typeof subtotalRefreshRows === 'function') {
+				subtotalRefreshRows();	// The drag and drop may have shown lines of a collapsed block, so we apply the collapsed blocks again
+			}
 
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			console.log("tableDND onDrop");

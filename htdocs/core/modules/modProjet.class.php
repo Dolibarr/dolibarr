@@ -125,6 +125,13 @@ class modProjet extends DolibarrModules
 				"",
 				0,
 			],
+			[
+				"PROJECT_TASK_EMAIL_TEMPLATE_REMIND_OVERDUE",
+				"emailtemplate:project_task",
+				"(SendingReminderForOverdueTask)",
+				'Email template used to remind the task executives of an overdue task (see MAIN_DELAY_TASKS_TODO)',
+				0,
+			],
 		];
 
 		// Boxes
@@ -147,6 +154,19 @@ class modProjet extends DolibarrModules
 			'frequency' => 1,
 			'unitfrequency' => 86400 * 7,
 			'status' => 0,
+			'test' => 'isModEnabled("project")',
+		);
+		$this->cronjobs[] = array(
+			'label' => 'SendReminderForOverdueTasksTitle',
+			'jobtype' => 'method',
+			'class' => 'projet/class/task.class.php',
+			'objectname' => 'Task',
+			'method' => 'sendReminderForOverdueTasks',
+			'parameters' => '',
+			'comment' => 'SendReminderForOverdueTasks',
+			'frequency' => 1,
+			'unitfrequency' => 86400,
+			'status' => 1,
 			'test' => 'isModEnabled("project")',
 		);
 		// Permissions
@@ -361,7 +381,7 @@ class modProjet extends DolibarrModules
 			$this->import_fieldshidden_array[$r] = array('t.fk_user_creat' => 'user->id', 'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'projet_task'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 			$this->import_convertvalue_array[$r] = array(
 				't.fk_projet' => array('rule' => 'fetchidfromref', 'classfile' => '/projet/class/project.class.php', 'class' => 'Project', 'method' => 'fetch', 'element' => 'Project'),
-				't.ref' => array('rule' => 'getrefifauto', 'class' => (!getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON), 'path' => "/core/modules/project/task/".(!getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON).'.php')
+				't.ref' => array('rule' => 'getrefifauto', 'class' => (!getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : getDolGlobalString('PROJECT_TASK_ADDON')), 'path' => "/core/modules/project/task/".(!getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : getDolGlobalString('PROJECT_TASK_ADDON')).'.php')
 			);
 			//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 			$this->import_regex_array[$r] = array('t.dateo' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datee' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');

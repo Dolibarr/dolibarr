@@ -107,7 +107,7 @@ $datestart_dtend = dol_mktime(23, 59, 59, GETPOSTINT('datestart_dtendmonth'), GE
 $dateend_dtstart = dol_mktime(0, 0, 0, GETPOSTINT('dateend_dtstartmonth'), GETPOSTINT('dateend_dtstartday'), GETPOSTINT('dateend_dtstartyear'), 'tzuserrel');
 $dateend_dtend = dol_mktime(23, 59, 59, GETPOSTINT('dateend_dtendmonth'), GETPOSTINT('dateend_dtendday'), GETPOSTINT('dateend_dtendyear'), 'tzuserrel');
 if ($search_status == '' && !GETPOSTISSET('search_status')) {
-	$search_status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+	$search_status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS'));
 }
 if (empty($mode) && !GETPOSTISSET('mode')) {
 	$mode = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_list');
@@ -286,7 +286,22 @@ if (empty($reshook) && !empty($massaction)) {
 	}
 
 	if (isset($percent)) {
+		$permissiontoupdateall = $user->hasRight('agenda', 'allactions', 'create');
+		$permissiontoupdatemyown = $user->hasRight('agenda', 'myactions', 'create');
 		foreach ($toselect as $toselectid) {
+			// Check user has the permission to change the status of this event
+			// Permission is the same than the one required to edit an event on the event card page.
+			$canupdatepercent = $permissiontoupdateall;
+			if (empty($canupdatepercent)) {
+				$resultfetch = $object->fetch($toselectid);
+				if ($resultfetch > 0 && ($object->authorid == $user->id || $object->userownerid == $user->id) && $permissiontoupdatemyown) {
+					$canupdatepercent = 1;
+				}
+			}
+			if (empty($canupdatepercent)) {
+				setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
+				continue;
+			}
 			$result = $object->updatePercent($toselectid, $percent);
 			if ($result < 0) {
 				dol_print_error($db);
@@ -433,6 +448,11 @@ if ($search_categ_cus != 0) {
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 $paramnoactionodate = $param;
 
@@ -581,7 +601,7 @@ if ($search_status == 'todo') {
 if ($search_import_key) {
 	$sql .= natural_search("a.import_key", $search_import_key);
 }
-if ($search_id) {
+if ($search_id != '') {
 	$sql .= natural_search("a.id", $search_id, 1);
 }
 if ($search_title) {
@@ -843,7 +863,7 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['a.id']['checked'])) {
-	print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
+	print '<td class="liste_titre"><input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'"></td>';
 }
 if (!empty($arrayfields['a.datep']['checked'])) {
 	print '<td class="liste_titre nowraponall center">';
@@ -973,7 +993,7 @@ if (!empty($arrayfields['a.fk_element']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -1131,7 +1151,7 @@ while ($i < $imaxinloop) {
 
 	// Start date
 	if (!empty($arrayfields['a.datep']['checked'])) {
-		print '<td class="center nowraponall'.($event_start_date_css ? ' '.$event_start_date_css.'x' : '').'"><span>';
+		print '<td class="center nowraponall tdlineheightsmall'.($event_start_date_css ? ' '.$event_start_date_css.'x' : '').'"><span>';
 		if (empty($obj->fulldayevent)) {
 			print '<div class="center inline-block lineheightsmall">';
 			print dol_print_date($db->jdate($obj->dp), 'dayreduceformat', 'tzuserrel');

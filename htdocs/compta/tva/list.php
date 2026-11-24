@@ -482,7 +482,7 @@ if (!empty($arrayfields['t.fk_typepayment']['checked'])) {
 // Filter: Bank Account
 if (!empty($arrayfields['t.fk_account']['checked'])) {
 	print '<td class="liste_titre left">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth200');
 	print '</td>';
 }
 
@@ -576,7 +576,7 @@ if (!empty($arrayfields['t.status']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -673,7 +673,9 @@ while ($i < $imaxinloop) {
 
 		// Label
 		if (!empty($arrayfields['t.label']['checked'])) {
-			print '<td>'.dol_trunc($obj->label, 40).'</td>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->label).'">';
+			print '<span class="spantitle">'.dolPrintHTML($obj->label).'</span>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

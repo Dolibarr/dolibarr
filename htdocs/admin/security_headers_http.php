@@ -293,24 +293,73 @@ function cleanSecurityCSP($securitycsp)
 			}
 		}
 		// We check if style-src contains self and unsafe-inline (if not the app will not work correctly)
-		if (!preg_match('/style-src[^;]*self/', $securitycsp) || !preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
-			if (!preg_match('/style-src/', $securitycsp)) {
-				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' style-src \'self\' \'unsafe-inline\';';
-			} else {
-				if (!preg_match('/style-src[^;]*self/', $securitycsp)) {
-					$securitycsp = preg_replace('/style-src\s+/', 'style-src \'self\' ', $securitycsp);
-				}
-				if (!preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
-					$securitycsp = preg_replace('/style-src\s+/', 'style-src \'unsafe-inline\' ', $securitycsp);
-				}
+		if (!preg_match('/style-src/', $securitycsp)) {
+			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' style-src \'self\' \'unsafe-inline\'';
+			if (isModEnabled('paypal')) {
+				$securitycsp .= ' *.paypal.com';
+			}
+			if (isModEnabled('stripe')) {
+				$securitycsp .= ' *.stripe.com';		// Must be added as they may be used by the core modules
+			}
+			$securitycsp .= ';';
+		} else {
+			if (!preg_match('/style-src[^;]*self/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src \'self\' ', $securitycsp);
+			}
+			if (!preg_match('/style-src[^;]*unsafe-inline/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src \'unsafe-inline\' ', $securitycsp);
+			}
+			// We check if entry for paypal or stripe are present
+			if (isModEnabled('paypal') && !preg_match('/style-src[^;]*paypal/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src *.paypal.com ', $securitycsp);
+			}
+			if (isModEnabled('stripe') && !preg_match('/style-src[^;]*stripe/', $securitycsp)) {
+				$securitycsp = preg_replace('/style-src\s+/', 'style-src *.stripe.com ', $securitycsp);
 			}
 		}
-		if (!preg_match('/dolibarr\.org/', $securitycsp)) {
-			if (!preg_match('/default-src/', $securitycsp)) {
-				$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src *.dolibarr.org;';
-			} else {
+		// We check if default-src contains self, unsafe-inline, unsafe-eval, data:, *.dolibarr.org, *.dolistore.com, *.githubusercontent.com, and paypal or stripe if enabled (if not the app will not work correctly)
+		// Note: data: is required to show images embedded with data: (for example in some email layouts)
+		if (!preg_match('/default-src/', $securitycsp)) {
+			$securitycsp .= (preg_match('/;\s*$/', $securitycsp) ? '' : '; ').' default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' data: *.dolibarr.org *.dolistore.com *.githubusercontent.com';
+			if (isModEnabled('paypal')) {
+				$securitycsp .= ' *.paypal.com';
+			}
+			if (isModEnabled('stripe')) {
+				$securitycsp .= ' *.stripe.com';
+			}
+			$securitycsp .= ';';
+		} else {
+			if (isModEnabled('paypal') && !preg_match('/default-src[^;]*paypal/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.paypal.com ', $securitycsp);
+			}
+			if (isModEnabled('stripe') && !preg_match('/default-src[^;]*stripe/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.stripe.com ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*githubusercontent\.com/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.githubusercontent.com ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*dolistore\.com/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.dolistore.com ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*dolibarr\.org/', $securitycsp)) {
 				$securitycsp = preg_replace('/default-src\s+/', 'default-src *.dolibarr.org ', $securitycsp);
 			}
+			if (!preg_match('/default-src[^;]*data:/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src data: ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*unsafe-eval/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src \'unsafe-eval\' ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*unsafe-inline/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src \'unsafe-inline\' ', $securitycsp);
+			}
+			if (!preg_match('/default-src[^;]*self/', $securitycsp)) {
+				$securitycsp = preg_replace('/default-src\s+/', 'default-src \'self\' ', $securitycsp);
+			}
+		}
+		// We check if img-src, when defined, contains data: (img-src replaces default-src for images, so data: must also be there)
+		if (preg_match('/img-src/', $securitycsp) && !preg_match('/img-src[^;]*data:/', $securitycsp)) {
+			$securitycsp = preg_replace('/img-src\s+/', 'img-src data: ', $securitycsp);
 		}
 	}
 	$securitycsp = preg_replace('/\s+/', ' ', $securitycsp);
@@ -362,7 +411,7 @@ print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCESTS" id="MAIN_SEC
 print '</tr>';
 // Force PP
 print '<tr class="oddeven">';
-print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>camera=*, microphone=(), geolocation=*', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCEPP').'</td>';
+print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>camera=*, microphone=(self), geolocation=*', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCEPP').'</td>';
 print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCEPP" id="MAIN_SECURITY_FORCEPP" value="'.getDolGlobalString("MAIN_SECURITY_FORCEPP").'" spellcheck="false"></td>';
 print '</tr>';
 
@@ -478,7 +527,8 @@ print '<script>
 			keysource = $(this).find(":selected").data("sourcetype");
 			$("#select_source_MAIN_SECURITY_FORCECSP").val($(this).val());
 			console.log("We hide and show fields");
-			if (keysource == "data" || keysource == "input") {
+			/* For data:, no additional value is shown, so we can add it directly (like blob:) */
+			if (keysource == "input") {
 				$(".div_input_data_MAIN_SECURITY_FORCECSP").css("display", "inline-block");
 				$("#btn_MAIN_SECURITY_FORCECSP").prop("disabled",true);
 			} else {

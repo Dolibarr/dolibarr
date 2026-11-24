@@ -125,7 +125,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "m.date_creat";
+	$sortfield = "m.date_creation";
 }
 
 // List of fields to search into when doing a "search in all"
@@ -214,7 +214,7 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 if ($filteremail) {
-	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
+	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creation as datec, m.date_envoi as date_envoi,";
 	$sql .= " mc.statut as sendstatut,";
 	$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label";
 
@@ -255,7 +255,7 @@ if ($filteremail) {
 		$sortfield = "m.rowid";
 	}
 } else {
-	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creat as datec, m.date_envoi as date_envoi,";
+	$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet as subject, m.nbemail, m.statut as status, m.date_creation as datec, m.date_envoi as date_envoi,";
 	$sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label";
 
 	$sqlfields = $sql; // $sql fields to remove for count total
@@ -629,7 +629,7 @@ print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "m.titre", "", $param, ""
 $totalarray['nbfield']++;
 print_liste_field_titre("Subject", $_SERVER["PHP_SELF"], "m.sujet", "", $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creat", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "m.date_creation", "", $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 
 // Project
@@ -723,19 +723,23 @@ while ($i < $imaxinloop) {
 	}
 
 	// Title
-	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+	print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+	print '<div class="twolinesmax-normallineheight minwidth200onall">';
 	$savref = $object->ref;
 	$object->ref = $obj->title;
 	print $object->getNomUrl(0);
 	$object->ref = $savref;
+	print '</div>';
 	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
 	// Topic
-	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->subject).'">';
-	print $obj->subject;
+	print '<td class="opacitymedium" title="'.dolPrintHTMLForAttribute($obj->subject).'">';
+	print '<div class="twolinesmax-normallineheight minwidth200onall">';
+	print dolPrintHTML($obj->subject);
+	print '</div>';
 	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
@@ -770,7 +774,7 @@ while ($i < $imaxinloop) {
 		{
 			print $nbemail;
 		}*/
-		print $nbemail;
+		print '<span class="badge badgeneutral">'.((int) $nbemail).'</span>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

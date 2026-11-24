@@ -59,7 +59,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'stocks', 'productbatch', 'incoterm', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'stocks', 'productbatch', 'other'));
 
 $order_id	= GETPOSTINT('id'); // id of order
 $ref		= GETPOST('ref', 'alpha');
@@ -84,6 +84,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
+if ($object->id > 0) {
+	$order_id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
 $result = restrictedArea($user, 'commande', $order_id);	// After the fetch: the page may be called with the ref only, the security check must be done on the object found
 
 // Security check

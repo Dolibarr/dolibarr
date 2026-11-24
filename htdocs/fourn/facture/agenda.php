@@ -114,6 +114,9 @@ if (!empty($user->socid)) {
 $usercancreate = false;
 
 $isdraft = (($object->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+if ($object->id > 0) {
+	$id = $object->id;	// The page may be called with the ref only: the security check must be done on the object found
+}
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', $isdraft);
 
 

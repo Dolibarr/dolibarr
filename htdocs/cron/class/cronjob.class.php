@@ -445,6 +445,7 @@ class Cronjob extends CommonObject
 		$sql .= "unitfrequency,";
 		$sql .= "frequency,";
 		$sql .= "status,";
+		$sql .= "email_alert,";
 		$sql .= "fk_user_author,";
 		$sql .= "fk_user_mod,";
 		$sql .= "note,";
@@ -475,6 +476,7 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->unitfrequency) ? 'NULL' : "'".$this->db->escape($this->unitfrequency)."'").",";
 		$sql .= " ".(!isset($this->frequency) ? '0' : ((int) $this->frequency)).",";
 		$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
+		$sql .= " ".(!isset($this->email_alert) ? 'NULL' : "'".$this->db->escape($this->email_alert)."'").",";
 		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
 		$sql .= " ".($user->id ? (int) $user->id : "NULL").",";
 		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'").",";
@@ -1419,7 +1421,12 @@ class Cronjob extends CommonObject
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob";
-			$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
+			if (getDolGlobalInt('CRON_DISABLE_AUTO_UNLOCK')) {
+				// Keep the job locked (no automatic rerun), only record the error
+				$sql .= " SET lastoutput = '".$dbs->escape($lastoutput)."'";
+			} else {
+				$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
+			}
 			$sql .= " WHERE rowid = ".((int) $cronjobid)." AND processing = 1 AND datelastresult IS NULL";
 			$dbs->query($sql);
 		});
@@ -1509,11 +1516,14 @@ class Cronjob extends CommonObject
 				if ($result === false || (!is_bool($result) && $result != 0)) {
 					$langs->load("errors");
 
-					if (!is_array($object->errors) || !in_array($object->error, $object->errors)) {
-						$errmsg .= $object->error;
+					// The class of the job may not declare the properties error and errors
+					$objecterror = isset($object->error) ? $object->error : '';
+					$objecterrors = (isset($object->errors) && is_array($object->errors)) ? $object->errors : array();
+					if (!in_array($objecterror, $objecterrors)) {
+						$errmsg .= $objecterror;
 					}
-					if (is_array($object->errors) && count($object->errors)) {
-						$errmsg .= (($errmsg ? ', ' : '').implode(', ', $object->errors));
+					if (count($objecterrors)) {
+						$errmsg .= (($errmsg ? ', ' : '').implode(', ', $objecterrors));
 					}
 					if (empty($errmsg)) {
 						$errmsg = $langs->trans('ErrorUnknown');
@@ -1636,9 +1646,15 @@ class Cronjob extends CommonObject
 
 		if ($error && !empty($this->email_alert)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
+			// The label of a job is a translation key, with the lang file to load after ':' (as in cron/list.php)
+			$reg = array();
+			if (preg_match('/:(.*)$/', $this->label, $reg)) {
+				$langs->load($reg[1]);
+			}
+			$labeltoshow = $langs->transnoentitiesnoconv(preg_replace('/:.*$/', '', $this->label));
+			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $labeltoshow);
 			// The body gives what the job returned, so the cause can be read without opening the job
-			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label)."\n\n";
+			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $labeltoshow)."\n\n";
 			$msg .= $langs->transnoentitiesnoconv("CronDtLastResult").': '.dol_print_date($this->datelastresult, 'dayhourtext')."\n";
 			$msg .= $langs->transnoentitiesnoconv("CronLastResult").': '.$this->lastresult."\n";
 			$msg .= $langs->transnoentitiesnoconv("CronLastOutput").":\n".$this->lastoutput."\n";
@@ -1687,15 +1703,15 @@ class Cronjob extends CommonObject
 		if (empty($this->datenextrun)) {
 			if (empty($this->datestart)) {
 				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
-					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm');
+					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm', 0, 'tzserver');
 				} else {
-					$this->datenextrun = $now + ((int) $this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $this->addFrequency($now);
 				}
 			} else {
 				if (!is_numeric($this->frequency) || (int) $this->unitfrequency == 2678400) {
-					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm');
+					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm', 0, 'tzserver');
 				} else {
-					$this->datenextrun = $this->datestart + ((int) $this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $this->addFrequency($this->datestart);
 				}
 			}
 		}
@@ -1704,9 +1720,9 @@ class Cronjob extends CommonObject
 			// Loop until date is after future
 			while ($this->datenextrun < $now) {
 				if (!is_numeric($this->unitfrequency) || (int) $this->unitfrequency == 2678400 || (int) $this->unitfrequency <= 0) {
-					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm');
+					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm', 0, 'tzserver');
 				} else {
-					$this->datenextrun += ((int) $this->frequency * (int) $this->unitfrequency);
+					$this->datenextrun = $this->addFrequency($this->datenextrun);
 				}
 			}
 		} else {
@@ -1730,6 +1746,23 @@ class Cronjob extends CommonObject
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Add the frequency of the job to a date. A frequency in days or weeks is added in the server timezone, so the job
+	 * keeps its time of day when daylight saving time starts or ends.
+	 *
+	 * @param	int|string	$time		Date to add the frequency to
+	 * @return	int						Date plus the frequency
+	 */
+	private function addFrequency($time)
+	{
+		$unitfrequency = (int) $this->unitfrequency;
+		if ($unitfrequency > 0 && $unitfrequency % 86400 == 0) {
+			return dol_time_plus_duree((int) $time, (int) $this->frequency * intdiv($unitfrequency, 86400), 'd', 0, 'tzserver');
+		}
+
+		return (int) $time + ((int) $this->frequency * $unitfrequency);
 	}
 
 	/**

@@ -70,16 +70,11 @@ $label_product_ref_option = GETPOSTISSET('label_product_ref_option');
 $label_product_label_option = GETPOSTISSET('label_product_label_option');
 
 if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-	$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', 'nohtml') : null);
-} else {
-	$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', 'alpha') : null);
-}
-
-if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
 	$security_check = 'nohtml';
 } else {
 	$security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
 }
+$label_product_ref = (GETPOSTISSET('label_product_ref') ? GETPOST('label_product_ref', $security_check) : null);
 $label_product_label = (GETPOSTISSET('label_product_label') ? GETPOST('label_product_label', $security_check) : null);
 
 $mesg = '';
@@ -400,9 +395,8 @@ $form = new Form($db);
 llxHeader('', $langs->trans("BarCodePrintsheet"), '', '', 0, 0, '', '', '', 'mod-barcode page-printsheet');
 
 print load_fiche_titre($langs->trans("BarCodePrintsheet"), '', 'barcode');
-print '<br>';
 
-print '<span class="opacitymedium">'.$langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'</span><br>';
+print '<div class="info">'.$langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'</div>';
 print '<br>';
 
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
@@ -521,7 +515,7 @@ if ($user->hasRight('societe', 'lire')) {
 	print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"><label for="fillfromthirdparty"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").'</label>';
 	print '<br>';
 	print '<div class="showforthirdpartyselector">';
-	print $form->select_company(GETPOSTINT('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+	print $form->select_company(GETPOSTINT('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300 valignmiddle');
 	print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector small" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 	print '</div>';
 }

@@ -117,11 +117,11 @@ if ($id > 0 || !empty($ref)) {
 	$helpurl = '';
 	$shortlabel = dol_trunc($object->label, 16);
 	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
-		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Referers');
+		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('ReferringItems');
 		$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 	}
 	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
-		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Referers');
+		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('ReferringItems');
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
@@ -163,7 +163,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		if ($showmessage && $nboflines > 1) {
-			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
+			print '<span class="opacitymedium">'.$langs->trans("ClickOnALinkOfColumn", $langs->transnoentitiesnoconv("ReferringItems")).'</span>';
 		} elseif ($user->hasRight('facture', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= "f.rowid as facid, 0 as type, f.titre as title, f.datec, f.suspended as suspended,";

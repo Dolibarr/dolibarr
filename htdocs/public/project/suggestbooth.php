@@ -96,7 +96,7 @@ if ($resultproject < 0) {
 $securekeyreceived = GETPOST('securekey', 'alpha');
 $securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
-if ($securekeytocompare != $securekeyreceived) {
+if (!hash_equals($securekeytocompare, (string) $securekeyreceived)) {
 	print $langs->trans('MissingOrBadSecureKey');
 	exit;
 }
@@ -584,7 +584,7 @@ print load_fiche_titre($langs->trans("NewSuggestionOfBooth"), '', '', 0, '', 'ce
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';
 // Title
-print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $project->label).'</span><br>';
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title).'</span><br>';
 print '</div>';
 
 
@@ -681,7 +681,7 @@ print '<span class="star">*</span>';
 print '</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE')) {
-	$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
+	$country_id = getCountry(getDolGlobalString('MEMBER_NEWFORM_FORCECOUNTRYCODE'), '2', $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	$country_code = dol_user_country();

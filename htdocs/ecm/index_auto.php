@@ -550,7 +550,7 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	if (isModEnabled('recruitment')) {
 		$langs->load("recruitment");
 		$rowspan++;
-		$sectionauto[] = array('position' => 210, 'level' => 1, 'module' => 'recruitment-recruitmentcandidature', 'test' => $user->hasRight('recruitment', 'read'), 'label' => $langs->trans("Candidatures"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
+		$sectionauto[] = array('position' => 210, 'level' => 1, 'module' => 'recruitment-recruitmentcandidature', 'test' => $user->hasRight('recruitment', 'recruitmentjobposition', 'read'), 'label' => $langs->trans("Candidatures"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
 	}
 	$rowspan++;
 	$sectionauto[] = array('position' => 220, 'level' => 1, 'module' => 'user', 'test' => 1, 'label' => $langs->trans("Users"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Users")));

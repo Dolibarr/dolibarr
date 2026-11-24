@@ -109,7 +109,9 @@ if ($action == 'updateform') {
 
 		$res8 = dolibarr_set_const($db, "MAIN_SECURITY_MAXFILESIZE_DOWNLOADED", GETPOST('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-		if ($res3 && $res4 && $res5 && $res6 && $res7 && $res8) {
+		$res9 = dolibarr_set_const($db, "MAIN_DOCUMENT_KEEP_VERSIONS", max(0, GETPOSTINT('MAIN_DOCUMENT_KEEP_VERSIONS')), 'chaine', 0, '', $conf->entity);
+
+		if ($res3 && $res4 && $res5 && $res6 && $res7 && $res8 && $res9) {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	}
@@ -217,6 +219,16 @@ print '<input type="text" name="MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION" class="m
 print "</td>";
 print '</tr>';
 
+// Previous versions kept when a file is replaced by an upload
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("DocumentKeepVersions").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("DocumentKeepVersionsDesc", $langs->transnoentitiesnoconv("OverwriteIfExists")).'</span>';
+print '</td>';
+print '<td class="nowrap">';
+print '<input class="flat width75 right" name="MAIN_DOCUMENT_KEEP_VERSIONS" type="number" min="0" spellcheck="false" value="'.getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS').'">';
+print '</td>';
+print '</tr>';
+
 
 // Use anti virus
 
@@ -249,7 +261,7 @@ if (getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON')) {
 	// Check that command is inside safe_mode
 	if (ini_get('safe_mode') && getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 		$langs->load("errors");
-		$basedir = preg_replace('/"/', '', dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
+		$basedir = preg_replace('/"/', '', dirname(getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')));
 		$listdir = explode(';', ini_get('safe_mode_exec_dir'));
 		if (!in_array($basedir, $listdir)) {
 			print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));

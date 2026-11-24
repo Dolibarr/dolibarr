@@ -223,8 +223,8 @@ var select2arrayoflanguage = {
 	inputTooShort: function (input) {
 		var n = input.minimum;
 		/*console.log(input); console.log(input.minimum);*/
-		if (n > 1) return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters"))."'"; ?>;
-			else return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter"))."'"; ?>
+		if (n > 1) return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "' ".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters"))."'"; ?>;
+			else return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "' ".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter"))."'"; ?>
 		},
 	loadMore: function (pageNumber) { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2LoadingMoreResults"))."'"; ?>; },
 	searching: function () { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2SearchInProgress"))."'"; ?>; }
@@ -720,7 +720,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 
 			/* reset page_y param */
-			var page_y = $(document).scrollTop();
+			var page_y = $(dolGetMainScrollElement()).scrollTop();
 			url = url.replace(/page_y=\d+/g, '');
 			if (page_y > 0) {
 				if (url.indexOf('?') > -1) {
@@ -825,7 +825,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 					url = url + "?dol_resetcache=1";
 				}
 			}
-			var page_y = $(document).scrollTop();
+			var page_y = $(dolGetMainScrollElement()).scrollTop();
 			url = url.replace(/page_y=\d+/g, '');
 			if (page_y > 0) {
 				if (url.indexOf('?') > -1) {
@@ -1092,6 +1092,17 @@ function document_preview(file, type, title)
 
 	console.log("document_preview A click was done: file="+file+", type="+type+", title="+title);
 
+	/* If we are into an iframe (like the media manager opened into a dialog popup), we show the preview into the parent window so the modal overlay covers the whole screen */
+	try {
+		if (window.parent && window.parent !== window && typeof window.parent.document_preview === 'function' && window.parent.jQuery && window.parent.jQuery("#dialogforpopup").length > 0) {
+			console.log("document_preview We are into an iframe, so we show the preview into the parent window");
+			window.parent.document_preview(new URL(file, window.location.href).href, type, title);
+			return;
+		}
+	} catch (e) {
+		console.log("document_preview Parent window is not reachable, so we show the preview into the current window");
+	}
+
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
 		var object_width = '100%';
@@ -1146,7 +1157,12 @@ function document_preview(file, type, title)
 	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
 		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+popupWidth+" height="+popupHeight); */
-		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
+		/* The content of the object tag is displayed by the browser when it cannot render the
+		   document itself. Chrome on Android does not render a PDF inside an object, so without
+		   this the preview area stays empty and the file cannot be reached at all. */
+		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam">';
+		newElem += '<a href="'+file+'" target="_blank" rel="noopener noreferrer">'+<?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Download"))."'"; ?>+'</a>';
+		newElem += '</object>';
 
 		optionsbuttons = {}
 		if (mode == 'image') {
@@ -1199,6 +1215,23 @@ function getParameterByName(name, valueifnotfound)
 }
 
 /*
+ * Return the element that scrolls the main area of the page: #id-right when the theme makes it scrollable, else the document
+ *
+ * @return	Element				Element to use with jQuery scrollTop()
+ */
+function dolGetMainScrollElement()
+{
+	var idright = document.getElementById("id-right");
+	if (idright) {
+		var overflowy = window.getComputedStyle(idright).overflowY;
+		if (overflowy == "auto" || overflowy == "scroll") {
+			return idright;
+		}
+	}
+	return document.scrollingElement || document.documentElement;
+}
+
+/*
  * Submit the form of a confirm box. Jump to the target url with a GET, but submit a POST form
  * instead when this url is too long to be accepted by the web server ("Request-URI Too Long").
  *
@@ -1247,31 +1280,44 @@ function dolSubmitConfirmForm(urljump, page, options, maxurllength)
 function getOperatorsForFieldType(type, maybenull = 0) {
 	console.log('Get list of operators for type='+type);
 
-	// Define the list of operators for each general field category
+	// Define the list of operators for each general field category (keys starting with 'separator' are shown as a non selectable separator)
 	const operatorList = {
 		selectlink: {
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>
 		},
 		text: {
-			Contains: <?php print "'".dol_escape_js($langs->trans('Contains'))."'"; ?>,
-			DoesNotContain: <?php print "'".dol_escape_js($langs->trans('DoesNotContain'))."'"; ?>,
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
+			Contains: <?php print "'".dol_escape_js($langs->trans('Contains'))."'"; ?>,
+			DoesNotContain: <?php print "'".dol_escape_js($langs->trans('DoesNotContain'))."'"; ?>,
+			separator2: '--------',
 			StartsWith: <?php print "'".dol_escape_js($langs->trans('StartsWith'))."'"; ?>,
-			EndsWith: <?php print "'".dol_escape_js($langs->trans('EndsWith'))."'"; ?>
+			EndsWith: <?php print "'".dol_escape_js($langs->trans('EndsWith'))."'"; ?>,
+			separator3: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>
 		},
 		number: {
 			'=': <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			'!=': <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
 			'<': <?php print "'".dol_escape_js($langs->trans('IsLowerThan'))."'"; ?>,
 			'>': <?php print "'".dol_escape_js($langs->trans('IsHigherThan'))."'"; ?>,
 			'<=': <?php print "'".dol_escape_js($langs->trans('IsLowerThanOrEqual'))."'"; ?>,
 			'>=': <?php print "'".dol_escape_js($langs->trans('IsHigherThanOrEqual'))."'"; ?>,
+			separator2: '--------',
+			IsInList: <?php print "'".dol_escape_js($langs->trans('IsInList'))."'"; ?>,
+			IsNotInList: <?php print "'".dol_escape_js($langs->trans('IsNotInList'))."'"; ?>,
 		},
 		date: {
 			Is: <?php print "'".dol_escape_js($langs->trans('Is'))."'"; ?>,
 			IsNot: <?php print "'".dol_escape_js($langs->trans('IsNot'))."'"; ?>,
+			separator1: '--------',
 			IsBefore: <?php print "'".dol_escape_js($langs->trans('IsBefore'))."'"; ?>,
 			IsAfter: <?php print "'".dol_escape_js($langs->trans('IsAfter'))."'"; ?>,
 			IsOnOrBefore: <?php print "'".dol_escape_js($langs->trans('IsOnOrBefore'))."'"; ?>,
@@ -1305,6 +1351,7 @@ function getOperatorsForFieldType(type, maybenull = 0) {
 
 	// If maybenull is true, then append the "IsDefined" and "IsNotDefined" operators
 	if (maybenull === 1) {
+		operatorList[generalType]["separatordefined"] = '--------';
 		operatorList[generalType]["IsDefined"] = <?php print "'".dol_escape_js($langs->trans('IsDefined'))."'"; ?>;
 		operatorList[generalType]["IsNotDefined"] = <?php print "'".dol_escape_js($langs->trans('IsNotDefined'))."'"; ?>;
 	}
@@ -1340,6 +1387,19 @@ function generateFilterString(column, operator, context, fieldType) {
 		case "EndsWith":
 			filter = column + " like \'%" + context + "\'";
 			break;
+		case "IsInList":
+		case "IsNotInList": {
+			// The value is a list of values separated with spaces or commas. We forge directly the universal filter syntax.
+			// Values are quoted, except for numeric fields (quotes and parenthesis are not allowed into values).
+			const isnumericfield = /^(int|integer|float|double|decimal|numeric|tinyint|smallint)/i.test(fieldType);
+			const listofvalues = String(context).replace(/['()]/g, "").split(/[\s,]+/).filter(function(v) { return v !== ""; }).map(function(v) {
+				return ((isnumericfield && /^-?[0-9]+(\.[0-9]+)?$/.test(v)) ? v : "\'" + v + "\'");
+			});
+			if (listofvalues.length > 0) {
+				filter = "(" + column + (operator === "IsNotInList" ? ":notin:" : ":in:") + listofvalues.join(",") + ")";
+			}
+			break;
+		}
 		case "IsDefined":
 			filter = column + ":isnot:null";
 			break;
@@ -1591,11 +1651,27 @@ $(document).ready(function() {
 			, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
 			, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
 		});
+
+		// Close all notifications (messages, warnings and errors) when the ESC key is pressed
+		$(document).on('keydown', function(e) {
+			if (e.key === 'Escape' || e.keyCode === 27) {
+				$('.jnotify-container .jnotify-notification').remove();
+			}
+		});
 	}
 });
 	<?php
 } ?>
 
+// Allow focus into select2 components (their dropdown is appended to body) when they are used into a modal jQuery UI dialog.
+// Without this, the modal dialog steals the focus of the select2 search field so typing does not filter the list.
+if (typeof $.ui != 'undefined' && typeof $.ui.dialog == 'function') {
+	$.widget("ui.dialog", $.ui.dialog, {
+		_allowInteraction: function(event) {
+			return !!$(event.target).closest(".select2-container").length || this._super(event);
+		}
+	});
+}
 
 
 jQuery(document).ready(function() {
@@ -1603,13 +1679,20 @@ jQuery(document).ready(function() {
 	// (SIREN "849 943 618", SIRET "849 943 618 00012"). Cleaning the pasted text before it is inserted
 	// makes the maxlength of the field apply to the id itself instead of to its presentation: without
 	// this the browser silently truncates the paste and the user records an id short of a few digits.
-	jQuery(document).on("paste", "input[data-profidnospace]", function(event) {
+	// Same for the dots of a field marked with data-profidnodot (SIREN "849.943.618").
+	jQuery(document).on("paste", "input[data-profidnospace], input[data-profidnodot]", function(event) {
 		var clipboardData = (event.originalEvent || event).clipboardData;
 		if (!clipboardData) {
 			return;
 		}
 		var pastedText = clipboardData.getData("text");
-		var cleanedText = pastedText.replace(/\s+/g, "");
+		var cleanedText = pastedText;
+		if (this.hasAttribute("data-profidnospace")) {
+			cleanedText = cleanedText.replace(/\s+/g, "");
+		}
+		if (this.hasAttribute("data-profidnodot")) {
+			cleanedText = cleanedText.replace(/\.+/g, "");
+		}
 		if (cleanedText == pastedText) {
 			return;		// Nothing to remove, leave the paste to the browser
 		}
@@ -1625,6 +1708,8 @@ jQuery(document).ready(function() {
 		// The page is in an iframe
 		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
 		jQuery(".id-container").css('width', '100%');
+		// Without the left menu, #id-right must not stay a table-cell, otherwise its width is reduced to the width of its content
+		jQuery("#id-right").css({"display": "block", "width": "100%"});
 
 	}
 
@@ -1756,7 +1841,11 @@ $(document).on('select2:open', (e) => {
 		if (id.substr(-2) == '[]') {
 			id = id.substr(0,id.length-2);
 		}
-		document.querySelector('input[aria-controls*='+id+']').focus();
+		/* Quote the value: an unquoted id with a dot (like 'u.fk_socpeople') is not a valid CSS selector */
+		const searchinput = document.querySelector('input[aria-controls*="'+id.replace(/["\\]/g, '\\$&')+'"]');
+		if (searchinput) {
+			searchinput.focus();
+		}
 	}
 });
 
@@ -1803,23 +1892,26 @@ $(document).ready(function() {
 function onKanbanColumnChange(item, newColumn) {
 	console.log("Call onKanbanColumnChange");
 	var originalColumn = item.data('original-column');
+	var field = newColumn.data('groupbyfield');
+	var data = {
+		field: field,
+		element: item.data('element'),
+		id: item.data('itemid'),
+		/* Token of the current page: this file is cached by the browser, so it must not contain a token */
+		token: jQuery("meta[name=anti-csrf-currenttoken]").attr("content")
+	};
+	/* The column of the records without any value uses the id 'undefined', saved as 0 like the "Undefined" entry of the dictionary */
+	var value = newColumn.data('groupbyid');
+	data['ajaxfield_'+field] = (value === 'undefined' ? 0 : value);
 	jQuery.ajax({
 		method: 'POST',
-		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/savekanbanfield.php',
-		data: {
-			field: 'editval_'+newColumn.data('groupbyfield'),
-			element: item.data('element'),
-			table_element: item.data('tableelement'),
-			fk_element: item.data('itemid'),
-			value: newColumn.data('groupbyid'),
-			/* Token of the current page: this file is cached by the browser, so it must not contain a token */
-			token: jQuery("meta[name=anti-csrf-currenttoken]").attr("content")
-		},
+		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/objectfield.php',
+		data: data,
 		context: document.body,
 		dataType: 'json',
 		success: function(response) {
-			if (response && response.error) {
-				onKanbanColumnChangeFailed(item, originalColumn, response.error);
+			if (!response || !response.result) {
+				onKanbanColumnChangeFailed(item, originalColumn, response ? response.msg : '');
 				return;
 			}
 			/* Record is saved, the new column becomes the reference for the next move */
@@ -1829,7 +1921,7 @@ function onKanbanColumnChange(item, newColumn) {
 			}
 		},
 		error: function(xhr) {
-			onKanbanColumnChangeFailed(item, originalColumn, xhr.status+' '+xhr.statusText);
+			onKanbanColumnChangeFailed(item, originalColumn, (xhr.responseJSON && xhr.responseJSON.msg) ? xhr.responseJSON.msg : xhr.status+' '+xhr.statusText);
 		}
 	});
 }
@@ -1960,6 +2052,82 @@ $(function() {
 				checkBox.prop('checked', nextCheckStatus).trigger('change');
 				setLastClickedRowStatus($(this), 1);
 			}
+		}
+	});
+});
+
+
+/*
+ * Left menu with MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER: the sub entries of a block are expanded when mouse stays over its title,
+ * other blocks are collapsed. A mousemove is required, so a title moving under a still mouse during animation does not expand.
+ */
+$(function() {
+	let blocks = $('.blockvmenuexpandonhover');
+	if (blocks.length === 0) {
+		return;
+	}
+	let animationDuration = 250;
+	let hoverDelay = 150;			/* To not expand blocks when mouse just crosses titles */
+	let hoverTimer = null;
+
+	let collapseBlocks = function () {
+		blocks.filter('.blockvmenuexpanded').removeClass('blockvmenuexpanded').children('.menu_subentries').stop(true).slideUp(animationDuration);
+	};
+
+	let expandBlock = function (block) {
+		if (block.hasClass('blockvmenuexpanded')) {
+			return;
+		}
+		collapseBlocks();
+		block.addClass('blockvmenuexpanded').children('.menu_subentries').stop(true).slideDown(animationDuration);
+	};
+
+	/* Expand the block if it has sub entries, else (block with class blockvmenucollapseonhover) collapse the expanded block */
+	let activateBlock = function (block) {
+		if (block.hasClass('blockvmenuexpandonhover')) {
+			expandBlock(block);
+		} else {
+			collapseBlocks();
+		}
+	};
+
+	let isBlockToChange = function (block) {
+		if (block.hasClass('blockvmenuexpandonhover')) {
+			if (block.data('staycollapsed')) {
+				return false;
+			}
+			return !block.hasClass('blockvmenuexpanded');
+		}
+		return blocks.filter('.blockvmenuexpanded').length > 0;
+	};
+
+	blocks.add('.blockvmenucollapseonhover').children('.menu_titre').on('mousemove', function () {
+		let block = $(this).parent();
+		if (hoverTimer === null && isBlockToChange(block)) {
+			hoverTimer = setTimeout(function () {
+				hoverTimer = null;
+				activateBlock(block);
+			}, hoverDelay);
+		}
+	}).on('mouseleave', function () {
+		clearTimeout(hoverTimer);
+		hoverTimer = null;
+		$(this).parent().removeData('staycollapsed');
+	}).on('focusin', function () {
+		activateBlock($(this).parent());
+	});
+
+	/* Click on the arrow expands a collapsed block or collapses an expanded one, instead of following the title link.
+	 * When collapsed, the block stays collapsed while the mouse stays on its title. */
+	$('.blockvmenuexpandonhover .menuexpandarrow').on('click', function (e) {
+		let block = $(this).closest('.blockvmenuexpandonhover');
+		e.preventDefault();
+		if (block.hasClass('blockvmenuexpanded')) {
+			block.data('staycollapsed', true);
+			collapseBlocks();
+		} else {
+			block.removeData('staycollapsed');
+			expandBlock(block);
 		}
 	});
 });

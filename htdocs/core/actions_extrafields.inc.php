@@ -223,7 +223,9 @@ if ($action == 'add') {
 					// Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
 						if (strpos($param_ligne, ',') !== false) {
-							list($key, $value) = explode(',', $param_ligne);
+							$tmparray = explode(',', $param_ligne);
+							$key = $tmparray[0];
+							$value = $tmparray[1];
 							if (!array_key_exists('options', $params)) {
 								$params['options'] = array();
 							}
@@ -256,7 +258,7 @@ if ($action == 'add') {
 					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
 					$visibility,
 					GETPOST('help', 'alpha'),
-					GETPOST('computed_value', 'alpha'),
+					GETPOST('computed_value', 'alphanohtmlquote'),
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile', 'alpha'),
 					'1',
@@ -438,7 +440,8 @@ if ($action == 'update') {
 				}
 
 				// Example: is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : 'objnotdefined'
-				$computedvalue = GETPOST('computed_value', 'nohtml');
+				// Example: isModEnabled('sellyoursaas')
+				$computedvalue = GETPOST('computed_value', 'alphanohtmlquote');
 
 				$result = $extrafields->update(
 					GETPOST('attrname', 'aZ09'),
@@ -458,7 +461,7 @@ if ($action == 'update') {
 					$computedvalue,
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile'),
-					GETPOST('enabled', 'nohtml'),
+					GETPOST('enabled', 'alphanohtmlquote'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOSTINT('printable'),
 					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),

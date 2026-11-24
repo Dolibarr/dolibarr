@@ -24,6 +24,7 @@
  * @var array<string,mixed> $arrayfields
  * @var ?string $extrafieldsobjectkey
  * @var	?string $extrafieldsobjectprefix
+ * @var ?string $extrafieldsonlykey		If set, only the column of this extrafield (code without prefix) is output
  * @var ?string $search_options_pattern
  * @var array<string,mixed> $search_array_options
  */
@@ -51,6 +52,9 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 		}
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+			if (!empty($extrafieldsonlykey) && (string) $key !== (string) $extrafieldsonlykey) {
+				continue;
+			}
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
 					continue;
@@ -79,7 +83,7 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 					// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
 					$morecss = '';
 					if (in_array($typeofextrafield, array('link', 'sellist', 'text', 'html'))) {
-						$morecss = 'maxwidth200';
+						$morecss = 'maxwidth100';
 					}
 					print $extrafields->showInputField($key, (!isset($search_array_options[$search_options_pattern.$tmpkey]) ? '' : $search_array_options[$search_options_pattern.$tmpkey]), '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
 				}

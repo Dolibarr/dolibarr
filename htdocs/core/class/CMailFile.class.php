@@ -605,11 +605,7 @@ class CMailFile
 				$msg = $this->checkIfHTML($msg);		// This add a header and a body including custom CSS to the HTML content
 			}
 
-			if ($msg === '.') {
-				$msg = "\n.\n";
-			}
-			// Replace . alone on a new line with .. to avoid to have SMTP interpret this as end of message
-			$msg = preg_replace('/(\r|\n)\.(\r|\n)/ims', '\1..\2', $msg);
+			// Note: lines starting with a "." are escaped by SMTPs::sendMsg() (dot-stuffing)
 
 			if ($this->msgishtml) {
 				$smtps->setBodyContent($msg, 'html');
@@ -919,7 +915,7 @@ class CMailFile
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL = 10;
 			}
 			$tmparray1 = explode(',', $this->addr_to);
-			if (count($tmparray1) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL) {
+			if (count($tmparray1) > getDolGlobalInt('MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL')) {
 				$this->error = 'Too much recipients in to:';
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
@@ -928,7 +924,7 @@ class CMailFile
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL = 10;
 			}
 			$tmparray2 = explode(',', $this->addr_cc);
-			if (count($tmparray2) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL) {
+			if (count($tmparray2) > getDolGlobalInt('MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL')) {
 				$this->error = 'Too much recipients in cc:';
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
@@ -937,7 +933,7 @@ class CMailFile
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL = 10;
 			}
 			$tmparray3 = explode(',', $this->addr_bcc);
-			if (count($tmparray3) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL) {
+			if (count($tmparray3) > getDolGlobalInt('MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL')) {
 				$this->error = 'Too much recipients in bcc:';
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
@@ -945,7 +941,7 @@ class CMailFile
 			if (!getDolGlobalString('MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL')) {
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL = 10;
 			}
-			if ((count($tmparray1) + count($tmparray2) + count($tmparray3)) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL) {
+			if ((count($tmparray1) + count($tmparray2) + count($tmparray3)) > getDolGlobalInt('MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL')) {
 				$this->error = 'Too much recipients in to:, cc:, bcc:';
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
@@ -1022,7 +1018,7 @@ class CMailFile
 						// So forcing using the option -f of sendmail is possible if constant MAIN_MAIL_ALLOW_SENDMAIL_F is defined.
 						// Having this variable defined may create problems with some sendmail (option -f refused)
 						// Having this variable not defined may create problems with some other sendmail (option -f required)
-						$additionnalparam .= ($additionnalparam ? ' ' : '').(getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? '-f'.$this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO, 2) : ($this->addr_from != '' ? '-f'.$this->getValidAddress($this->addr_from, 2) : ''));
+						$additionnalparam .= ($additionnalparam ? ' ' : '').(getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? '-f'.$this->getValidAddress(getDolGlobalString('MAIN_MAIL_ERRORS_TO'), 2) : ($this->addr_from != '' ? '-f'.$this->getValidAddress($this->addr_from, 2) : ''));
 					}
 					if (getDolGlobalString('MAIN_MAIL_SENDMAIL_FORCE_BA')) {    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
 						$additionnalparam .= ($additionnalparam ? ' ' : '').'-ba';
@@ -1101,10 +1097,10 @@ class CMailFile
 				$this->smtps->setTransportType(0); // Only this method is coded in SMTPs library
 
 				// Clean parameters
-				if (empty($conf->global->$keyforsmtpserver)) {
+				if (!getDolGlobalString($keyforsmtpserver)) {
 					$conf->global->$keyforsmtpserver = ini_get('SMTP');
 				}
-				if (empty($conf->global->$keyforsmtpport)) {
+				if (!getDolGlobalString($keyforsmtpport)) {
 					$conf->global->$keyforsmtpport = ini_get('smtp_port');
 				}
 
@@ -1142,6 +1138,8 @@ class CMailFile
 					$loginpass = getDolGlobalString($keyforsmtppw);
 					$this->smtps->setPW($loginpass);
 				}
+				// Authentication method of the send context (MAIN_MAIL_SMTPS_AUTH_TYPE_xxx when the context has its own setup)
+				$this->smtps->setAuthType(getDolGlobalString($keyforsmtpauthtype));
 
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
@@ -1308,10 +1306,10 @@ class CMailFile
 				require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
 
 				// Clean parameters
-				if (empty($conf->global->$keyforsmtpserver)) {
+				if (!getDolGlobalString($keyforsmtpserver)) {
 					$conf->global->$keyforsmtpserver = ini_get('SMTP');
 				}
-				if (empty($conf->global->$keyforsmtpport)) {
+				if (!getDolGlobalString($keyforsmtpport)) {
 					$conf->global->$keyforsmtpport = ini_get('smtp_port');
 				}
 
@@ -2396,6 +2394,7 @@ class CMailFile
 	{
 		$ret = '';
 
+		$address = trim(str_replace(array("\r", "\n", "\0"), '', $address));
 		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
 
 		// Loop over every component of the address

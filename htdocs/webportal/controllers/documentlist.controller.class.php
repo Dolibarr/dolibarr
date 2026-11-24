@@ -60,7 +60,7 @@ class DocumentListController extends AbstractDocumentController
 			return -1;
 		}
 
-		$langs->loadLangs(array('other', 'webportal@webportal'));
+		$langs->loadLangs(array('other', 'website'));
 		$context->title = $langs->trans('MyDocuments');
 		$context->desc = $langs->trans('ListOfMyDocuments');
 		$context->menu_active[] = 'document_list';

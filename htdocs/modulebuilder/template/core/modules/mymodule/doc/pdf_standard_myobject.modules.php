@@ -195,8 +195,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$outputlangs->loadLangs($langfiles);
 
 		// Show Draft Watermark
-		if (getDolGlobalString('MYOBJECT_DRAFT_WATERMARK') && $object->status == $object::STATUS_DRAFT) {
-			$this->watermark = getDolGlobalString('MYOBJECT_DRAFT_WATERMARK');
+		if (getDolGlobalString('MYMODULE_MYOBJECT_DRAFT_WATERMARK') && $object->status == $object::STATUS_DRAFT) {
+			$this->watermark = getDolGlobalString('MYMODULE_MYOBJECT_DRAFT_WATERMARK');
 		}
 
 		global $outputlangsbis;
@@ -281,7 +281,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			// Definition of $dir and $file
 			if ($object->specimen) {
 				$dir = $dir_output;
-				$file = $dir."/SPECIMEN.pdf";
+				$file = $dir."/SPECIMEN.pdf";			// When building a SPECIMEN Pdf file, the name must always be "SPECIMEN.pdf"
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $dir_output."/".$objectref;
@@ -675,7 +675,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 					$sign = 1;
 					// Collection of totals by value of VAT in $this->tva["taux"]=total_tva
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+					$prev_progress = (method_exists($object->lines[$i], 'get_prev_progress') ? $object->lines[$i]->get_prev_progress($object->id) : 0);
 					if ($prev_progress > 0 && $object->lines[$i] instanceof CommonInvoiceLine && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent; // @phan-suppress-current-line PhanUndeclaredProperty
@@ -953,8 +953,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if (getDolGlobalString('MYMODULE_DRAFT_WATERMARK') && $object->status == $object::STATUS_DRAFT) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', dol_escape_htmltag(getDolGlobalString('MYMODULE_DRAFT_WATERMARK')));
+		if (getDolGlobalString('MYMODULE_MYOBJECT_DRAFT_WATERMARK') && $object->status == $object::STATUS_DRAFT) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', dol_escape_htmltag(getDolGlobalString('MYMODULE_MYOBJECT_DRAFT_WATERMARK')));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -1215,7 +1215,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	{
 		global $conf;
 		$showdetails = !getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 0 : getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS');
-		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'MYMODULE_MYOBJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
 	/**

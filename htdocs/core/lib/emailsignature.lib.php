@@ -252,6 +252,11 @@ function dolGetSignatureQualityBadge($html, $outputlangs = null)
 		return '';
 	}
 
+	// Disabled by default because report is not relevant without technical knowledge.
+	if (!getDolGlobalString('MAIN_SHOW_EMAIL_SIGNATURE_QUALITY')) {
+		return '';
+	}
+
 	$res = dolCheckSignatureQuality($html);
 
 	$gradecolors = array(

@@ -217,6 +217,7 @@ if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."expensereport_det";
 				$sql .= " SET fk_code_ventilation = ".((int) $monCompte);
 				$sql .= " WHERE rowid = ".((int) $monId);
+				$sql .= " AND fk_expensereport IN (SELECT rowid FROM ".MAIN_DB_PREFIX."expensereport WHERE entity IN (".getEntity('expensereport', 0)."))";	// Line must belong to an object of an allowed entity
 
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);
@@ -576,7 +577,7 @@ if ($result) {
 		$totalarray['nbfield']++;
 	}
 	// Hook fields
-	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column

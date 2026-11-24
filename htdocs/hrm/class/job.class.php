@@ -282,15 +282,6 @@ class Job extends CommonObject
 			}
 		}
 
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
-			}
-		}
-
 		unset($object->context['createfromclone']);
 
 		// End
@@ -762,7 +753,9 @@ class Job extends CommonObject
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				list($class, $module) = explode('@', $this->picto);
+				$tmparray = explode('@', $this->picto);
+				$class = $tmparray[0];
+				$module = $tmparray[1];
 				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->label);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];

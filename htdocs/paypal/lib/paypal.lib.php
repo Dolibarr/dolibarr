@@ -296,6 +296,20 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	if ($ack == "SUCCESS" || $ack == "SUCCESSWITHWARNING") {
 		$token = urldecode($resArray["TOKEN"]);
 		$_SESSION['TOKEN'] = $token;
+
+		// Save the data needed by paymentok.php in database (key = PayPal token, propagated in the return url), so they are found even if the session cookie is lost
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$resultsave = onlinePaymentSessionSave('paypal', $token, array(
+			'fulltag' => $tag,
+			'FinalPaymentAmt' => $paymentAmount,
+			'currencyCodeType' => $currencyCodeType,
+			'ipaddress' => $_SESSION['ipaddress'],
+			'payerID' => '',
+			'paymentType' => $paymentType
+		));
+		if ($resultsave < 0) {
+			dol_syslog("Failed to save the data of the payment ".$token." into llx_onlinepayment_session", LOG_ERR, 0, '_payment');
+		}
 	}
 
 	return $resArray;
@@ -488,7 +502,7 @@ function hash_call($methodName, $nvpStr)
 	curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
 	curl_setopt($ch, CURLOPT_VERBOSE, true);
 	// TLSv1 by default or change to TLSv1.2 in module configuration
-	curl_setopt($ch, CURLOPT_SSLVERSION, (!getDolGlobalString('PAYPAL_SSLVERSION') ? 1 : $conf->global->PAYPAL_SSLVERSION));
+	curl_setopt($ch, CURLOPT_SSLVERSION, (!getDolGlobalString('PAYPAL_SSLVERSION') ? 1 : getDolGlobalString('PAYPAL_SSLVERSION')));
 
 	$ssl_verifypeer = -1;
 

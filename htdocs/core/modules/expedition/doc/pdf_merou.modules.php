@@ -165,14 +165,14 @@ class pdf_merou extends ModelePdfExpedition
 			$this->expediteur = $mysoc;
 
 			//Create recipient
-			$idcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
+			$idcontact = $this->getIdContactOfShipment($object, 'external', 'SHIPPING');
 			$this->destinataire = new Contact($this->db);
 			if (!empty($idcontact[0])) {
 				$this->destinataire->fetch($idcontact[0]);
 			}
 
 			//Create deliverer
-			$idcontact = $object->origin_object->getIdContact('internal', 'LIVREUR');
+			$idcontact = $this->getIdContactOfShipment($object, 'internal', 'LIVREUR');
 			$this->livreur = new User($this->db);
 			if (!empty($idcontact[0])) {
 				$this->livreur->fetch($idcontact[0]);
@@ -518,7 +518,7 @@ class pdf_merou extends ModelePdfExpedition
 
 		// Print Draft Watermark
 		if ($object->statut == 0 && (getDolGlobalString('SENDING_DRAFT_WATERMARK'))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SENDING_DRAFT_WATERMARK);
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('SENDING_DRAFT_WATERMARK'));
 		}
 
 		$posy = $this->marge_haute;
@@ -661,16 +661,16 @@ class pdf_merou extends ModelePdfExpedition
 
 		$object->fetch_thirdparty();
 
-		// If SHIPPING contact defined on order, we use it
+		// If SHIPPING contact defined on order (or on the shipment itself when it has no source object), we use it
 		$usecontact = false;
-		$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
+		$arrayidcontact = $this->getIdContactOfShipment($object, 'external', 'SHIPPING');
 		if (count($arrayidcontact) > 0) {
 			$usecontact = true;
 			$result = $object->fetch_contact($arrayidcontact[0]);
 		}
 
 		// Recipient name
-		if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
+		if ($usecontact && ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1'))) {
 			$thirdparty = $object->contact;
 		} else {
 			$thirdparty = $object->thirdparty;

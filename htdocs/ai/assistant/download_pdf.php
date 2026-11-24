@@ -52,7 +52,7 @@ if (!$user->hasRight('ai', 'assistant', 'use')) {
 // Must not be reachable from another site
 aiCheckCsrfToken('ai/assistant/download_pdf.php');
 
-$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins', 'bills', 'main', 'reports@reports'));
+$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins', 'bills', 'main', 'other'));
 
 /**
  * Translated header for a raw API field name (mirrors FIELD_LABELS in ai_assistant.js).

@@ -364,7 +364,8 @@ class Translate
 						 */
 						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n\r]")) {
 							if (isset($line[1])) {
-								list($key, $value) = $line;
+								$key = $line[0];
+								$value = $line[1];
 								//if ($domain == 'orders') print "Domain=$domain, found a string for $tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								if (empty($this->tab_translate[$key])) { // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
@@ -517,7 +518,9 @@ class Translate
 		$usecachekey = '';
 		// Using a memcached server
 		if (isModEnabled('memcached') && getDolGlobalString('MEMCACHED_SERVER')) {
-			$usecachekey = $newdomain . '_' . $langofdir; // Should not contains special chars
+			// The SQL below is filtered with getEntity(), so the cached result is entity dependent and the key must be too,
+			// otherwise entities with different overwrite translations share one cache entry (memcached is shared by all entities).
+			$usecachekey = $newdomain . '_' . $langofdir . '_' . str_replace(',', '-', getEntity('overwrite_trans')); // Should not contains special chars
 		} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 			// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 			$usecachekey = $newdomain;

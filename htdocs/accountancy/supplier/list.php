@@ -229,6 +229,7 @@ if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 				$sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
 				$sql .= " SET fk_code_ventilation = ".((int) $monCompte);
 				$sql .= " WHERE rowid = ".((int) $monId);
+				$sql .= " AND fk_facture_fourn IN (SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn WHERE entity IN (".getEntity('facture_fourn', 0)."))";	// Line must belong to an object of an allowed entity
 
 				$accountventilated = new AccountingAccount($db);
 				$accountventilated->fetch($monCompte, '', 1);
@@ -719,7 +720,7 @@ if ($result) {
 		$totalarray['nbfield']++;
 	}
 	// Hook fields
-	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -740,6 +741,7 @@ if ($result) {
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
 
+	$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
@@ -925,12 +927,16 @@ if ($result) {
 		if (!empty($arrayfields['co.label']['checked'])) {
 			$labelcountry = ($objp->country_code && ($langs->trans("Country".$objp->country_code) != "Country".$objp->country_code)) ? $langs->trans("Country".$objp->country_code) : $objp->country_label;
 			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labelcountry).'">';
-			print dol_escape_htmltag($labelcountry);
+			if (!empty($objp->country_code) && !$showcountrylabelinlist) {
+				print picto_from_langcode($objp->country_code, 'title="'.dolPrintHTMLForAttribute($labelcountry).'"', 1);
+			} else {
+				print dolPrintHTML($labelcountry);
+			}
 			print '</td>';
 			$totalarray['nbfield']++;
 		}
 		// VAT Num
-		if (!empty($arrayfields['co.label']['checked'])) {
+		if (!empty($arrayfields['s.tva_intra']['checked'])) {
 			print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 			$totalarray['nbfield']++;
 		}

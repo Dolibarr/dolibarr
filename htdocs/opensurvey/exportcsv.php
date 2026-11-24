@@ -29,7 +29,9 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveyquestion.class.php";
 
 /**
  * @var Conf $conf
@@ -69,6 +71,41 @@ if (!$user->hasRight('opensurvey', 'read')) {
  */
 
 $now = dol_now();
+
+// Survey of format 'F' (form): one column for each question, one line for each respondent
+if ($object->format == 'F') {
+	$questionstatic = new Opensurveyquestion($db);
+	$formquestions = $questionstatic->fetchAllBySurvey($object->id_sondage);
+	$respondents = $questionstatic->fetchRespondents($object->id_sondage);
+	if (!is_array($formquestions) || !is_array($respondents)) {
+		dol_print_error($db, $questionstatic->error);
+		exit;
+	}
+
+	$separator = ';';
+	$cells = array(csvClean($langs->transnoentities("Name"), 'UTF-8', $separator), csvClean($langs->transnoentities("Date"), 'UTF-8', $separator));
+	foreach ($formquestions as $question) {
+		$cells[] = csvClean($question->question, 'UTF-8', $separator);
+	}
+	$input = implode($separator, $cells)."\r\n";
+
+	foreach ($respondents as $respondent) {
+		$cells = array(csvClean($respondent['name'], 'UTF-8', $separator), csvClean(dol_print_date($respondent['date'], 'dayhour'), 'UTF-8', $separator));
+		foreach ($formquestions as $question) {
+			$value = isset($respondent['answers'][$question->id]) ? $respondent['answers'][$question->id] : '';
+			$cells[] = csvClean(str_replace("\n", ', ', $value), 'UTF-8', $separator);	// The answers of a question with several answers are separated by a comma
+		}
+		$input .= implode($separator, $cells)."\r\n";
+	}
+
+	header('Content-Type: text/csv; charset=utf-8');
+	header('Content-Length: '.strlen($input));
+	header('Content-Disposition: attachment; filename="'.$numsondage."_".dol_print_date($now, '%Y%m%d%H%M').'.csv"');
+	header('Cache-Control: max-age=10');
+	echo $input;
+
+	exit;
+}
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 $toutsujet = explode(",", $object->sujet);

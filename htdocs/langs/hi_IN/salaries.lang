@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=वेतन पर "उपयोगकर्ताओं" के लिए डिफ़ॉल्ट रूप से उपयोग किया जाने वाला खाता (खाते के चार्ट से)
@@ -55,8 +56,6 @@ FillFieldFirst=सबसे पहले कर्मचारी फ़ील�
 UpdateAmountWithLastSalary=अंतिम वेतन की राशि निर्धारित करें
 MakeTransferRequest=स्थानांतरण अनुरोध करें
 VirementOrder=क्रेडिट स्थानांतरण अनुरोध
-WithdrawalReceipt=क्रेडिट ट्रांसफर आदेश
-OrderWaiting=अपूर्ण आदेश
 FillEndOfMonth=महीने का अंत
 
 # Shortcuts

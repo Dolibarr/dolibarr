@@ -364,7 +364,6 @@ AmountInCurrency=Monto en la moneda %s
 NoExample=ningún ejemplo
 NbOfLines=Número de líneas
 NbOfObjectReferers=Número de elementos relacionados
-Referers=Artículos relacionados
 DateFrom=Desde %s
 Check=Controlar
 Uncheck=Desmarcar
