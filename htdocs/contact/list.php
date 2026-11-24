@@ -1379,8 +1379,8 @@ foreach ($arrayfields as $key => $val) {
 		case 'p.fk_stcommcontact':
 			print '<td class="liste_titre maxwidthonsmartphone center">';
 			$arraystcomm = array();
-			foreach ($contactstatic->cacheprospectstatus as $key => $val) {
-				$arraystcomm[$val['id']] = ($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
+			foreach ($contactstatic->cacheprospectstatus as $status_val) {
+				$arraystcomm[$status_val['id']] = ($langs->trans("StatusProspect".$status_val['id']) != "StatusProspect".$status_val['id'] ? $langs->trans("StatusProspect".$status_val['id']) : $status_val['label']);
 			}
 			print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2, 0, 0, '', 0, 0, 0, '', 'nowrap ');
 			print '</td>';
@@ -1968,13 +1968,13 @@ while ($i < $imaxinloop) {
 					print '<td class="center nowrap"><div class="nowrap">';
 					print '<div class="inline-block">'.$contactstatic->libProspCommStatut($obj->stcomm_id, 2, $contactstatic->cacheprospectstatus[$obj->stcomm_id]['label'] ?? '', $obj->stcomm_picto);
 					print '</div> - <div class="inline-block">';
-					foreach ($contactstatic->cacheprospectstatus as $key => $val) {
+					foreach ($contactstatic->cacheprospectstatus as $status_val) {
 						$titlealt = 'default';
-						if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
-							$titlealt = $val['label'];
+						if (!empty($status_val['code']) && !in_array($status_val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
+							$titlealt = $status_val['label'];
 						}
-						if ($obj->stcomm_id != $val['id']) {
-							print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.urlencode((string) ($val['code'])).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode((string) ($page)) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+						if ($obj->stcomm_id != $status_val['id']) {
+							print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.urlencode((string) ($status_val['code'])).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode((string) ($page)) : '').'">'.img_action($titlealt, $status_val['code'], $status_val['picto']).'</a>';
 						}
 					}
 					print '</div></div></td>';

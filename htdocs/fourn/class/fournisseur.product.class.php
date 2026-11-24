@@ -1141,6 +1141,7 @@ class ProductFournisseur extends Product
 		// Use a cache to avoid a full fetch of the same supplier on each line of a list
 		if ($this->fourn_id > 0 && !empty($conf->cache['thirdparty'][$this->fourn_id])) {
 			$thirdparty = $conf->cache['thirdparty'][$this->fourn_id];
+			'@phan-var-force Societe $thirdparty';
 		} else {
 			$thirdparty = new Fournisseur($this->db);
 			$result = $thirdparty->fetch($this->fourn_id);
