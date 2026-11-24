@@ -106,6 +106,11 @@ class FileUpload
 				$object->$parentObject = clone $parent;
 
 				$object_ref = dol_sanitizeFileName($object->project->ref).'/'.$object_ref;
+			} else {
+				// Forge the directory of the object the way the "Attached files" tabs do. For a thirdparty, the ref
+				// is the company name while the documents are stored under the id: using the ref stored the file
+				// into a directory the tab never reads.
+				$object_ref = get_exdir(0, 0, 0, 1, $object, $element);
 			}
 		}
 
