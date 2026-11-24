@@ -164,18 +164,18 @@ foreach ($object->fields as $key => $val) {
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
-// foreach ($object->fields as $key => $val) {
-// 	if (!empty($val['searchall'])) {
-// 		$fieldstosearchall['t.'.$key] = $val['label'];
-// 	}
-// }
-// $parameters = array('fieldstosearchall'=>$fieldstosearchall);
-// $reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-// if ($reshook > 0) {
-// 	$fieldstosearchall = empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall'];
-// } elseif ($reshook == 0) {
-// 	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
-// }
+foreach ($object->fields as $key => $val) {
+	if (!empty($val['searchall'])) {
+		$fieldstosearchall['t.'.$key] = $val['label'];
+	}
+}
+$parameters = array('fieldstosearchall' => $fieldstosearchall);
+$reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook > 0) {
+	$fieldstosearchall = empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall'];
+} elseif ($reshook == 0) {
+	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
+}
 
 // Definition of array of fields for columns from ->fields
 $tableprefix = 't';
@@ -397,7 +397,7 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
-if ($search_all) {
+if ($search_all && !empty($fieldstosearchall)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 /*

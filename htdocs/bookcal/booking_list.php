@@ -98,6 +98,15 @@ if (!isModEnabled("bookcal")) {
 if (!$permissiontoread) {
 	accessforbidden();
 }
+// Security check
+if ($user->socid > 0) {
+	accessforbidden();
+}
+// Check the user is allowed to access the thirdparty of the calendar
+// (a sales representative not allowed to see all customers is limited to his own customers)
+if ($object->id > 0 && !checkUserAccessToObject($user, array($object->element), $object->id, $object->table_element, '', 'fk_soc', 'rowid')) {
+	accessforbidden();
+}
 
 /*
  * Actions

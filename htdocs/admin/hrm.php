@@ -111,7 +111,7 @@ if ($action == 'update') {
 				if (empty($skill->lines)) {
 					$skill->fetchLines();
 				}
-				if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
+				if (count($skill->lines) < getDolGlobalInt('HRM_MAXRANK')) {
 					$skill->createSkills(count($skill->lines) + 1);
 				}
 			}

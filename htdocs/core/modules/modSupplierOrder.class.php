@@ -456,8 +456,8 @@ class modSupplierOrder extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'c.ref' => array(
 				'rule' => 'getrefifauto',
-				'class' => (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER),
-				'path' => "/core/modules/supplier_order/" . (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) . '.php',
+				'class' => (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER')),
+				'path' => "/core/modules/supplier_order/" . (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER')) . '.php',
 				'classobject' => 'CommandeFournisseur',
 				'pathobject' => '/fourn/class/fournisseur.commande.class.php',
 			),

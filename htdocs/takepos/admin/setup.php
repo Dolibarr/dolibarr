@@ -339,7 +339,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("Paymentnumpad");
 print '<td>';
 $array = array(0 => $langs->trans("Numberspad"), 1 => $langs->trans("BillsCoinsPad"));
-print $form->selectarray('TAKEPOS_NUMPAD', $array, (!getDolGlobalString('TAKEPOS_NUMPAD') ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
+print $form->selectarray('TAKEPOS_NUMPAD', $array, (!getDolGlobalString('TAKEPOS_NUMPAD') ? '0' : getDolGlobalString('TAKEPOS_NUMPAD')), 0);
 print "</td></tr>\n";
 
 // Numpad use payment icons

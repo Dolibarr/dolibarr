@@ -591,6 +591,41 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
 		$this->assertEquals(" AND ((t.ref LIKE 'SO-%'))", $sql);
 
+		// Test that a forbidden field used as the right operand (unquoted, so a field name) is also forbidden
+		$filter = "(t.description:<:pass_crypted)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.description:>=:PASS_CRYPTED)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.description:in:'a',api_key)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.label:<:salary)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that SQL keywords returning server information are forbidden on both sides
+		$filter = "(t.description:=:CURRENT_USER)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(session_user:like:'dol%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that a quoted string or a non forbidden field is still allowed as the right operand
+		$filter = "(t.description:<:'pass_crypted')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND ((t.description < 'pass_crypted'))", $sql);
+
+		$filter = "(t.date_end:>:date_start)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND ((t.date_end > date_start))", $sql);
+
 
 		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
 
@@ -600,6 +635,15 @@ class FunctionsLibTest extends CommonClassTest
 		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
+
+		// Forbidden fields or SQL keywords are also forbidden into a subrequest
+		$filter = "(t.label:IN:1,user)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.fk_user:IN:SELECT rowid FROM llx_user WHERE pass_crypted < 'a')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND (1=1)", $sql);
 
 		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is unset (default)
 		$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
@@ -958,6 +1002,20 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('ios', $tmp['browseros']);
 		$this->assertEquals('tablet', $tmp['layout']);
 		$this->assertEquals('iphone', $tmp['phone']);
+
+		// Android phone : its user agent contains "Linux", the OS stays android
+		$user_agent = 'Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36';
+		$tmp = getBrowserInfo($user_agent);
+		$this->assertEquals('chrome', $tmp['browsername']);
+		$this->assertEquals('android', $tmp['browseros']);
+		$this->assertEquals('phone', $tmp['layout']);
+		$this->assertEquals('android', $tmp['phone']);
+
+		// Linux desktop : still linux
+		$user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+		$tmp = getBrowserInfo($user_agent);
+		$this->assertEquals('linux', $tmp['browseros']);
+		$this->assertEquals('classic', $tmp['layout']);
 
 		// Lynx
 		$user_agent = 'Lynx/2.8.8dev.3 libwww‑FM/2.14 SSL‑MM/1.4.1';
@@ -3224,6 +3282,29 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testFetchObjectByElementOfTheOldCategorieName
+	 *
+	 * @return void
+	 */
+	public function testFetchObjectByElementOfTheOldCategorieName()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savmodules = $conf->modules;
+		$conf->modules['categorie'] = 'categorie';
+
+		// selectForForms() asks for strtolower() of the class name of a link extrafield, 'Categorie'
+		$this->assertSame(getElementProperties('category'), getElementProperties('categorie'));
+		$this->assertInstanceOf('Categorie', fetchObjectByElement(0, 'categorie'));
+
+		$conf->modules = $savmodules;
+	}
+
+	/**
 	 * testDolGetFicheHeadMoreTabsIsAccessible
 	 *
 	 * @return void
@@ -3240,7 +3321,7 @@ class FunctionsLibTest extends CommonClassTest
 
 		$savedconsts = array();
 		foreach (array('MAIN_MAXTABS_IN_CARD', 'MAIN_OPTIMIZEFORTEXTBROWSER') as $constname) {
-			$savedconsts[$constname] = (property_exists($conf->global, $constname) ? $conf->global->$constname : null);
+			$savedconsts[$constname] = (property_exists($conf->global, $constname) ? getDolGlobalString($constname) : null);
 		}
 		$conf->global->MAIN_MAXTABS_IN_CARD = 2;
 		$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 0;

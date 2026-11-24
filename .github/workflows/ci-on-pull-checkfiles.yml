@@ -200,3 +200,30 @@ jobs:
           fi
 
           echo "The PR does not mix database structure and code changes. OK."
+
+      - name: Check that User Interface and server components are not modified in the same PR
+        # The check is bypassed if the author of the last commit of the PR is a Dolibarr maintainer.
+        if: ${{ steps.maintainer.outputs.bypass != '1' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the list of files changed (whatever is the status) by the pull request,
+          # using the GitHub API so no git history is needed (no checkout).
+          ALL_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
+            --jq '.[] | .filename, (.previous_filename // empty)' | sort -u)
+
+          # Files of the User Interface (same detection than the screenshot check of ci-on-pull-checkdesc.yml)
+          UI_FILES=$(echo "$ALL_FILES" | grep -Ei '(^htdocs/theme/|\.(tpl|css|scss|html|js|vue)$)' | grep -Ev '^(htdocs/includes/|dev/|.*node_modules/)' || true)
+          # Files of server components: SOAP web services and REST API classes (api_*.php)
+          SERVER_FILES=$(echo "$ALL_FILES" | grep -E '(^htdocs/webservices/.*\.php$|(^|/)api_[^/]*\.php$)' | grep -v '^htdocs/includes/' || true)
+
+          if [ -n "$UI_FILES" ] && [ -n "$SERVER_FILES" ]; then
+            echo "::error::A PR must not modify the User Interface (.tpl, .css, .scss, .html, .js, .vue or htdocs/theme/ files) and the server components (SOAP web services into htdocs/webservices or REST API files api_*.php) at the same time. Please split the changes into dedicated PRs (see the CONTRIBUTING.md file)."
+            echo "User Interface files modified:"
+            echo "$UI_FILES" | sed 's/^/ - /'
+            echo "Server component files modified:"
+            echo "$SERVER_FILES" | sed 's/^/ - /'
+            exit 1
+          fi
+
+          echo "The PR does not mix User Interface and server component changes. OK."

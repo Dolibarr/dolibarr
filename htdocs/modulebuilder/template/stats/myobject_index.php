@@ -94,9 +94,9 @@ $object = new MyObject($db);
 $usercanreadstatistic = 1;
 $enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
 if ($enablepermissioncheck) {
-	$usercanreadstatistic = $user->hasRight($objecttype, 'read');
+	$usercanreadstatistic = $user->hasRight('mymodule', $objecttype, 'read');
 	if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
-		$usercanreadstatistic = $user->hasRight($objecttype, 'export');
+		$usercanreadstatistic = $user->hasRight('mymodule', $objecttype, 'export');
 	}
 }
 
@@ -133,7 +133,7 @@ $langs->loadLangs(array('companies', 'other', 'mymodule@mymodule'));
 $form = new Form($db);
 
 $title = $langs->trans("Statistics");
-$dir = getMultidirTemp($object);
+$dir = getMultidirTemp($object, $object->module);
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-order page-stats');
 
@@ -144,7 +144,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars i
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', dol_buildpath('/mymodule/myobject_list.php', 1).'?mode=kanban'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 //$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanbanGroupBy'), '', 'fa fa-grip-vertical imgforviewmode', dol_buildpath('/mymodule/aaa_index.php', 1).'?mode=kanbangroupby&groupby=p.fk_opp_status'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanbangroupby' ? 2 : 1), array('morecss' => 'reposition'));
 //$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', dol_buildpath('/mymodule/aaa_index.php', 1).'?mode=hierarchy'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/mymodule/stats/mymodule_index.php', 1).'?mode=statistics&objecttype=myobject@mymodule'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/mymodule/stats/myobject_index.php', 1).'?mode=statistics&objecttype=myobject@mymodule'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
@@ -389,11 +389,12 @@ if (array_key_exists('fk_user_creat', $object->fields)) {
 	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	print '</td></tr>';
 }
 // Status
 if (array_key_exists('status', $object->fields)) {
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	$liststatus = $object->fields['status']['arrayofkeyvalue'];
+	$liststatus = $object->fields['status']['arrayofkeyval'];
 	print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
 	print '</td></tr>';
 }

@@ -1975,7 +1975,7 @@ class Facture extends CommonInvoice
 				$tva, // vat rate
 				0, // localtax1_tx
 				0, // localtax2_tx
-				(!getDolGlobalString('INVOICE_PRODUCTID_DEPOSIT') ? 0 : $conf->global->INVOICE_PRODUCTID_DEPOSIT), // fk_product
+				(!getDolGlobalString('INVOICE_PRODUCTID_DEPOSIT') ? 0 : getDolGlobalString('INVOICE_PRODUCTID_DEPOSIT')), // fk_product
 				0, // remise_percent
 				0, // date_start
 				0, // date_end

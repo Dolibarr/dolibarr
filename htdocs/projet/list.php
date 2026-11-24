@@ -1911,6 +1911,7 @@ $totalarray = array(
 	'val' => array()
 );
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -2295,7 +2296,11 @@ while ($i < $imaxinloop) {
 		// Country code
 		if (!empty($arrayfields['co.country_code']['checked'])) {
 			print '<td class="tdoverflowmax125 center">';
-			print $obj->country_code;
+			if ($showcountrylabelinlist) {
+				print dolPrintHTML($obj->country_code);
+			} elseif (!empty($obj->country_code)) {
+				print picto_from_langcode($obj->country_code, 'title="'.dolPrintHTMLForAttribute($langs->trans("Country".$obj->country_code)).'"', 1);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

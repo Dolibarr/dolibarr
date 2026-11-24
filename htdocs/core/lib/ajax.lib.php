@@ -472,6 +472,22 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
 
 
 /**
+ * Return the jQuery selector of a html component from its id, or from its class when the name starts with '.'.
+ * jQuery meta-characters of an id (like the '.' of 'u.fk_socpeople') are escaped with a backslash.
+ *
+ * @param	string		$htmlname		Id of html component ('myid') or class ('.myclass')
+ * @return	string						jQuery selector ('#myid' or '.myclass'). It must still be escaped with dol_escape_js() to be included into a JS string.
+ */
+function ajax_jquery_selector($htmlname)
+{
+	if (preg_match('/^\./', $htmlname)) {
+		return $htmlname;
+	}
+
+	return '#'.preg_replace('/([!"#$%&\'()*+,.\/:;<=>?@\[\\\\\]^`{|}~])/', '\\\\$1', $htmlname);
+}
+
+/**
  * Convert a html select field into an ajax combobox.
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
@@ -517,7 +533,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
 
 	$tmpplugin = 'select2';
-	$componentname = (preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname);	// To support when htmlname is not an ID but a class
+	$componentname = ajax_jquery_selector($htmlname);	// To support when htmlname is not an ID but a class
 	$msg = "\n";
 	$msg .= '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
 	$msg .= "<script>\n";
@@ -526,7 +542,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
 	if (preg_match('/onrightofpage/', $morecss)) {	// In this case, htmlname must be an ID not a class.
 		$msg .= ' dropdownAutoWidth: true, ';
-		$msg .= ' dropdownParent: $(\'#'.$htmlname.'\').parent(), ';
+		$msg .= ' dropdownParent: $(\''.dol_escape_js($componentname).'\').parent(), ';
 	}
 	if ($placeholder) {
 		$msg .= '
@@ -622,24 +638,27 @@ function ajax_event($htmlname, $events)
 	$out = '';
 
 	if (is_array($events) && count($events)) {   // If an array of js events to do were provided.
+		$componentname = ajax_jquery_selector($htmlname);
+		// The JS function name must be a valid identifier, so without the '.' of an id like 'u.fk_socpeople'
+		$jsfunctionname = 'runJsCodeForEvent'.preg_replace('/[^a-zA-Z0-9_]/', '_', $htmlname);
 		$out = '<!-- JS code to manage event for id = ' . $htmlname . ' -->
 	<script>
 		$(document).ready(function () {
-			jQuery("#'.$htmlname.'").change(function () {
+			jQuery("'.dol_escape_js($componentname, 2).'").change(function () {
 				var obj = '.json_encode($events) . ';
 		   		$.each(obj, function(key,values) {
 	    			if (values.method.length) {
-	    				runJsCodeForEvent'.$htmlname.'(values);
+	    				'.$jsfunctionname.'(values);
 	    			}
 				});
 			});
-			function runJsCodeForEvent'.$htmlname.'(obj) {
-				var id = $("#'.$htmlname.'").val();
+			function '.$jsfunctionname.'(obj) {
+				var id = $("'.dol_escape_js($componentname, 2).'").val();
 				var method = obj.method;
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+			    console.log("Run runJsCodeForEvent-'.dol_escape_js($htmlname, 2).' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
 				// The token is required because the request carries an "action" parameter: with
 				// MAIN_SECURITY_CSRF_WITH_TOKEN >= 3 (the default), such a GET is refused without it.
 				// currentToken() is used and not newToken() because the called pages set NOTOKENRENEWAL.

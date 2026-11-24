@@ -23,7 +23,7 @@ and uses `skill-doli-code-review` for the code review.
 - Never publish the details of an unfixed security vulnerability in a public comment: warn the
   user and suggest the private channel (GitHub Security Advisory) instead.
 - Never merge, approve, close or label a PR in this loop, unless the user explicitly asks for it
-  (choosing **b) Merge** is such an explicit request).
+  (choosing **m) Merge** or **d) Close** is such an explicit request).
 - Remember the PR already proposed during the session (processed or skipped) so they are never
   proposed twice.
 - To filter JSON output, write the Python filter into a temporary script file in the scratchpad
@@ -46,31 +46,35 @@ and uses `skill-doli-code-review` for the code review.
 3. Take the most recent PR not yet proposed in this session. Display its number, title, author,
    **link**, its **mergeable status** (mergeable / not mergeable, from `mergeable` and
    `mergeStateStatus`) and its **CI status** (OK / running / error, and if error, the name of each
-   failing check), using `gh pr view N -R Dolibarr/dolibarr --json createdAt,changedFiles,mergeable,mergeStateStatus,statusCheckRollup`
+   failing check), using `gh pr view N -R Dolibarr/dolibarr --json baseRefName,createdAt,changedFiles,mergeable,mergeStateStatus,statusCheckRollup`
    (keep only the latest run of each check).
    This loop is mostly run from a **smartphone**: do NOT use the AskUserQuestion tool (its links
    are neither clickable nor copyable) and do not open a browser with `xdg-open`. Display the PR in
    a normal text message. Start the message with the PR number and title (e.g. `**#N - Title**`),
    then give the links as Markdown links, so they are clickable:
-   - PR link: `[https://github.com/Dolibarr/dolibarr/pull/N](https://github.com/Dolibarr/dolibarr/pull/N)`
+   - PR link, followed by the target branch of the PR in parentheses (`baseRefName`), e.g.
+     `- PR : [https://github.com/Dolibarr/dolibarr/pull/N](https://github.com/Dolibarr/dolibarr/pull/N) (develop)`
    - If the PR is mergeable and the CI is OK, also give the link to the diff of the files, with the
      number of modified files in parentheses in its label (`changedFiles` of `gh pr view`), e.g.
      `- Diff des fichiers (3) : [https://github.com/Dolibarr/dolibarr/pull/N/files](https://github.com/Dolibarr/dolibarr/pull/N/files)`
 
-   Then, in this order: the author, the creation date of the PR (`createdAt`, e.g. `2026-11-10`),
-   the mergeable status and the CI status. When the PR is not mergeable, or the CI is in error,
+   Then, in this order: one line with the creation date of the PR (`createdAt`) and its author,
+   e.g. `- Création : 2026-11-10 - login`, then the mergeable status and the CI status.
+   When the PR is not mergeable, or the CI is in error,
    put the ❌ emoji at the start of the value of that line (e.g. `- CI : ❌ erreur`).
 
    End the message with the choices below and wait for the user to reply with a letter:
-   - **a) Code review**
-   - **b) Merge** → only proposed when the PR is mergeable and the CI is OK. Run the action
+   - **a) Code review**. When the current branch is not `develop` and the PR is mergeable with the
+     CI OK, this choice becomes **a) Code review and check if it is already fixed in develop (must
+     be a backport in this case)**.
+   - **m) Merge** → only proposed when the PR is mergeable and the CI is OK. Run the action
      **Merge**, then go back to step 3 with the next PR.
-   - **c) Next one** → go back to step 3 with the next PR.
-   - **🟢 r) Re-run the CI** → only proposed when it is useful, and always displayed with the 🟢
+   - **n) Next one** → go back to step 3 with the next PR.
+   - **r) 🟢 Re-run the CI** → only proposed when it is useful, and always displayed with the 🟢
      emoji in front of it (Markdown has no color). Run the action **Re-run the CI**, then display
      the same PR again with its choices.
 
-   When **b)** or **r)** is not proposed, keep the same letters (a, c) so that a letter always
+   When **m)** or **r)** is not proposed, keep the same letters (a, n) so that a letter always
    means the same choice. There is no Stop choice: when the user asks to stop, go back to the
    initial branch if needed and give a short summary of the session (PRs processed and actions done).
 4. If **a)**, run the "Process a PR" procedure below, then go back to step 3 with the next PR.
@@ -126,8 +130,19 @@ run the action **Update branch** (no confirmation).
    - `QUAL`, `PERF`, `UXUI`, `CLOSE`: no change of behaviour except the one announced.
 3. Review the code with the `skill-doli-code-review` skill (rights, `GETPOST` filters, output
    escaping, SQL escaping, CSRF tokens, PHP compatibility of the target branch...).
-4. Give the user a short verdict: OK / minor remarks / **serious problem**.
-5. If a **serious problem** is found (security vulnerability, blocking bug, data loss, regression,
+4. If the base branch is not `develop`, check whether the bug is already fixed in `develop`:
+   `git fetch origin develop`, then compare the lines changed by the PR with the same code in
+   `origin/develop` (`git show origin/develop:FILE`), and look for the develop fix
+   (`git log origin/develop -S'...' -- FILE`, the issue number, or "backport of #NNN" in the PR body).
+   - Not fixed in `develop`: no backport needed, go on with the review.
+   - Fixed in `develop` in the same way: tell the user that the PR **is a backport** and give the
+     develop fix (PR number or commit), then go on with the review.
+   - Fixed in `develop` in a different way: report both fixes to the user, show the exact text of
+     the closing comment (see the action **Close as not qualified for maintenance branch**), and
+     propose **d) Close the PR with the label "PR not qualified for maintenance branch" and a
+     comment** or **n) Next one**. Wait for the user's answer (the review stops here).
+5. Give the user a short verdict: OK / minor remarks / **serious problem**.
+6. If a **serious problem** is found (security vulnerability, blocking bug, data loss, regression,
    broken upgrade): run the action **Comment** to describe the problem.
    For minor remarks, only report them to the user and go to the next PR.
 
@@ -142,7 +157,7 @@ run the action **Update branch** (no confirmation).
 3. Publish: `gh pr comment N -R Dolibarr/dolibarr --body-file FILE` (file in the scratchpad
    directory).
 
-### Merge (the choice b) is the confirmation)
+### Merge (the choice m) is the confirmation)
 
 1. Check again that the PR is still mergeable and the CI OK, with the same `headRefOid` as the one
    displayed (a new commit may have been pushed meanwhile). Otherwise, tell the user and do not merge.
@@ -152,6 +167,21 @@ run the action **Update branch** (no confirmation).
    gh pr merge N -R Dolibarr/dolibarr --merge --match-head-commit HEADREFOID
    ```
 3. Report the result to the user (merged, or the error returned by GitHub).
+
+### Close as not qualified for maintenance branch (the choice d) is the confirmation)
+
+1. The comment, in English, shown to the user before the choice d), says that the bug is already
+   fixed in `develop` (give the PR number or commit), and that when a fix for a maintenance branch
+   already has a fix in `develop`, it must be designed as a backport of the `develop` fix (same
+   code), so the branches stay consistent; the contributor can submit such a backport instead.
+2. Add the label, publish the comment (file in the scratchpad directory), then close the PR:
+
+   ```bash
+   gh pr edit N -R Dolibarr/dolibarr --add-label "PR not qualified for maintenance branch"
+   gh pr comment N -R Dolibarr/dolibarr --body-file FILE
+   gh pr close N -R Dolibarr/dolibarr
+   ```
+3. Report the result to the user, then go back to step 3 with the next PR.
 
 ### Update branch (no confirmation)
 
