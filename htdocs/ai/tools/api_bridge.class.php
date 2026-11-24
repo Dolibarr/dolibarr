@@ -1951,7 +1951,7 @@ class ToolApiBridge extends McpTool
 				),
 				'postPage' => array(
 					'suffix' => 'pages_create',
-					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, ".$websitephpcreate."). It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
+					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, ".$websitephpcreate."). A blog post gets the header and footer of its language found automatically; give header and/or footer (alias of a page of type 'header' or 'footer' of the website) only to choose them, never inside content. It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
 					'write' => array(
 						'preview' => 'AIPreviewCreateWebsitePage',
 						'required' => array('id', 'pageurl', 'title'),
@@ -1970,7 +1970,9 @@ class ToolApiBridge extends McpTool
 						'keywords' => "Keywords, separated by commas.",
 						'lang' => "Language code of the page, e.g. 'en' or 'fr'. Omit for the website language.",
 						'author_alias' => "Name of the author to show.",
-						'status' => "0 offline (default), 1 online."
+						'status' => "0 offline (default), 1 online.",
+						'header' => "Alias (pageurl) of a page of type 'header' of the website, included at the top of the page instead of the one found automatically. Pages of type header: api_websites_pages_list with sqlfilters \"(t.type_container:=:'header')\". Omit it to keep the automatic one.",
+						'footer' => "Alias (pageurl) of a page of type 'footer' of the website, included at the bottom of the page instead of the one found automatically. Pages of type footer: api_websites_pages_list with sqlfilters \"(t.type_container:=:'footer')\". Omit it to keep the automatic one."
 					)
 				),
 				'putPage' => array(

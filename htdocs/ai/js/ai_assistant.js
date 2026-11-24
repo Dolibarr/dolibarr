@@ -3249,7 +3249,7 @@ export function initAiAssistant(container) {
             cells.forEach(c => {
                 const id = c.getAttribute('data-socid');
                 if (names[id]) {
-                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a>`;
+                    c.innerHTML = `<div class="chat-cell"><a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a></div>`;
                 }
             });
             saveChatHistory();
@@ -3291,10 +3291,11 @@ export function initAiAssistant(container) {
                             val += ` <a href="${previewUrl}" target="_blank" class="chat-link chat-preview" title="${escapeHtml(t('Preview'))}"><span class="fas fa-search-plus"></span></a>`;
                         }
                     }
+                    // Content is wrapped into a div: the 2 lines max clamp can't be set on a td (it needs display -webkit-box)
                     if ((k === 'socid' || k === 'fk_soc') && row[k]) {
-                        content += `<td data-socid="${escapeHtml(String(row[k]))}">${val}</td>`;
+                        content += `<td data-socid="${escapeHtml(String(row[k]))}"><div class="chat-cell">${val}</div></td>`;
                     } else {
-                        content += `<td>${val}</td>`;
+                        content += `<td><div class="chat-cell">${val}</div></td>`;
                     }
                 });
                 content += '</tr>';
