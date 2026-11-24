@@ -10230,6 +10230,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 
 						// load class file and init object list in memory
 						if (!isset($memory_object_list[$class])) {
+							require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';	// For dol_is_file(), not loaded by master.inc.php (CLI scripts, cron jobs)
 							if (dol_is_file(DOL_DOCUMENT_ROOT . $path)) {
 								require_once DOL_DOCUMENT_ROOT . $path;
 								if (class_exists($class)) {
