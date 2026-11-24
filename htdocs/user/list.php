@@ -448,9 +448,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON u.fk_country = co.rowid
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-if ($reshook > 0) {
-	$sql .= $hookmanager->resPrint;
-}
 $sql .= " WHERE u.entity IN (".getEntity($object->element).")";
 if ($socid > 0) {
 	$sql .= " AND u.fk_soc = ".((int) $socid);
