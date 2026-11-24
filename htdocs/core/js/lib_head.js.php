@@ -1841,7 +1841,11 @@ $(document).on('select2:open', (e) => {
 		if (id.substr(-2) == '[]') {
 			id = id.substr(0,id.length-2);
 		}
-		document.querySelector('input[aria-controls*='+id+']').focus();
+		/* Quote the value: an unquoted id with a dot (like 'u.fk_socpeople') is not a valid CSS selector */
+		const searchinput = document.querySelector('input[aria-controls*="'+id.replace(/["\\]/g, '\\$&')+'"]');
+		if (searchinput) {
+			searchinput.focus();
+		}
 	}
 });
 
