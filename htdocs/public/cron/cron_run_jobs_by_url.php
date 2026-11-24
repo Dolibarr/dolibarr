@@ -100,7 +100,7 @@ if (empty($key)) {
 	echo 'Securitykey is required. Check setup of cron jobs module.';
 	exit;
 }
-if ($key != getDolGlobalString('CRON_KEY')) {
+if (!hash_equals(getDolGlobalString('CRON_KEY'), (string) $key)) {
 	echo 'Securitykey is wrong.';
 	exit;
 }

@@ -247,9 +247,8 @@ if ($resql) {
 					while ($obj = $db->fetch_object($resql)) {
 						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-						// To check...
-						// If 1 invoice has 2 payments at 2 different date, seems ok, we have 2 record $tabpay because $obj->fk_bank is different (obj->fk_bank is ID of payment in bank record table).
-						// If 2 invoices are paid in the same payment, we have 2 $tabobject but also 2 $tabpay (because $object_key has 2 different values) when we should have 1.
+						// If 1 invoice has 2 payments at 2 different date, we have 2 record $tabpay because $obj->fk_bank is different (obj->fk_bank is ID of payment in bank record table).
+						// If 2 invoices are paid in the same payment, we have 1 $tabpay with 2 objects. Lines are written per object, with the ref of the object in the label (see $label_suffix).
 
 						// Add object in payment
 						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
@@ -682,11 +681,13 @@ if ($resql) {
 			case 'payment_vat':
 				// Payment VAT
 				//------------------------------------------
-				$sql = "SELECT t.rowid,";
-				$sql .= " t.amount AS amount_payment, t.label AS label,";
+				// The bank link of type 'payment_vat' is on the payment (llx_payment_vat), not on the VAT declaration (llx_tva)
+				$sql = "SELECT pv.rowid, t.rowid AS tva_id,";
+				$sql .= " pv.amount AS amount_payment, t.label AS label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
-				$sql .= " FROM ".$db->prefix()."tva as t";
-				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = t.rowid AND bu.type = '".$db->escape($type)."'";
+				$sql .= " FROM ".$db->prefix()."payment_vat as pv";
+				$sql .= " INNER JOIN ".$db->prefix()."tva as t ON t.rowid = pv.fk_tva";
+				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pv.rowid AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=t.rowid";
@@ -720,13 +721,13 @@ if ($resql) {
 							);
 						}
 
-						// Set object infos
+						// Set object infos (the object is the VAT declaration paid by this payment)
 						if (!isset($tabobject[$object_key])) {
-							$static_tva->id = $obj->rowid;
-							$static_tva->ref = $prefix_ref.$obj->rowid;
+							$static_tva->id = $obj->tva_id;
+							$static_tva->ref = $prefix_ref.$obj->tva_id;
 							$tabobject[$object_key] = array(
-								'id' => $obj->rowid,
-								'ref' => $prefix_ref.$obj->rowid,
+								'id' => $obj->tva_id,
+								'ref' => $prefix_ref.$obj->tva_id,
 								'total_ht' => -$obj->amount_payment,
 								'total_ttc' => -$obj->amount_payment,
 								'url' => $static_tva->getNomUrl(1),
@@ -816,7 +817,7 @@ if ($resql) {
 				// Payment loan
 				//------------------------------------------
 				$sql = "SELECT l.rowid, l.capital AS loan_capital, l.accountancy_account_capital, l.accountancy_account_interest, l.accountancy_account_insurance, l.label,";
-				$sql .= " pl.amount_capital, pl.amount_interest, pl.amount_insurance,";
+				$sql .= " pl.rowid AS payment_id, pl.amount_capital, pl.amount_interest, pl.amount_insurance,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_loan as pl";
 				$sql .= " INNER JOIN ".$db->prefix()."loan as l ON pl.fk_loan = l.rowid";
@@ -846,10 +847,15 @@ if ($resql) {
 					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_LOAN_REF_PREFIX', 'L');
 
 					while ($obj = $db->fetch_object($resql)) {
-						$object_key = $obj->bu_type.'_'.$obj->rowid;
+						// One object per loan payment, not per loan: each payment has its own split between capital,
+						// interest and insurance, and several payments of a loan can be in the same journal
+						$object_key = $obj->bu_type.'_'.$obj->payment_id;
 
 						// Add object in payment
 						$payment_amount = $obj->amount_capital + $obj->amount_interest + $obj->amount_insurance;
+						if (empty($payment_amount)) {
+							continue;	// Nothing to record
+						}
 						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
 							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
 								'amount' => -$payment_amount,
@@ -864,39 +870,33 @@ if ($resql) {
 							$tabobject[$object_key] = array(
 								'id' => $obj->rowid,
 								'ref' => $prefix_ref.$obj->rowid,
-								'total_ht' => -$obj->loan_capital,
-								'total_ttc' => -$obj->loan_capital,
+								// The object is the payment: its total is the amount paid (not the loan capital)
+								'total_ht' => -$payment_amount,
+								'total_ttc' => -$payment_amount,
 								'url' => $static_loan->getNomUrl(1),
 								'operations' => array(),
 								'vats' => array(),
 							);
 						}
 
-						// Add amount for the accountancy code
+						// Add the amount of each part of the payment on its accountancy code (added, in case two parts use the same account)
 						$accountancy_account_capital = !empty($obj->accountancy_account_capital) ? $obj->accountancy_account_capital : $account_pay_loan_capital;
-						$tabobject[$object_key]['operations'][$accountancy_account_capital] = array(
-							// virtual total = loan_capital * amount_capital / payment_amount
-							'total_ht' => -($obj->loan_capital * $obj->amount_capital / $payment_amount),
-							'label' => $obj->label.' '.$langs->trans('LoanCapital'),
-						);
-
-						// Add amount for the accountancy code
 						$accountancy_account_interest = !empty($obj->accountancy_account_interest) ? $obj->accountancy_account_interest : $account_pay_loan_interest;
-						$tabobject[$object_key]['operations'][$accountancy_account_interest] = array(
-							// virtual total = loan_capital * amount_interest / payment_amount
-							'total_ht' => -($obj->loan_capital * $obj->amount_interest / $payment_amount),
-							'label' => $obj->label.' '.$langs->trans('Interest'),
-						);
-
-						// 526,23 = 569,74 * x / 15 000,00
-
-						// Add amount for the accountancy code
 						$accountancy_account_insurance = !empty($obj->accountancy_account_insurance) ? $obj->accountancy_account_insurance : $account_pay_loan_insurance;
-						$tabobject[$object_key]['operations'][$accountancy_account_insurance] = array(
-							// virtual total = loan_capital * amount_insurance / payment_amount
-							'total_ht' => -($obj->loan_capital * $obj->amount_insurance / $payment_amount),
-							'label' => $obj->label.' '.$langs->trans('Insurance'),
+						$parts = array(
+							array($accountancy_account_capital, $obj->amount_capital, $langs->trans('LoanCapital')),
+							array($accountancy_account_interest, $obj->amount_interest, $langs->trans('Interest')),
+							array($accountancy_account_insurance, $obj->amount_insurance, $langs->trans('Insurance')),
 						);
+						foreach ($parts as $part) {
+							if (!isset($tabobject[$object_key]['operations'][$part[0]])) {
+								$tabobject[$object_key]['operations'][$part[0]] = array(
+									'total_ht' => 0,
+									'label' => $obj->label.' '.$part[2],
+								);
+							}
+							$tabobject[$object_key]['operations'][$part[0]]['total_ht'] -= $part[1];
+						}
 					}
 				} else {
 					dol_print_error($db);
@@ -1154,6 +1154,26 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 
 		foreach ($payment['objects'] as $object_key => $object_data) {
 			$objectInfos = $tabobject[$object_key];
+			// When one bank line pays several objects, add the ref of the object to the labels, so the lines of each object are not seen as duplicates by BookKeeping::create()
+			$label_suffix = (count($payment['objects']) > 1 ? ' - '.$objectInfos['ref'] : '');
+
+			// An object with a total of 0 (tax included) whose operations are not 0 (they cancel out) can't be split between its
+			// accounts: it is not recorded (instead of booking the whole payment on the last account)
+			$cannotsplit = false;
+			if ((float) $objectInfos['total_ttc'] == 0) {	// (float): totals read from the database are strings like "0.00000000", not empty()
+				foreach ($objectInfos['operations'] as $operation) {
+					if (!empty($operation['total_ht'])) {
+						$cannotsplit = true;
+						break;
+					}
+				}
+			}
+			if ($cannotsplit) {
+				$errorforline++;
+				$error++;
+				setEventMessages($langs->trans('ErrorBankJournalObjectTotalZero', $objectInfos['ref']), null, 'errors');
+				continue;
+			}
 
 			$total_check = 0;
 
@@ -1167,7 +1187,7 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 				// Unique key is on couple: $payment_id, $objectInfos['id']
 				// For record in llx_accountaing_bookkeeping, for record with doc_type = 'bank', the value of fk_doc is ID in llx_bank and fk_docdet too. Wetry a fix this way;
 				//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
-				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'].$label_suffix, $amount, $journal, $journal_label, '');
 
 				if ($result < 0) {
 					$errorforline++;
@@ -1182,7 +1202,7 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 			}
 
 			// Operations
-			$payment_total_vat = (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT');
+			$payment_total_vat = ((float) $objectInfos['total_ttc'] == 0 ? 0.0 : (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT'));	// No division by zero for an object with a total of 0
 			$payment_total_ht = $object_data['amount'] - $payment_total_vat;
 			$total_operation = 0;
 			$idx = 1;
@@ -1205,7 +1225,12 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 					}
 					$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
 					if ($idx < $nb_operation) {
-						$amount = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
+						if ((float) $objectInfos['total_ht'] != 0) {
+							$amount = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
+						} else {
+							// Total of 0 without tax (lines that cancel out, with different VAT rates): same share, from the total tax included
+							$amount = price2num($object_data['amount'] * $operation['total_ht'] / $objectInfos['total_ttc'], 'MT');
+						}
 						$total_operation += $amount;
 					} else {
 						$amount = $payment_total_ht - $total_operation;
@@ -1214,7 +1239,7 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 
 					$bookkeepingToCreate = new BookKeeping($db);
 					//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
-					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
+					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']).$label_suffix, -$amount, $journal, $journal_label, '');
 					if ($result < 0) {
 						$errorforline++;
 
@@ -1263,7 +1288,7 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 
 						$bookkeepingToCreate = new BookKeeping($db);
 						//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', -$amount, $journal, $journal_label, '');
-						$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', -$amount, $journal, $journal_label, '');
+						$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%'.$label_suffix, -$amount, $journal, $journal_label, '');
 						if ($result < 0) {
 							$errorforline++;
 
@@ -1286,7 +1311,7 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 
 				$bookkeepingToCreate = new BookKeeping($db);
 				//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
-				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'].$label_suffix, $amount, $journal, $journal_label, '');
 				if ($result < 0) {
 					$errorforline++;
 
@@ -1458,14 +1483,32 @@ if (empty($action) || $action == 'view') {
 
 		foreach ($payment['objects'] as $object_key => $object_data) {
 			$objectInfos = $tabobject[$object_key];
+			// When one bank line pays several objects, add the ref of the object to the labels, so the lines of each object are not seen as duplicates by BookKeeping::create()
+			$label_suffix = (count($payment['objects']) > 1 ? ' - '.$objectInfos['ref'] : '');
+
+			// An object with a total of 0 (tax included) whose operations are not 0 (they cancel out) can't be split between its
+			// accounts: it is not recorded (instead of booking the whole payment on the last account)
+			$cannotsplit = false;
+			if ((float) $objectInfos['total_ttc'] == 0) {	// (float): totals read from the database are strings like "0.00000000", not empty()
+				foreach ($objectInfos['operations'] as $operation) {
+					if (!empty($operation['total_ht'])) {
+						$cannotsplit = true;
+						break;
+					}
+				}
+			}
+			if ($cannotsplit) {
+				print '<tr class="oddeven"><td>'.$date.'</td><td>'.$objectInfos['url'].'</td><td colspan="5"><span class="warning">'.$langs->trans('ErrorBankJournalObjectTotalZero', $objectInfos['ref']).'</span></td></tr>';
+				continue;
+			}
 
 			// Show bank line
 			if ($object_data['amount'] >= 0) {
-				FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountInfos['account_number'], $accountInfos['account_ref'], $payment['type_payment'], $object_data['amount']);
+				FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountInfos['account_number'], $accountInfos['account_ref'].$label_suffix, $payment['type_payment'], $object_data['amount']);
 			}
 
 			// Operations
-			$payment_total_vat = (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT');
+			$payment_total_vat = ((float) $objectInfos['total_ttc'] == 0 ? 0.0 : (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT'));	// No division by zero for an object with a total of 0
 			$payment_total_ht = $object_data['amount'] - $payment_total_vat;
 			$total_operation = 0;
 			$idx = 1;
@@ -1481,12 +1524,17 @@ if (empty($action) || $action == 'view') {
 				$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
 				if (!empty($operation['total_ht'])) {
 					if ($idx < $nb_operation) {
-						$value = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
+						if ((float) $objectInfos['total_ht'] != 0) {
+							$value = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
+						} else {
+							// Total of 0 without tax (lines that cancel out, with different VAT rates): same share, from the total tax included
+							$value = price2num($object_data['amount'] * $operation['total_ht'] / $objectInfos['total_ttc'], 'MT');
+						}
 						$total_operation += $value;
 					} else {
 						$value = $payment_total_ht - $total_operation;
 					}
-					FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), $payment['type_payment'], -$value);
+					FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']).$label_suffix, $payment['type_payment'], -$value);
 				}
 				$idx++;
 			}
@@ -1506,7 +1554,7 @@ if (empty($action) || $action == 'view') {
 					if (!empty($amount_vat)) {
 						$amount_vat = (float) price2num($payment_total_vat * $amount_vat / ($objectInfos['total_ttc'] - $objectInfos['total_ht']), 'MT');
 						$total_vat += $amount_vat;
-						FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', $payment['type_payment'], -$amount_vat);
+						FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%'.$label_suffix, $payment['type_payment'], -$amount_vat);
 					}
 					$idx++;
 				}
@@ -1514,7 +1562,7 @@ if (empty($action) || $action == 'view') {
 
 			// Show bank line
 			if ($object_data['amount'] < 0) {
-				FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountInfos['account_number'], $accountInfos['account_ref'], $payment['type_payment'], $object_data['amount']);
+				FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountInfos['account_number'], $accountInfos['account_ref'].$label_suffix, $payment['type_payment'], $object_data['amount']);
 			}
 		}
 	}

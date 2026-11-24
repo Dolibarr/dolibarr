@@ -156,7 +156,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $menu = array();
 
 	/**
-	 * @var array{triggers?:int<0,1>,login?:int<0,1>,substitutions?:int<0,1>,menus?:int<0,1>,theme?:int<0,1>,tpl?:int<0,1>,barcode?:int<0,1>,models?:int<0,1>,printing?:int<0,1>,css?:string[],js?:string[],hooks?:array{data?:string[],entity?:string},moduleforexternal?:int<0,1>,websitetemplates?:int<0,1>,contactelement?:int<0,1>} Module parts
+	 * @var array{triggers?:int<0,1>,login?:int<0,1>,substitutions?:int<0,1>,menus?:int<0,1>,theme?:int<0,1>,tpl?:int<0,1>,barcode?:int<0,1>,models?:int<0,1>,printing?:int<0,1>,css?:string[],js?:string[],hooks?:array{data?:list<string>,entity?:string}|list<string>,moduleforexternal?:int<0,1>,websitetemplates?:int<0,1>,contactelement?:int<0,1>} Module parts
 	 *  array(
 	 *      // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
 	 *      'triggers' => 0,
@@ -2560,7 +2560,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$this->module_parts['icon'] = $this->picto;
 			}
 
-			foreach ($this->module_parts as $key => $value) {
+			// Also remove the standard parts the module does not declare (anymore). Otherwise, when a new version of a
+			// module drops a part (a css or js file removed from the module for example), the constant written by the
+			// previous version stays forever and the file, that no longer exists, is still requested on every page.
+			$module_parts = $this->module_parts;
+			$standardparts = array('triggers', 'login', 'substitutions', 'menus', 'tpl', 'barcode', 'models', 'printing', 'theme', 'css', 'js', 'hooks', 'moduleforexternal', 'websitetemplates', 'captcha', 'icon');
+			foreach ($standardparts as $standardpart) {
+				if (!array_key_exists($standardpart, $module_parts)) {
+					$module_parts[$standardpart] = 0;
+				}
+			}
+
+			foreach ($module_parts as $key => $value) {
 				// If entity is defined
 				if (is_array($value) && isset($value['entity'])) {
 					$entity = $value['entity'];

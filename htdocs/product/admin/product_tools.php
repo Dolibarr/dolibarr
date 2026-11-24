@@ -251,11 +251,32 @@ if ($action == 'convert') {
 					$newdeliverydelay = $objectstatic2->delivery_time_days;
 					$newsupplierreputation = $objectstatic2->supplier_reputation;
 
+					// When the multicurrency module is on, update_buyprice() always recomputes the base price from
+					// the currency price it receives. Passing nothing here means the defaults (price 0, rate 1) are
+					// used and the price of every line is rewritten to 0, so the values read by
+					// fetch_product_fournisseur_price() above have to be given back. A line recorded before the
+					// module was enabled has no currency: it keeps its own price, at rate 1.
+					$newmulticurrencyprice = 0;
+					$newmulticurrencytx = 1;
+					$newmulticurrencycode = '';
+					if (isModEnabled("multicurrency")) {
+						$newmulticurrencycode = $objectstatic2->fourn_multicurrency_code;
+						if (!empty($newmulticurrencycode)) {
+							$newmulticurrencyprice = (float) $objectstatic2->fourn_multicurrency_price;
+							$newmulticurrencytx = (float) $objectstatic2->fourn_multicurrency_tx;
+						} else {
+							$newmulticurrencyprice = (float) $newprice;
+						}
+						if (empty($newmulticurrencytx)) {
+							$newmulticurrencytx = 1;
+						}
+					}
+
 					$newlevel = 0;
 					if (!empty($price_base_type) && !$updatelevel1) {
 						//print "$objectstatic2->id $newprice, $price_base_type, $newvat, $newminprice, $newlevel, $newnpr<br>\n";
 						$fourn->id = $obj->fk_soc;
-						$ret = $objectstatic2->update_buyprice($obj->qty, (float) $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, (float) $newvat, '', $newpercent, 0, $newnpr, $newdeliverydelay, $newsupplierreputation, $localtaxes_type, $newdefaultvatcode);
+						$ret = $objectstatic2->update_buyprice($obj->qty, (float) $newprice, $user, $price_base_type, $fourn, $obj->fk_availability, $obj->ref_fourn, (float) $newvat, '', $newpercent, 0, $newnpr, $newdeliverydelay, $newsupplierreputation, $localtaxes_type, $newdefaultvatcode, $newmulticurrencyprice, 'HT', $newmulticurrencytx, $newmulticurrencycode);
 					}
 
 					if ($ret < 0 || $retm < 0) {
