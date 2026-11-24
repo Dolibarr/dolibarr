@@ -2852,18 +2852,27 @@ class Product extends CommonObject
 
 			// Ne pas mettre de quote sur les numeriques decimaux.
 			// Ceci provoque des stockages avec arrondis en base au lieu des valeurs exactes.
+			// The price columns of the table product hold the default price of the product, that is the price of the level 1
+			// when multiprices are enabled (level is 0 when they are not). So they must not be overwritten by another level.
+			// The vat columns are however shared by all levels, so they are always updated.
+			$updatedefaultprice = (empty($level) || $level == 1);
+
 			$sql = "UPDATE ".$this->db->prefix()."product SET";
-			$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
-			$sql .= " price = ".(float) $price.",";
-			$sql .= " price_ttc = ".(float) $price_ttc.",";
-			$sql .= " price_min = ".(float) $price_min.",";
-			$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+			if ($updatedefaultprice) {
+				$sql .= " price_base_type = '".$this->db->escape($newpricebase)."',";
+				$sql .= " price = ".(float) $price.",";
+				$sql .= " price_ttc = ".(float) $price_ttc.",";
+				$sql .= " price_min = ".(float) $price_min.",";
+				$sql .= " price_min_ttc = ".(float) $price_min_ttc.",";
+			}
 			$sql .= " localtax1_tx = ".($localtax1 >= 0 ? (float) $localtax1 : 'NULL').",";
 			$sql .= " localtax2_tx = ".($localtax2 >= 0 ? (float) $localtax2 : 'NULL').",";
 			$sql .= " localtax1_type = ".($localtaxtype1 != '' ? "'".$this->db->escape($localtaxtype1)."'" : "'0'").",";
 			$sql .= " localtax2_type = ".($localtaxtype2 != '' ? "'".$this->db->escape($localtaxtype2)."'" : "'0'").",";
 			$sql .= " default_vat_code = ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
-			$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
+			if ($updatedefaultprice) {
+				$sql .= " price_label = ".(!empty($price_label) ? "'".$this->db->escape($price_label)."'" : "null").",";
+			}
 			$sql .= " tva_tx = ".(float) price2num($newvat).",";
 			$sql .= " recuperableonly = '".$this->db->escape((string) $newnpr)."'";
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -6417,7 +6426,10 @@ class Product extends CommonObject
 		}
 		// Include reception lines
 		if (isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
-			$filterStatus = '4';
+			// Same option as the supplier order side above: both halves of the subtraction must run on the
+			// same population of supplier orders, otherwise orders are counted while their receptions are
+			// not and the virtual stock comes out too high. The historical default of this side is kept.
+			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '4');
 			if (!empty($includedraftpoforvirtual)) {
 				$filterStatus = '0,'.$filterStatus;
 			}
