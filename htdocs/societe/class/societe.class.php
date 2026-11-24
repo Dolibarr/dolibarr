@@ -1564,7 +1564,7 @@ class Societe extends CommonObject
 			$sql .= ",localtax2_assuj = ".($this->localtax2_assuj != '' ? "'".$this->db->escape($this->localtax2_assuj)."'" : "null");
 			if ($this->localtax1_assuj == 1) {
 				if ($this->localtax1_value != '') {
-					$sql .= ",localtax1_value =".$this->localtax1_value;
+					$sql .= ", localtax1_value = ".((float) $this->localtax1_value);
 				} else {
 					$sql .= ",localtax1_value =0.000";
 				}
@@ -1574,7 +1574,7 @@ class Societe extends CommonObject
 
 			if ($this->localtax2_assuj == 1) {
 				if ($this->localtax2_value != '') {
-					$sql .= ",localtax2_value =".$this->localtax2_value;
+					$sql .= ", localtax2_value = ".((float) $this->localtax2_value);
 				} else {
 					$sql .= ",localtax2_value =0.000";
 				}
