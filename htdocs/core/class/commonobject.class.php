@@ -1741,6 +1741,89 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 *  Return contacts of several objects with one request (to use into lists instead of a liste_contact() on each line)
+	 *
+	 *  @param	int[]		$ids		Array of IDs of objects (of the same type than $this)
+	 *  @param	'external'|'thirdparty'|'internal'	$source		Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
+	 *  @param	int			$status		Status of user or contact (-1=all)
+	 *  @return	array<int,array<int,array{id:int,rowid:int,source:string,code:string,fk_c_type_contact:int,status:int,statuscontact:int,socid:int,entity:int,civility:string,lastname:string,firstname:string,email:string,photo:string,login:string,gender:string,job:string,phone:string,phone_perso:string,phone_mobile:string,office_fax:string}>>|int<-1,-1>	Array (ID of object => array of its contacts sorted on lastname) or -1 if KO
+	 */
+	public function getContactsOfObjects(array $ids, $source = 'external', $status = -1)
+	{
+		$reparray = array();
+
+		$listofids = array();
+		foreach ($ids as $id) {
+			if ((int) $id > 0) {
+				$listofids[(int) $id] = (int) $id;
+			}
+		}
+		if (empty($listofids)) {
+			return $reparray;
+		}
+
+		// Fields of llx_user and llx_socpeople are returned with the same keys
+		$sql = "SELECT ec.element_id, ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_c_type_contact, tc.source, tc.code";
+		$sql .= ", t.statut as statuscontact, t.fk_soc as socid, t.entity, t.civility, t.lastname, t.firstname, t.email, t.photo";
+		if ($source == 'internal') {
+			$sql .= ", t.login, t.gender, t.job, t.office_phone as phone, '' as phone_perso, t.user_mobile as phone_mobile, t.office_fax";
+		} else {
+			$sql .= ", '' as login, '' as gender, t.poste as job, t.phone, t.phone_perso, t.phone_mobile, '' as office_fax";
+		}
+		$sql .= " FROM ".$this->db->prefix()."element_contact as ec";
+		$sql .= " INNER JOIN ".$this->db->prefix()."c_type_contact as tc ON tc.rowid = ec.fk_c_type_contact";
+		if ($source == 'internal') {
+			$sql .= " LEFT JOIN ".$this->db->prefix()."user as t ON t.rowid = ec.fk_socpeople";
+		} else {
+			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople as t ON t.rowid = ec.fk_socpeople";
+		}
+		$sql .= " WHERE ec.element_id IN (".$this->db->sanitize(implode(',', $listofids)).")";
+		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
+		$sql .= " AND tc.source = '".($source == 'internal' ? 'internal' : 'external')."'";
+		$sql .= " AND tc.active = 1";
+		if ($status >= 0) {
+			$sql .= " AND t.statut = ".((int) $status);	// t is llx_user or llx_socpeople
+		}
+		$sql .= $this->db->order('t.lastname', 'ASC');
+
+		dol_syslog(get_class($this)."::getContactsOfObjects", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_print_error($this->db);
+			return -1;
+		}
+		while ($obj = $this->db->fetch_object($resql)) {
+			$reparray[(int) $obj->element_id][] = array(
+				'id' => (int) $obj->id,
+				'rowid' => (int) $obj->rowid,
+				'source' => (string) $obj->source,
+				'code' => (string) $obj->code,
+				'fk_c_type_contact' => (int) $obj->fk_c_type_contact,
+				'status' => (int) $obj->statuslink,
+				'statuscontact' => (int) $obj->statuscontact,
+				'socid' => (int) $obj->socid,
+				'entity' => (int) $obj->entity,
+				'civility' => (string) $obj->civility,
+				'lastname' => (string) $obj->lastname,
+				'firstname' => (string) $obj->firstname,
+				'email' => (string) $obj->email,
+				'photo' => (string) $obj->photo,
+				'login' => (string) $obj->login,
+				'gender' => (string) $obj->gender,
+				'job' => (string) $obj->job,
+				'phone' => (string) $obj->phone,
+				'phone_perso' => (string) $obj->phone_perso,
+				'phone_mobile' => (string) $obj->phone_mobile,
+				'office_fax' => (string) $obj->office_fax,
+			);
+		}
+		$this->db->free($resql);
+
+		return $reparray;
+	}
+
 
 	/**
 	 * 		Update status of a contact linked to object
