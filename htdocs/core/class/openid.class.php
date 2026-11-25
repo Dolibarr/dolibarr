@@ -249,7 +249,9 @@ class SimpleOpenID
 		foreach ($response as $line) {
 			$line = trim($line);
 			if ($line != "") {
-				list($key, $value) = explode(":", $line, 2);
+				$tmparray = explode(":", $line, 2);
+				$key = $tmparray[0];
+				$value = $tmparray[1];
 				$r[trim($key)] = trim($value);
 			}
 		}
@@ -388,7 +390,9 @@ class SimpleOpenID
 
 		$response = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'));
 
-		list($servers, $delegates) = $this->HTML2OpenIDServer($response['content']);
+		$tmparray = $this->HTML2OpenIDServer($response['content']);
+		$servers = $tmparray[0];
+		$delegates = $tmparray[1];
 		if (count($servers) == 0) {
 			$this->ErrorStore('OPENID_NOSERVERSFOUND');
 			return false;

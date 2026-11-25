@@ -1136,8 +1136,18 @@ class ProductFournisseur extends Product
 	 */
 	public function getSocNomUrl($withpicto = 0, $option = 'supplier', $maxlen = 0, $notooltip = 0)
 	{
-		$thirdparty = new Fournisseur($this->db);
-		$thirdparty->fetch($this->fourn_id);
+		global $conf;
+
+		// Use a cache to avoid a full fetch of the same supplier on each line of a list
+		if ($this->fourn_id > 0 && !empty($conf->cache['thirdparty'][$this->fourn_id])) {
+			$thirdparty = $conf->cache['thirdparty'][$this->fourn_id];
+		} else {
+			$thirdparty = new Fournisseur($this->db);
+			$result = $thirdparty->fetch($this->fourn_id);
+			if ($result > 0) {
+				$conf->cache['thirdparty'][$this->fourn_id] = $thirdparty;
+			}
+		}
 
 		return $thirdparty->getNomUrl($withpicto, $option, $maxlen, $notooltip);
 	}

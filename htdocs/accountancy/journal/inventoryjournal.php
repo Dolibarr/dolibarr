@@ -338,6 +338,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val['date'];
+					$bookkeeping->doc_date_hour = $val['date'];
 					$bookkeeping->doc_ref = $val['doc_ref'];
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'stock_mouvement';
@@ -398,6 +399,7 @@ if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'b
 
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val['date'];
+					$bookkeeping->doc_date_hour = $val['date'];
 					$bookkeeping->doc_ref = $val['doc_ref'];
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'stock_mouvement';

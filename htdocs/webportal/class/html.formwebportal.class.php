@@ -591,7 +591,9 @@ class FormWebPortal extends Form
 						continue;
 					}
 					if (strpos($valb, "|") !== false) {
-						list($valb, $parent) = explode('|', $valb);
+						$tmparray = explode('|', $valb);
+						$valb = $tmparray[0];
+						$parent = $tmparray[1];
 					}
 					$out .= '<option value="' . $keyb . '"';
 					$out .= (((string) $value == $keyb) ? ' selected' : '');
@@ -624,7 +626,9 @@ class FormWebPortal extends Form
 					}
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$tmparray = explode('|', $InfoFieldList[3]);
+					$parentName = $tmparray[0];
+					$parentField = $tmparray[1];
 					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList .= ', main.'.$parentField;
 					} else {

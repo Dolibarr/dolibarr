@@ -62,7 +62,7 @@ if (isModEnabled('category')) {
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
+$langs->loadLangs(array("companies", "commercial", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
@@ -591,6 +591,9 @@ if ($resql) {
 	dol_print_error($db);
 }
 
+// Load the types of thirdparty once (key is id), used by the search filter and by the lines
+$typenArray = (empty($arrayfields['typent.code']['checked']) ? array() : $formcompany->typent_array(0));
+
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.ref_ext, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
@@ -600,12 +603,22 @@ $sql .= " s.email, s.phone, s.phone_mobile, s.fax, s.url, s.siren as idprof1, s.
 $sql .= " s.ip, s.tms as date_modification, s.datec as date_creation, s.import_key,";
 $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.price_level,";
 $sql .= " s2.nom as name2,";
-$sql .= " typent.code as typent_code,";
+if (!empty($arrayfields['s2.nom']['checked'])) {
+	// Properties of the parent company, so its link can be shown without a fetch on each line
+	$sql .= " s2.rowid as parent_id, s2.name_alias as parent_name_alias, s2.client as parent_client, s2.fournisseur as parent_fournisseur,";
+	$sql .= " s2.code_client as parent_code_client, s2.code_fournisseur as parent_code_fournisseur, s2.status as parent_status,";
+	$sql .= " s2.logo as parent_logo, s2.canvas as parent_canvas, s2.entity as parent_entity, s2.email as parent_email, s2.phone as parent_phone,";
+}
+$sql .= " s.fk_typent, typent.code as typent_code,";
 $sql .= " staff.code as staff_code,";
 $sql .= " s.fk_forme_juridique as legalform_code,";
 $sql .= " country.code as country_code, country.label as country_label,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " region.code_region as region_code, region.nom as region_name";
+// Flag of global unsubscription from mass emailings, loaded only when the column is shown
+if (!empty($arrayfields['su.noemail']['checked'])) {
+	$sql .= ", (SELECT COUNT(mu.rowid) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email AND mu.unsubscribegroup = '' AND mu.entity IN (".getEntity('mailing').")) as noemail";
+}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -782,7 +795,7 @@ if ($search_email) {
 	$sql .= natural_search("s.email", $search_email);
 }
 if ($search_noemail) {
-	$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = '".$db->escape($search_email)."' AND unsubscribegroup = '' AND entity IN (".getEntity('societe')."))";
+	$sql .= " AND EXISTS (SELECT mu.rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email AND mu.unsubscribegroup = '' AND mu.entity IN (".getEntity('mailing')."))";
 }
 if (strlen($search_phone)) {
 	$sql .= dol_natural_search_phone($db, "s.phone", $search_phone);
@@ -909,6 +922,24 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	// Remove the LEFT JOIN on a unique key (they do not change the number of records) when the alias is not used elsewhere (filters, hooks).
+	// Order matters: region must be tested before state because the join on region uses state.
+	$arrayofjoinsforcount = array(
+		'region' => " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)",
+		'state' => " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)",
+		'country' => " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)",
+		'typent' => " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)",
+		'staff' => " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)",
+		'st' => " LEFT JOIN ".MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id",
+		's2' => " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid",
+		'ef' => " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)",
+	);
+	foreach ($arrayofjoinsforcount as $aliasforcount => $sqljoinforcount) {
+		$sqltmpforcount = str_replace($sqljoinforcount, '', $sqlforcount);
+		if (!preg_match('/\b'.preg_quote($aliasforcount, '/').'\./', $sqltmpforcount)) {
+			$sqlforcount = $sqltmpforcount;
+		}
+	}
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -1357,9 +1388,9 @@ if (empty($type) || $type == 'f') {
 }
 
 // If the user can view prospects other than his'
-$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
-$userlist[-2] = $langs->trans("NoSalesRepresentativeAffected");
 if ($user->hasRight("societe", "client", "voir") || $socid) {
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
+	$userlist[-2] = $langs->trans("NoSalesRepresentativeAffected");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentitiesnoconv('SalesRepresentatives');
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
@@ -1484,7 +1515,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	// We use showempty=0 here because there is already an unknown value into dictionary.
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), 'minwidth50 maxwidth125', 1);
+	print $form->selectarray("search_type_thirdparty", $typenArray, $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), 'minwidth50 maxwidth125', 1);
 	print '</td>';
 }
 // Multiprice level
@@ -1514,7 +1545,7 @@ if (!empty($arrayfields['s.email']['checked'])) {
 if (!empty($arrayfields['su.noemail']['checked'])) {
 	// Email
 	print '<td class="liste_titre center">';
-	print '<input class="flat searchemail maxwidth50imp" type="checkbox" name="search_noemail" '.($search_noemail ? ' checked="checked"' : '').'">';
+	print '<input class="flat searchemail maxwidth50imp" type="checkbox" name="search_noemail"'.($search_noemail ? ' checked="checked"' : '').'>';
 	print '</td>';
 }
 if (!empty($arrayfields['s.phone']['checked'])) {
@@ -1855,7 +1886,7 @@ if (!empty($arrayfields['s2.nom']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // IP Address
@@ -1903,8 +1934,28 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
-while ($i < $imaxinloop) {
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
+
+// Load the records of the page first, so data needed by all lines are loaded with one request instead of one per line
+$arrayofobj = array();
+for ($k = 0; $k < $imaxinloop; $k++) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break;
+	}
+	$arrayofobj[] = $obj;
+}
+$salesrepresentativesbysoc = array();
+if (!empty($arrayfields['sales.representative']['checked']) && !empty($arrayofobj)) {
+	$salesrepresentativesbysoc = $companystatic->getSalesRepresentativesOfThirdparties(array_column($arrayofobj, 'rowid'));
+	if (!is_array($salesrepresentativesbysoc)) {
+		$salesrepresentativesbysoc = array();
+	}
+}
+$userstatic = new User($db);
+
+while ($i < $imaxinloop) {
+	$obj = (empty($arrayofobj[$i]) ? null : $arrayofobj[$i]);
 	if (empty($obj)) {
 		break; // Should not happen
 	}
@@ -2065,7 +2116,7 @@ while ($i < $imaxinloop) {
 		}
 		// Address
 		if (!empty($arrayfields['s.address']['checked'])) {
-			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($companystatic->address).'">'.dolPrintHTML($companystatic->address).'</td>';
+			print '<td title="'.dolPrintHTMLForAttribute($companystatic->address).'"><div class="twolinesmax-normallineheight minwidth200onall maxwidth250">'.dolPrintHTML($companystatic->address).'</div></td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2093,7 +2144,7 @@ while ($i < $imaxinloop) {
 		}
 		// Region
 		if (!empty($arrayfields['region.nom']['checked'])) {
-			print "<td>".dolPrintHTML($obj->region_name)."</td>\n";
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($obj->region_name).'">'.dolPrintHTML($obj->region_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2102,7 +2153,12 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center tdoverflowmax100">';
 			$labelcountry = ($companystatic->country_code && ($langs->trans("Country".$companystatic->country_code) != "Country".$companystatic->country_code)) ? $langs->trans("Country".$companystatic->country_code) : $obj->country_label;
-			print $labelcountry;
+			if ($companystatic->country_code && !$showcountrylabelinlist) {
+				// Show flag, with country label as tooltip
+				print picto_from_langcode($companystatic->country_code, 'title="'.dolPrintHTMLForAttribute($labelcountry).'"', 1);
+			} else {
+				print dolPrintHTML($labelcountry);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2110,11 +2166,14 @@ while ($i < $imaxinloop) {
 		}
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
-			$typenArray = $formcompany->typent_array(1);
-			$labeltypeofcompany = empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
+			$labeltypeofcompany = (empty($obj->fk_typent) || empty($typenArray[$obj->fk_typent])) ? '' : $typenArray[$obj->fk_typent];
 
 			print '<td class="center tdoverflowmax125" title="'.dolPrintHTMLForAttribute($labeltypeofcompany).'">';
-			print dolPrintHTML($labeltypeofcompany);
+			if (!empty($labeltypeofcompany)) {
+				print '<span class="badge badge-status badge-thirdpartytype">';
+				print dolPrintHTML($labeltypeofcompany);
+				print '</span>';
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2167,25 +2226,25 @@ while ($i < $imaxinloop) {
 		}
 		// Unsubscribe to ML list
 		if (!empty($arrayfields['su.noemail']['checked'])) {
-			print '<td class="center">'.yn($obj->noemail)."</td>\n";
+			print '<td class="center">'.yn(empty($obj->noemail) ? 0 : 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['s.phone']['checked'])) {
-			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['s.phone_mobile']['checked'])) {
-			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['s.fax']['checked'])) {
-			print '<td class="nowraponall">'.dol_print_phone($obj->fax, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->fax, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax', '', 0, '', 2)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2259,13 +2318,12 @@ while ($i < $imaxinloop) {
 		// Sales Representative
 		if (!empty($arrayfields['sales.representative']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax100">';
-			$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
+			$listsalesrepresentatives = (empty($salesrepresentativesbysoc[$obj->rowid]) ? array() : $salesrepresentativesbysoc[$obj->rowid]);
 			$nbofsalesrepresentative = count($listsalesrepresentatives);
 			if ($nbofsalesrepresentative > 6) {
 				// We print only number
 				print $nbofsalesrepresentative;
 			} elseif ($nbofsalesrepresentative > 0) {
-				$userstatic = new User($db);
 				$j = 0;
 				foreach ($listsalesrepresentatives as $val) {
 					$userstatic->id = $val['id'];
@@ -2312,7 +2370,7 @@ while ($i < $imaxinloop) {
 			$prospectid = $obj->rowid;
 			$statusprospect = $obj->stcomm_id;
 
-			$formcompany->selectProspectStatus('status_prospect', $prospectstatic, $statusprospect, $prospectid);
+			$formcompany->selectProspectStatus('status_prospect', $prospectstatic, $statusprospect, $prospectid, "htmlnojs");
 
 			print '</td>';
 			if (!$i) {
@@ -2322,8 +2380,21 @@ while ($i < $imaxinloop) {
 		// Parent company
 		if (!empty($arrayfields['s2.nom']['checked'])) {
 			print '<td class="center tdoverflowmax100">';
-			if ($companystatic->parent > 0) {
-				$companyparent->fetch($companystatic->parent);
+			if ($companystatic->parent > 0 && !empty($obj->parent_id)) {
+				// Load the parent company from the fields of the main request instead of a fetch on each line
+				$companyparent->id = $obj->parent_id;
+				$companyparent->name = $obj->name2;
+				$companyparent->name_alias = $obj->parent_name_alias;
+				$companyparent->client = $obj->parent_client;
+				$companyparent->fournisseur = $obj->parent_fournisseur;
+				$companyparent->code_client = $obj->parent_code_client;
+				$companyparent->code_fournisseur = $obj->parent_code_fournisseur;
+				$companyparent->status = $obj->parent_status;
+				$companyparent->logo = $obj->parent_logo;
+				$companyparent->canvas = $obj->parent_canvas;
+				$companyparent->entity = $obj->parent_entity;
+				$companyparent->email = $obj->parent_email;
+				$companyparent->phone = $obj->parent_phone;
 				print $companyparent->getNomUrl(1);
 			}
 			print "</td>";

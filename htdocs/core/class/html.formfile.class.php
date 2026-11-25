@@ -251,7 +251,6 @@ class FormFile
 		$out .= ' ';
 		// Show overwrite if exists for ECM module, and everywhere when the replaced files are kept as previous versions
 		if ($sectionid || getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS') > 0) {
-			$langs->load('link');
 			$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1">';
 			$out .= '<label for="overwritefile" class="opacitylow paddingleft paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
 			$out .= '</span>';
@@ -326,7 +325,6 @@ class FormFile
 		// Section to generate the form to upload a new file
 		if ($linkfiles) {
 			$out2 .= "\n".'<!-- Start form link new url --><div class="formlinknewurl">'."\n";
-			$langs->load('link');
 
 			if ($nooutput != 2) {
 				$title = $langs->trans("LinkANewFile");
@@ -776,18 +774,27 @@ class FormFile
 					$modellist = ModelePDFUserGroup::liste_modeles($this->db);
 				}
 			} else {
+				// For external modules, modulepart can also be 'myobject@mymodule'
+				$modulepartformodel = $modulepart;
+				$submodulepartformodel = $submodulepart;
+				$reg = array();
+				if (preg_match('/^(\w+)@(\w+)$/', $modulepart, $reg)) {
+					$modulepartformodel = $reg[2];
+					$submodulepartformodel = $reg[1];
+				}
+
 				// For normalized standard modules
-				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
+				$file = dol_buildpath('/core/modules/'.$modulepartformodel.'/modules_'.strtolower($submodulepartformodel).'.php', 0);
 
 				if (file_exists($file)) {
 					$res = include_once $file;
 				} else {
 					// For normalized external modules.
-					$file = dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
+					$file = dol_buildpath('/'.$modulepartformodel.'/core/modules/'.$modulepartformodel.'/modules_'.strtolower($submodulepartformodel).'.php', 0);
 					$res = include_once $file;
 				}
 
-				$class = 'ModelePDF'.ucfirst($submodulepart);
+				$class = 'ModelePDF'.ucfirst($submodulepartformodel);
 
 				if (class_exists($class)) {
 					$modellist = call_user_func($class.'::liste_modeles', $this->db);
@@ -2419,7 +2426,6 @@ class FormFile
 		global $conf, $langs;
 		global $sortfield, $sortorder;
 
-		$langs->load("link");
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($this->db);

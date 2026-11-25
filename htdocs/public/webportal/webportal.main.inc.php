@@ -159,7 +159,7 @@ if (getDolGlobalInt('WEBPORTAL_LOGIN_BY_MODULE') && !empty($conf->modules_parts[
 
 		if (!$context->userIsLog()) {
 			// It is not already authenticated and it requests the login / password
-			$langs->loadLangs(array("other", "help", "admin"));
+			$langs->loadLangs(array("other", "admin"));
 
 			$action = GETPOST('action_login', 'alphanohtml');
 

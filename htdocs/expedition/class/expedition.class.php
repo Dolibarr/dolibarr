@@ -1943,7 +1943,8 @@ class Expedition extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$line_id = (int) $obj->expeditiondet_id;
 
-					if ($can_update_stock && (empty($obj->iskit) || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) && !empty($obj->incdec)) {
+					// Reverse stock only if a movement was actually recorded at validation, incdec may have changed since.
+					if ($can_update_stock && (empty($obj->iskit) || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) && (!empty($obj->incdec) || $this->hasShippingMovement($obj->fk_product, $obj->fk_entrepot))) {
 						$mouvS = new MouvementStock($this->db);
 						// we do not log origin because it will be deleted
 						$mouvS->origin = '';
@@ -2140,7 +2141,8 @@ class Expedition extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$line_id = (int) $obj->expeditiondet_id;
 
-					if ($can_update_stock && (empty($obj->iskit) || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) && !empty($obj->incdec)) {
+					// Reverse stock only if a movement was actually recorded at validation, incdec may have changed since.
+					if ($can_update_stock && (empty($obj->iskit) || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) && (!empty($obj->incdec) || $this->hasShippingMovement($obj->fk_product, $obj->fk_entrepot))) {
 						$mouvS = new MouvementStock($this->db);
 						// we do not log origin because it will be deleted
 						$mouvS->origin = '';
@@ -3247,6 +3249,24 @@ class Expedition extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 * Check whether a stock movement was recorded for a given product/warehouse at shipment validation.
+	 *
+	 * @param	int		$productId		Product id
+	 * @param	int		$warehouseId	Warehouse id
+	 * @return	bool					True if a movement exists
+	 */
+	private function hasShippingMovement($productId, $warehouseId)
+	{
+		$sql = "SELECT sm.rowid FROM ".MAIN_DB_PREFIX."stock_mouvement sm";
+		$sql .= " WHERE sm.fk_origin = ".(int) $this->id." AND sm.origintype = 'shipping'";
+		$sql .= " AND sm.fk_product = ".(int) $productId;
+		$sql .= " AND sm.fk_entrepot = ".(int) $warehouseId;
+		$sql .= " LIMIT 1";
+		$resql = $this->db->query($sql);
+		return ($resql && $this->db->num_rows($resql) > 0);
 	}
 
 	/**

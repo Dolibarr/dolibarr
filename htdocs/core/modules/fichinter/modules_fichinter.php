@@ -114,7 +114,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 {
 	// phpcs:enable
 	global $conf, $langs;
-	$langs->load("ficheinter");
+	$langs->load("interventions");
 
 	$error = 0;
 

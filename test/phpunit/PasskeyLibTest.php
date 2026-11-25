@@ -153,6 +153,12 @@ class PasskeyLibTest extends CommonClassTest
 		$conf->file->main_force_https = '';
 		$conf->global->MAIN_AUTHENTICATION_PASSKEY_RPID = '';
 
+		// Without PHP 8.0+ and openssl, the setup check stops on the PHP requirements, so URL checks can't be tested
+		if (!passkeyIsAvailable()) {
+			$this->assertEquals($langs->trans("PasskeyErrorPHPRequirements", '8.0', 'openssl'), passkeyCheckSetup());
+			$this->markTestSkipped('The WebAuthn library needs PHP 8.0 or higher with openssl');
+		}
+
 		$conf->file->dol_main_url_root = 'https://erp.example.com';
 		$this->assertEquals('', passkeyCheckSetup());
 

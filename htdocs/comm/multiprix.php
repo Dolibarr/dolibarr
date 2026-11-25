@@ -115,7 +115,8 @@ if ($_socid > 0) {
 	print '<tr><td>';
 	print $langs->trans("NewValue").'</td><td>';
 	print '<select name="price_level" class="flat">';
-	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+	$nbpricelevel = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+	for ($i = 1; $i <= $nbpricelevel; $i++) {
 		print '<option value="'.$i.'"';
 		if ($i == $objsoc->price_level) {
 			print 'selected';

@@ -663,7 +663,7 @@ class pdf_strato extends ModelePDFContract
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "dict", "contract", "companies"));
+		$outputlangs->loadLangs(array("main", "dict", "contracts", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -791,7 +791,7 @@ class pdf_strato extends ModelePDFContract
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id) && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id) && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1')) {
 				$this->recipient = $object->contact;
 			} else {
 				$this->recipient = $object->thirdparty;
