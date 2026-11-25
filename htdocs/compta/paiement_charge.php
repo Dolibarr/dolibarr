@@ -289,18 +289,14 @@ if ($action == 'create') {
 		print '<td class="right nowraponall"><span class="amount">'.price($objp->amount - $sumpaid)."</span></td>";
 
 		print '<td class="center nowraponall">';
-		if ($sumpaid < $objp->amount) {
-			$namef = "amount_".$objp->id;
-			$nameRemain = "remain_".$objp->id;
-			if (!empty($conf->use_javascript_ajax)) {
-				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
-			}
-			$remaintopay = $objp->amount - $sumpaid;
-			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'" value="'.GETPOST('amount_'.$objp->id, 'alpha').'">';
-		} else {
-			print '-';
+		$namef = "amount_".$objp->id;
+		$nameRemain = "remain_".$objp->id;
+		if (!empty($conf->use_javascript_ajax)) {
+			print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
 		}
+		$remaintopay = $objp->amount - $sumpaid;
+		print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
+		print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'" value="'.GETPOST('amount_'.$objp->id, 'alpha').'">';
 		print "</td>";
 
 		print "</tr>\n";

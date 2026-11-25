@@ -601,6 +601,7 @@ ALTER TABLE llx_oauth_token ADD COLUMN passkey_aaguid varchar(36) NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_eligible smallint NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
 ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
+ALTER TABLE llx_oauth_token ADD INDEX idx_oauth_token_fk_user (fk_user);
 
 -- RF or national reference the supplier provides to accept payments
 ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
@@ -750,3 +751,11 @@ ALTER TABLE llx_categorie_skill ADD INDEX idx_categorie_skill_fk_skill (fk_skill
 
 ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_fk_skill_rowid FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill (rowid);
+
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN doc_date_hour datetime NULL AFTER doc_date;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN doc_date_hour datetime NULL AFTER doc_date;
+-- Hour of source document is unknown for existing records, so we use doc_date at 12:00:00
+-- VMYSQL4.1 UPDATE llx_accounting_bookkeeping SET doc_date_hour = TIMESTAMP(doc_date, '12:00:00') WHERE doc_date_hour IS NULL;
+-- VMYSQL4.1 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = TIMESTAMP(doc_date, '12:00:00') WHERE doc_date_hour IS NULL;
+-- VPGSQL8.2 UPDATE llx_accounting_bookkeeping SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
+-- VPGSQL8.2 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;

@@ -466,7 +466,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--colortextbackhmenu: #<?php print $colortextbackhmenu; ?>;
 	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
 	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
-	--listetotal: #888888;
+	--listetotal: #666666;
 	--inputbackgroundcolor: #FFF;
 	--inputbackgroundcolordisabled: #eee;
 	--inputcolordisabled: rgb(80, 80, 80);
@@ -1089,7 +1089,7 @@ input.pageplusone {
 }
 .spantitle {
 	opacity: 0.7;
-	font-size: 0.95em;
+	font-size: 0.9em;
 }
 .colorwhite {
 	color: var(--colorwhite);
@@ -5859,6 +5859,9 @@ input.liste_titre {
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
 	white-space: nowrap;
+}
+.noborder tr.liste_total td, tr.liste_total td {
+	font-weight: bold;
 }
 .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
 	white-space: normal;

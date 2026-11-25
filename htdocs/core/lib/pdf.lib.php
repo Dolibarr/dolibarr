@@ -2478,6 +2478,7 @@ function pdf_getlineref_supplier($object, $i, $outputlangs, $hidedetails = 0)
 		$result .= $hookmanager->resPrint;
 	}
 	if (empty($reshook)) {
+		// ref_supplier is not defined on some object lines, for example on Contract lines @phan-suppress-next-line PhanUndeclaredProperty
 		$result .= dol_htmlentitiesbr($object->lines[$i]->ref_supplier);
 	}
 	return $result;
