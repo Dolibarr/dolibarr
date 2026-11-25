@@ -235,8 +235,23 @@ try {
 			$res = $db->query($sql);
 
 			if ($res && $obj = $db->fetch_object($res)) {
-				// Match found. Replace in the original query.
-				$query = preg_replace('/\b' . preg_quote($phrase, '/') . '\b/iu', "socid:" . $obj->rowid, $query);
+				// Match found. Replace in the original query — except when the
+				// phrase is immediately followed by another name-word
+				// (uppercase-initial or digit): "named CRUD TEST 002" types a NEW
+				// name that extends an existing company's, it is not a reference
+				// to it (#42377). ERP stopwords ("Invoice", ...) still resume
+				// resolution.
+				$query = preg_replace_callback(
+					'/\b' . preg_quote($phrase, '/') . '\b(\s+\S+)?/iu',
+					function (array $m) use ($obj, $dynamicStopWords) {
+						$next = isset($m[1]) ? trim($m[1]) : '';
+						if ($next !== '' && preg_match('/^[\p{Lu}\p{N}]/u', $next) && !in_array(mb_strtolower($next), $dynamicStopWords, true)) {
+							return $m[0];
+						}
+						return 'socid:' . $obj->rowid . (isset($m[1]) ? $m[1] : '');
+					},
+					$query
+				);
 
 				break;
 			}
