@@ -104,16 +104,17 @@ class MyModuleApi extends DolibarrApi
 	 * @param 	int			   $page				Page number
 	 * @param 	string         $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param 	string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param 	int			$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                               Array of MyObject objects
-	 * @phan-return array<int,MyObject>
-	 * @phpstan-return array<int,MyObject>
+	 * @phan-return array<int,MyObject>|array{count:int}
+	 * @phpstan-return array<int,MyObject>|array{count:int}
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 503 System error
 	 *
 	 * @url	GET /myobjects/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		global $hookmanager;
 
@@ -178,6 +179,11 @@ class MyModuleApi extends DolibarrApi
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
+		}
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

@@ -117,6 +117,18 @@ class ProjectTest extends CommonClassTest
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
+
+		// Contacts loaded for several projects with one request must be the same than with liste_contact()
+		$result = $localobject->add_contact($user->id, 'PROJECTLEADER', 'internal');
+		print __METHOD__." id=".$localobject->id." add_contact result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
+		$result = $localobject->getContactsOfObjects(array($localobject->id, 0), 'internal');
+		print __METHOD__." id=".$localobject->id." getContactsOfObjects result=".var_export($result, true)."\n";
+		$this->assertIsArray($result);
+		$this->assertEquals(array_column($localobject->liste_contact(-1, 'internal'), 'id'), array_column($result[$localobject->id], 'id'));
+		$result = $localobject->getContactsOfObjects(array());
+		$this->assertEquals(array(), $result);
+
 		return $localobject;
 	}
 

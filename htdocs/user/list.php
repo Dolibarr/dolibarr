@@ -262,7 +262,11 @@ if (isModEnabled('salaries') && $contextpage == 'employeelist' && $search_employ
 	}
 }
 
-$childids = $user->getAllChildIds(1);
+// List of subordinates is used only to restrict access to salaries, so we load the full user tree only if needed
+$childids = array();
+if (isModEnabled('salaries') && !$user->hasRight("salaries", "readall")) {
+	$childids = $user->getAllChildIds(1);
+}
 
 
 /*
@@ -407,9 +411,13 @@ $morejs = array();
 $morecss = array();
 $morehtmlright = "";
 
+// Apply the selection of columns of the user now, so we know before building the request which columns are shown
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 // Build and execute select
 // --------------------------------------------------------------------
-$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.office_phone, u.user_mobile, u.email, u.api_key, u.accountancy_code, u.gender, u.employee, u.photo,";
 $sql .= " u.fk_user,";
 $sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.thm, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
@@ -418,7 +426,8 @@ $sql .= " GREATEST(u.tms, COALESCE(ef.tms, u.tms)) as date_modification, u.datec
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas,";
 $sql .= " co.code as country_code, co.label as country_label";
-if ($permissiontoseepasskeys) {
+// The count of passkeys is a subrequest run for each user, so it is added only if the column is shown or used to sort
+if ($permissiontoseepasskeys && (!empty($arrayfields['nb_passkeys']['checked']) || in_array('nb_passkeys', explode(',', $sortfield)))) {
 	$sql .= ", (SELECT COUNT(pk.rowid) FROM ".MAIN_DB_PREFIX."oauth_token as pk WHERE pk.fk_user = u.rowid AND pk.service = '".$db->escape(UserPasskey::SERVICE)."') as nb_passkeys";
 }
 // Add fields from extrafields
@@ -444,9 +453,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON u.fk_country = co.rowid
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-if ($reshook > 0) {
-	$sql .= $hookmanager->resPrint;
-}
 $sql .= " WHERE u.entity IN (".getEntity($object->element).")";
 if ($socid > 0) {
 	$sql .= " AND u.fk_soc = ".((int) $socid);

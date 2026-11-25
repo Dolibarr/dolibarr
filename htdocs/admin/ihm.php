@@ -480,7 +480,7 @@ if ($mode == 'other') {
 	print '<table summary="otherparameters" class="noborder centpercent editmode tableforfield">';
 
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
-	print $langs->trans("Miscellaneous");
+	print $langs->trans("Menus");
 	print '</td>';
 	print '<td></td>';
 	print '</tr>';
@@ -504,6 +504,39 @@ if ($mode == 'other') {
 	print '<tr class="oddeven"><td>' . str_replace('{picto}', $pictohelp, $langs->trans("DisableLinkToHelp", '{picto}')) . '</td><td>';
 	print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	print '</td>';
+	print '</tr>';
+
+	// Hide unauthorized menus
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("HideUnauthorizedMenu"), $langs->trans("JustGrayedOtherwise")) . '</td><td>';
+	print ajax_constantonoff("MAIN_MENU_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Hide unauthorized button
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("ButtonHideUnauthorized"), $langs->trans("JustGrayedOtherwise")) . '</td><td>';
+	print ajax_constantonoff("MAIN_BUTTON_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Show bugtrack link
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
+	print '</td><td>';
+	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') . '">';
+	print '</td>';
+	print '</tr>';
+
+	// Option to show entries of menu level 2 only when mouse is over the menu title of level 1 (also available on page admin/menus.php)
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("MenuExpandLeftLevel2OnHover"), $langs->trans("MenuExpandLeftLevel2OnHoverDesc")) . '</td><td>';
+	print ajax_constantonoff("MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER", array(), $conf->entity, 1, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Title for lists options
+	print '<tr class="liste_titre"><td>';
+	print $langs->trans("Lists");
+	print '</td>';
+	print '<td></td>';
 	print '</tr>';
 
 	// Max size of lists
@@ -541,18 +574,6 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
-	// Hide unauthorized menus
-	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("HideUnauthorizedMenu"), $langs->trans("JustGrayedOtherwise")) . '</td><td>';
-	print ajax_constantonoff("MAIN_MENU_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	print '</td>';
-	print '</tr>';
-
-	// Hide unauthorized button
-	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("ButtonHideUnauthorized"), $langs->trans("JustGrayedOtherwise")) . '</td><td>';
-	print ajax_constantonoff("MAIN_BUTTON_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	print '</td>';
-	print '</tr>';
-
 	// Hide version link
 	/*
 
@@ -563,12 +584,11 @@ if ($mode == 'other') {
 	*/
 
 
-	// Show bugtrack link
-	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
-	print '</td><td>';
-	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') . '">';
+	// Title for other options
+	print '<tr class="liste_titre"><td>';
+	print $langs->trans("Other");
 	print '</td>';
+	print '<td></td>';
 	print '</tr>';
 
 	// Disable javascript and ajax

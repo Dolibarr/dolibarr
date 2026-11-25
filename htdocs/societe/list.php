@@ -591,6 +591,9 @@ if ($resql) {
 	dol_print_error($db);
 }
 
+// Load the types of thirdparty once (key is id), used by the search filter and by the lines
+$typenArray = (empty($arrayfields['typent.code']['checked']) ? array() : $formcompany->typent_array(0));
+
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.ref_ext, s.barcode, s.address, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
@@ -606,7 +609,7 @@ if (!empty($arrayfields['s2.nom']['checked'])) {
 	$sql .= " s2.code_client as parent_code_client, s2.code_fournisseur as parent_code_fournisseur, s2.status as parent_status,";
 	$sql .= " s2.logo as parent_logo, s2.canvas as parent_canvas, s2.entity as parent_entity, s2.email as parent_email, s2.phone as parent_phone,";
 }
-$sql .= " typent.code as typent_code,";
+$sql .= " s.fk_typent, typent.code as typent_code,";
 $sql .= " staff.code as staff_code,";
 $sql .= " s.fk_forme_juridique as legalform_code,";
 $sql .= " country.code as country_code, country.label as country_label,";
@@ -919,6 +922,24 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	// Remove the LEFT JOIN on a unique key (they do not change the number of records) when the alias is not used elsewhere (filters, hooks).
+	// Order matters: region must be tested before state because the join on region uses state.
+	$arrayofjoinsforcount = array(
+		'region' => " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)",
+		'state' => " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)",
+		'country' => " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)",
+		'typent' => " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)",
+		'staff' => " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)",
+		'st' => " LEFT JOIN ".MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id",
+		's2' => " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid",
+		'ef' => " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)",
+	);
+	foreach ($arrayofjoinsforcount as $aliasforcount => $tmpval) {
+		$sqltmpforcount = str_replace($tmpval, '', $sqlforcount);
+		if (!preg_match('/\b'.preg_quote($aliasforcount, '/').'\./', $sqltmpforcount)) {
+			$sqlforcount = $sqltmpforcount;
+		}
+	}
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -1494,7 +1515,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	// We use showempty=0 here because there is already an unknown value into dictionary.
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), 'minwidth50 maxwidth125', 1);
+	print $form->selectarray("search_type_thirdparty", $typenArray, $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), 'minwidth50 maxwidth125', 1);
 	print '</td>';
 }
 // Multiprice level
@@ -1931,7 +1952,6 @@ if (!empty($arrayfields['sales.representative']['checked']) && !empty($arrayofob
 		$salesrepresentativesbysoc = array();
 	}
 }
-$typenArray = (empty($arrayfields['typent.code']['checked']) ? array() : $formcompany->typent_array(1));
 $userstatic = new User($db);
 
 while ($i < $imaxinloop) {
@@ -2146,7 +2166,7 @@ while ($i < $imaxinloop) {
 		}
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
-			$labeltypeofcompany = empty($typenArray[$obj->typent_code]) ? '' : $typenArray[$obj->typent_code];
+			$labeltypeofcompany = (empty($obj->fk_typent) || empty($typenArray[$obj->fk_typent])) ? '' : $typenArray[$obj->fk_typent];
 
 			print '<td class="center tdoverflowmax125" title="'.dolPrintHTMLForAttribute($labeltypeofcompany).'">';
 			if (!empty($labeltypeofcompany)) {
@@ -2350,7 +2370,7 @@ while ($i < $imaxinloop) {
 			$prospectid = $obj->rowid;
 			$statusprospect = $obj->stcomm_id;
 
-			$formcompany->selectProspectStatus('status_prospect', $prospectstatic, $statusprospect, $prospectid);
+			$formcompany->selectProspectStatus('status_prospect', $prospectstatic, $statusprospect, $prospectid, "htmlnojs");
 
 			print '</td>';
 			if (!$i) {
