@@ -164,6 +164,31 @@ class ToolReports extends McpTool
 				]
 			];
 
+		$listofreporttools[] = [
+				"name" => "get_tickets_report",
+				"description" => "Generate a summary of support tickets with exact counts per group. Use it for questions like 'how many open tickets does each agent have' or 'open tickets by severity' — it returns counts, not ticket lists.",
+				"inputSchema" => [
+					"type" => "object",
+					"properties" => [
+						"group_by" => [
+							"type" => "string",
+							"enum" => ["status", "severity", "assigned_user", "type", "thirdparty"],
+							"description" => "Dimension to group the counts on.",
+							"default" => "status"
+						],
+						"open_only" => [
+							"type" => "boolean",
+							"description" => "true counts only open tickets (not closed nor canceled). Set it for the usual 'open tickets' questions.",
+							"default" => false
+						],
+						"date_start" => ["type" => "string", "description" => "Optional: only tickets created on or after this date (YYYY-MM-DD). Compute it from the current date when the user says a relative period."],
+						"date_end" => ["type" => "string", "description" => "Optional: only tickets created on or before this date (YYYY-MM-DD)."],
+						"thirdparty_id" => ["type" => "integer", "description" => "Optional: restrict the report to tickets of one customer."],
+						"thirdparty_name" => ["type" => "string", "description" => "Optional: restrict the report to tickets of one customer, searched by name when the ID is unknown."]
+					]
+				]
+			];
+
 			return $listofreporttools;
 	}
 
@@ -180,6 +205,7 @@ class ToolReports extends McpTool
 			'get_purchase_report' => array(array('fournisseur', 'facture', 'lire')),
 			'get_inventory_report' => array(array('produit', 'lire'), array('stock', 'lire')),
 			'get_financial_report' => array(array('facture', 'lire'), array('fournisseur', 'facture', 'lire')),
+			'get_tickets_report' => array(array('ticket', 'read')),
 			'get_thirdparty_transactions' => array(array('societe', 'lire'), array('facture', 'lire'))
 		);
 
@@ -194,7 +220,7 @@ class ToolReports extends McpTool
 	 */
 	public function getCategories(): array
 	{
-		return ['reporting', 'commercial', 'billing', 'stock'];
+		return ['reporting', 'commercial', 'billing', 'stock', 'thirdparty', 'project'];
 	}
 
 	/**
@@ -217,6 +243,8 @@ class ToolReports extends McpTool
 				return $this->getInventoryReport($args);
 			case 'get_financial_report':
 				return $this->getFinancialReport($args);
+			case 'get_tickets_report':
+				return $this->getTicketsReport($args);
 			default:
 				return ["error" => "Tool function '$name' not found."];
 		}
@@ -837,6 +865,154 @@ class ToolReports extends McpTool
 				$langs->transnoentitiesnoconv("Amount") => price($net)
 			]
 		];
+
+		return $list;
+	}
+
+	/**
+	 * Generate a summary of support tickets with counts per group.
+	 *
+	 * @param array<string, mixed> $args Input arguments (group_by, open_only, date_start, date_end, thirdparty_id/thirdparty_name).
+	 * @return array<int, array<string, string>>|array{rows:array<int,array<string,string>>,chart:array<string,mixed>} Count rows, or {rows, chart} like the other grouped reports.
+	 */
+	private function getTicketsReport(array $args): array
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
+
+		$langs->loadLangs(array("main", "ticket", "companies", "users"));
+
+		$groupBy  = isset($args['group_by']) ? (string) $args['group_by'] : 'status';
+		$openOnly = !empty($args['open_only']);
+		$socid    = $this->resolveThirdparty($args);
+
+		// Same code -> key mapping as Ticket::$labelStatusShort.
+		$statusKeys = array(
+			0 => 'Unread',
+			1 => 'Read',
+			2 => 'Assigned',
+			3 => 'InProgress',
+			5 => 'NeedMoreInformationShort',
+			7 => 'OnHold',
+			8 => 'SolvedClosed',
+			9 => 'Canceled'
+		);
+
+		$sqlJoin = " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON t.fk_soc = s.rowid"
+			. " LEFT JOIN " . MAIN_DB_PREFIX . "user as u ON t.fk_user_assign = u.rowid";
+
+		switch ($groupBy) {
+			case 'severity':
+				$sanitizedSqlGroup = "t.severity_code";
+				$colName = $langs->transnoentitiesnoconv("Severity");
+				break;
+			case 'assigned_user':
+				// Full name when set, login as fallback; empty means unassigned.
+				$sanitizedSqlGroup = "COALESCE(NULLIF(TRIM(CONCAT(u.firstname, ' ', u.lastname)), ''), u.login)";
+				$colName = $langs->transnoentitiesnoconv("AssignedTo");
+				break;
+			case 'type':
+				$sanitizedSqlGroup = "t.type_code";
+				$colName = $langs->transnoentitiesnoconv("Type");
+				break;
+			case 'thirdparty':
+				$sanitizedSqlGroup = "s.nom";
+				$colName = $langs->transnoentitiesnoconv("ThirdParty");
+				break;
+			default:	// 'status'
+				$sanitizedSqlGroup = "t.fk_statut";
+				$colName = $langs->transnoentitiesnoconv("Status");
+		}
+
+		// Open tickets = not closed and not canceled (fk_statut < STATUS_CLOSED).
+		$sqlWhere = " WHERE t.entity IN (" . getEntity('ticket') . ")";
+		if ($openOnly) {
+			$sqlWhere .= " AND t.fk_statut < " . ((int) Ticket::STATUS_CLOSED);
+		}
+		if ($socid) {
+			$sqlWhere .= " AND t.fk_soc = " . (int) $socid;
+		}
+		if (!empty($args['date_start'])) {
+			$sqlWhere .= " AND t.datec >= '" . $this->db->idate(dol_stringtotime($args['date_start'])) . "'";
+		}
+		if (!empty($args['date_end'])) {
+			$sqlWhere .= " AND t.datec <= '" . $this->db->idate(dol_stringtotime($args['date_end'])) . "'";
+		}
+
+		$sql = "SELECT " . $sanitizedSqlGroup . " as group_key,"
+			. " SUM(t.fk_statut < " . ((int) Ticket::STATUS_CLOSED) . ") as count_open,"
+			. " COUNT(t.rowid) as count_total"
+			. " FROM " . MAIN_DB_PREFIX . "ticket as t"
+			. $sqlJoin
+			. $sqlWhere
+			. " GROUP BY group_key"
+			. " ORDER BY count_open DESC, count_total DESC";
+
+		$resql = $this->db->query($sql);
+		$list = [];
+		$sumOpen = 0;
+		$sumTotal = 0;
+		$chartLabels = [];
+		$chartOpen = [];
+		$chartTotal = [];
+
+		if ($resql) {
+			while ($r = $this->db->fetch_object($resql)) {
+				$key = (string) $r->group_key;
+				if ($key === '') {
+					$label = $langs->transnoentitiesnoconv("Unknown");
+				} elseif ($groupBy === 'status' && isset($statusKeys[(int) $key])) {
+					$label = $langs->transnoentitiesnoconv($statusKeys[(int) $key]);
+				} elseif ($groupBy === 'severity') {
+					$label = $langs->transnoentitiesnoconv('TicketSeverityShort' . $key);
+				} elseif ($groupBy === 'type') {
+					$label = $langs->transnoentitiesnoconv('TicketTypeShort' . $key);
+				} else {
+					$label = $key;
+				}
+
+				$countOpen = (int) $r->count_open;
+				$countTotal = (int) $r->count_total;
+				$sumOpen += $countOpen;
+				$sumTotal += $countTotal;
+				$chartLabels[] = $label;
+				$chartOpen[] = $countOpen;
+				$chartTotal[] = $countTotal;
+
+				$list[] = [
+					$colName => $label,
+					$langs->transnoentitiesnoconv("Opened") => $countOpen,
+					$langs->transnoentitiesnoconv("Number") => $countTotal
+				];
+			}
+			$this->db->free($resql);
+		}
+
+		if (empty($list)) {
+			return [[$langs->transnoentitiesnoconv("Info") => $langs->transnoentitiesnoconv("NoRecordFound")]];
+		}
+
+		$list[] = [
+			$colName => $langs->transnoentitiesnoconv("Total"),
+			$langs->transnoentitiesnoconv("Opened") => $sumOpen,
+			$langs->transnoentitiesnoconv("Number") => $sumTotal
+		];
+
+		// Same contract as the other grouped reports: a chart payload the chat renders.
+		if (!empty($chartLabels)) {
+			return array(
+				'rows'  => $list,
+				'chart' => array(
+					'type'    => 'bar',
+					'labels'  => $chartLabels,
+					'datasets' => array(
+						array('label' => $langs->transnoentitiesnoconv('Opened'), 'data' => $chartOpen),
+						array('label' => $langs->transnoentitiesnoconv('Total'), 'data' => $chartTotal)
+					),
+				),
+			);
+		}
 
 		return $list;
 	}
