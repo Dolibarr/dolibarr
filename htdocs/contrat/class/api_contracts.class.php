@@ -110,6 +110,7 @@ class Contracts extends DolibarrApi
 	 * @since	19.0.0	Added properties parameter
 	 * @since	21.0.0	Added pagination_data parameter
 	 * @since	23.0.0	Added withLines parameter
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
@@ -120,15 +121,16 @@ class Contracts extends DolibarrApi
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @param bool 			   $withLines 			true or false to display or hide lines
+	 * @param int			$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                               Array of order objects
-	 * @phan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @throws RestException 400 Bad Request
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $withLines = true)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $withLines = true, $count = 0)
 	{
 		global $db, $conf;
 
@@ -176,6 +178,11 @@ class Contracts extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {

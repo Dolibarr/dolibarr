@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -140,15 +141,17 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryProjectOperator = getDolGlobalString('MAIN_SEARCH_CAT_PROJECT_OR_BY_DEFAULT');
 }
 
-/*
+// Filter on tags of customers is available only with option MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST (to avoid confusion with tags of projects)
 $searchCategoryCustomerOperator = 0;
-if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
-} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
-	$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+$searchCategoryCustomerList = array();
+if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled('category')) {
+	if (GETPOSTISSET('formfilteraction')) {
+		$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+	} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+		$searchCategoryCustomerOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+	}
+	$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array:int');
 }
-$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array:int');
-*/
 
 $search_omitChildren = 0;
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
@@ -512,6 +515,7 @@ if (empty($reshook)) {
 		$search_array_options = array();
 		$search_category_array = array();
 		$search_category_user_array = array();
+		$searchCategoryCustomerList = array();
 	}
 
 
@@ -604,19 +608,21 @@ if (!$user->hasRight('projet', 'all', 'lire')) {
 // Get id of types of contacts for projects (This list never contains a lot of elements)
 $listofprojectcontacttype = array();
 $listofprojectcontacttypeexternal = array();
-$sql = "SELECT ctc.rowid, ctc.code, ctc.source FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-$sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
-$resql = $db->query($sql);
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
-		if ($obj->source == 'internal') {
-			$listofprojectcontacttype[$obj->rowid] = $obj->code;
-		} else {
-			$listofprojectcontacttypeexternal[$obj->rowid] = $obj->code;
+if ($search_project_user > 0 || $search_project_contact > 0) {	// Only the filters on user or contact of project need them
+	$sql = "SELECT ctc.rowid, ctc.code, ctc.source FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
+	$sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			if ($obj->source == 'internal') {
+				$listofprojectcontacttype[$obj->rowid] = $obj->code;
+			} else {
+				$listofprojectcontacttypeexternal[$obj->rowid] = $obj->code;
+			}
 		}
+	} else {
+		dol_print_error($db);
 	}
-} else {
-	dol_print_error($db);
 }
 if (count($listofprojectcontacttype) == 0) {
 	$listofprojectcontacttype[0] = '0'; // To avoid sql syntax error if not found
@@ -626,7 +632,7 @@ if (count($listofprojectcontacttypeexternal) == 0) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -637,11 +643,18 @@ $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, 
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
-$sql .= " p.note_public, p.note_private,";
-$sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.code_fournisseur,";
+// Notes are TEXT fields, loaded only if shown: into their column or into the tooltip of the note picto of the ref (see Project::getNomUrl())
+if (!empty($arrayfields['p.note_public']['checked']) || ($user->socid > 0 && !empty($arrayfields['p.ref']['checked']))) {
+	$sql .= " p.note_public,";
+}
+if (!empty($arrayfields['p.note_private']['checked']) || ($user->socid <= 0 && !empty($arrayfields['p.ref']['checked']))) {
+	$sql .= " p.note_private,";
+}
+$sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.code_fournisseur,";
 $sql .= " country.code as country_code,";
 $sql .= " cls.code as opp_status_code,";
-$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
+$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
+$sql .= ' pa.ref as parent_ref, pa.title as parent_title, pa.entity as parent_entity, pa.public as parent_public, pa.fk_statut as parent_status, pa.dateo as parent_date_start, pa.datee as parent_date_end';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -657,14 +670,17 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".$db->prefix().$object->table_element." as p";
+// Joins on a unique key (alias => join): they do not change the number of records, so the count can skip the ones not used by filters
+$sqljoinsonuniquekey = array();
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".$db->prefix().$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
+	$sqljoinsonuniquekey['ef'] = " LEFT JOIN ".$db->prefix().$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on country.rowid = s.fk_pays";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.$object->table_element.' AS pa ON p.fk_project = pa.rowid';
+$sqljoinsonuniquekey['s'] = " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$sqljoinsonuniquekey['country'] = " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on country.rowid = s.fk_pays";
+$sqljoinsonuniquekey['cls'] = " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
+$sqljoinsonuniquekey['u'] = ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
+$sqljoinsonuniquekey['pa'] = ' LEFT JOIN '.MAIN_DB_PREFIX.$object->table_element.' AS pa ON p.fk_project = pa.rowid';
+$sql .= implode('', $sqljoinsonuniquekey);
 // We'll need this table joined to the select in order to filter by sale
 // No check is done on company permission because readability is managed by public status of project and assignment.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -917,8 +933,7 @@ if (!empty($searchCategoryProjectList)) {
 	}
 }
 
-// Search for tag/category of Customer Third party ($searchCategoryCustomerList is an array of ID)
-/*
+// Search for tag/category of Customer Third party ($searchCategoryCustomerList is an array of ID, empty if option MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST is off)
 $searchCategoryCustomerSqlList = array();
 if ($searchCategoryCustomerOperator == 1) {
 	$existsCategoryCustomerList = array();
@@ -963,7 +978,6 @@ if ($searchCategoryCustomerOperator == 1) {
 		$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
 	}
 }
-*/
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -979,6 +993,13 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	// Remove the joins whose alias is not used by filters (in reverse order, a join may use the alias of a previous one, like country with s)
+	foreach (array_reverse($sqljoinsonuniquekey, true) as $tmpalias => $tmpval) {
+		$sqltmpforcount = str_replace($tmpval, '', $sqlforcount);
+		if (!preg_match('/\b'.preg_quote($tmpalias, '/').'\./i', $sqltmpforcount)) {
+			$sqlforcount = $sqltmpforcount;
+		}
+	}
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -1443,7 +1464,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 // Filter on customer categories
 if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth200imp minwidth200 widthcentpercentminusx', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth200imp minwidth200 widthcentpercentminusx', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0, 1, 1, $langs->transnoentitiesnoconv("CustomersProspectsCategoriesShort"));
 }
 
 // alert on late date
@@ -1466,7 +1487,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+// $htmlofselectarray was built before the request, when the setup of user was applied on $arrayfields
 $selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1912,8 +1933,52 @@ $totalarray = array(
 );
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 $showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
-while ($i < $imaxinloop) {
+$PROJECT_MAX_SALES_TO_SHOW_IN_LIST = getDolGlobalInt('PROJECT_MAX_SALES_TO_SHOW_IN_LIST', 5);
+
+// Load the records of the page first, so data needed by all lines are loaded with one request instead of one per line
+$arrayofobj = array();
+for ($k = 0; $k < $imaxinloop; $k++) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break;
+	}
+	$arrayofobj[] = $obj;
+}
+// Assigned users and contacts of the projects of the page
+$assignedcontactsbysource = array('internal' => array(), 'external' => array());
+if (!empty($arrayfields['c.assigned']['checked']) && !empty($arrayofobj)) {
+	foreach (array_keys($assignedcontactsbysource) as $source) {
+		$tmpcontacts = $object->getContactsOfObjects(array_column($arrayofobj, 'id'), $source, 1);
+		$assignedcontactsbysource[$source] = (is_array($tmpcontacts) ? $tmpcontacts : array());
+	}
+}
+$assigneduserstatic = new User($db);
+$assignedcontactstatic = new Contact($db);
+// Sales representatives of the thirdparties of the page
+$salesrepresentativesbysoc = array();
+if (!empty($arrayfields['commercial']['checked']) && !empty($arrayofobj)) {
+	$salesrepresentativesbysoc = $companystatic->getSalesRepresentativesOfThirdparties(array_column($arrayofobj, 'socid'));
+	if (!is_array($salesrepresentativesbysoc)) {
+		$salesrepresentativesbysoc = array();
+	}
+}
+$salesrepstatic = new User($db);
+// Parent projects: the access is checked once for the page, with the same rules than checkUserAccessToObject()
+$parentprojectstatic = new Project($db);
+$userhasrightreadallprojects = $user->hasRight('projet', 'all', 'lire');
+$entitiesforproject = array();
+$authorizedprojects = array();
+if (!empty($arrayfields['p.fk_project']['checked'])) {
+	if ($userhasrightreadallprojects) {
+		$entitiesforproject = array_flip(explode(',', getEntity('project')));
+	} else {
+		// The list must not be restricted to the thirdparty of the filter, the parent project may be linked to another one
+		$authorizedprojects = array_flip(explode(',', ($socid > 0 ? $object->getProjectsAuthorizedForUser($user, 0, 1, 0) : $projectsListId)));
+	}
+}
+
+while ($i < $imaxinloop) {
+	$obj = (empty($arrayofobj[$i]) ? null : $arrayofobj[$i]);
 	if (empty($obj)) {
 		break; // Should not happen
 	}
@@ -1956,8 +2021,8 @@ while ($i < $imaxinloop) {
 	$object->usage_organize_event = $obj->usage_organize_event;
 	$object->email_msgid = $obj->email_msgid;
 	$object->import_key = $obj->import_key;
-	$object->note_public = $obj->note_public;
-	$object->note_private = $obj->note_private;
+	$object->note_public = (isset($obj->note_public) ? $obj->note_public : '');	// Notes are not always loaded by the request
+	$object->note_private = (isset($obj->note_private) ? $obj->note_private : '');
 	$object->thirdparty = $companystatic;
 
 	//$userAccess = $object->restrictedProjectArea($user); // disabled, permission on project must be done by the select
@@ -1966,33 +2031,45 @@ while ($i < $imaxinloop) {
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		$ifisrt = 1;
-		foreach (array('internal', 'external') as $source) {
-			$tab = $object->liste_contact(-1, $source, 0, '', 1);
+		foreach ($assignedcontactsbysource as $source => $contactsbyproject) {
+			$tab = (empty($contactsbyproject[$object->id]) ? array() : $contactsbyproject[$object->id]);
 			$numcontact = count($tab);
 			if (!empty($numcontact)) {
 				foreach ($tab as $contactproject) {
 					//var_dump($contacttask);
+					// Objects are filled with data loaded before the loop, so no fetch is done
 					if ($source == 'internal') {
-						if (!empty($conf->cache['user'][$contactproject['id']])) {
-							$c = $conf->cache['user'][$contactproject['id']];
-						} else {
-							$c = new User($db);
-							$c->fetch($contactproject['id']);
-							$conf->cache['user'][$contactproject['id']] = $c;
-						}
+						$assigneduserstatic->id = $contactproject['id'];
+						$assigneduserstatic->socid = $contactproject['socid'];
+						$assigneduserstatic->entity = $contactproject['entity'];
+						$assigneduserstatic->login = $contactproject['login'];
+						$assigneduserstatic->civility_code = $contactproject['civility'];
+						$assigneduserstatic->lastname = $contactproject['lastname'];
+						$assigneduserstatic->firstname = $contactproject['firstname'];
+						$assigneduserstatic->email = $contactproject['email'];
+						$assigneduserstatic->photo = $contactproject['photo'];
+						$assigneduserstatic->gender = $contactproject['gender'];
+						$assigneduserstatic->status = $contactproject['statuscontact'];
+						$assigneduserstatic->job = $contactproject['job'];
+						$assigneduserstatic->office_phone = $contactproject['phone'];
+						$assigneduserstatic->office_fax = $contactproject['office_fax'];
+						$assigneduserstatic->user_mobile = $contactproject['phone_mobile'];
+						$stringassignedusers .= $assigneduserstatic->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					} else {
-						if (!empty($conf->cache['contact'][$contactproject['id']])) {
-							$c = $conf->cache['contact'][$contactproject['id']];
-						} else {
-							$c = new Contact($db);
-							$c->fetch($contactproject['id']);
-							$conf->cache['contact'][$contactproject['id']] = $c;
-						}
-					}
-					if (get_class($c) == 'User') {
-						$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
-					} else {
-						$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
+						$assignedcontactstatic->id = $contactproject['id'];
+						$assignedcontactstatic->socid = $contactproject['socid'];
+						$assignedcontactstatic->entity = $contactproject['entity'];
+						$assignedcontactstatic->civility_code = $contactproject['civility'];
+						$assignedcontactstatic->lastname = $contactproject['lastname'];
+						$assignedcontactstatic->firstname = $contactproject['firstname'];
+						$assignedcontactstatic->email = $contactproject['email'];
+						$assignedcontactstatic->photo = $contactproject['photo'];
+						$assignedcontactstatic->status = $contactproject['statuscontact'];
+						$assignedcontactstatic->poste = $contactproject['job'];
+						$assignedcontactstatic->phone_pro = $contactproject['phone'];
+						$assignedcontactstatic->phone_perso = $contactproject['phone_perso'];
+						$assignedcontactstatic->phone_mobile = $contactproject['phone_mobile'];
+						$stringassignedusers .= $assignedcontactstatic->getNomUrl(-2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					}
 					$ifisrt = 0;
 				}
@@ -2220,12 +2297,23 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.fk_project']['checked'])) {
 			print '<td class="nowraponall">';
 			if ($object->fk_project) {
-				$parent_object = new Project($db);
-				$parent_result = $parent_object->fetch($object->fk_project);
-				if ($parent_result > 0) {
-					$accessallowed = checkUserAccessToObject($user, array('projet'), $parent_object, 'projet&project', '', '', 'rowid', '');
+				// The parent project is loaded by the main request (join on pa)
+				if (!is_null($obj->parent_ref)) {
+					if ($userhasrightreadallprojects) {
+						$accessallowed = isset($entitiesforproject[$obj->parent_entity]);
+					} else {
+						$accessallowed = isset($authorizedprojects[$object->fk_project]);
+					}
 					if ($accessallowed) {
-						print $parent_object->getNomUrl(-1);
+						$parentprojectstatic->id = $object->fk_project;
+						$parentprojectstatic->ref = $obj->parent_ref;
+						$parentprojectstatic->title = $obj->parent_title;
+						$parentprojectstatic->entity = $obj->parent_entity;
+						$parentprojectstatic->public = $obj->parent_public;
+						$parentprojectstatic->status = $obj->parent_status;
+						$parentprojectstatic->date_start = $db->jdate($obj->parent_date_start);
+						$parentprojectstatic->date_end = $db->jdate($obj->parent_date_end);
+						print $parentprojectstatic->getNomUrl(-1);
 					} else {
 						$parent_url = DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project;
 						print '<a href="'.$parent_url.'">';
@@ -2310,32 +2398,32 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['commercial']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($obj->socid) {
-				$PROJECT_MAX_SALES_TO_SHOW_IN_LIST = getDolGlobalInt('PROJECT_MAX_SALES_TO_SHOW_IN_LIST', 5);
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
-				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
+				// Sales representatives were loaded before the loop for all thirdparties of the page
+				$listsalesrepresentatives = (empty($salesrepresentativesbysoc[$obj->socid]) ? array() : $salesrepresentativesbysoc[$obj->socid]);
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
 				if ($nbofsalesrepresentative > $PROJECT_MAX_SALES_TO_SHOW_IN_LIST) {
 					// We print only number
 					print $nbofsalesrepresentative;
 				} elseif ($nbofsalesrepresentative > 0) {
-					$userstatic = new User($db);
+					// Use a dedicated object, $userstatic contains the author of the project shown in another column
 					$j = 0;
 					foreach ($listsalesrepresentatives as $val) {
-						$userstatic->id = $val['id'];
-						$userstatic->lastname = $val['lastname'];
-						$userstatic->firstname = $val['firstname'];
-						$userstatic->email = $val['email'];
-						$userstatic->status = $val['statut'];
-						$userstatic->entity = $val['entity'];
-						$userstatic->photo = $val['photo'];
-						$userstatic->login = $val['login'];
-						$userstatic->office_phone = $val['office_phone'];
-						$userstatic->office_fax = $val['office_fax'];
-						$userstatic->user_mobile = $val['user_mobile'];
-						$userstatic->job = $val['job'];
-						$userstatic->gender = $val['gender'];
-						print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+						$salesrepstatic->id = $val['id'];
+						$salesrepstatic->lastname = $val['lastname'];
+						$salesrepstatic->firstname = $val['firstname'];
+						$salesrepstatic->email = $val['email'];
+						$salesrepstatic->status = $val['statut'];
+						$salesrepstatic->entity = $val['entity'];
+						$salesrepstatic->photo = $val['photo'];
+						$salesrepstatic->login = $val['login'];
+						$salesrepstatic->office_phone = $val['office_phone'];
+						$salesrepstatic->office_fax = $val['office_fax'];
+						$salesrepstatic->user_mobile = $val['user_mobile'];
+						$salesrepstatic->job = $val['job'];
+						$salesrepstatic->gender = $val['gender'];
+						print ($nbofsalesrepresentative < 2) ? $salesrepstatic->getNomUrl(-1, '', 0, 0, 12) : $salesrepstatic->getNomUrl(-2);
 						$j++;
 						if ($j < $nbofsalesrepresentative) {
 							print ' ';

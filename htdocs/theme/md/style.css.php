@@ -976,7 +976,7 @@ input.pageplusone {
 }
 .spantitle {
 	opacity: 0.7;
-	font-size: 0.95em;
+	font-size: 0.9em;
 }
 .noopacity {
 	opacity: unset !important;
@@ -5509,6 +5509,9 @@ input.liste_titre {
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
 	white-space: nowrap;
 	line-height: 1.5em;
+}
+.noborder tr.liste_total td, tr.liste_total td {
+	font-weight: bold;
 }
 .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
 	white-space: normal;

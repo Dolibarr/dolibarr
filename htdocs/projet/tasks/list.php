@@ -360,12 +360,15 @@ if (count($listoftaskcontacttype) == 0) {
 
 // Build and execute select
 // --------------------------------------------------------------------
-$sanitizeddistinct = 'DISTINCT'; // We add distinct until we have rewritten the filter on contact of a project and task (into element_contact) to use a AND EXISTS instead of a join.
-$sql = "SELECT ".$sanitizeddistinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
+// No DISTINCT: filters on contacts of project and task are done with a AND EXISTS, so no duplicate lines are possible.
+$sql = "SELECT p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
 $sql .= " s.nom as name, s.name_alias as alias, s.rowid as socid,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_modification,";
 $sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut as status,";
-$sql .= " t.description, t.fk_task_parent, t.budget_amount";
+$sql .= " t.fk_task_parent, t.budget_amount";
+if (!empty($arrayfields['t.description']['checked'])) {
+	$sql .= ", t.description";	// Text field loaded only when its column is visible
+}
 // Add sum fields
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " , SUM(tt.element_duration * ".$db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.element_duration * ".$db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
@@ -387,17 +390,13 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t ON t.fk_projet = p.rowid";
+$sqltimejoin = '';
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype = 'task')";
+	$sqltimejoin = " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype = 'task')";
+	$sql .= $sqltimejoin;
 }
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
-}
-if ($search_project_user > 0) {
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ecp ON ecp.element_id = p.rowid AND ecp.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttype))).") AND ecp.fk_socpeople = ".((int) $search_project_user);
-}
-if ($search_task_user > 0) {
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_contact as ect ON ect.element_id = t.rowid AND ect.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listoftaskcontacttype))).") AND ect.fk_socpeople = ".((int) $search_task_user);
 }
 // Add table from hooks
 $parameters = array();
@@ -414,6 +413,12 @@ if (is_object($projectstatic) && $projectstatic->id > 0) {
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) {
 	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
+}
+if ($search_project_user > 0) {
+	$sql .= " AND EXISTS (SELECT ecp.rowid FROM ".MAIN_DB_PREFIX."element_contact as ecp WHERE ecp.element_id = p.rowid AND ecp.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listofprojectcontacttype))).") AND ecp.fk_socpeople = ".((int) $search_project_user).")";
+}
+if ($search_task_user > 0) {
+	$sql .= " AND EXISTS (SELECT ect.rowid FROM ".MAIN_DB_PREFIX."element_contact as ect WHERE ect.element_id = t.rowid AND ect.fk_c_type_contact IN (".$db->sanitize(implode(',', array_keys($listoftaskcontacttype))).") AND ect.fk_socpeople = ".((int) $search_task_user).")";
 }
 if ($search_project_ref) {
 	// When the project label column is not displayed, the project label is shown under the project ref, so we search into both
@@ -568,10 +573,13 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
-	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.fk_statut, p.datee, p.fk_opp_status, p.public, p.fk_user_creat,";
-	$sql .= " s.nom, s.rowid,";
+	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.fk_statut, p.datee, p.fk_opp_status, p.public, p.fk_user_creat, p.usage_bill_time,";
+	$sql .= " s.nom, s.name_alias, s.rowid,";
 	$sql .= " t.datec, t.dateo, t.datee, t.tms,";
-	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut";
+	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut, t.fk_task_parent";
+	if (!empty($arrayfields['t.description']['checked'])) {
+		$sql .= ", t.description";
+	}
 	// Add fields from extrafields
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -585,6 +593,9 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	if ($sqltimejoin) {
+		$sqlforcount = str_replace($sqltimejoin, '', $sqlforcount);	// Without the GROUP BY, the join on times would count lines of time spent instead of tasks
+	}
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
@@ -602,7 +613,11 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 }
 
 // Complete request and execute it with limit
-$sql .= $db->order($sortfield, $sortorder);
+$sqlorder = $db->order($sortfield, $sortorder);
+$sql .= $sqlorder;
+if ($sqlorder && !preg_match('/\bt\.rowid\b/', $sortfield)) {
+	$sql .= ", t.rowid ASC";	// Last sort criteria to get a stable order of tasks of a same project (also between pages)
+}
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
@@ -717,7 +732,7 @@ if ($search_task_status != '') {
 if ($search_societe != '') {
 	$param .= '&search_societe='.urlencode($search_societe);
 }
-if ($search_societe != '') {
+if ($search_societe_alias != '') {
 	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
 }
 if ($search_projectstatus != '') {
@@ -850,7 +865,7 @@ $moreforfilter .= '</div>';
 // Filter on customer categories
 if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0);
 }
 
 if (!empty($moreforfilter)) {
@@ -1172,7 +1187,7 @@ $timespentoutputformat = 'allhourmin';
 if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
 	$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 }
-if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
+if (getDolGlobalString('PROJECT_TIME_SPENT_FORMAT')) {
 	$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 }
 
@@ -1193,7 +1208,7 @@ while ($i < $imaxinloop) {
 	$object->id = $obj->id;
 	$object->ref = $obj->ref;
 	$object->label = $obj->label;
-	$object->description = $obj->description;
+	$object->description = $obj->description ?? '';
 	$object->status = $obj->status;
 	$object->progress = $obj->progress;
 	$object->budget_amount = $obj->budget_amount;
@@ -1210,6 +1225,7 @@ while ($i < $imaxinloop) {
 	$projectstatic->statut = $obj->projectstatus;
 	$projectstatic->status = $obj->projectstatus;
 	$projectstatic->datee = $db->jdate($obj->projectdatee);
+	$projectstatic->date_end = $projectstatic->datee;	// Property used by hasDelay() and the tooltip
 
 	if ($obj->socid) {
 		$socstatic->id = $obj->socid;
@@ -1239,7 +1255,7 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		$userAccess = $projectstatic->restrictedProjectArea($user); // why this ?
+		$userAccess = 1;	// No call to restrictedProjectArea() (2 SQL per line): the main SQL already keeps only projects the user can read
 		if ($userAccess >= 0) {
 			// Show here line of result
 			$j = 0;
@@ -1648,7 +1664,7 @@ while ($i < $imaxinloop) {
 if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
 	foreach ($totalarray['totalizable'] as $keytotalizable => $valtotalizable) {
 		$totalarray['pos'][$valtotalizable['pos']] = $keytotalizable;
-		$totalarray['val'][$keytotalizable] = $valtotalizable['total'];
+		$totalarray['val'][$keytotalizable] = isset($valtotalizable['total']) ? $valtotalizable['total'] : 0;
 	}
 }
 

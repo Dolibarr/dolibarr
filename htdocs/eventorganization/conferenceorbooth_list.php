@@ -110,6 +110,7 @@ if (!$sortorder) {
 
 // Initialize array of search criteria
 $search_all = GETPOST('search_all', 'alphanohtml');
+$search_projecttitle = GETPOST('search_projecttitle', 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -144,6 +145,9 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+
+// Add the "Project label" column (from a joined table so not into $object->fields)
+$arrayfields['prj.title'] = array('label' => 'ProjectLabel', 'checked' => 1, 'enabled' => 1, 'position' => null, 'help' => '');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
@@ -152,6 +156,11 @@ $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $objec
 
 // Change position of fields in arrayfield and object
 include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
+// Set the position of the "Project label" column right after the "Project" column, when the user has not already positioned it
+if (!isset($arrayfields['prj.title']['position']) && isset($arrayfields['t.fk_project']['position'])) {
+	$arrayfields['prj.title']['position'] = $arrayfields['t.fk_project']['position'] + 0.5;
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -227,6 +236,7 @@ if (empty($reshook)) {
 				$search[$key.'_dtend'] = '';
 			}
 		}
+		$search_projecttitle = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -660,12 +670,13 @@ if (!empty($project->id)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup @phan-suppress-current-line PhanTypeMismatchArgument
 
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
+$sql .= ", prj.title as projecttitle";
 
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -687,6 +698,8 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.id = ef.fk_object)";
 }
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as cact ON cact.id=t.fk_action AND cact.module LIKE '%@eventorganization'";
+// Add the project table to be able to show the project label
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as prj ON prj.rowid = t.fk_project";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -701,6 +714,9 @@ if ($projectid > 0) {
 }
 if (!empty($thirdpartyid)) {
 	$sql .= " AND t.fk_soc = ".((int) $thirdpartyid);
+}
+if ($search_projecttitle != '') {
+	$sql .= natural_search('prj.title', $db->sanitize($search_projecttitle), 0);
 }
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
@@ -822,6 +838,9 @@ foreach ($search as $key => $val) {
 	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
+}
+if ($search_projecttitle != '') {
+	$param .= '&search_projecttitle='.urlencode($search_projecttitle);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -978,6 +997,13 @@ foreach ($object->fields as $key => $val) {
 		}
 		print '</td>';
 	}
+
+	// Add the "Project label" column after the "Project" column (it is not a field of the object)
+	if ($key == 'fk_project' && !empty($arrayfields['prj.title']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input type="text" class="flat maxwidth75" name="search_projecttitle" value="'.dol_escape_htmltag($search_projecttitle).'">';
+		print '</td>';
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -1020,6 +1046,12 @@ foreach ($object->fields as $key => $val) {
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''), 0, (empty($val['helplist']) ? '' : $val['helplist']))."\n";
+		$totalarray['nbfield']++;
+	}
+
+	// Add the "Project label" column after the "Project" column (it is not a field of the object)
+	if ($key == 'fk_project' && !empty($arrayfields['prj.title']['checked'])) {
+		print getTitleFieldOfList($arrayfields['prj.title']['label'], 0, $_SERVER['PHP_SELF'], 'prj.title', '', $param, 'class="left tdoverflowmax150"', $sortfield, $sortorder, 'left tdoverflowmax150 ')."\n";
 		$totalarray['nbfield']++;
 	}
 }
@@ -1121,6 +1153,12 @@ while ($i < $imaxinloop) {
 			}
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
+			// When the project label column is not displayed, we show the project label under the project ref
+			$showprojectlabelunderref = ($key == 'fk_project' && empty($arrayfields['prj.title']['checked']) && (string) $obj->projecttitle !== '');
+			if ($showprojectlabelunderref) {
+				$cssforfield .= ' tdlineheightsmall';
+			}
+
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !is_numeric($object->$key)) {
@@ -1129,6 +1167,11 @@ while ($i < $imaxinloop) {
 				print '>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
+				} elseif ($key == 'fk_project') {
+					print $object->showOutputField($val, $key, (string) $object->$key, '');
+					if ($showprojectlabelunderref) {
+						print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->projecttitle).'"><span class="spantitle">'.dolPrintLabel($obj->projecttitle).'</span></div>';
+					}
 				} elseif ($key == 'ref') {
 					if (empty($arrayfields['t.label']['checked'])) {
 						// Show label under the ref when label column is not enabled
@@ -1161,6 +1204,16 @@ while ($i < $imaxinloop) {
 						$totalarray['val']['t.'.$key] = 0;
 					}
 					$totalarray['val']['t.'.$key] += $object->$key;
+				}
+			}
+
+			// Add the "Project label" column after the "Project" column (it is not a field of the object)
+			if ($key == 'fk_project' && !empty($arrayfields['prj.title']['checked'])) {
+				print '<td class="left tdoverflowmax150 classfortooltip" title="'.dol_escape_htmltag(dol_trunc($obj->projecttitle, 120)).'">';
+				print '<span class="spantitle">'.dolPrintLabel($obj->projecttitle).'</span>';
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
 				}
 			}
 		}

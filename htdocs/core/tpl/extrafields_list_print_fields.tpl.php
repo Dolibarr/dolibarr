@@ -25,6 +25,7 @@
  *
  * @var string $extrafieldsobjectkey
  * @var string $extrafieldsobjectprefix
+ * @var ?string $extrafieldsonlykey		If set, only the column of this extrafield (code without prefix) is output
  * @var int $i
  * @var array{nbfields:int,val:array<string,string>,pos?:array<int,string>} $totalarray
  */
@@ -53,6 +54,9 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 		}
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+			if (!empty($extrafieldsonlykey) && (string) $key !== (string) $extrafieldsonlykey) {
+				continue;
+			}
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
 					continue;

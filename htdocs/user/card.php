@@ -90,7 +90,7 @@ $backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
 $forcepasswordchange = GETPOSTINT('forcepasswordchange');
 
-if (empty($id) && $action != 'add' && $action != 'create') {
+if (empty($id) && $action != 'add' && $action != 'create' && $action!='adduserldap') {
 	$id = $user->id;
 }
 
@@ -167,6 +167,11 @@ if ($id > 0) {
 	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")))&& (empty($user->socid) || $user->socid == $object->socid);
 }
 
+$permissiontoeditextra = $permissiontoedit;
+if (GETPOST('attribute', 'aZ09') && !empty($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 // Permission to read salary and hourly rate
 $permissiontoseesalary = (empty($user->socid) && (
 	(isModEnabled('salaries') && $user->hasRight("salaries", "read") && ($id == 0 || in_array($id, $childids)))		// If user is a manager of employee
@@ -193,7 +198,7 @@ if (empty($reshook)) {
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+			if (empty($id) && (($action != 'add' && $action != 'create' && $action!='adduserldap') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
 				$backtopage = DOL_URL_ROOT.'/user/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
@@ -416,6 +421,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$id = $object->create($user);
+
 			if ($id > 0) {
 				$resPass = 0;
 				if (GETPOST('password', 'password')) {
@@ -782,6 +788,31 @@ if (empty($reshook)) {
 					}
 				}
 			}
+		}
+	}
+
+	// Update extrafields
+	if ($action == 'update_extras' && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);   // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+		if ($ret < 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			$result = $object->updateExtraField($attribute_name, 'USER_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$action = 'edit_extras';
 		}
 	}
 
