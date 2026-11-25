@@ -820,9 +820,9 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	// Remove the LEFT JOIN that can't change the number of records when their alias is not used elsewhere (filters, hooks, ...)
 	foreach ($sqljoinsremovableforcount as $tmpalias => $tmpsqljoin) {
-		$tmpsqlforcount = str_replace($tmpsqljoin, '', $sqlforcount);
-		if (!preg_match('/\b'.preg_quote($tmpalias, '/').'\./', $tmpsqlforcount)) {
-			$sqlforcount = $tmpsqlforcount;
+		$sqltmpforcount = str_replace($tmpsqljoin, '', $sqlforcount);
+		if (!preg_match('/\b'.preg_quote($tmpalias, '/').'\./', $sqltmpforcount)) {
+			$sqlforcount = $sqltmpforcount;
 		}
 	}
 
