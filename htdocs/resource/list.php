@@ -178,6 +178,7 @@ $arrayfields = array(
 	),
 );
 // Extra fields
+$extrafieldspositionoffset = 1000;	// To keep extrafields after the hardcoded fields by default
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
 $parameters = array('arrayfields' => &$arrayfields);
@@ -512,9 +513,18 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+// Fields and extrafields ordered by position
 foreach ($arrayfields as $key => $val) {
+	// Extra fields
+	$regkey = array();
+	if (!empty($val['checked']) && preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
 	if (empty($val['checked']) || !in_array($key, $corelistfields)) {
-		continue; // Extra fields are rendered by the extrafields tpls
+		continue;
 	}
 	switch ($key) {
 		case 't.rowid':
@@ -579,8 +589,6 @@ foreach ($arrayfields as $key => $val) {
 			break;
 	}
 }
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Action column
 if (!$conf->main_checkbox_left_column) {
@@ -601,14 +609,21 @@ print '<tr class="liste_titre">';
 if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
+// Fields and extrafields ordered by position
 foreach ($arrayfields as $key => $val) {
+	// Extra fields
+	$regkey = array();
+	if (!empty($val['checked']) && preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
 	if (!empty($val['checked']) && in_array($key, $corelistfields)) {
 		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], $key, "", $param, "", $sortfield, $sortorder, ($key == 't.rowid' ? 'center ' : ''));
 	}
 }
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -655,9 +670,18 @@ while ($i < $imaxinloop) {
 		}
 	}
 
+	// Fields and extrafields ordered by position
 	foreach ($arrayfields as $key => $val) {
+		// Extra fields
+		$regkey = array();
+		if (!empty($val['checked']) && preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+			$extrafieldsonlykey = $regkey[1];
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+			$extrafieldsonlykey = '';
+			continue;
+		}
 		if (empty($val['checked']) || !in_array($key, $corelistfields)) {
-			continue; // Extra fields are rendered by the extrafields tpls
+			continue;
 		}
 		switch ($key) {
 			case 't.rowid':
@@ -702,8 +726,6 @@ while ($i < $imaxinloop) {
 			$totalarray['nbfield']++;
 		}
 	}
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
