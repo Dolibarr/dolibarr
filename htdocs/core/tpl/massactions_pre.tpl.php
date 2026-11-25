@@ -337,7 +337,10 @@ if ($massaction == 'presend') {
 	$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 	$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
+	// Keys depending on each selected record are kept, they are substituted for each record when sending
 	$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
+	$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
+	$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
 	$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
 
 	$parameters = array(

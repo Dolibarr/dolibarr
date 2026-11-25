@@ -9703,13 +9703,18 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					if (!empty($object->fk_project) && $object->fk_project > 0) {
 						$project_id = $object->fk_project;
 					} elseif (!empty($object->fk_projet) && $object->fk_projet > 0) {
-						$project_id = $object->fk_project;
+						$project_id = $object->fk_projet;
 					}
 					if ($project_id > 0) {
 						// path:class:method:id
 						$substitutionarray['__PROJECT_ID__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
 						$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
 						$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+					} else {
+						// Object is not linked to a project: substitute with an empty value instead of leaving the keys in the text
+						$substitutionarray['__PROJECT_ID__'] = '';
+						$substitutionarray['__PROJECT_REF__'] = '';
+						$substitutionarray['__PROJECT_NAME__'] = '';
 					}
 				}
 			}
