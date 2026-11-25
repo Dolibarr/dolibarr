@@ -317,7 +317,7 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
 		$rowspan++;
-		$sectionauto[] = array('position' => 10, 'level' => 1, 'module' => 'product', 'test' => $user->hasRight('produit', 'lire'), 'label' => $langs->trans("ProductsAndServices"), 'desc' => $langs->trans("ECMDocsByProducts"));
+		$sectionauto[] = array('position' => 10, 'level' => 1, 'module' => 'product', 'test' => ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')), 'label' => $langs->trans("ProductsAndServices"), 'desc' => $langs->trans("ECMDocsByProducts"));
 	}
 	if (isModEnabled("societe")) {
 		$rowspan++;
@@ -406,7 +406,7 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		$sectionauto[] = array('position' => 210, 'level' => 1, 'module' => 'recruitment-recruitmentcandidature', 'test' => $user->hasRight('recruitment', 'recruitmentjobposition', 'read'), 'label' => $langs->trans("Candidatures"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
 	}
 	$rowspan++;
-	$sectionauto[] = array('position' => 220, 'level' => 1, 'module' => 'user', 'test' => 1, 'label' => $langs->trans("Users"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Users")));
+	$sectionauto[] = array('position' => 220, 'level' => 1, 'module' => 'user', 'test' => $user->hasRight('user', 'user', 'lire'), 'label' => $langs->trans("Users"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Users")));
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
@@ -543,7 +543,18 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 
 $mode = 'noajax';
 $url = DOL_URL_ROOT.'/ecm/index_auto.php';
-include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
+// The documents of a module are listed only if its section is shown to the user (permission to read the module)
+$allowedmodule = empty($module);
+foreach ($sectionauto as $tmpsection) {
+	if (!empty($module) && is_array($tmpsection) && ($tmpsection['module'] ?? '') == $module && !empty($tmpsection['test'])) {
+		$allowedmodule = true;
+	}
+}
+if ($allowedmodule) {
+	include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
+} else {
+	print '<div class="error">'.$langs->trans("NotEnoughPermissions").'</div>';
+}
 
 
 // End right panel
