@@ -1158,6 +1158,24 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 			// When one bank line pays several objects, add the ref of the object to the labels, so the lines of each object are not seen as duplicates by BookKeeping::create()
 			$label_suffix = (count($payment['objects']) > 1 ? ' - '.$objectInfos['ref'] : '');
 
+			// An object with a total of 0 (tax included) whose operations are not 0 (they cancel out) can't be split between its
+			// accounts: it is not recorded (instead of booking the whole payment on the last account)
+			$cannotsplit = false;
+			if ((float) $objectInfos['total_ttc'] == 0) {	// (float): totals read from the database are strings like "0.00000000", not empty()
+				foreach ($objectInfos['operations'] as $operation) {
+					if (!empty($operation['total_ht'])) {
+						$cannotsplit = true;
+						break;
+					}
+				}
+			}
+			if ($cannotsplit) {
+				$errorforline++;
+				$error++;
+				setEventMessages($langs->trans('ErrorBankJournalObjectTotalZero', $objectInfos['ref']), null, 'errors');
+				continue;
+			}
+
 			$total_check = 0;
 
 			// Show bank line
@@ -1185,7 +1203,7 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 			}
 
 			// Operations
-			$payment_total_vat = (empty($objectInfos['total_ttc']) ? 0.0 : (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT'));	// No division by zero for an object with a total of 0
+			$payment_total_vat = ((float) $objectInfos['total_ttc'] == 0 ? 0.0 : (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT'));	// No division by zero for an object with a total of 0
 			$payment_total_ht = $object_data['amount'] - $payment_total_vat;
 			$total_operation = 0;
 			$idx = 1;
@@ -1208,7 +1226,12 @@ if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'w
 					}
 					$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
 					if ($idx < $nb_operation) {
-						$amount = (empty($objectInfos['total_ht']) ? 0 : price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT'));
+						if ((float) $objectInfos['total_ht'] != 0) {
+							$amount = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
+						} else {
+							// Total of 0 without tax (lines that cancel out, with different VAT rates): same share, from the total tax included
+							$amount = price2num($object_data['amount'] * $operation['total_ht'] / $objectInfos['total_ttc'], 'MT');
+						}
 						$total_operation += (float) $amount;
 					} else {
 						$amount = $payment_total_ht - $total_operation;
@@ -1464,13 +1487,29 @@ if (empty($action) || $action == 'view') {
 			// When one bank line pays several objects, add the ref of the object to the labels, so the lines of each object are not seen as duplicates by BookKeeping::create()
 			$label_suffix = (count($payment['objects']) > 1 ? ' - '.$objectInfos['ref'] : '');
 
+			// An object with a total of 0 (tax included) whose operations are not 0 (they cancel out) can't be split between its
+			// accounts: it is not recorded (instead of booking the whole payment on the last account)
+			$cannotsplit = false;
+			if ((float) $objectInfos['total_ttc'] == 0) {	// (float): totals read from the database are strings like "0.00000000", not empty()
+				foreach ($objectInfos['operations'] as $operation) {
+					if (!empty($operation['total_ht'])) {
+						$cannotsplit = true;
+						break;
+					}
+				}
+			}
+			if ($cannotsplit) {
+				print '<tr class="oddeven"><td>'.$date.'</td><td>'.$objectInfos['url'].'</td><td colspan="5"><span class="warning">'.$langs->trans('ErrorBankJournalObjectTotalZero', $objectInfos['ref']).'</span></td></tr>';
+				continue;
+			}
+
 			// Show bank line
 			if ($object_data['amount'] >= 0) {
 				FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountInfos['account_number'], $accountInfos['account_ref'].$label_suffix, $payment['type_payment'], $object_data['amount']);
 			}
 
 			// Operations
-			$payment_total_vat = (empty($objectInfos['total_ttc']) ? 0.0 : (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT'));	// No division by zero for an object with a total of 0
+			$payment_total_vat = ((float) $objectInfos['total_ttc'] == 0 ? 0.0 : (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT'));	// No division by zero for an object with a total of 0
 			$payment_total_ht = $object_data['amount'] - $payment_total_vat;
 			$total_operation = 0;
 			$idx = 1;
@@ -1486,7 +1525,12 @@ if (empty($action) || $action == 'view') {
 				$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
 				if (!empty($operation['total_ht'])) {
 					if ($idx < $nb_operation) {
-						$value = (empty($objectInfos['total_ht']) ? 0 : price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT'));
+						if ((float) $objectInfos['total_ht'] != 0) {
+							$value = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
+						} else {
+							// Total of 0 without tax (lines that cancel out, with different VAT rates): same share, from the total tax included
+							$value = price2num($object_data['amount'] * $operation['total_ht'] / $objectInfos['total_ttc'], 'MT');
+						}
 						$total_operation += (float) $value;
 					} else {
 						$value = $payment_total_ht - $total_operation;

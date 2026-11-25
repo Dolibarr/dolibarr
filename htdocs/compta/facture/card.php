@@ -136,7 +136,8 @@ $array_options = array();
 
 // Load object
 if ($id > 0 || !empty($ref)) {
-	if ($action != 'add') {
+	// The creation form posts ref=provisoire (action=add, or action=create when the page is reloaded after a thirdparty change): there is nothing to load
+	if ($action != 'add' && $action != 'create') {
 		if (!getDolGlobalString('INVOICE_USE_SITUATION')) {
 			$fetch_situation = false;
 		} else {
@@ -2356,7 +2357,10 @@ if (empty($reshook)) {
 			$action = 'create';
 			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
 			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
-			setEventMessages($object->error, $object->errors, 'errors');
+			// A failed form check has already shown its own message and left $object->error empty
+			if (!empty($object->error) || !empty($object->errors)) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && (GETPOST('alldate_start', 'alpha') || GETPOST('alldate_end', 'alpha')) && $usercancreate) {
 		// Define date start and date end for all line

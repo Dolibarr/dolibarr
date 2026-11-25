@@ -528,6 +528,7 @@ ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not i
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 Error_BOOKKEEPING_ADDON_NotDefined=Error, the rule for bookkeeping numbering ref is not defined into general setup of Accountancy module
 ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
+ErrorBankJournalObjectTotalZero=%s: the total (tax included) is 0 but its lines are not (they cancel out), so the payment can't be split between the accounts. Not recorded.
 ProductUsage=Product or service usage
 ## Import
 ImportAccountingEntries=Accounting entries

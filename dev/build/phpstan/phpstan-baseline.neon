@@ -12991,6 +12991,12 @@ parameters:
 			path: ../../../htdocs/projet/tasks/list.php
 
 		-
+			message: '#^Offset ''total'' on \*NEVER\* in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/projet/tasks/list.php
+
+		-
 			message: '#^Offset ''totalbilled'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.offset
 			count: 1
@@ -13045,7 +13051,7 @@ parameters:
 			path: ../../../htdocs/projet/tasks/list.php
 
 		-
-			message: '#^Offset ''type'' on array\{nbfield\: int\<0, max\>, type\: array\{\}, val\: array\{t\.planned_workload\: \(float\|int\), t\.duration_effective\: \(float\|int\), t\.progress\: \(float\|int\), t\.budget_amount\: \(float\|int\), t\.tobill\?\: \(array\|float\|int\), t\.billed\?\: \(array\|float\|int\)\}, totalplannedworkload\: \(float\|int\), totaldurationeffective\: \(float\|int\), totaldurationdeclared\: \(float\|int\), totaltobillfield\: int\<0, max\>, totalbilledfield\: int\<0, max\>, \.\.\.\} in isset\(\) always exists and is not nullable\.$#'
+			message: '#^Offset int\<2, max\> on array\{\} in isset\(\) does not exist\.$#'
 			identifier: isset.offset
 			count: 1
 			path: ../../../htdocs/projet/tasks/list.php
@@ -13053,7 +13059,7 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 1
+			count: 2
 			path: ../../../htdocs/projet/tasks/list.php
 
 		-

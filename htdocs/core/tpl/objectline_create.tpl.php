@@ -892,7 +892,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 					// Get the price for the product and display it
 					console.log("Load unit price and set it into #price_ht or #price_ttc for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
 					$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
-						{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>', 'addalsovatforthirdpartyid': 1 },
+						{ 'id': $(this).val(), 'socid': <?php print (int) (property_exists($object, 'socid') ? $object->socid : 0); ?>, 'token': '<?php print currentToken(); ?>', 'addalsovatforthirdpartyid': 1 },
 						function(data) {
 							console.log("objectline_create.tpl Load unit price ends, we got value ht="+data.price_ht+" ttc="+data.price_ttc+" pricebasetype="+data.pricebasetype);
 

@@ -10804,7 +10804,8 @@ abstract class CommonObject
 				if ($resqlupdate === false) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
-				} else {
+				} elseif ((string) $this->ref === '' || $this->ref === '(PROV)') {
+					// Same condition as the WHERE above: an object created with its final ref keeps it in memory too
 					$this->ref = '(PROV'.$this->id.')';
 				}
 			}

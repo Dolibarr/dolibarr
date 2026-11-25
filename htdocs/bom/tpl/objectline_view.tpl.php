@@ -203,7 +203,13 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 	if ($res > 0) {
 		$unit = new CUnits($object->db);
 		$fk_defaultUnit = $unit->getUnitFromCode('h', 'short_label', 'time');
-		$nbPlannedHour = $unit->unitConverter($line->qty, $line->fk_unit, $fk_defaultUnit);
+		// Convert qty of line into hours without rounding (unitConverter() rounds to 2 decimals, so 1 minute
+		// would become 0.02 h). Only the resulting amount is rounded, as done by BOM::calculateCosts().
+		$nbPlannedHour = (float) price2num($line->qty) * $unit->scaleOfUnitPow($line->fk_unit);
+		$scaleOfHour = $unit->scaleOfUnitPow($fk_defaultUnit);
+		if (!empty($scaleOfHour)) {
+			$nbPlannedHour /= $scaleOfHour;
+		}
 		$line->total_cost = 0;
 		if ($workstation->thm_machine_estimated) {
 			$line->total_cost += $nbPlannedHour * $workstation->thm_machine_estimated;
@@ -211,6 +217,7 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 		if ($workstation->thm_operator_estimated) {
 			$line->total_cost += $nbPlannedHour * $workstation->thm_operator_estimated;
 		}
+		$line->total_cost = (float) price2num($line->total_cost, 'MT');
 		echo $workstation->getNomUrl(1);
 	}
 	print '</td>';

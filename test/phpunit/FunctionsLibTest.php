@@ -275,6 +275,20 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
 
+		// Test use of forbiddenstring
+		$errorstr = '';
+		$filter = "(t.fk_soc:IN:1,2)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('aaa'));
+		$this->assertEquals(" AND ((t.fk_soc IN (1,2)))", $sql);
+
+		$filter = "(t.api_key:IN:1,2)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('aaa'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.fk_soc:IN:1,2)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('fk_soc'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
 		return true;
 	}
 

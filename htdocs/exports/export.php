@@ -419,8 +419,11 @@ if ($step == 2 && $action == 'select_model' && $user->hasRight('export', 'lire')
 		$fieldsarrayvalue = explode(',', $objexport->hexafiltervalue);
 		$i = 1;
 		foreach ($fieldsarrayvalue as $val) {
+			if ($val === '') {
+				continue;	// Model saved without any filter
+			}
 			$tmp = explode('=', $val);
-			$array_filtervalue[$tmp[0]] = $tmp[1];
+			$array_filtervalue[$tmp[0]] = $tmp[1] ?? '';
 			$i++;
 		}
 		$_SESSION["export_filtered_fields"] = $array_filtervalue;
