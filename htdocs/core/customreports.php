@@ -754,7 +754,9 @@ $param = '';
 
 
 if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
-	print '<br>';
+	if (!defined('USE_CUSTOM_REPORT_AS_TAB')) {	// When shown as a tab, the parent page already renders the tab bar, so no br needed
+		print '<br>';
+	}
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" autocomplete="off">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="viewgraph">';

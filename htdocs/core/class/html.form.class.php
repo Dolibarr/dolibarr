@@ -1323,7 +1323,7 @@ class Form
 		$out .= $this->selectPhoneCode($selectedCode, $codename, 'maxwidth75 phone_code_select', 0, $country_id_hint);
 
 		// Visible number input (no name — not POSTed)
-		$out .= '<input type="tel" inputmode="numeric" pattern="[0-9]*" id="'.dol_escape_htmltag($htmlname).'_input" class="'.dol_escape_htmltag($morecss).'"';
+		$out .= '<input type="tel" inputmode="numeric" pattern="[0-9]*" id="'.dol_escape_htmltag($htmlname).'_input" class="valignmiddle'.($morecss ? ' '.dol_escape_htmltag($morecss) : '').'"';
 		if ($maxlength > 0) {
 			$out .= ' maxlength="'.$maxlength.'"';
 		}
@@ -11347,7 +11347,7 @@ class Form
 				$listoffieldsforselection .= '</label>';
 				if (!empty($draganddrop)) {
 					// Picto of drag and drop, at the end of the line
-					$listoffieldsforselection .= img_picto($langs->trans("MoveField", !empty($key) ? $key : 'none'), 'fa-arrows-alt-v', 'class="opacitymedium boxhandle hideonsmartphone cursormove"');
+					$listoffieldsforselection .= img_picto($langs->trans("MoveField", !empty($key) ? $key : 'none'), 'grip', 'class="opacitymedium boxhandle hideonsmartphone cursormove"');
 				}
 				$listoffieldsforselection .= '</li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
@@ -11369,7 +11369,7 @@ class Form
                     <li class="liinputsearch">
 						<input type="checkbox" class="opacitymedium checkall_dropdownselectedfields" title="'.dolPrintHTMLForAttribute($langs->trans('SelectAll')).'">
 						<input class="nopaddingleftimp inputsearch_dropdownselectedfields" type="text" placeholder="'.$langs->trans('Search').'">
-						'.(!empty($draganddrop) ? '<span class="fas fa-arrows-alt-v opacitymedium cursorpointer deletepositionfields_dropdownselectedfields" title="'.dolPrintHTMLForAttribute($langs->trans('DeleteFieldPositioning')).'"></span>' : '').'
+						'.(!empty($draganddrop) ? img_picto($langs->trans('DeleteFieldPositioning'), 'grip', 'class="opacitymedium cursorpointer deletepositionfields_dropdownselectedfields"') : '').'
 					</li>
                     '.$listoffieldsforselection.'
                     </ul>

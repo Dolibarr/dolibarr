@@ -123,25 +123,29 @@ $fieldstosearchall = array(
 );
 $arrayfields = array(
 	'c.rowid' => array('label' => 'TechnicalID', 'checked' => '-1', 'position' => 1),
-	'd.ref' => array('label' => "Ref", 'checked' => '1'),
-	'd.fk_type' => array('label' => "Type", 'checked' => '1'),
-	'd.lastname' => array('label' => "Lastname", 'checked' => '1'),
-	'd.firstname' => array('label' => "Firstname", 'checked' => '1'),
-	'd.login' => array('label' => "Login", 'checked' => '1'),
-	'c.note' => array('label' => "Label", 'checked' => '1'),
-	'd.bank' => array('label' => "BankAccount", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('bank'))),
+	'd.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 10),
+	'd.fk_type' => array('label' => "Type", 'checked' => '1', 'position' => 20),
+	'd.lastname' => array('label' => "Lastname", 'checked' => '1', 'position' => 30),
+	'd.firstname' => array('label' => "Firstname", 'checked' => '1', 'position' => 31),
+	'd.login' => array('label' => "Login", 'checked' => '1', 'position' => 32),
+	'c.note' => array('label' => "Label", 'checked' => '1', 'position' => 40),
+	'd.bank' => array('label' => "BankAccount", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('bank')), 'position' => 45),
 	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
 	 'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
 	'c.dateadh' => array('label' => "DateSubscription", 'checked' => '1', 'position' => 100),
 	'c.datef' => array('label' => "EndSubscription", 'checked' => '1', 'position' => 101),
 	'd.amount' => array('label' => "Amount", 'checked' => '1', 'position' => 102),
 	'c.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
-	'c.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'c.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 501),
 //	'd.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
 // Add hook to complete $arrayfield
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
 restrictedArea($user, 'adherent', '', '', 'cotisation');
@@ -510,7 +514,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -633,49 +637,52 @@ if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
-// Technical ID
-if (!empty($arrayfields['c.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.ref']['checked'])) {
-	print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], "c.rowid", "", $param, "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.fk_type']['checked'])) {
-	print_liste_field_titre($arrayfields['d.fk_type']['label'], $_SERVER["PHP_SELF"], "c.fk_type", "", $param, "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.lastname']['checked'])) {
-	print_liste_field_titre($arrayfields['d.lastname']['label'], $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.firstname']['checked'])) {
-	print_liste_field_titre($arrayfields['d.firstname']['label'], $_SERVER["PHP_SELF"], "d.firstname", "", $param, "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.login']['checked'])) {
-	print_liste_field_titre($arrayfields['d.login']['label'], $_SERVER["PHP_SELF"], "d.login", "", $param, "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['c.note']['checked'])) {
-	print_liste_field_titre($arrayfields['c.note']['label'], $_SERVER["PHP_SELF"], "c.note", "", $param, '', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.bank']['checked'])) {
-	print_liste_field_titre($arrayfields['d.bank']['label'], $_SERVER["PHP_SELF"], "b.fk_account", "", $param, "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['c.dateadh']['checked'])) {
-	print_liste_field_titre($arrayfields['c.dateadh']['label'], $_SERVER["PHP_SELF"], "c.dateadh", "", $param, '', $sortfield, $sortorder, 'center nowraponall ');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['c.datef']['checked'])) {
-	print_liste_field_titre($arrayfields['c.datef']['label'], $_SERVER["PHP_SELF"], "c.datef", "", $param, '', $sortfield, $sortorder, 'center nowraponall ');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.amount']['checked'])) {
-	print_liste_field_titre($arrayfields['d.amount']['label'], $_SERVER["PHP_SELF"], "c.subscription", "", $param, '', $sortfield, $sortorder, 'right ');
+// Fields title with position ordered by user setup
+foreach ($arrayfields as $key => $val) {
+	if (empty($val['checked'])) {
+		continue;
+	}
+	switch ($key) {
+		case 'c.rowid':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+			break;
+		case 'd.ref':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "c.rowid", "", $param, "", $sortfield, $sortorder);
+			break;
+		case 'd.fk_type':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "c.fk_type", "", $param, "", $sortfield, $sortorder);
+			break;
+		case 'd.lastname':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
+			break;
+		case 'd.firstname':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "d.firstname", "", $param, "", $sortfield, $sortorder);
+			break;
+		case 'd.login':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "d.login", "", $param, "", $sortfield, $sortorder);
+			break;
+		case 'c.note':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "c.note", "", $param, '', $sortfield, $sortorder);
+			break;
+		case 'd.bank':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "b.fk_account", "", $param, "", $sortfield, $sortorder);
+			break;
+		case 'c.dateadh':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "c.dateadh", "", $param, '', $sortfield, $sortorder, 'center nowraponall ');
+			break;
+		case 'c.datef':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "c.datef", "", $param, '', $sortfield, $sortorder, 'center nowraponall ');
+			break;
+		case 'd.amount':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "c.subscription", "", $param, '', $sortfield, $sortorder, 'right ');
+			break;
+		case 'c.datec':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "c.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+			break;
+		case 'c.tms':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+			break;
+	}
 	$totalarray['nbfield']++;
 }
 
@@ -686,12 +693,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (!empty($arrayfields['c.datec']['checked'])) {
-	print_liste_field_titre($arrayfields['c.datec']['label'], $_SERVER["PHP_SELF"], "c.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-}
-if (!empty($arrayfields['c.tms']['checked'])) {
-	print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-}
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
@@ -784,111 +785,88 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Technical ID
-		if (!empty($arrayfields['c.rowid']['checked'])) {
-			print '<td class="center" data-key="id">'.dolPrintHTML($obj->crowid).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
+		// Fields with position ordered by user setup
+		foreach ($arrayfields as $key => $val) {
+			if (empty($val['checked'])) {
+				continue;
 			}
-		}
-		// Ref
-		if (!empty($arrayfields['d.ref']['checked'])) {
-			print '<td class="nowraponall">'.$subscription->getNomUrl(1).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-		// Type
-		if (!empty($arrayfields['d.fk_type']['checked'])) {
-			print '<td class="tdoverflowmax100">';
-			if ($typeid > 0) {
-				print $adht->getNomUrl(1);
-			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
+			switch ($key) {
+				case 'c.rowid':
+					print '<td class="center" data-key="id">'.dolPrintHTML($obj->crowid).'</td>';
+					break;
+				case 'd.ref':
+					print '<td class="nowraponall">'.$subscription->getNomUrl(1).'</td>';
+					break;
+				case 'd.fk_type':
+					print '<td class="tdoverflowmax100">';
+					if ($typeid > 0) {
+						print $adht->getNomUrl(1);
+					}
+					print '</td>';
+					break;
 
-		// Lastname
-		if (!empty($arrayfields['d.lastname']['checked'])) {
-			print '<td class="tdoverflowmax125">'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-		// Firstname
-		if (!empty($arrayfields['d.firstname']['checked'])) {
-			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($adherent->firstname).'">'.dolPrintHTML($adherent->firstname).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
+				case 'd.lastname':
+					print '<td class="tdoverflowmax125">'.$adherent->getNomUrl(-1, 0, 'card', 'lastname').'</td>';
+					break;
+				case 'd.firstname':
+					print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($adherent->firstname).'">'.dolPrintHTML($adherent->firstname).'</td>';
+					break;
 
-		// Login
-		if (!empty($arrayfields['d.login']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($adherent->login).'">'.dolPrintHTML($adherent->login).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
+				case 'd.login':
+					print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($adherent->login).'">'.dolPrintHTML($adherent->login).'</td>';
+					break;
 
-		// Note
-		if (!empty($arrayfields['c.note']['checked'])) {
-			print '<td class="tdlineheightsmall" title="'.dolPrintHTMLForAttribute($obj->note_private).'">';
-			print '<div class="twolinesmax-normallineheight minwidth200onall">';
-			print '<span class="spantitle">';
-			print dolPrintHTML(dolGetFirstLineOfText($obj->note_private));
-			print '</span>';
-			print '</div>';
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
+				case 'c.note':
+					print '<td class="tdlineheightsmall" title="'.dolPrintHTMLForAttribute($obj->note_private).'">';
+					print '<div class="twolinesmax-normallineheight minwidth200onall">';
+					print '<span class="spantitle">';
+					print dolPrintHTML(dolGetFirstLineOfText($obj->note_private));
+					print '</span>';
+					print '</div>';
+					print '</td>';
+					break;
 
-		// Banque
-		if (!empty($arrayfields['d.bank']['checked'])) {
-			print '<td class="tdoverflowmax100">';
-			if ($obj->fk_account > 0) {
-				$accountstatic->id = $obj->fk_account;
-				$accountstatic->fetch($obj->fk_account);
-				//$accountstatic->label=$obj->label;
-				print $accountstatic->getNomUrl(1);
-			}
-			print "</td>\n";
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
+				case 'd.bank':
+					print '<td class="tdoverflowmax100">';
+					if ($obj->fk_account > 0) {
+						$accountstatic->id = $obj->fk_account;
+						$accountstatic->fetch($obj->fk_account);
+						//$accountstatic->label=$obj->label;
+						print $accountstatic->getNomUrl(1);
+					}
+					print "</td>\n";
+					break;
 
-		// Date start
-		if (!empty($arrayfields['c.dateadh']['checked'])) {
-			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->dateadh), 'day')."</td>\n";
+				case 'c.dateadh':
+					print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->dateadh), 'day')."</td>\n";
+					break;
+				case 'c.datef':
+					print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
+					break;
+				case 'd.amount':
+					print '<td class="right amount">'.price($obj->subscription).'</td>';
+					if (empty($totalarray['val']['d.amount'])) {
+						$totalarray['val']['d.amount'] = $obj->subscription;
+					} else {
+						$totalarray['val']['d.amount'] += $obj->subscription;
+					}
+					break;
+				case 'c.datec':
+					print '<td class="nowrap center">';
+					print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+					print '</td>';
+					break;
+				case 'c.tms':
+					print '<td class="nowrap center">';
+					print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
+					print '</td>';
+					break;
+			}
 			if (!$i) {
 				$totalarray['nbfield']++;
-			}
-		}
-		// Date end
-		if (!empty($arrayfields['c.datef']['checked'])) {
-			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-		// Price
-		if (!empty($arrayfields['d.amount']['checked'])) {
-			print '<td class="right amount">'.price($obj->subscription).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'd.amount';
-			}
-			if (empty($totalarray['val']['d.amount'])) {
-				$totalarray['val']['d.amount'] = $obj->subscription;
-			} else {
-				$totalarray['val']['d.amount'] += $obj->subscription;
+				if ($key == 'd.amount') {
+					$totalarray['pos'][$totalarray['nbfield']] = 'd.amount';
+				}
 			}
 		}
 		// Extra fields
@@ -897,24 +875,6 @@ while ($i < $imaxinloop) {
 		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		// Date creation
-		if (!empty($arrayfields['c.datec']['checked'])) {
-			print '<td class="nowrap center">';
-			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-		// Date modification
-		if (!empty($arrayfields['c.tms']['checked'])) {
-			print '<td class="nowrap center">';
-			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';

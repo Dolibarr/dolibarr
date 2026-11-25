@@ -333,7 +333,11 @@ if ($object->id > 0) {
 		if ($search_rowid) {
 			$param .= '&search_rowid='.urlencode($search_rowid);
 		}
-		if ($actioncode !== '' && $actioncode !== '-1') {
+		if (is_array($actioncode)) {
+			foreach ($actioncode as $str_action) {
+				$param .= '&actioncode[]='.urlencode($str_action);
+			}
+		} elseif ($actioncode !== '' && $actioncode !== '-1') {
 			$param .= '&actioncode='.urlencode($actioncode);
 		}
 		if ($search_agenda_label) {
@@ -357,7 +361,7 @@ if ($object->id > 0) {
 		}
 
 		// Try to know count of actioncomm from cache
-		$nbEvent = 0;
+		$nbEvent = null;
 		//require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 		//$cachekey = 'count_events_myobject_'.$object->id;
 		//$nbEvent = dol_getcache($cachekey);

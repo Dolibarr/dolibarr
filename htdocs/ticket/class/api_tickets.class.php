@@ -224,6 +224,7 @@ class Tickets extends DolibarrApi
 	 * Get a list of tickets
 	 *
 	 * @since	8.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param int       $socid      		Filter list with thirdparty ID
 	 * @param string	$sortfield			Sort field
@@ -234,12 +235,13 @@ class Tickets extends DolibarrApi
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param int		$loadcontacts		Load also contacts/addresses (0=No, 1=Yes)
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 *
 	 * @return array Array of ticket objects
-	 * @phan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 */
-	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $loadcontacts = 0, $pagination_data = false)
+	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $loadcontacts = 0, $pagination_data = false, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
@@ -285,6 +287,11 @@ class Tickets extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
@@ -961,6 +968,7 @@ class Tickets extends DolibarrApi
 	 * @param	string	$type	Contact type code (c_type_contact.code)
 	 * @param	string	$source	'internal' or 'external'
 	 * @return	bool			True if the active type exists for element 'ticket'
+	 * @throws	RestException	500 if the query fails
 	 */
 	private function _ticketContactTypeExists(string $type, string $source): bool
 	{
@@ -974,7 +982,7 @@ class Tickets extends DolibarrApi
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			return false;
+			throw new RestException(500, 'Error when checking the contact type: '.$this->db->lasterror());
 		}
 		$exists = ($this->db->num_rows($resql) > 0);
 		$this->db->free($resql);
@@ -1166,11 +1174,12 @@ class Tickets extends DolibarrApi
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
-	 * @throws RestException 400
+	 * @throws RestException 400 Invalid source or type
 	 * @throws RestException 401
-	 * @throws RestException 403
-	 * @throws RestException 404
-	 * @throws RestException 503
+	 * @throws RestException 403 Not allowed to write tickets, to access the ticket or to link the contact
+	 * @throws RestException 404 Ticket or contact not found
+	 * @throws RestException 409 Contact already linked to the ticket with this type
+	 * @throws RestException 500 System error
 	 */
 	public function postContact(int $id, int $contactid, string $type, string $source = "external", int $notrigger = 0): array
 	{
@@ -1183,76 +1192,58 @@ class Tickets extends DolibarrApi
 		if (empty($source)) {
 			throw new RestException(400, 'Source can not be empty');
 		}
+		if (!in_array($source, array('internal', 'external'), true)) {
+			throw new RestException(400, 'Source must be internal or external');
+		}
 		// test type
 		if (empty($type)) {
 			throw new RestException(400, 'type can not be empty');
 		}
 
 		// Check type/source contact exists
-		$sqlCheckTypeSource = "SELECT tc.rowid";
-		$sqlCheckTypeSource .= " FROM ".$this->db->prefix()."c_type_contact as tc";
-		$sqlCheckTypeSource .= " WHERE tc.element LIKE 'ticket'";
-		$sqlCheckTypeSource .= " AND tc.source = '".$this->db->escape($source)."'";
-		$sqlCheckTypeSource .= " AND tc.code = '".$this->db->escape($type)."'";
-		$sqlCheckTypeSource .= " AND tc.active = 1";
-		$result = $this->db->query($sqlCheckTypeSource);
-
-		if ($result && $this->db->num_rows($result) == 0) {
+		if (!$this->_ticketContactTypeExists($type, $source)) {
 			throw new RestException(400, 'Contact type not found');
 		}
 
-		// Check contact exists
-		if ($source == "external") {
-			// Check external contact exists
-			$sqlCheckExternalContact = "SELECT 1 as exist";
-			$sqlCheckExternalContact .= " FROM ".MAIN_DB_PREFIX."socpeople";
-			$sqlCheckExternalContact .= " WHERE rowid = " . intval($contactid);
-			$result = $this->db->query($sqlCheckExternalContact);
-
-			if ($result && $this->db->num_rows($result) == 0) {
-				throw new RestException(404, 'External contact not found');
-			}
-		} else {
-			// Check internal contact exists
-			$sqlCheckInternalContact = "SELECT 1 as exist";
-			$sqlCheckInternalContact .= " FROM ".MAIN_DB_PREFIX."user";
-			$sqlCheckInternalContact .= " WHERE rowid = " . intval($contactid);
-			$result = $this->db->query($sqlCheckInternalContact);
-
-			if ($result && $this->db->num_rows($result) == 0) {
-				throw new RestException(404, 'Internal contact not found');
-			}
-		}
-
-		// tests done, let's get it
 		$result = $this->ticket->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Ticket not found');
 		}
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Check contact exists in an entity visible from the current one
+		if ($source == 'external') {
+			$sqlCheckContact = "SELECT t.rowid";
+			$sqlCheckContact .= " FROM ".$this->db->prefix()."socpeople as t";
+			$sqlCheckContact .= " WHERE t.rowid = ".((int) $contactid);
+			$sqlCheckContact .= " AND t.entity IN (".getEntity('contact').")";
+		} else {
+			$sqlCheckContact = "SELECT t.rowid";
+			$sqlCheckContact .= " FROM ".$this->db->prefix()."user as t";
+			$sqlCheckContact .= " WHERE t.rowid = ".((int) $contactid);
+			$sqlCheckContact .= " AND t.entity IN (".getEntity('user').")";
+		}
+		$resql = $this->db->query($sqlCheckContact);
+		if (!$resql) {
+			throw new RestException(500, 'Error when checking the contact: '.$this->db->lasterror());
+		}
+		$contactFound = ($this->db->num_rows($resql) > 0);
+		$this->db->free($resql);
+		if (!$contactFound) {
+			throw new RestException(404, ($source == 'external' ? 'External' : 'Internal').' contact not found');
+		}
+
 		$result = $this->ticket->add_contact($contactid, $type, $source, $notrigger);
 
-		if ($result == 0) {
-			throw new RestException(400, 'Already exists: Contact='.$contactid.' is already linked to the ticket='.$id.' as source='.$source.' and type='.$type);
-		} elseif ($result == -1) {
-			throw new RestException(400, 'Wrong contact='.$contactid);
-		} elseif ($result == -2) {
-			throw new RestException(400, 'Wrong type='.$type);
-		} elseif ($result == -3) {
-			throw new RestException(400, 'Not allowed contacts');
+		if ($result == 0 || $result == -6) {
+			// Type and contact were checked above, so 0 means the contact is already linked with this type
+			throw new RestException(409, 'Contact='.$contactid.' is already linked to the ticket='.$id.' as source='.$source.' and type='.$type);
 		} elseif ($result == -4) {
-			throw new RestException(400, 'ErrorCommercialNotAllowedForThirdparty');
-		} elseif ($result == -5) {
-			throw new RestException(400, 'Trigger failed');
-		} elseif ($result == -6) {
-			throw new RestException(400, 'DB_ERROR_RECORD_ALREADY_EXISTS');
-		} elseif ($result == -7) {
-			throw new RestException(400, 'Some other error');
-		} elseif ($result <= -8) {
-			throw new RestException(400, 'Unknown error occurred');
+			throw new RestException(403, 'Not allowed to link contact='.$contactid.': '.$this->ticket->errorsToString());
+		} elseif ($result < 0) {
+			throw new RestException(500, 'Error when linking contact='.$contactid.' to the ticket='.$id.': '.$this->ticket->errorsToString());
 		}
 
 		return array(

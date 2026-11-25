@@ -242,7 +242,7 @@ class ExtraFieldsTest extends CommonClassTest
 
 		print __METHOD__." type=".$type." out=".$out."\n";
 		$this->assertStringNotContainsString('Error', $out);
-		$this->assertMatchesRegularExpression('/<option[^>]* value="1"/', $out);
+		$this->assertSame(1, preg_match('/<option[^>]* value="1"/', $out), 'The filter on $ID$ did not exclude the current record option');		// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
 	}
 
 	/**

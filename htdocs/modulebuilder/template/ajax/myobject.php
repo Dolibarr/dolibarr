@@ -42,7 +42,7 @@ if (!defined('NOREQUIRESOC')) {
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
 if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
-	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+	$res = @include str_replace("..", "", $_SERVER["CONTEXT_DOCUMENT_ROOT"])."/main.inc.php";
 }
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
@@ -90,8 +90,12 @@ $value = GETPOST('value', 'aZ09');
 $object = new MyObject($db);
 
 // Security check
-if (!$user->hasRight('mymodule', 'myobject', 'write')) {
+if (!isModEnabled('mymodule') || !$user->hasRight('mymodule', 'myobject', 'write')) {
 	accessforbidden();
+}
+// Data are modified, so only POST (with its CSRF token) is allowed
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+	httponly_accessforbidden('Only POST method is allowed');
 }
 
 /*
@@ -105,10 +109,15 @@ top_httphead();
 // Update the object field with the new value
 if ($objectId && $field && isset($value)) {
 	$object->fetch($objectId);
-	if ($object->id > 0) {
+	// Check access to the record (entity, external user...)
+	restrictedArea($user, $object->module, $object, $object->table_element, $object->element, 'fk_soc', 'rowid');
+
+	// Only fields of type stars can be updated with this ajax page
+	$result = -1;
+	if ($object->id > 0 && !empty($object->fields[$field]['type']) && preg_match('/^stars\(/', $object->fields[$field]['type'])) {
 		$object->$field = $value;
+		$result = $object->update($user);
 	}
-	$result = $object->update($user);
 
 	if ($result < 0) {
 		print json_encode(['status' => 'error', 'message' => 'Error updating '. $field]);

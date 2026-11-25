@@ -963,7 +963,7 @@ while ($i < $imaxinloop) {
 						print $moparent->getNomUrl(1);
 					}
 				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, (string) $object->id, '');
+					print (int) $object->id;	// Not showOutputField() that returns nothing when the Technical ID is hidden by the object (MAIN_SHOW_TECHNICAL_ID off)
 				} else {
 					if ($val['type'] == 'html') {
 						print '<div class="small lineheightsmall twolinesmax-normallineheight">';

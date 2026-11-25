@@ -2723,7 +2723,7 @@ export function initAiAssistant(container) {
         // The question being answered is the query itself, never context: it
         // waits outside the window until its answer arrives.
         const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
-        if (pending) { pending.classList.remove('ctx-pinned'); pending.dataset.ctxWindow = ''; }
+        if (pending) { pending.classList.remove('ctx-pinned', 'ctx-excluded'); pending.dataset.ctxWindow = ''; }
         let windowStart = msgs.length;
         if (AUTO_CONTEXT > 0) {
             let questions = 0;
@@ -2738,6 +2738,8 @@ export function initAiAssistant(container) {
             const on = state === 'on' || (state === '' && inWindow && !m.dataset.aiError);
             m.dataset.ctxWindow = inWindow ? '1' : '';
             m.classList.toggle('ctx-pinned', on);
+            // Bubbles left out of the context are dimmed (see .ctx-excluded in CSS).
+            m.classList.toggle('ctx-excluded', !on);
             const pin = m.querySelector('.ctx-pin');
             if (pin) {
                 // Two glyphs: a planted blue pin (travels with the next question)
@@ -2782,7 +2784,7 @@ export function initAiAssistant(container) {
     }
 
     // Small bar above the input: how many exchanges are pinned and their rough
-    // token weight (chars/4) - the cost of the selected context stays visible.
+    // token weight (chars/4) - the cost of the selected context is in the label tooltip.
     function updateContextBar() {
         let bar = container.querySelector('#ai-ctx-bar');
         // Past exchanges the user can act on (the pending question is not one).
@@ -2802,11 +2804,11 @@ export function initAiAssistant(container) {
         // "Auto (3)" is lit as long as every bubble simply follows the window
         // (no manual pin, no exclusion): one glance says which mode is on.
         const isDefault = !contextAllMode && past.every((m) => !m.dataset.ctx);
-        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' + escapeHtml(t('AIContextLabel')) +
+        const counter = t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens));
+        bar.innerHTML = '<span class="ai-ctx-label" title="' + escapeHtml(t('AIContextLabelHelp') + '\n' + counter) + '"><span class="fas fa-thumbtack"></span> ' + escapeHtml(t('AIContextLabel')) + '</span>' +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
             ' <a href="#" id="ai-ctx-all" class="' + (contextAllMode ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
-            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('None') + '</a>' +
-            ' <span class="opacitymedium marginleftonly" title="' + escapeHtml(t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens))) + '">(' + escapeHtml(t('AIContextTokens').replace('%s', String(tokens))) + ')</span>';
+            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('None') + '</a>';
         const auto = bar.querySelector('#ai-ctx-auto');
         if (auto) {
             auto.onclick = (ev) => {
@@ -3128,7 +3130,8 @@ export function initAiAssistant(container) {
         date: 'DateInvoice', datef: 'DateInvoice', date_lim_reglement: 'DateMaxPayment',
         total_ht: 'TotalHT', total_ttc: 'TotalTTC', total_tva: 'AmountVAT',
         remaintopay: 'RemainderToPay', price: 'Price', price_ttc: 'PriceTTC', tva_tx: 'VATRate',
-        code_client: 'CustomerCode', code_fournisseur: 'SupplierCode', fournisseur: 'Supplier'
+        code_client: 'CustomerCode', code_fournisseur: 'SupplierCode', fournisseur: 'Supplier',
+        user_group_list: 'UserGroups'
     };
     const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
         'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
@@ -3141,6 +3144,11 @@ export function initAiAssistant(container) {
         'no_email', 'typent_id', 'stcomm_id', 'fk_prospectlevel', 'country_id', 'fk_multicurrency', 'multicurrency_tx',
         'remise_supplier_percent'
         ]);
+    // Columns shown for a table nested into a single-object result, with their label key (null = default label).
+    // Display only: the LLM and the MCP still receive all fields.
+    const NESTED_COLUMNS = {
+        user_group_list: { id: null, name: 'Group' }
+    };
     // Local tax fields are shown only when the country of the company uses this local tax.
     [1, 2].forEach((x) => {
         if (!parseInt(config['useLocalTax' + x] || 0, 10)) {
@@ -3228,6 +3236,12 @@ export function initAiAssistant(container) {
         if (k === 'paye') return (String(v) === '1' ? '✓' : '✗');
         return escapeHtml(decodeHtmlEntities(String(v)));
     }
+    // True if the value is a text (not an amount, a date or a number sent as a string by the API)
+    function isTextCell(k, v) {
+        if (typeof v !== 'string' || v.trim() === '') return false;
+        if (MONEY_FIELDS.has(k) || isDateField(k)) return false;
+        return isNaN(Number(v.trim()));
+    }
     // socid -> customer name, resolved once per render through the bridge.
     async function resolveThirdpartyNames(container) {
         const cells = container.querySelectorAll('td[data-socid]');
@@ -3247,14 +3261,14 @@ export function initAiAssistant(container) {
             cells.forEach(c => {
                 const id = c.getAttribute('data-socid');
                 if (names[id]) {
-                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a>`;
+                    c.innerHTML = `<div class="chat-cell"><a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a></div>`;
                 }
             });
             saveChatHistory();
         } catch (e) { /* names stay as ids */ }
     }
 
-    function formatResult(data, isRecursive = false, toolName = '') {
+    function formatResult(data, isRecursive = false, toolName = '', columns = null) {
         if (!data) return t('NoDataAvailable');
         if (data.error) {
             // 'detail' is the reason given by the API (e.g. a 403 that explains itself), shown under the translated error
@@ -3270,12 +3284,16 @@ export function initAiAssistant(container) {
             if (data.length === 0) return t('NoRecordFound');
             isArray = true;
             let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid' && !HIDDEN_FIELDS.has(k));
+            // A table with its own list of columns shows only these ones, in this order
+            if (columns) {
+                keys = Object.keys(columns).filter(k => keys.includes(k));
+            }
             content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
             // Rows that are files (their url is a document.php download): the
             // "name" column is the file, not a third party, and the file gets a
             // magnifier opening Dolibarr's preview (same link, attachment=0).
             const isFileList = data.length > 0 && typeof data[0].url === 'string' && /\/document\.php\?/.test(data[0].url);
-            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : fieldLabel(k)}</th>`);
+            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : ((columns && columns[k]) ? escapeHtml(t(columns[k])) : fieldLabel(k))}</th>`);
             content += '</tr></thead><tbody>';
             data.forEach(row => {
                 content += '<tr>';
@@ -3289,10 +3307,12 @@ export function initAiAssistant(container) {
                             val += ` <a href="${previewUrl}" target="_blank" class="chat-link chat-preview" title="${escapeHtml(t('Preview'))}"><span class="fas fa-search-plus"></span></a>`;
                         }
                     }
+                    // Content is wrapped into a div: the 2 lines max clamp can't be set on a td (it needs display -webkit-box)
+                    // A socid cell is a text cell too: its id is replaced later by the name of the third party
                     if ((k === 'socid' || k === 'fk_soc') && row[k]) {
-                        content += `<td data-socid="${escapeHtml(String(row[k]))}">${val}</td>`;
+                        content += `<td class="tdoverflowmax100" data-socid="${escapeHtml(String(row[k]))}"><div class="chat-cell">${val}</div></td>`;
                     } else {
-                        content += `<td>${val}</td>`;
+                        content += `<td${isTextCell(k, row[k]) ? ' class="tdoverflowmax100"' : ''}><div class="chat-cell">${val}</div></td>`;
                     }
                 });
                 content += '</tr>';
@@ -3313,7 +3333,11 @@ export function initAiAssistant(container) {
                 // in {count, offset, limit, results} would otherwise show only the
                 // counters, and the rows would never reach the user.
                 else if (Array.isArray(value) && value.length && typeof value[0] === 'object') {
-                    nested += formatResult(value, true, toolName);
+                    // Title of the table, except for the rows of a wrapper (data, results) that are the answer itself
+                    if (key !== 'data' && key !== 'results') {
+                        nested += `<div class="chat-nested-title">${escapeHtml(fieldLabel(key))}</div>`;
+                    }
+                    nested += formatResult(value, true, toolName, NESTED_COLUMNS[key] || null);
                 }
             }
             content += '</ul></div>';

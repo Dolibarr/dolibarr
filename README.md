@@ -99,7 +99,7 @@ on such providers can't be guraranteed.
 
 ## UPGRADING
 
-Dolibarr supports upgrading, usually without the need for any (commercial) support (depending on if you use any commercial extensions). It supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
+Dolibarr supports upgrading, usually without the need for any (commercial) support (depending on if you use any commercial extensions). It supports upgrading all the way from any version after < +10 years old without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
 
 Follow these step-by-step instructions to seamlessly upgrade Dolibarr to the latest version:
 

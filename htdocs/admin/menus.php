@@ -180,6 +180,13 @@ $formadmin->select_menu(getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED', get
 print '</td>';
 print '</tr>';
 
+// Option to show entries of menu level 2 only when mouse is over the menu title of level 1
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("MenuExpandLeftLevel2OnHover"), $langs->trans("MenuExpandLeftLevel2OnHoverDesc")).'</td>';
+print '<td colspan="2" class="left">';
+print ajax_constantonoff('MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER', array(), null, 1, 0, 1);
+print '</td>';
+print '</tr>';
+
 print '</table>';
 print '</div>';
 

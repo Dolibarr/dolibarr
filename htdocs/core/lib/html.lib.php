@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2026	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2026   Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Charlene Benke			<charlene@patas.ch>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +78,20 @@ function dolPrintText($s)
 }
 
 /**
+ * Return a text string (possibly on several lines and that should not contain any HTML) ready to be output into a textarea,
+ * as its content or as its placeholder attribute. HTML tags are removed, line feeds are kept and special chars, including double quotes, are escaped.
+ *
+ * @param	string	$s		String to print
+ * @return	string			String ready for HTML output into a textarea or its placeholder
+ * @see dolPrintText(), dolPrintHTMLForTextArea()
+ * @example <textarea placeholder="<?php echo dolPrintTextForTextArea($defaulttext); ?>"><?php echo dolPrintTextForTextArea($text); ?></textarea>
+ */
+function dolPrintTextForTextArea($s)
+{
+	return dol_escape_htmltag(dol_string_nohtmltag($s, 2, 'UTF-8', 0, 0), 0, 1, '', 0, 1);
+}
+
+/**
  * Return a string (that can be on several lines) ready to be output on a HTML page.
  * To output a text inside an attribute, you can use dolPrintHTMLForAttribute() or dolPrintHTMLForTextArea() inside a textarea
  * With dolPrintHTML(), only content not already in HTML is encoded with HTML.
@@ -85,7 +100,7 @@ function dolPrintText($s)
  * @param	int					$allowiframe		Allow iframe tags
  * @param 	string[] 			$moreallowedtags 	Array of extra allowed tags (in addition to 'common' list)
  * @return	string									String ready for HTML output (sanitized and escape)
- * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea(), dolPrintText()
+ * @see dolPrintHTMLForAttribute(), dolPrintHTMLForTextArea(), dolPrintText()
  * @example <div class="rich-text"><?php echo dolPrintHTML($object->note); ?></div>
  */
 function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
@@ -112,7 +127,7 @@ function dolPrintHTML($s, $allowiframe = 0, $moreallowedtags = array())
  * @param	int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  * @param	string[]	$allowothertags			List of other tags allowed
  * @return	string								String ready for HTML output
- * @see dolPrintHTML(), dolPrintHTMLFortextArea()
+ * @see dolPrintHTML(), dolPrintHTMLForTextArea()
  * @example <span title="<?php echo dolPrintHTMLForAttribute($tooltip); ?>">?</span>
  */
 function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags = array())
@@ -140,7 +155,7 @@ function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags =
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
- * @see dolPrintHTML(), dolPrintHTMLFortextArea()
+ * @see dolPrintHTML(), dolPrintHTMLForTextArea()
  * @example <a href="<?php echo dolPrintHTMLForAttributeUrl($url); ?>">Link</a>
  */
 function dolPrintHTMLForAttributeUrl($s)
@@ -155,7 +170,7 @@ function dolPrintHTMLForAttributeUrl($s)
  * Return a string ready to be output on input textarea.
  * Differs from dolPrintHTML because all tags are escape. With dolPrintHTML, all tags except common one are escaped.
  * If the content is for a textare that need to edit a text string (not HTML), you can also use
- * dolPrintText() for the textarea.
+ * dolPrintTextForTextArea() for the textarea.
  *
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags
@@ -1878,7 +1893,7 @@ function getImgPictoConv($mode = 'fa')
 			'entity' => 'globe',
 			'graph' => 'chart-line',
 			'grip_title' => 'arrows-alt',
-			'grip' => 'arrows-alt',
+			'grip' => 'grip-lines',
 			'help' => 'question-circle',
 			'generic' => 'file',
 			'holiday' => 'umbrella-beach',
@@ -4682,18 +4697,20 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		$class = "dropdown-item";
 	} else {
 		$class = 'butAction';
-		if ($actionType == 'edit') {
-			$class = 'butAction butActionEdit';
-		} elseif ($actionType == 'email') {
-			$class = 'butAction butActionEmail';
-		} elseif ($actionType == 'clone') {
-			$class = 'butAction butActionClone';
-		} elseif ($actionType == 'cancel') {
-			$class = 'butAction butActionDelete';
-		} elseif ($actionType == 'danger' || $actionType == 'delete') {
-			$class = 'butAction butActionDelete';
-			if (!empty($url) && strpos($url, 'token=') === false) {
-				$url .= '&token=' . newToken();
+		if (!getDolGlobalString('MAIN_BUTTON_SHOW_FULL_TITLE')) {
+			if ($actionType == 'edit') {
+				$class = 'butAction butActionEdit';
+			} elseif ($actionType == 'email') {
+				$class = 'butAction butActionEmail';
+			} elseif ($actionType == 'clone') {
+				$class = 'butAction butActionClone';
+			} elseif ($actionType == 'cancel') {
+				$class = 'butAction butActionDelete';
+			} elseif ($actionType == 'danger' || $actionType == 'delete') {
+				$class = 'butAction butActionDelete';
+				if (!empty($url) && strpos($url, 'token=') === false) {
+					$url .= '&token=' . newToken();
+				}
 			}
 		}
 	}

@@ -862,8 +862,28 @@ body.ai-fullpage {
 }
 
 .chat-table td {
-    padding: 9px 10px;
+    padding: 9px 14px;
     border-bottom: 1px solid var(--ai-border);
+}
+
+/* Content of a body cell is limited to 2 lines (same as Dolibarr class twolinesmax) */
+.chat-table tbody td .chat-cell {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    height: auto !important;
+    word-break: break-word;
+}
+
+/* Min width only on text cells: on all cells, it gives the same width to every column, even a short id */
+.chat-table tbody td.tdoverflowmax100 .chat-cell {
+    min-width: 75px;
+}
+
+/* Ids, amounts and dates keep their own width and are never cut on 2 lines */
+.chat-table tbody td:not(.tdoverflowmax100) {
+    white-space: nowrap;
 }
 
 .chat-table tbody tr:last-child td {
@@ -899,6 +919,12 @@ body.ai-fullpage {
 .chat-object ul {
     padding-left: 18px;
     margin: 0;
+}
+
+/* Title of a table nested into a single-object result (e.g. the groups of a user) */
+.chat-nested-title {
+    margin-top: 12px;
+    font-weight: 600;
 }
 
 /* Toolbar under a result (e.g. Download PDF / Open record) */
@@ -1171,8 +1197,8 @@ a.msg-action-btn.primary span {
 .chat-link.chat-preview:hover { opacity: 1; }
 
 /* --- Context pins: opt-in selection of past exchanges resent to the model --- */
-/* Context pin on each bubble, two glyphs. Planted blue pin + ring around the bubble =
-   it goes back to the AI with the next question; grey pin leaning over = it does not. */
+/* Context pin on each bubble, two glyphs. Planted blue pin = it goes back to the AI
+   with the next question; grey pin leaning over + dimmed bubble = it does not. */
 .msg .ctx-pin { position: absolute; top: 2px; right: 2px; border: 0; background: none; cursor: pointer; font-size: 1em; color: #2c62ac; padding: 3px 5px; line-height: 1; transition: color .15s, opacity .15s; }
 .msg .msg-bubble { position: relative; padding-right: 24px; }
 .msg .ctx-pin .fa-thumbtack { position: relative; display: inline-block; }
@@ -1183,10 +1209,11 @@ a.msg-action-btn.primary span {
 .msg.user .ctx-pin { color: #fff; }
 .msg.user .ctx-pin.ctx-pin-off { color: rgba(255, 255, 255, 0.6); }
 .msg.user .ctx-pin:hover { color: #fff; }
-.msg.ctx-pinned .msg-bubble { box-shadow: 0 0 0 2px rgba(44, 98, 172, 0.45); }
-.msg.user.ctx-pinned .msg-bubble { box-shadow: 0 0 0 2px #8fc0ff; }
+.msg.ctx-excluded .msg-bubble { opacity: .6; transition: opacity .15s; }
+.msg.ctx-excluded .msg-bubble:hover { opacity: 1; }
 #ai-ctx-bar { font-size: 0.85em; opacity: .85; padding: 3px 10px; margin: 0 6px 4px; border-radius: 10px; background: rgba(44, 98, 172, 0.08); }
 #ai-ctx-bar a { margin-left: 8px; }
+#ai-ctx-bar .ai-ctx-label { cursor: help; }
 #ai-ctx-bar a.ai-ctx-active { font-weight: 600; text-decoration: none; padding: 1px 6px; border-radius: 8px; background: rgba(44, 98, 172, 0.15); }
 
 /* --- Full page: conversations column on the left, under the header (page mode only) --- */
