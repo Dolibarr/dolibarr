@@ -1874,7 +1874,8 @@ function classifyIntentUniversal(string $query, Translate $langs)
 			// Member/Subscription: members and subscriptions tools are
 			// categorized ['thirdparty', 'billing'].
 			'keys'     => ['Bill', 'Invoice', 'Payment', 'Cheque', 'VAT', 'BillStatusUnpaid', 'BillStatusPaid', 'BillStatusDraft', 'Member', 'Subscription'],
-			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue', 'member', 'membership', 'subscription', 'cotisation', 'adhesion']
+			// 'bill' and 'vat': their keys translate to 'Invoice' and 'Sales tax' in en_US.
+			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue', 'member', 'membership', 'subscription', 'cotisation', 'adhesion', 'bill', 'vat']
 		],
 		'commercial' => [
 			// 'Reception' and 'Shipment' matter: create_other_document (the tool
@@ -1885,7 +1886,8 @@ function classifyIntentUniversal(string $query, Translate $langs)
 			// Intervention: interventions tools are ['project', 'commercial'].
 			// WebSite/WebsitePage/BlogPost: websites tools (pages, blog posts) are ['commercial'].
 			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft', 'Reception', 'Shipment', 'Delivery', 'Intervention', 'WebSite', 'WebsitePage', 'BlogPost'],
-			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive', 'intervention', 'website', 'webpage', 'blog']
+			// 'Proposal' translates to a 2-word label ("commercial proposal"), so the short words users type are listed too.
+			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive', 'intervention', 'website', 'webpage', 'blog', 'proposal', 'propal', 'propale', 'proposition', 'devis']
 		],
 		'thirdparty' => [
 			// Ticket and agenda-event tools are ['thirdparty', 'project'];
@@ -1894,7 +1896,8 @@ function classifyIntentUniversal(string $query, Translate $langs)
 			// UI key translates to 'Tag/category' - unusable as a keyword,
 			// hence plain synonyms).
 			'keys'     => ['ThirdParty', 'Customer', 'Supplier', 'Contact', 'Company', 'Ticket', 'Member', 'Subscription', 'Event', 'Agenda'],
-			'synonyms' => ['client', 'partner', 'address', 'phone', 'vendor', 'ticket', 'support', 'incident', 'member', 'adherent', 'membership', 'meeting', 'appointment', 'rdv', 'category', 'categorie', 'tag']
+			// 'supplier' and 'contact': their keys translate to 'Vendor' and 'Contact/Address' in en_US.
+			'synonyms' => ['client', 'partner', 'address', 'phone', 'vendor', 'ticket', 'support', 'incident', 'member', 'adherent', 'membership', 'meeting', 'appointment', 'rdv', 'category', 'categorie', 'tag', 'supplier', 'contact']
 		],
 		'stock' => [
 			'keys'     => ['Product', 'Service', 'Stock', 'Warehouse'],

@@ -17,7 +17,7 @@
  */
 
 /**
- * \file    core/triggers/interface_99_modMyModule_MyModuleTriggers.class.php
+ * \file    core/triggers/interface_50_modMyModule_MyModuleTriggers.class.php
  * \ingroup mymodule
  * \brief   Example of trigger file.
  *

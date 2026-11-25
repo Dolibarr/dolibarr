@@ -1648,7 +1648,7 @@ while ($i < $imaxinloop) {
 if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
 	foreach ($totalarray['totalizable'] as $keytotalizable => $valtotalizable) {
 		$totalarray['pos'][$valtotalizable['pos']] = $keytotalizable;
-		$totalarray['val'][$keytotalizable] = $valtotalizable['total'];
+		$totalarray['val'][$keytotalizable] = isset($valtotalizable['total']) ? $valtotalizable['total'] : 0;
 	}
 }
 
