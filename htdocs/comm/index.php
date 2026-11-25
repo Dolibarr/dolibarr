@@ -6,8 +6,8 @@
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2020		Pierre Ardoin			<mapiolca@me.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,13 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -48,20 +55,12 @@ if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('commercialindex'));
 
 // Load translation files required by the page
-$langs->loadLangs(array("boxes", "commercial", "contracts", "orders", "propal", "supplier_proposal"));
+$langs->loadLangs(array("boxes", "commercial", "companies", "contracts", "orders", "propal", "supplier_proposal"));
 
 $action = GETPOST('action', 'aZ09');
 $bid = GETPOSTINT('bid');
@@ -75,7 +74,8 @@ if (!empty($user->socid) && $user->socid > 0) {
 
 $total = 0;
 
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$max = getDolUserInt('MAIN_SIZE_SHORTLIST_LIMIT', getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5));
+
 $maxofloop = getDolGlobalInt('MAIN_MAXLIST_OVERLOAD', 500);
 $now = dol_now();
 
@@ -561,6 +561,8 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
  * Draft interventions
  */
 if (isModEnabled('intervention') && is_object($fichinterstatic)) {
+	$fichinter_static = new Fichinter($db);
+
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut, f.duree as duration";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
@@ -572,7 +574,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
-	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
+	$sql .= " WHERE f.entity IN (".getEntity($fichinter_static->element).")";
 	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND f.fk_statut = 0";
 	if ($socid) {
@@ -625,7 +627,7 @@ if (isModEnabled('intervention') && is_object($fichinterstatic)) {
 				print $fichinterstatic->getNomUrl(1);
 				print "</td>";
 				print '<td class="tdoverflowmax250 minwidth100">';
-				print $companystatic->getNomUrl(1, 'customer');
+				print $companystatic->getNomUrl(1);
 				print '</td>';
 				print '<td class="nowraponall tdoverflowmax100 right">';
 				print convertSecondToTime($obj->duration);
@@ -756,7 +758,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 
 if (isModEnabled('propal') && is_object($propalstatic)) {
 	$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_statut as status, p.tms as datem,";
-	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
+	$sql .= " s.nom as socname, s.name_alias, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta as code_compta_client";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
@@ -803,6 +805,7 @@ if (isModEnabled('propal') && is_object($propalstatic)) {
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->socname;
+				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->client = $obj->client;
 				$companystatic->canvas = $obj->canvas;
 				$companystatic->email = $obj->email;
@@ -857,7 +860,7 @@ if (isModEnabled('order')) {
 	$commandestatic = new Commande($db);
 
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.facture, c.date_cloture as datec, c.tms as datem,";
-	$sql .= " s.nom as name, s.rowid as socid";
+	$sql .= " s.nom as name, s.name_alias, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
 	$sql .= ", s.canvas";
@@ -901,6 +904,7 @@ if (isModEnabled('order')) {
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
+				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->client = $obj->client;
 				$companystatic->code_client = $obj->code_client;
 				$companystatic->canvas = $obj->canvas;
@@ -1038,7 +1042,7 @@ if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $use
 /*
  * Latest contracts
  */
-if (isModEnabled('contract') && $user->hasRight("contrat", "lire") && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
+if (isModEnabled('contract') && $user->hasRight("contrat", "lire") && 0) { // TODO To redo/reimplement for new contract
 	$staticcontrat = new Contrat($db);
 
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010       Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,11 +49,9 @@ class mod_project_universal extends ModeleNumRefProjects
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
+	 * @var int		Position
 	 */
-	public $nom = 'Universal';
+	public $position = 20;
 
 	/**
 	 * @var string model name

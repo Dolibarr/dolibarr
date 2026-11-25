@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,14 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -46,6 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/public.lib.php';
@@ -55,24 +64,21 @@ if (!isModEnabled('bookcal')) {
 	httponly_accessforbidden('Module Bookcal isn\'t enabled');
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var Translate $langs
- *
- * @var string $dolibarr_main_url_root
- */
-
-$langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
+$langs->loadLangs(array("main", "other", "dict", "agenda", "companies"));
 
 $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
 $id_availability = GETPOSTINT('id_availability');
 
-$year = GETPOSTINT("year") ? GETPOSTINT("year") : idate("Y");
-$month = GETPOSTINT("month") ? GETPOSTINT("month") : idate("m");
+// Timezone of the visitor (detected by the browser and sent into parameter tz). Server timezone is used if not provided.
+$tzparam = GETPOST('tz', 'alphanohtml');
+$tzvisitor = bookcalGetVisitorTimezone($tzparam);
+$nowvisitorarray = dol_getdate(dol_now() + bookcalGetTimezoneOffset(dol_now(), $tzvisitor), true);	// Current date in the timezone of the visitor
+
+$year = GETPOSTINT("year") ? GETPOSTINT("year") : $nowvisitorarray['year'];
+$month = GETPOSTINT("month") ? GETPOSTINT("month") : $nowvisitorarray['mon'];
 $week = GETPOSTINT("week") ? GETPOSTINT("week") : idate("W");
-$day = GETPOSTINT("day") ? GETPOSTINT("day") : idate("d");
+$day = GETPOSTINT("day") ? GETPOSTINT("day") : $nowvisitorarray['mday'];
 $dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'), 'tzuserrel');
 if ($dateselect > 0) {
 	$day = GETPOSTINT('dateselectday');
@@ -90,7 +96,7 @@ if ($id_availability > 0) {
 }
 
 $now = dol_now();
-$nowarray = dol_getdate($now);
+$nowarray = $nowvisitorarray;
 $nowyear = $nowarray['year'];
 $nowmonth = $nowarray['mon'];
 $nowday = $nowarray['mday'];
@@ -137,11 +143,12 @@ $errmsg = '';
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
-	global $conf, $langs, $mysoc;
+	global $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -170,97 +177,117 @@ if ($action == 'add') {	// Test on permission not required here (anonymous actio
 		$user = new User($db);
 	}
 
-	$db->begin();
+	if ($object->status != $object::STATUS_DRAFT) {		// If calendar is open
+		$db->begin();
 
-	if (!GETPOST("lastname")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
-	}
-	if (!GETPOST("firstname")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
-	}
-	if (!GETPOST("email")) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
-	}
+		if (!GETPOST("lastname")) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
+		}
+		if (!GETPOST("firstname")) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
+		}
+		if (!GETPOST("email")) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
+		}
 
-	if (!$error) {
-		$sql = "SELECT s.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as s";
-		$sql .= " WHERE s.lastname = '".$db->escape(GETPOST("lastname"))."'";
-		$sql .= " AND s.firstname = '".$db->escape(GETPOST("firstname"))."'";
-		$sql .= " AND s.email = '".$db->escape(GETPOST("email"))."'";
-		$resql = $db->query($sql);
-
-		if ($resql) {
-			$num = $db->num_rows($resql);
-			if ($num > 0) {
-				$obj = $db->fetch_object($resql);
-				$idcontact = $obj->rowid;
-				$contact->fetch($idcontact);
+		// Check that the posted date is the start of a free slot of the calendar
+		$slotduration = 0;
+		if (!$error) {
+			$arrayofslots = bookcalGetSlots($db, $id, GETPOSTINT("datetimebooking"), GETPOSTINT("datetimebooking") + 1);
+			if (!is_array($arrayofslots)) {
+				$error++;
+				$errmsg .= $db->lasterror()."<br>\n";
+			} elseif (empty($arrayofslots[GETPOSTINT("datetimebooking")]) || $arrayofslots[GETPOSTINT("datetimebooking")] < 0 || GETPOSTINT("datetimebooking") <= dol_now()) {
+				$langs->load("errors");
+				$error++;
+				$errmsg .= $langs->trans("ErrorBookCalSlotNotAvailable")."<br>\n";
 			} else {
-				$contact->lastname = GETPOST("lastname");
-				$contact->firstname = GETPOST("firstname");
-				$contact->email = GETPOST("email");
-				$contact->ip = getUserRemoteIP();
+				$slotduration = $arrayofslots[GETPOSTINT("datetimebooking")];
+			}
+		}
 
-				if (checkNbPostsForASpeceificIp($contact, $nb_post_max) <= 0) {
-					$error++;
-					$errmsg .= implode('<br>', $contact->errors);
+		if (!$error) {
+			$sql = "SELECT s.rowid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as s";
+			$sql .= " WHERE s.lastname = '".$db->escape(GETPOST("lastname"))."'";
+			$sql .= " AND s.firstname = '".$db->escape(GETPOST("firstname"))."'";
+			$sql .= " AND s.email = '".$db->escape(GETPOST("email"))."'";
+			$resql = $db->query($sql);
+
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				if ($num > 0) {
+					$obj = $db->fetch_object($resql);
+					$idcontact = $obj->rowid;
+					$contact->fetch($idcontact);
 				} else {
-					$result = $contact->create($user);
-					if ($result < 0) {
+					$contact->lastname = GETPOST("lastname");
+					$contact->firstname = GETPOST("firstname");
+					$contact->email = GETPOST("email");
+					$contact->ip = getUserRemoteIP();
+
+					if (checkNbPostsForASpeceificIp($contact, $nb_post_max) <= 0) {
 						$error++;
-						$errmsg .= $contact->error." ".implode(',', $contact->errors);
+						$errmsg .= implode('<br>', $contact->errors);
+					} else {
+						$result = $contact->create($user);
+						if ($result < 0) {
+							$error++;
+							$errmsg .= $contact->error." ".implode(',', $contact->errors);
+						}
 					}
 				}
-			}
-		} else {
-			$error++;
-			$errmsg .= $db->lasterror();
-		}
-	}
-
-	if (!$error) {
-		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOSTINT("durationbooking"), 'i');
-
-		$actioncomm->label = $langs->trans("BookcalBookingTitle");
-		$actioncomm->type = 'AC_RDV';
-		$actioncomm->type_id = 5;
-		$actioncomm->datep = GETPOSTINT("datetimebooking");
-		$actioncomm->datef = $dateend;
-		$actioncomm->note_private = GETPOST("description");
-		$actioncomm->percentage = -1;
-		$actioncomm->fk_bookcal_calendar = $id;
-		$actioncomm->userownerid = $calendar->visibility;
-		$actioncomm->contact_id = $contact->id;
-		$actioncomm->socpeopleassigned = [
-			$contact->id => [
-				'id' => $contact->id,
-				'mandatory' => 0,
-				'answer_status' => 0,
-				'transparency' => 0,
-			]
-		];
-		$actioncomm->ip = getUserRemoteIP();
-		if (checkNbPostsForASpeceificIp($actioncomm, $nb_post_max) <= 0) {
-			$error++;
-			$errmsg .= implode('<br>', $actioncomm->errors);
-		} else {
-			$result = $actioncomm->create($user);
-			if ($result < 0) {
+			} else {
 				$error++;
-				$errmsg .= $actioncomm->error." ".implode(',', $actioncomm->errors);
+				$errmsg .= $db->lasterror();
 			}
 		}
-	}
 
-	if (!$error) {
-		$db->commit();
-		$action = 'afteradd';
+		if (!$error) {
+			$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), $slotduration, 'i');	// Duration is the one of the slot, not the posted one
+
+			$actioncomm->label = $langs->trans("BookcalBookingTitle");
+			$actioncomm->type = 'AC_RDV';
+			$actioncomm->type_id = 5;
+			$actioncomm->datep = GETPOSTINT("datetimebooking");
+			$actioncomm->datef = $dateend;
+			$actioncomm->note_private = GETPOST("description");
+			$actioncomm->percentage = -1;
+			$actioncomm->fk_bookcal_calendar = $id;
+			$actioncomm->userownerid = $calendar->visibility;
+			$actioncomm->contact_id = $contact->id;
+			$actioncomm->socpeopleassigned = [
+				$contact->id => [
+					'id' => $contact->id,
+					'mandatory' => 0,
+					'answer_status' => 0,
+					'transparency' => 0,
+				]
+			];
+			$actioncomm->ip = getUserRemoteIP();
+			if (checkNbPostsForASpeceificIp($actioncomm, $nb_post_max) <= 0) {
+				$error++;
+				$errmsg .= implode('<br>', $actioncomm->errors);
+			} else {
+				$result = $actioncomm->create($user);
+				if ($result < 0) {
+					$error++;
+					$errmsg .= $actioncomm->error." ".implode(',', $actioncomm->errors);
+				}
+			}
+		}
+
+		if (!$error) {
+			$db->commit();
+			$action = 'afteradd';
+		} else {
+			$db->rollback();
+			$action = 'create';
+		}
 	} else {
-		$db->rollback();
 		$action = 'create';
 	}
 }
@@ -285,8 +312,27 @@ llxHeaderVierge('BookingCalendar');
 print '<center><br><h2>'.(!empty($object->label) ? $object->label : $object->ref).'</h2></center>';
 
 if ($object->status == $object::STATUS_DRAFT) {
-	$langs->trans("errors");
+	$langs->load("errors");
 	$errmsg = $langs->trans("ErrorCalendarIsNotYetOpenOrHasBeenClosed");
+}
+
+// Show the timezone used to show dates and hours
+print '<div class="center opacitymedium marginbottomonly" id="bookcaltimezone">'.img_picto('', 'fa-globe', 'class="pictofixedwidth"').$langs->trans("BookCalTimezoneOfDates", dolPrintLabel(bookcalGetTimezoneLabel($tzvisitor))).'</div>';
+
+// Detect the timezone of the visitor and reload the page with it if it differs from the server timezone
+if ($tzparam === '' && empty($action)) {
+	print '<script>
+	try {
+		var bookcaltz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		if (bookcaltz && bookcaltz != \''.dol_escape_js($tzvisitor).'\') {
+			var bookcalurl = new URL(window.location.href);
+			bookcalurl.searchParams.set("tz", bookcaltz);
+			window.location.replace(bookcalurl.toString());
+		}
+	} catch (e) {
+		console.log("Failed to detect the timezone of the browser");
+	}
+	</script>';
 }
 
 dol_htmloutput_errors($errmsg);
@@ -305,9 +351,12 @@ if ($action == 'afteradd') {
 	print '<h2>';
 	print $langs->trans("BookingSuccessfullyBooked");
 	print '</h2>';
-	print $langs->trans("BookingReservationHourAfter", dol_print_date(GETPOSTINT("datetimebooking"), "dayhourtext"));
+	print $langs->trans("BookingReservationHourAfter", bookcalPrintDate(GETPOSTINT("datetimebooking"), "dayhourtext", $tzvisitor));
 } else {
 	$param = '';
+	if ($tzparam !== '') {
+		$param .= '&tz='.urlencode($tzvisitor);
+	}
 
 	print '<table class="centpercent">';
 	print '<tr>';
@@ -315,6 +364,7 @@ if ($action == 'afteradd') {
 	if ($action != 'create') {
 		print '<form name="formsearch" class="bookcalsearch" action="'.dolBuildUrl($_SERVER["PHP_SELF"]).'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="tz" value="'.dolPrintHTMLForAttribute($tzparam !== '' ? $tzvisitor : '').'">';
 
 		$nav = '<a href="?id='.$id."&year=".$prev_year."&month=".$prev_month.$param.'"><i class="fa fa-chevron-left"></i></a> &nbsp;'."\n";
 		$nav .= ' <span id="month_name">'.dol_print_date(dol_mktime(0, 0, 0, $month, 1, $year), "%b %Y");
@@ -347,8 +397,8 @@ if ($action == 'afteradd') {
 			$datetimebooking = dol_time_plus_duree($datetimechosen, intval($timestartarray[0]), "h");
 			$datetimebooking = dol_time_plus_duree($datetimebooking, intval($timestartarray[1]), "i");
 		}
-		print '<span>'.img_picto("", "calendar")." ".dol_print_date($datetimebooking, 'dayhourtext').'</span>';
-		print '<div class="center"><a href="'.$_SERVER["PHP_SELF"].'?id=1&year=2024&month=2" class="small">('.$langs->trans("SelectANewDate").')</a></div>';
+		print '<span>'.img_picto("", "calendar")." ".bookcalPrintDate($datetimebooking, 'dayhourtext', $tzvisitor).'</span>';
+		print '<div class="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).$param.'" class="small">('.$langs->trans("SelectANewDate").')</a></div>';
 		print '</td>';
 
 		print '<td>';
@@ -360,6 +410,7 @@ if ($action == 'afteradd') {
 		print '<input type="hidden" name="datechosen" value="'.$datechosen.'">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="durationbooking" value="'.$durationbooking.'">';
+		print '<input type="hidden" name="tz" value="'.dolPrintHTMLForAttribute($tzparam !== '' ? $tzvisitor : '').'">';
 
 		// Lastname
 		print '<tr><td><input autofocus type="text" name="lastname" class="minwidth150" placeholder="'.dol_escape_htmltag($langs->trans("Lastname").'*').'" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
@@ -405,24 +456,20 @@ if ($action == 'afteradd') {
 		}
 		print ' </tr>'."\n";
 
-		$todayarray = dol_getdate($now, true);
-		$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
+		$todayarray = $nowvisitorarray;
+		$todayint = sprintf("%04d", $todayarray['year']).'_'.sprintf("%02d", $todayarray['mon']).'_'.sprintf("%02d", $todayarray['mday']);
 
-		// Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']
+		// Load into an array all days of the shown month having slots. Key is the day in the timezone of the visitor (YYYY_MM_DD).
 		$arrayofavailabledays = array();
 
-		$arrayofavailabilities = $availability->fetchAll('', '', 0, 0, '(status:=:1) AND (fk_bookcal_calendar:=:'.((int) $id).')');
-		if ($arrayofavailabilities < 0) {
-			setEventMessages($availability->error, $availability->errors, 'errors');
+		$monthstart = dol_mktime(0, 0, 0, $month, 1, $year, 'tz,'.$tzvisitor);
+		$monthend = dol_mktime(0, 0, 0, $next_month, 1, $next_year, 'tz,'.$tzvisitor);
+		$arrayofslots = bookcalGetSlots($db, $id, max($monthstart, $now), $monthend);
+		if (!is_array($arrayofslots)) {
+			setEventMessages($db->lasterror(), null, 'errors');
 		} else {
-			foreach ($arrayofavailabilities as $key => $value) {
-				$startarray = dol_getdate((int) $value->start);
-				$endarray = dol_getdate((int) $value->end);
-				for ($i = $startarray['mday']; $i <= $endarray['mday']; $i++) {
-					if ($todayarray['mon'] >= $startarray['mon'] && $todayarray['mon'] <= $endarray['mon']) {
-						$arrayofavailabledays[dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year'])] = dol_mktime(0, 0, 0, $todayarray['mon'], $i, $todayarray['year']);
-					}
-				}
+			foreach ($arrayofslots as $slottime => $slotduration) {
+				$arrayofavailabledays[bookcalPrintDate($slottime, '%Y_%m_%d', $tzvisitor)] = 1;
 			}
 		}
 
@@ -449,7 +496,7 @@ if ($action == 'afteradd') {
 						$style .= ' cal_other_month_right';
 					}
 					echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-					show_bookcal_day_events($max_day_in_prev_month + $tmpday, $prev_month, $prev_year);
+					show_bookcal_day_events($max_day_in_prev_month + $tmpday, $prev_month, $prev_year, 0, $tzvisitor);
 					echo "  </td>\n";
 				} elseif ($tmpday <= $max_day_in_month) {
 					/* Show days of the current month */
@@ -463,19 +510,19 @@ if ($action == 'afteradd') {
 						$today = 1;
 					}
 					//var_dump($curtime); var_dump($todaytms); var_dump($arrayofavailabledays);
-					if ($curtime > $todaytms && in_array($curtime, $arrayofavailabledays)) {
+					$dateint = sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $tmpday);
+					if ($dateint > $todayint && !empty($arrayofavailabledays[$dateint])) {
 						$style .= ' cal_available cursorpointer';
 					}
-					if ($curtime < $todaytms) {
+					if ($dateint < $todayint) {
 						$style .= ' cal_past';
 					}
-					$dateint = sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $tmpday);
 					if (!empty(explode('dayevent_', $datechosen)[1]) && explode('dayevent_', $datechosen)[1] == $dateint) {
 						$style .= ' cal_chosen';
 						$isdatechosen = true;
 					}
 					echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-					show_bookcal_day_events($tmpday, $month, $year, $today);
+					show_bookcal_day_events($tmpday, $month, $year, $today, $tzvisitor);
 					echo "</td>\n";
 				} else {
 					/* Show days after the current month (next month) */
@@ -484,7 +531,7 @@ if ($action == 'afteradd') {
 						$style .= ' cal_other_month_right';
 					}
 					echo '  <td class="'.$style.' nowrap tdtop" width="14%">';
-					show_bookcal_day_events($tmpday - $max_day_in_month, $next_month, $next_year);
+					show_bookcal_day_events($tmpday - $max_day_in_month, $next_month, $next_year, 0, $tzvisitor);
 					echo "</td>\n";
 				}
 				$tmpday++;
@@ -504,6 +551,8 @@ if ($action == 'afteradd') {
 		print '<input type="hidden" id="datechosen" name="datechosen" value="">';
 		print '<input type="hidden" id="datetimechosen" name="datetimechosen" value="">';
 		print '<input type="hidden" id="durationbooking" name="durationbooking" value="">';
+		print '<input type="hidden" id="datetimebooking" name="datetimebooking" value="">';
+		print '<input type="hidden" name="tz" value="'.dolPrintHTMLForAttribute($tzparam !== '' ? $tzvisitor : '').'">';
 
 		print '<div id="bookinghoursection">';
 		print '<br><br><br><br><br><br><div class="opacitymedium center">'.$langs->trans("SelectADay").'</div>';
@@ -521,31 +570,21 @@ if ($action == 'afteradd') {
 
 	print '<script>';
 	print '
-	function generateBookingButtons(timearray, datestring){
+	function generateBookingButtons(slots, datestring){
 		console.log("We generate all booking buttons of "+datestring);
-		str = "";
+		$("#bookinghoursection").empty();
 
-		for (index in timearray){
-			let hour = new Date("2000-01-01T" + index + ":00");
-			duration = timearray[index];
-			isalreadybooked = false;
-			if (duration < 0) {
-				duration *= -1;
-				isalreadybooked = true;
-			}
-			hour.setMinutes(hour.getMinutes() + duration);
-
-			let hours = hour.getHours().toString().padStart(2, "0"); // Formatter pour obtenir deux chiffres
-			let mins = hour.getMinutes().toString().padStart(2, "0"); // Formatter pour obtenir deux chiffres
-
-			timerange = index + " - " + `${hours}:${mins}`;
-			str += \'<input class="button btnsubmitbooking \'+(isalreadybooked == true ? "btnbookcalbooked" : "")+\'" type="submit" name="timebooking" value="\'+timerange+\'" data-duration="\'+duration+\'"><br>\';
+		/* Each slot has a timestamp, a duration and a label already formatted by the server in the timezone of the visitor */
+		for (let i = 0; i < slots.length; i++) {
+			let slot = slots[i];
+			let button = $("<input>", {type: "submit", name: "timebooking", class: "button btnsubmitbooking" + (slot.booked ? " btnbookcalbooked" : ""), value: slot.label});
+			button.attr("data-duration", slot.duration).attr("data-datetime", slot.datetime);
+			$("#bookinghoursection").append(button).append("<br>");
 		}
 
-		$("#bookinghoursection").html(str);
 		$(".btnsubmitbooking").on("click", function(){
-			duration = $(this).data("duration");
-			$("#durationbooking").val(duration);
+			$("#durationbooking").val($(this).data("duration"));
+			$("#datetimebooking").val($(this).data("datetime"));
 		})
 	}';
 	print '$(document).ready(function() {
@@ -559,8 +598,9 @@ if ($action == 'afteradd') {
 				url: "'.DOL_URL_ROOT.'/public/bookcal/bookcalAjax.php",
 				data: {
 					action: "verifyavailability",
-					id: '.$id.',
+					id: '.((int) $id).',
 					datetocheck: $(this).children("div").data("datetime"),
+					tz: \''.dol_escape_js($tzvisitor).'\',
 					token: "'.currentToken().'",
 				}
 			}).done(function (data) {
@@ -568,7 +608,7 @@ if ($action == 'afteradd') {
 				if (data["code"] == "SUCCESS") {
 					/* TODO Replace this with a creating of allavailable hours button */
 					console.log(data)
-					timearray = data["availability"];
+					timearray = data["availability"] || [];
 					console.log(timearray);
 					generateBookingButtons(timearray, datestring);
 					$(".btnbookcalbooked").prop("disabled", true);
@@ -603,9 +643,10 @@ llxFooter('', 'public');
  * @param   int		$month					Month
  * @param   int		$year 					Year
  * @param   int		$today 					Today's day
+ * @param   string	$tzstring				Timezone of the visitor (Example: 'Europe/Paris'). Empty to use the default timezone.
  * @return	void
  */
-function show_bookcal_day_events($day, $month, $year, $today = 0)
+function show_bookcal_day_events($day, $month, $year, $today = 0, $tzstring = '')
 {
 	global $conf;
 	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
@@ -613,14 +654,14 @@ function show_bookcal_day_events($day, $month, $year, $today = 0)
 	}
 
 	$dateint = sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day);
-	$eventdatetime = dol_mktime(-1, -1, -1, $month, $day, $year);
+	$eventdatetime = dol_mktime(-1, -1, -1, $month, $day, $year, ($tzstring ? 'tz,'.$tzstring : 'auto'));	// Start of day in the timezone of the visitor
 	//print 'show_bookcal_day_events day='.$day.' month='.$month.' year='.$year.' dateint='.$dateint;
 
 	print "\n";
 
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year);
 	// Line with title of day
-	print '<div id="dayevent_'.$dateint.'" class="dayevent tagtable centpercent nobordernopadding" data-datetime="'.$eventdatetime.'" data-date="'.dol_print_date($eventdatetime, "daytext").'">'."\n";
+	print '<div id="dayevent_'.$dateint.'" class="dayevent tagtable centpercent nobordernopadding" data-datetime="'.$eventdatetime.'" data-date="'.dol_print_date(dol_mktime(12, 0, 0, $month, $day, $year, 'gmt'), "daytext", 'gmt').'">'."\n";
 	print dol_print_date($curtime, '%d');
 	print '<br>';
 	if ($today) {

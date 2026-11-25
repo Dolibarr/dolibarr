@@ -80,7 +80,17 @@ if ((substr($accountancyexport->getFormatCode($formatexportset), 0, 3) == 'fec')
 
 	$endaccountingperiod = dol_print_date(dol_get_last_day($tmparray['year'], $tmparray['mon']), 'dayxcard');
 	$siren = str_replace(" ", "", $siren);
-	$completefilename = $siren."FEC".$endaccountingperiod.".txt";
+	$completefilename = $siren."FEC".$endaccountingperiod;
+
+	// Option: append a timestamp suffix to avoid overwriting a previous export of the same fiscal period.
+	// The strict FEC naming convention (SIRENFECAAAAMMJJ.txt) is still respected by default;
+	// this suffix is only added if the admin explicitly enables it, since some import software
+	// requires strict compliance with the official filename.
+	if (getDolGlobalInt('ACCOUNTING_EXPORT_FEC_ADD_TIMESTAMP')) {
+		$completefilename .= "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+	}
+
+	$completefilename .= ".txt";
 } elseif ($accountancyexport->getFormatCode($formatexportset) == 'ciel' && $type_export == "general_ledger" && getDolGlobalString('ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME')) {
 	$completefilename = "XIMPORT.TXT";
 } else {

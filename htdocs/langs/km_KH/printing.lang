@@ -46,6 +46,10 @@ IPP_Color=ពណ៌
 IPP_Device=ឧបករណ៍
 IPP_Media=ប្រព័ន្ធផ្សព្វផ្សាយម៉ាស៊ីនបោះពុម្ព
 IPP_Supported=ប្រភេទប្រព័ន្ធផ្សព្វផ្សាយ
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=None
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Color
 DirectPrintingJobsDesc=ទំព័រនេះរាយបញ្ជីការងារបោះពុម្ពដែលបានរកឃើញសម្រាប់ម៉ាស៊ីនបោះពុម្ពដែលមាន។
 GoogleAuthNotConfigured=Google OAuth មិន​ត្រូវ​បាន​ដំឡើង​ទេ។ បើកម៉ូឌុល OAuth ហើយកំណត់ Google ID/Secret។
 GoogleAuthConfigured=អត្តសញ្ញាណប័ណ្ណ Google OAuth ត្រូវបានរកឃើញនៅក្នុងការដំឡើងម៉ូឌុល OAuth ។
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=អថេរកំណត់រចនាសម្ព�
 PrintingDriverDescprintipp=អថេរកំណត់រចនាសម្ព័ន្ធសម្រាប់ការបោះពុម្ពកម្មវិធីបញ្ជា Cups ។
 PrintTestDescprintgcp=បញ្ជីម៉ាស៊ីនបោះពុម្ពសម្រាប់ Google Cloud Print ។
 PrintTestDescprintipp=បញ្ជីម៉ាស៊ីនបោះពុម្ពសម្រាប់ពែង។
-Testbbbb
+PrinterLocation=Printer location

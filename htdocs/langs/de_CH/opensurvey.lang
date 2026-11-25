@@ -1,11 +1,11 @@
 # Dolibarr language file - Source file is en_US - opensurvey
+OpenSurveyArea=Umfragen-Übersicht
 AddACommentForPoll=Sie können einen Kommentar zur Umfrage hinzufügen...
 CreatePoll=Abstimmung erstellen
 PollTitle=Abstimmungstitel
 ToReceiveEMailForEachVote=EMail für jede Stimme erhalten
 TypeDate=Typ Datum
 TypeClassic=Typ Standard
-OpenSurveyStep2=Wählen Deine Daten aus den freien Tagen (grau). Die ausgewählten Tage erscheinen dann grün. Du kannst einen bereits ausgewählten Tag durch anklicken wieder abwählen.
 CopyHoursOfFirstDay=Stunden vom ersten Tag kopieren
 RemoveAllHours=Alle Stunden entfernen
 TheBestChoice=Die beste Möglichkeit ist momentan
@@ -20,6 +20,7 @@ CheckBox=Einfache Checkbox
 PourContreList=Liste (leer/dafür/dagegen)
 TitleChoice=Beschreibung wählen
 ExportSpreadsheet=Exportiere Resultattabelle
+ExpireDate=Frist
 NbOfSurveys=Anzahl Umfragen
 NbOfVoters=Anzahl Wähler
 SurveyResults=Resultate

@@ -1,46 +1,49 @@
-<style>
-body {
-        margin: 0;
-        padding: 0;
-        background-color: #F4F6F8;
-}
-</style>
+<div style="background-color: #F4F6F8; padding: 0; margin-top:-10px; margin-bottom:-20px; margin-left:-10px; margin-right:-10px;">
+<!-- Layout uses tables and inline styles only, so it is rendered the same way by all email readers -->
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" bgcolor="#F4F6F8" style="width: 100%; background-color: #F4F6F8;">
+	<tr>
+		<td align="center" style="padding: 50px 10px 0 10px;">
 
-<div style="background-color: #F4F6F8; padding: 0; margin-top:-10px; margin-bottom:-20px; margin-left:-10px; margin-right:-10px; width: 100%">
-        <div style="width: 680px; margin: 0 auto; background-color: #F4F6F8;">
+		<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="680" bgcolor="#ffffff" style="width: 100%; max-width: 680px; background-color: #ffffff; border-radius: 20px; box-shadow: 0px 0px 20px #aaa;">
+			<tr>
+				<td align="center" style="padding: 30px; text-align: center;">
+					<img src="__LOGO_URL__" height="75" style="height: 75px; width: auto; max-width: 100%; border-radius: 4px;">
+				</td>
+			</tr>
+			<tr>
+				<td align="center" bgcolor="#f6f6f6" style="padding: 30px; background-color: #f6f6f6; text-align: center; font-family: Arial, Helvetica, sans-serif;">
+					<strong><span style="font-size:36px">__SUBJECT__</span></strong>
+				</td>
+			</tr>
+			<tr>
+				<td align="left" style="padding: 30px; font-family: Arial, Helvetica, sans-serif;">
+					__(Hello)__<br>
 
-        <div style="width: 100%; height: 50px; background-color: unset;">
-        </div>
+					<h1>__(LastNews)__</h1>
 
-        <div style="border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0px 0px 20px #aaa;">
-	        <div style="border-top-left-radius: 20px; border-top-right-radius: 20px; width: calc(100% - 60px); background-color: white; padding: 30px; text-align: center;">
-	                <img src="__LOGO_URL__" style="height: 75px; max-width: 400px; border-radius: 4px;">
-	        </div>
-	        <div style="width: calc(100% - 60px); background-color: #f6f6f6; padding: 30px; text-align: center;">
-	        <strong><span style="font-size:36px">__SUBJECT__</span></strong>
-	        </div>
-	        <div style="width: calc(100% - 60px); background-color: #fff; padding: 30px;">
-	        __(Hello)__<br>
+					<!-- NEWS_START -->
+					__NEWS_LIST__
+					<!-- NEWS_END -->
 
-			<h1>__(LastNews)__</h1>
+				</td>
+			</tr>
+			<tr>
+				<td align="left" bgcolor="#f6f6f6" style="padding: 30px; background-color: #f6f6f6; color: #666; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; font-family: Arial, Helvetica, sans-serif;">
+					__MYCOMPANY_NAME__
+					<hr>
+					__MYCOMPANY_ADDRESS_WITH_PICTO__<br>
+					__MYCOMPANY_EMAIL_WITH_PICTO__<br>
+					__MYCOMPANY_SOCIAL_NETWORKS__
+				</td>
+			</tr>
+		</table>
 
-			<!-- NEWS_START -->
-			__NEWS_LIST__
-			<!-- NEWS_END -->
-
-	        </div>
-	    	<div style="width: calc(100% - 60px); border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; background-color: #f6f6f6; color: #666; padding: 30px;">
-	       	__MYCOMPANY_NAME__
-	       	<hr>
-	       	__MYCOMPANY_ADDRESS_WITH_PICTO__<br>
-	       	__MYCOMPANY_EMAIL_WITH_PICTO__<br>
-	       	__MYCOMPANY_SOCIAL_NETWORKS__
-	       	</div>
-        </div>
-
-		<div style="width: 100%; height: 100px; background-color: unset; text-align: center; color: #aaa;">
-        __CHECK_READ__
-        </div>
-
-        </div>
+		</td>
+	</tr>
+	<tr>
+		<td align="center" height="100" style="height: 100px; text-align: center; color: #aaa; font-family: Arial, Helvetica, sans-serif;">
+		__CHECK_READ__
+		</td>
+	</tr>
+</table>
 </div>

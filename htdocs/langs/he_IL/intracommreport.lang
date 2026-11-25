@@ -1,3 +1,6 @@
+IntraCommReport=Intracomm report
+IntraCommReports=Intracomm reports
+
 Module68000Name = דו"ח תוך-קוממיות
 Module68000Desc = ניהול דוחות תוך-קוממיות (תמיכה בפורמט DEB/DES צרפתי)
 IntracommReportSetup = הגדרת מודול Intracommreport
@@ -10,14 +13,11 @@ INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
 INTRACOMMREPORT_CATEG_FRAISDEPORT=קטגוריית שירותים מסוג "Frais de port"
-
 INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
-
 # Menu
 MenuIntracommReport=דו"ח תוך-קוממיות
 MenuIntracommReportNew=הצהרה חדשה
 MenuIntracommReportList=רשימה
-
 # View
 NewDeclaration=הצהרה חדשה
 Declaration=הַצהָרָה
@@ -25,16 +25,14 @@ AnalysisPeriod=תקופת ניתוח
 TypeOfDeclaration=סוג הצהרה
 DEB=הצהרת החלפת סחורות (DEB)
 DES=הצהרת החלפת שירותים (DES)
-
 # Export page
 IntracommReportTitle=הכנת קובץ XML בפורמט ProDouane
-
 # List
 IntracommReportList=רשימת הצהרות שנוצרו
 IntracommReportNumber=מספר ההכרזה
 IntracommReportPeriod=תקופת הניתוח
 IntracommReportTypeDeclaration=סוג הצהרה
 IntracommReportDownload=להוריד קובץ XML
-
 # Invoice
 IntracommReportTransportMode=מצב תחבורה
+DeleteIntraCommReport=Delete IntraComm report

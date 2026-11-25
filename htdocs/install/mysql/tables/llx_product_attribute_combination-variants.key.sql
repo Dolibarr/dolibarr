@@ -18,3 +18,12 @@
 
 ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_parent (fk_product_parent);
 ALTER TABLE llx_product_attribute_combination ADD INDEX idx_product_att_com_product_child (fk_product_child);
+
+ALTER TABLE llx_product_attribute_combination ADD CONSTRAINT fk_product_att_com_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
+
+-- No foreign key and no unique index on (fk_product_parent, fk_product_child):
+-- ProductCombination::createProductCombination() inserts the combination before the child
+-- product is known and updates fk_product_child afterwards, so the column holds 0 for the
+-- duration of the creation, and two concurrent creations for the same parent would both hold
+-- (fk_product_parent, 0). The import engine only needs a SELECT on its update key, which the
+-- index on fk_product_parent already serves.

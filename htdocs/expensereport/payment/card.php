@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,8 +57,8 @@ if ($id > 0) {
 }
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 
 // Load the parent expense report so restrictedArea() can also check the user hierarchy
@@ -80,6 +80,7 @@ $result = restrictedArea($user, 'expensereport', ($expensereport->id > 0 ? $expe
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('expensereport', 'supprimer')) {
 	$db->begin();
 
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -134,7 +135,7 @@ print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object-
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note public
-print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public)).'</td></tr>';
+print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlcontent">'.dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $object->note_public)).'</td></tr>';
 
 $disable_delete = 0;
 $title_button = '';
@@ -260,7 +261,7 @@ print '<div class="tabsAction">';
 if ($action == '') {
 	if ($user->hasRight('expensereport', 'supprimer')) {
 		if (!$disable_delete) {
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
+			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 		} else {
 			print dolGetButtonAction($title_button, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 		}

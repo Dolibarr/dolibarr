@@ -61,7 +61,6 @@ MenuLogCP=Ver registros de cambios
 PrevSoldeCP=Balance anterior
 NewSoldeCP=Nuevo equilibrio
 alreadyCPexist=Ya se ha hecho una solicitud de licencia en este período.
-HolidaysCancelation=Deje la cancelación de la solicitud
 EmployeeLastname=Apellido del empleado
 TypeWasDisabledOrRemoved=El tipo de licencia (id. %s) fue desactivado o eliminado
 LastHolidays=Últimas %s solicitudes de ausencia

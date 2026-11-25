@@ -73,7 +73,7 @@ class PriceField extends CommonField
 
 		$moreCss = $this->getInputCss($fieldInfos, $moreCss);
 		$autoFocus = $fieldInfos->inputAutofocus ? ' autofocus' : '';
-		$value = !$this->isEmptyValue($fieldInfos, $value) ? price((double) $value) : '';
+		$value = !$this->isEmptyValue($fieldInfos, $value) ? price((float) $value) : '';
 		$htmlName = $keyPrefix . $key . $keySuffix;
 
 		return self::$form->inputType('text', $htmlName, (string) $value, $htmlName, $moreCss, $moreAttrib . $autoFocus) . $langs->getCurrencySymbol($conf->currency);
@@ -95,7 +95,7 @@ class PriceField extends CommonField
 	{
 		global $conf, $langs;
 
-		return !$this->isEmptyValue($fieldInfos, $value) ? price((double) $value, 0, $langs, 0, 0, -1, $conf->currency) : '';
+		return !$this->isEmptyValue($fieldInfos, $value) ? price((float) $value, 0, $langs, 0, 0, -1, $conf->currency) : '';
 	}
 
 	/**
@@ -170,7 +170,7 @@ class PriceField extends CommonField
 		$htmlName = $keyPrefix . $key . $keySuffix;
 
 		if (GETPOSTISSET($htmlName)) {
-			$value = (double) price2num(GETPOST($htmlName, 'alphanohtml'));
+			$value = (float) price2num(GETPOST($htmlName, 'alphanohtml'));
 		} else {
 			$value = $defaultValue;
 		}

@@ -89,7 +89,7 @@ $error = 0;
  */
 
 // Load translation files
-$langs->loadLangs(array("main", "donations", "companies", "install", "other", "errors"));
+$langs->loadLangs(array("main", "donations", "companies", "install", "other"));
 
 // Security check
 if (!isModEnabled('invoice')) {
@@ -346,6 +346,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 			$error++;
+			$langs->load('errors');
 			$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
 			array_push($invoice->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 		}
@@ -449,7 +450,7 @@ if (!$ws) {
 	print '<div id="divsubscribe">';
 
 	print '<div class="center subscriptionformhelptext opacitymedium justify">';
-	print $langs->trans("NewDonationDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
+	print $langs->trans("NewDonationDesc", getDolGlobalString("MAIN_INFO_SOCIETE_NOM"))."<br>\n";
 
 	print '</div>';
 }

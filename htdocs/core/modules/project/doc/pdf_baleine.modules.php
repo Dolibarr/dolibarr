@@ -150,9 +150,12 @@ class pdf_baleine extends ModelePDFProjects
 	 *	@param	Project		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails			Do not show line details
+	 *  @param	int<0,1>	$hidedesc				Do not show desc
+	 *  @param	int<0,1>	$hideref				Do not show ref
 	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath = '')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user;
@@ -237,7 +240,7 @@ class pdf_baleine extends ModelePDFProjects
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Project"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Project"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -304,7 +307,7 @@ class pdf_baleine extends ModelePDFProjects
 
 					// Description of line
 					$ref = $object->lines[$i]->ref;
-					$libelleline = $object->lines[$i]->label;
+					$labelline = $object->lines[$i]->label;
 					$progress = ($object->lines[$i]->progress ? $object->lines[$i]->progress.'%' : '');
 					$datestart = dol_print_date($object->lines[$i]->date_start, 'day');
 					$dateend = dol_print_date($object->lines[$i]->date_end, 'day');
@@ -315,7 +318,7 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf->startTransaction();
 					// Label
 					$pdf->SetXY($this->posxlabel, $curY);
-					$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+					$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($labelline), 0, 'L');
 					$pageposafter = $pdf->getPage();
 					if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 						$pdf->rollbackTransaction(true);
@@ -325,7 +328,7 @@ class pdf_baleine extends ModelePDFProjects
 						// Label
 						$pdf->SetXY($this->posxlabel, $curY);
 						$posybefore = $pdf->GetY();
-						$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+						$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($labelline), 0, 'L');
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
@@ -373,7 +376,7 @@ class pdf_baleine extends ModelePDFProjects
 								// Label
 								$pdf->SetXY($this->posxlabel, $curY);
 								$posybefore = $pdf->GetY();
-								$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
+								$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->convToOutputCharset($labelline), 0, 'L');
 								$pageposafter = $pdf->getPage();
 								$posyafter = $pdf->GetY();
 							}

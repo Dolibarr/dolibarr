@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,7 +272,7 @@ class ProductStockEntrepot extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= " AND ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';

@@ -223,7 +223,7 @@ class MenuManager
 						}
 					}
 
-					print ucfirst($val['titre']);
+					print dol_ucfirst($val['titre']);
 					print '</a>'."\n";
 
 					// Search submenu for this mainmenu entry
@@ -256,14 +256,14 @@ class MenuManager
 							print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
 						}
 
-						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
+						if ($langs->trans(dol_ucfirst($val['mainmenu'])."Dashboard") == dol_ucfirst($val['mainmenu'])."Dashboard") {  // No translation
 							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
 								print $langs->trans("Access");
 							} else {
 								print $langs->trans("Dashboard");
 							}
 						} else {
-							print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+							print $langs->trans(dol_ucfirst($val['mainmenu'])."Dashboard");
 						}
 						print '</a>';
 						print '</li>'."\n";
@@ -348,6 +348,7 @@ class MenuManager
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
 							} else {
+								print '<span'.($val2['enabled'] ? '' : ' class="vsmenudisabled"').'>';
 								if ($val2['enabled']) {	// Allowed
 									$lastlevel2[$val2['level']] = 'enabled';
 								} else {
@@ -357,19 +358,30 @@ class MenuManager
 
 							// Add font-awesome for level 0 and 1 (if $val2['level'] == 1, we are on level2, if $val2['level'] == 2, we are on level 3...)
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
-								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
+								$reg = array();
+								if (preg_match('/^(fa[rsb]? )?fa-/', $val2['prefix'], $reg)) {
+									print '<span class="'.(empty($reg[1]) ? 'fa ' : '').$val2['prefix'].' paddingright pictofixedwidth"></span>';
+								} else {
+									print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
+								}
 							} else {
 								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth level'.($val2['level'] + 1).'"></i>';
 							}
 
-							print $val2['titre'];
-							if ($relurl2) {
-								print '</a>';
-							}
-
-
 							$currentlevel = (empty($submenu->liste[$key2]) ? 1 : $submenu->liste[$key2]['level'] + 1);
 							$nextlevel = (empty($submenu->liste[$key2 + 1]) ? 1 : $submenu->liste[$key2 + 1]['level'] + 1);
+
+							print $val2['titre'];
+							// If entry of level 2 has a submenu, we add '...' to show that a click will open the submenu
+							if ($val2['level'] == 0 && $nextlevel > $currentlevel) {
+								print ' ...';
+							}
+							if ($relurl2) {
+								print '</a>';
+							} else {
+								print '</span>';
+							}
+
 							// If there is no lower level
 							if ($nextlevel > $currentlevel) {
 								// There is a submenu with a lower level, we do not close the li

@@ -20,7 +20,6 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';
 
 /**
@@ -107,7 +106,7 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		if (!$this->email_template->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete email template : '.$this->email_template->error);
+			throw new RestException(500, 'Error when delete email template : '.$this->email_template->errorsToString());
 		}
 
 		return array(
@@ -132,7 +131,7 @@ class EmailTemplates extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500
 	 */
-	public function deleteByLAbel($label)
+	public function deleteByLabel($label)
 	{
 		$allowaccess = $this->_checkAccessRights('supprimer');
 		if (!$allowaccess) {
@@ -149,7 +148,7 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		if (!$this->email_template->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete email template : '.$this->email_template->error);
+			throw new RestException(500, 'Error when delete email template : '.$this->email_template->errorsToString());
 		}
 
 		return array(
@@ -295,7 +294,7 @@ class EmailTemplates extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -425,7 +424,7 @@ class EmailTemplates extends DolibarrApi
 		if ($this->email_template->update(DolibarrApiAccess::$user) > 0) {
 			return $this->_fetch($id, '');
 		} else {
-			throw new RestException(500, $this->email_template->error);
+			throw new RestException(500, $this->email_template->errorsToString());
 		}
 	}
 
@@ -493,7 +492,7 @@ class EmailTemplates extends DolibarrApi
 		if ($this->email_template->update(DolibarrApiAccess::$user) > 0) {
 			return $this->_fetch(0, $newlabel);
 		} else {
-			throw new RestException(500, $this->email_template->error);
+			throw new RestException(500, $this->email_template->errorsToString());
 		}
 	}
 
@@ -534,10 +533,10 @@ class EmailTemplates extends DolibarrApi
 			}
 			throw new RestException(404, 'Email Template not found');
 		} else {
-			if (empty($this->email_template->error)) {
+			if (empty($this->email_template->errorsToString())) {
 				throw new RestException(400, 'Unknown error in your request');
 			} else {
-				throw new RestException(400, 'Error: '.$this->email_template->error);
+				throw new RestException(400, 'Error: '.$this->email_template->errorsToString());
 			}
 		}
 	}

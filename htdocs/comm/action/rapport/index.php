@@ -27,11 +27,6 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
@@ -148,8 +148,8 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Period").'</td>';
 	print '<td class="center">'.$langs->trans("EventsNb").'</td>';
-	print '<td class="center">'.$langs->trans("Action").'</td>';
-	print '<td>'.$langs->trans("PDF").'</td>';
+	print '<td></td>';
+	print '<td></td>';
 	print '<td class="center">'.$langs->trans("Date").'</td>';
 	print '<td class="center">'.$langs->trans("Size").'</td>';
 	print "</tr>\n";
@@ -169,10 +169,10 @@ if ($resql) {
 			print "<td>".sprintf("%04d", $year)."-".sprintf("%02d", $month)."</td>\n";
 
 			// Nb of events
-			print '<td class="center">'.$obj->cc.'</td>';
+			print '<td class="center">'.($obj->cc ? (int) $obj->cc : '').'</td>';
 
 			// Button to build doc
-			print '<td class="center">';
+			print '<td class="right">';
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&token='.newToken().'&page='.((int) $page).'&month='.$month.'&year='.$year.'">';
 			print img_picto($langs->trans('BuildDoc'), 'filenew.png');
 			print '</a>';

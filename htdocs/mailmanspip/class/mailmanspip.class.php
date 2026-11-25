@@ -189,8 +189,8 @@ class MailmanSpip
 					$htpass = crypt($object->pass, makesalt());
 
 					$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut)";
-					$query .= " VALUES('".$mydb->escape(dolGetFirstLastname($object->firstname, $object->lastname))."', '".$mydb->escape($object->email)."',";
-					$query .= " '".$mydb->escape($object->login)."', '".$mydb->escape($mdpass)."', '".$mydb->escape($htpass)."', FLOOR(32000*RAND()), '1comite')";
+					$query .= " VALUES('".$mydb->escape(dolGetFirstLastname($object->firstname, $object->lastname))."', '".$mydb->escape((string) $object->email)."',";
+					$query .= " '".$mydb->escape((string) $object->login)."', '".$mydb->escape($mdpass)."', '".$mydb->escape($htpass)."', FLOOR(32000*RAND()), '1comite')";
 
 					$result = $mydb->query($query);
 
@@ -231,7 +231,7 @@ class MailmanSpip
 				$mydb = $this->connectSpip();
 
 				if ($mydb) {
-					$query = "DELETE FROM spip_auteurs WHERE login = '".$mydb->escape($object->login)."'";
+					$query = "DELETE FROM spip_auteurs WHERE login = '".$mydb->escape((string) $object->login)."'";
 
 					$result = $mydb->query($query);
 
@@ -351,7 +351,7 @@ class MailmanSpip
 					}
 
 					//We call Mailman to subscribe the user
-					$result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_URL, $list);
+					$result = $this->callMailman($object, getDolGlobalString('ADHERENT_MAILMAN_URL'), $list);
 
 					if ($result === false) {
 						$this->mladded_ko[$list] = $object->email;
@@ -421,7 +421,7 @@ class MailmanSpip
 					}
 
 					//We call Mailman to unsubscribe the user
-					$result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_UNSUB_URL, $list);
+					$result = $this->callMailman($object, getDolGlobalString('ADHERENT_MAILMAN_UNSUB_URL'), $list);
 
 					if ($result === false) {
 						$this->mlremoved_ko[$list] = $object->email;

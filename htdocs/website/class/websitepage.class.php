@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +78,11 @@ class WebsitePage extends CommonObject
 	public $pageurl;
 
 	/**
+	 * @var string	Full url of page, set by the wrapper of website templates to build the RSS feed
+	 */
+	public $fullpageurl;
+
+	/**
 	 * @var string 		Alias alt
 	 */
 	public $aliasalt;
@@ -116,6 +121,11 @@ class WebsitePage extends CommonObject
 	 * @var int 		Page allowed in frames
 	 */
 	public $allowed_in_frames;
+
+	/**
+	 * @var ?int		Number of versions to keep in history (0 = keep all versions, n = keep only the n last versions)
+	 */
+	public $keep_history;
 
 	/**
 	 * @var int 		Use meta robot tag "index" (else "noindex")
@@ -189,7 +199,7 @@ class WebsitePage extends CommonObject
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
@@ -213,12 +223,12 @@ class WebsitePage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'          => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
 		'pageurl'        => array('type' => 'varchar(16)', 'label' => 'WEBSITE_PAGENAME', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Ref/alias of page'),
-		'aliasalt'       => array('type' => 'varchar(255)', 'label' => 'AliasAlt', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'index' => 0, 'position' => 11, 'searchall' => 0, 'comment' => 'Alias alternative of page'),
+		'aliasalt'       => array('type' => 'text', 'label' => 'AliasAlt', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'index' => 0, 'position' => 11, 'searchall' => 0, 'comment' => 'Alias alternative of page'),
 		'type_container' => array('type' => 'varchar(16)', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'index' => 0, 'position' => 12, 'comment' => 'Type of container'),
 		'title'          => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'searchall' => 1, 'help' => 'UseTextBetween5And70Chars'),
 		'description'    => array('type' => 'varchar(255)', 'label' => 'Description', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'searchall' => 1),
@@ -229,8 +239,9 @@ class WebsitePage extends CommonObject
 		'fk_website'     => array('type' => 'integer', 'label' => 'WebsiteId', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 40, 'searchall' => 0, 'foreignkey' => 'websitepage.rowid'),
 		'fk_page'        => array('type' => 'integer', 'label' => 'ParentPageId', 'enabled' => 1, 'visible' => 1, 'notnull' => -1, 'position' => 45, 'searchall' => 0, 'foreignkey' => 'website.rowid'),
 		'allowed_in_frames'   => array('type' => 'integer', 'label' => 'AllowedInFrames', 'enabled' => 1, 'visible' => -1, 'position' => 48, 'searchall' => 0, 'default' => '0'),
+		'keep_history'   => array('type' => 'integer', 'label' => 'NumberOfVersionsToKeepInHistory', 'enabled' => 1, 'visible' => -1, 'position' => 49, 'default' => '5', 'help' => 'NumberOfVersionsToKeepInHistoryHelp'),
 		'htmlheader'     => array('type' => 'html', 'label' => 'HtmlHeader', 'enabled' => 1, 'visible' => 0, 'position' => 50, 'searchall' => 0),
-		'content'        => array('type' => 'mediumtext', 'label' => 'Content', 'enabled' => 1, 'visible' => 0, 'position' => 51, 'searchall' => 0),
+		'content'        => array('type' => 'html', 'label' => 'Content', 'enabled' => 1, 'visible' => 0, 'position' => 51, 'searchall' => 0),
 		'grabbed_from'   => array('type' => 'varchar(255)', 'label' => 'GrabbedFrom', 'enabled' => 1, 'visible' => 1, 'index' => 1, 'position' => 400, 'comment' => 'URL page content was grabbed from'),
 		'date_creation'  => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 		'tms'            => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 501),
@@ -262,9 +273,10 @@ class WebsitePage extends CommonObject
 	 *
 	 * @param  User		$user      User that creates
 	 * @param  int<0,1> $notrigger 0=launch triggers after, 1=disable triggers
+	 * @param  string[] $phpwrappers	PHP code strings added by the application itself (like header and footer containers), allowed even without permission writephp
 	 * @return int      	       Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = 0)
+	public function create(User $user, $notrigger = 0, $phpwrappers = array())
 	{
 		$this->description = dol_trunc($this->description, 255, 'right', 'utf-8', 1);
 		$this->keywords = dol_trunc($this->keywords, 255, 'right', 'utf-8', 1);
@@ -284,23 +296,30 @@ class WebsitePage extends CommonObject
 		$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
 		$dataposted = str_replace('<?=', '<?php', $dataposted);
 
+		// Check there is no PHP content into the imported file (must be only HTML + JS)
+		// Note: This one may be useless because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
+		$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
+
+		if ($phpcontent) {
+			$this->error = 'Error: you try to create htmlheader with PHP content inside, this is not allowed.';
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
 		// Test if page contains dynamic PHP content
 		if (!$user->hasRight('website', 'writephp')) {
 			// Check there is no PHP content into the imported file (must be only HTML + JS)
-			$phpcontent = dolKeepOnlyPhpCode($this->content);
+			// PHP wrappers added by the application itself (parameter $phpwrappers) are excluded from this test
+			$contenttocheck = (string) $this->content;
+			if (is_array($phpwrappers)) {
+				foreach ($phpwrappers as $wrapper) {
+					$contenttocheck = str_replace((string) $wrapper, '', $contenttocheck);
+				}
+			}
+			$phpcontent = dolKeepOnlyPhpCode($contenttocheck);
 
 			if ($phpcontent) {
 				$this->error = 'Error: you try to create a page with PHP content in HTML body without having permissions for that.';
-				$this->errors[] = $this->error;
-				return -1;
-			}
-
-			// Check there is no PHP content into the imported file (must be only HTML + JS)
-			// Note: This one may be uselss because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
-			$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
-
-			if ($phpcontent) {
-				$this->error = 'Error: you try to create a page with PHP content in HTML header without having permissions for that.';
 				$this->errors[] = $this->error;
 				return -1;
 			}
@@ -341,6 +360,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";				// Translation parent page (in mani language)
 		$sql .= " t.allowed_in_frames,";
+		$sql .= " t.keep_history,";
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
@@ -396,12 +416,12 @@ class WebsitePage extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				$this->fk_website = $obj->fk_website;
-				$this->type_container = $obj->type_container;
+				$this->fk_website = (int) $obj->fk_website;
+				$this->type_container = dol_sanitizeKeyCode($obj->type_container);
 
-				$this->pageurl = $obj->pageurl;
+				$this->pageurl = preg_replace('/[^\w_-]+/', '', $obj->pageurl);		// Sanitize page url
 				$this->ref = $obj->pageurl;
-				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
+				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', (string) $obj->aliasalt));
 
 				$this->title = $obj->title;
 				$this->description = $obj->description;
@@ -412,7 +432,8 @@ class WebsitePage extends CommonObject
 				$this->lang = $obj->lang;
 				$this->fk_page = $obj->fk_page;
 				$this->allowed_in_frames = $obj->allowed_in_frames;
-				$this->status = $obj->status;
+				$this->keep_history = $obj->keep_history;
+				$this->status = (int) $obj->status;
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
@@ -507,11 +528,11 @@ class WebsitePage extends CommonObject
 							}
 							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						$sql_extrawhere = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 						if ($foundnull) {
-							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+							$sql_extrawhere = "(".$sql_extrawhere." OR ".$this->db->sanitize($key)." IS NULL)";
 						}
-						$sqlwhere[] = $stringtouse;
+						$sqlwhere[] = $sql_extrawhere;
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
@@ -519,9 +540,9 @@ class WebsitePage extends CommonObject
 			}
 			if (count($sqlwhere) > 0) {
 				if (!empty($websiteid)) {
-					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+					$sql .= " AND (".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 				} else {
-					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+					$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 				}
 			}
 
@@ -554,7 +575,7 @@ class WebsitePage extends CommonObject
 				$record->fk_website = $obj->fk_website;
 				$record->type_container = $obj->type_container;
 				$record->pageurl = $obj->pageurl;
-				$record->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
+				$record->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', (string) $obj->aliasalt));
 				$record->title = $obj->title;
 				$record->description = $obj->description;
 				$record->image = $obj->image;
@@ -628,11 +649,11 @@ class WebsitePage extends CommonObject
 							}
 							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						$sql_extrawhere = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
 						if ($foundnull) {
-							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+							$sql_extrawhere = "(".$sql_extrawhere." OR ".$this->db->sanitize($key)." IS NULL)";
 						}
-						$sqlwhere[] = $stringtouse;
+						$sqlwhere[] = $sql_extrawhere;
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
@@ -640,9 +661,9 @@ class WebsitePage extends CommonObject
 			}
 			if (count($sqlwhere) > 0) {
 				if (!empty($websiteid)) {
-					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+					$sql .= " AND (".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere).')';
 				} else {
-					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+					$sql .= " WHERE ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 				}
 			}
 
@@ -711,6 +732,16 @@ class WebsitePage extends CommonObject
 			}
 		}
 
+		// Check there is no PHP content into the modifiedhtmlheader (must be only HTML + JS)
+		// Note: This one may be useless because this->htmlheader should be retrieved now using GETPOST(..., 'restricthtmlallowlinkscript') so without PHP content. We keep it in case of.
+		$phpcontent = dolKeepOnlyPhpCode($this->htmlheader);
+
+		if ($phpcontent) {
+			$this->error = 'Error: you try to create htmlheader with PHP content inside, this is not allowed.';
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -750,6 +781,7 @@ class WebsitePage extends CommonObject
 		}
 
 		if (!$error) {
+			require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 			$websiteobj = new Website($this->db);
 			$result = $websiteobj->fetch($this->fk_website);
 
@@ -813,6 +845,7 @@ class WebsitePage extends CommonObject
 
 		if ($istranslation) {
 			if (is_null($website)) {
+				require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 				$website = new Website($this->db);
 			}
 			$website->fetch($object->fk_website);

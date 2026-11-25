@@ -148,7 +148,7 @@ print load_fiche_titre($langs->trans('ComptaSetup'), $linkback, 'title_setup');
 
 print '<br>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
@@ -173,21 +173,6 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
 print "</tr>\n";
-
-/*
-foreach ($list as $key) {
-	print '<tr class="oddeven value">';
-
-	// Param
-	$libelle = $langs->trans($key);
-	print '<td><label for="'.$key.'">'.$libelle.'</label></td>';
-
-	// Value
-	print '<td>';
-	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
-	print '</td></tr>';
-}
-*/
 
 // Option to include various payment in results
 print '<tr class="oddeven value">'."\n";

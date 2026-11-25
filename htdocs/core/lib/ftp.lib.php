@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2022-2025	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2022	    Anthony Berton       	<bertonanthony@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,8 @@
  * @param 	string	$ftp_password	FTP password
  * @param 	string	$section		Directory
  * @param	integer	$ftp_passive	Use a passive mode
- * @return	array{conn_id:false|null|resource,ok:int<0,1>,mesg:string,curdir:string,curdiriso:string}		Result of connect
+ * @return	array{conn_id:false|null|resource|FTP\Connection,ok:int<0,1>,mesg:string,curdir:string,curdiriso:string}		Result of connect
+ * @phpstan-return	array{conn_id:false|null|FTP\Connection,ok:int<0,1>,mesg:string,curdir:string,curdiriso:string}		Result of connect
  */
 function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive = 0)
 {
@@ -52,7 +53,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 	}
 
 	if ($ok) {
-		$connecttimeout = (!getDolGlobalString('FTP_CONNECT_TIMEOUT') ? 40 : $conf->global->FTP_CONNECT_TIMEOUT);
+		$connecttimeout = (!getDolGlobalString('FTP_CONNECT_TIMEOUT') ? 40 : getDolGlobalString('FTP_CONNECT_TIMEOUT'));
 		$tmp_conn_id = 0;
 		if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 			dol_syslog('Try to connect with ssh2_connect');

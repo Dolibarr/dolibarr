@@ -149,7 +149,7 @@ class Webhook extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -227,7 +227,7 @@ class Webhook extends DolibarrApi
 		if ($this->target->update(DolibarrApiAccess::$user, 1) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->target->error);
+			throw new RestException(500, $this->target->errorsToString());
 		}
 	}
 

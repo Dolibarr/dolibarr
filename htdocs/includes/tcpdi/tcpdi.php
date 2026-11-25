@@ -19,7 +19,7 @@
 //
 
 // Dummy shim to allow unmodified use of fpdf_tpl
-class FPDF extends TCPDF {}
+//class FPDF extends TCPDF {}
 
 require_once('fpdf_tpl.php');
 
@@ -505,7 +505,10 @@ class TCPDI extends FPDF_TPL {
 
             $this->_out('/Resources ');
 
-            if (isset($tpl['resources'])) {
+            // @CHANGE DOL getPageResources() returns false when no node of the page tree carries any, and
+            // isset() is true for false: the value was written as a dictionary, which wrote nothing at all
+            // after "/Resources". Fall back on the default set instead.
+            if (!empty($tpl['resources'])) {
                 $this->current_parser =& $tpl['parser'];
                 $this->pdf_write_value($tpl['resources']); // "n" will be changed
             } else {

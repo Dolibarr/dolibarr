@@ -29,11 +29,6 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -41,10 +36,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills'));
 
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'chequelist'; // To manage different context of search (also used to save the selection and position of fields)
+
+$search_id = trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
@@ -57,6 +59,7 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 $search_account = GETPOST('search_account', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $mode = GETPOST('mode', 'alpha');
+$toselect = GETPOST('toselect', 'array:int');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -94,6 +97,7 @@ foreach ($arrayofpaymentmodetomanage as $key => $val) {
 }
 
 $arrayfields = array(
+	'bc.rowid'          => array('label' => "TechnicalID", 'checked' => '-1', 'position' => 1),
 	'bc.ref'            => array('label' => "Ref", 'checked' => '1', 'position' => 10),
 	'bc.type'			=> array('label' => "Type", 'checked' => '1', 'position' => 20),
 	'bc.date_bordereau' => array('label' => "DateCreation", 'checked' => '1', 'position' => 30),
@@ -102,11 +106,19 @@ $arrayfields = array(
 	'bc.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 60),
 	'bc.statut'			=> array('label' => "Status", 'checked' => '1', 'position' => 70)
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('chequelist'));
 $object = new RemiseCheque($db);
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Security check
 $result = restrictedArea($user, 'banque', '', '');
@@ -127,6 +139,7 @@ if (empty($reshook)) {
 
 	// All tests are required to be compatible with all browsers
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+		$search_id = '';
 		$search_ref = '';
 		$search_amount = '';
 		$search_account = '';
@@ -164,12 +177,18 @@ $sql .= $hookmanager->resPrint;
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
-$sql .= " ".MAIN_DB_PREFIX."bank_account as ba";
-$sql .= " WHERE bc.fk_bank_account = ba.rowid";
-$sql .= " AND bc.entity = ".((int) $conf->entity);
+$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."bank_account as ba ON ba.rowid = bc.fk_bank_account";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE bc.entity = ".((int) $conf->entity);
 
 // Search criteria
+if ($search_id != '') {
+	$sql .= natural_search("bc.rowid", $search_id, 1);
+}
 if ($search_ref) {
 	$sql .= natural_search("bc.ref", $search_ref);
 }
@@ -251,6 +270,9 @@ if ($resql) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.$limit;
 	}
+	if ($search_id != '') {
+		$param .= '&search_id='.urlencode($search_id);
+	}
 	if ($search_amount != '') {
 		$param .= '&search_amount='.urlencode($search_amount);
 	}
@@ -258,7 +280,12 @@ if ($resql) {
 		$param .= '&search_account='.urlencode((string) ($search_account));
 	}
 
-	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new';
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
+	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=create2';
 
 	$newcardbutton  = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
@@ -280,10 +307,10 @@ if ($resql) {
 
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
+	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'depositslip', 0, $newcardbutton, '', $limit);
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1); // This also change content of $arrayfields
 	$massactionbutton = '';
 	if ($massactionbutton) {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
@@ -298,60 +325,88 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
 		print '</td>';
 	}
 
-	// Filter: Ref
-	if (!empty($arrayfields['bc.ref']['checked'])) {
-		print '<td class="liste_titre">';
-		print '<input class="flat" type="text" size="4" name="search_ref" value="' . $search_ref . '">';
-		print '</td>';
-	}
+	// Fields with position ordered by user setup
+	foreach ($arrayfields as $arraykey => $arrayval) {
+		switch ($arraykey) {
+			case 'bc.rowid':
+				// Filter: Technical ID
+				if (!empty($arrayfields['bc.rowid']['checked'])) {
+					print '<td class="liste_titre center">';
+					print '<input class="flat width50" type="text" name="search_id" value="'.dolPrintHTMLForAttribute($search_id).'">';
+					print '</td>';
+				}
+				break;
 
-	// Filter: Type
-	if (!empty($arrayfields['bc.type']['checked'])) {
-		print '<td class="liste_titre">';
-		print '</td>';
-	}
+			case 'bc.ref':
+				// Filter: Ref
+				if (!empty($arrayfields['bc.ref']['checked'])) {
+					print '<td class="liste_titre">';
+					print '<input class="flat" type="text" size="4" name="search_ref" value="' . $search_ref . '">';
+					print '</td>';
+				}
+				break;
 
-	// Filter: Date
-	if (!empty($arrayfields['bc.date_bordereau']['checked'])) {
-		print '<td class="liste_titre center">';
-		print '<div class="nowrapfordate">';
-		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-		print '</div>';
-		print '<div class="nowrapfordate">';
-		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-		print '</div>';
-		print '</td>';
-	}
+			case 'bc.type':
+				// Filter: Type
+				if (!empty($arrayfields['bc.type']['checked'])) {
+					print '<td class="liste_titre">';
+					print '</td>';
+				}
+				break;
 
-	// Filter: Bank account
-	if (!empty($arrayfields['ba.label']['checked'])) {
-		print '<td class="liste_titre">';
-		$form->select_comptes($search_account, 'search_account', 0, '', 1);
-		print '</td>';
-	}
+			case 'bc.date_bordereau':
+				// Filter: Date
+				if (!empty($arrayfields['bc.date_bordereau']['checked'])) {
+					print '<td class="liste_titre center">';
+					print '<div class="nowrapfordate">';
+					print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+					print '</div>';
+					print '<div class="nowrapfordate">';
+					print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+					print '</div>';
+					print '</td>';
+				}
+				break;
 
-	// Filter: Number of cheques
-	if (!empty($arrayfields['bc.nbcheque']['checked'])) {
-		print '<td class="liste_titre">&nbsp;</td>';
-	}
+			case 'ba.label':
+				// Filter: Bank account
+				if (!empty($arrayfields['ba.label']['checked'])) {
+					print '<td class="liste_titre">';
+					$form->select_comptes($search_account, 'search_account', 0, '', 1);
+					print '</td>';
+				}
+				break;
 
-	// Filter: Amount
-	if (!empty($arrayfields['bc.amount']['checked'])) {
-		print '<td class="liste_titre right">';
-		print '<input class="flat maxwidth50" type="text" name="search_amount" value="' . $search_amount . '">';
-		print '</td>';
-	}
+			case 'bc.nbcheque':
+				// Filter: Number of cheques
+				if (!empty($arrayfields['bc.nbcheque']['checked'])) {
+					print '<td class="liste_titre">&nbsp;</td>';
+				}
+				break;
 
-	// Filter: Status (only placeholder)
-	if (!empty($arrayfields['bc.statut']['checked'])) {
-		print '<td class="liste_titre"></td>';
+			case 'bc.amount':
+				// Filter: Amount
+				if (!empty($arrayfields['bc.amount']['checked'])) {
+					print '<td class="liste_titre right">';
+					print '<input class="flat maxwidth50" type="text" name="search_amount" value="' . $search_amount . '">';
+					print '</td>';
+				}
+				break;
+
+			case 'bc.statut':
+				// Filter: Status (only placeholder)
+				if (!empty($arrayfields['bc.statut']['checked'])) {
+					print '<td class="liste_titre"></td>';
+				}
+				break;
+		}
 	}
 
 	// Fields from hook
@@ -360,7 +415,7 @@ if ($resql) {
 	print $hookmanager->resPrint;
 
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -375,46 +430,71 @@ if ($resql) {
 	// Fields title label
 	// --------------------------------------------------------------------
 	print '<tr class="liste_titre">';
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 		$totalarray['nbfield']++;
 	}
-	if (!empty($arrayfields['bc.ref']['checked'])) {
-		// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
-		print_liste_field_titre($arrayfields['bc.ref']['label'], $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
-		$totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['bc.type']['checked'])) {
-		print_liste_field_titre($arrayfields['bc.type']['label'], $_SERVER["PHP_SELF"], "bc.type", "", $param, "", $sortfield, $sortorder);
-		$totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['bc.date_bordereau']['checked'])) {
-		print_liste_field_titre($arrayfields['bc.date_bordereau']['label'], $_SERVER["PHP_SELF"], "bc.date_bordereau", "", $param, 'align="center"', $sortfield, $sortorder);
-		$totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['ba.label']['checked'])) {
-		print_liste_field_titre($arrayfields['ba.label']['label'], $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
-		$totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['bc.nbcheque']['checked'])) {
-		print_liste_field_titre($arrayfields['bc.nbcheque']['label'], $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, 'class="right"', $sortfield, $sortorder);
-		$totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['bc.amount']['checked'])) {
-		print_liste_field_titre($arrayfields['bc.amount']['label'], $_SERVER["PHP_SELF"], "bc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-		$totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['bc.statut']['checked'])) {
-		print_liste_field_titre($arrayfields['bc.statut']['label'], $_SERVER["PHP_SELF"], "bc.statut", "", $param, 'class="right"', $sortfield, $sortorder);
-		$totalarray['nbfield']++;
+	// Fields with position ordered by user setup
+	foreach ($arrayfields as $arraykey => $arrayval) {
+		switch ($arraykey) {
+			case 'bc.rowid':
+				if (!empty($arrayfields['bc.rowid']['checked'])) {
+					print_liste_field_titre($arrayfields['bc.rowid']['label'], $_SERVER["PHP_SELF"], "bc.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
+					$totalarray['nbfield']++;
+				}
+				break;
+			case 'bc.ref':
+				if (!empty($arrayfields['bc.ref']['checked'])) {
+					// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
+					print_liste_field_titre($arrayfields['bc.ref']['label'], $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
+					$totalarray['nbfield']++;
+				}
+				break;
+			case 'bc.type':
+				if (!empty($arrayfields['bc.type']['checked'])) {
+					print_liste_field_titre($arrayfields['bc.type']['label'], $_SERVER["PHP_SELF"], "bc.type", "", $param, "", $sortfield, $sortorder);
+					$totalarray['nbfield']++;
+				}
+				break;
+			case 'bc.date_bordereau':
+				if (!empty($arrayfields['bc.date_bordereau']['checked'])) {
+					print_liste_field_titre($arrayfields['bc.date_bordereau']['label'], $_SERVER["PHP_SELF"], "bc.date_bordereau", "", $param, 'align="center"', $sortfield, $sortorder);
+					$totalarray['nbfield']++;
+				}
+				break;
+			case 'ba.label':
+				if (!empty($arrayfields['ba.label']['checked'])) {
+					print_liste_field_titre($arrayfields['ba.label']['label'], $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+					$totalarray['nbfield']++;
+				}
+				break;
+			case 'bc.nbcheque':
+				if (!empty($arrayfields['bc.nbcheque']['checked'])) {
+					print_liste_field_titre($arrayfields['bc.nbcheque']['label'], $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, 'class="right"', $sortfield, $sortorder);
+					$totalarray['nbfield']++;
+				}
+				break;
+			case 'bc.amount':
+				if (!empty($arrayfields['bc.amount']['checked'])) {
+					print_liste_field_titre($arrayfields['bc.amount']['label'], $_SERVER["PHP_SELF"], "bc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
+					$totalarray['nbfield']++;
+				}
+				break;
+			case 'bc.statut':
+				if (!empty($arrayfields['bc.statut']['checked'])) {
+					print_liste_field_titre($arrayfields['bc.statut']['label'], $_SERVER["PHP_SELF"], "bc.statut", "", $param, 'class="right"', $sortfield, $sortorder);
+					$totalarray['nbfield']++;
+				}
+				break;
+		}
 	}
 
 	// Hook fields
-	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 		$totalarray['nbfield']++;
 	}
@@ -448,7 +528,7 @@ if ($resql) {
 
 			$account = new Account($db);
 			$account->fetch($objp->bid);
-			$checkdepositstatic->account_id = $account->getNomUrl(1);
+			$checkdepositstatic->account_id = $account->id;
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
@@ -465,87 +545,121 @@ if ($resql) {
 				print '<tr class="oddeven">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="nowrap center"></td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
 				}
 
-				// Num ref cheque
-				if (!empty($arrayfields['bc.ref']['checked'])) {
-					print '<td>';
-					print $checkdepositstatic->getNomUrl(1);
-					print '</td>';
-					if (!$i) {
-						$totalarray['nbfield']++;
+				// Fields with position ordered by user setup
+				foreach ($arrayfields as $arraykey => $arrayval) {
+					switch ($arraykey) {
+						case 'bc.rowid':
+							// Technical ID
+							if (!empty($arrayfields['bc.rowid']['checked'])) {
+								print '<td class="center">'.((int) $objp->rowid).'</td>';
+								if (!$i) {
+									$totalarray['nbfield']++;
+								}
+							}
+							break;
+
+						case 'bc.ref':
+							// Num ref cheque
+							if (!empty($arrayfields['bc.ref']['checked'])) {
+								print '<td>';
+								print $checkdepositstatic->getNomUrl(1);
+								print '</td>';
+								if (!$i) {
+									$totalarray['nbfield']++;
+								}
+							}
+							break;
+
+						case 'bc.type':
+							// Type
+							if (!empty($arrayfields['bc.type']['checked'])) {
+								$labelpaymentmode = ($langs->transnoentitiesnoconv("PaymentType".$checkdepositstatic->type) != "PaymentType".$checkdepositstatic->type ? $langs->transnoentitiesnoconv("PaymentType".$checkdepositstatic->type) : $checkdepositstatic->type);
+								print '<td>'.dol_escape_htmltag($labelpaymentmode).'</td>';
+								if (!$i) {
+									$totalarray['nbfield']++;
+								}
+							}
+							break;
+
+						case 'bc.date_bordereau':
+							// Date
+							if (!empty($arrayfields['bc.date_bordereau']['checked'])) {
+								print '<td class="center">'.dol_print_date($db->jdate($objp->date_bordereau), 'dayhour', 'tzuser').'</td>';
+								if (!$i) {
+									$totalarray['nbfield']++;
+								}
+							}
+							break;
+
+						case 'ba.label':
+							// Bank
+							if (!empty($arrayfields['ba.label']['checked'])) {
+								print '<td>';
+								if ($objp->bid) {
+									print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
+								} else {
+									print '&nbsp;';
+								}
+								print '</td>';
+								if (!$i) {
+									$totalarray['nbfield']++;
+								}
+							}
+							break;
+
+						case 'bc.nbcheque':
+							// Number of cheques
+							if (!empty($arrayfields['bc.nbcheque']['checked'])) {
+								print '<td class="right">'.$objp->nbcheque.'</td>';
+								if (!$i) {
+									$totalarray['nbfield']++;
+								}
+							}
+							break;
+
+						case 'bc.amount':
+							// Amount
+							if (!empty($arrayfields['bc.amount']['checked'])) {
+								print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
+								if (!$i) {
+									$totalarray['nbfield']++;
+								}
+								if (empty($totalarray['val']['amount'])) {
+									$totalarray['val']['amount'] = $objp->amount;
+								} else {
+									$totalarray['val']['amount'] += $objp->amount;
+								}
+							}
+							break;
+
+						case 'bc.statut':
+							// Status
+							if (!empty($arrayfields['bc.statut']['checked'])) {
+								print '<td class="right">';
+								print $checkdepositstatic->LibStatut($objp->statut, 5);
+								print '</td>';
+								if (!$i) {
+									$totalarray['nbfield']++;
+								}
+							}
+							break;
 					}
 				}
 
-				// Type
-				if (!empty($arrayfields['bc.type']['checked'])) {
-					$labelpaymentmode = ($langs->transnoentitiesnoconv("PaymentType".$checkdepositstatic->type) != "PaymentType".$checkdepositstatic->type ? $langs->transnoentitiesnoconv("PaymentType".$checkdepositstatic->type) : $checkdepositstatic->type);
-					print '<td>'.dol_escape_htmltag($labelpaymentmode).'</td>';
-					if (!$i) {
-						$totalarray['nbfield']++;
-					}
-				}
-
-				// Date
-				if (!empty($arrayfields['bc.date_bordereau']['checked'])) {
-					print '<td class="center">'.dol_print_date($db->jdate($objp->date_bordereau), 'dayhour', 'tzuser').'</td>';
-					if (!$i) {
-						$totalarray['nbfield']++;
-					}
-				}
-
-				// Bank
-				if (!empty($arrayfields['ba.label']['checked'])) {
-					print '<td>';
-					if ($objp->bid) {
-						print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
-					} else {
-						print '&nbsp;';
-					}
-					print '</td>';
-					if (!$i) {
-						$totalarray['nbfield']++;
-					}
-				}
-
-				// Number of cheques
-				if (!empty($arrayfields['bc.nbcheque']['checked'])) {
-					print '<td class="right">'.$objp->nbcheque.'</td>';
-					if (!$i) {
-						$totalarray['nbfield']++;
-					}
-				}
-
-				// Amount
-				if (!empty($arrayfields['bc.amount']['checked'])) {
-					print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
-					if (!$i) {
-						$totalarray['nbfield']++;
-					}
-					if (empty($totalarray['val']['amount'])) {
-						$totalarray['val']['amount'] = $objp->amount;
-					} else {
-						$totalarray['val']['amount'] += $objp->amount;
-					}
-				}
-
-				// Status
-				if (!empty($arrayfields['bc.statut']['checked'])) {
-					print '<td class="right">';
-					print $checkdepositstatic->LibStatut($objp->statut, 5);
-					print '</td>';
-					if (!$i) {
-						$totalarray['nbfield']++;
-					}
-				}
+				// Fields from hook
+				$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="nowrap center"></td>';
 					if (!$i) {
 						$totalarray['nbfield']++;

@@ -17,7 +17,7 @@
 
 CREATE TABLE llx_oauth_token (
     rowid 			integer AUTO_INCREMENT PRIMARY KEY,
-    service 		varchar(36),         	-- What king of key or token: 'Google', 'Stripe', 'auth-public-key', 'api', ...
+    service 		varchar(36),         	-- What king of key or token: 'Oauthservice-Setupname' (ex: 'Google-Smtp', 'Google-Login'), 'NAME_OF_EXTERNAL_SERVICE' (ex: 'EINVOICING_SUPERPDP_PROD'), 'api', 'dolibarr_totp' (for totp key) ...
     token 			text,				 	-- token in serialize format, of an object StdOAuth2Token of library phpoauth2. Deprecated, use tokenstring instead.
     tokenstring 	text,				 	-- token in json or text format. Value depends on 'service'. For example for an OAUTH service: '{"access_token": "sk_test_cccc", "refresh_token": "rt_aaa", "token_type": "bearer", ..., "scope": "read_write"}
     tokenstring_refresh	text NULL,			-- token refresh in text format. Value depends on 'service'.
@@ -33,5 +33,13 @@ CREATE TABLE llx_oauth_token (
     lastaccess    	datetime NULL,						-- updated at each api access
     apicount_previous_month BIGINT UNSIGNED DEFAULT 0,
     apicount_month BIGINT UNSIGNED DEFAULT 0,			-- increased by 1 at each page access, saved into pageviews_previous_month when on different month than lastaccess
-    apicount_total BIGINT UNSIGNED DEFAULT 0			-- increased by 1 at each page access, no reset
+    apicount_total BIGINT UNSIGNED DEFAULT 0,			-- increased by 1 at each page access, no reset
+    -- Fields used only for service 'passkey' (WebAuthn credential of a user, its public key in PEM format is saved into tokenstring)
+    passkey_label				varchar(255) NULL,		-- name given by the user to recognize the passkey
+    passkey_credential_id		varchar(255) NULL,		-- credential ID, lower case hex (base64url is case sensitive)
+    passkey_user_handle			varchar(128) NULL,		-- WebAuthn user.id, lower case hex, random and same for all passkeys of a user
+    passkey_sign_count			integer NULL,			-- last signature counter returned by the authenticator (0 for synced passkeys)
+    passkey_aaguid				varchar(36) NULL,		-- model of authenticator, as UUID
+    passkey_backup_eligible		smallint NULL,			-- 1 if the passkey can be synced to other devices
+    passkey_backup_state		smallint NULL			-- 1 if the passkey was synced at last use
 )ENGINE=innodb;

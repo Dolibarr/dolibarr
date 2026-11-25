@@ -3,7 +3,7 @@
  * Copyright (C) 2016-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyreport.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy'));
+$langs->loadLangs(array('compta', 'bills', 'donations', 'salaries', 'accountancy'));
 
 $id_report = GETPOSTINT('id_report');
 if ($id_report <= 0) {
@@ -181,6 +181,10 @@ if (isModEnabled('comptabilite')) {
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
+// When no accountancy module is enabled, no permission covers this page, so we refuse the access.
+if (!isModEnabled('comptabilite') && !isModEnabled('accounting')) {
+	accessforbidden();
+}
 
 /*
  * View
@@ -207,11 +211,12 @@ $builddate = 0;
 $name = '';
 $period = '';
 $calcmode = 0;
+$description = '';
 
 $form = new Form($db);
 
-$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year - 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_previous().'</a>';
-$textnextyear = ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year + 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_next().'</a>';
+$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year - 1).'&id_report='.((int) $id_report).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_previous().'</a>';
+$textnextyear = ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year + 1).'&id_report='.((int) $id_report).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_next().'</a>';
 
 
 // Affiche en-tete de rapport
@@ -267,7 +272,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 }
 
-report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta' => $modecompta, 'action' => ''), $calcmode);
+report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta' => $modecompta, 'action' => '', 'id_report' => $id_report), $calcmode);
 
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
@@ -373,9 +378,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 					$vars[$un_cat['code']] = 0;
 				}
 
+				$code = null;
+
 				// Previous Fiscal year (N-1)
-				foreach ($sommes as $code => $det) {
-					$vars[$code] = empty($det['NP']) ? 0 : $det['NP'];
+				foreach ($sommes as $code_idx => $det) {
+					$code = $code_idx;
+					$vars[$code_idx] = empty($det['NP']) ? 0 : $det['NP'];
 				}
 
 				$result = strtr($formula, $vars);
@@ -397,7 +405,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 					}
 				}
 
-				if (!isset($sommes[$code])) {
+				if ($code !== null && !isset($sommes[$code])) {
 					$sommes[$code] = array();
 				}
 				// Year N
@@ -409,9 +417,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 
 				// Current fiscal year (N)
-				if (is_array($sommes) && !empty($sommes)) {
-					foreach ($sommes as $code => $det) {
-						$vars[$code] = empty($det['N']) ? 0 : $det['N'];
+				if (!empty($sommes)) {
+					foreach ($sommes as $code_idx => $det) {
+						$code = $code_idx;
+						$vars[$code_idx] = empty($det['N']) ? 0 : $det['N'];
 					}
 				}
 
@@ -435,8 +444,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Detail by month
 				foreach ($months as $k => $v) {
 					if (($k + 1) >= $date_startmonth && (($date_startmonth <= $date_endmonth && ($k + 1) <= $date_endmonth) || ($date_startmonth > $date_endmonth))) {
-						foreach ($sommes as $code => $det) {
-							$vars[$code] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
+						foreach ($sommes as $code_idx => $det) {
+							$code = $code_idx;
+							$vars[$code_idx] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
 						}
 						$result = strtr($formula, $vars);
 						$result = str_replace('--', '+', $result);
@@ -461,8 +471,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 				if ($date_startmonth > $date_endmonth) {
 					foreach ($months as $k => $v) {
 						if (($k + 1) < $date_startmonth && ($k + 1) <= $date_endmonth) {
-							foreach ($sommes as $code => $det) {
-								$vars[$code] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
+							foreach ($sommes as $code_idx => $det) {
+								$code = $code_idx;
+								$vars[$code_idx] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
 							}
 							$result = strtr($formula, $vars);
 							$result = str_replace('--', '+', $result);
@@ -551,13 +562,20 @@ if ($modecompta == 'CREANCES-DETTES') {
 					foreach ($months as $k => $v) {
 						$monthtoprocess = $k + 1; // ($k+1) is month 1, 2, ..., 12
 						$yeartoprocess = $start_year;
-						if (($k + 1) < $start_month) {
+						if ($monthtoprocess < $start_month) {
 							$yeartoprocess++;
 						}
 
-						if (($yeartoprocess == $start_year && ($k + 1) >= $date_startmonth && $k < $date_endmonth) ||
-							($yeartoprocess == $start_year + 1 && ($k + 1) < $date_startmonth)
-						) {
+						// $k is the month index (0 = January). Compare the month number with the period bounds.
+						// A period inside one calendar year keeps months from the start month through the end month.
+						// A period that crosses New Year keeps the start year from the start month, then the next year through the end month.
+						if ($date_startmonth <= $date_endmonth) {
+							$keepmonth = ($yeartoprocess == $start_year && $monthtoprocess >= $date_startmonth && $monthtoprocess <= $date_endmonth);
+						} else {
+							$keepmonth = ($yeartoprocess == $start_year && $monthtoprocess >= $date_startmonth);
+							$keepmonth = $keepmonth || ($yeartoprocess == ($start_year + 1) && $monthtoprocess <= $date_endmonth);
+						}
+						if ($keepmonth) {
 							//var_dump($monthtoprocess.'_'.$yeartoprocess);
 							if (isset($cpt['account_number'])) {
 								$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);

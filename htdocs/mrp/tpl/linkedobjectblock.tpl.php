@@ -49,7 +49,7 @@ if (empty($conf) || !is_object($conf)) {
 print "<!-- BEGIN PHP TEMPLATE mrp/tpl/linkedobjectblock.tpl.php -->\n";
 
 // Load translation files required by the page
-$langs->load("bom");
+$langs->load("mrp");
 
 $total = 0;
 $ilink = 0;
@@ -105,12 +105,17 @@ if ($object->element == 'mo') {
 	}
 } else {
 	$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date,ref', 'desc', 0, 0, 1);
-	'@phan-var-force array<CommonObject> $linkedObjectBlock';
+	'@phan-var-force array<Mo> $linkedObjectBlock';
 
 	$total = 0;
 	$ilink = 0;
 	foreach ($linkedObjectBlock as $key => $objectlink) {
 		$ilink++;
+		$objectlink->fetch_thirdparty();
+
+		$refWithThirdparty = '<span class="small">';
+		$refWithThirdparty .= !empty($objectlink->thirdparty) ? $objectlink->thirdparty->getNomUrl(1) : '';
+		$refWithThirdparty .= '</span>';
 
 		$trclass = 'oddeven';
 		if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
@@ -125,7 +130,7 @@ if ($object->element == 'mo') {
 		print '</td>';
 
 		print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
-		print '<td class="linkedcol-ref tdoverflowmax150" >'.$objectlink->ref_client.'</td>';
+		print '<td class="linkedcol-ref tdoverflowmax150 nopaddingtopimp nopaddingbottomimp">'.$refWithThirdparty.'</td>';
 		print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_start_planned, 'day').'</td>';
 		print '<td class="linkedcol-amount right">-</td>';
 		print '<td class="linkedcol-statut right">'.$objectlink->getLibStatut(3).'</td>';

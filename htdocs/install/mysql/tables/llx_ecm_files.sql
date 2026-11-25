@@ -37,7 +37,7 @@ CREATE TABLE llx_ecm_files
   position          integer,                        -- position of file among others
   gen_or_uploaded   varchar(12),                    -- 'generated' 'uploaded' 'api' 'unknown'
   extraparams		varchar(255),					-- for stocking other parameters with json format
-  date_c			datetime,
+  date_creation	datetime,
   tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_c			integer,
   fk_user_m			integer,

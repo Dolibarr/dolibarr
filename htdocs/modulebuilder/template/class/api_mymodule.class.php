@@ -20,6 +20,7 @@
 use Luracast\Restler\RestException;
 
 dol_include_once('/mymodule/class/myobject.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 
@@ -101,7 +102,7 @@ class MyModuleApi extends DolibarrApi
 	 * @param 	string		   $sortorder			Sort order
 	 * @param 	int			   $limit				Limit for list
 	 * @param 	int			   $page				Page number
-	 * @param 	string         $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param 	string         $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param 	string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of MyObject objects
 	 * @phan-return array<int,MyObject>
@@ -125,7 +126,7 @@ class MyModuleApi extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
-		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
+		$restrictonsocid = (isset($tmpobject->fields['fk_soc']) ? 1 : 0); // Set to 1 if there is a field socid in table of object
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -145,7 +146,7 @@ class MyModuleApi extends DolibarrApi
 			$sql .= " WHERE t.entity IN (".getEntity($tmpobject->element).")";
 		} elseif (preg_match('/^\w+@\w+$/', (string) $tmpobject->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $tmpobject->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$tmparray[0]." = pt.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->db->sanitize($tmparray[1])." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($tmpobject->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
@@ -156,9 +157,9 @@ class MyModuleApi extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add where from hooks and sqlfilters
@@ -239,8 +240,10 @@ class MyModuleApi extends DolibarrApi
 			}
 
 			if ($field == 'array_options' && is_array($value)) {
+				$this->myobject->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
 				foreach ($value as $index => $val) {
-					$this->myobject->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->myobject);
+					$this->myobject->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->myobject);
 				}
 				continue;
 			}
@@ -280,7 +283,7 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
-			throw new RestException(403, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to instance id='.$id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->myobject->fetch($id);
@@ -300,19 +303,12 @@ class MyModuleApi extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->myobject->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->myobject);
+					$this->myobject->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->myobject);
 				}
 				continue;
 			}
 
-			if ($field == 'array_options' && is_array($value)) {
-				foreach ($value as $index => $val) {
-					$this->myobject->array_options[$index] = $this->_checkValForAPI($field, $val, $this->myobject);
-				}
-				continue;
-			}
-
-			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
+			$this->myobject->$field = $this->_checkValForAPI((string) $field, $value, $this->myobject);
 		}
 
 		// Clean data
@@ -346,7 +342,7 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
-			throw new RestException(403, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to instance id='.$id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->myobject->fetch($id);
@@ -354,9 +350,10 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(404, 'MyObject not found');
 		}
 
-		if ($this->myobject->delete(DolibarrApiAccess::$user) == 0) {
+		$result = $this->myobject->delete(DolibarrApiAccess::$user);
+		if ($result == 0) {
 			throw new RestException(409, 'Error when deleting MyObject : '.$this->myobject->error);
-		} elseif ($this->myobject->delete(DolibarrApiAccess::$user) < 0) {
+		} elseif ($result < 0) {
 			throw new RestException(500, 'Error when deleting MyObject : '.$this->myobject->error);
 		}
 
@@ -421,7 +418,7 @@ class MyModuleApi extends DolibarrApi
 
 		unset($object->rowid);
 		unset($object->canvas);
-
+		//BEGIN MODULEBUILDER LINES
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
 			$nboflines = count($object->lines);
@@ -432,7 +429,7 @@ class MyModuleApi extends DolibarrApi
 				unset($object->lines[$i]->note);
 			}
 		}
-
+		//END MODULEBUILDER LINES
 		return $object;
 	}
 }

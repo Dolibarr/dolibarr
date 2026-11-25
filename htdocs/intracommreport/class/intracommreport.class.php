@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ class IntracommReport extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
 	 *  'alias' the alias used into some old hard coded SQL requests
@@ -101,7 +101,7 @@ class IntracommReport extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>	Array of properties of field to show
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>	Array of properties of field to show
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => 1, 'position' => 10, 'notnull' => 1, "visible" => "0",),
@@ -312,8 +312,8 @@ class IntracommReport extends CommonObject
 		$date_time->addChild('date', date('Y-m-d'));
 		$date_time->addChild('time', date('H:i:s'));
 		$party = $envelope->addChild('Party');
-		$party->addAttribute('partyType', $conf->global->INTRACOMMREPORT_TYPE_ACTEUR);
-		$party->addAttribute('partyRole', $conf->global->INTRACOMMREPORT_ROLE_ACTEUR);
+		$party->addAttribute('partyType', getDolGlobalString('INTRACOMMREPORT_TYPE_ACTEUR'));
+		$party->addAttribute('partyRole', getDolGlobalString('INTRACOMMREPORT_ROLE_ACTEUR'));
 		$party->addChild('partyId', $party_id);
 		$party->addChild('partyName', $declarant);
 		$envelope->addChild('softwareUsed', 'Dolibarr');
@@ -330,12 +330,10 @@ class IntracommReport extends CommonObject
 		$functionCode = $function->addChild('functionCode', $mode);
 		$declaration->addChild('declarationTypeCode', getDolGlobalString('INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)));
 		$declaration->addChild('flowCode', ($type == 'introduction' ? 'A' : 'D'));
-		$declaration->addChild('currencyCode', $conf->global->MAIN_MONNAIE);
-		/********************************************************************/
+		$declaration->addChild('currencyCode', getDolGlobalString('MAIN_MONNAIE'));
 
-		/**************Ajout des lignes de factures**************************/
+		// Add lines of invoices
 		$res = $this->addItemsFact($declaration, $type, $period_reference);
-		/********************************************************************/
 
 		$this->errors = array_unique($this->errors);
 
@@ -362,7 +360,7 @@ class IntracommReport extends CommonObject
 
 		$declaration_des = $e->addChild('declaration_des');
 		$declaration_des->addChild('num_des', self::getDeclarationNumber($this->numero_declaration));
-		$declaration_des->addChild('num_tvaFr', $mysoc->tva_intra ?? ''); // /^FR[a-Z0-9]{2}[0-9]{9}$/  // Doit faire 13 caractères
+		$declaration_des->addChild('num_tvaFr', $mysoc->tva_intra ?? ''); // /^FR[a-Z0-9]{2}[0-9]{9}$/  // Must be 13 characters
 		$declaration_des->addChild('mois_des', (string) $period_month);
 		$declaration_des->addChild('an_des', (string) $period_year);
 
@@ -466,7 +464,9 @@ class IntracommReport extends CommonObject
 			$tabledet = 'facture_fourn_det';
 			$field_link = 'fk_facture_fourn';
 		}
-		list($year, $month) = explode('-', $period_reference);
+		$tmparray = explode('-', $period_reference);
+		$year = $tmparray[0];
+		$month = $tmparray[1];
 		$period_end_of_month_day = cal_days_in_month(CAL_GREGORIAN, (int) $month, (int) $year);
 
 		$sql .= ", l.fk_product, l.qty
@@ -475,7 +475,7 @@ class IntracommReport extends CommonObject
 				, c.code
 				, ext.mode_transport
 				FROM ".MAIN_DB_PREFIX.$tabledet." l
-				INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = l.".$this->db->escape($field_link).")
+				INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = l.".$this->db->sanitize($field_link).")
 				LEFT JOIN ".MAIN_DB_PREFIX.$table_extraf." ext ON (ext.fk_object = f.rowid)
 				INNER JOIN ".MAIN_DB_PREFIX."product p ON (p.rowid = l.fk_product)
 				INNER JOIN ".MAIN_DB_PREFIX."societe s ON (s.rowid = f.fk_soc)
@@ -509,12 +509,12 @@ class IntracommReport extends CommonObject
 			$code_douane = $code_douane_spe;
 		}
 		$cn8->addChild('CN8Code', $code_douane);
-		$item->addChild('MSConsDestCode', $res->code); // code iso pays client
-		$item->addChild('countryOfOriginCode', substr($res->zip, 0, 2)); // code iso pays d'origine
-		$item->addChild('netMass', (string) round($res->weight * $res->qty)); // Poids du produit
-		$item->addChild('quantityInSU', (string) $res->qty); // Quantité de produit dans la ligne
-		$item->addChild('invoicedAmount', (string) round($res->total_ht)); // Montant total ht de la facture (entier attendu)
-		// $item->addChild('invoicedNumber', $res->refinvoice); // Numéro facture
+		$item->addChild('MSConsDestCode', $res->code); // code iso country customer
+		$item->addChild('countryOfOriginCode', substr($res->zip, 0, 2)); // code iso original country
+		$item->addChild('netMass', (string) round($res->weight * $res->qty)); // Weight of product
+		$item->addChild('quantityInSU', (string) $res->qty); // Quantity of product in line
+		$item->addChild('invoicedAmount', (string) round($res->total_ht)); // amount of invoice (integer expected)
+		// $item->addChild('invoicedNumber', $res->refinvoice); // Number of invoice
 		if (!empty($res->tva_intra)) {
 			$item->addChild('partnerId', $res->tva_intra);
 		}
@@ -571,7 +571,7 @@ class IntracommReport extends CommonObject
 		foreach ($TLinesFraisDePort as $res) {
 			$sql = "SELECT p.customcode
 					FROM ".MAIN_DB_PREFIX.$tabledet." d
-					INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = d.".$this->db->escape($field_link).")
+					INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = d.".$this->db->sanitize($field_link).")
 					INNER JOIN ".MAIN_DB_PREFIX."product p ON (p.rowid = d.fk_product)
 					WHERE d.fk_product IS NOT NULL
 					AND f.entity = ".((int) $conf->entity)."
@@ -580,7 +580,7 @@ class IntracommReport extends CommonObject
 					(
 						SELECT MAX(d.total_ht)
 						FROM ".MAIN_DB_PREFIX.$tabledet." d
-						INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = d.".$this->db->escape($field_link).")
+						INNER JOIN ".MAIN_DB_PREFIX.$table." f ON (f.rowid = d.".$this->db->sanitize($field_link).")
 						WHERE d.fk_product IS NOT NULL
 						AND ".$more_sql." = '".$this->db->escape($res->refinvoice)."'
 						AND d.fk_product NOT IN
@@ -638,10 +638,12 @@ class IntracommReport extends CommonObject
 	 */
 	public function generateXMLFile($content_xml)
 	{
-		$name = $this->period.'.xml';
+		global $conf;
 
-		// TODO Must be stored into a dolibarr temp directory
-		$fname = sys_get_temp_dir().'/'.$name;
+		dol_mkdir($conf->intracommreport->dir_temp);
+
+		$name = $this->period.'.xml';
+		$fname = $conf->intracommreport->dir_temp.'/'.$name;
 
 		$f = fopen($fname, 'w+');
 		fwrite($f, $content_xml);
@@ -741,14 +743,16 @@ class IntracommReport extends CommonObject
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				list($class, $module) = explode('@', $this->picto);
+				$tmparray = explode('@', $this->picto);
+				$class = $tmparray[0];
+				$module = $tmparray[1];
 				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {

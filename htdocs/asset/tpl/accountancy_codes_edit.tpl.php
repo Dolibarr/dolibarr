@@ -16,22 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also shows fields from hook formAssetAccountancyCode. Need to have the following variables defined:
- * $object (asset, assetmodel, ...)
- * $assetaccountancycodes
- * $action
- * $conf
- * $langs
- *
- * $parameters
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode.
  */
 
 /**
+ * @var Conf $conf
  * @var DoliDB $db
  * @var Form $form
  * @var FormAccounting $formaccounting
  * @var HookManager $hookmanager
  * @var Translate $langs
+ *
+ * @var ?Object $object (asset, assetmodel, ...)
+ * @var AssetAccountancyCodes $assetaccountancycodes
+ * @var string $action
+ * @var array<string,mixed> $parameters
  */
 
 // Protection to avoid direct call of template
@@ -39,6 +38,11 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+
+'
+@phan-var-force AssetAccountancyCodes $assetaccountancycodes
+@phan-var-force array<string,mixed> $parameters
+';
 
 if (!is_object($form)) {
 	$form = new Form($db);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012-2013  Charles-Fr BENKE		<charles.fr@benke.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -75,7 +75,7 @@ class FormIntervention
 		// Search all contacts
 		$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut as status";
 		$sql .= " FROM ".$this->db->prefix()."fichinter as f";
-		$sql .= " WHERE f.entity = ".$conf->entity;
+		$sql .= " WHERE f.entity = ".((int) $conf->entity);
 		if ($socid >= 0) {
 			if ($socid == '0') {
 				$sql .= " AND (f.fk_soc = 0 OR f.fk_soc IS NULL)";

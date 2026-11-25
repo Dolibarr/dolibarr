@@ -3,6 +3,7 @@ OrdersArea=Área de pedidos de clientes
 SuppliersOrdersArea=Área de órdenes de compra
 OrderCard=Tarjeta de pedido
 OrderId=ID de pedido
+OrderDate=Fecha de pedido
 NewOrderSupplier=Nueva orden de compra
 ToOrder=Crear orden
 MakeOrder=Crear orden

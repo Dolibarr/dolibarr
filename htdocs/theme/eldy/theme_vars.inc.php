@@ -33,7 +33,7 @@
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 $theme_bordercolor = array(235, 235, 224);
-$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
+$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(237, 130, 137), array(80, 166, 90), array(149, 148, 57), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(93, 161, 2), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 if (!defined('ISLOADEDBYSTEELSHEET')) {	// File is run after an include of a php page, not by the style sheet, if the constant is not defined.
 	if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND')) { // user is loaded by dolgraph.class.php
 		if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND') == 'flashy') {
@@ -51,16 +51,16 @@ $theme_bgcoloronglet = array(hexdec('DE'), hexdec('E7'), hexdec('EC'));
 // Colors
 $colorbackbody = '255,255,255';
 $colorbackhmenu1 = '38,60,92'; // topmenu
-//$colorbackvmenu1 = '250,250,250'; // vmenu
-$colorbackvmenu1 = '248,248,248'; // vmenu
+$colorbackvmenu1 = '252,252,252'; // vmenu
+//$colorbackvmenu1 = $colorbackbody;
 $colortopbordertitle1 = '215,215,215'; // top border of title
-$colorbacktitle1 = '241,241,243'; // title of tables,list
+$colorbacktitle1 = '242,242,244'; // title of tables,list
 $colorbacktabcard1 = '255,255,255'; // card
 $colorbacktabactive = '234,234,234';
 $colorbacklineimpair1 = '255,255,255'; // line impair
 $colorbacklineimpair2 = '255,255,255'; // line impair
-$colorbacklinepair1 = '252,252,252'; // line pair
-$colorbacklinepair2 = '252,252,252'; // line pair
+$colorbacklinepair1 = '255,255,255'; // line pair
+$colorbacklinepair2 = '255,255,255'; // line pair
 $colorbacklinepairhover = '240,242,249'; // line hover
 $colorbacklinepairchecked = '240,242,249'; // line checked
 $colorbacklinebreak = '248,247,244'; // line break

@@ -24,7 +24,7 @@ $fieldShowList = $formCard->fieldsmanager->getAllFieldsInfos($formCard->object, 
 
 ?>
 
-<div id="properties">
+<div id="properties"  data-element="<?php print dol_escape_htmltag($formCard->object->element) ?>" >
 	<div class="grid">
 		<div class="card-left">
 			<?php foreach ($fieldShowList['columns'] as $idxColumn => $fields) {

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,8 +255,19 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	if (!$error) {
 		$fuser->loadRights();
 
-		// Suppression de la chaine de character ../ dans $original_file
+		// Removing the "../" string from $original_file
 		$original_file = str_replace("../", "/", $original_file);
+
+		// Security: Remove remaining '.', '..' and empty ('//' -> '/') segments, so the reference of the object
+		// extracted from the subdirectory can not be faked with a path like 'REF/./file' or 'REF//file'.
+		// The reference must also stay the same than the one resolved into dol_check_secure_access_document().
+		$pathsegments = explode('/', $original_file);
+		foreach ($pathsegments as $key => $pathsegment) {
+			if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+				unset($pathsegments[$key]);
+			}
+		}
+		$original_file = implode('/', $pathsegments);
 
 		// find the subdirectory name as the reference
 		if (empty($refname)) {
@@ -297,8 +308,8 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 		}
 
 		// Security:
-		// On interdit les remontees de repertoire ainsi que les pipe dans
-		// les noms de fichiers.
+		// We forbid directory traversal as well as pipes in
+		// file names.
 		if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 			dol_syslog("Refused to deliver file ".$original_file);
 			$errorcode = 'REFUSED';

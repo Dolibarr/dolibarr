@@ -65,7 +65,11 @@ class modPaymentByBankTransfer extends DolibarrModules
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array("modFournisseur", "modBanque"); // List of module class names as string that must be enabled if this module is enabled
+		if (getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+			$this->depends = array("modSupplierInvoice", "modBanque"); // List of module class names as string that must be enabled if this module is enabled
+		} else {
+			$this->depends = array("modFournisseur", "modBanque"); // List of module class names as string that must be enabled if this module is enabled
+		}
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
@@ -111,6 +115,13 @@ class modPaymentByBankTransfer extends DolibarrModules
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'debit';
+
+		$r++;
+		$this->rights[$r][0] = 565;
+		$this->rights[$r][1] = 'Delete a bank transfer payment request';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'delete';
 
 		// Menus
 		//-------

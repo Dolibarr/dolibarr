@@ -53,7 +53,9 @@ ALTER TABLE llx_user MODIFY COLUMN pass_temp varchar(128);
 ALTER TABLE llx_askpricesupplier RENAME TO llx_supplier_proposal;
 ALTER TABLE llx_askpricesupplierdet RENAME TO llx_supplier_proposaldet;
 ALTER TABLE llx_askpricesupplier_extrafields RENAME TO llx_supplier_proposal_extrafields;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_askpricesupplier_extrafields_rowid_seq RENAME TO llx_supplier_proposal_extrafields_rowid_seq;
 ALTER TABLE llx_askpricesupplierdet_extrafields RENAME TO llx_supplier_proposaldet_extrafields;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_askpricesupplierdet_extrafields_rowid_seq RENAME TO llx_supplier_proposaldet_extrafields_rowid_seq;
 ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
 
 -- Fix bad data

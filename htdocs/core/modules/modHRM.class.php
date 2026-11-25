@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +116,16 @@ class modHRM extends DolibarrModules
 		// Constants
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
+		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
+		$this->const = array(
+			array(
+				"EVALUATION_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/evaluations",
+				"",
+				0,
+			),
+		);
 		$r = 0;
 
 
@@ -183,7 +193,7 @@ class modHRM extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->hrm->enabled',
+			//      'test' => 'isModEnabled('hrm')',
 			//      'priority' => 50,
 			//  ),
 		);

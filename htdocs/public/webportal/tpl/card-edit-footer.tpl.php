@@ -22,5 +22,4 @@ $formCard = $this->formCard;
 
 ?>
 
-<footer>
-</footer>
+<footer class="object-card-edit__footer"><?php $this->loadTemplate('card-edit-actions-buttons') ?></footer>

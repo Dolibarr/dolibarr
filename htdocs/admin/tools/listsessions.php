@@ -157,7 +157,7 @@ if ($savehandler == 'files') {
 		print '<tr class="oddeven">';
 
 		// Login
-		print '<td>'.$sessionentry['login'].'</td>';
+		print '<td>'.dol_escape_htmltag($sessionentry['login']).'</td>';
 
 		// ID
 		print '<td class="nowrap left">';
@@ -186,7 +186,7 @@ if ($savehandler == 'files') {
 		$i++;
 	}
 	if (count($listofsessions) == 0) {
-		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</span></td></tr>';
 	}
 	print "</table>";
 } elseif ($savehandler == 'user') {
@@ -207,7 +207,7 @@ if ($savehandler == 'files') {
 		print '<tr class="oddeven">';
 
 		// Login
-		print '<td>'.$sessionentry['login'].'</td>';
+		print '<td>'.dol_escape_htmltag($sessionentry['login']).'</td>';
 
 		// ID
 		print '<td class="nowrap left">';
@@ -228,16 +228,16 @@ if ($savehandler == 'files') {
 		print '<td>'.$sessionentry['age'].'</td>';
 
 		// Remote IP
-		print '<td>'.$sessionentry['remote_ip'].'</td>';
+		print '<td>'.dol_escape_htmltag((string) $sessionentry['remote_ip']).'</td>';
 
 		// User Agent
-		print '<td class="nowrap left">'.$sessionentry['user_agent'].'</td>';
+		print '<td class="nowrap left">'.dol_escape_htmltag((string) $sessionentry['user_agent']).'</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 		$i++;
 	}
 	if (count($listofsessions) == 0) {
-		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</span></td></tr>';
 	}
 	print "</table>";
 } else {

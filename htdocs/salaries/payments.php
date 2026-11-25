@@ -4,6 +4,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,11 +256,12 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.ro
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = sal.fk_user";
 $sql .= " AND s.entity IN (".getEntity('payment_salaries').")";
-if (!$user->hasRight('salaries', 'readchild')) {
-	$sql .= " AND s.fk_user = ".(int) $user->id;
-}
 if (!$user->hasRight('salaries', 'readall')) {
-	$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
+	if (!$user->hasRight('salaries', 'readchild')) {
+		$sql .= " AND sal.fk_user = ".(int) $user->id;
+	} else {
+		$sql .= " AND sal.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
+	}
 }
 
 // Search criteria
@@ -306,7 +308,8 @@ if ($search_type_id > 0) {
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
-$nbtotalofrecords = '';
+$nbtotalofrecords = 0;
+$resql = null;
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -446,7 +449,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -461,7 +464,7 @@ print '<td class="liste_titre center">';
 print '<input class="flat" type="text" size="3" name="search_ref_salary" value="'.$db->escape($search_ref_salary).'">';
 print '</td>';
 // Label
-print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
+print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_label" value="'.$db->escape($search_label).'"></td>';
 // Date end period
 print '<td class="liste_titre center">';
 print '<div class="nowrapfordate">';
@@ -502,7 +505,7 @@ if (isModEnabled("bank")) {
 
 	// Account
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth125');
 	print '</td>';
 }
 // Amount
@@ -516,7 +519,7 @@ $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -531,7 +534,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -562,11 +565,11 @@ $totalarray['nbfield']++;
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -591,7 +594,7 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
-while ($i < $imaxinloop) {
+while ($i < $imaxinloop && $resql !== null) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break;
@@ -608,8 +611,8 @@ while ($i < $imaxinloop) {
 	$userstatic->login = $obj->login;
 	$userstatic->email = $obj->email;
 	$userstatic->socid = $obj->fk_soc;
-	$userstatic->statut = $obj->status;
-	$userstatic->status = $obj->status;
+	$userstatic->statut = (int) $obj->status;
+	$userstatic->status = (int) $obj->status;
 	$userstatic->gender = $obj->gender;
 	$userstatic->photo = $obj->photo;
 
@@ -644,7 +647,7 @@ while ($i < $imaxinloop) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -672,7 +675,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Label payment
-		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+		print '<td class="tdoverflowmax150">'.dol_trunc($obj->label, 40)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -694,7 +697,7 @@ while ($i < $imaxinloop) {
 		if (!$i) $totalarray['nbfield']++;*/
 
 		// Employee
-		print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1)."</td>\n";
+		print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -779,7 +782,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -816,7 +819,9 @@ if ($num == 0) {
 }
 
 
-$db->free($resql);
+if ($resql !== null) {
+	$db->free($resql);
+}
 
 $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook

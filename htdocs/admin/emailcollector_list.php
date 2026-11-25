@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,10 +29,12 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
@@ -77,7 +79,7 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new EmailCollector($db);
-$extrafields = new ExtraFields($db);
+
 $diroutputmassaction = $conf->emailcollector->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('emailcollectorlist')); // Note that conf->hooks_modules contains array
 
@@ -142,6 +144,9 @@ foreach ($object->fields as $key => $val) {
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -179,6 +184,18 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	// Save setup parameters
+	if (GETPOSTISSET('saveemailcollectorsettings')) {
+		$allowedext = trim((string) GETPOST('EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS', 'restricthtml'));
+		$result = dolibarr_set_const($db, 'EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS', $allowedext, 'chaine', 0, '', $conf->entity);
+		if ($result > 0) {
+			$conf->global->EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS = $allowedext;
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
+	}
+
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -247,6 +264,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 if ($object->ismultientitymanaged == 1) {
 	$sql .= " WHERE t.entity IN (".getEntity($object->element).")";
 } else {
@@ -428,7 +449,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -477,7 +498,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -489,7 +510,7 @@ print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? 
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -543,7 +564,7 @@ $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -558,7 +579,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -586,7 +607,7 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -643,7 +664,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -721,7 +742,7 @@ while ($i < $imaxinloop) {
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -788,7 +809,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_IMAP_USE_PHPIMAP');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_IMAP_USE_PHPIMAP", $arrval, $conf->global->MAIN_IMAP_USE_PHPIMAP);
+	print $form->selectarray("MAIN_IMAP_USE_PHPIMAP", $arrval, getDolGlobalString("MAIN_IMAP_USE_PHPIMAP"));
 }
 print '</td>';
 print '</tr>';
@@ -805,10 +826,33 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '</tr>';
 
+// EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES: Consider generic References as answer for "isnotanswer" filter.
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorIsNotAnswerUseReferences"), $langs->transnoentitiesnoconv("EmailCollectorIsNotAnswerUseReferencesHelp")).'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES", $arrval, getDolGlobalInt('EMAILCOLLECTOR_ISNOTANSWER_USE_REFERENCES', 0));
+}
+print '</td>';
+print '</tr>';
+
+// EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS: Allowlist of attachment extensions to download/save.
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorAllowedAttachmentExtensions"), $langs->transnoentitiesnoconv("EmailCollectorAllowedAttachmentExtensionsHelp")).'</td>';
+print '<td class="left">';
+print '<input class="minwidth300" type="text" name="EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS" value="'.dol_escape_htmltag(getDolGlobalString('EMAILCOLLECTOR_ALLOWED_ATTACHMENT_EXTENSIONS')).'">';
+print '</td>';
+print '</tr>';
+
 print '</table>';
 print '</div>';
 
 print '<br>';
+
+print '<div class="center">';
+print '<button type="submit" class="button button-save" name="saveemailcollectorsettings" value="1">'.$langs->trans("Save").'</button>';
+print '</div>';
 
 print '</form>'."\n";
 

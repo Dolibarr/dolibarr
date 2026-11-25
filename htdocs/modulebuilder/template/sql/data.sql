@@ -24,9 +24,11 @@
 
 
 -- new types of automatic events to record in agenda
--- 'code' must be a value matching 'MYOBJECT_ACTION'
+-- 'code' must be the TRIGGER_PREFIX of the class followed by the action, like 'MYMODULE_MYOBJECT_ACTION'
 -- 'elementtype' must be value 'mymodule' ('myobject@mymodule' may be possible but should not be required)
 
---insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_VALIDATE','MyObject validated','Executed when myobject is validated', 'myobject@mymodule', 1000);
---insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_UNVALIDATE','MyObject unvalidated','Executed when myobject is unvalidated', 'myobject@mymodule', 1001);
---insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_DELETE','MyObject deleted','Executed when myobject deleted', 'myobject@mymodule', 1004);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYMODULE_MYOBJECT_CREATE','MyObject created','Executed when myobject is created', 'myobject@mymodule', 1000);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYMODULE_MYOBJECT_MODIFY','MyObject modified','Executed when myobject is modified', 'myobject@mymodule', 1001);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYMODULE_MYOBJECT_VALIDATE','MyObject validated','Executed when myobject is validated', 'myobject@mymodule', 1002);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYMODULE_MYOBJECT_UNVALIDATE','MyObject unvalidated','Executed when myobject is unvalidated', 'myobject@mymodule', 1003);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYMODULE_MYOBJECT_DELETE','MyObject deleted','Executed when myobject deleted', 'myobject@mymodule', 1004);

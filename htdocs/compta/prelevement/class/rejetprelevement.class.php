@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2024       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -286,7 +286,7 @@ class RejetPrelevement
 
 			$subject = $langs->transnoentities("InfoRejectSubject");
 			$sendto = $emuser->getFullName($langs)." <".$emuser->email.">";
-			$from = $this->user->getFullName($langs)." <".$this->user->email.">";
+			$email_from = $this->user->getFullName($langs)." <".$this->user->email.">";
 			$msgishtml = 1;
 			$trackid = 'use'.$emuser->id;
 
@@ -300,7 +300,7 @@ class RejetPrelevement
 
 			$message = $langs->trans("InfoRejectMessage", $facref, $socname, $amount, $userinfo);
 
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $this->user->email, '', $trackid);
+			$mailfile = new CMailFile($subject, $sendto, $email_from, $message, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $this->user->email, '', $trackid);
 
 			$result = $mailfile->sendfile();
 			if ($result) {

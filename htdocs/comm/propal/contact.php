@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('facture', 'propal', 'orders', 'sendings', 'companies'));
+$langs->loadLangs(array('bills', 'propal', 'orders', 'sendings', 'companies'));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -175,7 +175,7 @@ if ($object->id > 0) {
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

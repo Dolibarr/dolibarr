@@ -7,7 +7,7 @@ GET http://{{hostnport}}/api/index.php/invoices?sortfield=t.rowid&sortorder=ASC
 HTTP 200
 
 # GET sorted invoices
-GET http://{{hostnport}}/api/index.php/invoices?sortfield=t.rowid&sortorder=DSC
+GET http://{{hostnport}}/api/index.php/invoices?sortfield=t.rowid&sortorder=DESC
 HTTP 200
 
 # GET with limit and page
@@ -39,7 +39,7 @@ jsonpath "$.pagination.limit" == 100
 # GET invoice with ID 0 - which should not exist
 GET http://{{hostnport}}/api/index.php/invoices/0
 HTTP 400
-{"error":{"code":400,"message":"Bad Request: No invoice with id=0 can exist"}}
+{"error":{"code":400,"message":"Bad Request: No invoice can be found with no criteria"}}
 
 # POST {}
 POST http://{{hostnport}}/api/index.php/invoices

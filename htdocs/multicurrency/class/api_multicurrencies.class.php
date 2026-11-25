@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2022   J-F Bouculat     <jfbouculat@gmail.com>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ class MultiCurrencies extends DolibarrApi
 	 * @param string	$sortorder		Sort order
 	 * @param int		$limit			Limit for list
 	 * @param int	    $page			Page number
-	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
+	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:>:'20160101')"
 	 * @param string    $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array					Array of warehouse objects
 	 * @phan-return MultiCurrency[]
@@ -390,10 +390,14 @@ class MultiCurrencies extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible MultiCurrencyRate object datas
+	 * Clean sensible CurrencyRate object datas
 	 *
-	 * @param   MultiCurrency	$object     Object to clean
+	 * @param   CurrencyRate	$object     Object to clean
 	 * @return  Object						Object with cleaned properties
+	 *
+	 * @phpstan-template T
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatasRate($object)
 	{

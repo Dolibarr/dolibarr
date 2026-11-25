@@ -21,5 +21,5 @@ if (empty($context) || !is_object($context)) {
 $formList = &$this->formList;
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $context); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('webPortalPrintFieldListFooter', $parameters, $context); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;

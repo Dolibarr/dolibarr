@@ -2,10 +2,8 @@
 AccountancyCodeAsset=Código de contabilidad (activo)
 AccountancyCodeDepreciationAsset=Código de contabilidad (cuenta de activos de depreciación)
 AccountancyCodeDepreciationExpense=Código de contabilidad (cuenta de gastos de depreciación)
-DeleteType=Borrar
 DeleteAnAssetType=Borrar un modelo de activos
 ConfirmDeleteAssetType=¿Está seguro que desea borrar este modelo de activos?
-ShowTypeCard=Mostrar el modelo '%s'
 ModuleAssetsName=Bienes
 ModuleAssetsDesc=Descripción de los activos
 AssetSetup=Configuración de activos

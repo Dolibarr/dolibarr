@@ -1,11 +1,11 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
- * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012       Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro
+ * Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,14 +104,14 @@ $hookmanager->initHooks(array('cli'));
 $now = dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".substr($userlogin, 0, 3)."... - ".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
 
 // Show TZ of the serveur when ran from command line.
 $ini_path = php_ini_loaded_file();
 print 'TZ server = '.getServerTimeZoneString()." - set in PHP ini ".$ini_path."\n";
 
 // Check security key
-if ($key != getDolGlobalString('CRON_KEY')) {
+if (!hash_equals(getDolGlobalString('CRON_KEY'), (string) $key)) {
 	print "Error: securitykey provided ".substr($key, 0, 5)."... does not match securitykey in setup.\n";
 	exit(1);
 }
@@ -157,8 +157,8 @@ if (getDolUserString('MAIN_LANG_DEFAULT')) {
 	$langcode = getDolUserString('MAIN_LANG_DEFAULT');
 }
 if ($langs->getDefaultLang() != $langcode) {
+	$langs = new Translate('', $conf);
 	$langs->setDefaultLang($langcode);
-	$langs->tab_translate = array();
 }
 // Language Management
 $langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
@@ -194,6 +194,45 @@ $sql .= " AND datelastrun <= '".$db->idate(dol_now() - getDolGlobalInt('CRON_MAX
 $sql .= " AND datelastresult IS NULL";
 $db->query($sql);
 
+// Also unlock jobs that have a PID but the process does not exist anymore (SIGKILL, crash, segfault, ...).
+// Without this, such a job remains stuck in processing=1 until CRON_MAX_DELAY_FOR_JOBS kicks in.
+// Disable with CRON_DISABLE_AUTO_UNLOCK when jobs can run in another process namespace (containers, web server
+// and cron runner on different hosts): the PID is not visible here, so a running job would be unlocked and run twice.
+if (!getDolGlobalInt('CRON_DISABLE_AUTO_UNLOCK') && function_exists('posix_kill') && function_exists('posix_get_last_error')) {
+	$sql = "SELECT rowid, pid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."cronjob";
+	$sql .= " WHERE processing = 1";
+	$sql .= " AND datelastresult IS NULL";
+	$sql .= " AND pid IS NOT NULL";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$pid = (int) $obj->pid;
+			if ($pid <= 0) {
+				continue;
+			}
+
+			$isalive = @posix_kill($pid, 0);
+			if (!$isalive) {
+				$errno = posix_get_last_error();
+				if ($errno === 3) { // ESRCH = No such process
+					$nowcleanup = dol_now();
+					$msg = 'Cron job unlocked: stale PID '.$pid;
+
+					$sqlu = "UPDATE ".MAIN_DB_PREFIX."cronjob";
+					$sqlu .= " SET processing = 0, pid = NULL, datelastresult = '".$db->idate($nowcleanup)."', lastresult = '-1', lastoutput = '".$db->escape($msg)."'";
+					$sqlu .= " WHERE rowid = ".((int) $obj->rowid)." AND processing = 1 AND pid = ".((int) $pid)." AND datelastresult IS NULL";
+					$db->query($sqlu);
+
+					dol_syslog("cron_run_jobs.php unlocked stuck job id=".$obj->rowid." (stale pid ".$pid.")", LOG_WARNING);
+					echo "cron_run_jobs.php unlocked stuck job id=".$obj->rowid." (stale pid ".$pid.")\n";
+				}
+			}
+		}
+		$db->free($resql);
+	}
+}
+
 dol_syslog("cron_run_jobs.php search qualified job using filter: ".json_encode($filter), LOG_DEBUG);
 echo "cron_run_jobs.php search qualified job using filter: ".json_encode($filter)."\n";
 
@@ -211,7 +250,7 @@ $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
 if (is_array($object->lines) && (count($object->lines) > 0)) {
-	$savconf = dol_clone($conf);
+	$savconf = dol_clone($conf, 1); // Native mode 2 (default) drops object properties like $conf->db, so restoring $conf from it later would leave those undefined
 
 	// Loop over job
 	foreach ($object->lines as $line) {
@@ -237,7 +276,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 			// Check module cron is activated
 			if (!isModEnabled('cron')) {
-				print "Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity."\n";
+				print "\nCanceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity."\n";
 				dol_syslog("cron_run_jobs.php: Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity, LOG_INFO);
 				continue;
 			}
@@ -265,13 +304,14 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				$langcode = $user->conf->MAIN_LANG_DEFAULT;
 			}
 			if ($langs->getDefaultLang() != $langcode) {
+				$langs = new Translate('', $conf);
 				$langs->setDefaultLang($langcode);
-				$langs->tab_translate = array();
 				$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 			}
 		}
 
 		if (!verifCond($line->test)) {
+			echo " - not qualified (testok=0)\n";
 			continue;
 		}
 

@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
@@ -30,6 +30,17 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -46,21 +57,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expenserepor
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- *
- * @var string $dolibarr_main_url_root
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array("trips", "bills", "mails"));
@@ -116,7 +115,6 @@ $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString(
 
 
 $object = new ExpenseReport($db);
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -303,6 +301,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $candelete) {
 		$object = new ExpenseReport($db);
 		$result = $object->fetch($id);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 		if ($result >= 0) {
 			header("Location: index.php");
@@ -468,7 +467,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!$error && $result > 0 && $object->fk_user_validator > 0) {
+		if (!$error && $result > 0 && $object->fk_user_validator > 0 && getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_VALIDATION')) {
 			$langs->load("mails");
 
 			// TO
@@ -497,7 +496,12 @@ if (empty($reshook)) {
 				// CONTENT
 				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
 				$link = '<a href="'.$link.'">'.$link.'</a>';
-				$message = $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
+				$summary = $object->getSummary();
+				$message = '';
+				if ($summary !== '') {
+					$message .= $langs->transnoentities("Summary").': '.dol_escape_htmltag($summary).'<br>';
+				}
+				$message .= $langs->transnoentities("ExpenseReportWaitingForApprovalMessage", $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
 
 				// Rebuild pdf
 				/*
@@ -585,82 +589,87 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
-			// Send mail
+			if (getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_VALIDATION')) {
+				// Send mail
 
-			// TO
-			$destinataire = new User($db);
-			$destinataire->fetch($object->fk_user_validator);
-			$emailTo = $destinataire->email;
+				// TO
+				$destinataire = new User($db);
+				$destinataire->fetch($object->fk_user_validator);
+				$emailTo = $destinataire->email;
 
-			// FROM
-			$expediteur = new User($db);
-			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+				// FROM
+				$expediteur = new User($db);
+				$expediteur->fetch($object->fk_user_author);
+				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
-			if ($emailFrom && $emailTo) {
-				$filename = array();
-				$filedir = array();
-				$mimetype = array();
+				if ($emailFrom && $emailTo) {
+					$filename = array();
+					$filedir = array();
+					$mimetype = array();
 
-				// SUBJECT
-				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-				}
+					// SUBJECT
+					$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+						$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
+					}
 
-				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForReApproval");
+					$subject = $societeName." - ".$langs->transnoentities("ExpenseReportWaitingForReApproval");
 
-				// CONTENT
-				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-				$link = '<a href="'.$link.'">'.$link.'</a>';
-				$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", dol_print_date($object->date_refuse, 'day'), $object->detail_refuse, $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs));
-				$message .= '<br>'.$langs->transnoentities("ExpenseReportWaitingForReApprovalMessage2", $link);
+					// CONTENT
+					$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+					$link = '<a href="'.$link.'">'.$link.'</a>';
+					$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", dol_print_date($object->date_refuse, 'day'), $object->detail_refuse, $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs));
+					$message .= '<br>'.$langs->transnoentities("ExpenseReportWaitingForReApprovalMessage2", $link);
 
-				// Rebuild pdf
-				/*
-				$object->setDocModel($user,"");
-				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+					// Rebuild pdf
+					/*
+					$object->setDocModel($user,"");
+					$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
-				   if($resultPDF)
-				   {
-					   // ATTACHMENT
-					   $filename=array(); $filedir=array(); $mimetype=array();
-					   array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-					   array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref_number).".pdf");
-					   array_push($mimetype,"application/pdf");
-				}
-				*/
+					   if($resultPDF)
+					   {
+						   // ATTACHMENT
+						   $filename=array(); $filedir=array(); $mimetype=array();
+						   array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+						   array_push($filedir,$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref) . "/" . dol_sanitizeFileName($object->ref_number).".pdf");
+						   array_push($mimetype,"application/pdf");
+					}
+					*/
 
 
-				// PREPARE SEND
-				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+					// PREPARE SEND
+					$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if (empty($mailfile->error)) {
-					// SEND
-					$result = $mailfile->sendfile();
-					if ($result) {
-						$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
-						setEventMessages($mesg, null, 'mesgs');
-						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-						exit;
-					} else {
-						$langs->load("other");
-						if ($mailfile->error) {
-							$mesg = '';
-							$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-							$mesg .= '<br>'.$mailfile->error;
-							setEventMessages($mesg, null, 'errors');
+					if (empty($mailfile->error)) {
+						// SEND
+						$result = $mailfile->sendfile();
+						if ($result) {
+							$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+							setEventMessages($mesg, null, 'mesgs');
+							header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+							exit;
 						} else {
-							setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+							$langs->load("other");
+							if ($mailfile->error) {
+								$mesg = '';
+								$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+								$mesg .= '<br>'.$mailfile->error;
+								setEventMessages($mesg, null, 'errors');
+							} else {
+								setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+							}
 						}
+					} else {
+						setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+						$action = '';
 					}
 				} else {
-					setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+					setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
 					$action = '';
 				}
 			} else {
-				setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
-				$action = '';
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -699,85 +708,90 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
-			// Send mail
+			if (getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_APPROVAL')) {
+				// Send mail
 
-			// TO
-			$destinataire = new User($db);
-			$destinataire->fetch($object->fk_user_author);
-			$emailTo = $destinataire->email;
+				// TO
+				$destinataire = new User($db);
+				$destinataire->fetch($object->fk_user_author);
+				$emailTo = $destinataire->email;
 
-			// CC
-			$emailCC = getDolGlobalString('NDF_CC_EMAILS');
-			if (empty($emailTo)) {
-				$emailTo = $emailCC;
-			}
-
-			// FROM
-			$expediteur = new User($db);
-			$expediteur->fetch($object->fk_user_approve > 0 ? $object->fk_user_approve : $object->fk_user_validator);
-			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-
-			if ($emailFrom && $emailTo) {
-				$filename = array();
-				$filedir = array();
-				$mimetype = array();
-
-				// SUBJECT
-				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
+				// CC
+				$emailCC = getDolGlobalString('NDF_CC_EMAILS');
+				if (empty($emailTo)) {
+					$emailTo = $emailCC;
 				}
 
-				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportApproved");
+				// FROM
+				$expediteur = new User($db);
+				$expediteur->fetch($object->fk_user_approve > 0 ? $object->fk_user_approve : $object->fk_user_validator);
+				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
-				// CONTENT
-				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-				$link = '<a href="'.$link.'">'.$link.'</a>';
-				$message = $langs->transnoentities("ExpenseReportApprovedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
+				if ($emailFrom && $emailTo) {
+					$filename = array();
+					$filedir = array();
+					$mimetype = array();
 
-				// Rebuilt pdf
-				/*
-				$object->setDocModel($user,"");
-				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+					// SUBJECT
+					$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+						$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
+					}
 
-				if($resultPDF
-				{
-					// ATTACHMENT
-					$filename=array(); $filedir=array(); $mimetype=array();
-					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-					array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
-					array_push($mimetype,"application/pdf");
-				}
-				*/
+					$subject = $societeName." - ".$langs->transnoentities("ExpenseReportApproved");
 
-				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, $emailCC, '', 0, -1);
+					// CONTENT
+					$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+					$link = '<a href="'.$link.'">'.$link.'</a>';
+					$message = $langs->transnoentities("ExpenseReportApprovedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
-				if (empty($mailfile->error)) {
-					// SEND
-					$result = $mailfile->sendfile();
-					if ($result) {
-						$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
-						setEventMessages($mesg, null, 'mesgs');
-						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-						exit;
-					} else {
-						$langs->load("other");
-						if ($mailfile->error) {
-							$mesg = '';
-							$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-							$mesg .= '<br>'.$mailfile->error;
-							setEventMessages($mesg, null, 'errors');
+					// Rebuilt pdf
+					/*
+					$object->setDocModel($user,"");
+					$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+
+					if($resultPDF
+					{
+						// ATTACHMENT
+						$filename=array(); $filedir=array(); $mimetype=array();
+						array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+						array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
+						array_push($mimetype,"application/pdf");
+					}
+					*/
+
+					$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, $emailCC, '', 0, -1);
+
+					if (empty($mailfile->error)) {
+						// SEND
+						$result = $mailfile->sendfile();
+						if ($result) {
+							$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+							setEventMessages($mesg, null, 'mesgs');
+							header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+							exit;
 						} else {
-							setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+							$langs->load("other");
+							if ($mailfile->error) {
+								$mesg = '';
+								$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+								$mesg .= '<br>'.$mailfile->error;
+								setEventMessages($mesg, null, 'errors');
+							} else {
+								setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+							}
 						}
+					} else {
+						setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+						$action = '';
 					}
 				} else {
-					setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+					setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
 					$action = '';
 				}
 			} else {
-				setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
-				$action = '';
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
 			}
 		} else {
 			setEventMessages($langs->trans("FailedtoSetToApprove"), null, 'warnings');
@@ -817,80 +831,85 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
-			// Send mail
+			if (getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_APPROVAL')) {
+				// Send mail
 
-			// TO
-			$destinataire = new User($db);
-			$destinataire->fetch($object->fk_user_author);
-			$emailTo = $destinataire->email;
+				// TO
+				$destinataire = new User($db);
+				$destinataire->fetch($object->fk_user_author);
+				$emailTo = $destinataire->email;
 
-			// FROM
-			$expediteur = new User($db);
-			$expediteur->fetch($object->fk_user_refuse);
-			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+				// FROM
+				$expediteur = new User($db);
+				$expediteur->fetch($object->fk_user_refuse);
+				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
-			if ($emailFrom && $emailTo) {
-				$filename = array();
-				$filedir = array();
-				$mimetype = array();
+				if ($emailFrom && $emailTo) {
+					$filename = array();
+					$filedir = array();
+					$mimetype = array();
 
-				// SUBJECT
-				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-				}
+					// SUBJECT
+					$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+						$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
+					}
 
-				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportRefused");
+					$subject = $societeName." - ".$langs->transnoentities("ExpenseReportRefused");
 
-				// CONTENT
-				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-				$link = '<a href="'.$link.'">'.$link.'</a>';
-				$message = $langs->transnoentities("ExpenseReportRefusedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $detailRefuse, $link);
+					// CONTENT
+					$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+					$link = '<a href="'.$link.'">'.$link.'</a>';
+					$message = $langs->transnoentities("ExpenseReportRefusedMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $detailRefuse, $link);
 
-				// Rebuilt pdf
-				/*
-				$object->setDocModel($user,"");
-				$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+					// Rebuilt pdf
+					/*
+					$object->setDocModel($user,"");
+					$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
-				if($resultPDF
-				{
-					// ATTACHMENT
-					$filename=array(); $filedir=array(); $mimetype=array();
-					array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-					array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
-					array_push($mimetype,"application/pdf");
-				}
-				*/
+					if($resultPDF
+					{
+						// ATTACHMENT
+						$filename=array(); $filedir=array(); $mimetype=array();
+						array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+						array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
+						array_push($mimetype,"application/pdf");
+					}
+					*/
 
-				// PREPARE SEND
-				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+					// PREPARE SEND
+					$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if (empty($mailfile->error)) {
-					// SEND
-					$result = $mailfile->sendfile();
-					if ($result) {
-						$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
-						setEventMessages($mesg, null, 'mesgs');
-						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-						exit;
-					} else {
-						$langs->load("other");
-						if ($mailfile->error) {
-							$mesg = '';
-							$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-							$mesg .= '<br>'.$mailfile->error;
-							setEventMessages($mesg, null, 'errors');
+					if (empty($mailfile->error)) {
+						// SEND
+						$result = $mailfile->sendfile();
+						if ($result) {
+							$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+							setEventMessages($mesg, null, 'mesgs');
+							header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+							exit;
 						} else {
-							setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+							$langs->load("other");
+							if ($mailfile->error) {
+								$mesg = '';
+								$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+								$mesg .= '<br>'.$mailfile->error;
+								setEventMessages($mesg, null, 'errors');
+							} else {
+								setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+							}
 						}
+					} else {
+						setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+						$action = '';
 					}
 				} else {
-					setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+					setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
 					$action = '';
 				}
 			} else {
-				setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
-				$action = '';
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+				exit;
 			}
 		} else {
 			setEventMessages($langs->trans("FailedtoSetToDeny"), null, 'warnings');
@@ -935,80 +954,85 @@ if (empty($reshook)) {
 				}
 
 				if ($result > 0) {
-					// Send mail
+					if (getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_APPROVAL')) {
+						// Send mail
 
-					// TO
-					$destinataire = new User($db);
-					$destinataire->fetch($object->fk_user_author);
-					$emailTo = $destinataire->email;
+						// TO
+						$destinataire = new User($db);
+						$destinataire->fetch($object->fk_user_author);
+						$emailTo = $destinataire->email;
 
-					// FROM
-					$expediteur = new User($db);
-					$expediteur->fetch($object->fk_user_cancel);
-					$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+						// FROM
+						$expediteur = new User($db);
+						$expediteur->fetch($object->fk_user_cancel);
+						$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
-					if ($emailFrom && $emailTo) {
-						$filename = array();
-						$filedir = array();
-						$mimetype = array();
+						if ($emailFrom && $emailTo) {
+							$filename = array();
+							$filedir = array();
+							$mimetype = array();
 
-						// SUBJECT
-						$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-							$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-						}
+							// SUBJECT
+							$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+							if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+								$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
+							}
 
-						$subject = $societeName." - ".$langs->transnoentities("ExpenseReportCanceled");
+							$subject = $societeName." - ".$langs->transnoentities("ExpenseReportCanceled");
 
-						// CONTENT
-						$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-						$link = '<a href="'.$link.'">'.$link.'</a>';
-						$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $detailCancel, $link);
+							// CONTENT
+							$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+							$link = '<a href="'.$link.'">'.$link.'</a>';
+							$message = $langs->transnoentities("ExpenseReportCanceledMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $detailCancel, $link);
 
-						// Rebuilt pdf
-						/*
-						$object->setDocModel($user,"");
-						$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
+							// Rebuilt pdf
+							/*
+							$object->setDocModel($user,"");
+							$resultPDF = expensereport_pdf_create($db,$object,'',"",$langs);
 
-						if($resultPDF
-						{
-							// ATTACHMENT
-							$filename=array(); $filedir=array(); $mimetype=array();
-							array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
-							array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
-							array_push($mimetype,"application/pdf");
-						}
-						*/
+							if($resultPDF
+							{
+								// ATTACHMENT
+								$filename=array(); $filedir=array(); $mimetype=array();
+								array_push($filename,dol_sanitizeFileName($object->ref).".pdf");
+								array_push($filedir, $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref)."/".dol_sanitizeFileName($object->ref).".pdf");
+								array_push($mimetype,"application/pdf");
+							}
+							*/
 
-						// PREPARE SEND
-						$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+							// PREPARE SEND
+							$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-						if (empty($mailfile->error)) {
-							// SEND
-							$result = $mailfile->sendfile();
-							if ($result) {
-								$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
-								setEventMessages($mesg, null, 'mesgs');
-								header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-								exit;
-							} else {
-								$langs->load("other");
-								if ($mailfile->error) {
-									$mesg = '';
-									$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-									$mesg .= '<br>'.$mailfile->error;
-									setEventMessages($mesg, null, 'errors');
+							if (empty($mailfile->error)) {
+								// SEND
+								$result = $mailfile->sendfile();
+								if ($result) {
+									$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+									setEventMessages($mesg, null, 'mesgs');
+									header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+									exit;
 								} else {
-									setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+									$langs->load("other");
+									if ($mailfile->error) {
+										$mesg = '';
+										$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+										$mesg .= '<br>'.$mailfile->error;
+										setEventMessages($mesg, null, 'errors');
+									} else {
+										setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+									}
 								}
+							} else {
+								setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+								$action = '';
 							}
 						} else {
-							setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+							setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
 							$action = '';
 						}
 					} else {
-						setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
-						$action = '';
+						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+						exit;
 					}
 				} else {
 					setEventMessages($langs->trans("FailedToSetToCancel"), null, 'warnings');
@@ -1024,7 +1048,7 @@ if (empty($reshook)) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid || in_array($object->fk_user_author, $childids)) {
-			$result = $object->setStatut(0);
+			$result = $object->setStatut(ExpenseReport::STATUS_DRAFT);
 
 			if ($result > 0) {
 				// Define output language
@@ -1127,8 +1151,7 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
-			// TODO We must never send an email without a setup or confirm option to choose if email is
-			// sent or not. So we add a hidden constant to avoid this for the moment.
+			// Email is sent only if option is enabled into the setup of module
 			if (getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_PAID')) {
 				// Send mail
 
@@ -1311,9 +1334,9 @@ if (empty($reshook)) {
 				unset($vatrate);
 				unset($comments);
 				unset($fk_c_type_fees);
-				unset($fk_project);
+				$fk_project = 0;
 
-				unset($date);
+				$date = false;
 			} else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -1669,7 +1692,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip', 0, '', '', 0, '', 1);
+			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip', 0, '', '', 0, '', 0);	// No drag and drop on the edit form, dropping a file reloads the page and discards it
 
 			if ($object->status == ExpenseReport::STATUS_REFUSED) {
 				print '<input type="hidden" name="action" value="updateFromRefuse">';
@@ -1834,6 +1857,10 @@ if ($action == 'create') {
 			$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlref = '<div class="refidno">';
+			$summary = $object->getSummary();
+			if ($summary !== '') {
+				$morehtmlref .= $langs->trans('Summary').': '.dol_escape_htmltag($summary);
+			}
 			$morehtmlref .= '</div>';
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -2008,7 +2035,6 @@ if ($action == 'create') {
 			if ($object->status == ExpenseReport::STATUS_CLOSED) {
 				$rowspan += 2;
 			}
-			print "</td>";
 			print '</tr>';
 
 			print '<tr>';
@@ -2030,6 +2056,7 @@ if ($action == 'create') {
 			print '<td>'.$langs->trans("AmountTTC").'</td>';
 			print '<td class="nowrap amountcard">'.price($object->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</td>';
 			print '</tr>';
+			print '</table>';
 
 			// List of payments already done
 			$canSeeBankAccount = isModEnabled('bank') && $user->hasRight('banque', 'lire');
@@ -2151,10 +2178,11 @@ if ($action == 'create') {
 			print "</table>";
 			print '</div>';
 
-			print '</div>';
-			print '</div>';
+			print '</div>'; // end fichehalfright
+			print '</div>'; // end fichecenter
+			print '<div class="clearboth"></div>';
 
-			print '<div class="clearboth"></div><br><br>';
+			print '<br><br>';
 
 			print '<div style="clear: both;"></div>';
 
@@ -2190,7 +2218,7 @@ if ($action == 'create') {
 					print '<td class="center linecolcarcategory">'.$langs->trans('CarCategory').'</td>';
 				}
 				print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
-				print '<td class="right linecolvat">'.$langs->trans('VAT').'</td>';
+				print '<td class="right linecolvat">'.$form->textwithpicto($langs->trans('VAT'), $langs->trans('ExpenseReportVatRateHelp')).'</td>';
 				print '<td class="right linecolpriceuht">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right linecolpriceuttc">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right linecolqty">'.$langs->trans('Qty').'</td>';
@@ -2315,13 +2343,9 @@ if ($action == 'create') {
 
 						// Unit price HT
 						print '<td class="right linecolunitht">';
-						if (!empty($line->value_unit_ht)) {
-							print price($line->value_unit_ht);
-						} else {
-							$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
-							$pricenettoshow = price2num((float) $line->value_unit / (1 + (float) $tmpvat / 100), 'MU');
-							print price($pricenettoshow);
-						}
+						$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $line->vatrate));
+						$pricenettoshow = price2num((float) $line->value_unit / (1 + (float) $tmpvat / 100), 'MU');
+						print price($pricenettoshow);
 						print '</td>';
 
 						print '<td class="right linecolunitttc">'.price($line->value_unit).'</td>';
@@ -2431,63 +2455,56 @@ if ($action == 'create') {
 							$colspan++;
 						}
 
-						print '<!-- line of expense report -->'."\n";
-						print '<tr class="tredited">';
-
-						print '<td class="center">';
-						print $numline;
-						print '</td>';
-
-						print '<td colspan="'.($colspan - 1).'" class="liste_titre"> ';
-						print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
-						print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
-						print '</a>';
 						if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
-							print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
-							print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
+							print '<!-- line of expense report -->'."\n";
+							print '<tr class="tredited">';
+
+							print '<td class="center">';
+							print $numline;
+							print '</td>';
+
+							print '<td colspan="'.($colspan - 1).'" class="liste_titre"> ';
+							print '<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("LinkTheLineToADocument");
+							print img_picto($langs->trans("LinkTheLineToADocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
 							print '</a>';
-						}
 
-						print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
-						print '<script type="text/javascript">'."\n";
-						print '$(document).ready(function() {
-        				        $( ".auploadnewfilenow" ).click(function() {
-        				            jQuery(".truploadnewfilenow").toggle();
-                                    jQuery(".trattachnewfilenow").hide();
-                                    return false;
-                                });
-        				        $( ".aattachtodoc" ).click(function() {
-        				            jQuery(".trattachnewfilenow").toggle();
-                                    jQuery(".truploadnewfilenow").hide();
-                                    return false;
-                                });';
-						if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array'))) {
-							print 'jQuery(".trattachnewfilenow").toggle();'."\n";
-						}
-						print '
-                        		jQuery("form[name=\"expensereport\"]").submit(function() {
-                            		if (jQuery(".truploadnewfilenow").is(":hidden")) {
-                                		jQuery("input[name=\"sendit\"]").val("");
-                            		}
-                        		});
-                    		';
-						print '
-                            });
-        				    ';
-						print '</script>'."\n";
-						print '</td></tr>';
-
-						$filenamelinked = '';
-						if ($line->fk_ecm_files > 0) {
-							$result = $ecmfilesstatic->fetch($line->fk_ecm_files);
-							if ($result > 0) {
-								$filenamelinked = $ecmfilesstatic->filename;
+							print '<!-- Code to open/close section to submit or link files in edit mode -->'."\n";
+							print '<script type="text/javascript">'."\n";
+							print '$(document).ready(function() {
+	        				        $( ".aattachtodoc" ).click(function() {
+										/* Show both sections (existing files and upload form) if one of them is hidden, else hide both */
+										var showsection = (jQuery(".trattachnewfilenow, .truploadnewfilenow").filter(":hidden").length > 0);
+	        				            jQuery(".trattachnewfilenow, .truploadnewfilenow").toggle(showsection);
+	                                    return false;
+	                                });';
+							if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array'))) {
+								print 'jQuery(".trattachnewfilenow, .truploadnewfilenow").show();'."\n";
 							}
-						}
+							print '
+	                        		jQuery("form[name=\"expensereport\"]").submit(function() {
+	                            		if (jQuery(".truploadnewfilenow").is(":hidden")) {
+	                                		jQuery("input[name=\"sendit\"]").val("");
+	                            		}
+	                        		});
+	                    		';
+							print '
+	                            });
+	        				    ';
+							print '</script>'."\n";
+							print '</td></tr>';
 
-						$tredited = 'tredited';	// Case the addfile and linkto file is used for edit (used by following tpl)
-						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
-						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+							$filenamelinked = '';
+							if ($line->fk_ecm_files > 0) {
+								$result = $ecmfilesstatic->fetch($line->fk_ecm_files);
+								if ($result > 0) {
+									$filenamelinked = $ecmfilesstatic->filename;
+								}
+							}
+
+							$tredited = 'tredited';	// Case the addfile and linkto file is used for edit (used by following tpl)
+							include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+							include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+						}
 
 						print '<tr class="oddeven tredited">';
 
@@ -2531,7 +2548,7 @@ if ($action == 'create') {
 
 						// Unit price
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num((!empty($line->value_unit_ht) ? $line->value_unit_ht : ""))).'"'.$taxlessUnitPriceDisabled.' />';
+						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value=""'.$taxlessUnitPriceDisabled.' />';
 						print '</td>';
 
 						// Unit price with tax
@@ -2592,63 +2609,58 @@ if ($action == 'create') {
 					$nbLinks = Link::count($db, $object->element, $object->id);
 				}
 
-				// Add line with link to add new file or attach to an existing file
-				print '<tr class="liste_titre">';
-				print '<td colspan="'.$colspan.'" class="liste_titre expensereportautoload">';
-				print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
-				print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
-				print '</a>';
 				if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
-					print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
-					print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
+					// Add line with link to add new file or attach to an existing file
+					print '<tr class="liste_titre">';
+					print '<td colspan="'.$colspan.'" class="liste_titre expensereportautoload">';
+					print '<a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("LinkTheLineToADocument");
+					print img_picto($langs->trans("LinkTheLineToADocument"), 'chevron-down', '', 0, 0, 0, '', 'marginleftonly');
 					print '</a>';
-				}
 
-				print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
-				print '<script type="text/javascript">'."\n";
-				print '$(document).ready(function() {
-				        $( ".auploadnewfilenow" ).click(function() {
-							console.log("We click on toggle of auploadnewfilenow");
-				            jQuery(".truploadnewfilenow").toggle();
-                            jQuery(".trattachnewfilenow").hide();
-							if (jQuery(".truploadnewfilenow").is(":hidden")) {
-                            	jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
-                            } else {
-                                jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
-                            }
-							// TODO Switch css fa-chevron-dow and add fa-chevron-up
-                            return false;
-                        });
-				        $( ".aattachtodoc" ).click(function() {
-							console.log("We click on toggle of aattachtodoc");
-				            jQuery(".trattachnewfilenow").toggle();
-                            jQuery(".truploadnewfilenow").hide();
-							// TODO Switch css fa-chevron-dow and add fa-chevron-up
-                            return false;
-                        });'."\n";
-				if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
-					print 'jQuery(".trattachnewfilenow").show();'."\n";
-				}
-				print '
-						jQuery("form[name=\"expensereport\"]").submit(function() {
-							if (jQuery(".truploadnewfilenow").is(":hidden")) {
-								/* When section to send file is not expanded, we disable the button sendit that submit form to add a new file, so button to submit line will work. */
-								jQuery("input[name=\"sendit\"]").val("");
-								jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
-							} else {
-								jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
-							}
-						});
-					';
-				print '
-                    });
-				    ';
-				print '</script>'."\n";
-				print '</td></tr>';
+					print '<!-- Code to open/close section to submit or link files in the form to add new line -->'."\n";
+					print '<script type="text/javascript">'."\n";
+					print '$(document).ready(function() {
+					        $( ".aattachtodoc" ).click(function() {
+								console.log("We click on toggle of aattachtodoc");
+								/* Show both sections (existing files and upload form) if one of them is hidden, else hide both */
+								var showsection = (jQuery(".trattachnewfilenow, .truploadnewfilenow").filter(":hidden").length > 0);
+					            jQuery(".trattachnewfilenow, .truploadnewfilenow").toggle(showsection);
+								if (jQuery(".truploadnewfilenow").is(":hidden")) {
+	                            	jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
+	                            } else {
+	                                jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
+	                            }
+								// TODO Switch css fa-chevron-dow and add fa-chevron-up
+	                            return false;
+	                        });'."\n";
+					if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
+						print 'jQuery(".trattachnewfilenow, .truploadnewfilenow").show();'."\n";
+					}
+					if (GETPOSTISSET('sendit')) {
+						// After an upload, the section of existing files is already visible, so we also show the upload form
+						print 'jQuery(".truploadnewfilenow").show();'."\n";
+					}
+					print '
+							jQuery("form[name=\"expensereport\"]").submit(function() {
+								if (jQuery(".truploadnewfilenow").is(":hidden")) {
+									/* When section to send file is not expanded, we disable the button sendit that submit form to add a new file, so button to submit line will work. */
+									jQuery("input[name=\"sendit\"]").val("");
+									jQuery("input[name=\"sendit\"]").prop("name", "senditdisabled");
+								} else {
+									jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
+								}
+							});
+						';
+					print '
+	                    });
+					    ';
+					print '</script>'."\n";
+					print '</td></tr>';
 
-				$tredited = '';	// Case the addfile and linkto file is used for edit (used by following tpl)
-				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
-				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+					$tredited = '';	// Case the addfile and linkto file is used for edit (used by following tpl)
+					include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
+					include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
+				}
 
 				print '<tr class="liste_titre expensereportcreate">';
 				print '<td></td>';
@@ -2661,7 +2673,7 @@ if ($action == 'create') {
 					print '<td>'.$langs->trans('CarCategory').'</td>';
 				}
 				print '<td class="expensereportcreatedescription">'.$langs->trans('Description').'</td>';
-				print '<td class="right expensereportcreatevat">'.$langs->trans('VAT').'</td>';
+				print '<td class="right expensereportcreatevat">'.$form->textwithpicto($langs->trans('VAT'), $langs->trans('ExpenseReportVatRateHelp')).'</td>';
 				print '<td class="right expensereportcreatepriceuth">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right expensereportcreatepricettc">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right expensereportcreateqty">'.$langs->trans('Qty').'</td>';
@@ -2713,7 +2725,7 @@ if ($action == 'create') {
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
 				// We must use null, null for seller and buyer as we don't know them for expense report.
-				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), null, null, 0, 0, '', false, 1);
+				print $form->load_tva('vatrate', ((isset($vatrate) && $vatrate !== '') ? $vatrate : $defaultvat), null, null, 0, 0, '', false, 1);
 				print '</td>';
 
 				// Unit price net
@@ -2745,7 +2757,7 @@ if ($action == 'create') {
 				print '</td>';
 
 				print '</tr>';
-			} // Fin si c'est payé/validé
+			} // End if paid/validated
 
 			print '</table>';
 			print '</div>';
@@ -2786,7 +2798,7 @@ if ($action == 'create') {
                     path += "&vatrate="+tva;
                     path += "&qty="+qty;
 
-                    if (type_fee == 4) { // frais_kilométriques
+                    if (type_fee == 4) { // mileage expenses
                         if (tax_cat == "" || parseInt(tax_cat) <= 0){
                             return ;
                         }
@@ -2867,9 +2879,9 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	/* If status is "Draft"
-	 *	ET user à droit "creer/supprimer"
-	 *	ET fk_user_author == user courant
-	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
+	 *	AND user has "create/delete" right
+	 *	AND fk_user_author == current user
+	 * 	Show: "Save" / "Modify" / "Delete"
 	 */
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_DRAFT) {
 		if (in_array($object->fk_user_author, $childids) || $user->hasRight('expensereport', 'writeall_advance')) {
@@ -2883,19 +2895,16 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	/* If status if "Refused"
-	 *	ET user à droit "creer/supprimer"
-	 *	ET fk_user_author == user courant
-	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
+	/* If status is "Refused"
+	 *	AND user has "create/delete" right
+	 *	AND fk_user_author == current user
+	 * 	Show: "Save" / "Modify" / "Delete"
 	 */
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_REFUSED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
-			// setdraft (le statut refusée est identique à brouillon)
-			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('ReOpen').'</a>';
-			// Enregistrer depuis le statut "Refusée"
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&token='.newToken().'&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
 		}
 	}
@@ -2907,10 +2916,10 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	/* Si l'état est "En attente d'approbation"
-	 *	ET user à droit de "approve"
-	 *	ET fk_user_validator == user courant
-	 *	Afficher : "Valider" / "Refuser" / "Supprimer"
+	/* If status is "Pending approval"
+	 *	AND user has "approve" right
+	 *	AND fk_user_validator == current user
+	 *	Show: "Validate" / "Refuse" / "Delete"
 	 */
 	if ($object->status == ExpenseReport::STATUS_VALIDATED) {
 		if (in_array($object->fk_user_author, $childids)) {
@@ -2930,7 +2939,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
 			// Cancel
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
 		}
 	}
 
@@ -2981,16 +2990,16 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 
 	// Clone
 	if ($user->hasRight('expensereport', 'creer')) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */
 	if ($user->hasRight('expensereport', 'creer') && $user->id == $object->fk_user_author && $object->status < ExpenseReport::STATUS_APPROVED) {
 		// Delete
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 	} elseif ($candelete && $object->status != ExpenseReport::STATUS_CLOSED) {
 		// Delete
-		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
+		print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 	}
 
 	$parameters = array();

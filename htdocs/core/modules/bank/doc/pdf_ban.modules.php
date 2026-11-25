@@ -63,7 +63,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		global $langs, $mysoc;
 
 		// Load translation files required by the page
-		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
+		$langs->loadLangs(array("main", "banks", "withdrawals", "companies"));
 
 		$this->db = $db;
 		$this->name = "ban";
@@ -180,7 +180,7 @@ class pdf_ban extends ModeleBankAccountDoc
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("BAN"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("BAN"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
@@ -197,15 +197,15 @@ class pdf_ban extends ModeleBankAccountDoc
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 50;
-				$tab_top_newpage = 40;
+				$tab_top = 40 + $this->marge_haute;
+				$tab_top_newpage = 30 + $this->marge_haute;
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Affiche notes
 				if (!empty($object->note_public)) {
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxref - 1, $tab_top - 2, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxref - 1, $tab_top - 2, dol_htmlentitiesbr((string) $object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - ($tab_top - 2);
 
@@ -401,7 +401,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		// phpcs:enable
 		global $conf;
 
-		$showdetails = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 0 : getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS');
 		return 1;
 	}
 }

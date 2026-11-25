@@ -3,6 +3,10 @@
 // @phan-stub-for-extension curl@7.4.12
 
 namespace {
+// Since PHP 8.0, curl_init() returns a CurlHandle object (added by hand: these stubs are from PHP 7.4)
+final class CurlHandle {
+}
+
 class CURLFile {
 
     // properties

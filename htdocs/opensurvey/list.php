@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 
 // Load translation files required by the page
 $langs->load("opensurvey");
@@ -53,6 +52,7 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 $mode = GETPOST('mode', 'aZ');
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
+$search_expired = GETPOST('search_expired');
 
 $id = GETPOST('id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -98,10 +98,24 @@ if (!$user->hasRight('opensurvey', 'read')) {
 $fieldstosearchall = array();
 
 // Definition of fields for list
-$arrayfields = array();
+$arrayfields = array(
+	'p.id_sondage' => array('label' => "Ref", 'checked' => '1', 'position' => 10),
+	'p.titre' => array('label' => "Title", 'checked' => '1', 'position' => 20),
+	'p.format' => array('label' => "Type", 'checked' => '1', 'position' => 30),
+	'p.fk_user_creat' => array('label' => "Author", 'checked' => '1', 'position' => 40),
+	'nbvoters' => array('label' => "NbOfVoters", 'checked' => '1', 'position' => 50),
+	'p.date_fin' => array('label' => "ExpireDate", 'checked' => '1', 'position' => 60),
+	'p.tms' => array('label' => "DateLastModification", 'checked' => '1', 'position' => 70),
+	'p.status' => array('label' => "Status", 'checked' => '1', 'position' => 500),
+);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -171,6 +185,9 @@ $title = $langs->trans('OpenSurveyArea');
 // --------------------------------------------------------------------
 $sql = "SELECT p.id_sondage as rowid, p.fk_user_creat, p.format, p.date_fin, p.status, p.titre as title, p.nom_admin, p.tms,";
 $sql .= " u.login, u.firstname, u.lastname";
+
+$sqlfields = $sql;
+
 $sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
 $sql .= " WHERE p.entity IN (".getEntity('survey').")";
@@ -196,32 +213,42 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
-// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
-	$num = $nbtotalofrecords;
-} else {
+
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
-
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-		exit;
-	}
-
-	$num = $db->num_rows($resql);
 }
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
+
 
 // Direct jump if only one record found
 if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
@@ -328,7 +355,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -339,21 +366,37 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
-print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_title" value="'.dol_escape_htmltag($search_title).'"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
-$arraystatus = array('-1' => '&nbsp;', '0' => $langs->trans("Draft"), '1' => $langs->trans("Opened"), '2' => $langs->trans("Closed"));
-print '<td class="liste_titre center parentonrightofpage">'.$form->selectarray('search_status', $arraystatus, $search_status, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth100 onrightofpage').'</td>';
+// Fields with position ordered by user setup
+foreach ($arrayfields as $key => $val) {
+	if (empty($val['checked'])) {
+		continue;
+	}
+	switch ($key) {
+		case 'p.id_sondage':
+			print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+			break;
+		case 'p.titre':
+			print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_title" value="'.dol_escape_htmltag($search_title).'"></td>';
+			break;
+		case 'p.format':
+		case 'p.fk_user_creat':
+		case 'nbvoters':
+		case 'p.date_fin':
+		case 'p.tms':
+			print '<td class="liste_titre"></td>';
+			break;
+		case 'p.status':
+			$arraystatus = array('-1' => '&nbsp;', '0' => $langs->trans("Draft"), '1' => $langs->trans("Opened"), '2' => $langs->trans("Closed"));
+			print '<td class="liste_titre center parentonrightofpage">'.$form->selectarray('search_status', $arraystatus, $search_status, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth100 onrightofpage').'</td>';
+			break;
+	}
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -362,7 +405,7 @@ $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -377,34 +420,58 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.id_sondage", "", $param, "", $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "p.titre", "", $param, "", $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "p.format", "", $param, "", $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("Author", $_SERVER["PHP_SELF"], "u.".$fieldtosortuser, "", $param, "", $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("NbOfVoters", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("ExpireDate", $_SERVER["PHP_SELF"], "p.date_fin", "", $param, 'align="center"', $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center"', $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.status", "", $param, 'align="center"', $sortfield, $sortorder);
-$totalarray['nbfield']++;
+// Fields title with position ordered by user setup
+foreach ($arrayfields as $key => $val) {
+	if (empty($val['checked'])) {
+		continue;
+	}
+	switch ($key) {
+		case 'p.id_sondage':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "p.id_sondage", "", $param, "", $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+			break;
+		case 'p.titre':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "p.titre", "", $param, "", $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+			break;
+		case 'p.format':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "p.format", "", $param, "", $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+			break;
+		case 'p.fk_user_creat':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "u.".$fieldtosortuser, "", $param, "", $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+			break;
+		case 'nbvoters':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+			break;
+		case 'p.date_fin':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "p.date_fin", "", $param, 'align="center"', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+			break;
+		case 'p.tms':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "p.tms", "", $param, 'align="center"', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+			break;
+		case 'p.status':
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "p.status", "", $param, 'align="center"', $sortfield, $sortorder);
+			$totalarray['nbfield']++;
+			break;
+	}
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -426,13 +493,15 @@ while ($i < $imaxinloop) {
 	}
 
 	$nbuser = 0;
-	$sql2 = 'select COUNT(*) as nb from '.MAIN_DB_PREFIX."opensurvey_user_studs where id_sondage='".$db->escape($obj->rowid)."'";
-	$resql2 = $db->query($sql2);
-	if ($resql2) {
-		$obj2 = $db->fetch_object($resql2);
-		$nbuser = $obj2->nb;
-	} else {
-		dol_print_error($db);
+	if (!empty($arrayfields['nbvoters']['checked'])) {
+		$sql2 = 'select COUNT(*) as nb from '.MAIN_DB_PREFIX."opensurvey_user_studs where id_sondage='".$db->escape($obj->rowid)."'";
+		$resql2 = $db->query($sql2);
+		if ($resql2) {
+			$obj2 = $db->fetch_object($resql2);
+			$nbuser = $obj2->nb;
+		} else {
+			dol_print_error($db);
+		}
 	}
 
 	$opensurvey_static->id = $obj->rowid;
@@ -442,9 +511,9 @@ while ($i < $imaxinloop) {
 	$opensurvey_static->date_fin = $db->jdate($obj->date_fin);
 
 	// Show here line of result
-	print '<tr data-rowid="'.$opensurvey_static->id.'" class="oddeven">';
+	print '<tr data-rowid="'.$opensurvey_static->id.'" class="oddeven row-with-select">';
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
@@ -459,72 +528,75 @@ while ($i < $imaxinloop) {
 		}
 	}
 
-	// Ref
-	print '<td class="tdoverflowmax150">';
-	print $opensurvey_static->getNomUrl(1);
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
+	// Fields with position ordered by user setup
+	foreach ($arrayfields as $key => $val) {
+		if (empty($val['checked'])) {
+			continue;
+		}
+		$fieldprinted = 1;
+		switch ($key) {
+			case 'p.id_sondage':
+				// Ref
+				print '<td class="tdoverflowmax150">';
+				print $opensurvey_static->getNomUrl(1);
+				print '</td>';
+				break;
+			case 'p.titre':
+				// Title
+				print '<td class="tdoverflowmax200">'.dol_htmlentities($obj->title).'</td>';
+				break;
+			case 'p.format':
+				// Type
+				print '<td class="tdoverflowmax125">';
+				$type = ($obj->format == 'A') ? 'classic' : 'date';
+				print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
+				print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate");
+				print '</td>';
+				break;
+			case 'p.fk_user_creat':
+				// Author
+				print '<td class="tdoverflowmax125">';
+				if ($obj->fk_user_creat) {
+					$userstatic = new User($db);
+					$userstatic->id = $obj->fk_user_creat;
+					$userstatic->firstname = $obj->firstname;
+					$userstatic->lastname = $obj->lastname;
+					$userstatic->login = $userstatic->getFullName($langs, 0, -1, 48);
 
-	// Title
-	print '<td class="tdoverflowmax200">'.dol_htmlentities($obj->title).'</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	// Type
-	print '<td class="tdoverflowmax125">';
-	$type = ($obj->format == 'A') ? 'classic' : 'date';
-	print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
-	print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate");
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	print '<td class="tdoverflowmax125">';
-	// Author
-	if ($obj->fk_user_creat) {
-		$userstatic = new User($db);
-		$userstatic->id = $obj->fk_user_creat;
-		$userstatic->firstname = $obj->firstname;
-		$userstatic->lastname = $obj->lastname;
-		$userstatic->login = $userstatic->getFullName($langs, 0, -1, 48);
-
-		print $userstatic->getLoginUrl(1);
-	} else {
-		print dol_htmlentities($obj->nom_admin);
-	}
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	// Nb of voters
-	print'<td class="right">'.$nbuser.'</td>'."\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_fin), 'day');
-	if ($db->jdate($obj->date_fin) < $now && $obj->status == Opensurveysondage::STATUS_VALIDATED) {
-		print img_warning($langs->trans("Expired"));
-	}
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->tms), 'dayhour');
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	print '<td class="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
+					print $userstatic->getLoginUrl(1);
+				} else {
+					print dol_htmlentities($obj->nom_admin);
+				}
+				print '</td>';
+				break;
+			case 'nbvoters':
+				// Nb of voters
+				print'<td class="right">'.$nbuser.'</td>'."\n";
+				break;
+			case 'p.date_fin':
+				// Expire date
+				print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_fin), 'day');
+				if ($db->jdate($obj->date_fin) < $now && $obj->status == Opensurveysondage::STATUS_VALIDATED) {
+					print img_warning($langs->trans("Expired"));
+				}
+				print '</td>';
+				break;
+			case 'p.tms':
+				// Date last modification
+				print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->tms), 'dayhour');
+				print '</td>';
+				break;
+			case 'p.status':
+				// Status
+				print '<td class="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
+				break;
+			default:
+				// Extra fields and fields from hooks are printed later
+				$fieldprinted = 0;
+		}
+		if ($fieldprinted && !$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	// Extra fields
@@ -534,7 +606,7 @@ while ($i < $imaxinloop) {
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
