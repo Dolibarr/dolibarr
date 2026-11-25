@@ -732,7 +732,7 @@ if ($object->id > 0) {
 
 		// Status of prospection
 		$object->loadCacheOfProspStatus();
-		print '<tr><td>'.$langs->trans("StatusProsp").'</td><td>'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
+		print '<tr><td>'.$langs->trans("StatusProsp").'</td><td>'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label'] ?? '');
 		print ' &nbsp; &nbsp; ';
 		print '<div class="floatright">';
 		foreach ($object->cacheprospectstatus as $key => $val) {
