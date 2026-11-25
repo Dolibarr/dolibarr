@@ -942,7 +942,7 @@ try {
 					}
 				}
 
-				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000);	// in characters
+				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);	// in characters
 				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
 				foreach ($histTurns as $turn) {
 					if (is_array($turn) && !empty($turn['id'])) {
