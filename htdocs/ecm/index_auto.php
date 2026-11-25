@@ -317,7 +317,7 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
 		$rowspan++;
-		$sectionauto[] = array('position' => 10, 'level' => 1, 'module' => 'product', 'test' => $user->hasRight('produit', 'lire'), 'label' => $langs->trans("ProductsAndServices"), 'desc' => $langs->trans("ECMDocsByProducts"));
+		$sectionauto[] = array('position' => 10, 'level' => 1, 'module' => 'product', 'test' => ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')), 'label' => $langs->trans("ProductsAndServices"), 'desc' => $langs->trans("ECMDocsByProducts"));
 	}
 	if (isModEnabled("societe")) {
 		$rowspan++;
