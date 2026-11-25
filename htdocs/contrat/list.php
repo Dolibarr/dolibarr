@@ -1579,11 +1579,11 @@ while ($i < $imaxinloop) {
 		}
 		// Phone
 		if (!empty($arrayfields['s.phone']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute((empty($socstatic->country_code) ? '' : $socstatic->country_code.': ').$obj->phone).'">'.dol_print_phone($obj->phone, $socstatic->country_code, 0, $socstatic->id).'</td>';
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $socstatic->country_code, 0, $socstatic->id, 'AC_TEL', ' ', 'phone', '', 0, '', 2).'</td>';
 		}
 		// Phone mobile
 		if (!empty($arrayfields['s.phone_mobile']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute((empty($socstatic->country_code) ? '' : $socstatic->country_code.': ').$obj->phone_mobile).'">'.dol_print_phone($obj->phone_mobile, $socstatic->country_code, 0, $socstatic->id).'</td>';
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $socstatic->country_code, 0, $socstatic->id, 'AC_TEL', ' ', 'mobile', '', 0, '', 2).'</td>';
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
