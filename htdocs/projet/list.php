@@ -1463,7 +1463,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 // Filter on customer categories
 if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth200imp minwidth200 widthcentpercentminusx', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth200imp minwidth200 widthcentpercentminusx', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0);
 }
 
 // alert on late date

@@ -865,7 +865,7 @@ $moreforfilter .= '</div>';
 // Filter on customer categories
 if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0);
 }
 
 if (!empty($moreforfilter)) {
