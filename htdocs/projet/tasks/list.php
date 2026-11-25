@@ -1648,7 +1648,7 @@ while ($i < $imaxinloop) {
 if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
 	foreach ($totalarray['totalizable'] as $keytotalizable => $valtotalizable) {
 		$totalarray['pos'][$valtotalizable['pos']] = $keytotalizable;
-		$totalarray['val'][$keytotalizable] = isset($valtotalizable['total']) ? $valtotalizable['total'] : 0;
+		$totalarray['val'][$keytotalizable] = isset($valtotalizable['total']) ? $valtotalizable['total'] : 0; // @phpstan-ignore isset.offset ('totalizable' is empty here but extrafields_list_print_fields.tpl.php fills it)
 	}
 }
 
