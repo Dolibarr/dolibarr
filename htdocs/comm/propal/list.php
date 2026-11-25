@@ -2002,7 +2002,7 @@ while ($i < $imaxinloop) {
 
 			print '<td class="center">';
 			if (!empty($obj->typent_code)) {
-				print $typenArray[$obj->typent_code];
+				print $typenArray[$obj->typent_code] ?? '';
 			}
 			print '</td>';
 			if (!$i) {

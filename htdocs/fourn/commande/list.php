@@ -1935,7 +1935,7 @@ if ($resql) {
 				if (empty($typenArray)) {
 					$typenArray = $formcompany->typent_array(1);
 				}
-				print $typenArray[$obj->typent_code];
+				print $typenArray[$obj->typent_code] ?? '';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
