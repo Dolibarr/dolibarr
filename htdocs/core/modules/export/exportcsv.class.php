@@ -273,19 +273,20 @@ class ExportCsv extends ModeleExports
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
 			// Translation newvalue
-			if (preg_match('/^\((.*)\)$/i', $newvalue, $reg)) {
+			if ($newvalue !== null && preg_match('/^\((.*)\)$/i', (string) $newvalue, $reg)) {
 				$newvalue = $outputlangs->transnoentities($reg[1]);
 			}
+			$rawvalue = (string) $newvalue;	// Value before the cleaning and the quotes of the CSV format
 
 			// Clean data and add encloser if required (depending on value of USE_STRICT_CSV_RULES)
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			$newvalue = csvClean($newvalue, $outputlangs->charset_output, $this->separator);
+			$newvalue = csvClean($rawvalue, $outputlangs->charset_output, $this->separator);
 
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
 				$array = jsonOrUnserialize($typefield);
-				if (is_array($array) && !empty($newvalue)) {
-					$array = $array['options'];
-					$selectlabelvalues[$code."_label"] = $array[$newvalue];
+				if (is_array($array) && $rawvalue !== '') {
+					$options = (isset($array['options']) && is_array($array['options'])) ? $array['options'] : array();
+					$selectlabelvalues[$code."_label"] = csvClean(isset($options[$rawvalue]) ? (string) $options[$rawvalue] : '', $outputlangs->charset_output, $this->separator);
 				} else {
 					$selectlabelvalues[$code."_label"] = "";
 				}

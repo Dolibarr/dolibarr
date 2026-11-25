@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Vincent Maury				<vmaury@timgroup.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -67,8 +67,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');	// This also test permission on read invoice
 
 // Security check
-if ($user->socid) {
-	$socid = $user->socid;
+if ($user->isExternalUser()) {
+	$socid = $user->isExternalUser();
 }
 // Now check also permission on thirdparty of invoices of payments. Thirdparty were loaded by the fetch_object before based on first invoice.
 // It should be enough because all payments are done on invoices of the same thirdparty.
@@ -103,6 +103,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
 
 	$object->fetch($id);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$result = $object->delete($user);
 	if ($result > 0) {
 		$db->commit();
@@ -174,7 +175,9 @@ $formfile = new FormFile($db);
 
 $head = payment_supplier_prepare_head($object);
 
-print dol_get_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment');
+// The tabs are printed before the result of the fetch is checked below, so we must not offer a drop area
+// when the object was not loaded: the upload could only fail.
+print dol_get_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment', 0, '', '', 0, '', ($result > 0 ? 1 : 0));
 
 if ($result > 0) {
 	/*
@@ -218,6 +221,12 @@ if ($result > 0) {
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td>';
 	print '<td>'.$labeltype;
 	print $object->num_payment ? ' - '.$object->num_payment : '';
+	print '</td></tr>';
+
+	// Payment number
+	print '<tr><td>'.$form->editfieldkey("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
+	print '<td>';
+	print $form->editfieldval("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer"), 'string', '', null, $langs->trans('PaymentNumberUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment numero
@@ -390,13 +399,18 @@ if ($result > 0) {
 	if ($user->socid == 0 && $action != 'presend') {
 		if ($user->hasRight('fournisseur', 'facture', 'supprimer')) {
 			if ($allow_delete) {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
+				print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1, array('attr' => array('class' => 'reposition')))."\n";
 			} else {
 				print dolGetButtonAction($title_button, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 			}
 		}
 	}
 	print '</div>';
+
+	// Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 
 	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -410,7 +424,14 @@ if ($result > 0) {
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 			$genallowed = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
 			$delallowed = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
-			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF') ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF'));
+			if (empty($modelpdf) && !empty($modellist)) {
+				$tmpkeys = array_keys($modellist);
+				$modelpdf = (string) $tmpkeys[0];
+			}
+			if (empty($modelpdf)) {
+				$modelpdf = 'standard_supplierpayment';
+			}
 
 			print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, (int) $genallowed, (int) $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $object->thirdparty->default_lang);
 			$somethingshown = $formfile->numoffiles;
@@ -426,6 +447,24 @@ if ($result > 0) {
 		*/
 
 		print '</div></div>';
+	}
+
+	// Ensure we have a PDF model to generate/attach the receipt on presend
+	if ($action == 'presend' && empty($object->model_pdf)) {
+		$defaultpdfmodel = getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF');
+		if (!empty($defaultpdfmodel)) {
+			$object->model_pdf = $defaultpdfmodel;
+		} else {
+			include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
+			$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
+			if (!empty($modellist)) {
+				$tmpkeys = array_keys($modellist);
+				$object->model_pdf = (string) $tmpkeys[0];
+			}
+		}
+		if (empty($object->model_pdf)) {
+			$object->model_pdf = 'standard_supplierpayment';
+		}
 	}
 
 	// Presend form

@@ -127,6 +127,7 @@ class Mailings extends DolibarrApi
 	 * Get a list of mass mailings
 	 *
 	 * @since	23.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
@@ -137,14 +138,15 @@ class Mailings extends DolibarrApi
 	 * @param string    $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @param int		$loadlinkedobjects	Load also linked object
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                       Array of order objects
-	 * @phan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 403
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_projects = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_projects = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('mailing', 'read')) {
 			throw new RestException(403);
@@ -175,6 +177,11 @@ class Mailings extends DolibarrApi
 
 		//this query will return total mass mailings with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -222,7 +229,7 @@ class Mailings extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -236,6 +243,7 @@ class Mailings extends DolibarrApi
 	 * Get a list of mass mailing targets
 	 *
 	 * @since	23.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param int       $id                 Mass mailing ID
 	 * @param string	$sortfield			Sort field
@@ -245,9 +253,10 @@ class Mailings extends DolibarrApi
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.lastname:like:'John Doe') and (t.statut:=:3)"
 	 * @param string    $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                       Array of order objects
-	 * @phan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return Mailing[]|array{data:Mailing[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @url GET    {id}/targets
 	 *
@@ -255,7 +264,7 @@ class Mailings extends DolibarrApi
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function indexTargets($id, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function indexTargets($id, $sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('mailing', 'read')) {
 			throw new RestException(403);
@@ -288,6 +297,11 @@ class Mailings extends DolibarrApi
 
 		//this query will return total mass mailing targets with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -330,7 +344,7 @@ class Mailings extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -375,7 +389,7 @@ class Mailings extends DolibarrApi
 		if ($cloningResult > 0) {
 			return $this->get($cloningResult);
 		} else {
-			throw new RestException(500, $this->mailing->error);
+			throw new RestException(500, $this->mailing->errorsToString());
 		}
 	}
 
@@ -466,7 +480,7 @@ class Mailings extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->mailing->array_options[$index] = $this->_checkValForAPI($field, $val, $this->mailing);
+					$this->mailing->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->mailing);
 				}
 				continue;
 			}
@@ -477,7 +491,7 @@ class Mailings extends DolibarrApi
 		if ($this->mailing->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->mailing->error);
+			throw new RestException(500, $this->mailing->errorsToString());
 		}
 	}
 
@@ -514,7 +528,7 @@ class Mailings extends DolibarrApi
 		}
 
 		if (!$this->mailing->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Mass mailing : '.$this->mailing->error);
+			throw new RestException(500, 'Error when delete Mass mailing : '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -587,7 +601,7 @@ class Mailings extends DolibarrApi
 		if ($this->mailing_target->update(DolibarrApiAccess::$user) > 0) {
 			return $this->getTarget($id, $targetid);
 		} else {
-			throw new RestException(500, $this->mailing_target->error);
+			throw new RestException(500, $this->mailing_target->errorsToString());
 		}
 	}
 
@@ -762,7 +776,7 @@ class Mailings extends DolibarrApi
 		}
 
 		if (!$this->mailing_target->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Mass mailing target: '.$this->mailing->error);
+			throw new RestException(500, 'Error when delete Mass mailing target: '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -809,7 +823,7 @@ class Mailings extends DolibarrApi
 
 		$count = $this->mailing->countNbOfTargets('all');
 		if (!$this->mailing->delete_targets()) {
-			throw new RestException(500, 'Error when delete targets of Mass mailing : '.$this->mailing->error);
+			throw new RestException(500, 'Error when delete targets of Mass mailing : '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -856,7 +870,7 @@ class Mailings extends DolibarrApi
 
 		$count = $this->mailing->countNbOfTargets('all');
 		if (!$this->mailing->reset_targets_status(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when reset targets status of Mass mailing : '.$this->mailing->error);
+			throw new RestException(500, 'Error when reset targets status of Mass mailing : '.$this->mailing->errorsToString());
 		}
 
 		return array(
@@ -905,7 +919,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(304, 'Nothing done. May be object is already draft');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error : '.$this->mailing->error);
+			throw new RestException(500, 'Error : '.$this->mailing->errorsToString());
 		}
 
 		$this->mailing->fetchObjectLinked();
@@ -957,7 +971,7 @@ class Mailings extends DolibarrApi
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating Mass mailing: '.$this->mailing->error);
+			throw new RestException(500, 'Error when validating Mass mailing: '.$this->mailing->errorsToString());
 		}
 
 		$this->mailing->fetchObjectLinked();

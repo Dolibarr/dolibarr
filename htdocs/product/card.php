@@ -16,12 +16,14 @@
  * Copyright (C) 2016-2022  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2022       Vincent de Grandpré     <vincent@de-grandpre.quebec>
- * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Mélina Joum		        <melina.joum@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,8 +48,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -57,14 +67,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 if (isModEnabled('propal')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -111,14 +113,16 @@ $formbarcode = null;
 // Get parameters
 $id  = GETPOSTINT('id');
 if (getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_REF_LABELS')) {
-	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'nohtml') : null);
+	$security_check = 'nohtml';
 } else {
-	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+	$security_check = !getDolGlobalString('MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML') ? 'alphanohtml' : 'restricthtml';
 }
+$ref = (GETPOSTISSET('ref') ? GETPOST('ref', $security_check) : null);
 $type = (GETPOSTISSET('type') ? GETPOSTINT('type') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOSTINT('socid');
 $duration_value = GETPOST('duration_value') === '' ? null : GETPOSTINT('duration_value');	// duration value can be an empty string
@@ -157,7 +161,7 @@ if ($result > 0) {
 
 $object = new Product($db);
 $object->type = $type; // so test later to fill $usercancxxx is correct
-$extrafields = new ExtraFields($db);
+$refLabelKey = ($type == Product::TYPE_SERVICE ? 'ServiceRef' : 'ProductRef');
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -266,7 +270,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 	// merge products
-	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $usercandelete) {
 		$error = 0;
 		$productOriginId = GETPOSTINT('product_origin');
 		$productOrigin = new Product($db);
@@ -280,172 +284,19 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			// The origin product will be deleted, so user must also have delete permission on its type
+			if (!$error && !(($productOrigin->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'supprimer')) || ($productOrigin->type == Product::TYPE_SERVICE && $user->hasRight('service', 'supprimer')))) {
+				setEventMessages($langs->trans('NotEnoughPermissions'), null, 'errors');
+				$error++;
+			}
+
 			if (!$error) {
-				// TODO Move the merge function into class of object.
-				$db->begin();
-
-				// Recopy some data
-				$listofproperties = array(
-					'ref',
-					'ref_ext',
-					'label',
-					'description',
-					'url',
-					'barcode',
-					'fk_barcode_type',
-					'import_key',
-					'mandatory_period',
-					'accountancy_code_buy',
-					'accountancy_code_buy_intra',
-					'accountancy_code_buy_export',
-					'accountancy_code_sell',
-					'accountancy_code_sell_intra',
-					'accountancy_code_sell_export'
-				);
-				foreach ($listofproperties as $property) {
-					if (empty($object->$property)) {
-						$object->$property = $productOrigin->$property;
-					}
-				}
-				// Concat some data
-				$listofproperties = array(
-					'note_public', 'note_private'
-				);
-				foreach ($listofproperties as $property) {
-					$object->$property = dol_concatdesc($object->$property, $productOrigin->$property);
-				}
-
-				// Merge extrafields
-				if (is_array($productOrigin->array_options)) {
-					foreach ($productOrigin->array_options as $key => $val) {
-						if (empty($object->array_options[$key])) {
-							$object->array_options[$key] = $val;
-						}
-					}
-				}
-
-				// Merge categories
-				$static_cat = new Categorie($db);
-				$custcats_ori = $static_cat->containing($productOrigin->id, 'product', 'id');
-				$custcats = $static_cat->containing($object->id, 'product', 'id');
-				$custcats = array_merge($custcats, $custcats_ori);
-				$object->setCategories($custcats);
-
-				// If product has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
-				if ($productOrigin->barcode == $object->barcode) {
-					dol_syslog("We clean customer and supplier code so we will be able to make the update of target");
-					$productOrigin->barcode = '';
-					//$productOrigin->update($productOrigin->id, $user, 0, 'merge');
-				}
-
-				// Update
-				$result = $object->update($object->id, $user, 0, 'merge');
-				if ($result <= 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
+				$result = $object->mergeProduct($productOriginId);
+				if ($result < 0) {
 					$error++;
-				}
-
-				// Move links
-				if (!$error) {
-					// TODO add this functionality into the api_products.class.php
-					// TODO Mutualise the list into object product.class.php
-					$objects = array(
-						'ActionComm' => '/comm/action/class/actioncomm.class.php',
-						'Bom' => '/bom/class/bom.class.php',
-						// do not use Categorie, it cause foreign key error, merge is done before
-						//'Categorie' => '/categories/class/categorie.class.php',
-						'Commande' => '/commande/class/commande.class.php',
-						'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
-						'Contrat' => '/contrat/class/contrat.class.php',
-						'Delivery' => '/delivery/class/delivery.class.php',
-						'Facture' => '/compta/facture/class/facture.class.php',
-						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
-						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
-						'FichinterRec' => '/fichinter/class/fichinterrec.class.php',
-						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
-						'Propal' => '/comm/propal/class/propal.class.php',
-						'Reception' => '/reception/class/reception.class.php',
-						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
-					);
-
-					// First, all core objects must update their tables
-					foreach ($objects as $object_name => $object_file) {
-						require_once DOL_DOCUMENT_ROOT.$object_file;
-
-						if (!$error && !$object_name::replaceProduct($db, $productOrigin->id, $object->id)) {
-							$error++;
-							setEventMessages($db->lasterror(), null, 'errors');
-							break;
-						}
-					}
-				}
-
-				// External modules should update their ones too
-				if (!$error) {
-					$parameters = array('soc_origin' => $productOrigin->id, 'soc_dest' => $object->id);
-					$reshook = $hookmanager->executeHooks(
-						'replaceProduct',
-						$parameters,
-						$object,
-						$action
-					);
-
-					if ($reshook < 0) {
-						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-						$error++;
-					}
-				}
-
-
-				if (!$error) {
-					$object->context = array(
-						'merge' => 1,
-						'mergefromid' => $productOrigin->id,
-					);
-
-					// Call trigger
-					$result = $object->call_trigger('PRODUCT_MODIFY', $user);
-					if ($result < 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
-						$error++;
-					}
-					// End call triggers
-				}
-
-				if (!$error) {
-					// Move files from the dir of the product being deleted into the dir of the product kept.
-					// This must happen on success only, and before the deletion: the filesystem is not part
-					// of the transaction, so moving the files on the failing path stripped the origin product
-					// of its documents while the database was rolled back, and Product::delete() removes the
-					// directory of the product, so a move placed after it finds nothing left to move.
-					if (!empty($conf->product->multidir_output[$productOrigin->entity])) {
-						$srcdir = $conf->product->multidir_output[$productOrigin->entity]."/".$productOrigin->ref;
-						$destdir = $conf->product->multidir_output[$object->entity]."/".$object->ref;
-
-						if (dol_is_dir($srcdir)) {
-							$dirlist = dol_dir_list($srcdir, 'files', 1);
-							foreach ($dirlist as $filetomove) {
-								$destfile = $destdir.'/'.$filetomove['relativename'];
-								//var_dump('Move file '.$filetomove['relativename'].' into '.$destfile);
-								dol_move($filetomove['fullname'], $destfile, '0', 0, 0, 1);
-							}
-							//exit;
-						}
-					}
-
-					// Delete the product
-					if ($productOrigin->delete($user) < 1) {
-						$error++;
-					}
-				}
-
-				if (!$error) {
-					setEventMessages($langs->trans('ProductsMergeSuccess'), null, 'mesgs');
-					$db->commit();
+					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					$langs->load("errors");
-					setEventMessages($langs->trans('ErrorsProductsMerge'), null, 'errors');
-					$db->rollback();
+					setEventMessages($langs->trans('ProductsMergeSuccess'), null, 'mesgs');
 				}
 			}
 		}
@@ -534,7 +385,7 @@ if (empty($reshook)) {
 		}
 		if (empty($ref)) {
 			if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
-				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('ProductRef')), null, 'errors');
+				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities($refLabelKey)), null, 'errors');
 				$action = "create";
 				$error++;
 			}
@@ -545,6 +396,10 @@ if (empty($reshook)) {
 			$error++;
 		}
 		$stockable_product = (int) ($type == 0 || ($type == 1 && getDolGlobalInt('STOCK_SUPPORTS_SERVICES')));
+		// If the stockable_product checkbox was shown in the form, use the submitted value
+		if (isModEnabled('stock') && ($type == 0 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES'))) {
+			$stockable_product = GETPOSTISSET('stockable_product') ? 1 : 0;
+		}
 		if (GETPOST('status_batch') && $stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
 			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement'), null, 'errors');
 			$action = "create";
@@ -758,6 +613,13 @@ if (empty($reshook)) {
 						$backtopage .= '&productid='.$object->id; // Old method
 					}
 
+					if (!empty($dol_openinpopup)) {
+						// Created from a popup dialog: reload the parent page instead (backtopage, with the new id substituted, can autoselect the product)
+						print '<script nonce="'.getNonce().'">';
+						print "window.parent.location.href = '".dol_escape_js($backtopage)."';";
+						print '</script>';
+						exit;
+					}
 					header("Location: ".$backtopage);
 					exit;
 				} else {
@@ -1030,6 +892,15 @@ if (empty($reshook)) {
 							}
 						}
 
+						if (!$error && GETPOST('clone_supplier_prices')) {
+							$result = $clone->clone_fournisseurs($object->id, $id);
+							if ($result < 1) {
+								setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
+								setEventMessages($clone->error, $clone->errors, 'errors');
+								$error++;
+							}
+						}
+
 						if (!$error && isModEnabled('bom') && $user->hasRight('bom', 'write')) {
 							$defbomidac = 0; // to avoid cloning same BOM twice
 							if (GETPOST('clone_defbom') && $object->fk_default_bom > 0) {
@@ -1067,7 +938,6 @@ if (empty($reshook)) {
 								}
 							}
 						}
-						// $clone->clone_fournisseurs($object->id, $id);
 					} else {
 						if ($clone->error == 'ErrorProductAlreadyExists') {
 							$refalreadyexists++;
@@ -1107,6 +977,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($user);
 
 		if ($result > 0) {
@@ -1212,8 +1083,8 @@ if (empty($reshook)) {
 			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $object->tva_tx));
 
-			// On reevalue prix selon taux tva car taux tva transaction peut etre different
-			// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
+			// We reevaluate price according to vat rate because vat rate of transaction can be different
+			// of the one of the product by default (for example when country of seller and buyer differ).
 			if ($tmpvat != $tmpprodvat) {
 				if ($price_base_type != 'HT') {
 					$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
@@ -1379,6 +1250,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
+$formaccounting = null;
 if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
@@ -1495,6 +1367,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<input type="hidden" name="barcode_auto" value="1">';
 		}
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+		print '<input type="hidden" name="dol_openinpopup" value="'.dol_escape_htmltag($dol_openinpopup).'">';
+		if (!empty($backtopageforcancel)) {
+			print '<input type="hidden" name="backtopageforcancel" value="'.dol_escape_htmltag($backtopageforcancel).'">';
+		}
 
 		if ($type == 1) {
 			$picto = 'service';
@@ -1530,7 +1406,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					/** @var ModeleProductCode $modCodeProduct */
 					$tmpcode = $modCodeProduct->getNextValue($object, $type);
 				}
-				print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("ProductRef").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
+				print '<td class="titlefieldcreate fieldrequired">'.$langs->trans($refLabelKey).'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
 				if ($refalreadyexists) {
 					print $langs->trans("RefAlreadyExists");
 				}
@@ -1624,8 +1500,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			if ($showbarcode) {
-				//var_dump($modBarCodeProduct); exit;
-
 				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
 				if (GETPOSTISSET('fk_barcode_type')) {
 					$fk_barcode_type = GETPOST('fk_barcode_type') ? GETPOST('fk_barcode_type') : 0;
@@ -1668,8 +1542,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			if (($type != 1 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
+				// Stockable product
+				if (isModEnabled('productbatch') && GETPOSTINT('status_batch')) {
+					print '<tr><td><input type="hidden" id="stockable_product" name="stockable_product" value="on" /></td><td></td></tr>';
+					$checked_stockable = 'checked';
+				} else {
+					$checked_stockable = ($type == 0 || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) ? 'checked' : '';
+					print '<tr><td><label for="stockable_product">' . $langs->trans("StockableProduct") . '</label></td>';
+					print '<td><input type="checkbox" id="stockable_product" name="stockable_product" ' . $checked_stockable . ' /></td></tr>';
+				}
 				// Default warehouse
-				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+				print '<tr class="showifstockable' . (empty($checked_stockable) ? ' hidden' : '') . '"><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
 				print $formproduct->selectWarehouses(GETPOSTINT('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth300 widthcentpercentminusxx maxwidth500');
 				print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?&action=create&type='.GETPOSTINT('type')).'">';
@@ -1901,7 +1784,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<table class="border centpercent">';
 
 			if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {
-				if (isModEnabled('accounting')) {
+				if (isModEnabled('accounting') && is_object($formaccounting)) {
 					/** @var FormAccounting $formaccounting */
 					// Accountancy_code_sell
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
@@ -2030,19 +1913,25 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</table>';
 		}
 
+		if (!empty($conf->use_javascript_ajax) && isModEnabled('stock')) {
+			print '<script>';
+			print '$(document).ready(function() {
+				$("#stockable_product").change(function() {
+					$(".showifstockable").toggle(this.checked);
+				});
+			});';
+			print '</script>';
+		}
+
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("Create");
+		print $form->buttonsSaveCancel("Create", "Cancel", array(), false, '', $dol_openinpopup);
 
 		print '</form>';
 	} elseif ($object->id > 0) {
-		/*
-		 * Product card
-		 */
-
 		$iskit = $object->hasFatherOrChild(1);
 
-		// Card in edit mode
+		// Product card in edit mode
 		if ($action == 'edit' && $usercancreate) {
 			//WYSIWYG Editor
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -2082,7 +1971,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$head = product_prepare_head($object);
 			$titre = $langs->trans("CardProduct".$object->type);
 			$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-			print dol_get_fiche_head($head, 'card', $titre, 0, $picto, 0, '', '', 0, '', 1);
+			print dol_get_fiche_head($head, 'card', $titre, 0, $picto, 0, '', '', 0, '', 0);	// No drag and drop on the edit form, dropping a file reloads the page and discards it
 
 			// Call Hook tabContentEditProduct
 			$parameters = array();
@@ -2501,6 +2390,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					if (isModEnabled('accounting')) {
 						/** @var FormAccounting $formaccounting */
+
 						// Accountancy_code_sell
 						print '<tr><td class="titlefieldcreate">'.$langs->trans("ProductAccountancySellCode").'</td>';
 						print '<td>';
@@ -2601,9 +2491,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '</form>';
 		} else {
-			// Card in view mode
+			// Product card in view mode
 
-			$showbarcode = (isModEnabled('barcode')&& getDolGlobalString('BARCODE_USE_ON_PRODUCT'));
+			$showbarcode = (isModEnabled('barcode') && getDolGlobalString('BARCODE_USE_ON_PRODUCT'));
 			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode', 'lire_advance')) {
 				$showbarcode = 0;
 			}
@@ -2638,7 +2528,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Type
 				if (isModEnabled("product") && isModEnabled("service")) {
 					$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-					print '<tr><td class="titlefield">';
+					print '<tr><td class="titlefieldmiddle">';
 					print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, (int) $usercancreate, $typeformat) : $langs->trans('Type');
 					print '</td><td>';
 					print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
@@ -2647,7 +2537,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if ($showbarcode) {
 					// Barcode type
-					print '<tr><td class="nowrap">';
+					print '<tr><td class="titlefieldmiddle nowrap">';
 					print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
 					print $langs->trans("BarcodeType");
 					print '</td>';
@@ -2703,7 +2593,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Stockable product / default warehouse
 				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {	// Do not use isStockManaged here.We must sow info even if stock not managed
-					print '<tr><td>' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
+					print '<tr><td class="titlefieldmiddle">' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
 					print '<td>';
 					if ($iskit) {
 						print '<input type="checkbox" readonly disabled> <span class="opacitymedium">' . $langs->trans("NotSupportedOnKits").'</span>';
@@ -2725,8 +2615,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Batch number management (to batch)
 				if (isModEnabled('productbatch')) {
 					if ($object->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-						print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
-						print $object->getLibStatut(0, 2);
+						print '<tr><td class="titlefieldmiddle">'.$langs->trans("ManageLotSerial").'</td><td>';
+						if ($object->status_batch == 0) {
+							print '<span class="opacitymedium">'.yn(0).'</span>';
+						} else {
+							print $object->getLibStatut(0, 2);
+						}
 						print '</td></tr>';
 						if ((($object->status_batch == '1' && getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
 							|| ($object->status_batch == '2' && getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced' && getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS')))) {
@@ -2736,14 +2630,56 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 					}
 
-					print '<tr><td>'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->transnoentities('SellByDate'), $langs->transnoentities('EatByDate')).'</td><td>';
-					print $object->getSellOrEatByMandatoryLabel();
+					print '<tr><td class="titlefieldmiddle">'.$langs->trans('BatchSellOrEatByMandatoryList', $langs->transnoentities('SellByDate'), $langs->transnoentities('EatByDate')).'</td><td>';
+					if ($object->sell_or_eat_by_mandatory == $object::SELL_OR_EAT_BY_MANDATORY_ID_NONE) {
+						print '<span class="opacitymedium">'.yn(0).'</span>';
+					} else {
+						print $object->getSellOrEatByMandatoryLabel();
+					}
 					print '</td></tr>';
 				}
 
 				if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {
+					// Line to group accounting codes
+					$collapse = !empty($_COOKIE['DOLUSER_COLLAPSE_product_separator_accounting']);
+
+					print '<tr id="trseparatoraccounting" class="trseparator trseparatoraccounting">';
+					print '<td class="titlefieldmiddle firstcol"><span class="cursorpointer far fa-'.($collapse ? 'plus' : 'minus').'-square"></span>&nbsp;<strong>'.$langs->trans("AccountancyCodes").'</strong></td>';
+					print '<td class="secondcol">';
+					$nbOfAccountingCodes = 0;
+					$nbOfAccountingCodes += (isModEnabled('accounting') && !empty($object->accountancy_code_sell)) ? 1 : 0;
+					$nbOfAccountingCodes += (isModEnabled('accounting') && !empty($object->accountancy_code_sell_intra)) ? 1 : 0;
+					$nbOfAccountingCodes += (isModEnabled('accounting') && !empty($object->accountancy_code_sell_export)) ? 1 : 0;
+					$nbOfAccountingCodes += (isModEnabled('accounting') && !empty($object->accountancy_code_buy)) ? 1 : 0;
+					$nbOfAccountingCodes += (isModEnabled('accounting') && !empty($object->accountancy_code_buy_intra)) ? 1 : 0;
+					$nbOfAccountingCodes += (isModEnabled('accounting') && !empty($object->accountancy_code_buy_export)) ? 1 : 0;
+					print '<span class="badge badge-secondary'.($collapse ? '' : ' hidden').'">'.$nbOfAccountingCodes.'</span>';
+					print '</td>';
+					print '</tr>';
+					print '<!-- Add js script to manage the collapse/uncollapse of separator accounting -->
+						<script nonce="'.getNonce().'" type="text/javascript">
+						jQuery(document).ready(function(){
+						   console.log("Inject js for collapsing of separatoraccounting - keep visible and set cookie");
+						   /* document.cookie = "DOLUSER_COLLAPSE_product_separator_accounting=1; path='.DOL_URL_ROOT.'/product/card.php"; */
+						   jQuery("#trseparatoraccounting").click(function(){
+						       console.log("We click on collapse/uncollapse to hide/show .tr_collapseaccounting");
+						       jQuery(".tr_collapseaccounting").toggle(100, function(){
+						           if (jQuery(".tr_collapseaccounting").first().is(":hidden")) {
+						           		jQuery("#trseparatoraccounting td.firstcol span").addClass("fa-plus-square").removeClass("fa-minus-square");
+										jQuery("#trseparatoraccounting td.secondcol span").removeClass("hidden");
+						           		document.cookie = "DOLUSER_COLLAPSE_product_separator_accounting=1; path='.DOL_URL_ROOT.'/product/card.php"
+						           } else {
+						           		jQuery("#trseparatoraccounting td.firstcol span").addClass("fa-minus-square").removeClass("fa-plus-square");
+										jQuery("#trseparatoraccounting td.secondcol span").addClass("hidden");
+						           		document.cookie = "DOLUSER_COLLAPSE_product_separator_accounting=0; path='.DOL_URL_ROOT.'/product/card.php"
+						           }
+						       });
+						   });
+						});
+						</script>';
+
 					// Accountancy sell code
-					print '<tr><td class="nowrap">';
+					print '<tr class="tr_collapseaccounting'.($collapse ? ' hidden' : '').'"><td class="nowrap">';
 					print $langs->trans("ProductAccountancySellCode");
 					print '</td><td>';
 					if (isModEnabled('accounting')) {
@@ -2754,13 +2690,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 						}
 					} else {
-						print $object->accountancy_code_sell;
+						print dolPrintHTML($object->accountancy_code_sell);
 					}
 					print '</td></tr>';
 
 					// Accountancy sell code intra-community
 					if ($mysoc->isInEEC()) {
-						print '<tr><td class="nowrap">';
+						print '<tr class="tr_collapseaccounting'.($collapse ? ' hidden' : '').'"><td class="nowrap">';
 						print $langs->trans("ProductAccountancySellIntraCode");
 						print '</td><td>';
 						if (isModEnabled('accounting')) {
@@ -2771,13 +2707,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 								print $accountingaccount2->getNomUrl(0, 1, 1, '', 1);
 							}
 						} else {
-							print $object->accountancy_code_sell_intra;
+							print dolPrintHTML($object->accountancy_code_sell_intra);
 						}
 						print '</td></tr>';
 					}
 
 					// Accountancy sell code export
-					print '<tr><td class="nowrap">';
+					print '<tr class="tr_collapseaccounting'.($collapse ? ' hidden' : '').'"><td class="nowrap">';
 					print $langs->trans("ProductAccountancySellExportCode");
 					print '</td><td>';
 					if (isModEnabled('accounting')) {
@@ -2788,12 +2724,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							print $accountingaccount3->getNomUrl(0, 1, 1, '', 1);
 						}
 					} else {
-						print $object->accountancy_code_sell_export;
+						print dolPrintHTML($object->accountancy_code_sell_export);
 					}
 					print '</td></tr>';
 
 					// Accountancy buy code
-					print '<tr><td class="nowrap">';
+					print '<tr class="tr_collapseaccounting'.($collapse ? ' hidden' : '').'"><td class="nowrap">';
 					print $langs->trans("ProductAccountancyBuyCode");
 					print '</td><td>';
 					if (isModEnabled('accounting')) {
@@ -2804,13 +2740,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							print $accountingaccount4->getNomUrl(0, 1, 1, '', 1);
 						}
 					} else {
-						print $object->accountancy_code_buy;
+						print dolPrintHTML($object->accountancy_code_buy);
 					}
 					print '</td></tr>';
 
 					// Accountancy buy code intra-community
 					if ($mysoc->isInEEC()) {
-						print '<tr><td class="nowrap">';
+						print '<tr class="tr_collapseaccounting'.($collapse ? ' hidden' : '').'"><td class="nowrap">';
 						print $langs->trans("ProductAccountancyBuyIntraCode");
 						print '</td><td>';
 						if (isModEnabled('accounting')) {
@@ -2821,13 +2757,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 								print $accountingaccount5->getNomUrl(0, 1, 1, '', 1);
 							}
 						} else {
-							print $object->accountancy_code_buy_intra;
+							print dolPrintHTML($object->accountancy_code_buy_intra);
 						}
 						print '</td></tr>';
 					}
 
 					// Accountancy buy code export
-					print '<tr><td class="nowrap">';
+					print '<tr class="tr_collapseaccounting'.($collapse ? ' hidden' : '').'"><td class="nowrap">';
 					print $langs->trans("ProductAccountancyBuyExportCode");
 					print '</td><td>';
 					if (isModEnabled('accounting')) {
@@ -2838,7 +2774,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							print $accountingaccount6->getNomUrl(0, 1, 1, '', 1);
 						}
 					} else {
-						print $object->accountancy_code_buy_export;
+						print dolPrintHTML($object->accountancy_code_buy_export);
 					}
 					print '</td></tr>';
 				}
@@ -2885,6 +2821,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<div class="underbanner clearboth"></div>';
 
 				print '<table class="border tableforfield centpercent">';
+
+				// Categories
+				if (isModEnabled('category')) {
+					print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+					print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
+					print "</td></tr>";
+				}
 
 				if ($object->isService()) {
 					// Duration
@@ -2970,7 +2913,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') || !getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
 						// Brut Surface / Volume
 						print '<tr><td>';
-						print (getDolGlobalString('PRODUCT_DISABLE_SURFACE') ? '' : $langs->trans("Surface"));
+						print(getDolGlobalString('PRODUCT_DISABLE_SURFACE') ? '' : $langs->trans("Surface"));
 						print (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') && !getDolGlobalString('PRODUCT_DISABLE_VOLUME')) ? ' / ' : '';
 						print (getDolGlobalString('PRODUCT_DISABLE_VOLUME') ? '' : $langs->trans("Volume")).'</td><td>';
 						if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') && $object->surface != '') {
@@ -3026,13 +2969,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$parameters = array();
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-				// Categories
-				if (isModEnabled('category')) {
-					print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-					print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
-					print "</td></tr>";
-				}
-
 				// Note private
 				if (getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 					print '<!-- show Note --> '."\n";
@@ -3073,7 +3009,7 @@ if ($action == 'merge') {
 			'name' => 'product_origin',
 			'label' => $langs->trans('MergeOriginProduct'),
 			'type' => 'other',
-			'value' => $form->select_produits(0, 'product_origin', '', 0, 0, 1, 2, '', 1, array(), 0, 1, 0, 'minwidth200', 0, '', null, 1),
+			'value' => $form->select_produits(0, 'product_origin', (int) $object->type, 0, 0, -1, 2, '', 1, array(), 0, 1, 0, 'minwidth200 maxwidth500', 0, '', null, 1, -1),
 		)
 	);
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeProducts"), $langs->trans("ConfirmMergeProducts"), "confirm_merge", $formquestion, 'no', 1, 250);
@@ -3090,8 +3026,15 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 		2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
 	);
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("CustomerPrices").')', 'value' => 0);
+		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("MultiPrices").')', 'value' => 0);
 	}
+	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("CustomerPerPrices").')', 'value' => 0);
+	}
+	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("MultiPricesAndCustomerPerPrices").')', 'value' => 0);
+	}
+	$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_supplier_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("SupplierPrices").')', 'value' => 0);
 	if (getDolGlobalString('PRODUIT_SOUSPRODUITS')) {
 		$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
 	}
@@ -3105,7 +3048,7 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->d
 			$formquestionclone[] = array('type' => 'checkbox', 'name' => 'clone_otherboms', 'label' => $langs->trans("CloneOtherBomsProduct"), 'value' => 0);
 		}
 	}
-	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 350, 600);
+	$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneProduct', $object->ref), 'confirm_clone', $formquestionclone, 'yes', 'action-clone', 0, 600);
 }
 
 // Call Hook formConfirm
@@ -3124,7 +3067,7 @@ print $formconfirm;
  * Action bar
  */
 if ($action != 'create' && $action != 'edit') {
-	$cloneProductUrl = $_SERVER["PHP_SELF"].'?action=clone&token='.newToken();
+	$cloneProductUrl = dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'clone'], true);
 	$cloneButtonId = 'action-clone-no-ajax';
 
 	print "\n".'<div class="tabsAction">'."\n";
@@ -3134,36 +3077,35 @@ if ($action != 'create' && $action != 'edit') {
 	if (empty($reshook)) {
 		if ($usercancreate) {
 			if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
-				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'edit', 'id' => $object->id], true), '', $usercancreate);
 			}
 
 			//Send
-			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
+			print dolGetButtonAction('', $langs->trans('SendMail'), 'email', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'presend', 'mode' => 'init'], true).'#formmailbeforetitle');
 
 			if (!isset($hookmanager->resArray['no_button_copy']) || $hookmanager->resArray['no_button_copy'] != 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-					$cloneProductUrl = '';
 					$cloneButtonId = 'action-clone';
 				}
-				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneProductUrl, $cloneButtonId, $usercancreate);
+				print dolGetButtonAction($langs->trans('ToClone'), $langs->trans('ToClone'), 'clone', $cloneProductUrl, $cloneButtonId, $usercancreate, array('attr' => array('class' => 'reposition')));
 			}
 		}
 		$object_is_used = $object->isObjectUsed($object->id);
 
 		if ($usercandelete) {
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+				print dolGetButtonAction($langs->trans('MergeProducts'), $langs->trans('Merge'), 'default', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'merge', 'id' => $object->id], true), '', true, array('attr' => array('classOverride' => 'butAction butActionDanger')))."\n";
+			}
 			if (empty($object_is_used)) {
 				if (!isset($hookmanager->resArray['no_button_delete']) || $hookmanager->resArray['no_button_delete'] != 1) {
 					if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-						print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', 'action-delete', true);
+						print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '#', 'action-delete', true, array('attr' => array('class' => 'reposition')))."\n";
 					} else {
-						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
+						print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'delete', 'id' => $object->id], true), '', true, array('attr' => array('class' => 'reposition')))."\n";
 					}
 				}
 			} else {
 				print dolGetButtonAction($langs->trans("ProductIsUsed"), $langs->trans('Delete'), 'delete', '#', '', false);
-			}
-			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
-				print '<a class="butActionDelete" href="card.php?action=merge&id='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeProducts")).'">'.$langs->trans('Merge').'</a>'."\n";
 			}
 		} else {
 			print dolGetButtonAction($langs->trans("NotEnoughPermissions"), $langs->trans('Delete'), 'delete', '#', '', false);
@@ -3288,7 +3230,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	print '<a name="builddoc"></a>'; // ancre
 
 	// Documents
-	$objectref = dol_sanitizeFileName($object->ref);
+	$objectref = dol_sanitizeFileName((string) $object->ref);
 	if (!empty($conf->product->multidir_output[$object->entity ?? $conf->entity])) {
 		$filedir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.$objectref; //Check repertories of current entities
 	} else {

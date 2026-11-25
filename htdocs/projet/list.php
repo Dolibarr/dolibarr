@@ -8,8 +8,8 @@
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2020	   Tobias Sean			<tobias.sekan@startmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -98,6 +99,8 @@ $search_entity = GETPOSTINT('search_entity');
 $search_id = GETPOST("search_id", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
+$search_note_public = GETPOST('search_note_public', 'alphanohtml');
+$search_note_private = GETPOST('search_note_private', 'alphanohtml');
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_societe_alias = GETPOST("search_societe_alias", 'alpha');
 $search_societe_country = GETPOST("search_societe_country", 'alpha');
@@ -153,6 +156,10 @@ if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 	$search_omitChildren = GETPOST('search_omitChildren', 'alpha') == 'on' ? 1 : 0;
 }
 
+// Default to no permissions
+$permissiontoread = 0;
+$permissiontoadd = 0;
+
 
 $mine = ((GETPOST('mode') == 'mine') ? 1 : 0);
 if ($mine) {
@@ -183,7 +190,8 @@ $search_date_end_start = GETPOSTDATE('search_date_end_start');	// Use tzserver
 $search_date_end_endmonth = GETPOSTINT('search_date_end_endmonth');
 $search_date_end_endyear = GETPOSTINT('search_date_end_endyear');
 $search_date_end_endday = GETPOSTINT('search_date_end_endday');
-$search_date_end_end = GETPOSTDATE('search_date_end_end', 'end');	;	// Use tzserver
+$search_date_end_end = GETPOSTDATE('search_date_end_end', 'end');
+;	// Use tzserver
 
 $search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
 $search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
@@ -271,6 +279,9 @@ foreach ($object->fields as $key => $val) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 // Add non object fields to fields for list
+if (!isset($arrayfields[$tableprefix.'.rowid'])) {	// Technical ID is hidden by the object when MAIN_SHOW_TECHNICAL_ID is off, but must remain selectable
+	$arrayfields[$tableprefix.'.rowid'] = array('label' => "TechnicalID", 'checked' => '-1', 'enabled' => '1', 'position' => 10);
+}
 $arrayfields['s.nom'] = array('label' => "ThirdParty", 'checked' => '1', 'position' => 21, 'enabled' => (!isModEnabled('societe') ? '0' : '1'));
 $arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'checked' => '0', 'position' => 22);
 $arrayfields['s.code_client'] = array('label' => "RefCustomer", 'checked' => '0', 'position' => 23);
@@ -280,6 +291,8 @@ $arrayfields['commercial'] = array('label' => "SaleRepresentativesOfThirdParty",
 $arrayfields['c.assigned'] = array('label' => "AssignedTo", 'checked' => '1', 'position' => 120);
 $arrayfields['opp_weighted_amount'] = array('label' => 'OpportunityWeightedAmountShort', 'checked' => '0', 'enabled' => (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? '0' : '1'), 'position' => 106);
 $arrayfields['u.login'] = array('label' => "Author", 'checked' => '-1', 'position' => 165);
+$arrayfields['p.note_public'] = array('label' => 'NotePublic', 'checked' => '0', 'position' => 170, 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PUBLIC_NOTES')));
+$arrayfields['p.note_private'] = array('label' => 'NotePrivate', 'checked' => '0', 'position' => 171, 'enabled' => (string) (int) (!getDolGlobalString('MAIN_LIST_HIDE_PRIVATE_NOTES')));
 // Force some fields according to search_usage filter...
 //if (GETPOST('search_usage_opportunity')) {
 //$arrayfields['p.usage_opportunity']['visible'] = 1;	// Not required, filter on search_opp_status is enough
@@ -310,6 +323,9 @@ if ($contextpage == 'lead') {
 	}
 }
 
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -350,12 +366,14 @@ if ($mode == 'kanbangroupby' && $groupby) {
 				$i = 1;
 				while ($i < ($num + 1)) {	// $num + 1 because we added the undefined entry so we start with $i=1;
 					$objp = $db->fetch_object($resql);
-					$groupbyvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+					// Same label as in the lead status selector: translation of OppStatus<code>, else label of dictionary
+					$labeloppstatus = ($langs->transnoentitiesnoconv("OppStatus".$objp->code) != "OppStatus".$objp->code ? $langs->transnoentitiesnoconv("OppStatus".$objp->code) : $objp->label);
+					$groupbyvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					// If this is a group code that need to be collapsed
 					if ($objp->code == 'WON') {
-						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					} elseif ($objp->code == 'LOST') {
-						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $labeloppstatus);
 					}
 
 					$i++;
@@ -423,6 +441,8 @@ if (empty($reshook)) {
 		$search_id = "";
 		$search_ref = "";
 		$search_label = "";
+		$search_note_public = '';
+		$search_note_private = '';
 		$search_societe = "";
 		$search_societe_ref_customer = "";
 		$search_societe_ref_supplier = "";
@@ -585,19 +605,21 @@ if (!$user->hasRight('projet', 'all', 'lire')) {
 // Get id of types of contacts for projects (This list never contains a lot of elements)
 $listofprojectcontacttype = array();
 $listofprojectcontacttypeexternal = array();
-$sql = "SELECT ctc.rowid, ctc.code, ctc.source FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
-$sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
-$resql = $db->query($sql);
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
-		if ($obj->source == 'internal') {
-			$listofprojectcontacttype[$obj->rowid] = $obj->code;
-		} else {
-			$listofprojectcontacttypeexternal[$obj->rowid] = $obj->code;
+if ($search_project_user > 0 || $search_project_contact > 0) {	// Only the filters on user or contact of project need them
+	$sql = "SELECT ctc.rowid, ctc.code, ctc.source FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
+	$sql .= " WHERE ctc.element = '".$db->escape($object->element)."'";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			if ($obj->source == 'internal') {
+				$listofprojectcontacttype[$obj->rowid] = $obj->code;
+			} else {
+				$listofprojectcontacttypeexternal[$obj->rowid] = $obj->code;
+			}
 		}
+	} else {
+		dol_print_error($db);
 	}
-} else {
-	dol_print_error($db);
 }
 if (count($listofprojectcontacttype) == 0) {
 	$listofprojectcontacttype[0] = '0'; // To avoid sql syntax error if not found
@@ -607,7 +629,7 @@ if (count($listofprojectcontacttypeexternal) == 0) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -618,10 +640,18 @@ $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, 
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
-$sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.code_fournisseur,";
+// Notes are TEXT fields, loaded only if shown: into their column or into the tooltip of the note picto of the ref (see Project::getNomUrl())
+if (!empty($arrayfields['p.note_public']['checked']) || ($user->socid > 0 && !empty($arrayfields['p.ref']['checked']))) {
+	$sql .= " p.note_public,";
+}
+if (!empty($arrayfields['p.note_private']['checked']) || ($user->socid <= 0 && !empty($arrayfields['p.ref']['checked']))) {
+	$sql .= " p.note_private,";
+}
+$sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.code_fournisseur,";
 $sql .= " country.code as country_code,";
 $sql .= " cls.code as opp_status_code,";
-$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
+$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
+$sql .= ' pa.ref as parent_ref, pa.title as parent_title, pa.entity as parent_entity, pa.public as parent_public, pa.fk_statut as parent_status, pa.dateo as parent_date_start, pa.datee as parent_date_end';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -637,14 +667,17 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".$db->prefix().$object->table_element." as p";
+// Joins on a unique key (alias => join): they do not change the number of records, so the count can skip the ones not used by filters
+$sqljoinsonuniquekey = array();
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".$db->prefix().$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
+	$sqljoinsonuniquekey['ef'] = " LEFT JOIN ".$db->prefix().$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on country.rowid = s.fk_pays";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.$object->table_element.' AS pa ON p.fk_project = pa.rowid';
+$sqljoinsonuniquekey['s'] = " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+$sqljoinsonuniquekey['country'] = " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on country.rowid = s.fk_pays";
+$sqljoinsonuniquekey['cls'] = " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
+$sqljoinsonuniquekey['u'] = ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
+$sqljoinsonuniquekey['pa'] = ' LEFT JOIN '.MAIN_DB_PREFIX.$object->table_element.' AS pa ON p.fk_project = pa.rowid';
+$sql .= implode('', $sqljoinsonuniquekey);
 // We'll need this table joined to the select in order to filter by sale
 // No check is done on company permission because readability is managed by public status of project and assignment.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -664,14 +697,25 @@ if (!$user->hasRight('projet', 'all', 'lire')) {
 if ($socid > 0) {
 	$sql .= " AND (p.fk_soc = ".((int) $socid).")"; // This filter if when we use a hard coded filter on company on url (not related to filter for external users)
 }
-if ($search_id) {
+if ($search_id != '') {
 	$sql .= natural_search('p.rowid', $search_id, 1);
 }
 if ($search_ref) {
-	$sql .= natural_search('p.ref', $search_ref);
+	// When the label column is not displayed, the label is shown under the ref, so we search into both
+	if (empty($arrayfields['p.title']['checked'])) {
+		$sql .= natural_search(array('p.ref', 'p.title'), $search_ref);
+	} else {
+		$sql .= natural_search('p.ref', $search_ref);
+	}
 }
 if ($search_label) {
 	$sql .= natural_search('p.title', $search_label);
+}
+if ($search_note_public != '') {
+	$sql .= natural_search('p.note_public', $search_note_public);
+}
+if ($search_note_private != '') {
+	$sql .= natural_search('p.note_private', $search_note_private);
 }
 if ($search_parent_ref) {
 	$sql .= natural_search('pa.ref', $search_parent_ref);
@@ -948,6 +992,13 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	// Remove the joins whose alias is not used by filters (in reverse order, a join may use the alias of a previous one, like country with s)
+	foreach (array_reverse($sqljoinsonuniquekey, true) as $tmpalias => $tmpval) {
+		$sqltmpforcount = str_replace($tmpval, '', $sqlforcount);
+		if (!preg_match('/\b'.preg_quote($tmpalias, '/').'\./i', $sqltmpforcount)) {
+			$sqlforcount = $sqltmpforcount;
+		}
+	}
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -988,8 +1039,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 
 // Output page
 // --------------------------------------------------------------------
-
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-project page-list bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -1141,11 +1190,17 @@ if ($search_date_modif_end) {
 	$param .= '&search_date_modif_end=' . urlencode((string) $search_date_modif_end);
 }
 if (!empty($search_category_user_array)) {
+	if ($searchCategoryUserOperator) {
+		$param .= '&search_category_user_operator='.((int) $searchCategoryUserOperator);
+	}
 	foreach ($search_category_user_array as $tmpval) {
 		$param .= '&search_category_user_list[]='.urlencode($tmpval);
 	}
 }
 if (!empty($search_category_array)) {
+	if ($searchCategoryProjectOperator) {
+		$param .= '&search_category_project_operator='.((int) $searchCategoryProjectOperator);
+	}
 	foreach ($search_category_array as $tmpval) {
 		$param .= '&search_category_project_list[]='.urlencode($tmpval);
 	}
@@ -1163,6 +1218,12 @@ if ($search_ref != '') {
 }
 if ($search_label != '') {
 	$param .= '&search_label='.urlencode($search_label);
+}
+if ($search_note_public != '') {
+	$param .= '&search_note_public='.urlencode($search_note_public);
+}
+if ($search_note_private != '') {
+	$param .= '&search_note_private='.urlencode($search_note_private);
 }
 if ($search_societe != '') {
 	$param .= '&search_societe='.urlencode($search_societe);
@@ -1239,6 +1300,9 @@ if ($search_login) {
 if ($search_import_key) {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
+if ($search_omitChildren) {
+	$param .= '&search_omitChildren=on';
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -1246,6 +1310,26 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
+
+// Use Post/Redirect/Get for filter submissions so browser history contains a
+// reconstructible GET request instead of a POST that requires confirmation.
+$filterSearchSubmitted = GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha');
+$filterResetSubmitted = GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha');
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($filterSearchSubmitted || $filterResetSubmitted)) {
+	$redirectUrl = dolBuildUrl($_SERVER['PHP_SELF'], array(
+		'formfilteraction' => 'list',
+		'sortfield' => $sortfield,
+		'sortorder' => $sortorder,
+	));
+	$redirectUrl .= $param;
+	if ($filterResetSubmitted && $search_status == -1) {
+		$redirectUrl .= '&search_status=-1';
+	}
+	header('Location: '.$redirectUrl, true, 303);
+	exit;
+}
+
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-project page-list bodyforlist');
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -1288,6 +1372,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-l
 if ($contextpage == 'lead') {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanbanGroupBy'), '', 'fa fa-grip-vertical imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanbangroupby&groupby=p.fk_opp_status'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanbangroupby' ? 2 : 1), array('morecss' => 'reposition'));
 }
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/projet/stats/index.php?mode=statistics&contextpage='.$contextpage.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('projet', 'creer'));
 
@@ -1359,7 +1444,8 @@ $moreforfilter .= img_picto($tmptitle, 'contact', 'class="pictofixedwidth"').$fo
 
 $moreforfilter .= '</div>';
 
-// If the user can view thirdparties other than his'
+// If the user can view thirdparties other than his', we offer the filter assigned to
+// TODO This must be moved on the dedicated column "Assigned to".
 if ($user->hasRight('user', 'user', 'lire')) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -1377,7 +1463,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 // Filter on customer categories
 if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth200imp minwidth200 widthcentpercentminusx', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth200imp minwidth200 widthcentpercentminusx', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0);
 }
 
 // alert on late date
@@ -1400,7 +1486,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+// $htmlofselectarray was built before the request, when the setup of user was applied on $arrayfields
 $selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1410,18 +1496,19 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 
 // Fields title search
 // --------------------------------------------------------------------
+print '<thead>';
 print '<tr class="liste_titre_filter">';
 // Action column left
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch" id="action_column_left">';
+if ($conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch" id="action_column_left">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
 // Project ID
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print '<td class="liste_titre" id="search_id">';
-	print '<input type="text" class="flat width50" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center" id="search_id">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 // Project ref
@@ -1603,6 +1690,16 @@ if (!empty($arrayfields['u.login']['checked'])) {
 	print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 	print '</td>';
 }
+if (!empty($arrayfields['p.note_public']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
+	print '</td>';
+}
+if (!empty($arrayfields['p.note_private']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -1650,7 +1747,7 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '</td>';
 }
 // Action column right
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch" id="action_column_right">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1664,12 +1761,12 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -1785,6 +1882,14 @@ if (!empty($arrayfields['u.login']['checked'])) {
 	print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.note_public']['checked'])) {
+	print_liste_field_titre($arrayfields['p.note_public']['label'], $_SERVER["PHP_SELF"], "p.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.note_private']['checked'])) {
+	print_liste_field_titre($arrayfields['p.note_private']['label'], $_SERVER["PHP_SELF"], "p.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -1812,11 +1917,11 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print '</tr>'."\n";
+print '</tr></thead>'."\n";
 
 
 $i = 0;
@@ -1826,8 +1931,53 @@ $totalarray = array(
 	'val' => array()
 );
 $imaxinloop = ($limit ? min($num, $limit) : $num);
-while ($i < $imaxinloop) {
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
+$PROJECT_MAX_SALES_TO_SHOW_IN_LIST = getDolGlobalInt('PROJECT_MAX_SALES_TO_SHOW_IN_LIST', 5);
+
+// Load the records of the page first, so data needed by all lines are loaded with one request instead of one per line
+$arrayofobj = array();
+for ($k = 0; $k < $imaxinloop; $k++) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break;
+	}
+	$arrayofobj[] = $obj;
+}
+// Assigned users and contacts of the projects of the page
+$assignedcontactsbysource = array('internal' => array(), 'external' => array());
+if (!empty($arrayfields['c.assigned']['checked']) && !empty($arrayofobj)) {
+	foreach (array_keys($assignedcontactsbysource) as $source) {
+		$tmpcontacts = $object->getContactsOfObjects(array_column($arrayofobj, 'id'), $source, 1);
+		$assignedcontactsbysource[$source] = (is_array($tmpcontacts) ? $tmpcontacts : array());
+	}
+}
+$assigneduserstatic = new User($db);
+$assignedcontactstatic = new Contact($db);
+// Sales representatives of the thirdparties of the page
+$salesrepresentativesbysoc = array();
+if (!empty($arrayfields['commercial']['checked']) && !empty($arrayofobj)) {
+	$salesrepresentativesbysoc = $companystatic->getSalesRepresentativesOfThirdparties(array_column($arrayofobj, 'socid'));
+	if (!is_array($salesrepresentativesbysoc)) {
+		$salesrepresentativesbysoc = array();
+	}
+}
+$salesrepstatic = new User($db);
+// Parent projects: the access is checked once for the page, with the same rules than checkUserAccessToObject()
+$parentprojectstatic = new Project($db);
+$userhasrightreadallprojects = $user->hasRight('projet', 'all', 'lire');
+$entitiesforproject = array();
+$authorizedprojects = array();
+if (!empty($arrayfields['p.fk_project']['checked'])) {
+	if ($userhasrightreadallprojects) {
+		$entitiesforproject = array_flip(explode(',', getEntity('project')));
+	} else {
+		// The list must not be restricted to the thirdparty of the filter, the parent project may be linked to another one
+		$authorizedprojects = array_flip(explode(',', ($socid > 0 ? $object->getProjectsAuthorizedForUser($user, 0, 1, 0) : $projectsListId)));
+	}
+}
+
+while ($i < $imaxinloop) {
+	$obj = (empty($arrayofobj[$i]) ? null : $arrayofobj[$i]);
 	if (empty($obj)) {
 		break; // Should not happen
 	}
@@ -1870,6 +2020,8 @@ while ($i < $imaxinloop) {
 	$object->usage_organize_event = $obj->usage_organize_event;
 	$object->email_msgid = $obj->email_msgid;
 	$object->import_key = $obj->import_key;
+	$object->note_public = (isset($obj->note_public) ? $obj->note_public : '');	// Notes are not always loaded by the request
+	$object->note_private = (isset($obj->note_private) ? $obj->note_private : '');
 	$object->thirdparty = $companystatic;
 
 	//$userAccess = $object->restrictedProjectArea($user); // disabled, permission on project must be done by the select
@@ -1878,33 +2030,45 @@ while ($i < $imaxinloop) {
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		$ifisrt = 1;
-		foreach (array('internal', 'external') as $source) {
-			$tab = $object->liste_contact(-1, $source, 0, '', 1);
+		foreach ($assignedcontactsbysource as $source => $contactsbyproject) {
+			$tab = (empty($contactsbyproject[$object->id]) ? array() : $contactsbyproject[$object->id]);
 			$numcontact = count($tab);
 			if (!empty($numcontact)) {
 				foreach ($tab as $contactproject) {
 					//var_dump($contacttask);
+					// Objects are filled with data loaded before the loop, so no fetch is done
 					if ($source == 'internal') {
-						if (!empty($conf->cache['user'][$contactproject['id']])) {
-							$c = $conf->cache['user'][$contactproject['id']];
-						} else {
-							$c = new User($db);
-							$c->fetch($contactproject['id']);
-							$conf->cache['user'][$contactproject['id']] = $c;
-						}
+						$assigneduserstatic->id = $contactproject['id'];
+						$assigneduserstatic->socid = $contactproject['socid'];
+						$assigneduserstatic->entity = $contactproject['entity'];
+						$assigneduserstatic->login = $contactproject['login'];
+						$assigneduserstatic->civility_code = $contactproject['civility'];
+						$assigneduserstatic->lastname = $contactproject['lastname'];
+						$assigneduserstatic->firstname = $contactproject['firstname'];
+						$assigneduserstatic->email = $contactproject['email'];
+						$assigneduserstatic->photo = $contactproject['photo'];
+						$assigneduserstatic->gender = $contactproject['gender'];
+						$assigneduserstatic->status = $contactproject['statuscontact'];
+						$assigneduserstatic->job = $contactproject['job'];
+						$assigneduserstatic->office_phone = $contactproject['phone'];
+						$assigneduserstatic->office_fax = $contactproject['office_fax'];
+						$assigneduserstatic->user_mobile = $contactproject['phone_mobile'];
+						$stringassignedusers .= $assigneduserstatic->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					} else {
-						if (!empty($conf->cache['contact'][$contactproject['id']])) {
-							$c = $conf->cache['contact'][$contactproject['id']];
-						} else {
-							$c = new Contact($db);
-							$c->fetch($contactproject['id']);
-							$conf->cache['contact'][$contactproject['id']] = $c;
-						}
-					}
-					if (get_class($c) == 'User') {
-						$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, 24, 1, '', 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
-					} else {
-						$stringassignedusers .= $c->getNomUrl(-2, '', 0, 0, -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
+						$assignedcontactstatic->id = $contactproject['id'];
+						$assignedcontactstatic->socid = $contactproject['socid'];
+						$assignedcontactstatic->entity = $contactproject['entity'];
+						$assignedcontactstatic->civility_code = $contactproject['civility'];
+						$assignedcontactstatic->lastname = $contactproject['lastname'];
+						$assignedcontactstatic->firstname = $contactproject['firstname'];
+						$assignedcontactstatic->email = $contactproject['email'];
+						$assignedcontactstatic->photo = $contactproject['photo'];
+						$assignedcontactstatic->status = $contactproject['statuscontact'];
+						$assignedcontactstatic->poste = $contactproject['job'];
+						$assignedcontactstatic->phone_pro = $contactproject['phone'];
+						$assignedcontactstatic->phone_perso = $contactproject['phone_perso'];
+						$assignedcontactstatic->phone_mobile = $contactproject['phone_mobile'];
+						$stringassignedusers .= $assignedcontactstatic->getNomUrl(-2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					}
 					$ifisrt = 0;
 				}
@@ -2075,7 +2239,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $object->status > 1) ? 'opacitymedium' : '').'">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -2091,7 +2255,7 @@ while ($i < $imaxinloop) {
 		}
 		// Project ID
 		if (!empty($arrayfields['p.rowid']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="center nowraponall">';
 			print $object->id;
 			print '</td>';
 			if (!$i) {
@@ -2100,10 +2264,15 @@ while ($i < $imaxinloop) {
 		}
 		// Project ref url
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowraponall tdoverflowmax200">';
-			print $object->getNomUrl(1, (!empty(GETPOSTINT('search_usage_event_organization')) ? 'eventorganization' : ''));
+			// When the label column is not displayed, we show the label under the ref
+			$showlabelunderref = (empty($arrayfields['p.title']['checked']) && (string) $obj->title !== '');
+			print '<td class="nowraponall tdoverflowmax200'.($showlabelunderref ? ' tdlineheightsmall' : '').'">';
+			print $object->getNomUrl(1, (!empty(GETPOSTINT('search_usage_event_organization')) ? 'eventorganization' : ''), 0, '', ' - ', 0, -1, '', '', 1);
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
+			}
+			if ($showlabelunderref) {
+				print '<div class="tdoverflowmax200 lineheightsmall" title="'.dolPrintHTMLForAttribute($obj->title).'"><span class="spantitle">'.dolPrintHTML($obj->title).'</span></div>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2112,8 +2281,12 @@ while ($i < $imaxinloop) {
 		}
 		// Project title
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+			print '<div class="twolinesmax-normallineheight minwidth200onall">';
+			print '<span class="spantitle">';
 			print dolPrintHTML($obj->title);
+			print '</span>';
+			print '</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2123,12 +2296,23 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.fk_project']['checked'])) {
 			print '<td class="nowraponall">';
 			if ($object->fk_project) {
-				$parent_object = new Project($db);
-				$parent_result = $parent_object->fetch($object->fk_project);
-				if ($parent_result > 0) {
-					$accessallowed = checkUserAccessToObject($user, array('projet'), $parent_object, 'projet&project', '', '', 'rowid', '');
+				// The parent project is loaded by the main request (join on pa)
+				if (!is_null($obj->parent_ref)) {
+					if ($userhasrightreadallprojects) {
+						$accessallowed = isset($entitiesforproject[$obj->parent_entity]);
+					} else {
+						$accessallowed = isset($authorizedprojects[$object->fk_project]);
+					}
 					if ($accessallowed) {
-						print $parent_object->getNomUrl(-1);
+						$parentprojectstatic->id = $object->fk_project;
+						$parentprojectstatic->ref = $obj->parent_ref;
+						$parentprojectstatic->title = $obj->parent_title;
+						$parentprojectstatic->entity = $obj->parent_entity;
+						$parentprojectstatic->public = $obj->parent_public;
+						$parentprojectstatic->status = $obj->parent_status;
+						$parentprojectstatic->date_start = $db->jdate($obj->parent_date_start);
+						$parentprojectstatic->date_end = $db->jdate($obj->parent_date_end);
+						print $parentprojectstatic->getNomUrl(-1);
 					} else {
 						$parent_url = DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project;
 						print '<a href="'.$parent_url.'">';
@@ -2138,7 +2322,7 @@ while ($i < $imaxinloop) {
 						print '</a>';
 					}
 				} else {
-					print ((int) $object->fk_project);
+					print((int) $object->fk_project);
 				}
 			}
 
@@ -2165,9 +2349,9 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
+				print '<span class="spantitle">';
 				print $companystatic->name_alias;
-			} else {
-				print '&nbsp;';
+				print '</span>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2179,8 +2363,6 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
 				print $companystatic->code_client;
-			} else {
-				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2192,8 +2374,6 @@ while ($i < $imaxinloop) {
 			print '<td class="tdoverflowmax100">';
 			if ($obj->socid) {
 				print $companystatic->code_fournisseur;
-			} else {
-				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2203,7 +2383,11 @@ while ($i < $imaxinloop) {
 		// Country code
 		if (!empty($arrayfields['co.country_code']['checked'])) {
 			print '<td class="tdoverflowmax125 center">';
-			print $obj->country_code;
+			if ($showcountrylabelinlist) {
+				print dolPrintHTML($obj->country_code);
+			} elseif (!empty($obj->country_code)) {
+				print picto_from_langcode($obj->country_code, 'title="'.dolPrintHTMLForAttribute($langs->trans("Country".$obj->country_code)).'"', 1);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2215,29 +2399,30 @@ while ($i < $imaxinloop) {
 			if ($obj->socid) {
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
-				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
+				// Sales representatives were loaded before the loop for all thirdparties of the page
+				$listsalesrepresentatives = (empty($salesrepresentativesbysoc[$obj->socid]) ? array() : $salesrepresentativesbysoc[$obj->socid]);
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
-				if ($nbofsalesrepresentative > 6) {
+				if ($nbofsalesrepresentative > $PROJECT_MAX_SALES_TO_SHOW_IN_LIST) {
 					// We print only number
 					print $nbofsalesrepresentative;
 				} elseif ($nbofsalesrepresentative > 0) {
-					$userstatic = new User($db);
+					// Use a dedicated object, $userstatic contains the author of the project shown in another column
 					$j = 0;
 					foreach ($listsalesrepresentatives as $val) {
-						$userstatic->id = $val['id'];
-						$userstatic->lastname = $val['lastname'];
-						$userstatic->firstname = $val['firstname'];
-						$userstatic->email = $val['email'];
-						$userstatic->status = $val['statut'];
-						$userstatic->entity = $val['entity'];
-						$userstatic->photo = $val['photo'];
-						$userstatic->login = $val['login'];
-						$userstatic->office_phone = $val['office_phone'];
-						$userstatic->office_fax = $val['office_fax'];
-						$userstatic->user_mobile = $val['user_mobile'];
-						$userstatic->job = $val['job'];
-						$userstatic->gender = $val['gender'];
-						print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+						$salesrepstatic->id = $val['id'];
+						$salesrepstatic->lastname = $val['lastname'];
+						$salesrepstatic->firstname = $val['firstname'];
+						$salesrepstatic->email = $val['email'];
+						$salesrepstatic->status = $val['statut'];
+						$salesrepstatic->entity = $val['entity'];
+						$salesrepstatic->photo = $val['photo'];
+						$salesrepstatic->login = $val['login'];
+						$salesrepstatic->office_phone = $val['office_phone'];
+						$salesrepstatic->office_fax = $val['office_fax'];
+						$salesrepstatic->user_mobile = $val['user_mobile'];
+						$salesrepstatic->job = $val['job'];
+						$salesrepstatic->gender = $val['gender'];
+						print ($nbofsalesrepresentative < 2) ? $salesrepstatic->getNomUrl(-1, '', 0, 0, 12) : $salesrepstatic->getNomUrl(-2);
 						$j++;
 						if ($j < $nbofsalesrepresentative) {
 							print ' ';
@@ -2290,7 +2475,7 @@ while ($i < $imaxinloop) {
 		}
 		// Assigned contacts of project
 		if (!empty($arrayfields['c.assigned']['checked'])) {
-			print '<td class="center nowraponall tdoverflowmax200">';
+			print '<td class="center nowraponall tdoverflowmax150">';
 			print $stringassignedusers;
 			print '</td>';
 			if (!$i) {
@@ -2306,8 +2491,12 @@ while ($i < $imaxinloop) {
 					$s .= ' ('.dol_escape_htmltag(price2num($obj->opp_percent, 1)).'%)';
 				}
 			}
-			print '<td class="center tdoverflowmax150" title="'.$s.'">';
-			print $s;
+			print '<td class="center tdoverflowmax150" title="'.dolPrintHTMLForAttribute($s).'">';
+			if ($s) {
+				print '<span class="badge badge-oppstatus">';
+				print dolPrintHTML($s);
+				print '</span>';
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2484,6 +2673,24 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Note public
+		if (!empty($arrayfields['p.note_public']['checked'])) {
+			print '<td class="flat maxwidth250imp">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['p.note_private']['checked'])) {
+			print '<td class="flat maxwidth250imp">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
@@ -2532,7 +2739,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

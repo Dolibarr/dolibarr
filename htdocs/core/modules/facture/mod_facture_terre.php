@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,10 +137,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$max = '';
 
 		$posindice = strlen($this->prefixinvoice) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixinvoice)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -160,10 +160,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$fayymm = '';
 
 		$posindice = strlen($this->prefixcreditnote) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -182,10 +182,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$fayymm = '';
 
 		$posindice = strlen($this->prefixdeposit) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixdeposit)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -229,7 +229,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 
 		// First we get the max value
 		$posindice = strlen($prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-%'";
 		$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
@@ -248,15 +248,15 @@ class mod_facture_terre extends ModeleNumRefFactures
 
 		if ($mode == 'last') {
 			if ($max >= (pow(10, 4) - 1)) {
-				$num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
+				$sql_num = (int) $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04d", $max);
+				$sql_num = sprintf("%04d", (int) $max);
 			}
 
 			$ref = '';
 			$sql = "SELECT ref as ref";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture";
-			$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-".$num."'";
+			$sql .= " WHERE ref LIKE '".$db->escape($prefix)."____-".$sql_num."'";
 			$sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 			$sql .= " ORDER BY ref DESC";
 

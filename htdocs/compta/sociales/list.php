@@ -79,6 +79,7 @@ $search_date_limit_endyear = GETPOSTINT('search_date_limit_endyear');
 $search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
 $search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_project = GETPOST('search_project', 'alpha');
 $search_users = GETPOST('search_users', 'array:int');
 $search_type = GETPOST('search_type', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
@@ -109,11 +110,15 @@ $arrayfields = array(
 	'cs.date_ech'	=> array('label' => "Date", 'checked' => '1', 'position' => 40),
 	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => '1', 'position' => 50),
 	'p.ref'			=> array('label' => "ProjectRef", 'checked' => '-1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled('project'))),
+	'p.title'		=> array('label' => "ProjectLabel", 'checked' => '0', 'position' => 61, 'enabled' => (string) (int) (isModEnabled('project'))),
 	'cs.fk_user'	=> array('label' => "Employee", 'checked' => '1', 'position' => 70),
 	'cs.fk_mode_reglement'	=> array('checked' => '-1', 'position' => 80, 'label' => "DefaultPaymentMode"),
 	'cs.amount'		=> array('label' => "Amount", 'checked' => '1', 'position' => 100),
 	'cs.paye'		=> array('label' => "Status", 'checked' => '1', 'position' => 110),
 );
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 if (isModEnabled("bank")) {
 	$arrayfields['cs.fk_account'] = array('checked' => -1, 'position' => 90, 'label' => "DefaultBankAccount");
@@ -174,6 +179,7 @@ if (empty($reshook)) {
 		$search_date_limit_start = '';
 		$search_date_limit_end = '';
 		$search_project_ref = '';
+		$search_project = '';
 		$search_users = '';
 		$search_type = '';
 		$search_account = '';
@@ -229,8 +235,8 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (cs.fk_user = u.rowid)";
 $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity = ".((int) $conf->entity);
 // Search criteria
-if ($search_ref) {
-	$sql .= " AND cs.ref = '".$db->escape($search_ref)."'";
+if ($search_ref != '') {
+	$sql .= natural_search('cs.rowid', $search_ref, 1);
 }
 if ($search_label) {
 	$sql .= natural_search("cs.libelle", $search_label);
@@ -238,6 +244,9 @@ if ($search_label) {
 if (isModEnabled('project')) {
 	if ($search_project_ref != '') {
 		$sql .= natural_search("p.ref", $search_project_ref);
+	}
+	if ($search_project != '') {
+		$sql .= natural_search("p.title", $search_project);
 	}
 }
 if (!empty($search_users)) {
@@ -331,6 +340,9 @@ if ($search_label) {
 }
 if ($search_project_ref >= 0) {
 	$param .= "&search_project_ref=".urlencode($search_project_ref);
+}
+if ($search_project != '') {
+	$param .= "&search_project=".urlencode($search_project);
 }
 if ($search_amount) {
 	$param .= '&search_amount='.urlencode($search_amount);
@@ -436,7 +448,7 @@ if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
 
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -451,7 +463,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 print '<tr class="liste_titre_filter">';
 
 // Filter: Buttons
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	print $form->showFilterAndCheckAddButtons(0);
 	print '</td>';
@@ -515,6 +527,13 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 	print '</td>';
 }
 
+// Filter: Project label
+if (!empty($arrayfields['p.title']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth100" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
+	print '</td>';
+}
+
 if (!empty($arrayfields['cs.fk_user']['checked'])) {
 	// Employee
 	print '<td class="liste_titre">';
@@ -558,7 +577,7 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // N
 print $hookmanager->resPrint;
 
 // Filter: Buttons
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	print $form->showFilterAndCheckAddButtons(0);
 	print '</td>';
@@ -573,7 +592,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -607,6 +626,10 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.title']['checked'])) {
+	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['cs.fk_user']['checked'])) {
 	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname,cs.periode", "", $param, 'class="left"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -633,7 +656,7 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -658,8 +681,10 @@ while ($i < $imaxinloop) {
 	$chargesociale_static->type_label = $obj->type_label;
 	$chargesociale_static->amount = $obj->amount;
 	$chargesociale_static->paye = $obj->paye;
-	$chargesociale_static->date_ech = $db->idate($obj->date_ech);		// Date of contribution
-	$chargesociale_static->period = $db->idate($obj->period, 'gmt');	// End date of period
+	// Values read from the database are strings, so they are converted with jdate() and not idate(), the same way
+	// ChargeSociales::fetch() does it. The properties are timestamps, used as such by getNomUrl() and getKanbanView().
+	$chargesociale_static->date_ech = $db->jdate($obj->date_ech);		// Date of contribution
+	$chargesociale_static->period = $db->jdate($obj->period);			// End date of period
 	$chargesociale_static->type_accountancy_code = $obj->type_accountancy_code;
 	$chargesociale_static->note_private = $obj->note_private;
 	$chargesociale_static->note_public = $obj->note_public;
@@ -682,11 +707,11 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven row-with-select">';
 
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -758,9 +783,21 @@ while ($i < $imaxinloop) {
 
 		// Project ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->project_id > 0) {
 				print $projectstatic->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Project label
+		if (!empty($arrayfields['p.title']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->project_label).'">';
+			if ($obj->project_id > 0) {
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->project_label).'</span>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -843,7 +880,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

@@ -92,7 +92,7 @@ $upload_dir = $conf->contrat->multidir_output[$object->entity ?? $conf->entity].
 $modulepart = 'contract';
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('contractcard', 'globalcard'));
+$hookmanager->initHooks(array('contractcard', 'contractdocument', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('contrat', 'creer');	// Used by the include of actions_dellink.inc.php
 
@@ -121,7 +121,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_do
 if ($object->id) {
 	$head = contract_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("Contract"), -1, 'contract');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Contract"), -1, 'contract', 0, '', '', 0, '', 1);
 
 
 	// Build file list
@@ -171,7 +171,7 @@ if ($object->id) {
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
-				$proj->fetch($object->fk_project);
+				$proj->fetch((int) $object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
 					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';

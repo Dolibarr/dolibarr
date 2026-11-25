@@ -92,7 +92,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 	$code = '';
 	$srctemplatepath = '';
 
-	// Positionne le modele sur le nom du modele a utiliser
+	// Set the model to the name of the model to use
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('ADHERENT_CARDS_ADDON_PDF')) {
 			$code = getDolGlobalString('ADHERENT_CARDS_ADDON_PDF');

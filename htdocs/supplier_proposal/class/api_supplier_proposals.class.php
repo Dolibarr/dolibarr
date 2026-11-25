@@ -21,6 +21,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**
@@ -76,7 +77,7 @@ class SupplierProposals extends DolibarrApi
 		}
 
 		if (!$this->supplier_proposal->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete Supplier Proposal : '.$this->supplier_proposal->error);
+			throw new RestException(500, 'Error when delete Supplier Proposal : '.$this->supplier_proposal->errorsToString());
 		}
 
 		return array(
@@ -139,8 +140,17 @@ class SupplierProposals extends DolibarrApi
 				continue;
 			}
 
-			$this->supplier_proposal->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				$this->supplier_proposal->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->supplier_proposal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->supplier_proposal);
+				}
+				continue;
+			}
+			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
+
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
 		  foreach ($request_data["lines"] as $line) {
@@ -148,6 +158,7 @@ class SupplierProposals extends DolibarrApi
 		  }
 		  $this->propal->lines = $lines;
 		}*/
+
 		if ($this->supplier_proposal->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating supplier proposal", array_merge(array($this->supplier_proposal->error), $this->supplier_proposal->errors));
 		}
@@ -189,17 +200,89 @@ class SupplierProposals extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->supplier_proposal->array_options[$index] = $val;
+					$this->supplier_proposal->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->supplier_proposal);
 				}
 				continue;
 			}
-			$this->supplier_proposal->$field = $value;
+			$this->supplier_proposal->$field = $this->_checkValForAPI($field, $value, $this->supplier_proposal);
 		}
 
 		if ($this->supplier_proposal->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->supplier_proposal->error);
+			throw new RestException(500, $this->supplier_proposal->errorsToString());
+		}
+	}
+
+	/**
+	 * Add a line to a supplier proposal (price request)
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param int   $id             Id of supplier proposal to update
+	 * @param array $request_data   Supplier proposal line data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url	POST {id}/line
+	 *
+	 * @return int
+	 *
+	 * @throws	RestException
+	 */
+	public function postLine($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->supplier_proposal->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Supplier proposal not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('supplier_proposal', $this->supplier_proposal->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$request_data = (object) $request_data;
+
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
+
+		$updateRes = $this->supplier_proposal->addline(
+			$request_data->desc,
+			$request_data->subprice,
+			$request_data->qty,
+			$request_data->tva_tx,
+			$request_data->localtax1_tx,
+			$request_data->localtax2_tx,
+			$request_data->fk_product,
+			$request_data->remise_percent,
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
+			$request_data->subprice,
+			$request_data->info_bits,
+			$request_data->product_type,
+			$request_data->rang,
+			$request_data->special_code,
+			$request_data->fk_parent_line,
+			$request_data->fk_fournprice,
+			$request_data->pa_ht,
+			$request_data->label,
+			$request_data->array_options,
+			$request_data->ref_fourn,
+			$request_data->fk_unit,
+			$request_data->origin,
+			$request_data->origin_id,
+			$request_data->multicurrency_subprice,
+			$request_data->date_start,
+			$request_data->date_end
+		);
+
+		if ($updateRes > 0) {
+			return $updateRes;
+		} else {
+			throw new RestException(400, $this->supplier_proposal->errorsToString());
 		}
 	}
 
@@ -207,6 +290,8 @@ class SupplierProposals extends DolibarrApi
 	 * List supplier proposals
 	 *
 	 * Get a list of supplier proposals
+	 *
+	 * @since 25.0.0 Parameter count
 	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
@@ -216,11 +301,12 @@ class SupplierProposals extends DolibarrApi
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                       Array of order objects
-	 * @phan-return SupplierProposal[]|array{data:SupplierProposal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return SupplierProposal[]|array{data:SupplierProposal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return SupplierProposal[]|array{data:SupplierProposal[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return SupplierProposal[]|array{data:SupplierProposal[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('supplier_proposal', 'lire')) {
 			throw new RestException(403);
@@ -231,9 +317,11 @@ class SupplierProposals extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -247,9 +335,9 @@ class SupplierProposals extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Add sql filters
@@ -263,6 +351,11 @@ class SupplierProposals extends DolibarrApi
 
 		//this query will return total supplier proposals with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -304,7 +397,7 @@ class SupplierProposals extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}

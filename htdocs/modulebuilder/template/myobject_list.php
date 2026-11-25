@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,8 +54,8 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
 $tmp2 = realpath(__FILE__);
-$i = strlen($tmp) - 1;
-$j = strlen($tmp2) - 1;
+$i = strlen($tmp) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+$j = strlen($tmp2) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
 	$i--;
 	$j--;
@@ -87,6 +87,7 @@ if (!$res) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -163,18 +164,18 @@ foreach ($object->fields as $key => $val) {
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
-// foreach ($object->fields as $key => $val) {
-// 	if (!empty($val['searchall'])) {
-// 		$fieldstosearchall['t.'.$key] = $val['label'];
-// 	}
-// }
-// $parameters = array('fieldstosearchall'=>$fieldstosearchall);
-// $reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-// if ($reshook > 0) {
-// 	$fieldstosearchall = empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall'];
-// } elseif ($reshook == 0) {
-// 	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
-// }
+foreach ($object->fields as $key => $val) {
+	if (!empty($val['searchall'])) {
+		$fieldstosearchall['t.'.$key] = $val['label'];
+	}
+}
+$parameters = array('fieldstosearchall' => $fieldstosearchall);
+$reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook > 0) {
+	$fieldstosearchall = empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall'];
+} elseif ($reshook == 0) {
+	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
+}
 
 // Definition of array of fields for columns from ->fields
 $tableprefix = 't';
@@ -192,6 +193,12 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+// Definition of array of fields with hardcoded columns
+/*
+$arrayfields = array_merge($arrayfields, array(
+	't.anotherfield' => array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>'1', 'enabled'=>'1', 'position'=>'90', 'csslist'=>'right'),
+));
+*/
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -203,6 +210,9 @@ $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $objec
 /*$arrayfields = array_merge($arrayfields, array(
 	'anotherfield' => array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>'1', 'enabled'=>'1', 'position'=>'90', 'csslist'=>'right'),
 ));*/
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -224,10 +234,12 @@ if ($enablepermissioncheck) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
+// BEGIN MODULEBUILDER ACCESSPOLICY
 //if ($user->socid > 0) accessforbidden();
 //$socid = 0; if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, 0, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
+// END MODULEBUILDER ACCESSPOLICY
 if (!isModEnabled("mymodule")) {
 	accessforbidden('Module mymodule not enabled');
 }
@@ -337,7 +349,7 @@ if (!empty($object->ismultientitymanaged) && (int) $object->ismultientitymanaged
 	$sql .= " WHERE t.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 } elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
 	$tmparray = explode('@', (string) $object->ismultientitymanaged);
-	$sql .= " LEFT JOIN ".$object->db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+	$sql .= " LEFT JOIN ".$object->db->prefix().$db->sanitize($tmparray[1])." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
 	$sql .= " WHERE pt.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 } else {
 	$sql .= " WHERE 1 = 1";
@@ -348,9 +360,7 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$field_spec = $object->fields[$key];
-		if ($field_spec === null) {
-			continue;
-		}
+		// Ignore false positive @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$mode_search = (($object->isInt($field_spec) || $object->isFloat($field_spec)) ? 1 : 0);
 		if ((strpos($field_spec['type'], 'integer:') === 0) || (strpos($field_spec['type'], 'sellist:') === 0) || !empty($field_spec['arrayofkeyval'])) {
 			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($field_spec['arrayofkeyval']) || !array_key_exists('0', $field_spec['arrayofkeyval'])))) {
@@ -387,7 +397,7 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
-if ($search_all) {
+if ($search_all && !empty($fieldstosearchall)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 /*
@@ -497,11 +507,6 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 }
 
 
-// Output page
-// --------------------------------------------------------------------
-
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-mymodule page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
-
 // Example : Adding jquery code
 // print '<script type="text/javascript">
 // jQuery(document).ready(function() {
@@ -535,6 +540,9 @@ if ($optioncss != '') {
 if ($groupby != '') {
 	$param .= '&groupby='.urlencode($groupby);
 }
+if ($search_all != '') {
+	$param .= '&search_all='.urlencode($search_all);
+}
 foreach ($search as $key => $val) {
 	if (is_array($search[$key])) {
 		foreach ($search[$key] as $skey) {
@@ -547,7 +555,7 @@ foreach ($search as $key => $val) {
 		$param .= '&search_'.$key.'day='.GETPOSTINT('search_'.$key.'day');
 		$param .= '&search_'.$key.'year='.GETPOSTINT('search_'.$key.'year');
 	} elseif ($search[$key] != '') {
-		$param .= '&search_'.$key.'='.urlencode($search[$key]);
+		$param .= '&search_'.$key.'='.urlencode((string) $search[$key]);
 	}
 }
 // Add $param from extra fields
@@ -556,6 +564,26 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
+
+// Use Post/Redirect/Get for filter submissions so browser history contains a
+// reconstructible GET request instead of a POST that requires confirmation.
+$filterSearchSubmitted = GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha');
+$filterResetSubmitted = GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha');
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($filterSearchSubmitted || $filterResetSubmitted)) {
+	$redirectUrl = dolBuildUrl($_SERVER['PHP_SELF'], array(
+		'formfilteraction' => 'list',
+		'sortfield' => $sortfield,
+		'sortorder' => $sortorder,
+	));
+	$redirectUrl .= $param;
+	header('Location: '.$redirectUrl, true, 303);
+	exit;
+}
+
+// Output page
+// --------------------------------------------------------------------
+
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-mymodule page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -572,7 +600,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -592,6 +620,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars i
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 //$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanbanGroupBy'), '', 'fa fa-grip-vertical imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanbangroupby&groupby=p.fk_opp_status'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanbangroupby' ? 2 : 1), array('morecss' => 'reposition'));
 //$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=hierarchy'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/mymodule/stats/myobject_index.php', 1).'?mode=statistics&objecttype=myobject@mymodule'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
@@ -601,7 +630,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 $topicmail = "SendMyObjectRef";
 $modelmail = "myobject";
 $objecttmp = new MyObject($db);
-$trackid = 'xxxx'.$object->id;
+$trackid = 'myobject'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
@@ -638,7 +667,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
 $selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -655,7 +684,21 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
-foreach ($object->fields as $key => $val) {
+// Fields and extrafields ordered by position (fields of hooks are output after)
+foreach ($arrayfields as $arraykey => $arrayval) {
+	$regkey = array();
+	// Extra fields
+	if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($object->fields[$regkey[1]])) {
+		continue;
+	}
+	$key = $regkey[1];
+	$val = $object->fields[$key];
 	//$searchkey = empty($search[$key]) ? '' : $search[$key];
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
@@ -668,6 +711,13 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
+		$cssforsearchcombo = 'maxwidth250';
+		$reg = array();
+		if (((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) && preg_match('/tdoverflowmax(\d+)/', $cssforfield, $reg)) {
+			// For a search combo, the tdoverflowmax of the cell is replaced with a maxwidth on the combo itself
+			$cssforsearchcombo = 'maxwidth'.$reg[1];
+			$cssforfield = trim(preg_replace('/\s*tdoverflowmax\d+/', '', $cssforfield));
+		}
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').($key == 'status' ? ' parentonrightofpage' : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			if (empty($val['searchmulti'])) {
@@ -676,7 +726,7 @@ foreach ($object->fields as $key => $val) {
 				print $form->multiselectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 0, 0, 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
 			}
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
-			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
+			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', trim($cssforfield.' '.$cssforsearchcombo), 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -696,8 +746,6 @@ foreach ($object->fields as $key => $val) {
 		print '</td>';
 	}
 }
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
@@ -726,7 +774,21 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-foreach ($object->fields as $key => $val) {
+// Fields and extrafields ordered by position (fields of hooks are output after)
+foreach ($arrayfields as $arraykey => $arrayval) {
+	$regkey = array();
+	// Extra fields
+	if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($object->fields[$regkey[1]])) {
+		continue;
+	}
+	$key = $regkey[1];
+	$val = $object->fields[$key];
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -743,8 +805,6 @@ foreach ($object->fields as $key => $val) {
 		$totalarray['nbfield']++;
 	}
 }
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -840,8 +900,21 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Fields
-		foreach ($object->fields as $key => $val) {
+		// Fields and extrafields ordered by position (fields of hooks are output after)
+		foreach ($arrayfields as $arraykey => $arrayval) {
+			$regkey = array();
+			// Extra fields
+			if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+				$extrafieldsonlykey = $regkey[1];
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+				$extrafieldsonlykey = '';
+				continue;
+			}
+			if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($object->fields[$regkey[1]])) {
+				continue;
+			}
+			$key = $regkey[1];
+			$val = $object->fields[$key];
 			$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -897,8 +970,6 @@ while ($i < $imaxinloop) {
 				}
 			}
 		}
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -973,7 +1044,7 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 	$genallowed = $permissiontoread;
 	$delallowed = $permissiontoadd;
 
-	print $formfile->showdocuments('massfilesarea_'.$object->module, '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_'.$object->module, '', $filedir, $urlsource, $genallowed, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page

@@ -6,6 +6,7 @@
  * Copyright (C) 2023      Alexandre Janniaux  <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,17 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		// Proposals to order
 		if ($action == 'PROPAL_CLOSE_SIGNED' && $object instanceof Propal) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			// If workflow to create order is on.
 			if (isModEnabled('order') && getDolGlobalString('WORKFLOW_PROPAL_AUTOCREATE_ORDER')) {
+				if (!empty($object->context['closedfromonlinesignature'])) {
+					// If signature was done from the online signature page,
+					// we must force permission to create order so the workflow action will work.
+					// The technical user of that page has no rights loaded, so initialise the object first.
+					if (empty($user->rights->commande)) {
+						$user->rights->commande = new stdClass();
+					}
+					$user->rights->commande->creer = 1;
+				}
 				$object->fetchObjectLinked();
 				if (!empty($object->linkedObjectsIds['commande'])) {
 					if (empty($object->context['closedfromonlinesignature'])) {
@@ -120,7 +131,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->setErrorsFromObject($newobject);
 				} else {
 					if (empty($object->fk_account) && !empty($object->thirdparty->fk_account) && !getDolGlobalInt('BANK_ASK_PAYMENT_BANK_DURING_ORDER')) {
-						$ret = $newobject->setBankAccount($object->thirdparty->fk_account, 1, $user);
+						$ret = $newobject->setBankAccount((int) $object->thirdparty->fk_account, 1, $user);
 						if ($ret < 0) {
 							$this->setErrorsFromObject($newobject);
 						}
@@ -147,7 +158,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of order = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
 						foreach ($object->linkedObjects['propal'] as $element) {
 							/** @var Propal $element */
 							$ret = $element->classifyBilled($user);
@@ -246,6 +257,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						/** @var Expedition $element */
 						if ($element->status == Expedition::STATUS_VALIDATED || $element->status == Expedition::STATUS_CLOSED) {
 							$totalonlinkedelements += $element->total_ht;
+							// A standalone shipment (without source order) has no price, so its amount is always 0 and can't
+							// be compared with the invoice: it is classified billed by the validation of an invoice linked to it.
+							if (empty($element->origin_id) && empty($element->billed)) {
+								$ret = $element->setBilled();
+								if ($ret < 0) {
+									return (int) $ret;
+								}
+							}
 						}
 					}
 					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
@@ -316,8 +335,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)
-						|| ($samemulticurrencycode && !empty($object->multicurrency_total_ht) && $this->shouldClassify($conf, $totalonlinkedelements_multicurrency, $object->multicurrency_total_ht))) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)
+						|| ($samemulticurrencycode && !empty($object->multicurrency_total_ht) && $this->shouldClassify($conf, $totalonlinkedelements_multicurrency, (float) $object->multicurrency_total_ht))) {
 						foreach ($object->linkedObjects['order_supplier'] as $element) {
 							/** @var CommandeFournisseur $element */
 							$ret = $element->classifyBilled($user);
@@ -341,7 +360,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked supplier proposals = ".$totalonlinkedelements.", of supplier invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
 						foreach ($object->linkedObjects['supplier_proposal'] as $element) {
 							/** @var SupplierProposal $element */
 							$ret = $element->classifyBilled($user);
@@ -420,7 +439,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						}
 					}
 					dol_syslog("Amount of linked orders = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
 						foreach ($object->linkedObjects['commande'] as $element) {
 							/** @var Commande $element */
 							$ret = $element->classifyBilled($user);
@@ -463,6 +482,15 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						$this->setErrorsFromObject($order);
 						return $ret;
 					}
+					// Ids of the lines of this order. A shipment may also carry lines of another order of the same customer
+					// (or be linked to several orders): only its lines that fulfil a line of this order are counted.
+					$orderlineids = array();
+					if (is_array($order->lines)) {
+						foreach ($order->lines as $orderline) {
+							$orderlineids[(int) $orderline->id] = (int) $orderline->id;
+						}
+					}
+
 					//Build array of quantity shipped by product for an order
 					if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
 						foreach ($order->linkedObjects as $type => $shipping_array) {
@@ -476,6 +504,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 								}
 
 								foreach ($shipping->lines as $shippingline) {
+									if (empty($orderlineids[(int) $shippingline->fk_elementdet])) {
+										continue;	// Line of another order, or free line: it ships nothing of this order
+									}
 									if (isset($qtyshipped[$shippingline->fk_product])) {
 										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
 									} else {
@@ -551,6 +582,15 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						return $ret;
 					}
 
+					// Ids of the lines of this purchase order. A reception may also carry lines of another purchase order of the
+					// same supplier (or be linked to several orders): only its lines that receive a line of this order are counted.
+					$orderlineids = array();
+					if (is_array($order->lines)) {
+						foreach ($order->lines as $orderline) {
+							$orderlineids[(int) $orderline->id] = (int) $orderline->id;
+						}
+					}
+
 					// Build array of quantity received by product for a purchase order
 					if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
 						foreach ($order->linkedObjects as $type => $shipping_array) {
@@ -566,6 +606,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 								}
 
 								foreach ($shipping->lines as $shippingline) {
+									if (empty($orderlineids[(int) $shippingline->fk_elementdet])) {
+										continue;	// Line of another purchase order, or free line: it receives nothing of this order
+									}
 									if (isset($qtyshipped[$shippingline->fk_product])) {
 										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
 									} else {

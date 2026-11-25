@@ -104,25 +104,6 @@ $eventfound = array();
 
 // TODO Remove use of $_SESSION['auto_check_events_not_before']. Seems not used.
 if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto_check_events_not_before'] || GETPOSTINT('forcechecknow')) {
-	/*$time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY; // Always defined
-	if (!empty($_SESSION['auto_check_events_not_before']))
-	{
-		// We start scan from the not before so if two tabs were opened at different moments and we close one (so the js timer),
-		// then we are not losing periods
-		$starttime = $_SESSION['auto_check_events_not_before'];
-		// Protection to avoid too long sessions
-		if ($starttime < ($time - (int) $conf->global->MAIN_SESSION_TIMEOUT))
-		{
-			dol_syslog("We ask to check browser notification on a too large period. We fix this with current date.");
-			$starttime = $time;
-		}
-	} else {
-		$starttime = $time;
-	}
-
-	$_SESSION['auto_check_events_not_before'] = $time + $time_update;
-	*/
-
 	// Force save of the session change we did.
 	// WARNING: Any change in sessions after that will not be saved !
 	session_write_close();

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2021		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,10 +95,10 @@ class mod_member_advanced extends ModeleNumRefMembers
 		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
@@ -130,10 +130,10 @@ class mod_member_advanced extends ModeleNumRefMembers
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {

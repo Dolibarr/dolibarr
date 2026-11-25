@@ -1,10 +1,15 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  */
 '
 @phan-var-force DolibarrModules $this
 @phan-var-force int $r
 ';
+
+/**
+ * @var DolibarrModules $this
+ * @var int $r
+ */
 
 if (empty($keyforclass) || empty($keyforclassfile) || empty($keyforelement)) {
 	//print $keyforclass.' - '.$keyforclassfile.' - '.$keyforelement;
@@ -17,7 +22,10 @@ if (empty($keyforalias)) {
 
 dol_include_once($keyforclassfile);
 if (class_exists($keyforclass)) {
-	$tmpobject = new $keyforclass($this->db);
+	/** @var CommonObject $tmpobject */
+	$tmpobject = new $keyforclass($this->db);  // @phpstan-ignore property.nonObject
+	'@phan-var-force CommonObject $tmpobject';
+
 
 	// Add common fields
 	foreach ($tmpobject->fields as $keyfield => $valuefield) {

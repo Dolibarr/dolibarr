@@ -1,10 +1,31 @@
 <?php
+/* Copyright (C) 2025       Yannis Hoareau
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
+ */
 
 /**
  * @var CommonObject $object
- * @var int[] $selectedLines
  * @var CommonObjectLine $line
+ * @var int[] $selectedLines
  */
+
+'
+@phan-var-force CommonObjectLine $line
+';
 
 $line_color = $object->getSubtotalColors($line->qty);
 
@@ -18,7 +39,7 @@ if (!empty($selectedLines) && !in_array($line->id, $selectedLines)) {
 }
 print "<td colspan='5'>";
 print '<input id="cb'.$line->rowid.'" class="flat checkforselect" type="checkbox" name="subtotal_toselect[]" value="'.$line->rowid.'" ' . ($selected ? ' checked="checked"' : '') . ' >';
-print $line->desc . "</td>\n";
+print dolPrintHTML($line->desc) . "</td>\n";
 
 
 print '</tr>';

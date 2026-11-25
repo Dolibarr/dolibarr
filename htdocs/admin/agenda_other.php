@@ -5,8 +5,8 @@
  * Copyright (C) 2015		Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,6 +98,10 @@ if ($action == 'set') {
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', $defaultfilter, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('AGENDA_AUTOREFRESH_FREQUENCY')) {
+		$autorefreshfrequency = GETPOSTINT('AGENDA_AUTOREFRESH_FREQUENCY');	// 0 = no automatic refresh, else seconds between two checks
+		dolibarr_set_const($db, 'AGENDA_AUTOREFRESH_FREQUENCY', ($autorefreshfrequency > 0 ? max(30, $autorefreshfrequency) : 0), 'chaine', 0, '', $conf->entity);
+	}
 
 	$defaultValues = new DefaultValues($db);
 	$result = $defaultValues->fetchAll('', '', 0, 0, "(t.page:=:'comm/action/card.php') AND (t.param:=:'complete') AND (t.user_id:=:0) AND (t.type:=:'createform') AND (t.entity:=:".((int) $conf->entity).")");
@@ -207,6 +211,7 @@ $head = agenda_prepare_head();
 
 print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 
+print "<br>\n";
 
 /*
  *  Miscellaneous
@@ -262,8 +267,8 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
 					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-						$name = substr($file, 4, dol_strlen($file) - 16);
-						$classname = substr($file, 0, dol_strlen($file) - 12);
+						$name = dol_substr($file, 4, dol_strlen($file) - 16);
+						$classname = dol_substr($file, 0, dol_strlen($file) - 12);
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, new ActionComm($db));
 
@@ -306,7 +311,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 						if (getDolGlobalString('ACTION_EVENT_ADDON_PDF') == "$name") {
 							print img_picto($langs->trans("Default"), 'on');
 						} else {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&amp;scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 						}
 						print '</td>';
 
@@ -320,7 +325,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 						print '<td class="center">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+						print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 						print '</td>';
 
 						print "</tr>\n";
@@ -338,7 +343,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 }
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
@@ -358,6 +363,15 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right parentonrightofpage">'."\n";
 $tmplist = array('' => '&nbsp;', 'show_list' => $langs->trans("ViewList"), 'show_month' => $langs->trans("ViewCal"), 'show_week' => $langs->trans("ViewWeek"), 'show_day' => $langs->trans("ViewDay"), 'show_peruser' => $langs->trans("ViewPerUser"));
 print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_month'), 0, 0, 0, '', 0, 0, 0, '', 'right onrightofpage width150');
+print '</td></tr>'."\n";
+
+// AGENDA_AUTOREFRESH_FREQUENCY: 0 = no automatic refresh, else seconds between two checks
+print '<tr class="oddeven">'."\n";
+print '<td>'.$form->textwithpicto($langs->trans("AGENDA_AUTOREFRESH_FREQUENCY"), $langs->trans("AGENDA_AUTOREFRESH_FREQUENCYHelp")).'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right parentonrightofpage">'."\n";
+$tmpfreqlist = array(0 => $langs->trans("Disabled"), 30 => '30 s', 60 => '1 min', 120 => '2 min', 300 => '5 min', 600 => '10 min');
+print $form->selectarray('AGENDA_AUTOREFRESH_FREQUENCY', $tmpfreqlist, getDolGlobalInt('AGENDA_AUTOREFRESH_FREQUENCY'), 0, 0, 0, '', 0, 0, 0, '', 'right onrightofpage width150');
 print '</td></tr>'."\n";
 
 // Manual or automatic

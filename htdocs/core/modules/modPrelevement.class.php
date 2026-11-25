@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011 Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +122,14 @@ class modPrelevement extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'bons';
 		$this->rights[$r][5] = 'credit';
+
+		$r++;
+		$this->rights[$r][0] = 155;
+		$this->rights[$r][1] = 'Delete a direct debit payment request';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'bons';
+		$this->rights[$r][5] = 'delete';
 
 		// Menus
 		//-------

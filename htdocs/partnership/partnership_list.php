@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2017 	Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		NextGestion				<contact@nextgestion.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -63,7 +64,7 @@ $memberid = GETPOSTINT('rowid');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -72,9 +73,9 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize a technical objects
+// Initialize technical objects
 $object = new Partnership($db);
-$extrafields = new ExtraFields($db);
+
 $adherent = new Adherent($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
 if ($socid > 0) {
@@ -95,15 +96,24 @@ $error = 0;
 
 $managedfor	= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
-if ($managedfor != 'member' && $sortfield == 'd.datefin') {
-	$sortfield = '';
+if ($sortfield == 'd.datefin') {
+	if ($managedfor != 'member' && !isModEnabled('member')) {
+		$sortfield = '';
+	}
 }
 
 // Add non object fields to fields for list
 $non_object_fields = array(
-	'town' => array('type' => 'varchar(128)', 'label' => 'Town', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1,),
-	'country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'searchall' => 1,)
+	'town' => array('type' => 'varchar(128)', 'label' => 'Town', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'searchall' => 1,),
+	'country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'position' => 52, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'searchall' => 1,),
+	// Field to add member when link is through thirdparty membership then member link
+	'fk_soc_member' => array('type' => 'custom', 'label' => 'Member', 'visible' => -1, 'enabled' => ($managedfor != 'member' && isModEnabled('member')), 'picto' => 'member', 'csslist' => 'tdoverflowmax125', 'position' => 54),
+	// Field to show when partnership linked to member or thirdparty
+	'fk_soc_dateend' => array('type' => 'custom', 'label' => 'DateEndSubscription', 'visible' => -1, 'enabled' => ($managedfor == 'member' || isModEnabled('member')), 'picto' => 'member', 'csslist' => 'center', 'position' => 55)
 );
+//$arrayfields['fk_soc_member'] = array('type' => 'varchar', 'label' => 'Member', 'checked' => -1, 'enabled' => 1, 'picto' => 'member', 'csslist' => 'tdoverflowmax125', 'position' => 51);
+//var_dump($arrayfields);
+
 
 // All fields in list
 $all_fields_list = array_merge($object->fields, $non_object_fields);
@@ -118,7 +128,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criteria
-$search_all = GETPOST('search_all', 'alphanohtml');
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search = array();
 foreach ($all_fields_list as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -143,23 +153,46 @@ foreach ($non_object_fields as $key => $val) {
 	}
 }
 
-// Definition of array of fields for columns
+// Definition of array of fields for columns from ->fields
+$tableprefix = 't';
 $arrayfields = array();
 foreach ($all_fields_list as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
-		$arrayfields['t.'.$key] = array(
+		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
+if (isset($object->fields['rowid']) && !isset($arrayfields['t.rowid'])) {	// Technical ID is hidden by the object when MAIN_SHOW_TECHNICAL_ID is off, but must remain selectable
+	$arrayfields['t.rowid'] = array('label' => 'TechnicalID', 'checked' => '-1', 'enabled' => '1', 'position' => $object->fields['rowid']['position']);
+}
 // Extra fields
+$extrafieldspositionoffset = 1000;	// To keep extrafields after the hardcoded fields by default
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// By default, the status is the last column, after the extrafields
+if (isset($arrayfields['t.status'])) {
+	$arrayfields['t.status']['position'] = (int) max(array_column($arrayfields, 'position')) + 1;
+}
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
+// Propagate saved positions from arrayfields to all_fields_list used to order columns
+foreach ($arrayfields as $key => $val) {
+	$fieldkey = explode('.', $key)[1];
+	if (isset($all_fields_list[$fieldkey], $val['position'])) {
+		$all_fields_list[$fieldkey]['position'] = $val['position'];
+	}
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -172,6 +205,13 @@ $permissiontodelete = $user->hasRight('partnership', 'delete');
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
+// External user is limited to his own thirdparty, and has no access to partnerships of members
+if ($user->socid > 0) {
+	if ($managedfor == 'member') {
+		accessforbidden();
+	}
+	$socid = $user->socid;
+}
 //restrictedArea($user, 'partnership', $object->id);
 if (empty($conf->partnership->enabled)) {
 	accessforbidden();
@@ -328,7 +368,10 @@ $morecss = array();
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
 if ($managedfor == 'member') {
-	$sql .= ', d.datefin, d.fk_adherent_type, dty.subscription';
+	$sql .= ', d.rowid as memberid, d.lastname, d.firstname, d.datefin, d.fk_adherent_type, dty.subscription';
+}
+if ($managedfor == 'thirdparty' && isModEnabled('member')) {
+	$sql .= ', d.rowid as memberid, d.lastname, d.firstname, d.datefin, d.fk_adherent_type, dty.subscription';
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -352,8 +395,13 @@ if ($managedfor == 'member') {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d on (d.rowid = t.fk_member)";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
 } else {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as d on (d.rowid = t.fk_soc)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = t.fk_soc)";
+	if ($managedfor == 'thirdparty' && isModEnabled('member')) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d on (d.fk_soc = s.rowid)";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
+	}
 }
+
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -367,14 +415,19 @@ if ($managedfor == 'member') {
 	if ($memberid > 0) {
 		$sql .= " AND t.fk_member = ".((int) $memberid);
 	} else {
-		$sql .= " AND fk_member > 0";
+		$sql .= " AND t.fk_member > 0";
 	}
 } else {
 	if ($socid > 0) {
 		$sql .= " AND t.fk_soc = ".((int) $socid);
 	} else {
-		$sql .= " AND fk_soc > 0";
+		$sql .= " AND t.fk_soc > 0";
 	}
+}
+// If internal user has no permission to see all thirdparties, restrict on thirdparties he is sale representative for
+// (not in member mode: a partnership of a member has no thirdparty to restrict on)
+if ($managedfor != 'member' && empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 }
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
@@ -396,10 +449,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -407,21 +460,24 @@ foreach ($search as $key => $val) {
 			if ($managedfor == 'member') {
 				$sql .= " AND d.country = '".$db->escape($val)."'";
 			} else {
-				$sql .= " AND d.fk_pays = '".$db->escape($val)."'";
+				$sql .= " AND s.fk_pays = '".$db->escape($val)."'";
 			}
-			//$sql .= natural_search("d.fk_pays", $val);
 		}
 		if ($key == 'town' && $search[$key] != '') {
-			$sql .= natural_search("d.town", $val);
+			if ($managedfor == 'member') {
+				$sql .= natural_search("d.town", $val);
+			} else {
+				$sql .= natural_search("s.town", $val);
+			}
 		}
 	}
 }
-if ($managedfor == 'member') {
+if ($managedfor == 'member' || ($managedfor == 'thirdparty' && isModEnabled('member'))) {
 	if ($search_filter == 'withoutsubscription') {
 		$sql .= " AND (d.datefin IS NULL)";
 	}
 	if ($search_filter == 'waitingsubscription') {
-		$sql .= " AND (d.datefin IS NULL AND t.subscription = '1')";
+		$sql .= " AND (d.datefin IS NULL AND dty.subscription = '1')";
 	}
 	if ($search_filter == 'uptodate') {
 		$sql .= " AND (d.datefin >= '".$db->idate($now)."' OR dty.subscription = '0')";
@@ -473,7 +529,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -496,7 +552,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".dol_buildpath('/partnership/partnership_card.php', 1).'?id='.$id);
@@ -678,7 +734,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('prevalidate', 'pr
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -744,11 +800,12 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
+$selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="tagtable nobottomiftotal liste noborder'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 
 if ($managedfor == 'member') {
@@ -756,17 +813,33 @@ if ($managedfor == 'member') {
 } else {
 	$arrayfields['t.fk_soc']['checked'] = 1;
 }
+
+
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch">';
+if ($conf->main_checkbox_left_column) {
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
-foreach ($all_fields_list as $key => $val) {
+// Fields and extrafields ordered by position (fields of hooks are output after)
+foreach ($arrayfields as $arraykey => $arrayval) {
+	$regkey = array();
+	// Extra fields
+	if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($all_fields_list[$regkey[1]])) {
+		continue;
+	}
+	$key = $regkey[1];
+	$val = $all_fields_list[$key];
 	$searchkey = empty($search[$key]) ? '' : $search[$key];
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
@@ -781,7 +854,11 @@ foreach ($all_fields_list as $key => $val) {
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').($key == 'status' ? ' parentonrightofpage' : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+			if (empty($val['searchmulti'])) {
+				print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 1, 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+			} else {
+				print $form->multiselectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 0, 0, 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+			}
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
@@ -794,31 +871,29 @@ foreach ($all_fields_list as $key => $val) {
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
-			print $formadmin->select_language($search[$key], 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+			print $formadmin->select_language((isset($search[$key]) ? $search[$key] : ''), 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+		} elseif ($val['type'] === 'boolean') {
+			print $form->selectyesno('search_' . $key, $search[$key] ?? '', 1, false, 1);
 		} elseif ($key == 'country') {
 			print $form->select_country(in_array($key, $search) ? $search[$key] : 0, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+		} elseif ($key == 'fk_soc_member') {
+			print '';
+		} elseif ($key == 'fk_soc_dateend') {	// End of subscription date
+			$selectarray = array('-1' => '', 'withoutsubscription' => $langs->trans("WithoutSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
+			print $form->selectarray('search_filter', $selectarray, $search_filter);
 		} else {
-			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
+			print '<input type="text" class="flat maxwidth'.(in_array($val['type'], array('integer', 'price')) ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
 		print '</td>';
 	}
 }
-// End of subscription date
-if ($managedfor == 'member') {
-	print '<td class="liste_titre center">';
-	$selectarray = array('-1' => '', 'withoutsubscription' => $langs->trans("WithoutSubscription"), 'uptodate' => $langs->trans("UpToDate"), 'outofdate' => $langs->trans("OutOfDate"));
-	print $form->selectarray('search_filter', $selectarray, $search_filter);
-	print '</td>';
-}
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -832,11 +907,25 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;	// For the column action
 }
-foreach ($all_fields_list as $key => $val) {
+// Fields and extrafields ordered by position (fields of hooks are output after)
+foreach ($arrayfields as $arraykey => $arrayval) {
+	$regkey = array();
+	// Extra fields
+	if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($all_fields_list[$regkey[1]])) {
+		continue;
+	}
+	$key = $regkey[1];
+	$val = $all_fields_list[$key];
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -849,26 +938,25 @@ foreach ($all_fields_list as $key => $val) {
 	}
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
-		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''), 0, (empty($val['helplist']) ? '' : $val['helplist']))."\n";
+		$tmpfield = 't.'.$key;
+		if ($key == 'fk_soc_member') {
+			$tmpfield = '';
+		} elseif ($key == 'fk_soc_dateend') {	// End of subscription date
+			$tmpfield = 'd.datefin';
+			$cssforfield = 'center';
+		}
+		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], $tmpfield, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''), 0, (empty($val['helplist']) ? '' : $val['helplist']))."\n";
 		$totalarray['nbfield']++;
 	}
 }
-// End of subscription date
-if ($managedfor == 'member') {
-	$key = 'datefin';
-	$cssforfield = 'center';
-	print getTitleFieldOfList('SubscriptionEndDate', 0, $_SERVER['PHP_SELF'], 'd.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
-}
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-	$totalarray['nbfield']++;	// For the column action
+	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
 
@@ -892,6 +980,7 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 $textlate = '';
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -914,13 +1003,15 @@ while ($i < $imaxinloop) {
 		$object->thirdparty = $companyobj;
 	}
 
-	if ($managedfor == 'member') {
-		if ($obj->fk_member > 0) {
-			$result = $adherent->fetch($obj->fk_member);
-		}
+	$adherent->id = 0;
+	if ($managedfor == 'member' && $obj->fk_member > 0) {
+		$result = $adherent->fetch($obj->fk_member);
+	}
+	if ($managedfor == 'thirdparty' && isModEnabled('member') && $obj->fk_soc) {
+		$result = $adherent->fetch(0, '', $obj->fk_soc);
 	}
 
-	if ($mode == 'kanban') {
+	if ($mode == 'kanban' || $mode == 'kanbangroupby') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
@@ -939,11 +1030,11 @@ while ($i < $imaxinloop) {
 			print '</td></tr>';
 		}
 	} else {
-		// Show here line of result
+		// Show line of result
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -957,7 +1048,21 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		foreach ($all_fields_list as $key => $val) {
+		// Fields and extrafields ordered by position (fields of hooks are output after)
+		foreach ($arrayfields as $arraykey => $arrayval) {
+			$regkey = array();
+			// Extra fields
+			if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+				$extrafieldsonlykey = $regkey[1];
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+				$extrafieldsonlykey = '';
+				continue;
+			}
+			if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($all_fields_list[$regkey[1]])) {
+				continue;
+			}
+			$key = $regkey[1];
+			$val = $all_fields_list[$key];
 			$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -966,32 +1071,42 @@ while ($i < $imaxinloop) {
 			}
 
 			if (in_array($val['type'], array('timestamp'))) {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			} elseif ($key == 'ref') {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			}
 
-			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('rowid', 'status')) && empty($val['arrayofkeyval'])) {
+			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'right';
 			}
 			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
-				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
-				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
+				print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
+				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key) && !in_array($key, array('ref'))) {
 					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
+				} elseif ($key == 'rowid') {
+					print (int) $object->id;	// Not showOutputField() that returns nothing when the Technical ID is hidden by the object (MAIN_SHOW_TECHNICAL_ID off)
 				} elseif ($key == 'country') {
 					if ($managedfor == 'member') {
 						if (!empty($adherent->country_code)) {
-							print  $langs->trans("Country".$adherent->country_code);
+							if ($showcountrylabelinlist) {
+								print $langs->trans("Country".$adherent->country_code);
+							} else {
+								print picto_from_langcode($adherent->country_code, 'title="'.dolPrintHTMLForAttribute($langs->trans("Country".$adherent->country_code)).'"', 1);
+							}
 						}
 					} else {
 						if (!empty($object->thirdparty->country_code)) {
-							print  $langs->trans("Country".$object->thirdparty->country_code);
+							if ($showcountrylabelinlist) {
+								print $langs->trans("Country".$object->thirdparty->country_code);
+							} else {
+								print picto_from_langcode($object->thirdparty->country_code, 'title="'.dolPrintHTMLForAttribute($langs->trans("Country".$object->thirdparty->country_code)).'"', 1);
+							}
 						}
 					}
 				} elseif ($key == 'town') {
@@ -1000,8 +1115,28 @@ while ($i < $imaxinloop) {
 					} else {
 						print $object->thirdparty->town;
 					}
-				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, (string) $object->id, '');
+				} elseif ($key == 'fk_soc_member' && $adherent->id > 0) {  // @phpstan-ignore greater.alwaysFalse,booleanAnd.alwaysFalse
+					print $adherent->getNomUrl(1);
+				} elseif ($key == 'fk_soc_dateend') {
+					if ($adherent->id > 0) {  // @phpstan-ignore greater.alwaysFalse
+						$datefin = $adherent->datefin;
+						if ($datefin) {
+							print dol_print_date($datefin, 'day');
+							if ($adherent->hasDelay()) {
+								$textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->member->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->member->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
+								print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
+							}
+						} else {
+							if (!empty($adherent->need_subscription)) {
+								print $langs->trans("SubscriptionNotReceived");
+								if ($adherent->status > 0) {
+									print " ".img_warning();
+								}
+							} else {
+								print '&nbsp;';
+							}
+						}
+					}
 				} else {
 					print $object->showOutputField($val, $key, $object->$key, '');
 				}
@@ -1023,39 +1158,13 @@ while ($i < $imaxinloop) {
 				}
 			}
 		}
-		// End of subscription date
-		if ($managedfor == 'member') {
-			print '<td class="nowrap center endofsubscriptiondate">';
-			$result = $adherent->fetch($object->fk_member);
-			if ($result) {
-				$datefin = $adherent->datefin;
-				if ($datefin) {
-					print dol_print_date($datefin, 'day');
-					if ($adherent->hasDelay()) {
-						$textlate .= ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
-						print " ".img_warning($langs->trans("SubscriptionLate").$textlate);
-					}
-				} else {
-					if (!empty($adherent->need_subscription)) {
-						print $langs->trans("SubscriptionNotReceived");
-						if ($adherent->status > 0) {
-							print " ".img_warning();
-						}
-					} else {
-						print '&nbsp;';
-					}
-				}
-			}
-			print '</td>';
-		}
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1075,9 +1184,6 @@ while ($i < $imaxinloop) {
 
 	$i++;
 }
-if ($managedfor != 'member') {
-	$totalarray['nbfield']++; // End of subscription date
-}
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
@@ -1090,7 +1196,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	if ($managedfor == 'member') {
+	if ($managedfor == 'member' || ($managedfor == 'thirdparty' && isModEnabled('member'))) {
 		$colspan++; // End of subscription date
 	}
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';

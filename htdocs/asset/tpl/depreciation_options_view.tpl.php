@@ -16,26 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also shows fields from hook formAssetAccountancyCode. Need to have the following variables defined:
- * $object (asset, assetmodel, ...)
- * $assetaccountancycodes
- * $action
- * $conf
- * $langs
- *
- * $parameters
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode.
  */
 
 /**
+ * @var Conf $conf
  * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
- * @var AssetDepreciationOptions $assetdepreciationoptions
  * @var Translate $langs
+ *
+ * @var Object $object		Asset, AssetModel, ...
+ * @var string $action
+ * @var array<string,mixed> $parameters
+ * @var AssetDepreciationOptions $assetdepreciationoptions
  */
 '
 @phan-var-force ?Form $form
 @phan-var-force HookManager $hookmanager
+@phan-var-force array<string,mixed> $parameters
 @phan-var-force AssetDepreciationOptions $assetdepreciationoptions
 ';
 
@@ -134,7 +133,13 @@ if (empty($reshook)) {
 			if (in_array($field_info['type'], array('text', 'html'))) {
 				print '<div class="longmessagecut">';
 			}
-			if ($field_key == 'lang') {
+			if ($field_key == 'rate') {
+				// The rate is provided by the core, by getRate(), and has no column in the table. It is
+				// declared with a 'computed' expression, which routes showOutputField() to dol_eval().
+				// dol_eval() then refuses getRate(), absent from $dolibarr_main_restrict_eval_methods,
+				// and every asset shows "Bad string syntax to evaluate ..." instead of its rate.
+				print $assetdepreciationoptions->getRate($mode_key);
+			} elseif ($field_key == 'lang') {
 				$langs->load("languages");
 				$labellang = ($value ? $langs->trans('Language_' . $value) : '');
 				print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');

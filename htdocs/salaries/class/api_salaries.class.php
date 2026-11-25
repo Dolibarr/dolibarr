@@ -1,8 +1,8 @@
 <?php
 /*
  * Copyright (C) 2023 Marc Chenebaux <marc.chenebaux@maj44.com>
- * Copyright (C) 2025		MDW			<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW			<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,18 +64,21 @@ class Salaries extends DolibarrApi
 	/**
 	 * Get the list of salaries.
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string    $sortfield  Sort field
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.fk_user:=:6) and (t.datep:>:'20250101')"
+	 * @param int		$count		Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array                List of salary objects
-	 * @phan-return Salary[]
-	 * @phpstan-return Salary[]
+	 * @phan-return Salary[]|array{count:int}
+	 * @phpstan-return Salary[]|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $count = 0)
 	{
 		$list = array();
 
@@ -103,6 +106,11 @@ class Salaries extends DolibarrApi
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
+		}
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -151,23 +159,23 @@ class Salaries extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
-			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
-				if ($id != DolibarrApiAccess::$user->id) {
-					throw new RestException(404, 'salary not found');
-				}
-			} else {
-				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
-				if (!in_array($id, $childids)) {
-					throw new RestException(404, 'salary not found');
-				}
-			}
-		}
-
 		$salary = new Salary($this->db);
 		$result = $salary->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'salary not found');
+		}
+
+		if (!DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			if (!DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+				if ($salary->fk_user != DolibarrApiAccess::$user->id) {
+					throw new RestException(404, 'salary not found');
+				}
+			} else {
+				$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+				if (!in_array($salary->fk_user, $childids)) {
+					throw new RestException(404, 'salary not found');
+				}
+			}
 		}
 
 		return $this->_cleanObjectDatas($salary);
@@ -221,6 +229,8 @@ class Salaries extends DolibarrApi
 			throw new RestException(404, 'salary not found');
 		}
 
+		$this->_checkAccessToSalary($salary);
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -228,10 +238,14 @@ class Salaries extends DolibarrApi
 			$salary->$field = $this->_checkValForAPI($field, $value, $salary);
 		}
 
+		// If the fk_user attribute is used to attach the salary to another employee, this employee
+		// must also be inside the scope allowed to the current user
+		$this->_checkAccessToSalary($salary);
+
 		if ($salary->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $salary->error);
+			throw new RestException(500, $salary->errorsToString());
 		}
 	}
 
@@ -344,7 +358,7 @@ class Salaries extends DolibarrApi
 	 */
 	public function getPayments($pid)
 	{
-		// A payment of salary can be done on different salaires of didderent user, so only users with permission
+		// A payment of salary can be done on different salaries of different users, so only users with permission
 		// to read all area allowed.
 		// TODO To support read or readchild case, the get must be done with a SQL that include the paid user with
 		// a where on current user and childids of current user.
@@ -386,6 +400,7 @@ class Salaries extends DolibarrApi
 		if ($salary->fetch($id) <= 0 || empty($salary->id)) {
 			throw new RestException(404, 'Salary not found');
 		}
+		$this->_checkAccessToSalary($salary);
 		// create() pays the salaries that are the keys of amounts, not {id}
 		if (!is_array($request_data['amounts']) || array_diff(array_keys($request_data['amounts']), array($salary->id))) {
 			throw new RestException(400, 'amounts must be keyed by the salary id '.$salary->id);
@@ -453,6 +468,13 @@ class Salaries extends DolibarrApi
 			throw new RestException(404, 'Payment salary not found');
 		}
 
+		// Check the salary the payment is attached to is inside the scope of the current user
+		$salary = new Salary($this->db);
+		if ($salary->fetch($paymentsalary->fk_salary) <= 0) {
+			throw new RestException(404, 'Salary not found');
+		}
+		$this->_checkAccessToSalary($salary);
+
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
@@ -460,10 +482,20 @@ class Salaries extends DolibarrApi
 			$paymentsalary->$field = $this->_checkValForAPI($field, $value, $paymentsalary);
 		}
 
+		// If the fk_salary attribute is used to attach the payment to another salary, this salary
+		// must also be inside the scope allowed to the current user
+		if ((int) $paymentsalary->fk_salary != (int) $salary->id) {
+			$salarytarget = new Salary($this->db);
+			if ($salarytarget->fetch($paymentsalary->fk_salary) <= 0) {
+				throw new RestException(404, 'Salary not found');
+			}
+			$this->_checkAccessToSalary($salarytarget);
+		}
+
 		if ($paymentsalary->update(DolibarrApiAccess::$user) > 0) {
-			return $this->get($id);
+			return $this->_cleanObjectDatas($paymentsalary);
 		} else {
-			throw new RestException(500, $paymentsalary->error);
+			throw new RestException(500, $paymentsalary->errorsToString());
 		}
 	}
 
@@ -498,6 +530,35 @@ class Salaries extends DolibarrApi
 	 );
 	 }*/
 
+
+	/**
+	 * Check the current user can access the salary record of another user.
+	 * Same three-tier rule as salaries/card.php and the get() method:
+	 * readall allows all, readchild allows salaries of user and subordinates,
+	 * otherwise only salaries of the current user are allowed.
+	 * Throw 404 (and not 403) to avoid disclosing existence of the salary.
+	 *
+	 * @param   Salary  $salary     Salary object (with property fk_user loaded)
+	 * @return  void
+	 *
+	 * @throws RestException
+	 */
+	private function _checkAccessToSalary($salary)
+	{
+		if (DolibarrApiAccess::$user->hasRight('salaries', 'readall')) {
+			return;
+		}
+		if (DolibarrApiAccess::$user->hasRight('salaries', 'readchild')) {
+			$childids = DolibarrApiAccess::$user->getAllChildIds(1);
+			if (!in_array($salary->fk_user, $childids)) {
+				throw new RestException(404, 'salary not found');
+			}
+			return;
+		}
+		if ((int) $salary->fk_user != (int) DolibarrApiAccess::$user->id) {
+			throw new RestException(404, 'salary not found');
+		}
+	}
 
 	/**
 	 * Validate fields before creating an object

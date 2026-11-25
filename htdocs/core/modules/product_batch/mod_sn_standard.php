@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2021       Christophe Battarel			<christophe@altairis.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,10 +93,10 @@ class mod_sn_standard extends ModeleNumRefBatch
 		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(batch FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(batch FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lot";
 		$sql .= " WHERE batch LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -129,10 +129,10 @@ class mod_sn_standard extends ModeleNumRefBatch
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(batch FROM ".$posindice.") AS SIGNED)) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(batch FROM ".((int) $posindice).") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lot";
 		$sql .= " WHERE batch LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		$resql = $db->query($sql);
 		if ($resql) {

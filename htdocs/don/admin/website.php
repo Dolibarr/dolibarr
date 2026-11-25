@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,6 @@ $langs->loadLangs(array("admin", "donations"));
 $action = GETPOST('action', 'aZ09');
 
 // Hook to be used by external payment modules (ie Payzen, ...)
-$hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('newpayment'));
 
 if (!$user->admin) {
@@ -140,7 +139,7 @@ if ($conf->use_javascript_ajax) {
 }
 
 
-print '<span class="opacitymedium">'.$langs->trans("BlankDonationFormDesc").'</span><br><br>';
+print '<div class="info">'.$langs->trans("BlankDonationFormDesc").'</div>';
 
 $param = '';
 
@@ -156,10 +155,13 @@ if (!getDolGlobalString('DONATION_ENABLE_PUBLIC')) {
 	$enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
 	$enabledisablehtml .= '</a>';
 }
+
+print '<div class="neutral">';
 print $enabledisablehtml;
 print '<input type="hidden" id="DONATION_ENABLE_PUBLIC" name="DONATION_ENABLE_PUBLIC" value="'.(!getDolGlobalString('DONATION_ENABLE_PUBLIC') ? 0 : 1).'">';
+print '</div>';
 
-print '<br><br>';
+print '<br>';
 
 
 if (getDolGlobalString('DONATION_ENABLE_PUBLIC')) {

@@ -229,9 +229,9 @@ class BooleanField extends CommonField
 			$alias = $fieldInfos->sqlAlias ?? 't.';
 			$field = $this->db->sanitize($alias . ($fieldInfos->nameInTable ?? $key));
 
-			$sql = " AND (" . $field . " = '" . $this->db->escape($value) . "'";
+			$sql = " AND (" . $this->db->sanitize($field) . " = '" . $this->db->escape($value) . "'";
 			if ($value == '0') {
-				$sql .= " OR " . $field . " IS NULL";
+				$sql .= " OR " . $this->db->sanitize($field) . " IS NULL";
 			}
 			$sql .= ")";
 

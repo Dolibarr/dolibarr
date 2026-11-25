@@ -9,8 +9,8 @@
  * Copyright (C) 2016-2018	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2019		Nicolas Zabouri				<info@inovea-conseil.com>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2025		Charlene Benke				<charlene@patas-monkey.com>
  *
@@ -39,22 +39,25 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/phone.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 if (isModEnabled("category")) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
+$langs->loadLangs(array('contracts', 'products', 'companies', 'compta', 'projects'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -68,15 +71,22 @@ $mode = GETPOST('mode', 'alpha');
 $socid = GETPOSTINT('socid');
 
 $search_name = GETPOST('search_name', 'alpha');
+$search_alias = GETPOST('search_alias', 'alpha');
+$search_phone = GETPOST('search_phone', 'alpha');
+$search_phone_mobile = GETPOST('search_phone_mobile', 'alpha');
 $search_email = GETPOST('search_email', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'aZ09');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
+$search_id = GETPOST('search_id', 'alpha');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
+$search_project_ref = GETPOST('search_project_ref', 'alpha');
+$search_project = GETPOST('search_project', 'alpha');
+$search_type = (GETPOSTISSET('search_type') ? GETPOSTINT('search_type') : -1);
 $search_all = GETPOST('search_all', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
 $search_signed_status = GETPOST('search_signed_status', 'alpha');
@@ -160,8 +170,8 @@ if ($search_status == '') {
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Contrat($db);
-$extrafields = new ExtraFields($db);
 $staticcontratligne = new ContratLigne($db);
+$projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -189,17 +199,24 @@ if ($reshook > 0) {
 }
 
 $arrayfields = array(
+	'c.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'c.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 10),
 	'c.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 12),
 	'c.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1', 'position' => 14),
+	'c.fk_contract_type' => array('label' => $langs->trans("ContractType"), 'checked' => '1', 'position' => 16),
+	'p.ref' => array('label' => $langs->trans("ProjectRef"), 'checked' => '0', 'enabled' => (isModEnabled('project') ? '1' : '0'), 'position' => 18),
+	'p.title' => array('label' => $langs->trans("ProjectLabel"), 'checked' => '0', 'enabled' => (isModEnabled('project') ? '1' : '0'), 'position' => 19),
 	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 30),
-	's.email' => array('label' => $langs->trans("ThirdPartyEmail"), 'checked' => '0', 'position' => 30),
+	's.name_alias' => array('label' => $langs->trans("AliasNameShort"), 'checked' => '0', 'position' => 30),
 	's.town' => array('label' => $langs->trans("Town"), 'checked' => '0', 'position' => 31),
 	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1', 'position' => 32),
 	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0', 'position' => 33),
 	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => '0', 'position' => 34),
-	'sale_representative' => array('label' => $langs->trans("SaleRepresentativesOfThirdParty"), 'checked' => '-1', 'position' => 80),
-	'c.date_contrat' => array('label' => $langs->trans("DateContract"), 'checked' => '1', 'position' => 45),
+	's.phone' => array('label' => $langs->trans("Phone"), 'checked' => '1', 'position' => 100),
+	's.phone_mobile' => array('label' => $langs->trans("PhoneMobile"), 'checked' => '1', 'position' => 102),
+	's.email' => array('label' => $langs->trans("ThirdPartyEmail"), 'checked' => '0', 'position' => 115),
+	'sale_representative' => array('label' => $langs->trans("SaleRepresentativesOfThirdParty"), 'checked' => '-1', 'position' => 130),
+	'c.date_contrat' => array('label' => $langs->trans("DateContract"), 'checked' => '1', 'position' => 140),
 	'c.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'c.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
 	'c.note_public' => array('label' => $langs->trans("NotePublic"), 'checked' => '0', 'position' => 520, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
@@ -210,6 +227,9 @@ $arrayfields = array(
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -251,15 +271,22 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_dfyear = '';
 	$search_op2df = '';
 	$search_name = "";
-	$search_email = "";
+	$search_alias = "";
 	$search_town = '';
 	$search_zip = "";
 	$search_state = "";
-	$search_type_thirdparty = '';
 	$search_country = '';
+	$search_phone = "";
+	$search_phone_mobile = "";
+	$search_email = "";
+	$search_type_thirdparty = '';
+	$search_id = '';
 	$search_contract = "";
 	$search_ref_customer = "";
 	$search_ref_supplier = "";
+	$search_project_ref = '';
+	$search_project = '';
+	$search_type = -1;
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
@@ -321,18 +348,18 @@ $now = dol_now();
 $title = "";
 
 $sql = 'SELECT';
-$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity, c.signed_status,";
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
+$sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.fk_contract_type, c.note_private, c.note_public, c.entity, c.signed_status,";
+$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.phone, s.phone_mobile, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code, c.note_public, c.note_private,";
-$sql .= " state.code_departement as state_code, state.nom as state_name,";
-// TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove the HAVING and then,
-// remove completely the SUM and GROUP BY (faster). Status of each service can be read into the loop that build the list.
-$sql .= " MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") as lower_planned_end_date,";	// lowest expiration date among open service lines
-$sql .= " SUM(".$db->ifsql("cd.statut=0", '1', '0').') as nb_initial,';
-$sql .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", '1', '0').') as nb_running,';
-$sql .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", '1', '0').') as nb_expired,';
-$sql .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contract->services->expires->warning_delay)."')", '1', '0').') as nb_late,';
-$sql .= " SUM(".$db->ifsql("cd.statut=5", '1', '0').') as nb_closed';
+$sql .= " state.code_departement as state_code, state.nom as state_name";
+// Subrequest to get the lowest expiration date among open service lines (kept into the main request because the field can be sorted)
+// TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove this subrequests ?
+$sanitizedsqllowerplannedenddate = "(SELECT MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid)";
+if ($arrayfields['lower_planned_end_date']['checked'] || ($search_dfyear > 0 && $search_op2df)) {
+	$sql .= ", ".$sanitizedsqllowerplannedenddate." as lower_planned_end_date";	// lowest expiration date among open service lines
+}
+// Note: The number of service lines per status (nb_initial, nb_running, ...) is loaded later, with one request, for the records of the page only
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -352,13 +379,9 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (c.fk_soc = s.rowid)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (c.rowid = ef.fk_object)";
-}
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
-if ($search_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
-	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 // Add table from hooks
 $parameters = array();
@@ -380,8 +403,20 @@ if ($search_date_end) {
 if ($search_name) {
 	$sql .= natural_search('s.nom', $search_name);
 }
+if ($search_alias) {
+	$sql .= natural_search('s.name_alias', $search_alias);
+}
 if ($search_email) {
 	$sql .= natural_search('s.email', $search_email);
+}
+if ($search_phone) {
+	$sql .= dol_natural_search_phone($db, array('s.phone', 's.phone_mobile'), $search_phone);
+}
+if ($search_phone_mobile) {
+	$sql .= dol_natural_search_phone($db, array('s.phone', 's.phone_mobile'), $search_phone_mobile);
+}
+if ($search_id != '') {
+	$sql .= natural_search('c.rowid', $search_id, 1);
 }
 if ($search_contract) {
 	$sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
@@ -392,11 +427,28 @@ if (!empty($search_ref_customer)) {
 if (!empty($search_ref_supplier)) {
 	$sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
 }
+if ($search_project_ref != '') {
+	if (empty($arrayfields['p.title']['checked'])) {
+		// The project label is shown into the ref column, so search on both
+		$sql .= natural_search(array('p.ref', 'p.title'), $search_project_ref);
+	} else {
+		$sql .= natural_search('p.ref', $search_project_ref);
+	}
+}
+if ($search_project != '') {
+	$sql .= natural_search('p.title', $search_project);
+}
+if ($search_type >= 0) {
+	$sql .= " AND c.fk_contract_type = ".((int) $search_type);
+}
 if ($search_zip) {
 	$sql .= natural_search(array('s.zip'), $search_zip);
 }
 if ($search_town) {
 	$sql .= natural_search(array('s.town'), $search_town);
+}
+if ($search_state) {
+	$sql .= natural_search(array('state.nom'), $search_state);
 }
 if ($search_country && $search_country != '-1') {
 	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
@@ -414,15 +466,19 @@ if (!empty($search_note_public)) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+// Search on user. Done with an EXISTS so a contract is not returned twice if the user has several roles on it.
 if ($search_user > 0) {
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
+	$sql .= " AND EXISTS (";
+	$sql .= " SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid AND tc.element = 'contrat' AND tc.source = 'internal'";
+	$sql .= " WHERE ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user).")";
 }
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $search_sale);
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
@@ -514,7 +570,20 @@ if ($search_date_modif_end) {
 	$sql .= " AND c.tms <= '".$db->idate($search_date_modif_end)."'";
 }
 if ($search_signed_status != '' && $search_signed_status >= 0) {
-	$sql .= " AND c.signed_status = '".$db->escape($search_signed_status)."'";
+	$sql .= " AND c.signed_status = ".((int) $search_signed_status);
+}
+// Search on the lowest planned end date. Done into the WHERE (and not into a HAVING) so the request to count records can be a simple COUNT(*).
+if ($search_dfyear > 0 && $search_op2df) {
+	if ($search_op2df == '<=') {
+		//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
+		$sql .= " AND ".$sanitizedsqllowerplannedenddate." <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
+	} elseif ($search_op2df == '>=') {
+		//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
+		$sql .= " AND ".$sanitizedsqllowerplannedenddate." >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
+	} else {
+		//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
+		$sql .= " AND ".$sanitizedsqllowerplannedenddate." BETWEEN '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."' AND '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
+	}
 }
 
 // Add where from extra fields
@@ -523,16 +592,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity, c.signed_status,";
-$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.status, s.logo,';
-$sql .= " typent.code, c.note_public, c.note_private,";
-$sql .= " state.code_departement, state.nom";
-// Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
-	}
-}
 // Add where from hooks
 $parameters = array('search_dfyear' => $search_dfyear, 'search_op2df' => $search_op2df);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -541,18 +600,7 @@ $sql .= $hookmanager->resPrint;
 $parameters = array('search_dfyear' => $search_dfyear, 'search_op2df' => $search_op2df);
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
-	if ($search_dfyear > 0 && $search_op2df) {
-		if ($search_op2df == '<=') {
-			$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
-		} elseif ($search_op2df == '>=') {
-			$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
-		} else {
-			$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
-		}
-		$sql .= empty($hookmanager->resPrint) ? "" : " AND ".$hookmanager->resPrint;
-	} else {
-		$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
-	}
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 } else {
 	$sql = $hookmanager->resPrint;
 }
@@ -563,14 +611,18 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	//$result = $db->query($sql);
 	//$nbtotalofrecords = $db->num_rows($result);
 
-	if ($search_dfyear > 0 && $search_op2df) {
+	if (preg_match('/\sHAVING\s/i', $sql)) {	// A HAVING (added by a hook) can't be kept into a request converted into a COUNT(*)
 		$resql = $db->query($sql, 0, 'auto', 1);
-		while ($db->fetch_object($resql)) {
-			if (empty($nbtotalofrecords)) {
-				$nbtotalofrecords = 1;    // We can't make +1 because init value is ''
-			} else {
-				$nbtotalofrecords++;
+		if ($resql) {
+			while ($db->fetch_object($resql)) {
+				if (empty($nbtotalofrecords)) {
+					$nbtotalofrecords = 1;    // We can't make +1 because init value is ''
+				} else {
+					$nbtotalofrecords++;
+				}
 			}
+		} else {
+			dol_print_error($db);
 		}
 	} else {
 		/* The fast and low memory method to get and count full list converts the sql into a sql count */
@@ -578,8 +630,13 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_country as country on (country.rowid = s.fk_pays)', '', $sqlforcount);
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as typent on (typent.id = s.fk_typent)', '', $sqlforcount);
-		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as state on (state.rowid = s.fk_departement)', '', $sqlforcount);
+		if (!$search_state) {	// The join is required by the filter on the state name
+			$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as state on (state.rowid = s.fk_departement)', '', $sqlforcount);
+		}
 		$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat', '', $sqlforcount);
+		if ($search_project_ref == '' && $search_project == '') {	// The join is required by the filters on project
+			$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON p.rowid = c.fk_projet', '', $sqlforcount);
+		}
 		//$sqlforcount = str_replace('LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as ef on (c.rowid = ef.fk_object)', '', $sqlforcount);	// We my need this if there is filters on extrafields
 		$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
 
@@ -657,11 +714,23 @@ if ($socid > 0) {
 if ($search_all != '') {
 	$param .= '&search_all='.urlencode($search_all);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_contract != '') {
 	$param .= '&search_contract='.urlencode($search_contract);
 }
 if ($search_name != '') {
 	$param .= '&search_name='.urlencode($search_name);
+}
+if ($search_alias != '') {
+	$param .= '&search_alias='.urlencode($search_alias);
+}
+if ($search_phone != '') {
+	$param .= '&search_phone='.urlencode($search_phone);
+}
+if ($search_phone_mobile != '') {
+	$param .= '&search_phone_mobile='.urlencode($search_phone_mobile);
 }
 if ($search_email != '') {
 	$param .= '&search_email='.urlencode($search_email);
@@ -671,6 +740,15 @@ if ($search_ref_customer != '') {
 }
 if ($search_ref_supplier != '') {
 	$param .= '&search_ref_supplier='.urlencode($search_ref_supplier);
+}
+if ($search_project_ref != '') {
+	$param .= '&search_project_ref='.urlencode($search_project_ref);
+}
+if ($search_project != '') {
+	$param .= '&search_project='.urlencode($search_project);
+}
+if ($search_type >= 0) {
+	$param .= '&search_type='.$search_type;
 }
 if ($search_note_private != '') {
 	$param .= '&search_note_private='.urlencode($search_note_private);
@@ -765,6 +843,15 @@ if ($search_user > 0) {
 if ($search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 }
+if ($search_town != '') {
+	$param .= '&search_town='.urlencode($search_town);
+}
+if ($search_zip != '') {
+	$param .= '&search_zip='.urlencode($search_zip);
+}
+if ($search_state != '') {
+	$param .= '&search_state='.urlencode($search_state);
+}
 if ($search_country != '') {
 	$param .= "&search_country=".urlencode($search_country);
 }
@@ -782,6 +869,10 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -804,6 +895,7 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/contrat/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('contrat', 'creer'));
 
@@ -894,7 +986,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -906,10 +998,15 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre maxwidthsearch center">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
+	print '</td>';
+}
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
@@ -927,14 +1024,32 @@ if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 	print '<input type="text" class="flat" size="6" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'">';
 	print '</td>';
 }
+if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+	print '<td class="liste_titre">';
+	print $form->selectarray('search_type', array('-1' => '', '0' => $langs->trans('CustomerContract'), '1' => $langs->trans('SupplierContract')), $search_type, 0, 0, 0, '', 0, 0, 0, '', 'flat maxwidth100');
+	print '</td>';
+}
+// Project ref
+if (!empty($arrayfields['p.ref']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth75" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'">';
+	print '</td>';
+}
+// Project label
+if (!empty($arrayfields['p.title']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat maxwidth100" name="search_project" value="'.dol_escape_htmltag($search_project).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'"'.($user->socid > 0 ? " disabled" : "").'>';
 	print '</td>';
 }
-if (!empty($arrayfields['s.email']['checked'])) {
+// Alias name
+if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="6" name="search_email" value="'.dol_escape_htmltag($search_email).'">';
+	print '<input type="text" class="flat maxwidth75" name="search_alias" value="'.dolPrintHTMLForAttribute($search_alias).'">';
 	print '</td>';
 }
 // Town
@@ -957,10 +1072,28 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 	print '</td>';
 }
+// Phone
+if (!empty($arrayfields['s.phone']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat width50" name="search_phone" value="'.dol_escape_htmltag($search_phone).'">';
+	print '</td>';
+}
+// Phone mobile
+if (!empty($arrayfields['s.phone_mobile']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat width50" name="search_phone_mobile" value="'.dol_escape_htmltag($search_phone_mobile).'">';
+	print '</td>';
+}
+// Email
+if (!empty($arrayfields['s.email']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat width75" name="search_email" value="'.dol_escape_htmltag($search_email).'">';
+	print '</td>';
+}
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), '', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['sale_representative']['checked'])) {
@@ -1029,7 +1162,7 @@ if (!empty($arrayfields['lower_planned_end_date']['checked'])) {
 	print '<td class="liste_titre nowraponall center">';
 	$arrayofoperators = array('0' => '', '=' => '=', '<=' => '<=', '>=' => '>=');
 	print $form->selectarray('search_op2df', $arrayofoperators, $search_op2df, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth50imp');
-	print '</br>';
+	print '<br>';
 	print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0);
 	print ' ';
 	print $formother->selectyear($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
@@ -1041,7 +1174,7 @@ if (!empty($arrayfields['status']['checked'])) {
 }
 
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -1055,9 +1188,13 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['c.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
 	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
@@ -1072,13 +1209,25 @@ if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 	print_liste_field_titre($arrayfields['c.ref_supplier']['label'], $_SERVER["PHP_SELF"], "c.ref_supplier", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;	// For the column action
 }
+if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+	print_liste_field_titre($arrayfields['c.fk_contract_type']['label'], $_SERVER["PHP_SELF"], "c.fk_contract_type", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.ref']['checked'])) {
+	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.title']['checked'])) {
+	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER["PHP_SELF"], "p.title", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;	// For the column action
 }
-if (!empty($arrayfields['s.email']['checked'])) {
-	print_liste_field_titre($arrayfields['s.email']['label'], $_SERVER["PHP_SELF"], "s.email", "", $param, '', $sortfield, $sortorder);
-	$totalarray['nbfield']++;	// For the column action
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.town']['checked'])) {
 	print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
@@ -1094,6 +1243,18 @@ if (!empty($arrayfields['state.nom']['checked'])) {
 }
 if (!empty($arrayfields['country.code_iso']['checked'])) {
 	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['s.phone']['checked'])) {
+	print_liste_field_titre($arrayfields['s.phone']['label'], $_SERVER["PHP_SELF"], "s.phone", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['s.phone_mobile']['checked'])) {
+	print_liste_field_titre($arrayfields['s.phone_mobile']['label'], $_SERVER["PHP_SELF"], "s.phone_mobile", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;	// For the column action
+}
+if (!empty($arrayfields['s.email']['checked'])) {
+	print_liste_field_titre($arrayfields['s.email']['label'], $_SERVER["PHP_SELF"], "s.email", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;	// For the column action
 }
 if (!empty($arrayfields['typent.code']['checked'])) {
@@ -1148,7 +1309,7 @@ if (!empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($staticcontratligne->LibStatut(5, 3, -1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
 	$totalarray['nbfield']++;	// For the column action
 }
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;	// For the column action
 }
@@ -1164,11 +1325,63 @@ $typenArray = array();
 $cacheCountryIDCode = array();
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 $showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
-while ($i < $imaxinloop) {
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
+
+// Load the records of the page first, so data needed by all lines are loaded with one request instead of one per line
+$arrayofobj = array();
+$listofcontractids = array();
+for ($k = 0; $k < $imaxinloop; $k++) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break;
+	}
+	$arrayofobj[] = $obj;
+	$listofcontractids[] = (int) $obj->rowid;
+}
+// Number of service lines per status of the contracts of the page
+$nbofservicesbycontract = array();
+if (!empty($listofcontractids)) {
+	$sqlnbofservices = "SELECT cd.fk_contrat,";
+	$sqlnbofservices .= " SUM(".$db->ifsql("cd.statut=0", '1', '0').") as nb_initial,";
+	$sqlnbofservices .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", '1', '0').") as nb_running,";
+	$sqlnbofservices .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", '1', '0').") as nb_expired,";
+	$sqlnbofservices .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contract->services->expires->warning_delay)."')", '1', '0').") as nb_late,";
+	$sqlnbofservices .= " SUM(".$db->ifsql("cd.statut=5", '1', '0').") as nb_closed";
+	$sqlnbofservices .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+	$sqlnbofservices .= " WHERE cd.fk_contrat IN (".$db->sanitize(implode(',', $listofcontractids)).")";
+	$sqlnbofservices .= " GROUP BY cd.fk_contrat";
+	$resqlnbofservices = $db->query($sqlnbofservices);
+	if ($resqlnbofservices) {
+		while ($objnbofservices = $db->fetch_object($resqlnbofservices)) {
+			$nbofservicesbycontract[(int) $objnbofservices->fk_contrat] = $objnbofservices;
+		}
+		$db->free($resqlnbofservices);
+	} else {
+		dol_print_error($db);
+	}
+}
+// Sales representatives of the thirdparties of the page
+$salesrepresentativesbysoc = array();
+if (!empty($arrayfields['sale_representative']['checked']) && !empty($arrayofobj)) {
+	$salesrepresentativesbysoc = $socstatic->getSalesRepresentativesOfThirdparties(array_column($arrayofobj, 'socid'));
+	if (!is_array($salesrepresentativesbysoc)) {
+		$salesrepresentativesbysoc = array();
+	}
+}
+
+while ($i < $imaxinloop) {
+	$obj = (empty($arrayofobj[$i]) ? null : $arrayofobj[$i]);
 	if (empty($obj)) {
 		break; // Should not happen
 	}
+
+	// Number of service lines per status (null if the contract has no line, like the previous subrequests did)
+	$nbofservices = (empty($nbofservicesbycontract[(int) $obj->rowid]) ? null : $nbofservicesbycontract[(int) $obj->rowid]);
+	$obj->nb_initial = ($nbofservices ? $nbofservices->nb_initial : null);
+	$obj->nb_running = ($nbofservices ? $nbofservices->nb_running : null);
+	$obj->nb_expired = ($nbofservices ? $nbofservices->nb_expired : null);
+	$obj->nb_late = ($nbofservices ? $nbofservices->nb_late : null);
+	$obj->nb_closed = ($nbofservices ? $nbofservices->nb_closed : null);
 
 	$contracttmp->ref = $obj->ref;
 	$contracttmp->id = $obj->rowid;
@@ -1219,7 +1432,7 @@ while ($i < $imaxinloop) {
 		// Show here line of result
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1233,6 +1446,13 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Technical ID
+		if (!empty($arrayfields['c.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked'])) {
 			print '<td class="nowraponall">';
@@ -1242,7 +1462,7 @@ while ($i < $imaxinloop) {
 			}
 			if (!empty($obj->note_private) || !empty($obj->note_public)) {
 				print ' <span class="note">';
-				print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/core/note.php?element=contrat&id='.$obj->rowid.'&save_lastsearch_values=1">'.img_picto($langs->trans("ViewPrivateNote"), 'note').'</a>';
 				print '</span>';
 			}
 
@@ -1268,6 +1488,43 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">'.dol_escape_htmltag($obj->ref_supplier).'</td>';
 		}
+		if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
+			$contractTypeLabels = array(0 => $langs->trans('CustomerContract'), 1 => $langs->trans('SupplierContract'));
+			print '<td>'.dol_escape_htmltag($contractTypeLabels[(int) $obj->fk_contract_type] ?? '').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Project ref
+		if (!empty($arrayfields['p.ref']['checked'])) {
+			// When the project label column is not displayed, we show the project label under the project ref
+			$showprojectlabelunderref = (empty($arrayfields['p.title']['checked']) && (string) $obj->project_label !== '');
+			print '<td class="tdoverflowmax150'.($showprojectlabelunderref ? ' tdlineheightsmall' : '').'">';
+			if ($obj->project_id > 0) {
+				$projectstatic->id = $obj->project_id;
+				$projectstatic->ref = $obj->project_ref;
+				$projectstatic->title = $obj->project_label;
+				print $projectstatic->getNomUrl(1);
+				if ($showprojectlabelunderref) {
+					print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->project_label).'"><span class="spantitle">'.dolPrintLabel($obj->project_label).'</span></div>';
+				}
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Project label
+		if (!empty($arrayfields['p.title']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->project_label).'">';
+			if ($obj->project_id > 0) {
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->project_label).'</span>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if ($obj->socid > 0) {
@@ -1276,9 +1533,11 @@ while ($i < $imaxinloop) {
 			}
 			print '</td>';
 		}
-		// Email
-		if (!empty($arrayfields['s.email']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
+		// Alias name
+		if (!empty($arrayfields['s.name_alias']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->name_alias).'">';
+			print '<span class="spantitle">'.dolPrintHTML($obj->name_alias).'</span>';
+			print '</td>';
 		}
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
@@ -1307,13 +1566,30 @@ while ($i < $imaxinloop) {
 		}
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
-			print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($socstatic->country).'">';
-			print dol_escape_htmltag($socstatic->country);
+			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($socstatic->country).'">';
+			if (!empty($socstatic->country_code) && !$showcountrylabelinlist) {
+				print picto_from_langcode($socstatic->country_code, 'title="'.dolPrintHTMLForAttribute($socstatic->country).'"', 1);
+			} else {
+				print dolPrintHTML($socstatic->country);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Phone
+		if (!empty($arrayfields['s.phone']['checked'])) {
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $socstatic->country_code, 0, $socstatic->id, 'AC_TEL', ' ', 'phone', '', 0, '', 2).'</td>';
+		}
+		// Phone mobile
+		if (!empty($arrayfields['s.phone_mobile']['checked'])) {
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $socstatic->country_code, 0, $socstatic->id, 'AC_TEL', ' ', 'mobile', '', 0, '', 2).'</td>';
+		}
+		// Email
+		if (!empty($arrayfields['s.email']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $obj->email, 0, $obj->socid, 1, 0, $showinvalidemail, 1).'</td>';
+		}
+
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
 			print '<td class="center">';
@@ -1330,10 +1606,8 @@ while ($i < $imaxinloop) {
 			// Sales representatives
 			print '<td>';
 			if ($obj->socid > 0) {
-				$listsalesrepresentatives = $socstatic->getSalesRepresentatives($user);
-				if ($listsalesrepresentatives < 0) {
-					dol_print_error($db);
-				}
+				// Sales representatives were loaded before the loop for all thirdparties of the page
+				$listsalesrepresentatives = (empty($salesrepresentativesbysoc[$obj->socid]) ? array() : $salesrepresentativesbysoc[$obj->socid]);
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
 				if ($nbofsalesrepresentative > 6) {
 					// We print only number
@@ -1441,7 +1715,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

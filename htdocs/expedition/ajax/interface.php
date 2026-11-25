@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2024	Laurent Destailleur (eldy)	<eldy@users.sourceforge.net>
  * Copyright (C) 2024	Lionel Vessiller			<lvessiller@open-dsi.fr>
+ * Copyright (C) 2026		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +85,7 @@ if ($action == 'updateselectbatchbywarehouse' && $permissiontowrite) {
 	}
 	$sql .= " WHERE ps.fk_product = ".((int) $product_id);
 	if ($warehouse_id > 0) {
-		$sql .= " AND fk_entrepot = '".((int) $warehouse_id)."'";
+		$sql .= " AND fk_entrepot = ".((int) $warehouse_id);
 	}
 	$sql .= " ORDER BY e.ref, pb.batch";
 

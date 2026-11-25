@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2021 NextGestion  <contact@nextgestion.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,9 +86,9 @@ class PartnershipUtils
 		}
 
 		$partnership = new Partnership($this->db);
-		$MAXPERCALL = (!getDolGlobalString('PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL') ? 25 : $conf->global->PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL); // Limit to 25 per call
+		$MAXPERCALL = getDolGlobalInt('PARTNERSHIP_MAX_EXPIRATION_CANCEL_PER_CALL', 25); // Limit to 25 per call
 
-		$langs->loadLangs(array("partnership", "member"));
+		$langs->loadLangs(array("partnership", "members"));
 
 		$error = 0;
 		$erroremail = '';
@@ -115,7 +115,7 @@ class PartnershipUtils
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d on (d.rowid = p.fk_member)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
 		$sql .= " WHERE fk_member > 0";
-		$sql .= " AND (d.datefin < '".$this->db->idate($datetotest)."' AND dty.subscription = 1)";
+		$sql .= " AND (d.datefin < '".$this->db->idate($datetotest)."' AND dty.subscription = '1')";
 		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted not yet canceled
 		$sql .= $this->db->order('d.rowid', 'ASC');
 		// Limit is managed into loop later
@@ -184,7 +184,7 @@ class PartnershipUtils
 							if (!empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
-								$outputlangs->loadLangs(array('main', 'member', 'partnership'));
+								$outputlangs->loadLangs(array('main', 'members', 'partnership'));
 							}
 
 							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
@@ -194,14 +194,14 @@ class PartnershipUtils
 
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-							$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+							$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 
 							// We are in the case of autocancellation subscription because of missing backlink
 							$fk_partner = $object->fk_member;
 
 							$adherent = new Adherent($this->db);
 							$adherent->fetch($object->fk_member);
-							$sendto = $adherent->email;
+							$sendto = (string) $adherent->email;
 
 							$trackid = 'par'.$object->id;
 							$sendcontext = 'standard';
@@ -300,7 +300,7 @@ class PartnershipUtils
 			$maxpercall = getDolGlobalInt('PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL', 10);
 		}
 
-		$langs->loadLangs(array("partnership", "member"));
+		$langs->loadLangs(array("partnership", "members"));
 
 		$error = 0;
 		$erroremail = '';
@@ -325,7 +325,7 @@ class PartnershipUtils
 
 		$this->db->begin();
 
-		$sql = "SELECT p.rowid, p.status, p.".$fk_partner;
+		$sql = "SELECT p.rowid, p.status, p.".$this->db->sanitize($fk_partner);
 		$sql .= ", p.url_to_check, p.last_check_backlink";
 		$sql .= ', partner.url, partner.email';
 		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p";
@@ -334,7 +334,7 @@ class PartnershipUtils
 		} else {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as partner on (partner.rowid = p.fk_soc)";
 		}
-		$sql .= " WHERE p.".$fk_partner." > 0";
+		$sql .= " WHERE p.".$this->db->sanitize($fk_partner)." > 0";
 		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted and not yet canceled
 		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referral link.
 		$sql .= $this->db->order('p.rowid', 'ASC');
@@ -410,7 +410,7 @@ class PartnershipUtils
 									if (!empty($newlang)) {
 										$outputlangs = new Translate("", $conf);
 										$outputlangs->setDefaultLang($newlang);
-										$outputlangs->loadLangs(array('main', 'member', 'partnership'));
+										$outputlangs->loadLangs(array('main', 'members', 'partnership'));
 									}
 
 									$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'partnership_send', $user, $outputlangs, 0, 1, $labeltemplate);
@@ -420,9 +420,9 @@ class PartnershipUtils
 
 									$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 									$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-									$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+									$from = dol_string_nospecial(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), ' ', array(",")).' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 
-									$sendto = $obj->email;
+									$sendto = (string) $obj->email;
 
 									$trackid = 'par'.$object->id;
 									$sendcontext = 'standard';

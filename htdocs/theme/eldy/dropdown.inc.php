@@ -56,6 +56,10 @@ button.dropdown-item.global-search-item {
 	border-bottom-right-radius: 6px;
 }
 
+#top-bookmark-search-nothing-found {
+	color: #444;
+}
+
 
 .dropdown-search {
 	border-color: #eee;
@@ -139,10 +143,14 @@ button.dropdown-item.global-search-item {
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
 	border: 1px solid rgba(128, 128, 128, .15);
-	border-radius: 4px !important;
+	border-radius: 10px !important;
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
+.ai_dropdown{
+	margin-top: 14px !important;
+	margin-left: -2px !important;
+}
 
 .dropdown-toggle{
 	text-decoration: none !important;
@@ -150,7 +158,7 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after, div#topmenu-quickmemo-dropdown a.dropdown-toggle::after {
 	display: none;
 }
 
@@ -176,7 +184,8 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 
 
 .open>.dropdown-toggle::after {
-	transform: rotate(180deg);
+	/* Flip instead of rotate(180deg): the arrow box is 50px high, so a rotation makes it overflow the page width during the transition */
+	transform: scaleY(-1);
 }
 
 /*
@@ -272,7 +281,7 @@ a.top-menu-dropdown-link {
 .dropdown-menu > .user-footer {
 	border-top: 1px solid #f0f0f0;
 	background-color: #f9f9f9;
-	padding: 10px;
+	padding: 20px;
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
 }
@@ -290,7 +299,7 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-menu > .user-body, .dropdown-body {
-	padding: 15px;
+	padding: 20px;
 	border-bottom: 1px solid #f4f4f4;
 	border-top: 1px solid #f0f0f0;
 	white-space: normal;
@@ -326,11 +335,17 @@ a.top-menu-dropdown-link {
 	border-radius: 0;
 }
 
-
+/* Any element (picto of a module added into the group of tools of the top right menu via the hook
+ * printTopRightMenu) can apply the class topmenu-any to get the same padding as the pictos of the core.
+ * The :hover is required, else .atoplogin:hover of the reduction 3 wins and the picto moves on hover. */
+.topmenu-any, .topmenu-any:hover,
+#topmenu-tool,
 #topmenu-global-search-dropdown,
+#topmenu-ai-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,
 #topmenu-uploadfile-dropdown,
+#topmenu-quickmemo-dropdown,
 #topmenu-login-dropdown {
 	padding: 0 5px 0 5px;
 }
@@ -449,12 +464,67 @@ a.dropdown-item {
  * SELECT FIELDS
  */
 
-li.liinputsearch {
+li.liinputsearch, div.liinputsearch {
 	position: sticky;
-	display: block;
 	top: 0;
 	background: var(--colorbackbody);
 	z-index: 1;
+}
+div.liinputsearch {
+	display: block;
+}
+
+/* Column selector: the line of the search area is a row with the checkbox to check all,
+ * the picto of trash to delete the personalization of the position of the fields, and the search
+ * input that fills the remaining width */
+li.liinputsearch {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding-right: 10px;
+	/* The bar of the search area, on the full width of the row (under the checkbox and the picto of trash too) */
+	border-bottom: 1px solid var(--inputbordercolor);
+}
+li.liinputsearch input[type="checkbox"],
+li.liinputsearch span.fas {
+	flex: 0 0 auto;
+}
+li.liinputsearch input[type="text"] {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 140px;
+	/* The bar is that of the row, the input has none anymore */
+	border-bottom: 0 !important;
+}
+
+/* Picto to delete the personalization of the position of the fields: the picto of move of the
+ * fields, crossed with a thin rising diagonal bar */
+li.liinputsearch span.deletepositionfields_dropdownselectedfields {
+	position: relative;
+}
+li.liinputsearch span.deletepositionfields_dropdownselectedfields::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	background-image:
+		linear-gradient(135deg, transparent calc(50% - 0.5px), currentColor calc(50% - 0.5px), currentColor calc(50% + 0.5px), transparent calc(50% + 0.5px));
+}
+
+/* Column selector: the label of each field fills the row and the picto of
+ * drag and drop is at the end of the row */
+.dropdown dd ul.sortable li {
+	display: flex;
+	align-items: center;
+}
+.dropdown dd ul.sortable li label {
+	flex: 1 1 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 
@@ -542,10 +612,11 @@ div.quickaddblock:focus {
 	bottom: 0;
 	transform: translateY(100%);
 
-	background: #fff;
-	border: 1px solid #bbb;
 	text-align: <?php echo $left; ?>;
-	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+	background: #fff;
+	/* border: 1px solid #bbb; */
+	border-radius: 6px;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
 }
 
 /* dropdown --up variant */
@@ -570,7 +641,8 @@ div.quickaddblock:focus {
 	background: none;
 	color: #333 !important;
 }
-.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused),
+.dropdown-content span:is(.butAction,.butActionDelete,.butActionRefused) {
 	display: flex;
 	border-radius: 0;
 }

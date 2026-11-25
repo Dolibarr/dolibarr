@@ -413,7 +413,7 @@ if ($object->id) {
 	 */
 	$head = conferenceorboothPrepareHead($object, $withproject);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', $langs->trans("ConferenceOrBooth"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 
 	// Build file list
@@ -449,14 +449,14 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'eventorganization';
+	$modulepart = 'conferenceorbooth@eventorganization';
 	$param = '&id='.$object->id;
 	//$param = '';
 	if ($withproject) {
 		$param .= '&withproject=1';
 	}
 	//$relativepathwithnofile='conferenceorbooth/' . dol_sanitizeFileName($object->id).'/';
-	$relativepathwithnofile = 'conferenceorbooth/'.dol_sanitizeFileName($object->ref).'/';
+	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

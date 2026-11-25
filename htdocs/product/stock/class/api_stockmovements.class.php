@@ -87,6 +87,10 @@ class StockMovements extends DolibarrApi
 			throw new RestException(404, 'stock movement not found');
 		}
 
+		if (! DolibarrApi::_checkAccessToResource('stockmovement', $this->stockmovement, 'stock_mouvement', '', '', 'rowid', 'fk_entrepot@entrepot')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		return $this->_cleanObjectDatas($this->stockmovement);
 	}
 
@@ -94,21 +98,23 @@ class StockMovements extends DolibarrApi
 	 * Get a list of stock movements
 	 *
 	 * @since	5.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
 	 * @param int		$limit				Limit for list
 	 * @param int		$page				Page number
-	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.fk_product:=:1) and (t.date_creation:<:'20160101')"
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.fk_product:=:1) and (t.date_creation:>:'20160101')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array						Array of warehouse objects
-	 * @phan-return MouvementStock[]
-	 * @phpstan-return MouvementStock[]
+	 * @phan-return MouvementStock[]|array{count:int}
+	 * @phpstan-return MouvementStock[]|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		$obj_ret = array();
 
@@ -117,10 +123,11 @@ class StockMovements extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement AS t LEFT JOIN ".MAIN_DB_PREFIX."stock_mouvement_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."entrepot as e ON t.fk_entrepot = e.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."stock_mouvement_extrafields AS ef ON (ef.fk_object = t.rowid)";
+		$sql .= " WHERE e.entity IN (".getEntity('stock').")";
 
-		//$sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
-		$sql .= ' WHERE 1 = 1';
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -132,6 +139,11 @@ class StockMovements extends DolibarrApi
 
 		// this query will return total stock movements with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -172,7 +184,7 @@ class StockMovements extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -234,11 +246,7 @@ class StockMovements extends DolibarrApi
 
 		$this->stockmovement->setOrigin($origin_type, $origin_id);
 		if ($this->stockmovement->_create(DolibarrApiAccess::$user, $product_id, $warehouse_id, $qty, $type, (float) $price, $label, $movementcode, $dateMvt, $dluo, $dlc, $batch) <= 0) {
-			$errormessage = $this->stockmovement->error;
-			if (empty($errormessage)) {
-				$errormessage = implode(',', $this->stockmovement->errors);
-			}
-			throw new RestException(503, 'Error when create stock movement : '.$errormessage);
+			throw new RestException(503, 'Error when create stock movement : '.$this->stockmovement->errorsToString());
 		}
 
 		return $this->stockmovement->id;
@@ -263,17 +271,18 @@ class StockMovements extends DolibarrApi
 			throw new RestException(404, 'stock movement not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('stock', $this->stockmovement)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach($request_data as $field => $value) {
 			if ($field == 'id') continue;
-			$this->stockmovement->$field = $value;
+			$this->stockmovement->$field = $this->_checkValForAPI($field, $value, $this->stockmovement);
 		}
 
-		if($this->stockmovement->update($id, DolibarrApiAccess::$user))
+		if ($this->stockmovement->update($id, DolibarrApiAccess::$user)) {
 			return $this->get ($id);
+		}
 
 		return false;
 	}*/
@@ -295,7 +304,7 @@ class StockMovements extends DolibarrApi
 			throw new RestException(404, 'stock movement not found');
 		}
 
-		if (! DolibarrApi::_checkAccessToResource('stock',$this->stockmovement->id)) {
+		if (! DolibarrApi::_checkAccessToResource('stock', $this->stockmovement)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

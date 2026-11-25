@@ -5,7 +5,6 @@ SupplierInvoices=Leverantörsfakturor
 ShowSupplierInvoice=Visa leverantörsfaktura
 NewSupplier=Ny leverantör
 NewSupplierInvoice = Ny leverantörsfaktura
-History=Historik
 ListOfSuppliers=Leverantörsförteckning
 ShowSupplier=Visa leverantör
 BuyingPriceMin=Bästa inköpspris

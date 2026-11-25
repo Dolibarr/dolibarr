@@ -159,7 +159,7 @@ if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolis
 
 $morehtmlref = '<div class="refidno">';
 // Title
-$morehtmlref .= $object->title;
+$morehtmlref .= '<span class="banner-object-name-alias">'.$object->title.'</span>';
 // Thirdparty
 if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
@@ -263,7 +263,7 @@ if (!empty($object->id)) {
 		$param .= '&dateevent_endday='.GETPOSTINT('dateevent_endday');
 	}
 
-
+	// Try to know count of actioncomm from cache
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 	$cachekey = 'count_events_project_'.$object->id;
 	$nbEvent = dol_getcache($cachekey);

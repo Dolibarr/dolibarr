@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Open-DSI					<support@open-dsi.fr>
- * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -34,6 +34,7 @@ require '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -42,9 +43,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
@@ -107,7 +107,7 @@ $datestart_dtend = dol_mktime(23, 59, 59, GETPOSTINT('datestart_dtendmonth'), GE
 $dateend_dtstart = dol_mktime(0, 0, 0, GETPOSTINT('dateend_dtstartmonth'), GETPOSTINT('dateend_dtstartday'), GETPOSTINT('dateend_dtstartyear'), 'tzuserrel');
 $dateend_dtend = dol_mktime(23, 59, 59, GETPOSTINT('dateend_dtendmonth'), GETPOSTINT('dateend_dtendday'), GETPOSTINT('dateend_dtendyear'), 'tzuserrel');
 if ($search_status == '' && !GETPOSTISSET('search_status')) {
-	$search_status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+	$search_status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS'));
 }
 if (empty($mode) && !GETPOSTISSET('mode')) {
 	$mode = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_list');
@@ -122,8 +122,6 @@ $search_categ_cus = GETPOST("search_categ_cus", "intcomma", 3) ? GETPOST("search
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new ActionComm($db);
 $hookmanager->initHooks(array('agendalist'));
-
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -196,6 +194,9 @@ foreach ($object->fields as $key => $val) {
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 // Complete arrayfields with special fields
 $arrayfields = array_merge($arrayfields, array(
@@ -285,7 +286,22 @@ if (empty($reshook) && !empty($massaction)) {
 	}
 
 	if (isset($percent)) {
+		$permissiontoupdateall = $user->hasRight('agenda', 'allactions', 'create');
+		$permissiontoupdatemyown = $user->hasRight('agenda', 'myactions', 'create');
 		foreach ($toselect as $toselectid) {
+			// Check user has the permission to change the status of this event
+			// Permission is the same than the one required to edit an event on the event card page.
+			$canupdatepercent = $permissiontoupdateall;
+			if (empty($canupdatepercent)) {
+				$resultfetch = $object->fetch($toselectid);
+				if ($resultfetch > 0 && ($object->authorid == $user->id || $object->userownerid == $user->id) && $permissiontoupdatemyown) {
+					$canupdatepercent = 1;
+				}
+			}
+			if (empty($canupdatepercent)) {
+				setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
+				continue;
+			}
 			$result = $object->updatePercent($toselectid, $percent);
 			if ($result < 0) {
 				dol_print_error($db);
@@ -432,6 +448,11 @@ if ($search_categ_cus != 0) {
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 $paramnoactionodate = $param;
 
@@ -580,7 +601,7 @@ if ($search_status == 'todo') {
 if ($search_import_key) {
 	$sql .= natural_search("a.import_key", $search_import_key);
 }
-if ($search_id) {
+if ($search_id != '') {
 	$sql .= natural_search("a.id", $search_id, 1);
 }
 if ($search_title) {
@@ -704,8 +725,8 @@ $num = $db->num_rows($resql);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Local calendar
-$newtitle = '<div class="nowrap clear inline-block minheight30">';
-$newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
+$newtitle = '<div class="nowrap clear inline-block minheight30 hideonsmartphone">';
+$newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled><label class="labelcalendar"><span class="check_local_text small"> '.$langs->trans("LocalAgenda").'</span></label> &nbsp; ';
 $newtitle .= '</div>';
 //$newtitle=$langs->trans($title);
 
@@ -713,7 +734,7 @@ $tabactive = 'cardlist';
 
 $head = calendars_prepare_head($param);
 
-print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" spellcheck="false">'."\n";
 
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -818,7 +839,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 $moreforfilter = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -835,14 +856,14 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre" align="middle">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
 if (!empty($arrayfields['a.id']['checked'])) {
-	print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
+	print '<td class="liste_titre"><input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'"></td>';
 }
 if (!empty($arrayfields['a.datep']['checked'])) {
 	print '<td class="liste_titre nowraponall center">';
@@ -910,7 +931,7 @@ if (!empty($arrayfields['a.percent']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -924,7 +945,7 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
@@ -972,7 +993,7 @@ if (!empty($arrayfields['a.fk_element']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -994,7 +1015,7 @@ if (!empty($arrayfields['a.percent']['checked'])) {
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "a.percent", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
@@ -1110,7 +1131,7 @@ while ($i < $imaxinloop) {
 	print '<tr class="oddeven row-with-select ' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
 
 	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if ($conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
@@ -1130,7 +1151,7 @@ while ($i < $imaxinloop) {
 
 	// Start date
 	if (!empty($arrayfields['a.datep']['checked'])) {
-		print '<td class="center nowraponall'.($event_start_date_css ? ' '.$event_start_date_css.'x' : '').'"><span>';
+		print '<td class="center nowraponall tdlineheightsmall'.($event_start_date_css ? ' '.$event_start_date_css.'x' : '').'"><span>';
 		if (empty($obj->fulldayevent)) {
 			print '<div class="center inline-block lineheightsmall">';
 			print dol_print_date($db->jdate($obj->dp), 'dayreduceformat', 'tzuserrel');
@@ -1326,7 +1347,7 @@ while ($i < $imaxinloop) {
 		print '<td class="center nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
 	}
 	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	if (!$conf->main_checkbox_left_column) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;

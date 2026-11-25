@@ -31,9 +31,9 @@ UseDiscountOnTotal=välisummasta
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Määrittää, käsitelläänkö globaalia alennusta tuotteena, palveluna vai vain välisummana marginaalin laskennassa.
 MARGIN_TYPE=Osto-/kustannushinta, jota ehdotti oletus marginaalilaskennassa
 MargeType1=Marginaali parhaalla Toimittaja hinnalla
-MargeType2=Painotetun keskihinnan marginaali (WAP)
+MargeType2=Margin on Weighted Average Cost (WAC)
 MargeType3=Omakustannushinnan marginaali
-MarginTypeDesc=* Parhaan ostohinnan marginaali = myyntihinta - paras Toimittaja tuotekortissa määritetty hinta<br>* Painotetun keskihinnan marginaali (WAP) ) = Myyntihinta – tuotteen painotettu keskihinta (WAP) tai paras Toimittaja hinta, jos WAPia ei ole vielä määritetty<br>* Kustannusmarginaali hinta = myyntihinta – omakustannushinta määritetty tuotekortilla tai WAP:lla, jos omakustannushintaa ei ole määritetty, tai paras Toimittaja hinta, jos WAPia ei ole vielä määritetty
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Cost (WAC) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAC if cost price not defined, or best vendor price if WAC not yet defined
 CostPrice=Kustannushinta
 UnitCharges=Yksikkömaksut
 Charges=Maksut
@@ -43,4 +43,7 @@ rateMustBeNumeric=Koron on oltava numeerinen arvo
 markRateShouldBeLesserThan100=Arvosanan tulee olla alle 100
 ShowMarginInfos=Näytä marginaalitiedot
 CheckMargins=Marginaalien yksityiskohta
-MarginPerSaleRepresentativeWarning=Käyttäjäkohtaisen marginaalin raportissa käytetään kolmansien osapuolten ja myyntiedustajien välistä linkkiä kunkin myyntiedustajan marginaalin laskemiseen. Koska joillakin kolmansilla osapuolilla ei ehkä ole omaa myyntiedustajaa ja, jotkut kolmannet osapuolet voivat olla linkitettynä useisiin osapuoliin, joten joitain summia ei välttämättä sisällytetä tähän raporttiin (jos myyntiedustajaa ei ole) ja jotkut saattavat näkyä eri riveillä (jokaiselle myyntiedustajalle).
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included in this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginUpdateLinkedBuyingPrice=Suggest to propagate the cost price modified on a line to all the lines of the linked proposals, orders and invoices that has the same product (users will decide yes or no at eachmodification)
+UpdateLinkedBuyingPrice=Update the cost price on all lines (with the same product) of the linked documents
+UpdateLinkedBuyingPriceQuestion=The cost price of this line has changed. Apply it to the lines of the linked documents that has the same product ?

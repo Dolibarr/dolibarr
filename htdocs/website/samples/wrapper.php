@@ -22,7 +22,7 @@ if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
 	die("Sample file for website module. Can't be called directly.");
 }
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
-	require_once './master.inc.php';
+	require_once './master.inc.php'; // @phpstan-ignore requireOnce.fileNotFound (exists only in the deployed website directory)
 } // Load master if not already loaded
 /**
  * @var Conf $conf
@@ -137,6 +137,17 @@ if (GETPOSTISSET('type')) {
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);
+
+// Security: Remove remaining '.', '..' and empty ('//' -> '/') segments, so the reference of the object
+// extracted from the subdirectory can not be faked with a path like 'REF/./file' or 'REF//file'.
+// The reference must also stay the same than the one resolved into dol_check_secure_access_document().
+$pathsegments = explode('/', $original_file);
+foreach ($pathsegments as $key => $pathsegment) {
+	if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+		unset($pathsegments[$key]);
+	}
+}
+$original_file = implode('/', $pathsegments);
 
 
 // Cache or not
@@ -267,7 +278,7 @@ if ($rss) {
 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 	}
 
-	// Ajout directives pour resoudre bug IE
+	// Add directives to fix IE bug
 	//header('Cache-Control: Public, must-revalidate');
 	//header('Pragma: public');
 	if ($cachedelay) {

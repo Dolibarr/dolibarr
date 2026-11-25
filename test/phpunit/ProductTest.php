@@ -25,12 +25,12 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.product.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -230,5 +230,96 @@ class ProductTest extends CommonClassTest
 		$this->assertLessThan($result, 0);
 
 		return $result;
+	}
+
+	/**
+	 * testProductMerge
+	 * Merge an origin product into a target one: empty fields of target are filled, notes are concatenated and origin is deleted.
+	 *
+	 * @return      void
+	 */
+	public function testProductMerge()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$target = new Product($db);
+		$target->initAsSpecimen();
+		$target->ref = 'PRODUCT_SPEC_MERGE_TARGET';
+		$target->barcode = '';
+		$target->description = '';
+		$target->note_private = 'Note target';
+		$targetid = $target->create($user);
+		$this->assertGreaterThan(0, $targetid, "Creation of target product: ".$target->error);
+
+		$origin = new Product($db);
+		$origin->initAsSpecimen();
+		$origin->ref = 'PRODUCT_SPEC_MERGE_ORIGIN';
+		$origin->barcode = '';
+		$origin->description = 'Description origin';
+		$origin->note_private = 'Note origin';
+		$originid = $origin->create($user);
+		$this->assertGreaterThan(0, $originid, "Creation of origin product: ".$origin->error);
+
+		$target = new Product($db);
+		$target->fetch($targetid);
+		$result = $target->mergeProduct($originid);
+		print __METHOD__." targetid=".$targetid." originid=".$originid." result=".$result."\n";
+		$this->assertEquals(0, $result, "Merge of products: ".$target->error);
+
+		// Origin product must be deleted
+		$check = new Product($db);
+		$this->assertEquals(0, $check->fetch($originid), "Origin product must be deleted");
+
+		// Empty fields of target are filled with origin values and notes are concatenated
+		$check = new Product($db);
+		$check->fetch($targetid);
+		$this->assertEquals('PRODUCT_SPEC_MERGE_TARGET', $check->ref);
+		$this->assertEquals('Description origin', $check->description);
+		$this->assertEquals(1, preg_match('/Note target.*Note origin/s', $check->note_private), "Notes must be concatenated");
+
+		$result = $check->delete($user);
+		$this->assertGreaterThan(0, $result, "Deletion of target product: ".$check->error);
+	}
+
+	/**
+	 * testUpdateBuyPriceKeepsPriceLine
+	 *
+	 * Setting a supplier price again, without the id of its line, must update the line and keep its history.
+	 *
+	 * @return	void
+	 */
+	public function testUpdateBuyPriceKeepsPriceLine()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$societe = new Societe($db);
+		$societe->fetch(1);
+
+		$product = new ProductFournisseur($db);
+		$product->initAsSpecimen();
+		$product->ref = 'PHPUNIT_KEEP_PRICELINE_'.dol_now();
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, $product->errorsToString());
+
+		$ref_fourn = 'SUPPLIER_REF_PHPUNIT_KEEP_'.dol_now();
+		$ids = array();
+		foreach (array(10, 12) as $price) {
+			$productsupplier = new ProductFournisseur($db);
+			$productsupplier->id = $productid;
+			$ids[] = $productsupplier->update_buyprice(1, $price, $user, 'HT', $societe, 0, $ref_fourn, 0, 0, 0, 0, 0, 0, '', array(), '', $price, 'HT', 1, $conf->currency);
+		}
+		$this->assertGreaterThan(0, $ids[0], 'The price line must be created');
+		$this->assertEquals($ids[0], $ids[1], 'The price line must be kept');
+		$this->assertCount(2, $productsupplier->listProductFournisseurPriceLog($ids[0]), 'The history must contain the 2 prices');
+
+		$product->delete($user);
 	}
 }

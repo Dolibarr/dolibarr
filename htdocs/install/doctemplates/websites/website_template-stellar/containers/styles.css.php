@@ -271,8 +271,18 @@ html.bodywebsite,
 }
 .bodywebsite strong,
 .bodywebsite b {
-  font-weight: 400;
+    font-weight: 400;
 }
+.bodywebsite .post-boxed-title.font-weight-bold {
+    font-weight: 600;
+}
+.bodywebsite .container.blog-box.centpercent {
+    color: #888;
+}
+span.text-primary {
+    color: #006;
+}
+
 .bodywebsite em,
 .bodywebsite i {
   font-style: italic;
@@ -291,6 +301,16 @@ html.bodywebsite,
   column-gap: 2em;
   text-align: justify;
 }
+.bodywebpagetype-blogpost div#main p {
+    text-align: justify;
+}
+.bodywebpagetype-blogpost section {
+    padding: 5em 5em 3em 5em;
+}
+.bodywebsite img {
+    max-width: 100%;
+}
+
 .bodywebsite h1,
 .bodywebsite h2,
 .bodywebsite h3,
@@ -1076,6 +1096,9 @@ html.bodywebsite,
   .bodywebsite .row > * {
 	padding: 0 0 0 1.25em;
   }
+}
+.bodywebsite .row {
+    padding-bottom: 30px;
 }
 .bodywebsite .box {
   border-radius: 8px;

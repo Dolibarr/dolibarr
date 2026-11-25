@@ -105,7 +105,6 @@ AdherentNotLinkedToThirdParty
 AdvTgtUse
 Agents
 AllFilesDidAlreadyExist
-AlreadyInV7
 AmountOfReceptions
 AmountOfReceptionsByMonthHT
 AmountOfShipments
@@ -455,7 +454,6 @@ Level
 Lifetime
 LinkedElementsInvalidDeleted
 LinkedToAConcialitedTransaction
-ListOfAttendeesPerConference
 ListTicketsLinkToContract
 Load
 LocalTaxReport
@@ -539,7 +537,6 @@ NoEstablishmentFound
 NoMail
 NoModuleFound
 NoOperations
-NoPasswordGenerationRuleConfigured
 NoReader
 NoRecordedUnpaidInvoices
 NoRecords
@@ -982,6 +979,7 @@ MYMODULE_MYPARAM10
 MYMODULE_MYPARAM11
 MYMODULE_MYPARAM12
 MYMODULE_MYPARAM13
+MYMODULE_MYPARAM14
 ManufacturingOrders
 MemberCreate
 MemberTypeCreate

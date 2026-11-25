@@ -5,7 +5,6 @@ SupplierInvoices=Faktury dostawcy
 ShowSupplierInvoice=Pokaż fakturę dostawcy
 NewSupplier=Nowy dostawca
 NewSupplierInvoice = Nowa faktura od dostawcy
-History=Historia
 ListOfSuppliers=Lista dostawców
 ShowSupplier=Pokaż dostawcę
 BuyingPriceMin=Najlepsza cena zakupu

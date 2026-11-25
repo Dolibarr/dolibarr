@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
+IdModule=identificación del módulo
 EnterNameOfObjectDesc=Ingrese el nombre del objeto a crear sin espacios. Use mayúsculas para separar palabras (Por ejemplo: MiObjeto, Estudiante, Profesor...). Se generará el archivo de clase CRUD, las páginas para enumerar/añadir/editar/eliminar el objeto y los archivos SQL.
 ModuleBuilderDesc2=Ruta donde se generan / editan los módulos (primer directorio para módulos externos definido en %s): <strong> %s </strong>
 ModuleBuilderDesc3=Módulos generados / editables encontrados: <strong> %s </strong>
@@ -35,6 +36,7 @@ SpaceOrSpecialCharAreNotAllowed=No se permiten espacios ni caracteres especiales
 FileNotYetGenerated=Archivo aún no generado
 GenerateCode=Generar codigo
 RegenerateMissingFiles=Generar archivos perdidos
+LanguageFile=Archivo para idioma
 ConfirmDeleteProperty=¿Está seguro de que desea eliminar la propiedad <strong> %s </strong>? Esto cambiará el código en la clase PHP pero también eliminará la columna de la definición de la tabla del objeto.
 NotNull=No nulo
 SearchAll=Usado para 'buscar todo'
@@ -75,7 +77,6 @@ DictionariesDefDesc=Defina aquí los diccionarios proporcionados por su módulo
 PermissionsDefDesc=Defina aquí los nuevos permisos proporcionados por su módulo
 MenusDefDescTooltip=Los menús proporcionados por su módulo/aplicación se definen en la matriz <strong> $this->menus </strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o usar el editor incorporado. <br> <br> Nota: Una vez definidos (y el módulo reactivado), los menús también son visibles en el editor de menús disponible para los usuarios administradores en %s.
 DictionariesDefDescTooltip=Los diccionarios proporcionados por su módulo / aplicación se definen en la matriz <strong> $ this-> dictionary </strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o utilizar el editor incorporado. <br> <br> Nota: Una vez definidos (y el módulo reactivado), los diccionarios también son visibles en el área de configuración para los usuarios administradores en %s.
-PermissionsDefDescTooltip=Los permisos proporcionados por su módulo / aplicación se definen en la matriz <strong> $ this-> rights </strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o utilizar el editor incorporado. <br> <br> Nota: Una vez definidos (y el módulo reactivado), los permisos son visibles en la configuración de permisos predeterminada %s.
 HooksDefDesc=Defina en la propiedad <b>module_parts['hooks']</b>, en el archivo descriptor del módulo, la lista de contextos en los que se debe ejecutar su gancho (la lista de contextos posibles se puede encontrar mediante una búsqueda en '<b>initHooks(</b>' en el código principal).<br>Luego edite el archivo con el código de los ganchos con el código de sus funciones enganchadas (la lista de funciones enganchables se puede encontrar mediante una búsqueda en '<b>executeHooks</b>' en el código principal).
 TriggerDefDesc=Defina en el archivo disparador el código que desea ejecutar cuando se ejecute un evento de negocio externo a su módulo (eventos disparados por otros módulos).
 SeeIDsInUse=Ver ID en uso en su instalación

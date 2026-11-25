@@ -3,6 +3,7 @@
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +27,11 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/user/class/user.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/user/class/user.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -176,6 +176,46 @@ class UserTest extends CommonClassTest
 			),
 			array()
 		);
+		return $localobject;
+	}
+
+	/**
+	 * testUserUpdateEmptyGeneralAccount
+	 *
+	 * The empty option of the select of accounting accounts posts '-1'. It must be stored as an empty general account.
+	 *
+	 * @param   User  $localobject     User
+	 * @return  User
+	 * @depends testUserUpdate
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testUserUpdateEmptyGeneralAccount($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject->accountancy_code_user_general = '421';
+		$result = $localobject->update($user);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
+
+		$newlocalobject = new User($db);
+		$newlocalobject->fetch($localobject->id);
+		$this->assertEquals('421', $newlocalobject->accountancy_code_user_general, 'A real general account must be stored');
+
+		$localobject->accountancy_code_user_general = '-1';
+		$result = $localobject->update($user);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
+		$this->assertEquals('', $localobject->accountancy_code_user_general, 'The value -1 of the empty option must be normalised');
+
+		$newlocalobject = new User($db);
+		$newlocalobject->fetch($localobject->id);
+		$this->assertEmpty($newlocalobject->accountancy_code_user_general, 'The value -1 of the empty option must not be stored');
+
 		return $localobject;
 	}
 
@@ -397,6 +437,79 @@ class UserTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $result;
+	}
+
+	/**
+	 * testUserUpdateRemovesRedundantClearPassword
+	 *
+	 * A clear password left in database is removed by update() when the encryption of passwords
+	 * is enabled and it matches the encrypted password, and only then.
+	 *
+	 * @return  void
+	 */
+	public function testUserUpdateRemovesRedundantClearPassword()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savencrypted = getDolGlobalString('DATABASE_PWD_ENCRYPTED');
+		$savgenerated = getDolGlobalString('USER_PASSWORD_GENERATED');
+		$conf->global->DATABASE_PWD_ENCRYPTED = '1';
+		$conf->global->USER_PASSWORD_GENERATED = 'none';
+
+		$localobject = new User($db);
+		$localobject->initAsSpecimen();
+		$localobject->login = 'testclearpass'.dol_print_date(dol_now(), 'dayhourlog');
+		$localobject->email = $localobject->login.'@example.com';
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, 'Creation of the user failed: '.$localobject->error);
+
+		$result = $localobject->setPassword($user, 'TheGoodPass-123');
+		$this->assertEquals('TheGoodPass-123', $result);
+
+		// The clear password matches the encrypted one: update() removes it
+		$db->query("UPDATE ".MAIN_DB_PREFIX."user SET pass = 'TheGoodPass-123' WHERE rowid = ".((int) $id));
+		$localobject = new User($db);
+		$localobject->fetch($id);
+		$this->assertEquals('TheGoodPass-123', $localobject->pass_indatabase);
+		$passcrypted = $localobject->pass_indatabase_crypted;
+		$result = $localobject->update($user);
+		$this->assertGreaterThanOrEqual(0, $result, 'Update of the user failed: '.$localobject->error);
+		$localobject = new User($db);
+		$localobject->fetch($id);
+		$this->assertEmpty($localobject->pass_indatabase, 'A clear password that matches the encrypted one must be removed');
+		$this->assertEquals($passcrypted, $localobject->pass_indatabase_crypted, 'The encrypted password must not change');
+
+		// The clear password does not match the encrypted one: update() keeps it
+		$db->query("UPDATE ".MAIN_DB_PREFIX."user SET pass = 'AnotherPass-456' WHERE rowid = ".((int) $id));
+		$localobject = new User($db);
+		$localobject->fetch($id);
+		$result = $localobject->update($user);
+		$this->assertGreaterThanOrEqual(0, $result, 'Update of the user failed: '.$localobject->error);
+		$localobject = new User($db);
+		$localobject->fetch($id);
+		$this->assertEquals('AnotherPass-456', $localobject->pass_indatabase, 'A clear password that differs from the encrypted one must be kept');
+		$this->assertEquals($passcrypted, $localobject->pass_indatabase_crypted, 'The encrypted password must not change');
+
+		// The encryption of passwords is disabled: update() keeps the clear password
+		$conf->global->DATABASE_PWD_ENCRYPTED = '';
+		$db->query("UPDATE ".MAIN_DB_PREFIX."user SET pass = 'TheGoodPass-123' WHERE rowid = ".((int) $id));
+		$localobject = new User($db);
+		$localobject->fetch($id);
+		$result = $localobject->update($user);
+		$this->assertGreaterThanOrEqual(0, $result, 'Update of the user failed: '.$localobject->error);
+		$localobject = new User($db);
+		$localobject->fetch($id);
+		$this->assertEquals('TheGoodPass-123', $localobject->pass_indatabase, 'The clear password must be kept when passwords are not encrypted');
+
+		$conf->global->DATABASE_PWD_ENCRYPTED = $savencrypted;
+		$conf->global->USER_PASSWORD_GENERATED = $savgenerated;
+
+		$result = $localobject->delete($user);
+		$this->assertGreaterThan(0, $result, 'Deletion of the user failed: '.$localobject->error);
 	}
 
 	/**

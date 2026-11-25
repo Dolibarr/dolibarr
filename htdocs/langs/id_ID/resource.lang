@@ -34,5 +34,6 @@ ResourceTypeCode=Kode jenis sumber daya
 ImportDataset_resource_1=Sumber daya
 ErrorResourcesAlreadyInUse=Beberapa sumber daya sedang digunakan
 ErrorResourceUseInEvent=%s digunakan dalam acara %s
-MaxUsers=Pengguna maksimum (tempat, kursi, dll.)
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
 MaxUsersLabel=Pengguna maksimal

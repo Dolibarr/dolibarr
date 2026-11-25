@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2014		Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,6 +50,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 $ltt = GETPOSTINT("localTaxType");
 $mode = GETPOST('mode', 'alpha');
+$toselect = GETPOST('toselect', 'array:int');
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 
 /*
@@ -78,7 +80,7 @@ print load_fiche_titre($langs->transcountry($ltt == 2 ? "LT2Payments" : "LT1Paym
 
 $sql = "SELECT rowid, amount, label, f.datev, f.datep";
 $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f ";
-$sql .= " WHERE f.entity = ".$conf->entity." AND localtaxtype = ".((int) $ltt);
+$sql .= " WHERE f.entity = ".((int) $conf->entity)." AND localtaxtype = ".((int) $ltt);
 $sql .= " ORDER BY datev DESC";
 
 $result = $db->query($sql);
@@ -118,7 +120,7 @@ if ($result) {
 				print '<div class="box-flex-container kanban">';
 			}
 			// Output Kanban
-			print $localtax_static->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+			print $localtax_static->getKanbanView('', array('selected' => in_array($localtax_static->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';

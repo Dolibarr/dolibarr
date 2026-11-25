@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,16 +60,23 @@ if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MUL
 }
 
 $permissiontoread = true;
+$permissiontoedit = (!empty($user->admin) || $user->hasRight('user', 'user', 'write'));
+$feature2 = 'user';
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoread = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
+	$permissiontoedit = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'write'));
+	$feature2 = 'group_advance';
 }
+
+// Security check (same as user/group/card.php)
+$result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
 
 
 /*
  * Actions
  */
 
-if ($action == 'dolibarr2ldap') {
+if ($action == 'dolibarr2ldap' && $permissiontoedit) {
 	$ldap = new Ldap();
 	$result = $ldap->connectBind();
 
@@ -159,7 +166,7 @@ print dol_get_fiche_end();
 print '<div class="tabsAction">';
 
 if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+	print dolGetButtonAction('', $langs->trans("ForceSynchronize"), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dolibarr2ldap&token='.newToken(), '', $permissiontoedit);
 }
 
 print "</div>\n";
@@ -190,7 +197,6 @@ if ($result > 0) {
 
 	$records = $ldap->getAttribute($dn, $search);
 
-	//var_dump($records);
 
 	// Show tree
 	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {

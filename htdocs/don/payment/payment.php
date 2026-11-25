@@ -56,6 +56,9 @@ $permissiontoread = $user->hasRight('don', 'lire');
 $permissiontoadd = $user->hasRight('don', 'creer');
 $permissiontodelete = $user->hasRight('don', 'supprimer');
 
+// Check module, read permission (and create permission on action=create) and entity of the donation
+$result = restrictedArea($user, 'don', $chid);
+
 
 /*
  * Actions
@@ -199,7 +202,7 @@ if ($action == 'create') {
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
-	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOST("remonth") ? $datepaid : -1) : 0;
+	$datepayment = getDolGlobalString('MAIN_AUTOFILL_DATE') ? 0 : (GETPOST("remonth") ? $datepaid : -1);
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1, 0, '', '', $object->date, '', 1, $langs->trans("DonationDate"));
 	print "</td>";
 	print '</tr>';

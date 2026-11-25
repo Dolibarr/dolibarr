@@ -39,21 +39,21 @@ top_httphead();
 
 	<link rel="stylesheet" href="<?php print dirname($context->rootUrl).'/theme/common/fontawesome-5/css/all.min.css?layout=classic'; ?>">
 	<?php
-	//$jNotifyCSSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.css';
-	//$jNotifyCSSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.css', 2);
-	$jNotifyCSSUrl = dirname($context->rootUrl).'/includes/jquery/plugins/jnotify/jquery.jnotify.min.css?layout=classic';
+	//$jNotifyCSSUrl = $context->rootUrl.'public/includes/jquery/plugins/jnotify/jquery.jnotify.css';
+	//$jNotifyCSSUrl = dol_buildpath('/public/includes/jquery/plugins/jnotify/jquery.jnotify.min.css', 2);
+	$jNotifyCSSUrl = dirname($context->rootUrl).'/public/includes/jquery/plugins/jnotify/jquery.jnotify.min.css?layout=classic';
 	print '<link rel="stylesheet" href="'.$jNotifyCSSUrl.' ">'."\n";
 
 	// JQuery
-	//$jQueryJSUrl = $context->rootUrl.'includes/jquery/js/jquery.js';
-	//$jQueryJSUrl = dol_buildpath('/includes/jquery/js/jquery.js', 2);
-	$jQueryJSUrl = dirname($context->rootUrl).'/includes/jquery/js/jquery.min.js';
+	//$jQueryJSUrl = $context->rootUrl.'public/includes/jquery/js/jquery.js';
+	//$jQueryJSUrl = dol_buildpath('/public/includes/jquery/js/jquery.js', 2);
+	$jQueryJSUrl = dirname($context->rootUrl).'/public/includes/jquery/js/jquery.min.js';
 	print '<script src="'.$jQueryJSUrl.'"></script>'."\n";
 
 	// JNotify
-	//$jNotifyJSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.js';
-	//$jNotifyJSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.js', 2);
-	$jNotifyJSUrl = dirname($context->rootUrl).'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js';
+	//$jNotifyJSUrl = $context->rootUrl.'public/includes/jquery/plugins/jnotify/jquery.jnotify.js';
+	//$jNotifyJSUrl = dol_buildpath('/public/includes/jquery/plugins/jnotify/jquery.jnotify.min.js', 2);
+	$jNotifyJSUrl = dirname($context->rootUrl).'/public/includes/jquery/plugins/jnotify/jquery.jnotify.min.js';
 	print '<script src="'.$jNotifyJSUrl.'"></script>'."\n";
 
 	$bodyClass = [

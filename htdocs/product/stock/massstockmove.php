@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2013-2022  Laurent Destaileur		<ely@users.sourceforge.net>
  * Copyright (C) 2014	    Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,13 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -36,14 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/import/import_csv.modules.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 $confirm = GETPOST('confirm', 'alpha');
 $filetoimport = GETPOST('filetoimport');
@@ -137,6 +137,7 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	}
 
 	// Check a batch number is provided if product need it
+	$producttmp = null;
 	if (!$error) {
 		$producttmp = new Product($db);
 		$producttmp->fetch($id_product);
@@ -151,14 +152,13 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 
 	// TODO Check qty is ok for stock move. Note qty may not be enough yet, but we make a check now to report a warning.
 	// What is more important is to have qty when doing action 'createmovements'
-	if (!$error) {
+	if (!$error && $producttmp !== null) {
 		// Warning, don't forget lines already added into the $_SESSION['massstockmove']
 		if ($producttmp->hasbatch()) {
 		} else {
 		}
 	}
 
-	//var_dump($_SESSION['massstockmove']);exit;
 	if (!$error) {
 		if (count(array_keys($listofdata)) > 0) {
 			$id = max(array_keys($listofdata)) + 1;
@@ -262,11 +262,6 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 						$firstrecord = array_shift($arraybatchinfo);
 						$dlc = $firstrecord['eatby'];
 						$dluo = $firstrecord['sellby'];
-						//var_dump($batch);
-						//var_dump($arraybatchinfo);
-						//var_dump($firstrecord);
-						//var_dump($dlc);
-						//var_dump($dluo); exit;
 					} else {
 						$dlc = '';
 						$dluo = '';
@@ -316,7 +311,6 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 			}
 		}
 	}
-	//var_dump($_SESSION['massstockmove']);exit;
 
 	if (!$error) {
 		unset($_SESSION['massstockmove']);
@@ -532,7 +526,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontodelete)
 	$langs->load("other");
 
 	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile');
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	} else {
@@ -568,24 +562,26 @@ $titletoadd = $langs->trans("Select");
 $buttonrecord = $langs->trans("RecordMovements");
 $titletoaddnoent = $langs->transnoentitiesnoconv("Select");
 $buttonrecordnoent = $langs->transnoentitiesnoconv("RecordMovements");
-print '<span class="opacitymedium">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span>';
 
-print '<br>';
-//print '<br>';
-
-// Form to upload a file
 print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
+
+print '<div class="info">';
+print '<span class="">'.$langs->trans("SelectProductInAndOutWareHouse", $titletoaddnoent, $buttonrecordnoent).'</span>';
+
+print '<br>';
+
+// Form to upload a file
 if (!empty($conf->dol_optimize_smallscreen)) {
 	print '<br>';
 }
-print '<span class="opacitymedium">';
+print '<span class="">';
 print $langs->trans("or");
-print ' ';
+print '<br>';
 $importcsv = new ImportCsv($db, 'massstocklist');
-print $form->textwithpicto($langs->trans('SelectAStockMovementFileToImport'), $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator));
-print '</span>';
+print $form->textwithpicto($langs->trans('SelectAStockMovementFileToImport'), empty($conf->dol_optimize_smallscreen) ? $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator) : $langs->transnoentitiesnoconv("Import"), 1);
+print '</span> ';
 
 $maxfilesizearray = getMaxFileSizeArray();
 $maxmin = $maxfilesizearray['maxmin'];
@@ -593,9 +589,8 @@ if ($maxmin > 0) {
 	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 }
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
-$out = (!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '');
-print '<input type="submit" class="button small smallpaddingimp" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
+$tooltipsendit = '';	// The limits of upload are shown in the tooltip of the submit button
 if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
@@ -649,12 +644,14 @@ if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 	}
 
 	$langs->load('other');
-	$out .= ' ';
-	$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow), 1);
+	$tooltipsendit = $langs->transnoentitiesnoconv("ThisLimitIsDefinedInSetup", $max, $maxphptoshow);
 } else {
 	$out .= ' ('.$langs->trans("UploadDisabled").')';
 }
+print '<input type="submit" class="button small smallpaddingimp'.($tooltipsendit ? ' classfortooltip' : '').'" value="'.$langs->trans("ImportFromCSV").'"'.(!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '').($tooltipsendit ? ' title="'.dolPrintHTMLForAttribute($tooltipsendit).'"' : '').' name="sendit">';
 print $out;
+
+print '</div>';
 
 print '</form>';
 
@@ -787,7 +784,7 @@ if (count($listofdata)) {
 	print '<input type="hidden" name="action" value="createmovements">';
 
 	// Button to record mass movement
-	$codemove = (GETPOSTISSET("codemove") ? GETPOST("codemove", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
+	$codemove = (GETPOSTISSET("codemove") ? GETPOST("codemove", 'alpha') : getDolGlobalString('STOCK_MASSSTOCKMOVE_CODE_PREFIX', 'MSM-').dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
 	$labelmovement = GETPOST("label") ? GETPOST('label') : $langs->trans("MassStockTransferShort").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
 
 	print '<div class="center">';

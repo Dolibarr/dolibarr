@@ -5,7 +5,7 @@
  * Copyright (C) 2011	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2016	    Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ class Entrepot extends CommonObject
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
-	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
@@ -168,14 +168,14 @@ class Entrepot extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 15),
 		'ref' => array('type' => 'varchar(255)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'showoncombobox' => 1, 'position' => 25, 'searchall' => 1),
+		'lieu' => array('type' => 'varchar(64)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 26, 'showoncombobox' => 2, 'searchall' => 1),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => -2, 'position' => 35, 'searchall' => 1),
-		'lieu' => array('type' => 'varchar(64)', 'label' => 'LocationSummary', 'enabled' => 1, 'visible' => 1, 'position' => 40, 'showoncombobox' => 2, 'searchall' => 1),
 		'fk_parent' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php:1:((statut:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ParentWarehouse', 'enabled' => 1, 'visible' => -2, 'position' => 41),
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Project', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'position' => 42),
 		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -2, 'position' => 45, 'searchall' => 1),
@@ -370,12 +370,16 @@ class Entrepot extends CommonObject
 		$this->town = trim($this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : 0);
 
+		if (!isset($this->status) && isset($this->statut)) {
+			$this->status = $this->statut;
+		}
+
 		$sql = "UPDATE ".$this->db->prefix()."entrepot";
 		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
-		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
-		$sql .= ", fk_project = ".(($this->fk_project > 0) ? $this->fk_project : "NULL");
+		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? ((int) $this->fk_parent) : "NULL");
+		$sql .= ", fk_project = ".(($this->fk_project > 0) ? ((int) $this->fk_project) : "NULL");
 		$sql .= ", description = '".$this->db->escape($this->description)."'";
-		$sql .= ", statut = ".((int) $this->statut);
+		$sql .= ", statut = ".((int) $this->status);
 		$sql .= ", lieu = '".$this->db->escape($this->lieu)."'";
 		$sql .= ", address = '".$this->db->escape($this->address)."'";
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";

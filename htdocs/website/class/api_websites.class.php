@@ -1,0 +1,1104 @@
+<?php
+/* Copyright (C) 2026		Laurent Destailleur		<eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+use Luracast\Restler\RestException;
+
+require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/website2.lib.php';
+
+/**
+ * \file    htdocs/website/class/api_websites.class.php
+ * \ingroup website
+ * \brief   File for API management of websites.
+ */
+
+/**
+ * API class for websites
+ *
+ * @access protected
+ * @class  DolibarrApiAccess {@requires user,external}
+ */
+class Websites extends DolibarrApi
+{
+	/**
+	 * @var Website {@type Website}
+	 */
+	public $website;
+
+	/**
+	 * @var WebsitePage {@type WebsitePage}
+	 */
+	public $websitepage;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		global $db;
+
+		$this->db = $db;
+		$this->website = new Website($this->db);
+		$this->websitepage = new WebsitePage($this->db);
+	}
+
+	/**
+	 * Get properties of a website object by id
+	 *
+	 * Return an array with website information.
+	 *
+	 * @param   int     $id             ID of website
+	 * @return  array|mixed             Properties of website
+	 * @phan-return Website
+	 * @phpstan-return Website
+	 *
+	 * @url     GET {id}
+	 *
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Website not found
+	 */
+	public function get($id)
+	{
+		return $this->_fetchWebsite($id);
+	}
+
+	/**
+	 * Get properties of a website object by ref
+	 *
+	 * Return an array with website information.
+	 *
+	 * @param   string  $ref            Ref of website
+	 * @return  array|mixed             Properties of website
+	 * @phan-return Website
+	 * @phpstan-return Website
+	 *
+	 * @url     GET ref/{ref}
+	 *
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Website not found
+	 */
+	public function getByRef($ref)
+	{
+		return $this->_fetchWebsite(0, $ref);
+	}
+
+	/**
+	 * List websites
+	 *
+	 * Get a list of websites
+	 *
+	 * @since   25.0.0   Parameter count
+	 *
+	 * @param   string  $sortfield      Sort field
+	 * @param   string  $sortorder      Sort order
+	 * @param   int     $limit          Limit for list
+	 * @param   int     $page           Page number
+	 * @param   string  $sqlfilters     Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%')"
+	 * @param   string  $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param   int		$count			Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
+	 * @return  array                   Array of website objects
+	 * @phan-return Website[]|array{count:int}
+	 * @phpstan-return Website[]|array{count:int}
+	 *
+	 * @throws  RestException   400     Bad sqlfilters
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   503     Error retrieving list of websites
+	 */
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$obj_ret = array();
+
+		$sql = "SELECT t.rowid, t.ref";
+		$sql .= " FROM ".$this->db->prefix()."website as t";
+		$sql .= " WHERE t.entity IN (".getEntity('website').")";
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		$sqlTotals = str_replace('SELECT t.rowid, t.ref', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$website_static = new Website($this->db);
+				if ($website_static->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($website_static), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve website list : '.$this->db->lasterror());
+		}
+
+		// If pagination data is requested (page > 0), the response will contain element data with all values and element pagination with pagination data
+		if ($page > 0) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = array();
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = array(
+				'total' => (int) $total,
+				'page' => $page,
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
+				'limit' => $limit
+			);
+		}
+
+		return $obj_ret;
+	}
+
+	/**
+	 * List pages of a website
+	 *
+	 * Get a list of pages for a given website
+	 *
+	 * @since   25.0.0   Parameter count
+	 *
+	 * @param   int     $id             ID of website
+	 * @param   string  $sortfield      Sort field
+	 * @param   string  $sortorder      Sort order
+	 * @param   int     $limit          Limit for list
+	 * @param   int     $page           Page number
+	 * @param   string  $sqlfilters     Other criteria to filter answers separated by a comma. Syntax example "(t.pageurl:like:'home')"
+	 * @param   string  $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param   int		$count			Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
+	 * @return  array                   Array of website page objects
+	 * @phan-return WebsitePage[]|array{count:int}
+	 * @phpstan-return WebsitePage[]|array{count:int}
+	 *
+	 * @url     GET {id}/pages
+	 *
+	 * @throws  RestException   400     Bad sqlfilters
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Website not found
+	 * @throws  RestException   503     Error retrieving list of pages
+	 */
+	public function indexPages($id, $sortfield = "t.pageurl", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->website->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Website not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('website', $this->website->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$obj_ret = array();
+
+		$sql = "SELECT t.rowid, t.pageurl";
+		$sql .= " FROM ".$this->db->prefix()."website_page as t";
+		$sql .= " WHERE t.fk_website = ".((int) $id);
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		$sqlTotals = str_replace('SELECT t.rowid, t.pageurl', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$page_static = new WebsitePage($this->db);
+				if ($page_static->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($page_static), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve page list : '.$this->db->lasterror());
+		}
+
+		if ($page > 0) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = array();
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = array(
+				'total' => (int) $total,
+				'page' => $page,
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
+				'limit' => $limit
+			);
+		}
+
+		return $obj_ret;
+	}
+
+	/**
+	 * Get properties of a website page by id
+	 *
+	 * Return an array with page information.
+	 *
+	 * @param   int     $id             ID of website
+	 * @param   int     $pageid         ID of page
+	 * @return  array|mixed             Object with cleaned properties
+	 * @phan-return WebsitePage
+	 * @phpstan-return WebsitePage
+	 *
+	 * @url     GET {id}/pages/{pageid}
+	 *
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Website or page not found
+	 */
+	public function getPage($id, $pageid)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->website->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Website not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('website', $this->website->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->websitepage->fetch($pageid);
+		if (!$result) {
+			throw new RestException(404, 'Page not found');
+		}
+
+		// Check that the page belongs to the website
+		if ($this->websitepage->fk_website != $this->website->id) {
+			throw new RestException(404, 'Page not found for this website');
+		}
+
+		return $this->_cleanObjectDatas($this->websitepage);
+	}
+
+	/**
+	 * List pages of all websites
+	 *
+	 * Get a list of pages (and blog posts), whatever is their website
+	 *
+	 * @since   25.0.0   Parameter count
+	 *
+	 * @param   string  $sortfield      Sort field
+	 * @param   string  $sortorder      Sort order
+	 * @param   int     $limit          Limit for list
+	 * @param   int     $page           Page number
+	 * @param   string  $sqlfilters     Other criteria to filter answers separated by a comma. Syntax example "(t.fk_website:=:1) and (t.type_container:=:'blogpost')"
+	 * @param   string  $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param   int		$count			Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
+	 * @return  array                   Array of website page objects
+	 * @phan-return WebsitePage[]|array{count:int}
+	 * @phpstan-return WebsitePage[]|array{count:int}
+	 *
+	 * @url     GET pages
+	 *
+	 * @throws  RestException   400     Bad sqlfilters
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   503     Error retrieving list of pages
+	 */
+	public function indexAllPages($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$obj_ret = array();
+
+		$sql = "SELECT t.rowid, t.pageurl";
+		$sql .= " FROM ".$this->db->prefix()."website_page as t";
+		$sql .= " INNER JOIN ".$this->db->prefix()."website as w ON w.rowid = t.fk_website";
+		$sql .= " WHERE w.entity IN (".getEntity('website').")";
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		$sqlTotals = str_replace('SELECT t.rowid, t.pageurl', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$page_static = new WebsitePage($this->db);
+				if ($page_static->fetch($obj->rowid) > 0) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($page_static), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve page list : '.$this->db->lasterror());
+		}
+
+		if ($page > 0) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = array();
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = array(
+				'total' => (int) $total,
+				'page' => $page,
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
+				'limit' => $limit
+			);
+		}
+
+		return $obj_ret;
+	}
+
+	/**
+	 * Get properties of a website page by its id only
+	 *
+	 * Return an array with page information. The website of the page is found from the page.
+	 *
+	 * @param   int     $pageid         ID of page
+	 * @return  array|mixed             Object with cleaned properties
+	 * @phan-return WebsitePage
+	 * @phpstan-return WebsitePage
+	 *
+	 * @url     GET pages/{pageid}
+	 *
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Page not found
+	 */
+	public function getPageById($pageid)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->websitepage->fetch($pageid);
+		if ($result <= 0) {
+			throw new RestException(404, 'Page not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('website', $this->websitepage->fk_website)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $this->_cleanObjectDatas($this->websitepage);
+	}
+
+	/**
+	 * Create a website page
+	 *
+	 * Create a new page (or blog post with type_container = 'blogpost') into a website.
+	 * The request data can include any field of the website_page table (pageurl and title are mandatory).
+	 * It can also include 'header' and 'footer': alias (pageurl) of a page of type 'header' or 'footer' of the website,
+	 * to include in the page instead of the ones found automatically for a blog post.
+	 *
+	 * @param   int     $id             ID of website
+	 * @param   array   $request_data   Page data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return  int						ID of the new page
+	 *
+	 * @url     POST {id}/pages
+	 *
+	 * @throws  RestException   400     Bad or missing value for a field, or header/footer not found as a container of this type
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Website not found
+	 * @throws  RestException   409     A page with this pageurl already exists
+	 * @throws  RestException   500     Error creating page
+	 */
+	public function postPage($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'write')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->website->fetch($id);
+		if ($result <= 0) {
+			throw new RestException(404, 'Website not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('website', $this->website->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->websitepage = new WebsitePage($this->db);
+
+		// Apply request data to the page object
+		foreach ((array) $request_data as $field => $value) {
+			if ($field == 'id' || $field == 'rowid' || $field == 'fk_website') {
+				continue;
+			}
+			if ($field == 'image') {
+				continue;	// The image used by the CMS is the one found into the content
+			}
+			if ($field == 'header' || $field == 'footer') {
+				continue;	// Alias of the header or footer container to include, checked later
+			}
+			if ($field === 'caller') {
+				$this->websitepage->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->websitepage->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->websitepage);
+				}
+				continue;
+			}
+			if ($field == 'content') {
+				// Security: PHP content can't be added through the API (the HTML sanitizer would also silently remove it)
+				$this->websitepage->content = $this->_checkPageContentForAPI($value, '');
+				continue;
+			}
+			$this->websitepage->$field = $this->_checkValForAPI($field, $value, $this->websitepage);
+		}
+
+		$this->websitepage->fk_website = $this->website->id;
+		if (empty($this->websitepage->type_container)) {
+			$this->websitepage->type_container = 'page';
+		}
+		if (!isset($request_data['status'])) {
+			$this->websitepage->status = WebsitePage::STATUS_DRAFT;
+		}
+		if (is_null($this->websitepage->aliasalt)) {
+			$this->websitepage->aliasalt = '';	// Same default as web interface
+		}
+		$this->websitepage->pageurl = preg_replace('/\.php$/i', '', trim((string) $this->websitepage->pageurl));
+		$this->websitepage->ref = $this->websitepage->pageurl;
+
+		// Check mandatory fields (same rules than web interface)
+		if (empty($this->websitepage->pageurl)) {
+			throw new RestException(400, 'Field pageurl is mandatory');
+		}
+		if (!preg_match('/^[a-z0-9\-\_]+$/i', $this->websitepage->pageurl) || preg_match('/^page\d+/i', $this->websitepage->pageurl)) {
+			throw new RestException(400, 'Field pageurl must contain only a-z, 0-9, - and _ characters and must not be pageX');
+		}
+		if (empty($this->websitepage->title)) {
+			throw new RestException(400, 'Field title is mandatory');
+		}
+
+		// Header and footer containers given by the caller must exist in the website with the right type
+		$headername = '';
+		if (isset($request_data['header']) && $request_data['header'] !== '') {
+			$headername = $this->_checkContainerForAPI($this->website, $request_data['header'], 'header');
+		}
+		$footername = '';
+		if (isset($request_data['footer']) && $request_data['footer'] !== '') {
+			$footername = $this->_checkContainerForAPI($this->website, $request_data['footer'], 'footer');
+		}
+
+		// Check there is no other page with the same name or alias
+		$websitepagetemp = new WebsitePage($this->db);
+		$result = $websitepagetemp->fetch(0, (string) $this->website->id, $this->websitepage->pageurl);
+		if ($result < 0) {
+			throw new RestException(500, $websitepagetemp->errorsToString());
+		}
+		if ($result > 0) {
+			throw new RestException(409, 'A page with this pageurl already exists in this website');
+		}
+
+		// Clean data: remove head section from content (same as web interface)
+		$this->websitepage->content = preg_replace('/<head>.*<\/head>/ims', '', (string) $this->websitepage->content);
+
+		// A blog post gets the header and footer containers of its language, and its structured data
+		// A header or footer container given by the caller is used instead, whatever the type of page
+		$phpwrappers = array();
+		if ($this->websitepage->type_container == 'blogpost' || $headername !== '' || $footername !== '') {
+			$phpwrappers = $this->_addBlogpostWrappers($this->website, $this->websitepage, $headername, $footername);
+		}
+
+		// Create the page in database
+		$pageid = $this->websitepage->create(DolibarrApiAccess::$user, 0, $phpwrappers);
+		if ($pageid <= 0) {
+			throw new RestException(500, $this->websitepage->errorsToString());
+		}
+
+		// Regenerate static files on disk (same as web interface in index.php)
+		$this->_regeneratePageFiles($this->website, $this->websitepage);
+
+		// If there is no home page yet, this new page is set as the home page (same as web interface)
+		if (empty($this->website->fk_default_home)) {
+			$this->website->fk_default_home = $pageid;
+			$result = $this->website->update(DolibarrApiAccess::$user);
+			if ($result > 0) {
+				global $conf, $dolibarr_main_data_root;
+
+				$pathofwebsite = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$this->website->ref;
+				dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$pageid.'.tpl.php', $pathofwebsite.'/wrapper.php', $this->website);
+			} else {
+				dol_syslog("Failed to set the default home page of website ".$this->website->ref, LOG_WARNING);
+			}
+		}
+
+		return $pageid;
+	}
+
+	/**
+	 * Update a website page
+	 *
+	 * Update a page of a website by its ID. The request data can include any field
+	 * of the website_page table (title, description, content, pageurl, status, etc.).
+	 * To change only parts of the content, give instead of content a list content_replacements
+	 * of {"old": fragment of the current content, found once and only once, "new": its replacement},
+	 * applied in order (all or nothing). For example, to move an element: remove it, then add it elsewhere.
+	 *
+	 * @param   int     $id             ID of website
+	 * @param   int     $pageid         ID of page to update
+	 * @param   array   $request_data   Page data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
+	 * @return  array|mixed				Object after update
+	 * @phan-return WebsitePage
+	 * @phpstan-return WebsitePage
+	 *
+	 * @url     PUT {id}/pages/{pageid}
+	 *
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Website or page not found
+	 * @throws  RestException   500     Error updating page
+	 */
+	public function putPage($id, $pageid, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('website', 'write')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->website->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Website not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('website', $this->website->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->websitepage->fetch($pageid);
+		if (!$result) {
+			throw new RestException(404, 'Page not found');
+		}
+
+		// Check that the page belongs to the website
+		if ($this->websitepage->fk_website != $this->website->id) {
+			throw new RestException(404, 'Page not found for this website');
+		}
+
+		// Keep the old PHP content to detect if PHP content changed
+		$phpfullcodestringold = dolKeepOnlyPhpCode($this->websitepage->content);
+
+		// Partial changes of the content: each fragment 'old' of content_replacements is replaced with its 'new', in order
+		if (is_array($request_data) && array_key_exists('content_replacements', $request_data)) {
+			if (array_key_exists('content', $request_data)) {
+				throw new RestException(400, 'Give either content (the whole new content) or content_replacements (partial changes), not both');
+			}
+			$replacement = dolApplyReplacementsToPageContent((string) $this->websitepage->content, $request_data['content_replacements']);
+			$numreplacement = $replacement['index'] + 1;
+			if ($replacement['error'] == 'badformat') {
+				throw new RestException(400, 'content_replacements must be a list of {"old": fragment of the current content (not empty), "new": its replacement (empty to remove it)}. Error on replacement '.$numreplacement.'.');
+			}
+			if ($replacement['error'] == 'notfound') {
+				throw new RestException(400, 'The fragment "old" of replacement '.$numreplacement.' was not found in the content of the page (as left by the previous replacements). Read the page again and copy the fragment exactly. Nothing was changed.');
+			}
+			if ($replacement['error'] == 'notunique') {
+				throw new RestException(400, 'The fragment "old" of replacement '.$numreplacement.' was found '.$replacement['nbfound'].' times in the content of the page. Give a longer fragment so it is found only once. Nothing was changed.');
+			}
+			$request_data['content'] = $replacement['content'];
+			unset($request_data['content_replacements']);
+		}
+
+		// Apply request data to the page object
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id' || $field == 'rowid') {
+				continue;
+			}
+			if ($field == 'image') {
+				continue;	// The image used by the CMS is the one found into the content
+			}
+			if ($field == 'fk_website') {
+				// Do not allow changing the website ownership of a page via this endpoint
+				continue;
+			}
+			if ($field === 'caller') {
+				$this->websitepage->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->websitepage->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->websitepage);
+				}
+				continue;
+			}
+			if ($field == 'content') {
+				// Security: PHP content can't be added or modified through the API, only kept unchanged
+				$this->websitepage->content = $this->_checkPageContentForAPI($value, $phpfullcodestringold);
+				continue;
+			}
+			$this->websitepage->$field = $this->_checkValForAPI($field, $value, $this->websitepage);
+		}
+
+		// Clean data: remove head section from content (same as web interface)
+		$this->websitepage->content = preg_replace('/<head>.*<\/head>/ims', '', $this->websitepage->content);
+
+		// Update the page in database
+		$result = $this->websitepage->update(DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(500, $this->websitepage->errorsToString());
+		}
+
+		// Regenerate static files on disk (same as web interface in index.php)
+		$this->_regeneratePageFiles($this->website, $this->websitepage);
+
+		return $this->_cleanObjectDatas($this->websitepage);
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 * @phpstan-template T
+	 *
+	 * @param   Object  $object     Object to clean
+	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
+	 */
+	protected function _cleanObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
+
+		// Remove properties not relevant for the website API response and not already cleaned by the parent
+		unset($object->canvas);
+		unset($object->name);
+		unset($object->lastname);
+		unset($object->firstname);
+		unset($object->civility_id);
+		unset($object->statut);
+		unset($object->region_id);
+		unset($object->state_id);
+		unset($object->country_id);
+		unset($object->country_code);
+		unset($object->barcode_type);
+		unset($object->barcode_type_coder);
+		unset($object->total_ht);
+		unset($object->total_tva);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->total_ttc);
+		unset($object->user);
+		unset($object->fk_account);
+		unset($object->shipping_method_id);
+		unset($object->fk_incoterms);
+		unset($object->label_incoterms);
+		unset($object->location_incoterms);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_tx);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+
+		unset($object->mode_reglement_id);
+		unset($object->cond_reglement_id);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->shipping_method);
+		unset($object->model_pdf);
+		unset($object->last_main_doc);
+		unset($object->lines);
+		unset($object->actiontypecode);
+		unset($object->civility_code);
+		unset($object->date_cloture);
+		unset($object->user_closing_id);
+		unset($object->totalpaid);
+		unset($object->totalpaid_multicurrency);
+		unset($object->cond_reglement_supplier_id);
+		unset($object->deposit_percent);
+		unset($object->warehouse_id);
+		unset($object->array_languages);
+		unset($object->contacts_ids);
+		unset($object->contacts_ids_internal);
+		unset($object->other_linked_objects);
+		unset($object->linkedObjectsIds);
+		unset($object->origin_type);
+		unset($object->origin_id);
+		unset($object->product);
+		unset($object->fk_project);
+		unset($object->contact_id);
+		unset($object->validation);
+		unset($object->user_validation_id);
+		unset($object->tms);
+		unset($object->newid);
+		unset($object->object_type);
+		unset($object->fk_object);
+
+		return $object;
+	}
+
+	/**
+	 * Get properties of a website object.
+	 *
+	 * @param   int     $id     ID of website
+	 * @param   string  $ref    Ref of website
+	 * @return  Object          Object with cleaned properties
+	 * @phan-return Website
+	 * @phpstan-return Website
+	 *
+	 * @throws  RestException   400     Bad value for parameter id or ref
+	 * @throws  RestException   403     Access denied
+	 * @throws  RestException   404     Website not found
+	 */
+	private function _fetchWebsite($id, $ref = '')
+	{
+		if (empty($id) && empty($ref)) {
+			throw new RestException(400, 'bad value for parameter id or ref');
+		}
+
+		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->website->fetch($id, $ref);
+		if (!$result) {
+			throw new RestException(404, 'Website not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('website', $this->website->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		return $this->_cleanObjectDatas($this->website);
+	}
+
+	/**
+	 * Refuse a page content containing javascript: a script tag, a 'javascript:' link or an 'on...=' event attribute
+	 * (the javascript dol_htmlwithnojs() removes).
+	 *
+	 * @param	string		$content		HTML content of page (without its PHP code)
+	 * @return	void
+	 *
+	 * @throws	RestException	400		Content contains javascript
+	 */
+	private function _checkNoJsInPageContentForAPI($content)
+	{
+		// We only look for non obfuscated javascript. Obfuscated javascript will be cleaned by the
+		// sanitizeVal 'restricthtmlallowclass' without a proper error message.
+		$jspattern = '/<script\b|javascript\s*:|\son[a-z]+\s*=/i';
+
+		if (preg_match_all($jspattern, $content) > 0) {
+			throw new RestException(400, 'The content contains javascript (script tag, javascript: link or on... event attribute): javascript is not allowed in a website page created or updated through the API. Remove it and retry.');
+		}
+	}
+
+	/**
+	 * Check and sanitize the content of a page received by the API.
+	 * PHP code can't be added or modified through the API, even with permission website->writephp, except if
+	 * $dolibarr_website_allow_custom_php is 3. Otherwise, if the page already contains PHP code, the content can
+	 * be resubmitted only if this PHP code is kept unchanged.
+	 *
+	 * @param	mixed		$content				Content of page received by the API
+	 * @param	string		$phpfullcodestringold	PHP code of the current content of the page ('' for a new page)
+	 * @return	string								Sanitized content
+	 *
+	 * @throws	RestException	400		PHP code could not be preserved by the HTML sanitizer, or content contains javascript
+	 * @throws	RestException	403		Content contains new or modified PHP code
+	 */
+	private function _checkPageContentForAPI($content, $phpfullcodestringold)
+	{
+		if (is_array($content) || is_object($content)) {
+			throw new RestException(400, 'Field content must be a string');
+		}
+		$content = (string) $content;
+
+		$phpfullcodestring = dolKeepOnlyPhpCode($content);
+
+		// Removing all the PHP code is allowed. Adding or modifying PHP code is allowed only if $dolibarr_website_allow_custom_php is 3.
+		if ($phpfullcodestring !== '' && $phpfullcodestring !== $phpfullcodestringold) {
+			if (!DolibarrApiAccess::$user->hasRight('website', 'writephp')) {
+				throw new RestException(403, 'Permission incomplete: you are not allowed to add or modify dynamic PHP content in a website page (permission website->writephp is required). Keep the existing PHP code unchanged.');
+			}
+			global $dolibarr_website_allow_custom_php;
+			if (empty($dolibarr_website_allow_custom_php) || (int) $dolibarr_website_allow_custom_php < 3) {
+				throw new RestException(403, 'Adding or modifying dynamic PHP content of a website page is not allowed through the API, even with the permission to edit PHP content (this requires $dolibarr_website_allow_custom_php = 3 in conf.php). Use the website editor of the application to do it, or keep the existing PHP code unchanged.');
+			}
+			// Same checks of the PHP code than in the website editor (forbidden functions...). Errors are returned with setEventMessages().
+			$phpcodeold = $phpfullcodestringold;
+			$phpcodenew = $phpfullcodestring;
+			$errorsbefore = isset($_SESSION['dol_events']['errors']) ? count($_SESSION['dol_events']['errors']) : 0;
+			if (checkPHPCode($phpcodeold, $phpcodenew)) {
+				$phperrors = isset($_SESSION['dol_events']['errors']) ? array_slice($_SESSION['dol_events']['errors'], $errorsbefore) : array();
+				if (isset($_SESSION['dol_events']['errors'])) {
+					$_SESSION['dol_events']['errors'] = array_slice($_SESSION['dol_events']['errors'], 0, $errorsbefore);
+				}
+				throw new RestException(403, 'The dynamic PHP content of the page was refused: '.implode(' ', $phperrors));
+			}
+		}
+
+		if ($phpfullcodestring === '') {
+			$this->_checkNoJsInPageContentForAPI($content);
+			// Keep the class attributes: the CSS of a website page relies on them
+			return (string) sanitizeVal($content, 'restricthtmlallowclass');
+		}
+
+		// PHP code is allowed: protect the PHP blocks so the HTML sanitizer does not remove them, then restore them
+		$phpblocks = array();
+		$contentwithoutphp = '';
+		$parts = preg_split('/(<\?.*?(?:\?>|\z))/s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+		foreach ((array) $parts as $i => $part) {
+			if ($i % 2) {	// Odd parts are the captured PHP blocks
+				$phpblocks[] = $part;
+				$contentwithoutphp .= 'DOLAPIPHPBLOCK'.(count($phpblocks) - 1).'DOLAPIPHPBLOCKEND';
+			} else {
+				$contentwithoutphp .= $part;
+			}
+		}
+		$this->_checkNoJsInPageContentForAPI($contentwithoutphp);
+		$newcontent = (string) sanitizeVal($contentwithoutphp, 'restricthtmlallowclass');
+		foreach ($phpblocks as $key => $phpblock) {
+			$newcontent = str_replace('DOLAPIPHPBLOCK'.$key.'DOLAPIPHPBLOCKEND', $phpblock, $newcontent);
+		}
+
+		// Final check: the PHP code of the content to save must be exactly the checked PHP code
+		if (dolKeepOnlyPhpCode($newcontent) !== $phpfullcodestring) {
+			throw new RestException(400, 'The PHP code of the page could not be preserved by the HTML sanitizer of the API (PHP code is probably inside a forbidden HTML tag or attribute). Use the website editor of the application to update this page.');
+		}
+
+		return $newcontent;
+	}
+
+	/**
+	 * Return the alias of a header or footer container of a website, after checking it exists with this type.
+	 *
+	 * @param	Website		$website		Website
+	 * @param	mixed		$name			Alias (pageurl) of the container, as given in the request
+	 * @param	string		$type			Type of container expected: 'header' or 'footer'
+	 * @return	string						Alias of the container, as stored in database
+	 *
+	 * @throws	RestException	400			The alias is not the one of a container of this type in the website
+	 * @throws	RestException	500			Error reading the container
+	 */
+	private function _checkContainerForAPI($website, $name, $type)
+	{
+		if (is_array($name) || is_object($name) || !preg_match('/^[a-z0-9\-\_]+$/i', (string) $name)) {
+			throw new RestException(400, 'Field '.$type.' must be the alias (pageurl) of a page of type '.$type.' of the website');
+		}
+
+		$container = new WebsitePage($this->db);
+		$result = $container->fetch(0, (string) $website->id, (string) $name);
+		if ($result < 0) {
+			throw new RestException(500, $container->errorsToString());
+		}
+		if ($result == 0 || $container->type_container != $type) {
+			throw new RestException(400, 'No page of type '.$type.' with the alias '.$name.' was found in the website '.$website->ref);
+		}
+
+		return (string) $container->pageurl;
+	}
+
+	/**
+	 * Wrap the content of a blog post with the header and footer containers and the structured data.
+	 * A container is included only if the website has exactly one container of this type in the language of the post
+	 * (or, if it has none in this language, in the main language of the website),
+	 * except when it is given by the caller (it is then included whatever the type of the page).
+	 *
+	 * @param	Website		$website		Website
+	 * @param	WebsitePage	$websitepage	Blog post to complete (its content is modified)
+	 * @param	string		$headername		Alias of the header container to use instead of the one found automatically
+	 * @param	string		$footername		Alias of the footer container to use instead of the one found automatically
+	 * @return	string[]					PHP wrappers added to the content (to pass to WebsitePage::create())
+	 */
+	private function _addBlogpostWrappers($website, $websitepage, $headername = '', $footername = '')
+	{
+		dol_syslog("_addBlogpostWrappers");
+
+		$pagelang = (string) (empty($websitepage->lang) ? $website->lang : $websitepage->lang);
+
+		$found = array('header' => array(), 'footer' => array());
+
+		// Containers are searched automatically only for a blog post, and only if one of them is not given
+		if ($websitepage->type_container == 'blogpost' && ($headername === '' || $footername === '')) {
+			$websitepagetemp = new WebsitePage($this->db);
+			$containers = $websitepagetemp->fetchAll($website->id, '', '', 0, 0, "((t.type_container:=:'header') OR (t.type_container:=:'footer'))");
+			if (!is_array($containers)) {
+				throw new RestException(500, $websitepagetemp->errorsToString());
+			}
+
+			// Keep the containers of the language of the post (an empty language is the main language of the website)
+			// If there is none of a type in this language, the ones of the main language of the website are used instead
+			$foundmainlang = array('header' => array(), 'footer' => array());
+			foreach ($containers as $container) {
+				$containerlang = (string) (empty($container->lang) ? $website->lang : $container->lang);
+				if ($containerlang == $pagelang) {
+					$found[$container->type_container][] = $container->pageurl;
+				}
+				if ($containerlang == (string) $website->lang) {
+					$foundmainlang[$container->type_container][] = $container->pageurl;
+				}
+			}
+			foreach (array('header', 'footer') as $containertype) {
+				if (count($found[$containertype]) == 0) {
+					$found[$containertype] = $foundmainlang[$containertype];
+				}
+			}
+		}
+
+		// The containers given by the caller are used instead of the ones found automatically
+		if ($headername !== '') {
+			$found['header'] = array($headername);
+		}
+		if ($footername !== '') {
+			$found['footer'] = array($footername);
+		}
+
+		$phpwrappers = array();
+
+		$content = (string) $websitepage->content;
+		if (count($found['header']) == 1 && strpos($content, "includeContainer('".$found['header'][0]."')") === false) {
+			$wrapper = "<?php includeContainer('".$found['header'][0]."'); ?>\n";
+			$content = $wrapper.$content;
+			$phpwrappers[] = $wrapper;
+		}
+		if (count($found['footer']) == 1 && strpos($content, "includeContainer('".$found['footer'][0]."')") === false) {
+			$wrapper = "\n<?php includeContainer('".$found['footer'][0]."'); ?>\n";
+			$content .= $wrapper;
+			$phpwrappers[] = $wrapper;
+		}
+
+		$websitepage->content = $content;
+
+		return $phpwrappers;
+	}
+
+	/**
+	 * Regenerate static page files on disk (master.inc.php, alias, tpl content).
+	 * This replicates the behavior of the web interface in htdocs/website/index.php
+	 * when a page is updated (action = updatesource/updatecontent).
+	 *
+	 * @param   Website      $website        Website object
+	 * @param   WebsitePage  $websitepage    WebsitePage object
+	 * @return  void
+	 */
+	private function _regeneratePageFiles($website, $websitepage)
+	{
+		global $conf;
+		global $dolibarr_main_data_root;
+
+		$pathofwebsite = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$website->ref;
+
+		$filemaster = $pathofwebsite.'/master.inc.php';
+		$filealias = $pathofwebsite.'/'.$websitepage->pageurl.'.php';
+		$filetpl = $pathofwebsite.'/page'.$websitepage->id.'.tpl.php';
+
+		dol_mkdir($pathofwebsite);
+
+		// Regenerate the master.inc.php
+		$result = dolSaveMasterFile($filemaster);
+		if (!$result) {
+			dol_syslog("Failed to write the master file ".$filemaster, LOG_WARNING);
+		}
+
+		// Save page alias
+		$result = dolSavePageAlias($filealias, $website, $websitepage);
+		if (!$result) {
+			dol_syslog("Failed to write the alias file ".basename($filealias), LOG_WARNING);
+		}
+
+		// Save page content (the .tpl.php file)
+		$result = dolSavePageContent($filetpl, $website, $websitepage, 1);
+		if (!$result) {
+			dol_syslog("Failed to write the tpl file ".$filetpl, LOG_WARNING);
+		}
+	}
+}

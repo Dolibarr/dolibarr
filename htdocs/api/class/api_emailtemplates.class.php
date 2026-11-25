@@ -20,7 +20,6 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';
 
 /**
@@ -107,7 +106,7 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		if (!$this->email_template->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete email template : '.$this->email_template->error);
+			throw new RestException(500, 'Error when delete email template : '.$this->email_template->errorsToString());
 		}
 
 		return array(
@@ -132,7 +131,7 @@ class EmailTemplates extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500
 	 */
-	public function deleteByLAbel($label)
+	public function deleteByLabel($label)
 	{
 		$allowaccess = $this->_checkAccessRights('supprimer');
 		if (!$allowaccess) {
@@ -149,7 +148,7 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		if (!$this->email_template->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when delete email template : '.$this->email_template->error);
+			throw new RestException(500, 'Error when delete email template : '.$this->email_template->errorsToString());
 		}
 
 		return array(
@@ -205,6 +204,8 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * Get a list of email templates
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
 	 * @param int		$limit				Limit for list
@@ -213,16 +214,17 @@ class EmailTemplates extends DolibarrApi
 	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(e.active:=:1) and (e.module:=:'adherent')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array						Array of order objects
-	 * @phan-return CEmailTemplate[]|array{data:CEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return CEmailTemplate[]|array{data:CEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return CEmailTemplate[]|array{data:CEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return CEmailTemplate[]|array{data:CEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @url GET
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "e.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_user = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "e.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_user = '', $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		$allowaccess = $this->_checkAccessRights('lire');
 		if (!$allowaccess) {
@@ -252,6 +254,11 @@ class EmailTemplates extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT e.rowid', 'SELECT count(e.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -295,7 +302,7 @@ class EmailTemplates extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -425,7 +432,7 @@ class EmailTemplates extends DolibarrApi
 		if ($this->email_template->update(DolibarrApiAccess::$user) > 0) {
 			return $this->_fetch($id, '');
 		} else {
-			throw new RestException(500, $this->email_template->error);
+			throw new RestException(500, $this->email_template->errorsToString());
 		}
 	}
 
@@ -493,7 +500,7 @@ class EmailTemplates extends DolibarrApi
 		if ($this->email_template->update(DolibarrApiAccess::$user) > 0) {
 			return $this->_fetch(0, $newlabel);
 		} else {
-			throw new RestException(500, $this->email_template->error);
+			throw new RestException(500, $this->email_template->errorsToString());
 		}
 	}
 
@@ -534,10 +541,10 @@ class EmailTemplates extends DolibarrApi
 			}
 			throw new RestException(404, 'Email Template not found');
 		} else {
-			if (empty($this->email_template->error)) {
+			if (empty($this->email_template->errorsToString())) {
 				throw new RestException(400, 'Unknown error in your request');
 			} else {
-				throw new RestException(400, 'Error: '.$this->email_template->error);
+				throw new RestException(400, 'Error: '.$this->email_template->errorsToString());
 			}
 		}
 	}

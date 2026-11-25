@@ -72,6 +72,7 @@ class modGeoIPMaxmind extends DolibarrModules
 		$this->phpmax = array();
 		$this->need_dolibarr_version = array(2, 7, -1); // Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 1;
+		$this->need_setup = 1; // The module can't work without a setup of the path to the GeoIP database file
 
 		// Constants
 		$this->const = array();

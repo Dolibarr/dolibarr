@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,6 @@
 
 // Load Dolibarr environment
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -39,6 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other"));
@@ -73,7 +71,7 @@ $pagenext = $page + 1;
 // Initialize a technical objects
 $object = new StockTransfer($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = getMultidirOutput($object).'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object, '', 0, 'temp') . 'massgeneration/'.$user->id;
 $hookmanager->initHooks(array('stocktransferlist')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -127,8 +125,14 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+if (isset($object->fields['rowid']) && !isset($arrayfields['t.rowid'])) {	// Technical ID is hidden by the object when MAIN_SHOW_TECHNICAL_ID is off, but must remain selectable
+	$arrayfields['t.rowid'] = array('label' => 'TechnicalID', 'checked' => '-1', 'enabled' => '1', 'position' => $object->fields['rowid']['position']);
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -215,6 +219,9 @@ $help_url = '';
 $morejs = array();
 $morecss = array();
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -247,6 +254,10 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
+// If internal user has no permission to see all thirdparties, restrict on thirdparties he is sale representative for
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND (t.fk_soc IS NULL OR t.fk_soc = 0 OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $user->id)."))";
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -260,17 +271,22 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search("t.".$db->escape($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			if ($key == 'ref' && empty($arrayfields['t.label']['checked'])) {
+				// Label is shown into the ref column, so search on both
+				$sql .= natural_search(array('t.ref', 't.label'), $search[$key]);
+			} else {
+				$sql .= natural_search("t.".$db->escape($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			}
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -421,7 +437,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -476,8 +492,6 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -489,7 +503,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -508,11 +522,18 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
+		$cssforsearchcombo = 'maxwidth250';
+		$reg = array();
+		if (((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) && preg_match('/tdoverflowmax(\d+)/', $cssforfield, $reg)) {
+			// For a search combo, the tdoverflowmax of the cell is replaced with a maxwidth on the combo itself
+			$cssforsearchcombo = 'maxwidth'.$reg[1];
+			$cssforfield = trim(preg_replace('/\s*tdoverflowmax\d+/', '', $cssforfield));
+		}
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').($key == 'status' ? ' parentonrightofpage' : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 1, 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
-			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
+			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', trim($cssforfield.' '.$cssforsearchcombo), 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -538,7 +559,7 @@ $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -553,7 +574,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -581,7 +602,7 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -640,7 +661,7 @@ while ($i < $imaxinloop) {
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -665,13 +686,12 @@ while ($i < $imaxinloop) {
 			if (in_array($val['type'], array('timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 			} elseif ($key == 'ref') {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
+				$cssforfield .= ($cssforfield ? ' ' : '').(empty($arrayfields['t.label']['checked']) ? 'tdlineheightsmall' : 'nowraponall');
 			}
 
 			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'right';
 			}
-			//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
@@ -682,7 +702,17 @@ while ($i < $imaxinloop) {
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, (string) $object->id, '');
+					print (int) $object->id;	// Not showOutputField() that returns nothing when the Technical ID is hidden by the object (MAIN_SHOW_TECHNICAL_ID off)
+				} elseif ($key == 'ref' && empty($arrayfields['t.label']['checked'])) {
+					// Show label under the ref when label column is not enabled
+					print '<div class="tdoverflowmax150 inline-block lineheightsmall">';
+					print $object->showOutputField($val, $key, $object->$key, '');
+					if (!empty($object->label)) {
+						print '<br><span class="spantitle">'.dolPrintHTML($object->label).'</span>';
+					}
+					print '</div>';
+				} elseif ($key == 'label') {
+					print '<span class="spantitle">'.$object->showOutputField($val, $key, $object->$key, '').'</span>';
 				} else {
 					print $object->showOutputField($val, $key, $object->$key, '');
 				}
@@ -711,7 +741,7 @@ while ($i < $imaxinloop) {
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

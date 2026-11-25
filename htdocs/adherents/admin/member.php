@@ -8,9 +8,9 @@
  * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2020-2025  Frédéric France      		<frederic.france@free.fr>
+ * Copyright (C) 2020-2026  Frédéric France      		<frederic.france@free.fr>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -336,8 +336,8 @@ foreach ($dirModMember as $dirroot) {
 		// Loop on each module find in opened directory
 		while (($file = readdir($handle)) !== false) {
 			// module filename has to start with mod_member_
-			if (substr($file, 0, 11) == 'mod_member_' && substr($file, -3) == 'php') {
-				$file = substr($file, 0, dol_strlen($file) - 4);
+			if (dol_substr($file, 0, 11) == 'mod_member_' && dol_substr($file, -3) == 'php') {
+				$file = dol_substr($file, 0, dol_strlen($file) - 4);
 				try {
 					dol_include_once($dirroot.$file.'.php');
 				} catch (Exception $e) {
@@ -461,8 +461,8 @@ foreach ($dirmodels as $reldir) {
 				foreach ($filelist as $file) {
 					if (preg_match('/\.class\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 14);
-							$classname = substr($file, 0, dol_strlen($file) - 10);
+							$name = dol_substr($file, 4, dol_strlen($file) - 14);
+							$classname = dol_substr($file, 0, dol_strlen($file) - 10);
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
@@ -528,7 +528,7 @@ foreach ($dirmodels as $reldir) {
 								// Preview
 								print '<td class="center">';
 								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
+									print '<a href="'.dolBuildUrl($_SERVER["PHP_SELF"], ['action' => 'specimen', 'module' => $name], true).'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
 								} else {
 									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
@@ -651,6 +651,7 @@ if (isModEnabled('invoice')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
 	if (isModEnabled("bank")) {
 		print '<td>';
+		// TODO Use the vat selector
 		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0' => $langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry' => $langs->trans("Default")), getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS', '0'), 0);
 		print '</td>';
 	} else {

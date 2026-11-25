@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,19 +23,24 @@
 /**
  * @var Conf $conf
  * @var DoliDB $db
- * @var EcmDirectory $ecmdir
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var EcmDirectory $ecmdir
  * @var Website $website
  *
  * @var string $action
+ * @var string $sortfield
+ * @var string $sortorder
+ * @var string $url
  * @var ?string $module
  * @var int $section
  * @var string $filepathnoext
  * @var string $pageid
  * @var int $formalreadyopen
+ * @var string $websitekey
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -50,6 +55,7 @@ if (empty($conf) || !is_object($conf)) {
 @phan-var-force EcmDirectory $ecmdir
 @phan-var-force ?string $module
 @phan-var-force int $section
+@phan-var-force string $websitekey
 ';
 
 ?>
@@ -78,8 +84,8 @@ if ($module == 'ecm') {
 	$showroot = 0;
 }
 if ($module == 'medias') {
-	$permtoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
-	$permtoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permtoadd = $user->hasRight("website", "write");
+	$permtoupload = $user->hasRight("website", "write");
 	$showroot = 1;
 }
 
@@ -90,7 +96,7 @@ if (!isset($section)) {
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax)) {
 	// TODO Add website, pageid, filemanager if defined
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section, 'urlfile' => GETPOST("urlfile"))), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels
@@ -100,13 +106,34 @@ if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->us
 <div id="ecm-layout-north" class="toolbar largebutton">
 <?php
 
+// Keep the popup mode (no menus) on links when the file manager is open into a dialog popup
+$paramspopuparray = array();
+foreach (array('dol_hide_topmenu', 'dol_hide_leftmenu') as $tmpparam) {
+	if (GETPOSTINT($tmpparam)) {
+		$paramspopuparray[$tmpparam] = GETPOSTINT($tmpparam);
+	}
+}
+if (GETPOST('dol_openinpopup', 'aZ09')) {
+	$paramspopuparray['dol_openinpopup'] = GETPOST('dol_openinpopup', 'aZ09');
+}
+$paramspopup = (empty($paramspopuparray) ? '' : '&'.http_build_query($paramspopuparray));
+
 // Start top panel, toolbar
 print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
 if ($permtoadd) {
 	$websitekeyandpageid = (!empty($websitekey) ? '&website='.urlencode($websitekey) : '').(!empty($pageid) ? '&pageid='.urlencode((string) $pageid) : '');
-	print '<a id="acreatedir" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+	$paramscreatedir = array('action' => 'create', 'module' => $module);
+	if (!empty($websitekey)) {
+		$paramscreatedir['website'] = $websitekey;
+	}
+	if (!empty($pageid)) {
+		$paramscreatedir['pageid'] = $pageid;
+	}
+	$paramscreatedir = array_merge($paramscreatedir, $paramspopuparray);
+	$paramscreatedir['backtopage'] = $_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid.$paramspopup;
+	print '<a id="acreatedir" href="'.dolBuildUrl(DOL_URL_ROOT.'/ecm/dir_add_card.php', $paramscreatedir).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
 	print img_picto('', 'folder-plus', '', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 } else {
@@ -115,19 +142,27 @@ if ($permtoadd) {
 	print '</a>';
 }
 if ($module == 'ecm') {
-	$tmpurl = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
+	if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
+		$tmpurl = '#';
+	} else {
+		$paramsrefresh = array('action' => 'refreshmanual', 'module' => $module);
+		if ($section) {
+			$paramsrefresh['section'] = $section;
+		}
+		$tmpurl = dolBuildUrl($_SERVER["PHP_SELF"], $paramsrefresh);
+	}
 	print '<a id="arefreshbutton" href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
 	print img_picto('', 'refresh', 'id="refreshbutton"', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
 	// @phan-suppress-next-line PhanTypeExpectedObjectPropAccess
-	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'&website='.urlencode($website->ref).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print '<a id="agenerateimgwebp" href="'.dolBuildUrl($_SERVER["PHP_SELF"], array_merge(array('action' => 'confirmconvertimgwebp', 'website' => $website->ref), $paramspopuparray), true).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', 0, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 } elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
 	if (getDolGlobalInt('ECM_SHOW_GENERATE_WEBP_BUTTON')) {
-		print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+		print '<a id="agenerateimgwebp" href="'.dolBuildUrl($_SERVER["PHP_SELF"], array('action' => 'confirmconvertimgwebp'), true).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 		print img_picto('', 'images', '', 0, 0, 0, '', 'size15x flip marginrightonly');
 		print '</a>';
 	}
@@ -197,6 +232,60 @@ if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
 	print $formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section ? $section : -1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir, empty($formalreadyopen) ? 0 : $formalreadyopen, 0, 0, 1);
+
+	// Files can be dropped on the field to choose files (dotted border, highlighted while files are dragged over it).
+	// When files are chosen or dropped, before the click on Upload: a file larger than the maximum upload size is
+	// refused, and if files with the same names already exist in the directory, the user chooses to replace them or
+	// to leave them out. Not on smartphones, where files can't be dragged.
+	if ($permtoupload && getDolGlobalString('MAIN_UPLOAD_DOC') && !empty($conf->use_javascript_ajax) && empty($conf->dol_optimize_smallscreen)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxuploadsize = (int) $maxfilesizearray['maxmin'] * 1024;
+		print '<script>
+		jQuery(document).ready(function() {
+			var form = document.getElementById(\''.dol_escape_js($nameforformuserfile).'\');
+			var fileinput = form ? form.querySelector("input[type=file]") : null;
+			if (!fileinput || fileinput.disabled) {
+				return;
+			}
+			fileinput.classList.add("ecmfiledropinput");
+			fileinput.title = \''.dol_escape_js($langs->transnoentitiesnoconv("ECMDropFilesOnField")).'\';
+			fileinput.addEventListener("dragenter", function() { fileinput.classList.add("ecmfiledropinputover"); });
+			fileinput.addEventListener("dragleave", function() { fileinput.classList.remove("ecmfiledropinputover"); });
+			fileinput.addEventListener("drop", function() { fileinput.classList.remove("ecmfiledropinputover"); });
+			var maxsize = '.$maxuploadsize.';
+			fileinput.addEventListener("change", function() {
+				var files = fileinput.files;
+				if (!files || !files.length) { return; }
+				var kept = new DataTransfer();
+				var toobig = [];
+				Array.prototype.forEach.call(files, function(f) {
+					if (maxsize > 0 && f.size > maxsize) { toobig.push(f.name); } else { kept.items.add(f); }
+				});
+				if (toobig.length) {
+					alert(\''.dol_escape_js($langs->transnoentitiesnoconv("ECMFileTooBigForUpload", dol_print_size($maxuploadsize, 1, 1), '__FILES__')).'\'.replace("__FILES__", toobig.join(", ")));
+				}
+				/* Files with the name of a file already in the directory: replace them (OK) or leave them out (Cancel) */
+				var existing = {};
+				document.querySelectorAll("#ecmfileview tr[data-filename]").forEach(function(tr) { existing[tr.getAttribute("data-filename")] = 1; });
+				var duplicates = Array.prototype.filter.call(kept.files, function(f) { return existing[f.name]; }).map(function(f) { return f.name; });
+				if (duplicates.length) {
+					if (confirm(\''.dol_escape_js($langs->transnoentitiesnoconv("ECMFilesAlreadyExist", '__FILES__')).'\'.replace("__FILES__", duplicates.join(", ")))) {
+						var overwrite = form.querySelector("input[name=overwritefile]");
+						if (overwrite) { overwrite.checked = true; }
+					} else {
+						var notduplicates = new DataTransfer();
+						Array.prototype.forEach.call(kept.files, function(f) { if (!existing[f.name]) { notduplicates.items.add(f); } });
+						kept = notduplicates;
+					}
+				}
+				if (kept.files.length != files.length) {
+					fileinput.files = kept.files;	/* Does not fire a new change event */
+				}
+			});
+		});
+		</script>';
+	}
 } else {
 	print '&nbsp;';
 }
@@ -217,7 +306,7 @@ print '</div>';
 
 // Ask confirmation of deletion of directory
 if ($action == 'delete_section') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], array('section' => $section)), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection', $ecmdir->label), 'confirm_deletesection', '', '', 1);
 }
 // End confirm
 
@@ -236,14 +325,14 @@ if ($action == 'confirmconvertimgwebp') {
 	if ($module == 'medias') {
 		$formquestion['website'] = array('type' => 'hidden', 'value' => $website->ref, 'name' => 'website');  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
 	}
-	$param = '';
+	$paramsconvertimgwebp = $paramspopuparray;
 	if (!empty($sortfield)) {
-		$param .= '&sortfield='.urlencode($sortfield);
+		$paramsconvertimgwebp['sortfield'] = $sortfield;
 	}
 	if (!empty($sortorder)) {
-		$param .= '&sortorder='.urlencode($sortorder);
+		$paramsconvertimgwebp['sortorder'] = $sortorder;
 	}
-	print $form->formconfirm($_SERVER["PHP_SELF"].($param ? '?'.$param : ''), empty($file) ? $langs->trans('ConfirmImgWebpCreation') : $langs->trans('ConfirmChosenImgWebpCreation'), empty($file) ? $langs->trans('ConfirmGenerateImgWebp') : $langs->trans('ConfirmGenerateChosenImgWebp', basename($file)), 'convertimgwebp', $formquestion, "yes", 1);
+	print $form->formconfirm(dolBuildUrl($_SERVER["PHP_SELF"], $paramsconvertimgwebp), empty($file) ? $langs->trans('ConfirmImgWebpCreation') : $langs->trans('ConfirmChosenImgWebpCreation'), empty($file) ? $langs->trans('ConfirmGenerateImgWebp') : $langs->trans('ConfirmGenerateChosenImgWebp', basename($file)), 'convertimgwebp', $formquestion, "yes", 1);
 	$action = 'file_manager';
 }
 
@@ -321,7 +410,12 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 		// Show the link to "Root"
 		if ($showroot) {
-			print '<tr class="oddeven nohover"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode((string) $pageid).'">';
+			$paramsroot = array('file_manager' => 1);
+			if (!empty($websitekey)) {
+				$paramsroot['website'] = $websitekey;
+			}
+			$paramsroot['pageid'] = $pageid;
+			print '<tr class="oddeven nohover"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.dolBuildUrl($_SERVER["PHP_SELF"], $paramsroot).'">';
 			if ($module == 'medias') {
 				print $langs->trans("RootOfMedias");
 			} else {

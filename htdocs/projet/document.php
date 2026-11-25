@@ -134,7 +134,7 @@ if ($object->id > 0) {
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($object);
-	print dol_get_fiche_head($head, 'document', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+	print dol_get_fiche_head($head, 'document', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'), 0, '', '', 0, '', 1);
 
 	// Files list constructor
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
@@ -156,7 +156,7 @@ if ($object->id > 0) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Title
-	$morehtmlref .= $object->title;
+	$morehtmlref .= '<span class="banner-object-name-alias">'.$object->title.'</span>';
 	// Thirdparty
 	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');

@@ -23,6 +23,7 @@ use Luracast\Restler\RestException;
 
 dol_include_once('/knowledgemanagement/class/knowledgerecord.class.php');
 dol_include_once('/categories/class/categorie.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 
@@ -123,23 +124,26 @@ class KnowledgeManagement extends DolibarrApi
 	 *
 	 * Get a list of knowledgerecords
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string			$sortfield			Sort field
 	 * @param string			$sortorder			Sort order
 	 * @param int				$limit				Limit for list
 	 * @param int				$page				Page number
 	 * @param int				$category			Use this param to filter list by category
-	 * @param string			$sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string			$sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string			$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int			$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                               Array of order objects
-	 * @phan-return KnowledgeRecord[]|array{data:KnowledgeRecord[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return KnowledgeRecord[]|array{data:KnowledgeRecord[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return KnowledgeRecord[]|array{data:KnowledgeRecord[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return KnowledgeRecord[]|array{data:KnowledgeRecord[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /knowledgerecords/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		$obj_ret = array();
 		$tmpobject = new KnowledgeRecord($this->db);
@@ -174,9 +178,9 @@ class KnowledgeManagement extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
 			}
 		}
 		// Select products of given category
@@ -194,6 +198,11 @@ class KnowledgeManagement extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -234,7 +243,7 @@ class KnowledgeManagement extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -322,7 +331,7 @@ class KnowledgeManagement extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->knowledgerecord->array_options[$index] = $this->_checkValForAPI($field, $val, $this->knowledgerecord);
+					$this->knowledgerecord->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->knowledgerecord);
 				}
 				continue;
 			}
@@ -336,7 +345,7 @@ class KnowledgeManagement extends DolibarrApi
 		if ($this->knowledgerecord->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->knowledgerecord->error);
+			throw new RestException(500, $this->knowledgerecord->errorsToString());
 		}
 	}
 
@@ -367,7 +376,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 		if (!$this->knowledgerecord->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting KnowledgeRecord : '.$this->knowledgerecord->error);
+			throw new RestException(500, 'Error when deleting KnowledgeRecord : '.$this->knowledgerecord->errorsToString());
 		}
 
 		return array(
@@ -470,12 +479,16 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 
+		if (!DolibarrApi::_checkAccessToResource('knowledgerecord', $this->knowledgerecord->id, 'knowledgemanagement_knowledgerecord')) {
+			throw new RestException(403, 'Access to instance id='.$this->knowledgerecord->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->knowledgerecord->validate(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->error);
+			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->knowledgerecord);
@@ -507,12 +520,16 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 
+		if (!DolibarrApi::_checkAccessToResource('knowledgerecord', $this->knowledgerecord->id, 'knowledgemanagement_knowledgerecord')) {
+			throw new RestException(403, 'Access to instance id='.$this->knowledgerecord->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		$result = $this->knowledgerecord->cancel(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->error);
+			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->knowledgerecord);

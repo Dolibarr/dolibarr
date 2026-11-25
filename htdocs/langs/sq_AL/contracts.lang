@@ -31,6 +31,10 @@ MenuClosedServices=Shërbime të mbyllura
 NewContract=Kontrata e re
 NewContractSubscription=Kontratë e re ose abonim
 AddContract=Krijo kontratë
+ContractType=Contract type
+CustomerContract=Customer contract
+SupplierContract=Supplier contract
+LastSupplierContracts=Latest %s supplier contracts
 DeleteAContract=Fshi një kontratë
 ActivateAllOnContract=Aktivizoni të gjitha shërbimet
 CloseAContract=Mbyllni një kontratë
@@ -103,7 +107,13 @@ ConfirmCloneContract=Are you sure you want to clone the contract <b>%s</b>?
 LowerDateEndPlannedShort=Data më e ulët e planifikuar e përfundimit të shërbimeve aktive
 SendContractRef=Informacioni i kontratës __REF__
 OtherContracts=Kontrata të tjera
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Përfaqësuesi i shitjeve nënshkrimi i kontratës
 TypeContact_contrat_internal_SALESREPFOLL=Kontrata vijuese e përfaqësuesit të shitjeve
 TypeContact_contrat_external_BILLING=Faturimi i kontaktit me klientin
@@ -114,3 +124,7 @@ ShowClosedServices=Shfaq Shërbimet e Mbyllura
 HideClosedServices=Fshih Shërbimet e Mbyllura
 UserStartingService=Shërbimi i fillimit të përdoruesit
 UserClosingService=Shërbimi i mbylljes së përdoruesit
+SendReminderForExpiredServicesTitle=Send reminder by email for expiring contract services
+SendReminderForExpiredServices=Send reminder by email to the customer when a running contract service is about to expire (parameter is number of days before end of service to send the reminder. It can be a list of days separated by a semicolon, for example '10;5;0;-5'). The template of email to send is defined in setup of contract module.
+DescCONTRACT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Email template to use to send email reminder when a contract service is about to expire
+ContractID=Contract ID

@@ -79,7 +79,7 @@ class ViewImageController extends Controller
 	 */
 	public function init()
 	{
-		global $conf, $hookmanager, $dolibarr_nocache, $user;
+		global $conf, $hookmanager, $user;
 
 		define('MAIN_SECURITY_FORCECSP', "default-src 'none'");
 
@@ -138,16 +138,41 @@ class ViewImageController extends Controller
 			// We are here when param cache=xxx to force a cache policy:
 			//  xxx=1 means cache of 3600s
 			//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
-			if (empty($dolibarr_nocache)) {
-				$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
-				header('Cache-Control: max-age=' . $delaycache . ', public, must-revalidate');
-				header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + (int) $delaycache) . ' GMT');    // This is to avoid to have Expires set by proxy or web server
+			$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
+			header('Cache-Control: max-age=' . $delaycache . ', public, must-revalidate');
+			header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
+			header('Expires: ' . gmdate('D, d M Y H:i:s', time() + (int) $delaycache) . ' GMT');    // This is to avoid to have Expires set by proxy or web server
+		}
+
+		// If we have a hash public (hashp), we guess the original_file from the shared file record (never trust param file).
+		if (!empty($hashp) && $hashp != 'shared') {
+			include_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
+			$ecmfile = new EcmFiles($this->db);
+			$result = $ecmfile->fetch(0, '', '', '', $hashp);
+			if ($result > 0) {
+				$tmp = explode('/', $ecmfile->filepath, 2); // $ecmfile->filepath is relative to document directory
+				// filepath can be 'users/X' or 'X/propale/PR11111'
+				if (is_numeric($tmp[0])) { // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
+					$tmp = explode('/', $tmp[1], 2);
+				}
+				$moduleparttocheck = $tmp[0]; // moduleparttocheck is first part of path
+
+				if ($modulepart) {	// Not required, so often not defined, for link using public hashp parameter.
+					if ($moduleparttocheck != $modulepart) {
+						httponly_accessforbidden('Bad link. File is from another module part.', 403);
+					}
+				} else {
+					$modulepart = $moduleparttocheck;
+				}
+				$original_file = ((!empty($tmp[1]) ? $tmp[1] . '/' : '') . $ecmfile->filename); // this is relative to module dir
+
+				if ($extname) {
+					$original_file = getImageFileNameForSize($original_file, $extname);
+				}
 			} else {
-				// If any cache on files were disable by config file (for test purpose)
-				header('Cache-Control: no-cache');
+				httponly_accessforbidden("ErrorFileNotFoundWithSharedLink", 403, 1);
 			}
-			//print $dolibarr_nocache; exit;
 		}
 
 		// Define mime type
@@ -171,6 +196,17 @@ class ViewImageController extends Controller
 		$original_file = preg_replace('/\.\.+/', '..', $original_file);    // Replace '... or more' with '..'
 		$original_file = str_replace('../', '/', $original_file);
 		$original_file = str_replace('..\\', '/', $original_file);
+
+		// Security: Remove remaining '.', '..' and empty ('//' -> '/') segments, so the reference of the object
+		// extracted from the subdirectory can not be faked with a path like 'REF/./file' or 'REF//file'.
+		// The reference must also stay the same than the one resolved into dol_check_secure_access_document().
+		$pathsegments = explode('/', $original_file);
+		foreach ($pathsegments as $key => $pathsegment) {
+			if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+				unset($pathsegments[$key]);
+			}
+		}
+		$original_file = implode('/', $pathsegments);
 
 		// Find the subdirectory name as the reference
 		$refname = basename(dirname($original_file) . "/");
@@ -250,7 +286,7 @@ class ViewImageController extends Controller
 		}
 
 		// Security:
-		// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+		// We forbid directory traversal as well as pipes in file names.
 		if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file)) {
 			dol_syslog("Refused to deliver file " . $fullpath_original_file);
 			print "ErrorFileNameInvalid: " . dol_escape_htmltag($original_file);
@@ -395,7 +431,7 @@ class ViewImageController extends Controller
 					// we must check the securekey that protet against forging url
 					if ($reg[1] == 'user' && (int) $reg[2] > 0) {
 						$encodedsecurekey = dol_hash($conf->file->instance_unique_id . 'uservirtualcard' . $id . '-' . $login, 'md5');
-						if ($encodedsecurekey != GETPOST('securekey')) {
+						if (!hash_equals($encodedsecurekey, (string) GETPOST('securekey'))) {
 							$code = 'badvalueforsecurekey';
 						}
 					}

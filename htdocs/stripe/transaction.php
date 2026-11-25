@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -31,14 +39,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
@@ -73,6 +73,7 @@ $result = restrictedArea($user, 'banque');
  */
 
 $stripe = new Stripe($db);
+$form = new Form($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
 
@@ -85,8 +86,7 @@ if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('
 	$servicestatus = '1';
 }
 $stripeacc = $stripe->getStripeAccount($service);
-/*if (empty($stripeaccount))
-{
+/*if (empty($stripeaccount)) {
 	print $langs->trans('ErrorStripeAccountNotDefined');
 }*/
 
@@ -103,11 +103,11 @@ if (!$rowid) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$title = $langs->trans("StripeTransactionList");
-	$title .= (!empty($stripeacc) ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
+	$title .= $form->textwithpicto('', $stripeacc ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
-	$moreforfilter = '';
+	//$moreforfilter = '';
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste">'."\n";

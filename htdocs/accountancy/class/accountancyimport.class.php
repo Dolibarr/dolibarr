@@ -88,6 +88,31 @@ class AccountancyImport
 	}
 
 	/**
+	 *  Compute date and hour of source document, using the same source value than doc_date (at 12:00:00 if there is no hour)
+	 *
+	 * @param   array<array{val:null|int|float|string,type:int<-1,1>}>       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param   array<string,string>       $listfields         Fields list to add
+	 * @param 	int			$record_key         Record key
+	 * @return  string							Value
+	 */
+	public function computeDocDateHour(&$arrayrecord, $listfields, $record_key)
+	{
+		if (isset($listfields['b.doc_date'])) {
+			$value = trim((string) $arrayrecord[$listfields['b.doc_date']]['val']);
+
+			// Date without hour (YYYY-MM-DD or YYYYMMDD): hour is unknown, so we use noon
+			$reg = array();
+			if (preg_match('/^(\d{4})-?(\d{2})-?(\d{2})$/', $value, $reg)) {
+				return $reg[1].'-'.$reg[2].'-'.$reg[3].' 12:00:00';
+			}
+
+			return $value;
+		}
+
+		return '';
+	}
+
+	/**
 	 *  Compute amount
 	 *
 	 * @param   array<array{val:null|int|float|string,type:int<-1,1>}>       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...

@@ -77,6 +77,7 @@
 -- Peru
 -- Portugal
 -- Romania     -> only for Departments/Counties
+-- République démocratique du Congo     -> only for Departments/Counties
 -- San Salvador
 -- Slovakia
 -- Slovenia
@@ -470,6 +471,10 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1
 -- Portugal Regions (rowid country=25)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 25, 15001, 'PT',  NULL, 'Portugal');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 25, 15002, 'PT9', NULL, 'Azores-Madeira');
+
+
+-- République démocratique du Congo Region (id country=73)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 73, 7301, '', 0, 'République démocratique du Congo');
 
 
 -- Romania Regions (id country=188)

@@ -114,13 +114,13 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 {
 	// phpcs:enable
 	global $conf, $langs;
-	$langs->load("ficheinter");
+	$langs->load("interventions");
 
 	$error = 0;
 
 	$srctemplatepath = '';
 
-	// Positionne modele sur le nom du modele de fichinter a utiliser
+	// Set model to the name of the fichinter model to use
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('FICHEINTER_ADDON_PDF')) {
 			$modele = getDolGlobalString('FICHEINTER_ADDON_PDF');

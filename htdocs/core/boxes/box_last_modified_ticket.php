@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class box_last_modified_ticket extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param = '')
+	public function __construct($db, $param = '')  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $langs;
 		$langs->load("boxes");
@@ -73,10 +73,6 @@ class box_last_modified_ticket extends ModeleBoxes
 			'limit' => dol_strlen($text)
 		);
 
-		$this->info_box_contents[0][0] = array(
-			'td' => 'class="left"',
-			'text' => $langs->trans("BoxLastModifiedTicketContent"),
-		);
 
 		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut as status";

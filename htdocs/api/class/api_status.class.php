@@ -19,7 +19,6 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
@@ -40,11 +39,13 @@ class Status extends DolibarrApi
 	}
 
 	/**
-	 * Get status (Dolibarr version)
+	 * Get status (Dolibarr version).
+	 * Exact version and environment details are disclosed to admin users only,
+	 * to avoid version/environment fingerprinting by non-admin API users.
 	 *
 	 * @return array
-	 * @phan-return array{success:array{code:int,dolibarr_version:string,access_locked:string,environment?:string,timestamp_now_utc?:int,timestamp_php_tz?:string,date_tz?:string}}
-	 * @phpstan-return array{success:array{code:int,dolibarr_version:string,access_locked:string,environment?:string,timestamp_now_utc?:int,timestamp_php_tz?:string,date_tz?:string}}
+	 * @phan-return array{success:array{code:int,access_locked:string,dolibarr_version?:string,environment?:string,timestamp_now_utc?:int,timestamp_php_tz?:string,date_tz?:string}}
+	 * @phpstan-return array{success:array{code:int,access_locked:string,dolibarr_version?:string,environment?:string,timestamp_now_utc?:int,timestamp_php_tz?:string,date_tz?:string}}
 	 */
 	public function index()
 	{
@@ -53,12 +54,18 @@ class Status extends DolibarrApi
 		$response = array(
 			'success' => array(
 				'code' => 200,
-				'dolibarr_version' => DOL_VERSION,
 				'access_locked' => getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED', '0'),
 			),
 		);
 
-		if (empty($dolibarr_main_prod)) {
+		// Show technical details only to admin users (avoid information disclosure to non-admin users).
+		if (DolibarrApiAccess::$user->admin) {
+			$response['success']['dolibarr_version'] = DOL_VERSION;				// Full version
+		} else {
+			$response['success']['dolibarr_version'] = (float) DOL_VERSION;		// Major version
+		}
+
+		if (empty($dolibarr_main_prod) && DolibarrApiAccess::$user->admin) {
 			$response['success']['environment']       = 'non-production';
 			$response['success']['timestamp_now_utc'] = dol_now();
 			$response['success']['timestamp_php_tz']  = date_default_timezone_get();

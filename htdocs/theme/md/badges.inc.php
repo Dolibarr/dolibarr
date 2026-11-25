@@ -63,6 +63,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	font-size: 1em;
 	padding: .19em .35em;			/* more than 0.19 generate a change into height of lines */
 }
+.badge-thirdpartytype {
+	border-width: 1px;
+	border-color: #844c84;
+	color: #844c84;
+}
 .tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
 	font-size: 1.1em;
 	padding: .4em .4em;
@@ -105,7 +110,13 @@ span.badgeneutral {
 	border-radius: 10px;
 	white-space: nowrap;
 }
-
+span.badgeliketopmenu {
+	padding: 2px 7px 2px 7px;
+	background-color: var(--colorbackhmenu1);
+	color: var(--colorbackvmenu1);
+	border-radius: 10px;
+	white-space: nowrap;
+}
 
 /* PRIMARY */
 .badge-primary{
@@ -276,10 +287,12 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 
 		$TBadgeBorderOnly = array('0', '1b', '3', '4b', '5', '7', '10');
-		$thisBadgeTextColor = colorIsLight(${$statusVarNamePrefix.'badgeStatus'.$statusName}) ? '#212529' : '#ffffff';
+		$varname = $statusVarNamePrefix.'badgeStatus'.$statusName;
+		$thisBadgeTextColor = colorIsLight(${$varname}) ? '#212529' : '#ffffff';
 
 		if (!empty(${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName})) {
-			$thisBadgeTextColor = ${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName};
+			$varname = $statusVarNamePrefix.'badgeStatus_textColor'.$statusName;
+			$thisBadgeTextColor = ${$varname};
 		}
 
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {

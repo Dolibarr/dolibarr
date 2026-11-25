@@ -7,8 +7,8 @@
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,6 @@ if (empty($reshook)) {
 			$qty = price2num(GETPOST("prod_qty_" . $i, 'alpha'), 'MS');
 			if ($qty > 0) {
 				if ($object->add_sousproduit($id, GETPOSTINT("prod_id_" . $i), (float) $qty, GETPOSTINT("prod_incdec_" . $i)) > 0) {
-					//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
 					$action = 'edit';
 				} else {
 					$error++;
@@ -166,7 +165,7 @@ $formproduct = new FormProduct($db);
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
 $resql = false;
-// action recherche des produits par mot-cle et/ou par categorie
+// action searching products by keywords and/or by category
 if ($action == 'search') {
 	$current_lang = $langs->getDefaultLang();
 
@@ -184,7 +183,7 @@ if ($action == 'search') {
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".$db->escape($current_lang)."'";
 	}
 	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 
@@ -335,6 +334,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print dol_get_fiche_end();
 
+		print '<div class="clearboth"></div>';
 
 		print '<div class="clearboth"></div><br>';
 
@@ -393,6 +393,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</table>';
 		print '</div>';
 
+
 		print '<br>'."\n";
 
 
@@ -420,7 +421,7 @@ if ($id > 0 || !empty($ref)) {
 				$rowspan++;
 			}
 
-			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="POST" class="formtoaddinkit'.($action != 'search' ?' hideobject' : '').'" name="formtoaddinkit" id="formtoaddinkit">';
+			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="POST" class="formtoaddinkit'.($action != 'search' ? ' hideobject' : '').'" name="formtoaddinkit" id="formtoaddinkit">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="search">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
@@ -480,7 +481,7 @@ if ($id > 0 || !empty($ref)) {
 							if ($prod_arbo->type == 2 || $prod_arbo->type == 3) {
 								$is_pere = 0;
 								$prod_arbo->get_sousproduits_arbo();
-								// associations sousproduits
+								// associations subproducts
 								$prods_arbo = $prod_arbo->get_arbo_each_prod();
 								if (count($prods_arbo) > 0) {
 									foreach ($prods_arbo as $key => $value) {
@@ -611,6 +612,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$totalsell = 0;
 		$total = 0;
+		$potential_kit_stock = 0;
 		if (count($prods_arbo)) {
 			foreach ($prods_arbo as $value) {
 				$productstatic->fetch($value['id']);
@@ -679,7 +681,20 @@ if ($id > 0 || !empty($ref)) {
 					if (isModEnabled('stock')) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
-
+					// Check if the component has a required quantity and stock.
+					if ($value['nb'] > 0 && is_numeric($value['stock'])) {
+						// Calculate how many full kits this component can support.
+						$possible_with_this = floor($value['stock'] / $value['nb']);
+						// Keep the smallest value across all components (the limiting factor).
+						if ($potential_kit_stock === 0 || $possible_with_this < $potential_kit_stock) {
+							$potential_kit_stock = $possible_with_this;
+						}
+					} else {
+						// If a component has no required quantity or its stock is not available, no kit can be made.
+						$potential_kit_stock = 0;
+						// Optionally, break the loop early for efficiency.
+						break;
+					}
 					// Hook fields
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
@@ -793,6 +808,15 @@ if ($id > 0 || !empty($ref)) {
 
 			// Stock
 			if (isModEnabled('stock')) {
+				// Add a new row for the potential kits stock.
+				$colspan_counter = 4;
+				print '<tr class="total-row right">';
+				print '<td></td><td></td><td></td>';
+				print '<td colspan="' . ($colspan_counter) . '" class="titlefield">' . $langs->trans("PotentialKitsFromStock") . '</td>';
+					// Calculate the value to display. If $potential_kit_stock is null or 0, show 0.
+				$stock_to_display = $potential_kit_stock;
+				print '<td class="total-value">' . price($stock_to_display) . '</td>';
+				print '</tr>';
 				print '<td class="liste_total right">&nbsp;</td>';
 			}
 

@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,12 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-if (isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +36,11 @@ if (isModEnabled('category')) {
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other"));
@@ -119,12 +118,19 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
+// get user rights on supplier prices
+$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
+
+
 // Definition of array of fields for columns
 $arrayfields = array(
-	'stockqty' => array('type' => 'float', 'label' => 'PhysicalStock', 'enabled' => '1', 'visible' => -2, 'checked' => '0', 'position' => 170),
-	'estimatedvalue' => array('type' => 'float', 'label' => 'EstimatedStockValue', 'enabled' => '1', 'visible' => 1, 'checked' => '1', 'position' => 171),
-	'estimatedstockvaluesell' => array('type' => 'float', 'label' => 'EstimatedStockValueSell', 'enabled' => '1', 'checked' => '1', 'visible' => 2, 'position' => 172),
+	'stockqty' => array('type' => 'float', 'label' => 'PhysicalStock', 'enabled' => '1', 'visible' => 2, 'checked' => '1', 'position' => 450),
+	'estimatedstockvaluesell' => array('type' => 'float', 'label' => 'EstimatedStockValueSell', 'enabled' => '1', 'checked' => '1', 'visible' => 2, 'position' => 452),
 );
+if ($usercancreadsupplierprice) {
+	$arrayfields['estimatedvalue'] = array('type' => 'float', 'label' => 'EstimatedStockValue', 'enabled' => '1', 'visible' => 1, 'checked' => '1', 'position' => 451);
+}
+
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
@@ -138,8 +144,23 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+if (isset($object->fields['rowid']) && !isset($arrayfields['t.rowid'])) {	// Technical ID is hidden by the object when MAIN_SHOW_TECHNICAL_ID is off, but must remain selectable
+	$arrayfields['t.rowid'] = array('label' => 'TechnicalID', 'checked' => '-1', 'enabled' => '1', 'position' => $object->fields['rowid']['position']);
+}
 // Extra fields
+$extrafieldspositionoffset = 1000;	// To keep extrafields after the hardcoded fields by default
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// By default, the status is the last column, after the extrafields
+if (isset($arrayfields['t.statut'])) {
+	$arrayfields['t.statut']['position'] = (int) max(array_column($arrayfields, 'position')) + 1;
+}
+
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -259,6 +280,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as ccount ON ccount.rowid = t.fk
 if ($separatedPMP) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_perentity as pa ON pa.fk_product = p.rowid AND pa.fk_product = ps.fk_product AND pa.entity = ". (int) $conf->entity;
 }
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE t.entity IN (".getEntity('stock').")";
 foreach ($search as $key => $val) {
 	$class_key = $key;
@@ -284,10 +309,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate((int) $search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate((int) $search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate((int) $search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." <= '".$db->idate((int) $search[$key])."'";
 				}
 			}
 		}
@@ -336,7 +361,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= " GROUP BY ";
 foreach ($object->fields as $key => $val) {
-	$sql .= "t.".$db->escape($key).", ";
+	$sql .= "t.".$db->sanitize($key).", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -538,7 +563,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -549,14 +574,41 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
 }
-foreach ($object->fields as $key => $val) {
+// Fields and extrafields ordered by position (fields of hooks are output after)
+foreach ($arrayfields as $arraykey => $arrayval) {
+	// Columns that are not fields of $object->fields
+	if (in_array($arraykey, array('stockqty', 'estimatedvalue', 'estimatedstockvaluesell'))) {
+		if (!empty($arrayval['checked'])) {
+			print '<td class="liste_titre"></td>';
+		}
+		continue;
+	}
+	$regkey = array();
+	// Extra fields
+	if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($object->fields[$regkey[1]])) {
+		continue;
+	}
+	$key = $regkey[1];
+	$val = $object->fields[$key];
+	// Status
 	if ($key == 'statut') {
+		if (!empty($arrayfields['t.statut']['checked'])) {
+			print '<td class="liste_titre center parentonrightofpage">';
+			print $form->selectarray('search_status', $warehouse->labelStatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
+			print '</td>';
+		}
 		continue;
 	}
 	$searchkey = empty($search[$key]) ? '' : $search[$key];
@@ -594,35 +646,13 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-if (!empty($arrayfields["stockqty"]['checked'])) {
-	print '<td class="liste_titre"></td>';
-}
-
-if (!empty($arrayfields["estimatedvalue"]['checked'])) {
-	print '<td class="liste_titre"></td>';
-}
-
-if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
-	print '<td class="liste_titre"></td>';
-}
-
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-// Status
-if (!empty($arrayfields['t.statut']['checked'])) {
-	print '<td class="liste_titre center parentonrightofpage">';
-	print $form->selectarray('search_status', $warehouse->labelStatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
-	print '</td>';
-}
-
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -636,12 +666,56 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-foreach ($object->fields as $key => $val) {
+// Fields and extrafields ordered by position (fields of hooks are output after)
+foreach ($arrayfields as $arraykey => $arrayval) {
+	// Columns that are not fields of $object->fields
+	if ($arraykey == 'stockqty') {
+		if (!empty($arrayfields["stockqty"]['checked'])) {
+			print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty", '', $param, '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield']++;
+			$totalarray['type'][$totalarray['nbfield']] = 'stock';
+		}
+		continue;
+	}
+	if ($arraykey == 'estimatedvalue') {
+		if (!empty($arrayfields["estimatedvalue"]['checked'])) {
+			print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield']++;
+			$totalarray['type'][$totalarray['nbfield']] = 'price';
+		}
+		continue;
+	}
+	if ($arraykey == 'estimatedstockvaluesell') {
+		if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
+			print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
+			$totalarray['nbfield']++;
+			$totalarray['type'][$totalarray['nbfield']] = 'price';
+		}
+		continue;
+	}
+	$regkey = array();
+	// Extra fields
+	if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($object->fields[$regkey[1]])) {
+		continue;
+	}
+	$key = $regkey[1];
+	$val = $object->fields[$key];
+	// Status
 	if ($key == 'statut') {
+		if (!empty($arrayfields['t.statut']['checked'])) {
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "t.statut", '', $param, '', $sortfield, $sortorder, 'center ');
+			$totalarray['nbfield']++;
+		}
 		continue;
 	}
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
@@ -661,39 +735,13 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-if (!empty($arrayfields["stockqty"]['checked'])) {
-	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stockqty", '', $param, '', $sortfield, $sortorder, 'right ');
-	$totalarray['nbfield']++;
-	$totalarray['type'][$totalarray['nbfield']] = 'stock';
-}
-
-if (!empty($arrayfields["estimatedvalue"]['checked'])) {
-	print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ');
-	$totalarray['nbfield']++;
-	$totalarray['type'][$totalarray['nbfield']] = 'price';
-}
-
-if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
-	print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
-	$totalarray['nbfield']++;
-	$totalarray['type'][$totalarray['nbfield']] = 'price';
-}
-
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-if (!empty($arrayfields['t.statut']['checked'])) {
-	print_liste_field_titre($arrayfields['t.statut']['label'], $_SERVER["PHP_SELF"], "t.statut", '', $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;
-}
-
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -707,6 +755,7 @@ $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -744,7 +793,7 @@ while ($i < $imaxinloop) {
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -758,10 +807,90 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		foreach ($object->fields as $key => $val) {
-			if ($key == 'statut') {
+		// Fields and extrafields ordered by position (fields of hooks are output after)
+		foreach ($arrayfields as $arraykey => $arrayval) {
+			// Stock qty
+			if ($arraykey == 'stockqty') {
+				if (!empty($arrayfields["stockqty"]['checked'])) {
+					print '<td class="right">'.price(price2num($obj->stockqty, 'MS'), 0, '', 0, 0).'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'stockqty';
+					}
+				}
 				continue;
 			}
+
+			// PMP value
+			if ($arraykey == 'estimatedvalue') {
+				if (!empty($arrayfields["estimatedvalue"]['checked'])) {
+					print '<td class="right">';
+					if (price2num($obj->estimatedvalue, 'MT')) {
+						print '<span class="amount">'.price(price2num($obj->estimatedvalue, 'MT'), 1).'</span>';
+					} else {
+						print '';
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'estimatedvalue';
+					}
+				}
+				continue;
+			}
+
+			// Selling value
+			if ($arraykey == 'estimatedstockvaluesell') {
+				if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
+					print '<td class="right">';
+					if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+						if ($obj->sellvalue) {
+							print '<span class="amount">'.price(price2num($obj->sellvalue, 'MT'), 1).'</span>';
+						}
+					} else {
+						$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
+						print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'estimatedstockvaluesell';
+					}
+				}
+				continue;
+			}
+
+			$regkey = array();
+			// Extra fields
+			if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+				$extrafieldsonlykey = $regkey[1];
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+				$extrafieldsonlykey = '';
+				continue;
+			}
+			if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($object->fields[$regkey[1]])) {
+				continue;
+			}
+			$key = $regkey[1];
+			$val = $object->fields[$key];
+
+			// Status
+			if ($key == 'statut') {
+				if (!empty($arrayfields['t.statut']['checked'])) {
+					print '<td class="center">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				continue;
+			}
+
 			$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -778,9 +907,6 @@ while ($i < $imaxinloop) {
 			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'right';
 			}
-			if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) {
-				$cssforfield = 'tdoverflowmax100';
-			}
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
@@ -791,10 +917,21 @@ while ($i < $imaxinloop) {
 				if ($key == 'statut') {
 					print $object->getLibStatut(5);
 				}
-				if ($key == 'phone') {
+				if ($key == 'rowid') {
+					print (int) $object->id;	// Not showOutputField() that returns nothing when the Technical ID is hidden by the object (MAIN_SHOW_TECHNICAL_ID off)
+				} elseif ($key == 'phone') {
 					print dol_print_phone($object->phone, '', 0, $object->id, 'AC_TEL');
 				} elseif ($key == 'fax') {
 					print dol_print_phone($object->fax, '', 0, $object->id, 'AC_FAX');
+				} elseif ($key == 'fk_pays') {
+					$tmparray = getCountry($object->fk_pays, 'all');
+					if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
+						print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);
+					} else {
+						print dolPrintHTML($tmparray['label']);
+					}
+				} elseif (in_array($key, array('lieu', 'description'))) {
+					print '<span class="spantitle">'.$warehouse->showOutputField($val, $key, (string) $object->$key, '').'</span>';
 				} else {
 					print $warehouse->showOutputField($val, $key, (string) $object->$key, '');
 				}
@@ -817,71 +954,13 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		// Stock qty
-		if (!empty($arrayfields["stockqty"]['checked'])) {
-			print '<td class="right">'.price(price2num($obj->stockqty, 'MS')).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'stockqty';
-			}
-		}
-
-		// PMP value
-		if (!empty($arrayfields["estimatedvalue"]['checked'])) {
-			print '<td class="right">';
-			if (price2num($obj->estimatedvalue, 'MT')) {
-				print '<span class="amount">'.price(price2num($obj->estimatedvalue, 'MT'), 1).'</span>';
-			} else {
-				print '';
-			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'estimatedvalue';
-			}
-		}
-
-		// Selling value
-		if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
-			print '<td class="right">';
-			if (!getDolGlobalString('PRODUIT_MULTIPRICES') && !getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-				if ($obj->sellvalue) {
-					print '<span class="amount">'.price(price2num($obj->sellvalue, 'MT'), 1).'</span>';
-				}
-			} else {
-				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-				print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
-			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'estimatedstockvaluesell';
-			}
-		}
-
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
-		// Status
-		if (!empty($arrayfields['t.statut']['checked'])) {
-			print '<td class="center">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

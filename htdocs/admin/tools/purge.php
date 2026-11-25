@@ -95,11 +95,10 @@ $form = new Form($db);
 
 print load_fiche_titre($langs->trans("Purge"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("PurgeAreaDesc", $dolibarr_main_data_root).'</span><br>';
-print '<br>';
+print '<div class="info">'.$langs->trans("PurgeAreaDesc", $dolibarr_main_data_root).'</div>';
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="purge" />';
 

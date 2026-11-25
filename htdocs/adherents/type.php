@@ -9,7 +9,7 @@
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ require '../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -43,7 +44,6 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 // Load translation files required by the page
@@ -91,17 +91,19 @@ $label = GETPOST("label", "alpha");
 $morphy = GETPOST("morphy", "alpha");
 $status = GETPOST("status", "intcomma");
 $subscription = GETPOSTINT("subscription");
+$caneditamount = GETPOSTINT("caneditamount");
+$minimumamount = GETPOST('minimumamount', 'alpha');
 $amount = GETPOST('amount', 'alpha');
+$amountformuladescription = GETPOST("amountformuladescription", 'restricthtml');
 $duration_value = GETPOSTINT('duration_value');
 $duration_unit = GETPOST('duration_unit', 'alpha');
 $vote = GETPOSTINT("vote");
 $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
-$caneditamount = GETPOSTINT("caneditamount");
 
 // Initialize a technical object
 $object = new AdherentType($db);
-$extrafields = new ExtraFields($db);
+
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));
 
 // Fetch optionals attributes and labels
@@ -124,6 +126,12 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+
+// Technical ID
+$arrayfields['d.rowid'] = array('label' => 'TechnicalID', 'checked' => -1, 'enabled' => 1, 'position' => 1);
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
@@ -172,8 +180,10 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->morphy = trim($morphy);
 	$object->status = (int) $status;
 	$object->subscription = (string) (int) $subscription;
-	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->caneditamount = $caneditamount;
+	$object->minimumamount = ($minimumamount == '' ? '' : price2num($minimumamount, 'MT'));
+	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->amountformuladescription = trim($amountformuladescription);
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note_public = trim($comment);
@@ -233,8 +243,10 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;
 	$object->subscription = (string) (int) $subscription;
-	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->caneditamount = $caneditamount;
+	$object->minimumamount = $minimumamount;
+	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->amountformuladescription = trim($amountformuladescription);
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note_public = trim($comment);
@@ -262,6 +274,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 
 if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$res = $object->delete($user);
 
 	if ($res > 0) {
@@ -296,7 +309,7 @@ $totalarray = [
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head([]);
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote,";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.caneditamount, d.minimumamount, d.amount, d.amountformuladescription, d.vote,";
 	$sql .= " d.statut as status, d.morphy, d.duration,";
 	$sql .= " d.tms";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -344,7 +357,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
 		$selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 		//$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -360,44 +373,52 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 			$totalarray['nbfield']++;
 		}
-		if (!empty($arrayfields['t.rowid']['checked'])) {
-			print '<th>'.$langs->trans("Ref").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.libelle']['checked'])) {
-			print '<th>'.$langs->trans($arrayfields['t.libelle']['label']).'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.morphy']['checked'])) {
-			print '<th class="center">'.$langs->trans("MembersNature").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.duration']['checked'])) {
-			print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.subscription']['checked'])) {
-			print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.amount']['checked'])) {
-			print '<th class="center">'.$langs->trans("Amount").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.caneditamount']['checked'])) {
-			print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.vote']['checked'])) {
-			print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.tms']['checked'])) {
-			print '<th class="center">'.$langs->trans("DateModification").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.statut']['checked'])) {
-			print '<th class="center">'.$langs->trans("Status").'</th>';
+		// Fields title with position ordered by user setup
+		foreach ($arrayfields as $key => $val) {
+			if (empty($val['checked'])) {
+				continue;
+			}
+			switch ($key) {
+				case 'd.rowid':
+					print '<th class="center">'.$langs->trans("ID").'</th>';
+					break;
+				case 't.rowid':
+					print '<th>'.$langs->trans("Ref").'</th>';
+					break;
+				case 't.libelle':
+					print '<th>'.$langs->trans($val['label']).'</th>';
+					break;
+				case 't.morphy':
+					print '<th class="center">'.$langs->trans("MembersNature").'</th>';
+					break;
+				case 't.duration':
+					print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
+					break;
+				case 't.subscription':
+					print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
+					break;
+				case 't.caneditamount':
+					print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
+					break;
+				case 't.minimumamount':
+					print '<th class="right">'.$langs->trans("MinimumAmountShort").'</th>';
+					break;
+				case 't.amount':
+					print '<th class="right">'.$langs->trans("Amount").'</th>';
+					break;
+				case 't.amountformuladescription':
+					print '<th class="center">'.$langs->trans("AmountFormulaDescription").'</th>';
+					break;
+				case 't.vote':
+					print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
+					break;
+				case 't.tms':
+					print '<th class="center">'.$langs->trans("DateModification").'</th>';
+					break;
+				case 't.statut':
+					print '<th class="center">'.$langs->trans("Status").'</th>';
+					break;
+			}
 			$totalarray['nbfield']++;
 		}
 		if (!$conf->main_checkbox_left_column) {
@@ -423,8 +444,10 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$membertype->label = $objp->rowid;
 			$membertype->status = $objp->status;
 			$membertype->subscription = $objp->subscription;
-			$membertype->amount = $objp->amount;
 			$membertype->caneditamount = $objp->caneditamount;
+			$membertype->minimumamount = $objp->minimumamount;
+			$membertype->amount = $objp->amount;
+			$membertype->amountformuladescription = $objp->amountformuladescription;
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
@@ -446,63 +469,81 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
-				if (!empty($arrayfields['t.rowid']['checked'])) {
-					print '<td class="nowraponall">';
-					print $membertype->getNomUrl(1);
-					//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
-					print '</td>';
-				}
-				if (!empty($arrayfields['t.libelle']['checked'])) {
-					print '<td>'.dol_escape_htmltag($objp->label).'</td>';
-				}
-				if (!empty($arrayfields['t.morphy']['checked'])) {
-					print '<td class="center">';
-					if ($objp->morphy == 'phy') {
-						print $langs->trans("Physical");
-					} elseif ($objp->morphy == 'mor') {
-						print $langs->trans("Moral");
-					} else {
-						print $langs->trans("MorAndPhy");
+				// Fields with position ordered by user setup
+				foreach ($arrayfields as $key => $val) {
+					if (empty($val['checked'])) {
+						continue;
 					}
-					print '</td>';
-				}
-				if (!empty($arrayfields['t.duration']['checked'])) {
-					print '<td class="center nowrap">';
-					if ($objp->duration) {
-						$duration_value = intval($objp->duration);
-						if ($duration_value > 1) {
-							$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
-						} else {
-							$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
-						}
-						$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
-						print max(1, $duration_value).' '.$dur[$unit];
+					switch ($key) {
+						case 'd.rowid':
+							print '<td class="center" data-key="id">'.dolPrintHTML($objp->rowid).'</td>';
+							break;
+						case 't.rowid':
+							print '<td class="nowraponall">';
+							print $membertype->getNomUrl(1);
+							//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
+							print '</td>';
+							break;
+						case 't.libelle':
+							print '<td><span class="spantitle">'.dolPrintHTML($objp->label).'</td>';
+							break;
+						case 't.morphy':
+							print '<td class="center">';
+							print $membertype->getmorphylib($objp->morphy, 1);
+							print '</td>';
+							break;
+						case 't.duration':
+							print '<td class="center nowrap">';
+							if ($objp->duration) {
+								$duration_value = intval($objp->duration);
+								if ($duration_value > 1) {
+									$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
+								} else {
+									$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
+								}
+								$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
+								print max(1, $duration_value).' '.$dur[$unit];
+							}
+							print '</td>';
+							break;
+						case 't.subscription':
+							print '<td class="center">'.yn($objp->subscription).'</td>';
+							break;
+						case 't.caneditamount':
+							print '<td class="center">'.yn($objp->caneditamount).'</td>';
+							break;
+						case 't.minimumamount':
+							print '<td class="right">';
+							$minimumamount = ((is_null($objp->minimumamount) || $objp->minimumamount === '') ? '' : price($objp->minimumamount));
+							print '<span class="amount">'.$minimumamount.'</span>';
+							print '</td>';
+							break;
+						case 't.amount':
+							print '<td class="right">';
+							$amount = (is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount));
+							$minimumamount = (is_null($objp->minimumamount) || $objp->minimumamount === '' ? '' : price($objp->minimumamount));
+							if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
+								print img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup').' ';
+							}
+							if ($amount && $minimumamount && $amount < $minimumamount) {
+								print img_warning('Amount lower than minimum of '.price($minimumamount).' defined in setup').' ';
+							}
+							print '<span class="amount">'.$amount.'</span>';
+							print '</td>';
+							break;
+						case 't.amountformuladescription':
+							print '<td class="center">'.dolPrintHTML($objp->amountformuladescription).'</td>';
+							break;
+						case 't.vote':
+							print '<td class="center">'.yn($objp->vote).'</td>';
+							break;
+						case 't.tms':
+							print '<td class="center">'.dol_print_date($db->jdate($objp->tms), 'dayhour').'</td>';
+							break;
+						case 't.statut':
+							print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
+							break;
 					}
-					print '</td>';
-				}
-				if (!empty($arrayfields['t.subscription']['checked'])) {
-					print '<td class="center">'.yn($objp->subscription).'</td>';
-				}
-				if (!empty($arrayfields['t.amount']['checked'])) {
-					print '<td class="center">';
-					$amount = (is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount));
-					print '<span class="amount">'.$amount.'</span>';
-					if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
-						print img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup');
-					}
-					print '</td>';
-				}
-				if (!empty($arrayfields['t.caneditamount']['checked'])) {
-					print '<td class="center">'.yn($objp->caneditamount).'</td>';
-				}
-				if (!empty($arrayfields['t.vote']['checked'])) {
-					print '<td class="center">'.yn($objp->vote).'</td>';
-				}
-				if (!empty($arrayfields['t.tms']['checked'])) {
-					print '<td class="center">'.dol_print_date($db->jdate($objp->tms), 'dayhour').'</td>';
-				}
-				if (!empty($arrayfields['t.statut']['checked'])) {
-					print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 				}
 				if (!$conf->main_checkbox_left_column) {
 					if ($user->hasRight('adherent', 'configurer')) {
@@ -572,13 +613,24 @@ if ($action == 'create') {
 	print $form->selectyesno("subscription", 1, 1);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>';
-	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : '').'">';
-	print '</td></tr>';
-
 	print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
 	print $form->selectyesno("caneditamount", GETPOSTISSET('caneditamount') ? GETPOST('caneditamount') : 0, 1);
 	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("MinimumAmountShort").'</td><td>';
+	print '<input name="minimumamount" size="5" value="'.(GETPOSTISSET('minimumamount') ? GETPOST('minimumamount') : ($minimumamount ? price($minimumamount): '')).'">';
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Amount");
+
+	print '</td><td>';
+	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : '').'">';
+	print '</td></tr>';
+
+	print '<tr><td class="tdtop">'.$langs->trans("AmountFormulaDescription").'</td><td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('amountformuladescription', (GETPOSTISSET('amountformuladescription') ? GETPOST('amountformuladescription', 'restricthtml') : $object->amountformuladescription), '', 100, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
+	$doleditor->Create();
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 	print $form->selectyesno("vote", GETPOSTISSET("vote") ? GETPOST('vote', 'aZ09') : 1, 1);
@@ -641,7 +693,9 @@ if ($rowid > 0) {
 		print '<table class="tableforfield border centpercent">';
 
 		// Morphy
-		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >'.$object->getmorphylib($object->morphy).'</td>';
+		print '<tr><td>'.$langs->trans("MembersNature").'</td><td class="valeur" >';
+		print $object->getmorphylib($object->morphy, 1);
+		print '</td>';
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
@@ -649,17 +703,39 @@ if ($rowid > 0) {
 		print '</tr>';
 
 		// Amount
-		print '<tr><td class="titlefield">'.$langs->trans("Amount").'</td><td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
+		print yn($object->caneditamount);
+		print '</td></tr>';
+
+		if (!empty($object->caneditamount)) {
+			print '<tr><td class="titlefield">'.$langs->trans("MinimumAmountShort").'</td><td>';
+			$minimumamount = ((is_null($object->minimumamount) || $object->minimumamount === '') ? '' : price($object->minimumamount));
+			print $minimumamount;
+			print '</tr>';
+		}
+
+		print '<tr><td class="titlefield">'.$langs->trans("Amount");
+		if (!empty($object->caneditamount)) {
+			print ' <span class="opacitymedium">('.$langs->trans("Recommended").')</span>';
+		}
+		print '</td><td>';
 		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '<span class="amount">'.$amount.'</span>';
 		if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
 			print ' '.img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup');
 		}
+		if ($amount && $minimumamount && $amount < $minimumamount) {
+			print ' '.img_warning('Amount lower than minimum of '.price($minimumamount).' defined in setup');
+		}
+		if (empty($object->caneditamount) && empty($object->amount)) {
+			$langs->load("errors");
+			print img_warning($langs->trans("WarningAmountRequiredIfFreeAmountNotAllowed"));
+		}
 		print '</tr>';
 
-		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
-		print yn($object->caneditamount);
-		print '</td></tr>';
+		print '<tr><td class="tdtop">'.$langs->trans("AmountFormulaDescription").'</td><td><div class="longmessagecut">';
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->amountformuladescription));
+		print "</div></td></tr>";
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);
@@ -681,7 +757,7 @@ if ($rowid > 0) {
 
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td><div class="longmessagecut">';
-		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public));
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $object->note_public));
 		print "</div></td></tr>";
 
 		// Welcome email content
@@ -773,10 +849,10 @@ if ($rowid > 0) {
 			$sql .= natural_search("d.email", $search_email);
 		}
 		if ($filter == 'uptodate') {
-			$sql .= " AND (datefin >= '".$db->idate($now)."') OR t.subscription = 0)";
+			$sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = '0')";
 		}
 		if ($filter == 'outofdate') {
-			$sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
+			$sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = '1')";
 		}
 
 		// Count total nb of records
@@ -964,8 +1040,7 @@ if ($rowid > 0) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
-					}
-					if ($user->hasRight('adherent', 'supprimer')) {
+
 						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";
@@ -1032,8 +1107,7 @@ if ($rowid > 0) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="editfielda marginleftonly" href="'.dolBuildUrl('card.php', ['rowid' => $objp->rowid, 'action' => 'edit', 'backtopage' => dolBuildUrl($_SERVER["PHP_SELF"], ['rowid' => $object->id])], true).'">'.img_edit().'</a>';
-					}
-					if ($user->hasRight('adherent', 'supprimer')) {
+
 						print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'unlink').'</a>';
 					}
 					print "</td>";
@@ -1076,9 +1150,9 @@ if ($rowid > 0) {
 
 		print '<table class="border centpercent">';
 
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.dolPrintHTML($object->id).'</td></tr>';
 
-		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dolPrintHTMLForAttribute($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
 		print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
@@ -1096,15 +1170,29 @@ if ($rowid > 0) {
 		print $form->selectyesno("subscription", $object->subscription, 1);
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
+		print $form->selectyesno("caneditamount", $object->caneditamount, 1);
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("MinimumAmountShort").'</td><td>';
+		$minimumamount = ((is_null($object->minimumamount) || $object->minimumamount === '') ? '' : price($object->minimumamount));
+		print '<input name="minimumamount" size="5" value="';
+		print $minimumamount;
+		print '">';
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Amount");
+		print '</td><td>';
 		$amount = ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '<input name="amount" size="5" value="';
 		print $amount;
 		print '">';
 		print '</td></tr>';
 
-		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
-		print $form->selectyesno("caneditamount", $object->caneditamount, 1);
+		print '<tr><td class="tdtop">'.$langs->trans("AmountFormulaDescription").'</td><td>';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor('amountformuladescription', $object->amountformuladescription, '', 120, 'dolibarr_details', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
+		$doleditor->Create();
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
@@ -1118,7 +1206,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor'), 15, '90%');
+		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_details', '', false, false, isModEnabled('fckeditor'), 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 

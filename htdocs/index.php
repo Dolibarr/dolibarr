@@ -4,8 +4,8 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2026  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ require 'main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -55,18 +56,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/redirect_if_setup_not_complete.inc.php';
  * Actions
  */
 
-if (GETPOST('addbox')) {	// Add box (when submit is done from a form when ajax disabled)
-	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOSTINT('areacode');
-	$userid = GETPOSTINT('userid');
-	$boxorder = GETPOST('boxorder', 'aZ09');
-	$boxorder .= GETPOST('boxcombo', 'aZ09');
-
-	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
-	if ($result > 0) {
-		setEventMessages($langs->trans("BoxAdded"), null);
-	}
-}
+// Add box (when submit is done from a form when ajax disabled)
+include DOL_DOCUMENT_ROOT.'/core/actions_addbox.inc.php';
 
 
 /*
@@ -90,16 +81,18 @@ $title = $langs->trans("HomeArea").' - '.$appli;
 
 llxHeader('', $title);
 
+$boxwork = ''; // Ensure this is initialised
 
 $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
+// Show the user message of the day (MOTD)
 if (getDolGlobalString('MAIN_MOTD')) {
-	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
+	$motd = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
 
 	$substitutionarray = getCommonSubstitutionArray($langs);
 	complete_substitutions_array($substitutionarray, $langs);
-	$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
+	$texttoshow = make_substitutions($motd, $substitutionarray, $langs);
 
 	print "\n<!-- Start of welcome text -->\n";
 	print '<table class="centpercent notopnoleftnoright"><tr><td>';
@@ -112,6 +105,39 @@ if (getDolGlobalString('MAIN_MOTD')) {
  * Show specific warnings
  */
 
+// Specific warning for legal announcement
+if (getDolGlobalString('MAIN_FORCE_SYSTEM_MESSAGE')) {
+	$langs->loadLangs(array("other"));
+	$messagetoshow = $langs->trans(getDolGlobalString('MAIN_FORCE_SYSTEM_MESSAGE'));
+	$messagetoshow = info_admin($messagetoshow, 0, 0, 'warning', 'clearboth');
+
+	$tmpobject = new stdClass();
+	$parameters = array('type' => 'MAIN_FORCE_SYSTEM_MESSAGE');
+	$reshook = $hookmanager->executeHooks('messageOfTheDay', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook == 0) {
+		$messagetoshow .= $hookmanager->resPrint;
+	}
+	if ($messagetoshow) {	// $message is an HTML string.
+		print '<!-- show system message -->';
+		print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('a', 'div', 'span', 'b'));
+	}
+}
+
+// Specific warning to recommend upgrade
+if (getDolGlobalString('MAIN_FORCE_UPGRADE_MESSAGE') || getDolGlobalString('MAIN_FORCE_UPGRADE_URL')) {
+	$langs->loadLangs(array("other"));
+	if (is_numeric(getDolGlobalString('MAIN_FORCE_UPGRADE_MESSAGE'))) {
+		$messagetoshow = $langs->trans("YourInstallIsOldThanksToUpgrade");
+	} else {
+		$messagetoshow = $langs->trans(getDolGlobalString('MAIN_FORCE_UPGRADE_MESSAGE', "YourInstallIsOldThanksToUpgrade"));
+	}
+	if (getDolGlobalString('MAIN_FORCE_UPGRADE_URL')) {
+		$messagetoshow .= '<br><a href="'.getDolGlobalString('MAIN_FORCE_UPGRADE_URL').'" target="_blank">'.getDolGlobalString('MAIN_FORCE_UPGRADE_URL').'</a>';
+	}
+	$messagetoshow = info_admin($messagetoshow, 0, 0, 'warning', 'clearboth');
+	print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('div', 'span', 'b'));
+}
+
 // Specific warning to propose to upgrade invoice situation to progressive mode
 /*
 if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
@@ -121,20 +147,22 @@ if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 }
 */
 
+
 /*
  * Show security warnings
  */
 
 // Security warning if install.lock file is missing or if conf file is writable
 if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
-	$message = '';
+	$messagetoshow = '';
+	$securitywarnings = array();	// Security warnings to show merged into one div
 
 	// Check if install lock file is present
 	$lockfile = DOL_DATA_ROOT.'/install.lock';
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
 		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		$securitywarnings[] = info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 1, 'warning');
 	}
 
 	// Conf files must be in read only mode
@@ -148,21 +176,48 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		//  @phpstan-ignore-next-line
 		if (is_writable($conffile)) {
 			$langs->load("errors");
-			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+			$securitywarnings[] = info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 1, 'warning');
 		}
 	}
 
-	$object = new stdClass();
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('infoadmin', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	if ($reshook == 0) {
-		$message .= $hookmanager->resPrint;
+	if (!empty($securitywarnings)) {
+		// Each warning has its own picto (info_admin called with nodiv), all wrapped into the same div as the one built by info_admin()
+		$messagetoshow .= '<div class="wordbreak warning info_admin clearboth securitywarnings'.(empty($conf->use_javascript_ajax) ? '' : ' cursorpointer').'"';
+		$messagetoshow .= (empty($conf->use_javascript_ajax) ? '' : ' title="'.dolPrintHTMLForAttribute($langs->transnoentities("ClickToHide")).'"').'>';
+		$messagetoshow .= implode('<br><br>', $securitywarnings).'</div>';
 	}
-	if ($message) {	// $message is an HTML string.
+
+	$tmpobject = new stdClass();
+	$parameters = array('type' => 'MAIN_REMOVE_INSTALL_WARNING');
+	$reshook = $hookmanager->executeHooks('messageOfTheDay', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by some hooks
+	if ($reshook == 0) {
+		$messagetoshow .= $hookmanager->resPrint;
+	}
+	if ($messagetoshow) {	// $message is an HTML string.
 		print '<!-- show security warning -->';
-		print dol_string_onlythesehtmltags($message, 1, 0, 0, 0, array('div', 'span', 'b'));
-		//print '<br>';
-		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+		print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('div', 'span', 'b', 'br'));
+		if (!empty($securitywarnings) && !empty($conf->use_javascript_ajax)) {
+			// Hide the security warnings for the current page view when user clicks on them, but not when user selects text
+			// (by dragging, or with a double/triple click: so hiding is delayed to know if another click follows).
+			print '<script nonce="'.getNonce().'" type="text/javascript">
+			jQuery(document).ready(function() {
+				var securitywarningstimer = null;
+				jQuery(".securitywarnings").click(function(event) {
+					var securitywarningsdiv = jQuery(this);
+					clearTimeout(securitywarningstimer);
+					if (event.detail > 1) {
+						return;
+					}
+					securitywarningstimer = setTimeout(function() {
+						if (window.getSelection().toString() === "") {
+							console.log("Click on .securitywarnings, we hide it");
+							securitywarningsdiv.hide();
+						}
+					}, 300);
+				});
+			});
+			</script>';
+		}
 	}
 }
 
@@ -170,8 +225,6 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
  * Dashboard Dolibarr statistics
  * Hidden for external users
  */
-
-print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
@@ -290,23 +343,22 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		}
 	}
 
-
 	// Number of cheque to send
-	if (isModEnabled('bank')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
+	if (isModEnabled('bank') && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
 		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT')) {
 			include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
 			$board = new RemiseCheque($db);
-			$dashboardlines[$board->element] = $board->load_board($user);
+			$dashboardlines[$board->element] = $board->load_board($user);	// board->element is 'withdraw'
 		}
 		if (isModEnabled('prelevement')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element . '_direct_debit'] = $board->load_board($user, 'direct_debit');
+			$dashboardlines[$board->element . '_direct_debit'] = $board->load_board($user, 'direct-debit');
 		}
 		if (isModEnabled('paymentbybanktransfer')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element . '_credit_transfer'] = $board->load_board($user, 'credit_transfer');
+			$dashboardlines[$board->element . '_credit_transfer'] = $board->load_board($user, 'credit-transfer');
 		}
 	}
 
@@ -337,6 +389,14 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 		$board = new Holiday($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
+	}
+
+	// Number of interventions to validate or process
+	if (isModEnabled('intervention') && !getDolGlobalString('MAIN_DISABLE_BLOCK_FICHINTER') && $user->hasRight('ficheinter', 'lire') && !$user->socid) {
+		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+		$board = new Fichinter($db);
+		$dashboardlines[$board->element.'_draft'] = $board->load_board($user, 'draft');
+		$dashboardlines[$board->element.'_validated'] = $board->load_board($user, 'validated');
 	}
 
 	if (isModEnabled('mrp')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_MRP')) {
@@ -454,6 +514,12 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				'stats' =>
 					array('holiday'),
 			),
+		'intervention' =>
+			array(
+				'lang' => 'interventions',
+				'groupName' => 'Interventions',
+				'stats' => array('fichinter_draft', 'fichinter_validated'),
+			),
 		'cubes' =>
 			array(
 				'groupName' => 'Mo',
@@ -480,7 +546,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	$valid_dashboardlines = array();
 	foreach ($dashboardlines as $workboardid => $tmp) {
 		if ($tmp instanceof WorkboardResponse) {
-			$tmp->id = $workboardid; // Complete the object to add its id into its name
+			$tmp->id = (string) $workboardid; // Complete the object to add its id into its name
 			$valid_dashboardlines[$workboardid] = $tmp;
 		}
 	}
@@ -531,7 +597,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 	// Show dashboard
 	$nbworkboardempty = 0;
-	$isIntopOpenedDashBoard = $globalStatInTopOpenedDashBoard = array();
+	$isIntopOpenedDashBoard = array();
 	$openedDashBoard = '';
 	if (!empty($valid_dashboardlines)) {
 		$boxwork .= '<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
@@ -580,6 +646,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					'member' => dol_buildpath('/adherents/card.php?action=create', 1),
 					'expensereport' => dol_buildpath('/expensereport/card.php?action=create', 1),
 					'holiday' => dol_buildpath('/holiday/card.php?action=create', 1),
+					'intervention' => dol_buildpath('/fichinter/card.php?action=create', 1),
 					'cubes' => dol_buildpath('/mrp/mo_card.php?action=create', 1),
 
 				);
@@ -595,7 +662,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 				// Show the span for the total of record. TODO This seems not used.
 				if (!empty($groupElement['globalStats'])) {
-					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
 					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$groupElement['globalStats']['nbTotal'].'</span>';
 				}
 
@@ -620,12 +686,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
 
-					$dateOrder = '';
-					if ($board->id == 'mo') {
-						$dateOrder = $langs->trans("DateToday") . " > " . $langs->trans("DateReference");
-					} else {
-						$dateOrder = $langs->trans("DateReference") . " > " . $langs->trans("DateToday");
-					}
+					$dateOrder = $langs->trans("DateToday") . " > " . $langs->trans("DateReference");
 					$warningDelay = ceil(empty($board->warning_delay) ? 0 : $board->warning_delay);
 					$sign = '';
 					if ($warningDelay >= 0) {
@@ -773,7 +834,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 
 			$textlate = $langs->trans("NActionsLate", $board->nbtodolate);
-			$textlate .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+			$textlate .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateToday").' > '.$langs->trans("DateReference").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
 
 
 			$boxwork .= '<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
@@ -824,6 +885,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	$boxwork .= '</div>';
 
 	if (!empty($isIntopOpenedDashBoard)) {
+		print '<br>';
 		print '<div class="fichecenter">';
 		print '<div class="opened-dash-board-wrap"><div class="box-flex-container">'.$openedDashBoard.'</div></div>';
 		print '</div>';
@@ -832,6 +894,9 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 
 print '<div class="clearboth"></div>';
+
+// Show the combo list to add a widget (placed between the dashboard thumbs and the widget zone)
+print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
 print '<div class="fichecenter fichecenterbis">';
 
@@ -866,6 +931,7 @@ print $boxlist;
 print '</div>';
 
 //print 'mem='.memory_get_usage().' - '.memory_get_peak_usage();
+
 
 // End of page
 llxFooter();

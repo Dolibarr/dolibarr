@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  * Copyright (C) 2014-2016 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
+$langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "products", "trips", "admin"));
 
 $local = GETPOSTINT('localTaxType');
 
@@ -88,7 +88,7 @@ if (empty($min)) {
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 //$modetax = $conf->global->TAX_MODE;
-$calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
+$calc = getDolGlobalInt('MAIN_INFO_LOCALTAX_CALC'.$local);
 $modetax = getDolGlobalInt('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOSTINT("modetax");

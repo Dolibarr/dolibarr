@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
@@ -86,6 +86,10 @@ class Productlots extends DolibarrApi
 			throw new RestException(404, 'Product lots not found');
 		}
 
+		if ($id > 0 && !DolibarrApi::_checkAccessToResource('produit', $this->productlot->id, 'product_lot')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
 		return $this->_cleanObjectDatas($this->productlot);
 	}
 
@@ -96,6 +100,7 @@ class Productlots extends DolibarrApi
 	 *
 	 * @since	5.0.0	Initial implementation
 	 * @since	21.0.0	Added data pagination
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param	string	$sortfield			Sort field
 	 * @param	string	$sortorder			Sort order
@@ -105,14 +110,15 @@ class Productlots extends DolibarrApi
 	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(pl.label:like:'%dol%') and (pl.datec:<:'20160101')"
 	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param	int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return	array						Array of order objects
-	 * @phan-return productlot[]|array{data:productlot[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return productlot[]|array{data:productlot[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return productlot[]|array{data:productlot[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return productlot[]|array{data:productlot[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 * @url GET
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "pl.batch", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "pl.batch", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		global $conf;
 
@@ -131,7 +137,7 @@ class Productlots extends DolibarrApi
 		// caller may see, as productlot_list.php does. Without it the API returns the lots of every entity.
 		$sql .= " WHERE pl.entity IN (".getEntity('productlot').")";
 
-		// Filtres universels
+		// Global filters
 		if ($sqlfilters) {
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
@@ -140,8 +146,13 @@ class Productlots extends DolibarrApi
 			}
 		}
 
-		// Clone pour total (avant ORDER/LIMIT)
+		// Clone for total (before ORDER/LIMIT)
 		$sqlTotals = preg_replace('/^\s*SELECT\s+pl\.rowid/i', 'SELECT COUNT(pl.rowid) AS total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		// ORDER BY
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -182,7 +193,7 @@ class Productlots extends DolibarrApi
 				if ($row && isset($row->total)) $total = (int) $row->total;
 			}
 
-			// Evite division par zéro
+			// Avoid division by zero
 			$safeLimit  = ($limit > 0) ? (int) $limit : max(1, count($obj_ret));
 			$pageCount  = (int) ceil($total / $safeLimit);
 
@@ -277,7 +288,7 @@ class Productlots extends DolibarrApi
 			throw new RestException(404, 'productlot not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('productlot', $this->productlot->id, 'product_lot', '', 'fk_soc', 'rowid')) {
+		if (!DolibarrApi::_checkAccessToResource('produit', $this->productlot->id, 'product_lot')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
@@ -292,7 +303,7 @@ class Productlots extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->productlot->array_options[$index] = $this->_checkValForAPI($field, $val, $this->productlot);
+					$this->productlot->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->productlot);
 				}
 				continue;
 			}
@@ -335,7 +346,7 @@ class Productlots extends DolibarrApi
 			throw new RestException(404, 'Product lot not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('productlot', $this->productlot->id, 'product_lot', '', 'fk_soc', 'rowid')) {
+		if (!DolibarrApi::_checkAccessToResource('produit', $this->productlot->id, 'product_lot')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

@@ -31,6 +31,10 @@ MenuClosedServices=Dịch vụ đã đóng
 NewContract=Hợp đồng mới
 NewContractSubscription=Hợp đồng hoặc đăng ký mới
 AddContract=Tạo hợp đồng
+ContractType=Contract type
+CustomerContract=Customer contract
+SupplierContract=Supplier contract
+LastSupplierContracts=Latest %s supplier contracts
 DeleteAContract=Xóa hợp đồng
 ActivateAllOnContract=Kích hoạt toàn bộ dịch vụ
 CloseAContract=Đóng hợp đồng
@@ -103,7 +107,13 @@ ConfirmCloneContract=Bạn có chắc chắn muốn sao chép hợp đồng <b>%
 LowerDateEndPlannedShort=Ngày kết thúc dự kiến thấp hơn ngày của các dịch vụ đang hoạt động
 SendContractRef=Thông tin hợp đồng __REF__
 OtherContracts=Hợp đồng khác
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Đại diện bán hàng ký hợp đồng
 TypeContact_contrat_internal_SALESREPFOLL=Đại diện bán hàng theo dõi hợp đồng
 TypeContact_contrat_external_BILLING=Liên hệ để thanh toán của khách hàng
@@ -114,3 +124,7 @@ ShowClosedServices=Hiển thị các dịch vụ đã đóng
 HideClosedServices=Ẩn các dịch vụ đã đóng
 UserStartingService=Dịch vụ khởi động người dùng
 UserClosingService=Dịch vụ đóng của người dùng
+SendReminderForExpiredServicesTitle=Send reminder by email for expiring contract services
+SendReminderForExpiredServices=Send reminder by email to the customer when a running contract service is about to expire (parameter is number of days before end of service to send the reminder. It can be a list of days separated by a semicolon, for example '10;5;0;-5'). The template of email to send is defined in setup of contract module.
+DescCONTRACT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Email template to use to send email reminder when a contract service is about to expire
+ContractID=Contract ID

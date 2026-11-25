@@ -34,10 +34,18 @@ function myobjectPrepareHead($object)
 
 	$langs->load("mymodule@mymodule");
 
+	// BEGIN MODULEBUILDER TABFLAG CONTACT
 	$showtabofpagecontact = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_CONTACT');
+	// END MODULEBUILDER TABFLAG CONTACT
+	// BEGIN MODULEBUILDER TABFLAG NOTE
 	$showtabofpagenote = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_NOTE');
+	// END MODULEBUILDER TABFLAG NOTE
+	// BEGIN MODULEBUILDER TABFLAG DOCUMENT
 	$showtabofpagedocument = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_DOCUMENT');
+	// END MODULEBUILDER TABFLAG DOCUMENT
+	// BEGIN MODULEBUILDER TABFLAG AGENDA
 	$showtabofpageagenda = getDolGlobalInt('MAIN_MYMODULE_SHOW_PAGE_OF_AGENDA');
+	// END MODULEBUILDER TABFLAG AGENDA
 
 	$h = 0;
 	$head = array();
@@ -47,13 +55,16 @@ function myobjectPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	// BEGIN MODULEBUILDER TAB CONTACT
 	if ($showtabofpagecontact) {
 		$head[$h][0] = dolBuildUrl(dol_buildpath("/mymodule/myobject_contact.php", 1), ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Contacts");
 		$head[$h][2] = 'contact';
 		$h++;
 	}
+	// END MODULEBUILDER TAB CONTACT
 
+	// BEGIN MODULEBUILDER TAB NOTE
 	if ($showtabofpagenote) {
 		if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 			$nbNote = 0;
@@ -72,7 +83,9 @@ function myobjectPrepareHead($object)
 			$h++;
 		}
 	}
+	// END MODULEBUILDER TAB NOTE
 
+	// BEGIN MODULEBUILDER TAB DOCUMENT
 	if ($showtabofpagedocument) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -87,13 +100,16 @@ function myobjectPrepareHead($object)
 		$head[$h][2] = 'document';
 		$h++;
 	}
+	// END MODULEBUILDER TAB DOCUMENT
 
+	// BEGIN MODULEBUILDER TAB AGENDA
 	if ($showtabofpageagenda) {
 		$head[$h][0] = dolBuildUrl(dol_buildpath("/mymodule/myobject_agenda.php", 1), ['id' => $object->id]);
 		$head[$h][1] = $langs->trans("Events");
 		$head[$h][2] = 'agenda';
 		$h++;
 	}
+	// END MODULEBUILDER TAB AGENDA
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

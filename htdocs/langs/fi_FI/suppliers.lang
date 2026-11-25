@@ -5,7 +5,6 @@ SupplierInvoices=Osto laskut
 ShowSupplierInvoice=Näytä ostolasku
 NewSupplier=Uusi Toimittaja
 NewSupplierInvoice = Uusi ostolasku
-History=Historia
 ListOfSuppliers=Toimittajalista
 ShowSupplier=Näytä toimittaja
 BuyingPriceMin=Alhaisin ostohinta

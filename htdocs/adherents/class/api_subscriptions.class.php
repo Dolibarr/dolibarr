@@ -90,6 +90,8 @@ class Subscriptions extends DolibarrApi
 	 *
 	 * Get a list of subscriptions
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string    $sortfield  		Sort field
 	 * @param string    $sortorder  		Sort order
 	 * @param int       $limit     			Limit for list
@@ -97,27 +99,29 @@ class Subscriptions extends DolibarrApi
 	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
 	 * @param string 	$properties 		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array 						Array of subscription objects
-	 * @phan-return array{data:Subscription[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array<int,Subscription>
-	 * @phpstan-return array{data:Subscription[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array<int,Subscription>
+	 * @phan-return array{data:Subscription[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array<int,Subscription>|array{count:int}
+	 * @phpstan-return array{data:Subscription[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array<int,Subscription>|array{count:int}
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Subscription found
 	 * @throws	RestException	503		Error when retrieving Subscription list
 	 */
-	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "dateadh", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
-		global $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'lire')) {
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid";
+		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription as t";
-		$sql .= ' WHERE 1 = 1';
+		// llx_subscription carries no entity column, the entity of a subscription is the one of its member,
+		// so the restriction goes through llx_adherent, as adherents/subscription/list.php does.
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."adherent as d ON d.rowid = t.fk_adherent";
+		$sql .= ' WHERE d.entity IN ('.getEntity('adherent').')';
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -128,7 +132,12 @@ class Subscriptions extends DolibarrApi
 		}
 
 		//this query will return total orders with the filters given
-		$sqlTotals = str_replace('SELECT rowid', 'SELECT count(rowid) as total', $sql);
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -169,7 +178,7 @@ class Subscriptions extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -232,7 +241,7 @@ class Subscriptions extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(403);
 		}
 
@@ -259,7 +268,7 @@ class Subscriptions extends DolibarrApi
 
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$subscription->array_options[$index] = $this->_checkValForAPI($field, $val, $subscription);
+					$subscription->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $subscription);
 				}
 				continue;
 			}
@@ -269,7 +278,7 @@ class Subscriptions extends DolibarrApi
 		if ($subscription->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, 'Error when updating contribution: '.$subscription->error);
+			throw new RestException(500, 'Error when updating contribution: '.$subscription->errorsToString());
 		}
 	}
 

@@ -107,14 +107,14 @@ $linkback = '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/admin/modules.php', ['restore
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 
-print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = agenda_prepare_head();
 
 print dol_get_fiche_head($head, 'xcal', $langs->trans("Agenda"), -1, 'action');
 
-print '<span class="opacitymedium">'.$langs->trans("AgendaSetupOtherDesc")."</span><br>\n";
+print '<div class="info">'.$langs->trans("AgendaSetupOtherDesc")."</div><br>\n";
 print "<br>\n";
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table

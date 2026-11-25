@@ -34,5 +34,6 @@ ResourceTypeCode=資源類型代碼
 ImportDataset_resource_1=資源
 ErrorResourcesAlreadyInUse=部分資源正在使用中
 ErrorResourceUseInEvent=%s 已在 %s 事件中使用
-MaxUsers=最多用戶數（地點、座位等）
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
 MaxUsersLabel=最多用戶數

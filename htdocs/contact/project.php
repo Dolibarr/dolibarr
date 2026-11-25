@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
-$langs->loadLangs(array("contacts", "companies", "projects"));
+$langs->loadLangs(array("companies", "projects"));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -93,7 +93,7 @@ if ($id) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid" tabindex="-1">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
