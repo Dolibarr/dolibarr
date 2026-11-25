@@ -127,8 +127,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $hookmanager->initHooks(array('expensereportcard', 'globalcard'));
 
 
-// An existing expense report can be modified only if it is for the user or one of his subordinates, or with the permission to write the expense reports of everybody
-$caneditreport = (empty($object->id) || in_array($object->fk_user_author, $childids) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')));
+// An existing expense report can be modified only if it is for the user or one of his subordinates, by the user designated to approve it,
+// or with the permission to write the expense reports of everybody
+$caneditreport = (empty($object->id) || in_array($object->fk_user_author, $childids)
+	|| ($user->hasRight('expensereport', 'approve') && $object->fk_user_validator == $user->id)
+	|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')));
 
 $permissionnote = $user->hasRight('expensereport', 'creer') && $caneditreport; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('expensereport', 'creer') && $caneditreport; // Used by the include of actions_dellink.inc.php
