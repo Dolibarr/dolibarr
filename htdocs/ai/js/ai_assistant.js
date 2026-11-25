@@ -747,13 +747,15 @@ export function initAiAssistant(container) {
         }
 
         // Classes and not inline styles, so the alignment is kept in the saved conversations.
-        // A column of numbers (amount, quantity, percent...) is never wrapped, and right aligned when the model gives no alignment.
+        // A column of numbers (amount, quantity, percent...) is right aligned when the model gives no alignment.
+        // Neither numbers nor short single words (ref, date...) are wrapped.
         const isNumber = (c) => /^[+\-−]?\s*[€$£]?\s*\d[\d\s.,]*(%|[€$£]|[A-Z]{3})?$/.test(c.replace(/\*/g, '').trim());
         const classes = delimiters.map((d, i) => {
             const values = rows.map((r) => r[i]).filter((c) => c !== '');
             const numeric = values.length > 0 && values.every(isNumber);
             const align = /^:-+:$/.test(d) ? 'center' : (/:$/.test(d) ? 'right' : (numeric && !/^:/.test(d) ? 'right' : ''));
-            return (align + (numeric ? ' nowraponall' : '')).trim();
+            const nowrap = numeric || (values.length > 0 && values.every((c) => c.length <= 24 && !/\s/.test(c)));
+            return (align + (nowrap ? ' nowraponall' : '')).trim();
         });
         const cell = (tag, content, i) => '<' + tag + (classes[i] ? ' class="' + classes[i] + '"' : '') + '>'
             // <br> is the only way to write a line break into a markdown cell: the models use it

@@ -1123,9 +1123,6 @@ try {
 					$clean = $guard->unmaskAiResponse($clean);
 				}
 
-				// Removed carriage returns and newlines
-				$clean = preg_replace('/[\r\n]/', ' ', $clean);
-
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog('parse_intent.php response var clean='.$clean, LOG_DEBUG, 0, '_ai');
 				}
@@ -1138,6 +1135,22 @@ try {
 					// [ "type": "function", "function": "name": "api_...", "arguments": { ... } ]
 
 					$intentJSON = json_decode($clean, true);
+					if ($intentJSON === null) {
+						// Some models write real newlines inside the json strings, which is not valid: escape them
+						// (and not remove them, the markdown of the answer needs its lines) and try again.
+						$cleanescaped = preg_replace_callback(
+							'/"(?:[^"\\\\]++|\\\\.)*+"/s',
+							/**
+							 * @param string[] $reg Matches
+							 * @return string
+							 */
+							static function ($reg) {
+								return str_replace(array("\r\n", "\r", "\n"), '\n', $reg[0]);
+							},
+							$clean
+						);
+						$intentJSON = json_decode((string) $cleanescaped, true);
+					}
 					if (getDolGlobalString("AI_DEBUG")) {
 						dol_syslog('parse_intent.php intentJSON = '.var_export($intentJSON, true), LOG_DEBUG, 0, '_ai');
 					}
