@@ -1234,7 +1234,7 @@ function getAiChatAssistantConfig()
 		'AIAttachmentBlockedByPrivacy', 'AIAttachmentMustBeConvertedToText', 'AIAttachmentTypeNotAllowed', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
-		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC', 'UserGroups',
+		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC', 'UserGroups', 'Group',
 		// General UI
 		'NoDataAvailable',
 		'Error',

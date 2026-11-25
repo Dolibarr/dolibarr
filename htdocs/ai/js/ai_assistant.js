@@ -3144,6 +3144,11 @@ export function initAiAssistant(container) {
         'no_email', 'typent_id', 'stcomm_id', 'fk_prospectlevel', 'country_id', 'fk_multicurrency', 'multicurrency_tx',
         'remise_supplier_percent'
         ]);
+    // Columns shown for a table nested into a single-object result, with their label key (null = default label).
+    // Display only: the LLM and the MCP still receive all fields.
+    const NESTED_COLUMNS = {
+        user_group_list: { id: null, name: 'Group' }
+    };
     // Local tax fields are shown only when the country of the company uses this local tax.
     [1, 2].forEach((x) => {
         if (!parseInt(config['useLocalTax' + x] || 0, 10)) {
@@ -3263,7 +3268,7 @@ export function initAiAssistant(container) {
         } catch (e) { /* names stay as ids */ }
     }
 
-    function formatResult(data, isRecursive = false, toolName = '') {
+    function formatResult(data, isRecursive = false, toolName = '', columns = null) {
         if (!data) return t('NoDataAvailable');
         if (data.error) {
             // 'detail' is the reason given by the API (e.g. a 403 that explains itself), shown under the translated error
@@ -3279,12 +3284,16 @@ export function initAiAssistant(container) {
             if (data.length === 0) return t('NoRecordFound');
             isArray = true;
             let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid' && !HIDDEN_FIELDS.has(k));
+            // A table with its own list of columns shows only these ones, in this order
+            if (columns) {
+                keys = Object.keys(columns).filter(k => keys.includes(k));
+            }
             content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
             // Rows that are files (their url is a document.php download): the
             // "name" column is the file, not a third party, and the file gets a
             // magnifier opening Dolibarr's preview (same link, attachment=0).
             const isFileList = data.length > 0 && typeof data[0].url === 'string' && /\/document\.php\?/.test(data[0].url);
-            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : fieldLabel(k)}</th>`);
+            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : ((columns && columns[k]) ? escapeHtml(t(columns[k])) : fieldLabel(k))}</th>`);
             content += '</tr></thead><tbody>';
             data.forEach(row => {
                 content += '<tr>';
@@ -3328,7 +3337,7 @@ export function initAiAssistant(container) {
                     if (key !== 'data' && key !== 'results') {
                         nested += `<div class="chat-nested-title">${escapeHtml(fieldLabel(key))}</div>`;
                     }
-                    nested += formatResult(value, true, toolName);
+                    nested += formatResult(value, true, toolName, NESTED_COLUMNS[key] || null);
                 }
             }
             content += '</ul></div>';
