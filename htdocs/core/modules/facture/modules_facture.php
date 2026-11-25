@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,14 +87,14 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
 	 *
-	 * @var array<int,array<string,float>>
+	 * @var array<int|string,array<string,float>>
 	 */
 	public $localtax1;
 
 	/**
 	 * Local tax rates Array[tax_type][tax_rate]
 	 *
-	 * @var array<int,array<string,float>>
+	 * @var array<int|string,array<string,float>>
 	 */
 	public $localtax2;
 
@@ -107,6 +107,15 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 */
 	public $atleastoneratenotnull = 0;
 
+	/**
+	 * @var int<0,1>
+	 */
+	public $showAmountBeforeDiscount = 1;
+
+	/**
+	 * @var int<0,1>
+	 */
+	public $showDiscountAmount = 1;
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -181,10 +190,10 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		}
 
 		// Create a new instance of SwissQrBill, containing default headers with fixed values
-		$qrBill = SwissQrBill\QrBill::create();
+		$qrBill = SwissQrBill\QrBill::create(); // @phpstan-ignore-line
 
 		// First, set creditor address
-		$address = SwissQrBill\DataGroup\Element\CombinedAddress::create(
+		$address = SwissQrBill\DataGroup\Element\CombinedAddress::create( // @phpstan-ignore-line
 			$this->emetteur->name,
 			$this->emetteur->address,
 			$this->emetteur->zip . " " . $this->emetteur->town,
@@ -198,8 +207,8 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 
 		// Get IBAN from account.
 		$account = new Account($this->db);
-		$account->fetch($object->fk_account);
-		$creditorInformation = SwissQrBill\DataGroup\Element\CreditorInformation::create($account->iban);
+		$account->fetch((int) $object->fk_account);
+		$creditorInformation = SwissQrBill\DataGroup\Element\CreditorInformation::create($account->iban); // @phpstan-ignore-line
 		if (!$creditorInformation->isValid()) {
 			$langs->load("errors");
 			$this->error = $langs->transnoentities("SwissQrCreditorInformationInvalid", $account->iban, (string) $creditorInformation->getViolations());
@@ -215,15 +224,15 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		// Add payment reference CLASSIC-IBAN
 		// This is what you will need to identify incoming payments.
 		$qrBill->setPaymentReference(
-			SwissQrBill\DataGroup\Element\PaymentReference::create(
-				SwissQrBill\DataGroup\Element\PaymentReference::TYPE_NON
+			SwissQrBill\DataGroup\Element\PaymentReference::create( // @phpstan-ignore-line
+				SwissQrBill\DataGroup\Element\PaymentReference::TYPE_NON // @phpstan-ignore-line
 			)
 		);
 
 		$currencyinvoicecode = $object->multicurrency_code ? $object->multicurrency_code : $conf->currency;
 
 		// Add payment amount, with currency
-		$pai = SwissQrBill\DataGroup\Element\PaymentAmountInformation::create($currencyinvoicecode, $object->total_ttc);
+		$pai = SwissQrBill\DataGroup\Element\PaymentAmountInformation::create($currencyinvoicecode, $object->total_ttc); // @phpstan-ignore-line
 		if (!$pai->isValid()) {
 			$this->error = $langs->transnoentities("SwissQrPaymentInformationInvalid", (string) $object->total_ttc, (string) $pai->getViolations());
 			return false;
@@ -232,14 +241,14 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 
 		// Add some human-readable information about what the bill is for.
 		$qrBill->setAdditionalInformation(
-			SwissQrBill\DataGroup\Element\AdditionalInformation::create(
+			SwissQrBill\DataGroup\Element\AdditionalInformation::create( // @phpstan-ignore-line
 				$object->ref
 			)
 		);
 
 		// Set debtor address; We _know_ zip&town have to be filled, so skip that if unfilled.
 		if (!empty($object->thirdparty->zip) && !empty($object->thirdparty->town)) {
-			$address = SwissQrBill\DataGroup\Element\CombinedAddress::create(
+			$address = SwissQrBill\DataGroup\Element\CombinedAddress::create( // @phpstan-ignore-line
 				$object->thirdparty->name,
 				$object->thirdparty->address,
 				$object->thirdparty->zip . " " . $object->thirdparty->town,
@@ -302,7 +311,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 
 			$pdf->setPage(1);
 			$pdf->SetTextColor(0, 0, 0);
-			$output = new SwissQrBill\PaymentPart\Output\TcPdfOutput\TcPdfOutput($qrBill, in_array($langs->shortlang, ['de', 'fr', 'it']) ? $langs->shortlang : 'en', $pdf);
+			$output = new SwissQrBill\PaymentPart\Output\TcPdfOutput\TcPdfOutput($qrBill, in_array($langs->shortlang, ['de', 'fr', 'it']) ? $langs->shortlang : 'en', $pdf); // @phpstan-ignore-line
 			$output->setPrintable(false)->getPaymentPart();
 		} catch (Exception $e) {
 			$pdf->rollbackTransaction(true);

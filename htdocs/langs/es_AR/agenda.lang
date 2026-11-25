@@ -3,6 +3,7 @@ IdAgenda=ID del evento
 ActionsOwnedBy=Propietario del evento
 EventsNb=Cantidad de eventos
 ListOfActions=Lista de eventos
+Location=Ubicaciòn
 EventOnFullDay=Evento de todo(s) el(los) día(s)
 MenuToDoActions=Todos los eventos incompletos
 MenuDoneActions=Todos los eventos terminados

@@ -60,7 +60,7 @@ class DocumentListController extends AbstractDocumentController
 			return -1;
 		}
 
-		$langs->loadLangs(array('other', 'webportal@webportal'));
+		$langs->loadLangs(array('other', 'website'));
 		$context->title = $langs->trans('MyDocuments');
 		$context->desc = $langs->trans('ListOfMyDocuments');
 		$context->menu_active[] = 'document_list';
@@ -92,7 +92,6 @@ class DocumentListController extends AbstractDocumentController
 
 		if (!empty($thirdparty) && $thirdparty->id) {
 			// 1. Prepare data
-			require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 			$client_dir_name = $thirdparty->id;
 			$dir_ged_tiers = $conf->societe->multidir_output[$thirdparty->entity ?? $conf->entity]."/".$client_dir_name;
 			$fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC, 1);

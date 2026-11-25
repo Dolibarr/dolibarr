@@ -2,7 +2,7 @@
 /* <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,6 +142,7 @@ if ($action == 'add_currency') {			// Manual insertion of a rate
 } elseif ($action == 'setapilayer') {		// Update rate from currencylayer
 	if (GETPOSTISSET('modify_apilayer')) {
 		// Save setup
+		dolibarr_set_const($db, 'MULTICURRENCY_APP_PROVIDER', GETPOST('MULTICURRENCY_APP_PROVIDER', 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, 'MULTICURRENCY_APP_KEY', GETPOST('MULTICURRENCY_APP_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, 'MULTICURRENCY_APP_ENDPOINT', GETPOST('MULTICURRENCY_APP_ENDPOINT', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -219,7 +220,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, $conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE);
+	print $form->selectarray("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE", $arrval, getDolGlobalInt("MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE"));
 }
 print '</td></tr>';
 
@@ -232,7 +233,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX', array(), null, 0, 0, 0, 2, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, $conf->global->MULTICURRENCY_USE_ORIGIN_TX);
+	print $form->selectarray("MULTICURRENCY_USE_ORIGIN_TX", $arrval, getDolGlobalInt("MULTICURRENCY_USE_ORIGIN_TX"));
 }
 print '</td></tr>';
 
@@ -245,7 +246,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		print ajax_constantonoff('MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, $conf->global->MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT);
+		print $form->selectarray("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT", $arrval, getDolGlobalInt("MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT"));
 	}
 	print '</td></tr>';
 }
@@ -255,7 +256,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_buyPriceInCurrency").'</td>';
 print '<td class="right">';
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_MULTICURRENCY_BUY_PRICE_IN_CURRENCY">';
 print $form->selectyesno("MULTICURRENCY_BUY_PRICE_IN_CURRENCY",$conf->global->MULTICURRENCY_BUY_PRICE_IN_CURRENCY,1);
@@ -269,7 +270,7 @@ print '</td></tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_modifyRateApplication").'</td>';
 print '<td class="right">';
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_MULTICURRENCY_MODIFY_RATE_APPLICATION">';
 print $form->selectarray('MULTICURRENCY_MODIFY_RATE_APPLICATION', array('PU_DOLIBARR' => 'PU_DOLIBARR', 'PU_CURRENCY' => 'PU_CURRENCY'), $conf->global->MULTICURRENCY_MODIFY_RATE_APPLICATION);
@@ -292,7 +293,7 @@ print '<td>'.$form->textwithpicto($langs->trans("CurrenciesUsed"), $langs->trans
 print '<td class="right">'.$langs->trans("Rate").' / '.$langs->getCurrencySymbol(getDolCurrency()).'</td>'."\n";
 print '</tr>';
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add_currency">';
 
@@ -330,7 +331,7 @@ foreach ($TCurrency as &$currency) {
 	}
 	print '</td>';
 	print '<td class="right">';
-	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
@@ -361,7 +362,7 @@ print '<br>';
 if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
 	print '<br>';
 
-	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" id="form_sync" spellcheck="false">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setapilayer">';
 
@@ -372,11 +373,15 @@ if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
 
 	$endpointdefault = 'https://api.currencylayer.com/live?access_key=__MULTICURRENCY_APP_KEY__&source=__MULTICURRENCY_APP_SOURCE__';
 	$endpointdefault2 = 'https://api.apilayer.com/currency_data/live?base=__MULTICURRENCY_APP_SOURCE__';
+	$endpointdefaultfrankfurter = MultiCurrency::MULTICURRENCY_APP_ENDPOINT_FRANKFURTER_DEFAULT;
 
 	$tooltiptext = $langs->trans("CurrencyLayerAccount_help_to_synchronize", $urlforapilayer).'<br><span class="small">';
 	$tooltiptext .= '<br>- Endpoint for currencylayer:<br>'.$endpointdefault;
 	$tooltiptext .= '<br>- Endpoint for apilayer:<br>'.$endpointdefault2;
+	$tooltiptext .= '<br>- Endpoint for Frankfurter (free, no API key needed):<br>'.$endpointdefaultfrankfurter;
 	$tooltiptext .= '</span><br>';
+
+	$currentprovider = getDolGlobalString('MULTICURRENCY_APP_PROVIDER', 'currencylayer');
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$form->textwithpicto($langs->trans("CurrencyLayerAccount"), $tooltiptext, 1, 'help', 'valignmiddle', 0, 3, 'tooltipcurrencylayer').'</td>'."\n";
@@ -384,16 +389,25 @@ if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
 	print '<textarea id="response" class="hideobject" name="response"></textarea>';
 	print '<input type="submit" name="modify_apilayer" class="button buttongen" value="'.$langs->trans("Modify").'">';
 	print '<input type="submit" id="bt_sync" name="bt_sync_apilayer" class="button buttongen" value="'.$langs->trans('Synchronize').'"';
-	if (!getDolGlobalString('MULTICURRENCY_APP_KEY')) {
+	if ($currentprovider != 'frankfurter' && !getDolGlobalString('MULTICURRENCY_APP_KEY')) {
 		print ' disabled="disabled"';
 	}
 	print '/>';
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("multicurrency_appProvider").'</td>';
+	print '<td class="right">';
+	print '<select id="MULTICURRENCY_APP_PROVIDER" name="MULTICURRENCY_APP_PROVIDER" class="flat">';
+	print '<option value="currencylayer"'.($currentprovider == 'currencylayer' ? ' selected' : '').'>'.$langs->trans("multicurrency_providerCurrencyLayer").'</option>';
+	print '<option value="frankfurter"'.($currentprovider == 'frankfurter' ? ' selected' : '').'>'.$langs->trans("multicurrency_providerFrankfurter").'</option>';
+	print '</select>&nbsp;';
+	print '</td></tr>';
+
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("multicurrency_appId").'</td>';
 	print '<td class="right">';
-	print '<input class="width300" type="text" name="MULTICURRENCY_APP_KEY" value="' . getDolGlobalString('MULTICURRENCY_APP_KEY').'" />&nbsp;';
+	print '<input class="width300" type="text" name="MULTICURRENCY_APP_KEY" value="' . getDolGlobalString('MULTICURRENCY_APP_KEY').'" placeholder="'.($currentprovider == 'frankfurter' ? $langs->trans("multicurrency_appIdNotNeeded") : '').'" />&nbsp;';
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
@@ -402,11 +416,25 @@ if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
 	print '<input type="text" name="MULTICURRENCY_APP_SOURCE" value="' . getDolGlobalString('MULTICURRENCY_APP_SOURCE').'" size="10" placeholder="USD" />&nbsp;'; // Default: USD
 	print '</td></tr>';
 
+	$endpointdefaultforcurrentprovider = ($currentprovider == 'frankfurter') ? $endpointdefaultfrankfurter : MultiCurrency::MULTICURRENCY_APP_ENDPOINT_DEFAULT;
+
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->transnoentitiesnoconv("MULTICURRENCY_APP_ENDPOINT").'</td>';
 	print '<td class="right">';
-	print '<input class="width500" type="text" name="MULTICURRENCY_APP_ENDPOINT" value="' . getDolGlobalString('MULTICURRENCY_APP_ENDPOINT', MultiCurrency::MULTICURRENCY_APP_ENDPOINT_DEFAULT).'" />&nbsp;';
+	print '<input class="width500" id="MULTICURRENCY_APP_ENDPOINT" type="text" name="MULTICURRENCY_APP_ENDPOINT" value="' . getDolGlobalString('MULTICURRENCY_APP_ENDPOINT', $endpointdefaultforcurrentprovider).'" />&nbsp;';
 	print '</td></tr>';
+
+	print '<script>
+	jQuery(document).ready(function() {
+		var endpointdefaults = {
+			currencylayer: '.json_encode($endpointdefault).',
+			frankfurter: '.json_encode($endpointdefaultfrankfurter).'
+		};
+		jQuery("#MULTICURRENCY_APP_PROVIDER").on("change", function() {
+			jQuery("#MULTICURRENCY_APP_ENDPOINT").val(endpointdefaults[jQuery(this).val()]);
+		});
+	});
+	</script>';
 
 	/*print '<tr class="oddeven">';
 	 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_alternateCurrencySource").'</td>';

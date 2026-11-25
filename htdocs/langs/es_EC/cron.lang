@@ -1,8 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-Permission23101 =Leer trabajo programada
-Permission23102 =Crear / actualizar trabajo programado
-Permission23103 =Eliminar trabajo programado
-Permission23104 =Ejecutar trabajo programado
 CronSetup=Configuración de administración de trabajos programada
 KeyForCronAccess=Clave de seguridad para la URL para iniciar trabajos cron
 FileToLaunchCronJobs=Línea de comandos para comprobar y poner en marcha trabajos calificados de cron

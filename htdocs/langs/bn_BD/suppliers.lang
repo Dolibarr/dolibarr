@@ -5,7 +5,6 @@ SupplierInvoices=বিক্রেতা চালান
 ShowSupplierInvoice=ভেন্ডর ইনভয়েস দেখান
 NewSupplier=নতুন বিক্রেতা
 NewSupplierInvoice = নতুন বিক্রেতা চালান
-History=ইতিহাস
 ListOfSuppliers=বিক্রেতাদের তালিকা
 ShowSupplier=বিক্রেতা দেখান
 BuyingPriceMin=সেরা ক্রয় মূল্য

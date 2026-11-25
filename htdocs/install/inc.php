@@ -44,20 +44,24 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 '
 @phan-var-force ?string $dolibarr_main_url_root_alt
+@phan-var-force ?string $dolibarr_main_document_root_alt
 @phan-var-force ?string $dolibarr_main_db_prefix
 ';
+
+$realpathconf = realpath(DOL_DOCUMENT_ROOT.'/core/class/conf.class.php');
 
 $conf = new Conf();
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
 
-// Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
+// Fix PHP_SELF (e.g. for apache via caudium) because PHP_SELF must be a relative URL
 // et non path absolu.
 if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"]) {
 	$_SERVER["PHP_SELF"] = $_SERVER["DOCUMENT_URI"];
@@ -221,9 +225,9 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 		// restrictive open_basedir). Use !empty() so an empty value falls
 		// back to the default relative documents path.
 		$dolibarr_main_data_root = !empty($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : DOL_DOCUMENT_ROOT.'/../documents';
-		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
-		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
-		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
+		$dolibarr_main_url_root = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
+		$dolibarr_main_url_root_alt = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
+		$dolibarr_main_document_root = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
 		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ? trim($dolibarr_main_document_root_alt) : '';
 
 		// Remove last / or \ on directories or url value
@@ -245,7 +249,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 
 		// Create conf object
 		if (!empty($dolibarr_main_document_root)) {
-			$result = conf($dolibarr_main_document_root);
+			$result = conf($dolibarr_main_document_root, $realpathconf);
 		}
 		// Load database driver
 		if ($result > 0) {
@@ -266,10 +270,10 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 // Define prefix
-if (!isset($dolibarr_main_db_prefix) || !$dolibarr_main_db_prefix) {
+if (empty($dolibarr_main_db_prefix)) {
 	$dolibarr_main_db_prefix = 'llx_';
 }
-define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : ''));
+define('MAIN_DB_PREFIX', $dolibarr_main_db_prefix);
 
 define('DOL_CLASS_PATH', 'class/'); // Filesystem path to class dir
 define('DOL_DATA_ROOT', (!empty($dolibarr_main_data_root) ? $dolibarr_main_data_root : DOL_DOCUMENT_ROOT.'/../documents'));
@@ -420,10 +424,11 @@ if (GETPOST('lang', 'aZ09')) {
 /**
  * Load conf file (file must exists)
  *
- * @param	string		$dolibarr_main_document_root		Root directory of Dolibarr bin files
+ * @param	string		$dolibarr_main_document_root		Root directory of Dolibarr program files
+ * @param	?string		$realpathconf						Real path of conf class if class was already included
  * @return	int												Return integer <0 if KO, >0 if OK
  */
-function conf($dolibarr_main_document_root)
+function conf($dolibarr_main_document_root, $realpathconf = null)
 {
 	global $conf;
 	global $dolibarr_main_db_type;
@@ -438,18 +443,25 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_main_cookie_cryptkey;
 
+	if ($realpathconf) {
+		if (realpath($dolibarr_main_document_root.'/core/class/conf.class.php') != $realpathconf) {
+			print 'Warning: You are running files from directory ('.preg_replace('/core\/class\/conf\.class\.php$/', '', $realpathconf).') that differs from the directory already defined into the existing conf.php file ($dolibarr_main_document_root = '.$dolibarr_main_document_root.').';
+			die(-1);
+		}
+	}
+
 	$return = @include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 	if (!$return) {
 		return -1;
 	}
 
 	$conf = new Conf();
-	$conf->db->type = trim($dolibarr_main_db_type);
-	$conf->db->host = trim($dolibarr_main_db_host);
-	$conf->db->port = trim($dolibarr_main_db_port);
-	$conf->db->name = trim($dolibarr_main_db_name);
-	$conf->db->user = trim($dolibarr_main_db_user);
-	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim($dolibarr_main_db_pass));
+	$conf->db->type = trim((string) $dolibarr_main_db_type);
+	$conf->db->host = trim((string) $dolibarr_main_db_host);
+	$conf->db->port = trim((string) $dolibarr_main_db_port);
+	$conf->db->name = trim((string) $dolibarr_main_db_name);
+	$conf->db->user = trim((string) $dolibarr_main_db_user);
+	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim((string) $dolibarr_main_db_pass));
 
 	// Mysql driver support has been removed in favor of mysqli
 	if ($conf->db->type == 'mysql') {
@@ -574,19 +586,19 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	if ($jQueryUiCustomPath) {
 		print '<link rel="stylesheet" type="text/css" href="'.$jQueryUiCustomPath.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
 	} else {
-		print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
+		print '<link rel="stylesheet" type="text/css" href="../public/includes/jquery/css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n"; // JQuery
 	}
 
 	print '<!-- Includes JS for JQuery -->'."\n";
 	if ($jQueryCustomPath) {
 		print '<script type="text/javascript" src="'.$jQueryCustomPath.'jquery.min.js"></script>'."\n";
 	} else {
-		print '<script type="text/javascript" src="../includes/jquery/js/jquery.min.js"></script>'."\n";
+		print '<script type="text/javascript" src="../public/includes/jquery/js/jquery.min.js"></script>'."\n";
 	}
 	if ($jQueryUiCustomPath) {
 		print '<script type="text/javascript" src="'.$jQueryUiCustomPath.'jquery-ui.min.js"></script>'."\n";
 	} else {
-		print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui.min.js"></script>'."\n";
+		print '<script type="text/javascript" src="../public/includes/jquery/js/jquery-ui.min.js"></script>'."\n";
 	}
 
 	print '<title>'.$langs->trans("DolibarrSetup").'</title>'."\n";

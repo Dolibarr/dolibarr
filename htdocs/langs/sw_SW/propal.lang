@@ -9,11 +9,11 @@ PdfCommercialProposalTitle=Pendekezo
 ProposalCard=Kadi ya pendekezo
 NewProp=Pendekezo jipya la kibiashara
 NewPropal=Pendekezo jipya
-Prospect=Matarajio
 DeleteProp=Futa pendekezo la kibiashara
 ValidateProp=Thibitisha pendekezo la kibiashara
 CancelPropal=Cancel
 AddProp=Tengeneza pendekezo
+AddRenewalProp=Create renewal proposal
 ConfirmDeleteProp=Je, una uhakika unataka kufuta pendekezo hili la kibiashara?
 ConfirmValidateProp=Je, una uhakika unataka kuthibitisha pendekezo hili la kibiashara chini ya jina <b> %s </b> ?
 ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
@@ -23,7 +23,10 @@ AllPropals=Mapendekezo yote
 SearchAProposal=Tafuta pendekezo
 NoProposal=Hakuna pendekezo
 ProposalsStatistics=Takwimu za pendekezo la kibiashara
+NumberOfProposals=Number of proposals
 NumberOfProposalsByMonth=Idadi kwa mwezi
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=Kiasi kwa mwezi (isipokuwa kodi)
 NbOfProposals=Idadi ya mapendekezo ya kibiashara
 ShowPropal=Onyesha pendekezo
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=Wiki 1
 AvailabilityTypeAV_2W=Wiki 2
 AvailabilityTypeAV_3W=Wiki 3
 AvailabilityTypeAV_1M=mwezi 1
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Pendekezo la ufuatiliaji wa mwakilishi
 TypeContact_propal_external_BILLING=Anwani ya ankara ya mteja
 TypeContact_propal_external_CUSTOMER=Pendekezo la ufuatiliaji wa mawasiliano ya mteja
 TypeContact_propal_external_SHIPPING=Mawasiliano ya mteja kwa utoaji
-
 # Document models
 CantBeNoSign=haiwezi kuwekwa haijatiwa saini
 CaseFollowedBy=Kesi ikifuatiwa na
@@ -122,3 +123,12 @@ SignSociete_rib=Sign mandate
 SignPropal=Kubali pendekezo
 Signed=saini
 SignedOnly=Imesainiwa pekee
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
+SendReminderForExpiringProposalsTitle=Send reminder by email for expiring commercial proposals
+SendReminderForExpiringProposals=Send reminder by email to the customer when a validated commercial proposal is about to expire (parameter is number of days before end of validity to send the reminder. It can be a list of days separated by a semicolon, for example '10;5;0;-5'). The template of email to send is defined by the PROPOSAL_EMAIL_TEMPLATE_REMIND_EXPIRATION constant.
+SendingReminderForExpiringProposal=Sending reminder for expiring commercial proposal
+ProposalReminderExpirationTopic=Your commercial proposal is about to expire
+ProposalReminderExpirationContent=Your commercial proposal is about to expire on the date below. Please contact us if you want to extend it or confirm your order.

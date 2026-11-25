@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  *
@@ -43,6 +43,7 @@
  * @var Translate $langs
  * @var User $user
  * @var ExtraFields $extrafields
+ *
  * @var CommonObject $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
@@ -51,6 +52,8 @@
  *
  * @var string $action
  * @var int	$dateSelector
+ * @var string $var
+ * @var int	$i
  */
 
 // Protection to avoid direct call of template
@@ -58,14 +61,16 @@ if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
 '
 @phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
 @phan-var-force Societe $seller
 @phan-var-force Societe $buyer
 @phan-var-force string $var
+@phan-var-force int $i
 ';
+
+global $db;
 
 // Handle subtotals line edit
 if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
@@ -92,6 +97,33 @@ if (empty($inputalsopricewithtax)) {
 }
 if (empty($canchangeproduct)) {
 	$canchangeproduct = 0;
+}
+
+$situationinvoicelinewithparent = 0;
+$situationinvoicelinewithchild = 0;
+
+if (getDolGlobalInt('INVOICE_USE_SITUATION') && in_array($object->element, array('facture', 'facturedet'))) {
+	/** @var CommonInvoice $object */
+	// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+
+	// Set if invoice line has a parent
+	if (isset($line->fk_prev_id)) {
+		if ($object->isSituationInvoice()) {	// Method isSituationInvoice() exists only on invoices
+			// Set constant to disallow editing during a situation cycle
+			$situationinvoicelinewithparent = 1;
+		}
+	}
+	// Set if invoice line has a child
+	$sqlcheckchild = "SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_prev_id = ".((int) $line->id);
+	$resqlcheckchild = $db->query($sqlcheckchild);
+	if ($resqlcheckchild) {
+		$objcheckchild = $db->fetch_object($resqlcheckchild);
+		if ($objcheckchild->count > 0) {
+			$situationinvoicelinewithchild = 1;
+		}
+	} else {
+		dol_print_error($db);
+	}
 }
 
 // Define colspan for the button 'Add'
@@ -166,23 +198,7 @@ $coldisplay++;
 		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
-	$situationinvoicelinewithparent = 0;
-	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
-		/** @var CommonInvoice $object */
-		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
-		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
-			// Set constant to disallow editing during a situation cycle
-			$situationinvoicelinewithparent = 1;
-		}
-	}
-
-	// Do not allow editing during a situation cycle
-	// but in some situations that is required (update legal information for example)
-	if (getDolGlobalString('INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION')) {
-		$situationinvoicelinewithparent = 0;
-	}
-
-	if (!$situationinvoicelinewithparent) {
+	if (!$situationinvoicelinewithparent || getDolGlobalString('INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION')) {
 		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
@@ -198,7 +214,7 @@ $coldisplay++;
 		$doleditor->Create();
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">';
-		print GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description;
+		print dolPrintHTMLForTextArea(GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description);
 		print '</textarea>';
 	}
 
@@ -210,6 +226,11 @@ $coldisplay++;
 			print $temps;
 			print '</div>';
 		}
+	}
+
+	// Reference the customer gives to the line (line of its purchase order). Kept editable when already filled.
+	if ($line instanceof OrderLine && (getDolGlobalString('MAIN_ENABLE_LINE_REF_CUSTOMER') || !empty($line->ref_customer))) {
+		print '<div class="paddingtop">'.$langs->trans('RefCustomerLine').' : <input type="text" name="line_ref_customer" id="line_ref_customer" class="width150" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('line_ref_customer') ? GETPOST('line_ref_customer', 'alphanohtml') : (string) $line->ref_customer).'"></div>';
 	}
 
 	// Show autofill date for recurring invoices
@@ -246,11 +267,11 @@ $coldisplay++;
 		$type_tva = 2;
 	}
 	if (!$situationinvoicelinewithparent) {
-		print '<td class="right">';
+		print '<td class="right nowraponall">';
 		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1, (int) $type_tva);
 		print '</td>';
 	} else {
-		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
+		print '<td class="right nowraponall"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
 	}
 
 	$coldisplay++;
@@ -259,11 +280,6 @@ $coldisplay++;
 		print ' readonly';
 	}
 	print '></td>';
-
-	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-		$coldisplay++;
-		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
-	}
 
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
@@ -276,6 +292,11 @@ $coldisplay++;
 			print ' readonly';
 		}
 		print '></td>';
+	}
+
+	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+		$coldisplay++;
+		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
 
 	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
@@ -303,7 +324,14 @@ $coldisplay++;
 		&nbsp;
 	<?php } ?>
 	</td>
-
+	<?php
+	// Shippable Status (Empty cell for edit mode to keep column alignment)
+	if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shipping') && !getDolGlobalString('ORDER_DISABLE_SHIPPABLE_ICON_ON_CARD') && ($object->status > 0 && $object->status < 3)) {
+		print '<td class="linecolstock center">';
+		print '&nbsp;';
+		print '</td>';
+	}
+	?>
 	<?php
 	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		$unit_type = false;
@@ -342,17 +370,21 @@ $coldisplay++;
 	<?php
 	// Progression for situation invoices
 	if ($object->situation_cycle_ref) {
+		// Progress of a credit note is not editable
+		$disabledprogress = ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE) ? ' disabled' : '';	// @phan-suppress-current-line PhanUndeclaredConstantOfClass
 		$coldisplay++;
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
 			$old_fieldv = $line->getAllPrevProgress($line->fk_facture);
 			$fieldv = $tmp_fieldv + $old_fieldv;
 
-			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%';
+			print '<td></td>';	// Invoice progress
+			$coldisplay++;
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress"'.$disabledprogress.'>%';
 			print ' '.$form->textwithpicto('', $langs->trans("PreviousProgress").' ('.$old_fieldv.'%)');
 			print '</td>';
 		} else {
-			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress">%</td>';
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress"'.$disabledprogress.'>%</td>';
 		}
 		$coldisplay++;
 		print '<td></td>';
@@ -414,7 +446,9 @@ $coldisplay++;
 	$prefillDates = false;
 	$date_start_prefill = 0;
 	$date_end_prefill = 0;
+	// @phan-suppress-next-line PhanUndeclaredGlobalVariable
 	if (getDolGlobalString('MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE') && !empty($object->lines) && $i > 0) {
+		// @phan-suppress-next-line PhanUndeclaredGlobalVariable
 		for ($j = $i - 1; $j >= 0; $j--) {
 			$lastline = $object->lines[$j];
 			if ($lastline->product_type == Product::TYPE_SERVICE && (!empty($lastline->date_start) || !empty($lastline->date_end))) {
@@ -438,8 +472,8 @@ $coldisplay++;
 		?>
 		function prefill_service_dates()
 		{
-			$('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, 'day')); ?>").trigger('change');
-			$('#date_end').val("<?php echo dol_escape_js(dol_print_date($date_end_prefill, 'day')); ?>").trigger('change');
+			$('#date_start').val(<?php echo "'".dol_escape_js(dol_print_date($date_start_prefill, 'day'))."'"; ?>).trigger('change');
+			$('#date_end').val(<?php echo "'".dol_escape_js(dol_print_date($date_end_prefill, 'day'))."'"; ?>).trigger('change');
 
 			return false; // Prevent default link behaviour (which is go to href URL)
 		}
@@ -533,13 +567,13 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 
 		var ratejs = price2numjs(rate.val());
 		if (! $.isNumeric(rate.val().replace(',','.')))	{		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->transnoentities("rateMustBeNumeric")); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->transnoentities("rateMustBeNumeric"))."'"; ?>);
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
 		}
 		if (npRate == "np_markRate" && rate.val() >= 100) {		// TODO Use price2numjs ?
-			alert('<?php echo dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100")); ?>');
+			alert(<?php echo "'".dol_escape_js($langs->transnoentities("markRateShouldBeLesserThan100"))."'"; ?>);
 			e.stopPropagation();
 			setTimeout(function () { rate.focus() }, 50);
 			return false;
@@ -578,6 +612,7 @@ jQuery(document).ready(function()
 		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
 			jQuery("#price_ttc").val('');
 			jQuery("#multicurrency_subprice").val('');
+			jQuery("#multicurrency_price_ttc").val('');
 		}
 	});
 	jQuery("#price_ttc").keyup(function(event) {
@@ -585,13 +620,23 @@ jQuery(document).ready(function()
 		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#multicurrency_subprice").val('');
+			jQuery("#multicurrency_price_ttc").val('');
 		}
 	});
 	jQuery("#multicurrency_subprice").keyup(function(event) {
 		// console.log(event.which);		// discard event tag and arrows
-		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_subprice").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_price_ttc").val('');
+		}
+	});
+	jQuery("#multicurrency_price_ttc").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#multicurrency_price_ttc").val() != '') {
+			jQuery("#price_ht").val('');
+			jQuery("#price_ttc").val('');
+			jQuery("#multicurrency_subprice").val('');
 		}
 	});
 

@@ -1,38 +1,38 @@
-IntraCommReport=تقرير إنتراكوم
-IntraCommReports=تقارير إنتراكوم
+IntraCommReport=تقرير المعاملات داخل الاتحاد الأوروبي
+IntraCommReports=تقارير المعاملات داخل الاتحاد الأوروبي
 
-Module68000Name = تقرير إنتراكوم
-Module68000Desc = إدارة تقارير Intracomm (دعم تنسيق DEB / DES الفرنسي)
-IntracommReportSetup = إعداد وحدة Intracommreport
-IntracommReportAbout = حول التقرير الداخلي
+Module68000Name = تقرير المعاملات داخل الاتحاد الأوروبي
+Module68000Desc = إدارة تقارير المعاملات داخل الاتحاد الأوروبي، مع دعم تنسيقي DEB وDES الفرنسيين
+IntracommReportSetup = إعدادات وحدة تقارير المعاملات داخل الاتحاد الأوروبي
+IntracommReportAbout = حول وحدة تقارير المعاملات داخل الاتحاد الأوروبي
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=النوع الفاعل
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les مقدمات
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_AGREMENT=رقم الاعتماد الصادر عن مركز CISD المختص
+INTRACOMMREPORT_TYPE_ACTEUR=نوع الجهة
+INTRACOMMREPORT_ROLE_ACTEUR=الدور الذي تؤديه الجهة
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=مستوى الالتزام بالإبلاغ عن الواردات
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=مستوى الالتزام بالإبلاغ عن الصادرات
+INTRACOMMREPORT_CATEG_FRAISDEPORT=فئة الخدمات من نوع «تكاليف الشحن»
+INTRACOMMREPORT_NUM_DECLARATION=رقم مقدّم الإقرار
 # Menu
-MenuIntracommReport=تقرير إنتراكوم
-MenuIntracommReportNew=إعلان جديد
-MenuIntracommReportList=قائمة
+MenuIntracommReport=تقارير المعاملات داخل الاتحاد الأوروبي
+MenuIntracommReportNew=إقرار جديد
+MenuIntracommReportList=القائمة
 # View
-NewDeclaration=إعلان جديد
-Declaration=إعلان
+NewDeclaration=إقرار جديد
+Declaration=الإقرار
 AnalysisPeriod=فترة التحليل
-TypeOfDeclaration=نوع التصريح
-DEB=إقرار تبادل البضائع (DEB)
-DES=تصريح تبادل الخدمات (DES)
+TypeOfDeclaration=نوع الإقرار
+DEB=إقرار تبادل السلع (DEB)
+DES=إقرار تبادل الخدمات (DES)
 # Export page
-IntracommReportTitle=تحضير ملف XML بتنسيق ProDouane
+IntracommReportTitle=إعداد ملف XML بتنسيق ProDouane
 # List
-IntracommReportList=قائمة الإعلانات التي تم إنشاؤها
-IntracommReportNumber=نوميرو من التصريح
+IntracommReportList=قائمة الإقرارات المُنشأة
+IntracommReportNumber=رقم الإقرار
 IntracommReportPeriod=فترة التحليل
-IntracommReportTypeDeclaration=نوع التصريح
+IntracommReportTypeDeclaration=نوع الإقرار
 IntracommReportDownload=تنزيل ملف XML
 # Invoice
-IntracommReportTransportMode=وضع النقل
-DeleteIntraCommReport=حذف تقرير انتراكوم
+IntracommReportTransportMode=وسيلة النقل
+DeleteIntraCommReport=حذف تقرير المعاملات داخل الاتحاد الأوروبي

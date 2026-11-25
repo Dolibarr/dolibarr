@@ -34,7 +34,6 @@ if (!defined('NOCSRFCHECK')) {
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
-//if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', 1);
 }
@@ -53,7 +52,7 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
 }
 
-$langs->loadLangs(array("bookmarks"));
+$langs->loadLangs(array("main"));
 
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
@@ -64,7 +63,7 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  */
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+if (GETPOSTINT('cache')) {
 	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
 	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
@@ -110,13 +109,14 @@ if (!isModEnabled('bookmark')) {
 	if ($resql = $db->query($sql)) {
 		$bookmarkList = '<div id="dropdown-bookmarks-list" class="start">';
 		$i = 0;
-		while ((!getDolGlobalString('BOOKMARKS_SHOW_IN_MENU') || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
+		while ((!getDolGlobalString('BOOKMARKS_SHOW_IN_MENU') || $i < getDolGlobalInt('BOOKMARKS_SHOW_IN_MENU')) && $obj = $db->fetch_object($resql)) {
 			$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank" rel="noopener noreferrer"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
 			$bookmarkList .= dol_escape_htmltag($obj->title);
 			$bookmarkList .= '</a>';
 			$i++;
 		}
 		if ($i == 0) {
+			$langs->load("other");
 			$bookmarkList .= '<br><div class="opacitymedium center">'.$langs->trans("NoBookmarks").'</div>';
 			$bookmarkList .= '<br><br>';
 		}

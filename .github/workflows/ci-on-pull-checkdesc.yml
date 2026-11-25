@@ -1,8 +1,10 @@
 ---
 # Check the title (label) of a PR starts with a valid keyword (Fix|Close|New|Perf|Doc|Qual|Sec|UXUI)
-# and that the description of the PR does not contain the mention @eldy.
-# If this is not the case, the CI fails, so the PR is refused.
+# and that the description of the PR does not contain a mention of a maintainer (defined into MAINTAINERS file).
+# If this is not the case, the CI fails, so the PR is refused. If the description contains the mention, the PR is also closed.
 # If the PR targets a branch other than develop, the keyword must also be restricted to (Fix|Sec|Doc).
+# If the repository variable DEVELOP_FEATURE_FREEZE is set to 1, PR of type (New|Qual) on develop are also refused,
+# except if the author of the last commit of the PR is a maintainer (defined into MAINTAINERS file).
 # Note: the keyword can be in upper or lower case (use upper case to see the PR into the ChangeLog)
 # and must be followed by a space, a '#' or a ':' (for example: "Fix #456 Short description", "Fix: Short description", "New Short description").
 # Draft PRs are skipped (they are not analyzed until they are ready for review).
@@ -10,22 +12,24 @@
 # screenshot pasted into the description of the PR or into one of its comments. A PR is considered as a change of
 # User Interface if its title starts with the keyword UXUI or it modifies UI files (.tpl, .css, .scss, .html,
 # .js, .vue and htdocs/theme/, except into htdocs/includes and dev directories). The second job runs only when
-# the first job is green.
+# the first job is green. This check is skipped if the title of the PR contains "No visual change".
 name: Check PR title and description
 
+# Note: pull_request_target gives a write token even for PRs from forks. This is safe because
+# the workflow never checks out or runs code of the PR, it only reads the title, body, files and comments of the PR.
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, edited, reopened, ready_for_review, synchronize]
 
 permissions: {}
 
 jobs:
   check-pr:
-    name: Check PR title and description syntax
+    name: Check PR title, description and branch
     if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: read # to get the list of files of the PR
+      pull-requests: write # to get the list of files of the PR and to close it
       issues: read # to get the comments of the PR
     steps:
       - name: Check PR title prefix
@@ -58,12 +62,63 @@ jobs:
           echo "::error::The PR targets the branch '$PR_TARGET_BRANCH' which is not the branch develop, so only bugfix or security PR are allowed. Quality, log, perf or refactoring must be done in develop branch."
           exit 1
 
+      - name: Check PR type is allowed on develop during feature freeze
+        if: vars.DEVELOP_FEATURE_FREEZE == '1'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ "$PR_TARGET_BRANCH" != "develop" ]; then
+            exit 0
+          fi
+
+          if echo "$PR_TITLE" | grep -Eiq '^(New|Qual)[ #:]'; then
+            # As for the quota check, if the author of the last commit of the PR is a maintainer (a github login found
+            # on a line "M: Name <email> / login" of the MAINTAINERS file of the target branch, never read from the PR),
+            # the feature freeze is bypassed: the maintainer has taken over the PR (for example with "Update branch").
+            MAINTAINERS=$(gh api -H "Accept: application/vnd.github.raw" "repos/${GH_REPO}/contents/MAINTAINERS?ref=${PR_TARGET_BRANCH}" \
+              | grep -E '^[[:space:]]*M:.*<[^>]*@[^>]*>[[:space:]]*/[[:space:]]*[A-Za-z0-9-]+[[:space:]]*$' \
+              | sed -E 's|.*/[[:space:]]*([A-Za-z0-9-]+)[[:space:]]*$|\1|' | sort -u || true)
+            LAST_COMMIT_AUTHOR=$(gh api "repos/${GH_REPO}/pulls/${PR_NUMBER}/commits" --paginate \
+              -q '.[] | (.author.login // "")' | tail -n 1)
+            echo "Author of the last commit of the PR: ${LAST_COMMIT_AUTHOR:-unknown}"
+            if [ -n "${LAST_COMMIT_AUTHOR}" ] && printf '%s\n' "${MAINTAINERS}" | grep -qixF -- "${LAST_COMMIT_AUTHOR}"; then
+              echo "The author of the last commit, ${LAST_COMMIT_AUTHOR}, is a maintainer found into the MAINTAINERS file. Check of the feature freeze skipped. OK."
+              exit 0
+            fi
+
+            echo "::error::The branch develop is in feature freeze. PR of type NEW or QUAL are not accepted for the moment. Please submit it again after the release."
+            exit 1
+          fi
+
+          echo "Type of PR is allowed on develop during the feature freeze: '$PR_TITLE'"
+
       - name: Check PR description mentions
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
-          if echo "$PR_BODY" | grep -Eiq '@eldy\b'; then
-            echo "::error::The description of the PR must not contain the mention of the maintener (@eldy). This is useless as the maintener is already watching and notified for PR."
+          # Get the github logins of maintainers from the lines "M: Name <email> / login" of the MAINTAINERS file of the target branch
+          # (the file is read from the base repository, never from the PR)
+          MAINTAINERS=$(gh api -H "Accept: application/vnd.github.raw" "repos/${GH_REPO}/contents/MAINTAINERS?ref=${PR_TARGET_BRANCH}" \
+            | grep -E '^[[:space:]]*M:.*<[^>]*@[^>]*>[[:space:]]*/[[:space:]]*[A-Za-z0-9-]+[[:space:]]*$' \
+            | sed -E 's|.*/[[:space:]]*([A-Za-z0-9-]+)[[:space:]]*$|\1|' | sort -u | paste -sd '|' - || true)
+          if [ -z "$MAINTAINERS" ]; then
+            echo "No maintainer found into the MAINTAINERS file. Check of mentions skipped."
+            exit 0
+          fi
+          echo "Maintainers found into MAINTAINERS file: $MAINTAINERS"
+
+          if printf '%s' "$PR_BODY" | grep -Eiq "@(${MAINTAINERS})\b"; then
+            # Close the PR (a failure must not hide the CI error below)
+            gh pr close "$PR_NUMBER" --comment "PR closed automatically: its description must not contain the mention of a maintainer (defined into MAINTAINERS file), who is already notified of every PR. Please reopen it after removing the mention." || true
+            echo "::error::The description of the PR must not contain the mention of a maintainer (defined into MAINTAINERS file). This is useless as the maintainers are already watching and notified for PR."
             exit 1
           fi
 
@@ -76,6 +131,12 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
+          # Exception: the author declares into the title of the PR that the PR has no visual change
+          if printf '%s' "$PR_TITLE" | grep -Fiq 'No visual change'; then
+            echo "The title of the PR contains 'No visual change'. No screenshot required."
+            exit 0
+          fi
+
           UI_RELATED=0
           REASON=""
 

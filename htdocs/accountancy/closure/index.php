@@ -2,7 +2,7 @@
 /* Copyright (C) 2019-2023  Open-DSI    	    		<support@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025-2026	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,8 +122,8 @@ if (empty($current_fiscal_period) && !empty($first_active_fiscal_period)) {
 	}
 }
 
-$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');
-$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
+$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');  // @phpstan-ignore argument.type
+$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');  // @phpstan-ignore argument.type
 
 
 /*
@@ -247,8 +247,16 @@ if (isset($current_fiscal_period)) {
 		$form_question = array();
 
 		$fiscal_period_arr = array();
-		foreach ($active_fiscal_periods as $info) {
-			$fiscal_period_arr[$info['id']] = $info['label'];
+		if (!empty($current_fiscal_period['date_end'])) {
+			foreach ($active_fiscal_periods as $info) {
+				if ($info['date_start'] > $current_fiscal_period['date_end']) {
+					$fiscal_period_arr[$info['id']] = $info['label'];
+				}
+			}
+		}
+		if (empty($fiscal_period_arr)) {
+			$langs->load('errors');
+			setEventMessages($langs->trans(empty($current_fiscal_period['date_end']) ? 'ErrorAccountancyClosureNoEndDate' : 'ErrorAccountancyClosureNoNextFiscalPeriod'), null, 'errors');
 		}
 		$form_question['new_fiscal_period_id'] = array(
 			'name' => 'new_fiscal_period_id',
@@ -270,7 +278,7 @@ if (isset($current_fiscal_period)) {
 			'value' => 0
 		);
 
-		$formconfirm = $form->formconfirm(
+		$formconfirm = empty($fiscal_period_arr) ? '' : $form->formconfirm(
 			$_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
 			$langs->trans('AccountancyClosureClose'),
 			$langs->trans('AccountancyClosureConfirmClose'),

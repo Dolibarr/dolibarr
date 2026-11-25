@@ -2,6 +2,7 @@
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +26,12 @@
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
+require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -46,6 +47,10 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
  * @backupGlobals disabled
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @phan-file-suppress PhanUndeclaredClass
+ * @phan-file-suppress PhanUndeclaredExtendedClass
+ * @phan-file-suppress PhanUndeclaredMethod
+ * @phan-file-suppress PhanUndeclaredProperty
  */
 class ActionCommTest extends CommonClassTest
 {
@@ -92,6 +97,7 @@ class ActionCommTest extends CommonClassTest
 		$localobject->fk_project  = 0;
 		$localobject->datep       = $now;
 		$localobject->datef       = $now;
+		$localobject->max_participants = 25;
 		$localobject->percentage  = -1;   // Not applicable
 		$localobject->socid       = 0;
 		$localobject->contactid   = 0;
@@ -138,8 +144,58 @@ class ActionCommTest extends CommonClassTest
 		$result = $localobject->fetch($id);
 
 		$this->assertLessThan($result, 0);
+		$this->assertSame(25, (int) $localobject->max_participants);
 		print __METHOD__." id=".$id." result=".$result."\n";
 		return $localobject;
+	}
+
+	/**
+	 * testActionCommGetTranslatedCompanyCreateLabel
+	 *
+	 * @return void
+	 */
+	public function testActionCommGetTranslatedCompanyCreateLabel()
+	{
+		global $conf,$langs,$db;
+		$conf = $this->savconf;
+		$db = $this->savdb;
+
+		$thirdpartyname = 'Test company';
+
+		$englishlangs = new Translate('', $conf);
+		$englishlangs->setDefaultLang('en_US');
+		$englishlangs->load('agenda');
+		$englishlabel = $englishlangs->transnoentitiesnoconv('NewCompanyToDolibarr', $thirdpartyname);
+
+		$frenchlangs = new Translate('', $conf);
+		$frenchlangs->setDefaultLang('fr_FR');
+		$frenchlangs->load('agenda');
+		$frenchlabel = $frenchlangs->transnoentitiesnoconv('NewCompanyToDolibarr', $thirdpartyname);
+
+		$localobject = new ActionComm($db);
+		$localobject->code = 'AC_COMPANY_CREATE';
+		$localobject->thirdparty = new Societe($db);
+		$localobject->thirdparty->name = $thirdpartyname;
+
+		try {
+			$langs = new Translate('', $conf);
+			$langs->setDefaultLang('fr_FR');
+			$langs->load('agenda');
+			$localobject->label = $englishlabel;
+			$this->assertSame($frenchlabel, $localobject->getTranslatedLabel());
+
+			$langs = new Translate('', $conf);
+			$langs->setDefaultLang('en_US');
+			$langs->load('agenda');
+			$localobject->label = $frenchlabel;
+			$this->assertSame($englishlabel, $localobject->getTranslatedLabel());
+
+			$localobject->code = 'AC_OTH_AUTO';
+			$localobject->label = 'Manual agenda label';
+			$this->assertSame('Manual agenda label', $localobject->getTranslatedLabel());
+		} finally {
+			$langs = $this->savlangs;
+		}
 	}
 
 	/**
@@ -160,9 +216,14 @@ class ActionCommTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$localobject->label = 'New label';
+		$localobject->max_participants = 30;
 		$result = $localobject->update($user);
 
 		$this->assertLessThan($result, 0);
+		$updatedobject = new ActionComm($db);
+		$resultfetch = $updatedobject->fetch($localobject->id);
+		$this->assertLessThan($resultfetch, 0);
+		$this->assertSame(30, (int) $updatedobject->max_participants);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		return $localobject->id;
 	}
@@ -191,5 +252,117 @@ class ActionCommTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $result;
+	}
+
+	/**
+	 * testActionCommUid
+	 *
+	 * Checks that an event gets a uid when it is created, that fetch() reads it back, and that an
+	 * event predating the uid column (uid left NULL by the migration) has one written on the first
+	 * fetch, without its modification date being touched.
+	 *
+	 * @return	void
+	 */
+	public function testActionCommUid()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$now = dol_now();
+
+		$localobject = new ActionComm($db);
+		$localobject->type_code = 'AC_OTH';
+		$localobject->label = 'Event used to check the uid';
+		$localobject->datep = $now;
+		$localobject->datef = $now;
+		$localobject->percentage = -1;
+		$localobject->authorid = $user->id;
+		$localobject->userownerid = $user->id;
+
+		$id = $localobject->create($user);
+		$this->assertLessThan($id, 0, 'the event could not be created');
+		$uuidv4 = '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/';
+		$this->assertSame(1, preg_match($uuidv4, (string) $localobject->uid), 'create() did not set a v4 uid');
+
+		// The uid is in the row, and the same one comes back
+		$fetched = new ActionComm($db);
+		$fetched->fetch($id);
+		$this->assertSame($localobject->uid, $fetched->uid, 'fetch() did not read back the uid of create()');
+
+		// An event of before the uid column: it gets one on the first fetch, and its tms stays put
+		$sql = "SELECT tms FROM ".MAIN_DB_PREFIX."actioncomm WHERE id = ".((int) $id);
+		$resql = $db->query($sql);
+		$tmsbefore = $db->fetch_object($resql)->tms;
+
+		$db->query("UPDATE ".MAIN_DB_PREFIX."actioncomm SET uid = NULL, tms = '".$db->escape($tmsbefore)."' WHERE id = ".((int) $id));
+
+		$backfilled = new ActionComm($db);
+		$backfilled->fetch($id);
+		$this->assertSame(1, preg_match($uuidv4, (string) $backfilled->uid), 'fetch() did not backfill the uid of an old event');
+
+		$sql = "SELECT uid, tms FROM ".MAIN_DB_PREFIX."actioncomm WHERE id = ".((int) $id);
+		$resql = $db->query($sql);
+		$obj = $db->fetch_object($resql);
+		$this->assertSame($backfilled->uid, $obj->uid, 'the backfilled uid was not written to the database');
+		$this->assertSame($tmsbefore, $obj->tms, 'the backfill changed the modification date of the event');
+
+		$localobject->fetch($id);
+		$localobject->delete($user);
+
+		print __METHOD__." id=".$id."\n";
+	}
+
+	/**
+	 * testActionCommUidOfClone
+	 *
+	 * Checks that a clone of an event (createFromClone(), used by the Clone button of the event
+	 * card) gets its own uid instead of the one of the source event, so it can be created at all
+	 * (the uid column is unique).
+	 *
+	 * @return	void
+	 */
+	public function testActionCommUidOfClone()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$now = dol_now();
+
+		$source = new ActionComm($db);
+		$source->type_code = 'AC_OTH';
+		$source->label = 'Event used to check the uid of a clone';
+		$source->datep = $now;
+		$source->datef = $now;
+		$source->percentage = -1;
+		$source->authorid = $user->id;
+		$source->userownerid = $user->id;
+
+		$sourceid = $source->create($user);
+		$this->assertLessThan($sourceid, 0, 'the source event could not be created');
+
+		$clone = new ActionComm($db);
+		$clone->fetch($sourceid);
+		$sourceuid = $clone->uid;
+		$cloneid = $clone->createFromClone($user, 0);
+		$this->assertLessThan($cloneid, 0, 'the clone could not be created: '.$clone->error.' '.implode(' ', $clone->errors));
+		$this->assertNotEquals($sourceid, $cloneid, 'the clone has the id of its source');
+
+		$uuidv4 = '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/';
+		$fetched = new ActionComm($db);
+		$fetched->fetch($cloneid);
+		$this->assertSame(1, preg_match($uuidv4, (string) $fetched->uid), 'the clone has no v4 uid');
+		$this->assertNotEquals($sourceuid, $fetched->uid, 'the clone got the uid of its source');
+
+		$fetched->delete($user);
+		$source->fetch($sourceid);
+		$source->delete($user);
+
+		print __METHOD__." id=".$cloneid."\n";
 	}
 }

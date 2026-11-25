@@ -68,7 +68,6 @@ $projectstatic = new Project($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-
 // Security check
 $socid = 0;
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
@@ -144,7 +143,7 @@ if ($id > 0 || !empty($ref)) {
 
 			$morehtmlref = '<div class="refidno">';
 			// Title
-			$morehtmlref .= $projectstatic->title;
+			$morehtmlref .= '<span class="banner-object-name-alias">'.$projectstatic->title.'</span>';
 			// Thirdparty
 			if ($projectstatic->thirdparty->id > 0) {
 				$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');

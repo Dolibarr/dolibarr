@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -112,9 +112,10 @@ if (!is_object($user)) {
  * @param 	int<0,1>	$disablehead		More content into html header
  * @param 	string[]	$arrayofjs			Array of complementary js files
  * @param 	string[]	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -276,35 +277,54 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$errmsg = $langs->trans("TwoRecordsOfCompanyName");
 		} else {
 			$partnership->fk_soc = $company->id;
-			// update thirdparty fields
-			if (empty($company->address)) {
-				$company->address = GETPOST('address');
-			}
-			if (empty($company->zip)) {
-				$company->zip = GETPOST('zipcode');
-			}
-			if (empty($company->town)) {
-				$company->town = GETPOST('town');
-			}
-			if (empty($company->country_id)) {
-				$company->country_id = GETPOSTINT('country_id');
-			}
-			if (empty($company->email)) {
-				$company->email = GETPOST('email');
-			}
-			if (empty($company->url)) {
-				$company->url = GETPOST('url');
-			}
-			if (empty($company->state_id)) {
-				$company->state_id = GETPOSTINT('state_id');
-			}
-			if (empty($company->name_alias)) {
-				$company->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
-			}
 
-			$res = $company->update(0, $user);
-			if ($res < 0) {
-				setEventMessages($company->error, $company->errors, 'errors');
+			// Existing thirdparty found: we do not update its record from this anonymous form.
+			// Visitor is not authenticated and we have no proof he belongs to this thirdparty,
+			// so we keep the submitted data into the partnership private note, a user will
+			// be able to record it manually if the information is confirmed.
+			$infolines = '';
+			if (GETPOST('email')) {
+				$infolines .= $langs->transnoentitiesnoconv("Email").' : '.GETPOST('email')."\n";
+			}
+			if (GETPOST('url')) {
+				$infolines .= $langs->transnoentitiesnoconv("Url").' : '.GETPOST('url')."\n";
+			}
+			if (GETPOST('address')) {
+				$infolines .= $langs->transnoentitiesnoconv("Address").' : '.GETPOST('address')."\n";
+			}
+			if (GETPOST('zipcode')) {
+				$infolines .= $langs->transnoentitiesnoconv("Zip").' : '.GETPOST('zipcode')."\n";
+			}
+			if (GETPOST('town')) {
+				$infolines .= $langs->transnoentitiesnoconv("Town").' : '.GETPOST('town')."\n";
+			}
+			if (GETPOSTINT('country_id') > 0) {
+				$infolines .= $langs->transnoentitiesnoconv("Country").' : '.getCountry(GETPOSTINT('country_id'), '', $db, $langs, 0)."\n";
+			}
+			if (GETPOSTINT('state_id') > 0) {
+				$infolines .= $langs->transnoentitiesnoconv("State").' : '.getState(GETPOSTINT('state_id'), '2', $db, 0, $langs, 0)."\n";
+			}
+			if (GETPOST('firstname') || GETPOST('lastname')) {
+				$infolines .= $langs->transnoentitiesnoconv("Name").' : '.dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'))."\n";
+			}
+			if ($infolines) {
+				$tagdaydate = dol_print_date(dol_now(), '%Y%m%d', 'tzserver');
+				$tagstart = '--- '.$tagdaydate.' info sent from partnership public page ---';
+				$tagend = '--- '.$tagdaydate.' info end ---';
+				$section = $tagstart."\n".rtrim($infolines)."\n".$tagend;
+
+				// If a section for the same day is already into the note, we replace it
+				// instead of adding a new one, to avoid duplicated content when the
+				// form is submitted several times during the same day.
+				$pattern = '/'.preg_quote($tagstart, '/').'.*?'.preg_quote($tagend, '/').'/s';
+				if (!empty($partnership->note_private) && preg_match($pattern, $partnership->note_private)) {
+					$newnote = preg_replace($pattern, $section, $partnership->note_private);
+					if (is_string($newnote)) {
+						$partnership->note_private = $newnote;
+					}
+				} else {
+					$partnership->note_private = dol_concatdesc($partnership->note_private, $section);
+				}
 			}
 		}
 
@@ -429,11 +449,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN()) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE()) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'paybox') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
@@ -444,11 +460,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'paypal') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
@@ -459,11 +471,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'stripe') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.$partnership->ref;
@@ -474,11 +482,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
 						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
-							} else {
-								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
-							}
+							$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 						}
 					} else {
 						dol_print_error(null, "Autosubscribe form is setup to ask an online payment for a not managed online payment");
@@ -641,7 +645,7 @@ print '<tr><td>'.$langs->trans('Country').'</td><td>';
 print img_picto('', 'country', 'class="pictofixedwidth"');
 $country_id = GETPOSTINT('country_id');
 if (!$country_id && getDolGlobalString('PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE')) {
-	$country_id = getCountry($conf->global->PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
+	$country_id = getCountry(getDolGlobalString('PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE'), '2', $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	$country_code = dol_user_country();

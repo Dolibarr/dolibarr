@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  		Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Benjamin Falière		<benjamin@faliere.com>
  *
@@ -93,7 +93,12 @@ foreach ($object->fields as $key => $val) {
 		} else {
 			$check = 'nohtml';
 		}
-		$value = GETPOST($key, $check);
+		if (getDolGlobalString('MAIN_SECURITY_DISALLOW_UNSECURED_TEXT')) {
+			$security_check = 'alphanohtml';
+		} else {
+			$security_check = $check;
+		}
+		$value = GETPOST($key, $security_check);
 	} elseif (preg_match('/^html/', $val['type'])) {
 		$tmparray = explode(':', $val['type']);
 		if (!empty($tmparray[1])) {
@@ -122,6 +127,9 @@ foreach ($object->fields as $key => $val) {
 			print img_picto('', 'language', 'class="pictofixedwidth"');
 			print $formadmin->select_language($value, $key, 0, array(), 1, 0, 0, 'minwidth300', 2);
 		} else {
+			if (isset($val['notnull']) && $val['notnull'] > 0 && empty($value)) {
+				// $value = 'ifone'; 	// TODO Implement this
+			}
 			print $object->showInputField($val, $key, $value, '', '', '', 0);
 		}
 	}

@@ -63,6 +63,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	font-size: 0.95em;
 	padding: .19em .35em;			/* more than 0.19 generate a change into height of lines */
 }
+.badge-thirdpartytype {
+	border-width: 1px;
+	border-color: #844c84;
+	color: #844c84;
+}
 .tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
 	font-size: 1.1em;
 	padding: .4em .4em .3em .4em;
@@ -111,6 +116,18 @@ span.badgeneutral {
 	color: #666;
 	border-radius: 10px;
 	white-space: nowrap;
+}
+span.badgeliketopmenu {
+	padding: 2px 7px 2px 7px;
+	background-color: var(--colorbackhmenu1);
+	color: var(--colorbackvmenu1);
+	border-radius: 10px;
+	white-space: nowrap;
+}
+
+span.badge-oppstatus {
+	color: #fff !important;
+	background-color: #776666;
 }
 
 

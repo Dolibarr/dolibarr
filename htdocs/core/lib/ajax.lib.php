@@ -2,8 +2,9 @@
 /* Copyright (C) 2007-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2015  Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2012       Christophe Battarel  	<christophe.battarel@altairis.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Open-Dsi				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +38,13 @@
  * @param string		$urloption			More parameters on URL request
  * @param int			$minLength			Minimum number of chars to trigger that Ajax search
  * @param int			$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
- * @param array<string,string|string[]>	$ajaxoptions	Multiple options array
- *                                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                                      - Ex: array('disabled'=> )
- *                                                      - Ex: array('show'=> )
- *                                                      - Ex: array('update_textarea'=> )
- *                                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
+ * @param array<string,string|array<int|string,string|array<string,string>>>	$ajaxoptions	Multiple options array
+ *                                                                                              - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *                                                                                              - Ex: array('disabled'=> )
+ *                                                                                              - Ex: array('show'=> )
+ *                                                                                              - Ex: array('update_textarea'=> )
+ *                                                                                              - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
+ *                                                                                              - Ex: array('noresultlabel'=> HTML escaped label of a greyed not selectable line to show when search returns nothing)
  * @param string		$moreparams			More params provided to ajax call
  * @return string   						Script
  */
@@ -74,14 +76,16 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					var autoselect = '.((int) $autoselect).';
 					var options = '.json_encode($ajaxoptions).'; /* Option of actions to do after keyup, or after select */
 
-					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid losing the product id. This is needed only for select of predefined product */
+					/* Disable the "ENTER" key on the search field (useful for barcode readers) to avoid submitting the form */
 					$("input#search_'.$htmlnamejquery.'").keydown(function(e) {
-						if (e.keyCode != 9)		/* If not "Tab" key */
-						{
-							if (e.keyCode == 13) { return false; } /* disable "ENTER" key useful for barcode readers */
-							console.log("Clear id previously selected for field '.$htmlname.'");
-							$("#'.$htmlnamejquery.'").val("");
-						}
+						if (e.keyCode == 13) { return false; }
+					});
+
+					/* Remove selected id as soon as the input content really changes (typing, deleting, cutting or pasting a char), because the old selection is then wrong.
+					   We use the "input" event instead of "keydown" so that copying (Ctrl+C), selecting all (Ctrl+A) or moving the caret (arrow/Home/End keys) does not clear the previously selected id. */
+					$("input#search_'.$htmlnamejquery.'").on("input", function() {
+						console.log("Clear id previously selected for field '.$htmlname.'");
+						$("#'.$htmlnamejquery.'").val("");
 					});
 
 					// Check options for secondary actions when keyup
@@ -126,6 +130,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						$.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
 								if (data != null)
 								{
+									/* If nothing found, show a line that can not be selected (if a label was provided in options.noresultlabel) */
+									if (data.length == 0 && options.noresultlabel) {
+										response([{ label: options.noresultlabel, value: "", id: "", noresult: true }]);
+										return;
+									}
 									response($.map( data, function(item) {
 										console.log("Received answer from ajax GET, we populate array to return to the jquery autocomplete");
 										if (autoselect == 1 && data.length == 1) {
@@ -194,7 +203,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						},
 						dataType: "json",
     					minLength: '.((int) $minLength).',
+						focus: function( event, ui ) {
+							if (ui.item.noresult) { return false; }
+						},
     					select: function( event, ui ) {		// Function ran once a new value has been selected into the javascript combo
+							if (ui.item.noresult) { return false; }
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
@@ -295,6 +308,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 					if (widgetData) {
 						widgetData._renderItem = function( ul, item ) {
 							return $("<li>")
+							.addClass(item.noresult ? "ui-state-disabled" : "")
 							.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
 							.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 							.appendTo(ul);
@@ -458,6 +472,22 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
 
 
 /**
+ * Return the jQuery selector of a html component from its id, or from its class when the name starts with '.'.
+ * jQuery meta-characters of an id (like the '.' of 'u.fk_socpeople') are escaped with a backslash.
+ *
+ * @param	string		$htmlname		Id of html component ('myid') or class ('.myclass')
+ * @return	string						jQuery selector ('#myid' or '.myclass'). It must still be escaped with dol_escape_js() to be included into a JS string.
+ */
+function ajax_jquery_selector($htmlname)
+{
+	if (preg_match('/^\./', $htmlname)) {
+		return $htmlname;
+	}
+
+	return '#'.preg_replace('/([!"#$%&\'()*+,.\/:;<=>?@\[\\\\\]^`{|}~])/', '\\\\$1', $htmlname);
+}
+
+/**
  * Convert a html select field into an ajax combobox.
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
@@ -469,10 +499,11 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * @param	'resolve'|'off'	$widthTypeOfAutocomplete	'resolve' or 'off'
  * @param	string		$idforemptyvalue			Defaults to '-1'
  * @param	string		$morecss					More css
+ * @param 	string 		$placeholder 				String to use as placeholder (Not yet tested !)
  * @return	string									Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  * @see selectArrayAjax() of html.form.class
  */
-function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $idforemptyvalue = '-1', $morecss = '')
+function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $idforemptyvalue = '-1', $morecss = '', $placeholder = '')
 {
 	global $conf;
 
@@ -502,13 +533,23 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
 
 	$tmpplugin = 'select2';
+	$componentname = ajax_jquery_selector($htmlname);	// To support when htmlname is not an ID but a class
 	$msg = "\n";
 	$msg .= '<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
 	$msg .= "<script>\n";
 	$msg .= '$(document).ready(function () {
-		$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({';
-	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
-		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
+		$(\''.dol_escape_js($componentname).'\').'.$tmpplugin.'({';
+	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
+	if (preg_match('/onrightofpage/', $morecss)) {	// In this case, htmlname must be an ID not a class.
+		$msg .= ' dropdownAutoWidth: true, ';
+		$msg .= ' dropdownParent: $(\''.dol_escape_js($componentname).'\').parent(), ';
+	}
+	if ($placeholder) {
+		$msg .= '
+					placeholder: {
+					    id: \'-1\',
+					    text: \''.dol_escape_js($placeholder).'\'
+					  },';
 	}
 	$msg .= '
 			dir: \'ltr\',
@@ -520,11 +561,13 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	if (getDolGlobalString('MAIN_ENABLE_ACCENT_INSENSITIVE_SEARCH')) {	// lowercase + remove accents
 		$msg .= '
 				var term = params.term.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-				var text = (data.text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";';
+				var searchText = data.element ? $(data.element).attr("data-search") : undefined;
+				var text = (searchText !== undefined ? searchText : (data.text || "")).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() || "";';
 	} else {															// lowercase only (accent kept)
 		$msg .= '
 				var term = params.term.toLowerCase();
-				var text = (data.text || "").toLowerCase();';
+				var searchText = data.element ? $(data.element).attr("data-search") : undefined;
+				var text = (searchText !== undefined ? searchText : (data.text || "")).toLowerCase();';
 	}
 	$msg .= '
 				var keywords = term.split(" ");
@@ -538,7 +581,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 			theme: \'default'.dol_escape_js($moreselect2theme).'\',		/* to add css on generated html components */
 			containerCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 			selectionCssClass: \':all:\',		/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
-			dropdownCssClass: \'ui-dialog\',
+			dropdownCssClass: \'dol-dropdown-dialog dol-dropdown-dialogmono\',
 			templateResult: function (data, container) {	/* Format visible output into combo list */
  				/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 				if (data.element) { $(container).addClass($(data.element).attr("class")); }
@@ -557,6 +600,11 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 			},
 			templateSelection: function (selection) {		/* Format visible output of selected value */
 				if (selection.id == \''.(dol_escape_js($idforemptyvalue)).'\') return \'<span class="placeholder">\'+selection.text+\'</span>\';
+				if (selection.element && $(selection.element).attr("data-select-html") != undefined) {
+					if (typeof htmlEntityDecodeJs === "function") {
+						return htmlEntityDecodeJs($(selection.element).attr("data-select-html"));
+					}
+				}
 				return selection.text;
 			},
 			escapeMarkup: function(markup) {
@@ -590,30 +638,38 @@ function ajax_event($htmlname, $events)
 	$out = '';
 
 	if (is_array($events) && count($events)) {   // If an array of js events to do were provided.
+		$componentname = ajax_jquery_selector($htmlname);
+		// The JS function name must be a valid identifier, so without the '.' of an id like 'u.fk_socpeople'
+		$jsfunctionname = 'runJsCodeForEvent'.preg_replace('/[^a-zA-Z0-9_]/', '_', $htmlname);
 		$out = '<!-- JS code to manage event for id = ' . $htmlname . ' -->
 	<script>
 		$(document).ready(function () {
-			jQuery("#'.$htmlname.'").change(function () {
+			jQuery("'.dol_escape_js($componentname, 2).'").change(function () {
 				var obj = '.json_encode($events) . ';
 		   		$.each(obj, function(key,values) {
 	    			if (values.method.length) {
-	    				runJsCodeForEvent'.$htmlname.'(values);
+	    				'.$jsfunctionname.'(values);
 	    			}
 				});
 			});
-			function runJsCodeForEvent'.$htmlname.'(obj) {
-				var id = $("#'.$htmlname.'").val();
+			function '.$jsfunctionname.'(obj) {
+				var id = $("'.dol_escape_js($componentname, 2).'").val();
 				var method = obj.method;
 				var url = obj.url;
 				var htmlname = obj.htmlname;
 				var showempty = obj.showempty;
-			    console.log("Run runJsCodeForEvent-'.$htmlname.' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+			    console.log("Run runJsCodeForEvent-'.dol_escape_js($htmlname, 2).' from ajax_combobox id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+				// The token is required because the request carries an "action" parameter: with
+				// MAIN_SECURITY_CSRF_WITH_TOKEN >= 3 (the default), such a GET is refused without it.
+				// currentToken() is used and not newToken() because the called pages set NOTOKENRENEWAL.
 				$.getJSON(url,
 						{
 							action: method,
+							token: \''.currentToken().'\',
 							id: id,
 							htmlname: htmlname,
-							showempty: showempty
+							showempty: showempty,
+							token: \''.currentToken().'\'
 						},
 						function(response) {
 							$.each(obj.params, function(key,action) {
@@ -922,12 +978,12 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 	if (empty($conf->use_javascript_ajax) || $forcenojs) {
 		$url = DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : ''));
 		if ($readonly) {
-			$url ='#';
+			$url = '#';
 		}
 		$out .= '<a id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'" href="'.$url.'">'.img_picto($langs->trans($text_off), $switchoff, '', 0, 0, 0, '', $cssswitchoff).'</a>';
 		$url = DOL_URL_ROOT.'/core/ajax/objectonoff.php?action=set&token='.newToken().'&id='.((int) $object->id).'&element='.urlencode($object->element).'&field='.urlencode($field).'&value=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.($moreparam ? '&'.$moreparam : ''));
 		if ($readonly) {
-			$url ='#';
+			$url = '#';
 		}
 		$out .= '<a id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'" href="'.$url.'">'.img_picto($langs->trans($text_on), $switchon, '', 0, 0, 0, '', $cssswitchon).'</a>';
 	} else {

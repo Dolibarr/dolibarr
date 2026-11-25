@@ -28,6 +28,9 @@
  * @var string $projectsListId
  * @var int $socid
  * @var string[] $listofoppstatus
+ * @var string[] $listofopplabel
+ * @var string[] $colorseries
+ * @var int $mine
  * @var ?string $badgeStatus2
  */
 '
@@ -141,7 +144,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			$dolgraph->setShowPercent(1);
 			$dolgraph->SetType(array('pie'));
 			//$dolgraph->setWidth('100%');
-			$dolgraph->SetHeight('200');
+			$dolgraph->SetHeight('180');
 			$dolgraph->draw('idgraphstatus');
 			print $dolgraph->show($totaloppnb ? 0 : 1);
 
@@ -149,10 +152,11 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		}
 		//if ($totalinprocess != $total)
 		//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
-		print '<tr class="liste_total"><td class="maxwidth200 tdoverflow">'.$langs->trans("OpportunityTotalAmount").' ('.$langs->trans("WonLostExcluded").')</td><td class="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
+		print '<tr class="liste_total"><td class="maxwidth200 tdoverflow">';
+		print $form->textwithpicto($langs->trans("OpportunityTotalAmount"), $langs->trans("WonLostExcluded")).'</td><td class="right">'.price($totalamount, 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
 		print '<tr class="liste_total"><td class="minwidth200 tdoverflow">';
 		//print $langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')';
-		print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount").' ('.$langs->trans("WonLostExcluded").')', $langs->trans("OpportunityPonderatedAmountDesc"), 1);
+		print $form->textwithpicto($langs->trans("OpportunityPonderatedAmount"), $langs->trans("OpportunityPonderatedAmountDesc").' ('.$langs->trans("WonLostExcluded").')', 1);
 		print '</td><td class="right">'.price(price2num($ponderated_opp_amount, 'MT'), 0, '', 1, -1, -1, $conf->currency).'</td></tr>';
 		print "</table>";
 		print "</div>";

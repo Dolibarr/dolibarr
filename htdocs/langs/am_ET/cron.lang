@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = የታቀደውን ሥራ ያንብቡ
-Permission23102 = የታቀደ ሥራን ይፍጠሩ / ያዘምኑ
-Permission23103 = የታቀደውን ሥራ ሰርዝ
-Permission23104 = የታቀደውን ሥራ ያከናውኑ
 # Admin
 CronSetup=የታቀደ የሥራ አስተዳደር ማዋቀር
 URLToLaunchCronJobs=ዩአርኤል ለመፈተሽ እና ብቁ የሆኑ የክሮን ስራዎችን ከአሳሽ ለማስጀመር
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=በዩኒክስ አካባቢ የትእዛዝ መስመ�
 CronExplainHowToRunWin=በማይክሮሶፍት(tm) ዊንዶውስ አካባቢ በየ5 ደቂቃው የትእዛዝ መስመሩን ለማስኬድ የታቀዱ የተግባር መሳሪያዎችን መጠቀም ይችላሉ።
 CronMethodDoesNotExists=ክፍል %s ምንም አይነት ዘዴ አልያዘም %s
 CronMethodNotAllowed=የክፍል %s ክፍል %s የተከለከሉ ዘዴዎች በብሎክ ዝርዝር ውስጥ አለ
-CronJobDefDesc=የክሮን የስራ መገለጫዎች በሞጁል ገላጭ ፋይል ውስጥ ተገልጸዋል። ሞጁል ሲነቃ ተጭነዋል እና ይገኛሉ ስለዚህ ከአስተዳዳሪ መሳሪያዎች ሜኑ %s ሆነው ስራዎቹን ማስተዳደር ይችላሉ።
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=አስቀድሞ የተገለጹ የክሮን የሥራ መገለጫዎች ዝርዝር
 # Menu
 EnabledAndDisabled=ነቅቷል እና ተሰናክሏል።
@@ -27,7 +22,7 @@ CronDelete=የታቀዱ ስራዎችን ሰርዝ
 CronConfirmDelete=እርግጠኛ ነዎት እነዚህን የታቀዱ ስራዎች መሰረዝ ይፈልጋሉ?
 CronExecute=አሁን አስጀምር
 CronConfirmExecute=እርግጠኛ ነዎት እነዚህን የታቀዱ ስራዎችን አሁን ማከናወን ይፈልጋሉ?
-CronInfo=መርሐግብር የተያዘለት የሥራ ሞጁል ሥራን በራስ-ሰር ለማስፈጸም ቀጠሮ ለመያዝ ያስችላል። ስራዎች እንዲሁ በእጅ ሊጀምሩ ይችላሉ.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=ኢዮብ
 CronNone=Next run of scheduled task
 CronNotYetRan=Never executed
@@ -79,7 +74,7 @@ CronType_command=የሼል ትዕዛዝ
 CronCannotLoadClass=የክፍል ፋይልን መጫን አልተቻለም %s (ክፍል %s ለመጠቀም)
 CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=የክፍል ፋይል %s ተጭኗል፣ ነገር ግን %s አልተገኘም
-UseMenuModuleToolsToAddCronJobs=ወደ ሜኑ ይሂዱ "<a href="%s">ቤት - የአስተዳዳሪ መሳሪያዎች - የታቀዱ ስራዎችን ለማየት እና ለማረም</a>"
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=ሥራ ተወግዷል
 MakeLocalDatabaseDumpShort=የአካባቢ የውሂብ ጎታ ምትኬ
 MakeLocalDatabaseDump=የአካባቢ የመረጃ ቋት ፍጠር። መለኪያዎች፡ መጭመቅ ('gz' ወይም 'bz' or 'none')፣ የመጠባበቂያ አይነት ('mysql'፣ 'pgsql'፣ 'auto')፣ 1፣ 'auto' ወይም filename to build፣ የሚቀመጡ የመጠባበቂያ ፋይሎች ብዛት ናቸው።

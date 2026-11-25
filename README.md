@@ -23,27 +23,25 @@ Dolibarr has a large community ready to help you, free forums and [preferred par
 
 Dolibarr is released under the terms of the GNU General Public License as published by the Free Software Foundation; either Version 3 of the License, or (at your option) any later version (GPL-3+).
 
-See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) file for a full copy of the license.
-
-Other licenses apply for some included dependencies. See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) for a full list.
+See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) file for a full copy of the license. Other licenses apply for some included dependencies. See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) for a full list.
 
 
 ## INSTALLING
 
-There is a lot of different solutions to install Dolibarr.
+There are many different solutions to install Dolibarr.
 
-### Using packages 
+### On your own server: Using auto-installer packages 
 
-If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just few clicks, you can use one of the packaged versions (see next chapter if you have IT knowledge) :
+If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just a few clicks, you can use one of the packaged versions (see next chapter if you have IT knowledge):
 
 - [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
 - [DoliDeb for Debian, Ubuntu](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
-- DoliRpm for Red Hat, Fedora, OpenSuse, Mandriva or Mageia
-- The Docker image (see chapter "Using Docker")
+- DoliRpm for Red Hat, Fedora, openSUSE, Mandriva or Mageia
+- The Docker image (see chapter "Using a Docker image")
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
-### Using the generic step by step setup (recommended for IT users)
+### On your own server: Using the generic step-by-step setup (recommended for IT users)
 
 You can use any web server supporting PHP (Apache, Nginx, ...) and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version:
 
@@ -73,26 +71,43 @@ You can use any web server supporting PHP (Apache, Nginx, ...) and a supported d
 
 - Follow the installer instructions
 
-### Using Docker images
+### On your own server: Using a Docker image
 
 Dolibarr is also available as a [Docker image](https://hub.docker.com/r/dolibarr/dolibarr). Installation instructions are available [here](https://github.com/Dolibarr/dolibarr-docker).
 
-### Using ready to use SaaS/Cloud offers
+### On a SaaS offer: Using ready-to-use commercial offers (support, upgrades, backups provided)
 
-If you lack the time to install it yourself, consider exploring commercial 'ready-to-use' Cloud offerings (refer to https://saas.dolibarr.org). Keep in mind that this third option comes with associated costs.
+If you lack the time to install and maintain it yourself, consider exploring commercial 'ready-to-use' Cloud offerings. Keep in mind that this option comes with associated costs.
+
+A list of official SaaS offers: https://saas.dolibarr.org
+
+
+### On a third-party container deployer
+
+The following providers can run the Dolibarr container for you. "Deploy on ..." opens a page to install Dolibarr, "Go to ..." opens an installation guide. Support
+on such providers can't be guraranteed.
+
+| Provider | |
+| :---: | --- |
+| <img src="https://www.google.com/s2/favicons?domain=easypanel.io&sz=64" width="24" height="24" alt="Easypanel"> | <a href="https://easypanel.io/templates/dolibarr" rel="nofollow">Deploy on Easypanel</a> |
+| <img src="https://www.google.com/s2/favicons?domain=elest.io&sz=64" width="24" height="24" alt="Elestio"> | <a href="https://elest.io/open-source/dolibarr" rel="nofollow">Deploy on Elestio</a> |
+| <img src="https://www.google.com/s2/favicons?domain=podway.io&sz=64" width="24" height="24" alt="Podway"> | <a href="https://podway.io/start?app=dolibarr&amp;ref=docs-dolibarr" rel="nofollow">Deploy on Podway</a> |
+| <img src="https://www.google.com/s2/favicons?domain=railway.com&sz=64" width="24" height="24" alt="Railway"> | <a href="https://railway.com/deploy/dolibarr" rel="nofollow">Deploy on Railway</a> |
+| <img src="https://www.google.com/s2/favicons?domain=repocloud.io&sz=64" width="24" height="24" alt="RepoCloud"> | <a href="https://repocloud.io/details/Dolibarr/" rel="nofollow">Deploy on RepoCloud</a> |
+| <img src="https://www.google.com/s2/favicons?domain=simafri.com&sz=64" width="24" height="24" alt="Simafri"> | <a href="https://www.simafri.com/en/guides/self-host-dolibarr/" rel="nofollow">Go to Simafri guide</a> |
 
 
 ## UPGRADING
 
-Dolibarr supports upgrading, usually without the need for any (commercial) support (depending on if you use any commercial extensions). It supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
+Dolibarr supports upgrading, usually without the need for any (commercial) support (depending on if you use any commercial extensions). It supports upgrading all the way from any version after < +10 years old without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
 
 Follow these step-by-step instructions to seamlessly upgrade Dolibarr to the latest version:
 
-- At first make a backup of your Dolibarr files & then [see](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
+- First, make a backup of your Dolibarr files, then see [the upgrade guide](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
 - Verify that your installed PHP version is supported by the new version [see PHP support](https://wiki.dolibarr.org/index.php/Releases).
 - Overwrite all old files from the 'dolibarr' directory with files provided in the new version's package.
-- At your next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
-  If an `install.lock` file exists to lock any other upgrade process, the application will ask you to remove the file manually (you should find the `install.lock` file in the directory used to store generated and uploaded documents, in most cases, it is the directory called "*documents*").
+- On your next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
+  If an `install.lock` file exists (which locks any other upgrade process), the application will ask you to remove the file manually (you should find the `install.lock` file in the directory used to store generated and uploaded documents; in most cases, this is the directory called "*documents*").
 
 
 ## WHAT'S NEW
@@ -205,7 +220,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
   - Argentina invoice numbering using A,B,C...
   - Greece fetch customer vat details from AADE, all invoice types, MyData(external free module)
   - ZATCA e-invoicing QR-Code
-  - Compatible with [European directives](https://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
+  - Compatible with [European directives](https://commission.europa.eu/topics/taxation_en) (2006/112/CE ... 2010/45/UE)
   - Compatible with data privacy rules (Europe's GDPR, ...)
   - ...
 - Flexible PDF & ODT generation for invoices, proposals, orders...
@@ -217,7 +232,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - MariaDB, MySQL or PostgreSQL
 - Compatible with all Cloud solutions that match PHP & MySQL or PostgreSQL prerequisites.
 
-See exact requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite)
+See exact requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisites)
 
 ### Extending
 
@@ -242,13 +257,13 @@ Administrator, user, developer and translator's documentation are available alon
 ## CONTRIBUTING AND RELEASE PROCESS
 
 This project exists thanks to all the people who contribute.
-Please read the instructions on how to contribute (report a bug/error, a feature request, send code, ...)  [[Contributing](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)]
+Please read the instructions on how to contribute (report a bug/error, a feature request, send code, ...)  [Contributing](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)
 
 A View on Contributors:
 
 [![Dolibarr](https://opencollective.com/dolibarr/contributors.svg?width=890&button=false)](https://github.com/Dolibarr/dolibarr/graphs/contributors)
 
-The release process is described into the file dev/build/makepack-howto.md
+The release process is described in the file dev/build/makepack-howto.md
 
 
 ## CREDITS
@@ -275,4 +290,4 @@ Follow Dolibarr project on:
 
 ## Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here. 🙏 [[Become a sponsor/backer](https://opencollective.com/dolibarr#backer)]
+Support this project by becoming a sponsor. Your logo will show up here. 🙏 [Become a sponsor/backer](https://opencollective.com/dolibarr#backer)]

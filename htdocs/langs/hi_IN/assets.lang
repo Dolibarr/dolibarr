@@ -18,10 +18,8 @@ AccountancyCodeDepreciationAsset=लेखांकन कोड (मूल्�
 AccountancyCodeDepreciationExpense=लेखांकन कोड (मूल्यह्रास व्यय खाता)
 AssetsLines=संपत्ति
 ConfirmValidateAsset=क्या आप वाकई इस संपत्ति को संदर्भ <b>%s</b> के साथ सत्यापित करना चाहते हैं?
-DeleteType=मिटाना
 DeleteAnAssetType=परिसंपत्ति मॉडल हटाएं
 ConfirmDeleteAssetType=क्या आप वाकई इस परिसंपत्ति मॉडल को हटाना चाहते हैं?
-ShowTypeCard=मॉडल '%s' दिखाएँ
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=संपत्ति
 # Module description 'ModuleAssetsDesc'
@@ -29,13 +27,18 @@ ModuleAssetsDesc=संपत्ति विवरण
 # Admin page
 AssetSetup=संपत्ति सेटअप
 AssetSetupPage=संपत्ति सेटअप पृष्ठ
-ExtraFieldsAssetModel=पूरक विशेषताएँ (परिसंपत्ति का मॉडल)
+ExtraFieldsAssetModel=Additionnal fields (Asset's model)
 AssetsType=परिसंपत्ति मॉडल
 AssetsTypeId=एसेट मॉडल आईडी
 AssetsTypeLabel=एसेट मॉडल लेबल
 AssetsTypes=परिसंपत्ति मॉडल
 ASSET_ACCOUNTANCY_CATEGORY=अचल परिसंपत्ति लेखा समूह
 ASSET_DEPRECIATION_DURATION_PER_YEAR=एक वर्ष में परिशोधन की गणना के लिए दिनों में आनुपातिक अवधि
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTION=Day count convention of the prorata temporis
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTIONTooltip=How the depreciation of a <b>partial</b> period is computed, which means the first and the last year of an asset. A full annuity is always the value divided by the duration and is never impacted by this setting.<br><br>A convention defines <b>both</b> how the days of the period are counted <b>and</b> by how many days a full year is divided. The two must always match: counting real calendar days and dividing them by 360 overestimates every partial period by about 1.39 percent.<br><br><b>30/360</b>: every month counts 30 days and every year 360 days. The convention applied by most accounting firms in France.<br><b>Real days / 365</b>: real calendar days of the period, divided by 365.<br><b>Real days / real year</b>: real calendar days, each year divided by its own real length, 365 or 366. The most accurate on a period covering a leap day.<br><br>Example on an asset of 13000 depreciated over 5 years, put in service on March 10th and sold on February 23rd of the fourth year, fiscal years running from August to July. Cumulated depreciation at the disposal: 7684.44 with 30/360, 7700.27 with real days / 365, 7697.29 with real days / real year.<br><br><b>Warning</b>: changing this setting does not recompute the plans already generated. Save the depreciation options of an asset again to regenerate its plan.
+AssetDayCountConventionThirty360=30/360 - every month counts 30 days, every year 360 days (usual in France)
+AssetDayCountConventionAct365=Real days / 365 - real calendar days divided by 365
+AssetDayCountConventionActAct=Real days / real year - real calendar days, each year divided by its own length (365 or 366)
 # Menu
 MenuAssets=संपत्ति
 MenuNewAsset=नई परिसंपत्ति
@@ -142,5 +145,6 @@ AssetErrorCalculationDepreciationLines=मूल्यह्रास रेख�
 AssetErrorReversalDateNotProvidedForMode='%s' मूल्यह्रास विधि के लिए प्रत्यावर्तन तिथि प्रदान नहीं की गई है
 AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode='%s' मूल्यह्रास विधि के लिए प्रत्यावर्तन तिथि चालू वित्तीय वर्ष की शुरुआत से अधिक या उसके बराबर होनी चाहिए
 AssetErrorReversalAmountNotProvidedForMode=मूल्यह्रास मोड '%s' के लिए प्रतिवर्तन राशि प्रदान नहीं की गई है।
+AssetErrorDegressiveDailyDurationForMode=A degressive depreciation needs a duration in years or in months for the depreciation mode '%s'.
 AssetErrorFetchCumulativeDepreciation=मूल्यह्रास रेखा से संचित मूल्यह्रास राशि प्राप्त करते समय त्रुटि
 AssetErrorSetLastCumulativeDepreciation=अंतिम संचित मूल्यह्रास राशि रिकॉर्ड करते समय त्रुटि

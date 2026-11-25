@@ -31,6 +31,10 @@ MenuClosedServices=Хидматҳои пӯшида
 NewContract=Шартномаи нав
 NewContractSubscription=Шартномаи нав ё обуна
 AddContract=Эҷоди шартнома
+ContractType=Contract type
+CustomerContract=Customer contract
+SupplierContract=Supplier contract
+LastSupplierContracts=Latest %s supplier contracts
 DeleteAContract=Шартномаро нест кунед
 ActivateAllOnContract=Ҳама хидматҳоро фаъол созед
 CloseAContract=Бастани шартнома
@@ -103,7 +107,13 @@ ConfirmCloneContract=Шумо мутмаин ҳастед, ки шартнома
 LowerDateEndPlannedShort=Санаи ба охир расидани анҷоми хидматҳои фаъол
 SendContractRef=Маълумот дар бораи шартнома __REF__
 OtherContracts=Шартномаҳои дигар
-##### Types de contacts #####
+##### Statistics #####
+ContractsStatistics=Contract's statistics
+NbOfContracts=Nb of contracts
+NumberOfContractsByMonth=Number of contracts by month
+AmountOfServices=Number of services
+AmountOfServicesByMonthHT=Number of services (excl. tax) by month
+##### Types of contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Намояндаи фурӯш шартнома имзо мекунад
 TypeContact_contrat_internal_SALESREPFOLL=Намояндаи фурӯш пас аз бастани шартнома
 TypeContact_contrat_external_BILLING=Тамос бо мизоҷон
@@ -114,3 +124,7 @@ ShowClosedServices=Хидматҳои пӯшида нишон диҳед
 HideClosedServices=Хидматҳои пӯшида
 UserStartingService=Хидмати оғози корбар
 UserClosingService=Хизматрасонии бастани корбар
+SendReminderForExpiredServicesTitle=Send reminder by email for expiring contract services
+SendReminderForExpiredServices=Send reminder by email to the customer when a running contract service is about to expire (parameter is number of days before end of service to send the reminder. It can be a list of days separated by a semicolon, for example '10;5;0;-5'). The template of email to send is defined in setup of contract module.
+DescCONTRACT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Email template to use to send email reminder when a contract service is about to expire
+ContractID=Contract ID

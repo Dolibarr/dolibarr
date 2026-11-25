@@ -70,6 +70,15 @@ if ($size > 10000) {
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var HookManager $hookmanager
+ *
+ * @var string $action
+ * @var string $captcha
+ * @var string $message
+ * @var string $title
+ * @var ?string $php_self
+ */
 '
 @phan-var-force HookManager $hookmanager
 @phan-var-force string $action
@@ -88,15 +97,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 @phan-var-force string $titletruedolibarrversion
 @phan-var-force string $urllogo
 @phan-var-force int<0,1> $forgetpasslink
+@phan-var-force string $title
+@phan-var-force ?string $php_self
 ';
-
-/**
- * @var HookManager $hookmanager
- * @var string $action
- * @var string $captcha
- * @var string $message
- * @var string $title
- */
 
 
 /*
@@ -147,8 +150,17 @@ $php_self = preg_replace('/(&amp;)+/', '&amp;', $php_self);
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array(
-	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
+	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(getDolVersionForUrl()))
 );
+
+// Javascript code for the login with a passkey. Not while a two-factor authentication code is asked.
+require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+// The button is not shown if the setup is wrong: the reason is shown only to administrators on the setup page, not to visitors.
+$passkeytotppending = !empty($_SESSION['dol_totp_pending']);
+$passkeyenabled = (passkeyIsEnabled() && !empty($conf->use_javascript_ajax) && !$passkeytotppending && passkeyCheckSetup() === '');
+if ($passkeyenabled) {
+	$arrayofjs[] = '/core/js/passkey.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(getDolVersionForUrl()));
+}
 
 // We display application title
 $application = constant('DOL_APPLICATION_TITLE');
@@ -181,7 +193,6 @@ if (getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_ON', 0) > 0 && isset($conf->file->
 	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
 		dolSetCookie('DOL_rollback_url_'.$prefix, $_SERVER['REQUEST_URI'], time() + 3600);	// $_SERVER["REQUEST_URI"] is for example /mydolibarr/mypage.php
 	}
-
 	// Auto redirect if OpenID Connect is the only authentication
 	if ($conf->file->main_authentication === 'openid_connect') {
 		// Avoid redirection hell
@@ -229,6 +240,17 @@ $(document).ready(function () {
 		?>$('#<?php echo $focus_element; ?>').focus(); <?php
 	} ?>		// Warning to use this only on visible element
 });
+</script>
+<?php } ?>
+<?php if (isModEnabled('ai')) { ?>
+<script>
+/* Login page reached (logout, session expired...): clear the AI chat conversations kept in sessionStorage */
+try {
+	for (var i = sessionStorage.length - 1; i >= 0; i--) {
+		var key = sessionStorage.key(i);
+		if (key && key.indexOf('aiChatHistory_') === 0) { sessionStorage.removeItem(key); }
+	}
+} catch (e) { /* storage not available */ }
 </script>
 <?php } ?>
 
@@ -294,8 +316,27 @@ if ($disablenofollow) {
 
 <div class="tagtable left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
 
+<?php
+// Second step of a two-factor authentication: only the code is asked for. The login is posted back for the form test, main.inc.php reads it from the session.
+$totppending = !empty($_SESSION['dol_totp_pending']);
+if ($totppending) {
+	$langs->load("users");
+	?>
+<!-- Two-factor authentication code -->
+<div class="trinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
+	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		?><label for="totpcode" class="hidden"><?php echo $langs->trans("TOTPEnterCode"); ?></label><?php
+	} ?>
+<span class="fa fa-key"></span>
+<input type="text" id="totpcode" maxlength="8" placeholder="<?php echo $langs->trans("TOTPEnterCode"); ?>" name="totpcode" class="flat input-icon-password minwidth150 input-nobottom" value="" tabindex="1" autofocus="autofocus" autocomplete="one-time-code" inputmode="numeric" spellcheck="false" />
+<input type="hidden" name="username" value="<?php echo dolPrintHTMLForAttribute($_SESSION['dol_totp_pending']['login']); ?>">
+</div>
+</div>
+<?php } ?>
+
 <!-- Login -->
-<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
+<?php if (!$totppending && (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth')) { ?>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
@@ -303,7 +344,7 @@ if ($disablenofollow) {
 	} ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
-<input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150 input-nobottom" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" autocapitalize="off" autocomplete="on" spellcheck="false" />
+<input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150 input-nobottom" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" autocapitalize="off" autocomplete="<?php echo $passkeyenabled ? 'username webauthn' : 'on'; ?>" spellcheck="false" />
 </div>
 </div>
 
@@ -407,8 +448,11 @@ if (!empty($morelogincontent)) {
 if (isset($conf->file->main_authentication) && $conf->file->main_authentication == 'googleoauth') {
 	$forgetpasslink = '';
 }
+if ($totppending) {
+	$forgetpasslink = '';	// Replaced by a link to cancel the two-factor authentication step
+}
 
-if ($forgetpasslink || $helpcenterlink) {
+if ($forgetpasslink || $helpcenterlink || $totppending) {
 	$moreparam = '';
 	if ($dol_hide_topmenu) {
 		$moreparam .= (strpos($moreparam, '?') === false ? '?' : '&').'dol_hide_topmenu='.$dol_hide_topmenu;
@@ -425,6 +469,12 @@ if ($forgetpasslink || $helpcenterlink) {
 
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 5px;">';
+	if ($totppending) {
+		// Back to the login and password form of the same page, main.inc.php removes the pending second step
+		echo '<a class="alogin alogincanceltotp" href="'.$php_self.'&amp;actionlogin=canceltotp&amp;token='.newToken().'">';
+		echo $langs->trans('Cancel');
+		echo '</a>';
+	}
 	if ($forgetpasslink) {
 		$url = DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
 		if (getDolGlobalString('MAIN_PASSWORD_FORGOTLINK')) {
@@ -435,7 +485,7 @@ if ($forgetpasslink || $helpcenterlink) {
 		echo '</a>';
 	}
 
-	if ($forgetpasslink && $helpcenterlink) {
+	if (($forgetpasslink || $totppending) && $helpcenterlink) {
 		echo '&nbsp;-&nbsp;';
 	}
 
@@ -462,7 +512,7 @@ if (getDolGlobalInt('MAIN_AUTHENTICATION_OIDC_ON', 0) > 0 && isset($conf->file->
 	if (!empty($url)) {
 		print '<a class="alogin" href="'.$url.'">';
 		print '<div class="loginbuttonexternal">';
-		print $langs->trans("LoginUsingOpenID");
+		print getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL_IMG') ? '<img src="'.getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL_IMG').'" height="50px" >' : $langs->trans("LoginUsingOpenID");
 		print '</div>';
 		print '</a>';
 	} else {
@@ -502,6 +552,20 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 	print '<div class="loginbuttonexternal">';
 	print img_picto('', 'google', 'class="pictofixedwidth"');
 	print $langs->trans("LoginWith", "Google");
+	print '</div>';
+	print '</a>';
+	print '</div>';
+}
+
+if ($passkeyenabled) {
+	$langs->load("users");
+
+	// The button is managed by core/js/passkey.js. It is hidden if the browser does not support passkeys.
+	echo '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
+	print '<a class="alogin" href="#" id="passkeylogin" data-url="'.dol_escape_htmltag(DOL_URL_ROOT.'/core/ajax/passkeylogin.php').'" data-msg-error="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("PasskeyLoginFailed")).'">';
+	print '<div class="loginbuttonexternal">';
+	print img_picto('', 'fa-fingerprint', 'class="pictofixedwidth"');
+	print $langs->trans("LoginWithPasskey");
 	print '</div>';
 	print '</a>';
 	print '</div>';
@@ -586,10 +650,6 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 	<?php
 }
 ?>
-
-<!-- authentication mode = <?php echo $main_authentication ?> -->
-<!-- cookie name used for this session = <?php echo $session_name ?> -->
-<!-- urlfrom in this session = <?php echo isset($_SESSION["urlfrom"]) ? $_SESSION["urlfrom"] : ''; ?> -->
 
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 

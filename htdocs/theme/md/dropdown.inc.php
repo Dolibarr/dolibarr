@@ -51,11 +51,13 @@ button.dropdown-item.global-search-item {
 	display: block;
 }
 
-
+#topmenu-tool a,
 #topmenu-global-search-dropdown a.login-dropdown-a,
 #topmenu-quickadd-dropdown a.login-dropdown-a,
 #topmenu-bookmark-dropdown a.login-dropdown-a,
-#topmenu-uploadfile-dropdown a.login-dropdown-a {
+#topmenu-ai-dropdown a.login-dropdown-a,
+#topmenu-uploadfile-dropdown a.login-dropdown-a,
+#topmenu-quickmemo-dropdown a.login-dropdown-a {
 	color: var(--colortextbackhmenu);
 }
 
@@ -153,16 +155,20 @@ button.dropdown-item.global-search-item {
 	background-clip: padding-box;
 	border: 1px solid #ccc;
 	border: 1px solid rgba(128, 128, 128, .15);
-	border-radius: 4px;
+	border-radius: 10px;
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
+.ai_dropdown{
+	margin-top: 14px !important;
+	margin-left: -2px !important;
+}
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-ai-dropdown {
 	padding-right: 2px;
 }
-div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after, div#topmenu-quickmemo-dropdown a.dropdown-toggle::after {
 	display: none;
 }
 
@@ -249,6 +255,7 @@ div#topmenu-global-search-dropdown,
 div#topmenu-quickadd-dropdown,
 div#topmenu-bookmark-dropdown,
 div#topmenu-uploadfile-dropdown,
+div#topmenu-quickmemo-dropdown,
 div#topmenu-login-dropdown {
 	<?php if ($disableimages) { ?>
 		line-height: 35px;
@@ -287,7 +294,7 @@ a.top-menu-dropdown-link {
 
 .dropdown-menu > .user-footer {
 	background-color: #f9f9f9;
-	padding: 10px;
+	padding: 20px;
 }
 
 .user-footer:after {
@@ -303,7 +310,7 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-body {
-	padding: 15px;
+	padding: 20px;
 }
 .dropdown-menu > .user-body, .dropdown-body{
 	border-bottom: 1px solid #f4f4f4;
@@ -313,6 +320,7 @@ a.top-menu-dropdown-link {
 #top-bookmark-search-nothing-found {
 	padding: 15px;
 	display: block;
+	color: #444;
 }
 
 .dropdown-menu > .bookmark-body, .dropdown-body{
@@ -325,6 +333,9 @@ a.top-menu-dropdown-link {
 #topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body {
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 200px) ;
+}
+#topmenu-quickmemo-dropdown .dropdown-body {
+	padding: 10px 10px 10px 15px;
 }
 
 
@@ -343,12 +354,17 @@ a.top-menu-dropdown-link {
 	border-radius: 0;
 }
 
-
+/* Any element (picto of a module added into the group of tools of the top right menu via the hook
+ * printTopRightMenu) can apply the class topmenu-any to get the same padding as the pictos of the core. */
+.topmenu-any,
+#topmenu-tool,
 #topmenu-login-dropdown,
 #topmenu-quickadd-dropdown,
 #topmenu-bookmark-dropdown,
 #topmenu-global-search-dropdown,
-#topmenu-uploadfile-dropdown {
+#topmenu-ai-dropdown,
+#topmenu-uploadfile-dropdown,
+#topmenu-quickmemo-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -467,12 +483,67 @@ a.dropdown-item {
  * SELECT FIELDS
  */
 
-li.liinputsearch {
+li.liinputsearch, div.liinputsearch {
 	position: sticky;
-	display: block;
 	top: 0;
-	background: var(--colorbackbody);
 	z-index: 1;
+	background: inherit;
+}
+div.liinputsearch {
+	display: block;
+}
+
+/* Column selector: the line of the search area is a row with the checkbox to check all,
+ * the picto of trash to delete the personalization of the position of the fields, and the search
+ * input that fills the remaining width */
+li.liinputsearch {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding-right: 10px;
+	/* The bar of the search area, on the full width of the row (under the checkbox and the picto of trash too) */
+	border-bottom: 1px solid var(--inputbordercolor);
+}
+li.liinputsearch input[type="checkbox"],
+li.liinputsearch span.fas {
+	flex: 0 0 auto;
+}
+li.liinputsearch input[type="text"] {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 140px;
+	/* The bar is that of the row, the input has none anymore */
+	border-bottom: 0 !important;
+}
+
+/* Picto to delete the personalization of the position of the fields: the picto of move of the
+ * fields, crossed with a thin rising diagonal bar */
+li.liinputsearch span.deletepositionfields_dropdownselectedfields {
+	position: relative;
+}
+li.liinputsearch span.deletepositionfields_dropdownselectedfields::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	background-image:
+		linear-gradient(160deg, transparent calc(50% - 0.5px), currentColor calc(50% - 0.5px), currentColor calc(50% + 0.5px), transparent calc(50% + 0.5px));
+}
+
+/* Column selector: the label of each field fills the row and the picto of
+ * drag and drop is at the end of the row */
+.dropdown dd ul.sortable li {
+	display: flex;
+	align-items: center;
+}
+.dropdown dd ul.sortable li label {
+	flex: 1 1 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 
@@ -596,10 +667,11 @@ div.quickaddblock:focus {
 	bottom: 0;
 	transform: translateY(100%);
 
-	background: #fff;
-	border: 1px solid #bbb;
 	text-align: <?php echo $left; ?>;
-	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+	background: #fff;
+	/* border: 1px solid #bbb; */
+	border-radius: 6px;
+	box-shadow: 0 1px 10px rgb(0, 0, 0, 0.3);
 }
 
 /* dropdown --up variant */
@@ -624,7 +696,8 @@ div.quickaddblock:focus {
 	background: none;
 	color: #000 !important;
 }
-.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused),
+.dropdown-content span:is(.butAction,.butActionDelete,.butActionRefused) {
 	display: flex;
 	border-radius: 0;
 }
@@ -722,7 +795,8 @@ div.quickaddblock:focus {
 	#topmenu-quickadd-dropdown a.login-dropdown-a,
 	#topmenu-bookmark-dropdown a.login-dropdown-a,
 	#topmenu-login-dropdown a.login-dropdown-a,
-	#topmenu-uploadfile-dropdown a.login-dropdown-a {
+	#topmenu-uploadfile-dropdown a.login-dropdown-a,
+	#topmenu-quickmemo-dropdown a.login-dropdown-a {
 		color: var(--colortextbackvmenu);
 	}
 
@@ -749,7 +823,8 @@ div.quickaddblock:focus {
 	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
 	div#topmenu-bookmark-dropdown,
-	div#topmenu-uploadfile-dropdown {
+	div#topmenu-uploadfile-dropdown,
+	div#topmenu-quickmemo-dropdown {
 		line-height: unset;
 	}
 

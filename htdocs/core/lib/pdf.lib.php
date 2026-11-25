@@ -14,8 +14,8 @@
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
- * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2026  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,12 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 		define('K_SMALL_RATIO', 2 / 3);
 		define('K_THAI_TOPCHARS', true);
 		define('K_TCPDF_CALLS_IN_HTML', true);
-		if (getDolGlobalString('TCPDF_THROW_ERRORS_INSTEAD_OF_DIE')) {
+		// Default: throw exceptions on TCPDF/TCPDI errors instead of die().
+		// A die() in a PDF library produces white pages on web requests and kills
+		// batch jobs on the first bad PDF. Exceptions can be caught and surfaced as
+		// normal Dolibarr errors. Users can opt out by setting
+		// TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = 0 to restore the legacy die() behavior.
+		if (getDolGlobalString('TCPDF_THROW_ERRORS_INSTEAD_OF_DIE', '1')) {
 			define('K_TCPDF_THROW_EXCEPTION_ERROR', true);
 		} else {
 			define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
@@ -182,13 +187,15 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 	//$metric=$arrayformat['unit'];
 
 	//$pdfa = false; // PDF default version
-	$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// PDF/A-1 ou PDF/A-3
+	$pdfa = getDolGlobalInt('PDF_USE_A', 0); 	// 0=PDF 1.7, 1=PDF 1.4/A-1b ou 3=PDF 1.7/A-3b
 
 	if (!getDolGlobalString('MAIN_DISABLE_TCPDI') && class_exists('TCPDI')) {
 		$pdf = new TCPDI($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	} else {
 		$pdf = new TCPDF($pagetype, $metric, $format, true, 'UTF-8', false, $pdfa);
 	}
+	// Allow "file://..." image src values (used to embed local server paths translated from a public URL)
+	$pdf->setAllowLocalFiles(true);
 
 	// Protection and encryption of pdf
 	if (getDolGlobalString('PDF_SECURITY_ENCRYPTION')) {
@@ -307,11 +314,11 @@ function pdf_getPDFFontSize($outputlangs)
  *
  * @param	string		$logo		Full path to logo file to use
  * @param	bool		$url		Image with url (true or false)
- * @return	int|float
+ * @return	float
  */
 function pdf_getHeightForLogo($logo, $url = false)
 {
-	$height = getDolGlobalInt('MAIN_DOCUMENTS_LOGO_HEIGHT', 20);
+	$height = getDolGlobalFloat('MAIN_DOCUMENTS_LOGO_HEIGHT', 20);
 	$maxwidth = 130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($logo, $url);
@@ -321,8 +328,49 @@ function pdf_getHeightForLogo($logo, $url = false)
 			$height = $height * $maxwidth / $width;
 		}
 	}
-	//print $tmp['width'].' '.$tmp['height'].' '.$width; exit;
+
 	return $height;
+}
+
+/**
+ * Output company logo on top-left of a PDF page header, or the company name as fallback text if no logo is
+ * set, or an error message if the logo file is missing/unreadable. Shared by the page headers of the various
+ * document generators (invoices, orders, proposals, ...).
+ *
+ * @param	TCPDF		$pdf				PDF object
+ * @param	Translate	$outputlangs		Object lang for output
+ * @param	Societe		$emetteur			Emitting company (the PDF generator's $this->emetteur)
+ * @param	string		$logodir			Directory containing the logos subfolder (already resolved by the caller)
+ * @param	float		$posx				X position to place the logo image
+ * @param	float		$posy				Y position to place the logo image
+ * @param	float		$w					Cell width used for the fallback company name / error message text
+ * @param	float		$default_font_size	Default font size (used to size the error message font)
+ * @param	string		$align				Alignment ('L', 'R', or 'J') for the fallback company name text
+ * @return	void
+ */
+function pdf_writeLogoOrCompanyName($pdf, $outputlangs, $emetteur, $logodir, $posx, $posy, $w, $default_font_size, $align)
+{
+	if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
+		if ($emetteur->logo) {
+			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
+				$logo = $logodir.'/logos/thumbs/'.$emetteur->logo_small;
+			} else {
+				$logo = $logodir.'/logos/'.$emetteur->logo;
+			}
+			if (is_readable($logo)) {
+				$height = pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $posx, $posy, 0, $height); // width=0 (auto)
+			} else {
+				$pdf->SetTextColor(200, 0, 0);
+				$pdf->SetFont('', 'B', $default_font_size - 2);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+			}
+		} else {
+			$text = (string) $emetteur->name;
+			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, $align);
+		}
+	}
 }
 
 /**
@@ -331,10 +379,10 @@ function pdf_getHeightForLogo($logo, $url = false)
  *
  * @param 	TCPDF     $pdf				PDF initialized object
  * @param 	string    $htmlcontent		HTML Content
- * @return 	int							Height
+ * @return 	float						Height
  * @see getStringHeight()
  */
-function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
+function pdfGetHeightForHtmlContent($pdf, $htmlcontent)
 {
 	// store current object
 	$pdf->startTransaction();
@@ -370,8 +418,8 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 			}
 		}
 	}
-	// restore previous object
-	$pdf = $pdf->rollbackTransaction();
+	// restore previous object state
+	$pdf->rollbackTransaction(true);
 
 	return $height;
 }
@@ -380,10 +428,10 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 /**
  * Returns the name of the thirdparty
  *
- * @param   Societe|Contact     $thirdparty     Contact or thirdparty
- * @param   Translate           $outputlangs    Output language
- * @param   int<0,1>            $includealias   1=Include alias name after name
- * @return  string                              String with name of thirdparty (+ alias if requested)
+ * @param   Societe|Contact|null    $thirdparty     Contact or thirdparty
+ * @param   Translate           	$outputlangs    Output language
+ * @param   int<0,1>            	$includealias   1=Include alias name after name
+ * @return  string                  	            String with name of thirdparty (+ alias if requested)
  */
 function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includealias = 0)
 {
@@ -426,18 +474,19 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  *   	@param  Societe|string|null   $targetcompany		Target company object
  *      @param  Contact|string|null	  $targetcontact	    Target contact object
  * 		@param	int			          $usecontact		    Use contact instead of company
- * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
+ * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetshipping', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
  *      @param  ?CommonObject         $object               Object we want to build document for
+ *      @param   string               $type                 Type of address ('BILLING' or 'SHIPPING')
  * 		@return	string|int				    		        String with full address or -1 if KO
  */
-function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
+function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null, $type = 'BILLING')
 {
 	global $hookmanager;
 
 	if ($mode == 'source' && !is_object($sourcecompany)) {
 		return -1;
 	}
-	if ($mode == 'target' && !is_object($targetcompany)) {
+	if (($mode == 'target' || $mode == 'targetshipping') && !is_object($targetcompany)) {
 		return -1;
 	}
 
@@ -451,7 +500,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	$reshook = 0;
 	$stringaddress = '';
 	if (is_object($hookmanager)) {
-		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact);
+		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact, 'type' => $type);
 		$action = '';
 		// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -546,7 +595,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 		}
 
-		if ($mode == 'target' || preg_match('/targetwithdetails/', $mode)) {
+		if ($mode == 'target' || $mode == 'targetshipping' || preg_match('/targetwithdetails/', $mode)) {
 			if ($usecontact && (is_object($targetcontact))) {
 				$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs, 1));
 
@@ -561,7 +610,9 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 						$companytouseforaddress = $targetcontact->thirdparty;
 					}
 
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+					if (is_object($companytouseforaddress)) {
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress))."\n";
+					}
 				}
 				// Country
 				if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
@@ -654,7 +705,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 
 			// Intra VAT
-			if (!getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) {
+			if ($type == 'BILLING' && !getDolGlobalString('MAIN_TVAINTRA_NOT_IN_ADDRESS')) {
 				if ($usecontact && is_object($targetcontact) && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
 					$targetcontact->fetch_thirdparty();
 					if (!empty($targetcontact->thirdparty->id) && $targetcontact->thirdparty->tva_intra) {
@@ -672,47 +723,49 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 
 			// Professional Ids
-			if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+			if ($type == 'BILLING') {
+				if (getDolGlobalString('MAIN_PROFID1_IN_ADDRESS') && !empty($targetcompany->idprof1)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
-			}
-			if (getDolGlobalString('MAIN_PROFID2_IN_ADDRESS') && !empty($targetcompany->idprof2)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId2", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID2_IN_ADDRESS') && !empty($targetcompany->idprof2)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId2", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
-			}
-			if (getDolGlobalString('MAIN_PROFID3_IN_ADDRESS') && !empty($targetcompany->idprof3)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId3", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID3_IN_ADDRESS') && !empty($targetcompany->idprof3)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId3", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
-			}
-			if (getDolGlobalString('MAIN_PROFID4_IN_ADDRESS') && !empty($targetcompany->idprof4)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId4", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID4_IN_ADDRESS') && !empty($targetcompany->idprof4)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId4", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
-			}
-			if (getDolGlobalString('MAIN_PROFID5_IN_ADDRESS') && !empty($targetcompany->idprof5)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId5", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID5_IN_ADDRESS') && !empty($targetcompany->idprof5)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId5", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
-			}
-			if (getDolGlobalString('MAIN_PROFID6_IN_ADDRESS') && !empty($targetcompany->idprof6)) {
-				$tmp = $outputlangs->transcountrynoentities("ProfId6", $targetcompany->country_code);
-				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
-					$tmp = $reg[1];
+				if (getDolGlobalString('MAIN_PROFID6_IN_ADDRESS') && !empty($targetcompany->idprof6)) {
+					$tmp = $outputlangs->transcountrynoentities("ProfId6", $targetcompany->country_code);
+					if (preg_match('/\((.+)\)/', $tmp, $reg)) {
+						$tmp = $reg[1];
+					}
+					$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
 				}
-				$stringaddress .= ($stringaddress ? "\n" : '').$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
 			}
 
 			// Public note
@@ -720,7 +773,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				if ($mode == 'source' && !empty($sourcecompany->note_public)) {
 					$stringaddress .= ($stringaddress ? "\n" : '').dol_string_nohtmltag($sourcecompany->note_public);
 				}
-				if (($mode == 'target' || preg_match('/targetwithdetails/', $mode)) && !empty($targetcompany->note_public)) {
+				if (($mode == 'target' || $mode == 'targetshipping' || preg_match('/targetwithdetails/', $mode)) && !empty($targetcompany->note_public)) {
 					$stringaddress .= ($stringaddress ? "\n" : '').dol_string_nohtmltag($targetcompany->note_public);
 				}
 			}
@@ -739,7 +792,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
  * 		@param	float		$page_height	Height of page
  *      @return	void
  */
-function pdf_pagehead(&$pdf, $outputlangs, $page_height)
+function pdf_pagehead($pdf, $outputlangs, $page_height)
 {
 	global $conf;
 
@@ -766,7 +819,7 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 
 
 /**
- *   	Show header of page for PDF generation
+ *   	Add some information from the blockedlog module
  *
  *   	@param	TCPDF		$pdf     		Object PDF
  *      @param	Translate	$outputlangs	Object lang for output
@@ -777,35 +830,341 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
  * 		@param	float		$posy			Pos y
  *      @return	void
  */
-function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object, &$w, &$posx, &$posy)
+function pdfWriteAdditionnalTitle($pdf, $outputlangs, $page_height, $object, &$w, &$posx, &$posy)
 {
-	global $db;
-
-	// Transaction ID
+	// Transaction/Signature ID + Duplicate or Temporary info
 	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
-	if (isALNERunningVersion() && isModEnabled('blockedlog')) {
-		if ($object->status > $object::STATUS_DRAFT) {
-			$unalterablelogid = 'UNDEFINED';
-			$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
-			$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$db->escape($object->ref)."'";
-			$sql .= $db->order('rowid', 'DESC');
-			$sql .= $db->plimit(1);
+	pdfWriteBlockedLogSignature($pdf, $outputlangs, $page_height, $object, $w, $posx, $posy);
+}
 
-			$resql = $db->query($sql);
-			if ($resql) {
-				$obj = $db->fetch_object($resql);
-				if ($obj) {
-					$unalterablelogid = $obj->signature;
+
+/**
+ *   	Add some information from the blockedlog module
+ *
+ *   	@param	CommonDocGenerator	$docgenerator	Doc generator
+ *   	@param	int			$index			Index
+ *   	@param	TCPDF		$pdf     		Object PDF
+ *      @param	Translate	$outputlangs	Object lang for output
+ *      @param	?Translate	$outputlangsbis	Object lang for output
+ * 		@param	Facture		$object			Object invoice
+ * 		@param	float		$col1x			Col1x
+ * 		@param	float		$col2x			Col2x
+ * 		@param	float		$largcol2		Largcol2
+ * 		@param	float		$tab2_top		Tab2_top
+ * 		@param	float		$tab2_hl		Tab2_hl
+ *      @return	void
+ */
+function pdfWriteVATArray($docgenerator, &$index, $pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl)
+{
+	global $mysoc;
+
+	$tmpatleastoneratenotnull = 0;
+
+	// Local tax 1 before VAT
+	foreach ($docgenerator->localtax1 as $localtax_type => $localtax_rate) {
+		if (in_array((string) $localtax_type, array('1', '3', '5'))) {
+			continue;
+		}
+
+		foreach ($localtax_rate as $tvakey => $tvaval) {
+			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
+				//$tmpatleastoneratenotnull++;
+
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				$tvacompl = '';
+				if (preg_match('/\*/', (string) $tvakey)) {
+					$tvakey = str_replace('*', '', (string) $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 				}
+
+				$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
+				$totalvat .= ' ';
+
+				if (getDolGlobalString('PDF_LOCALTAX1_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+					$totalvat .= $tvacompl;
+				} else {
+					$totalvat .= vatrate((string) abs((float) $tvakey), true).$tvacompl;
+				}
+
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+				$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', true);
+			}
+		}
+	}
+
+	// Local tax 2 before VAT
+	foreach ($docgenerator->localtax2 as $localtax_type => $localtax_rate) {
+		if (in_array((string) $localtax_type, array('1', '3', '5'))) {
+			continue;
+		}
+
+		foreach ($localtax_rate as $tvakey => $tvaval) {
+			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
+				//$tmpatleastoneratenotnull++;
+
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				$tvacompl = '';
+				if (preg_match('/\*/', (string) $tvakey)) {
+					$tvakey = str_replace('*', '', (string) $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+				}
+				$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
+				$totalvat .= ' ';
+
+				if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+					$totalvat .= $tvacompl;
+				} else {
+					$totalvat .= vatrate((string) abs((float) $tvakey), true).$tvacompl;
+				}
+
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+				$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', true);
+			}
+		}
+	}
+
+	// Situations totals might be wrong on huge amounts with old mode 1
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1 && $object->situation_cycle_ref && $object->situation_counter > 1) {
+		$sum_pdf_tva = 0;
+		foreach ($docgenerator->tva as $tvakey => $tvaval) {
+			$sum_pdf_tva += $tvaval; // sum VAT amounts to compare to object
+		}
+
+		if ($sum_pdf_tva != $object->total_tva) { // apply coef to recover the VAT object amount (the good one)
+			if (!empty($sum_pdf_tva)) {
+				$coef_fix_tva = $object->total_tva / $sum_pdf_tva;
+			} else {
+				$coef_fix_tva = 1;
 			}
 
-			if ($unalterablelogid != 'UNDEFINED') {
-				$posy += 5;
-				$pdf->SetXY($posx, $posy);
-				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SignatureID")." : ".dol_trunc(strtoupper($unalterablelogid), 10), '', 'R');
+
+			foreach ($docgenerator->tva as $tvakey => $tvaval) {
+				$docgenerator->tva[$tvakey] = $tvaval * $coef_fix_tva;
 			}
+			foreach ($docgenerator->tva_array as $tvakey => $tvaval) {
+				$docgenerator->tva_array[$tvakey]['amount'] = $tvaval['amount'] * $coef_fix_tva;
+			}
+		}
+	}
+
+	if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {	// by default, we show detail of vat here
+		// VAT
+		foreach ($docgenerator->tva_array as $tvakey => $tvaval) {
+			if ((float) $tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_VAT_LINE_IF_ZERO')) {	// $tvakey can be 'rate (code)', for example '0 (C+S-18)'
+				$tmpatleastoneratenotnull++;
+
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				$tvacompl = '';
+				if (preg_match('/\*/', $tvakey)) {
+					$tvakey = str_replace('*', '', $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+				}
+				$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
+				$totalvat .= ' ';
+				if (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'rateonly') {
+					$totalvat .= vatrate((string) $tvaval['vatrate'], true).$tvacompl;
+				} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
+					$totalvat .= $tvaval['vatcode'].$tvacompl;
+				} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+					$totalvat .= $tvacompl;
+				} else {
+					$totalvat .= vatrate((string) $tvaval['vatrate'], true).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
+				}
+
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+
+				$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($tvaval['amount'], 'MT'), 0, $outputlangs), 0, 'R', true);
+			}
+		}
+	}
+
+	// Local tax 1 after VAT
+	foreach ($docgenerator->localtax1 as $localtax_type => $localtax_rate) {
+		if (in_array((string) $localtax_type, array('2', '4', '6'))) {
+			continue;
+		}
+
+		foreach ($localtax_rate as $tvakey => $tvaval) {
+			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX1_LINE_IF_ZERO')) {
+				//$tmpatleastoneratenotnull++;
+
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				$tvacompl = '';
+				if (preg_match('/\*/', (string) $tvakey)) {
+					$tvakey = str_replace('*', '', (string) $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+				}
+				$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT1", $mysoc->country_code) : '');
+				$totalvat .= ' ';
+
+				if (getDolGlobalString('PDF_LOCALTAX1_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+					$totalvat .= $tvacompl;
+				} else {
+					$totalvat .= vatrate((string) abs((float) $tvakey), true).$tvacompl;
+				}
+
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+				$total_localtax = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', true);
+			}
+		}
+	}
+
+	// Local tax 2 after VAT
+	foreach ($docgenerator->localtax2 as $localtax_type => $localtax_rate) {
+		if (in_array((string) $localtax_type, array('2', '4', '6'))) {
+			continue;
+		}
+
+		foreach ($localtax_rate as $tvakey => $tvaval) {
+			// retrieve global local tax
+			if ($tvakey != 0 || getDolGlobalString('INVOICE_SHOW_ALSO_LOCALTAX2_LINE_IF_ZERO')) {
+				//$tmpatleastoneratenotnull++;
+
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+				$tvacompl = '';
+				if (preg_match('/\*/', (string) $tvakey)) {
+					$tvakey = str_replace('*', '', (string) $tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+				}
+				$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalLT2", $mysoc->country_code) : '');
+				$totalvat .= ' ';
+
+				if (getDolGlobalString('PDF_LOCALTAX2_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
+					$totalvat .= $tvacompl;
+				} else {
+					$totalvat .= vatrate((string) abs((float) $tvakey), true).$tvacompl;
+				}
+
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
+
+				$total_localtax = ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? price2num($tvaval * $object->multicurrency_tx, 'MT') : $tvaval);
+
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_localtax, 0, $outputlangs), 0, 'R', true);
+			}
+		}
+	}
+
+	$docgenerator->atleastoneratenotnull = $tmpatleastoneratenotnull;
+}
+
+
+/**
+ *   	Add some information from the blockedlog module
+ *
+ *   	@param	CommonDocGenerator	$docgenerator	Doc generator
+ *   	@param	int			$index			Index
+ *   	@param	TCPDF		$pdf     		Object PDF
+ *      @param	Translate	$outputlangs	Object lang for output
+ *      @param	?Translate	$outputlangsbis	Object lang for output
+ * 		@param	Facture		$object			Object invoice
+ * 		@param	float		$col1x			Col1x
+ * 		@param	float		$col2x			Col2x
+ * 		@param	float		$largcol2		Largcol2
+ * 		@param	float		$tab2_top		Tab2_top
+ * 		@param	float		$tab2_hl		Tab2_hl
+ * 		@param	float		$deja_regle				Already paid
+ * 		@param	float		$creditnoteamount		Credit notes amount
+ * 		@param	float		$depositsamount			Deposits amount
+ * 		@param	float		$resteapayer			Remain to pay
+ * 		@param	float		$resteapayer_origin		Remain to pay
+ *      @return	void
+ */
+function pdfWriteAlreadyPaid($docgenerator, &$index, $pdf, $outputlangs, $outputlangsbis, $object, $col1x, $col2x, $largcol2, $tab2_top, $tab2_hl, $deja_regle, $creditnoteamount, $depositsamount, $resteapayer, $resteapayer_origin)
+{
+	global $mysoc;
+
+	$useborder = 0;
+
+	if ((($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) && !getDolGlobalString('INVOICE_NO_PAYMENT_DETAILS'))
+		|| isALNERunningVersion()) {
+		// Already paid + Deposits
+		$index++;
+		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Paid").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("Paid") : ''), 0, 'L', false);
+		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+		//if (!isModEnabled("multicurrency") || $object->multicurrency_tx == 1 || getDolGlobalInt('MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF') == 0) {
+		$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount, 0, $outputlangs), 0, 'R', false);
+		//} else {
+		//		$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount, 0, $outputlangs), 0, 'R', false);
+		//
+		//		$index++;
+		//		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+		//		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Paid").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("Paid") : '').' ('.$outputlangs->getCurrencySymbol($mysoc->currency_code).')', $useborder, 'L', true);
+
+		//		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+		//		$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle_origin + $depositsamount_origin, 0, $outputlangs, 1, -1, -1, $mysoc->currency_code), $useborder, 'L', true);
+		//}
+
+		// Credit note
+		if ($creditnoteamount) {
+			$labeltouse = ($outputlangs->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangs->transnoentities("CreditNotesOrExcessReceived") : $outputlangs->transnoentities("CreditNotes");
+			$labeltouse .= (is_object($outputlangsbis) ? (' / '.(($outputlangsbis->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangsbis->transnoentities("CreditNotesOrExcessReceived") : $outputlangsbis->transnoentities("CreditNotes"))) : '');
+			$index++;
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $labeltouse, 0, 'L', false);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', false);
+		}
+
+		if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT) {
+			$index++;
+			$pdf->SetFillColor(255, 255, 255);
+
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', true);
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT'), 0, $outputlangs), $useborder, 'R', true);
+
+			$resteapayer = 0;
+			$resteapayer_origin = 0;
+		}
+
+		$index++;
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFillColor(224, 224, 224);
+		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RemainderToPay") : ''), $useborder, 'L', true);
+		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+		if (!isModEnabled("multicurrency") || $object->multicurrency_tx == 1 || getDolGlobalInt('MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF') == 0) {
+			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', true);
+		} else {
+			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', true);
+
+			//$pdf->MultiCell($largcol2, $tab2_hl, '('.price($resteapayer_origin, 0, $outputlangs, 1, -1, 'MT', $mysoc->currency_code).')   '.price($resteapayer, 0, $outputlangs), 0, 'R', true);
+			$index++;
+			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->SetFillColor(224, 224, 224);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RemainderToPay") : '').' ('.$outputlangs->getCurrencySymbol($mysoc->currency_code).')', $useborder, 'L', true);
+
+			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer_origin, 0, $outputlangs, 1, -1, -1, $mysoc->currency_code), $useborder, 'L', true);
 		}
 	}
 }
@@ -815,7 +1174,7 @@ function pdfWriteBlockedLogSignature(&$pdf, $outputlangs, $page_height, $object,
  *	Return array of possible substitutions for PDF content (without external module substitutions).
  *
  *	@param	Translate	    $outputlangs	Output language
- *	@param	null|string[]	$exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
+ *	@param	null|string[]	$exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', 'ticket', 'member', 'candidate'...)
  *	@param	?Object			$object         Object
  *	@param	int<0,2>        $onlykey       	1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
  *  @param  null|string[]	$include        Array of family keys we want to include. For example array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...)
@@ -841,7 +1200,7 @@ function pdf_getSubstitutionArray($outputlangs, $exclude = null, $object = null,
  *      @param  string		$text           Text to show
  *      @return	void
  */
-function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
+function pdf_watermark($pdf, $outputlangs, $h, $w, $unit, $text)
 {
 	// Print Draft Watermark
 	if ($unit == 'pt') {
@@ -905,7 +1264,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *      @param  CommonDocGenerator	$pdftemplate    	PDF template
  *      @return	int                                 	0 if nothing done, 1 if a mention was printed
  */
-function pdfCertifMention(&$pdf, $outputlangs, $seller, $default_font_size, &$posy, $pdftemplate)
+function pdfCertifMention($pdf, $outputlangs, $seller, $default_font_size, &$posy, $pdftemplate)
 {
 	include_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 
@@ -915,6 +1274,8 @@ function pdfCertifMention(&$pdf, $outputlangs, $seller, $default_font_size, &$po
 
 /**
  *  Show bank information for PDF generation
+ *  The hook 'pdf_bank' can replace this block (return > 0). A hook that does it draws the block itself and gives the Y position
+ *  reached in $hookmanager->resArray['posy'] (if not set, the Y position received is returned).
  *
  *  @param	TCPDF		$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
@@ -925,9 +1286,20 @@ function pdfCertifMention(&$pdf, $outputlangs, $seller, $default_font_size, &$po
  *  @param	int			$default_font_size		Default font size
  *  @return	float                               The Y PDF position
  */
-function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $default_font_size = 10)
+function pdf_bank($pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, $default_font_size = 10)
 {
+	global $hookmanager;
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'outputlangs' => $outputlangs, 'curx' => $curx, 'cury' => $cury, 'onlynumber' => $onlynumber, 'default_font_size' => $default_font_size);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_bank', $parameters, $account, $action); // Note that $action and $account may have been modified by some hooks
+		if ($reshook > 0) {
+			return isset($hookmanager->resArray['posy']) ? (float) $hookmanager->resArray['posy'] : $cury;
+		}
+	}
 
 	$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
 	$diffsizecontent = getDolGlobalInt('PDF_DIFFSIZE_CONTENT', 4);
@@ -1009,7 +1381,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 				$pdf->SetXY($curx, $cury + 1);
 				$curx += $tmplength;
 				$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
-				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', false);
+				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($account->getBankFieldLabel($val)), 0, 'C', false);
 				if (empty($onlynumber)) {
 					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
 				}
@@ -1107,7 +1479,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  *  @param	string		$watermark		Watermark text to print on page
  * 	@return	int							Return height of bottom margin including footer text
  */
-function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_basse, $marge_gauche, $page_hauteur, $object, $showdetails = 0, $hidefreetext = 0, $page_largeur = 0, $watermark = '')
+function pdf_pagefoot($pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_basse, $marge_gauche, $page_hauteur, $object, $showdetails = 0, $hidefreetext = 0, $page_largeur = 0, $watermark = '')
 {
 	global $conf, $hookmanager;
 
@@ -1324,10 +1696,12 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$posy = 0;
 	// For customized footer
 	if (is_object($hookmanager)) {
-		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs' => $outputlangs);
+		$parameters = array('line1' => $line1, 'line2' => $line2, 'line3' => $line3, 'line4' => $line4, 'outputlangs' => $outputlangs, 'hidefreetext' => $hidefreetext, 'pdf' => $pdf, 'pagenb' => $pdf->PageNo());
 		$action = '';
 		$hookmanager->executeHooks('pdf_pagefoot', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (!empty($hookmanager->resPrint) && $hidefreetext == 0) {
+		// The footer returned by a hook replaces the default footer on the last page only (the one that shows the free text), unless
+		// the hook also returns $this->results['footeronallpages'] = 1 to replace it on all pages.
+		if (!empty($hookmanager->resPrint) && ($hidefreetext == 0 || !empty($hookmanager->resArray['footeronallpages']))) {
 			$mycustomfooter = $hookmanager->resPrint;
 			$mycustomfooterheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 
@@ -1482,6 +1856,8 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 /**
  *	Show linked objects for PDF generation
+ *	The hook 'pdf_writeLinkedObjects' can replace this block (return > 0). A hook that does it draws the block itself and gives the
+ *	Y position reached in $hookmanager->resArray['posy'] (if not set, the current Y position of the PDF is returned).
  *
  *	@param	TCPDF		$pdf				Object PDF
  *	@param	CommonObject	$object				Object
@@ -1494,8 +1870,19 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
  *	@param	float		$default_font_size	Font size
  *	@return	float                           The Y PDF position
  */
-function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
+function pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
 {
+	global $hookmanager;
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'outputlangs' => $outputlangs, 'posx' => $posx, 'posy' => $posy, 'w' => $w, 'h' => $h, 'align' => $align, 'default_font_size' => $default_font_size);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_writeLinkedObjects', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return isset($hookmanager->resArray['posy']) ? (float) $hookmanager->resArray['posy'] : $pdf->getY();
+		}
+	}
+
 	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);	// May update $object->note_public
 
 	if (!empty($linkedobjects)) {
@@ -1532,7 +1919,7 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
  *  @param	'L'|'C'|'R'|'J'	$align				text alignment ('L', 'C', 'R', 'J' (default))
  * 	@return	string
  */
-function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0, $align = 'J')
+function pdf_writelinedesc($pdf, $object, $i, $outputlangs, $w, $h, $posx, $posy, $hideref = 0, $hidedesc = 0, $issupplierline = 0, $align = 'J')
 {
 	global $hookmanager;
 
@@ -1718,17 +2105,17 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
-	$libelleproduitservice = '';  // Default value
+	$labelproductservice = '';  // Default value
 	if (!getDolGlobalString('PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES')) {
 		// Description short of product line
-		$libelleproduitservice = $label;
-		if (!empty($libelleproduitservice) && getDolGlobalString('PDF_BOLD_PRODUCT_LABEL')) {
+		$labelproductservice = $label;
+		if (!empty($labelproductservice) && getDolGlobalString('PDF_BOLD_PRODUCT_LABEL')) {
 			// Adding <b> may convert the original string into a HTML string. So we have to first
 			// convert \n into <br> we text is not already HTML.
-			if (!dol_textishtml($libelleproduitservice)) {
-				$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
+			if (!dol_textishtml($labelproductservice)) {
+				$labelproductservice = str_replace("\n", '<br>', $labelproductservice);
 			}
-			$libelleproduitservice = '<b>'.$libelleproduitservice.'</b>';
+			$labelproductservice = '<b>'.$labelproductservice.'</b>';
 		}
 	}
 
@@ -1749,8 +2136,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF')) {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc(
-						dol_concatdesc($libelleproduitservice, " * ".$subprodval[3]),
+					$labelproductservice = dol_concatdesc(
+						dol_concatdesc($labelproductservice, " * ".$subprodval[3]),
 						(!empty($qtyText) ?
 							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1] * $qtyText :
 							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1])
@@ -1758,8 +2145,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				}
 			} else {
 				foreach ($tmparrayofsubproducts as $subprodval) {
-					$libelleproduitservice = dol_concatdesc(
-						dol_concatdesc($libelleproduitservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3]),
+					$labelproductservice = dol_concatdesc(
+						dol_concatdesc($labelproductservice, " * ".$subprodval[5].(($subprodval[5] && $subprodval[3]) ? ' - ' : '').$subprodval[3]),
 						(!empty($qtyText) ?
 							$outputlangs->trans('Qty').':'.$qtyText.' x '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1].'= '.$outputlangs->trans('QtyTot').':'.$subprodval[1] * $qtyText :
 							$outputlangs->trans('Qty').' '.$outputlangs->trans('AssociatedProducts').':'.$subprodval[1])
@@ -1770,7 +2157,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 
 	if (isModEnabled('barcode') && getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_PRODUCT_BARCODE') && !empty($product_barcode)) {
-		$libelleproduitservice = dol_concatdesc($libelleproduitservice, $outputlangs->trans("BarCode")." ".$product_barcode);
+		$labelproductservice = dol_concatdesc($labelproductservice, $outputlangs->trans("BarCode")." ".$product_barcode);
 	}
 
 	// Description long of product line
@@ -1779,24 +2166,24 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromCreditNote", $sourceref);
 		} elseif ($desc == '(DEPOSIT)' && $object->lines[$i]->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
 			// Add date of deposit
 			if (getDolGlobalString('INVOICE_ADD_DEPOSIT_DATE')) {
-				$libelleproduitservice .= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
+				$labelproductservice .= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
 			}
 		} elseif ($desc == '(EXCESS RECEIVED)' && $object->lines[$i]->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived", $discount->ref_facture_source);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived", $discount->ref_facture_source);
 		} elseif ($desc == '(EXCESS PAID)' && $object->lines[$i]->fk_remise_except) {
 			$discount = new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
+			$labelproductservice = $outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid", $discount->ref_invoice_supplier_source);
 		} else {
 			if ($idprod) {
 				// Check if description must be output
@@ -1808,17 +2195,17 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				}
 				if (empty($hidedesc)) {
 					if (getDolGlobalString('MAIN_DOCUMENTS_DESCRIPTION_FIRST')) {
-						$libelleproduitservice = dol_concatdesc($desc, $libelleproduitservice);
+						$labelproductservice = dol_concatdesc($desc, $labelproductservice);
 					} else {
 						if (getDolGlobalString('HIDE_LABEL_VARIANT_PDF') && $prodser->isVariant()) {
-							$libelleproduitservice = $desc;
+							$labelproductservice = $desc;
 						} else {
-							$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
+							$labelproductservice = dol_concatdesc($labelproductservice, $desc);
 						}
 					}
 				}
 			} else {
-				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desc);
+				$labelproductservice = dol_concatdesc($labelproductservice, $desc);
 			}
 		}
 	}
@@ -1851,6 +2238,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$productCustomerPriceStatic = new ProductCustomerPrice($db);
+				// fk_soc and socid are declared in child classes: @phan-suppress-next-line PhanUndeclaredProperty
 				$filter = array('fk_product' => (string) $idprod, 'fk_soc' => (string) $object->socid);
 
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
@@ -1886,19 +2274,19 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			}
 		}
 
-		if (!empty($libelleproduitservice) && !empty($ref_prodserv)) {
+		if (!empty($labelproductservice) && !empty($ref_prodserv)) {
 			$ref_prodserv .= " - ";
 		}
 	}
 
 	if (!empty($ref_prodserv) && getDolGlobalString('PDF_BOLD_PRODUCT_REF_AND_PERIOD')) {
-		if (!dol_textishtml($libelleproduitservice)) {
-			$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
+		if (!dol_textishtml($labelproductservice)) {
+			$labelproductservice = str_replace("\n", '<br>', $labelproductservice);
 		}
 		$ref_prodserv = '<b>'.$ref_prodserv.'</b>';
 		// $prefix_prodserv and $ref_prodser are not HTML var
 	}
-	$libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;
+	$labelproductservice = $prefix_prodserv.$ref_prodserv.$labelproductservice;
 
 	// Add an additional description for the category products
 	if (getDolGlobalString('CATEGORY_ADD_DESC_INTO_DOC') && $idprod && isModEnabled('category')) {
@@ -1910,7 +2298,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			// Adding the descriptions if they are filled
 			$desccateg = $cate->description;
 			if ($desccateg) {
-				$libelleproduitservice = dol_concatdesc($libelleproduitservice, $desccateg);
+				$labelproductservice = dol_concatdesc($labelproductservice, $desccateg);
 			}
 		}
 	}
@@ -1930,14 +2318,14 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
 		if (getDolGlobalString('PDF_BOLD_PRODUCT_REF_AND_PERIOD')) {
-			if (!dol_textishtml($libelleproduitservice)) {
-				$libelleproduitservice = str_replace("\n", '<br>', $libelleproduitservice);
+			if (!dol_textishtml($labelproductservice)) {
+				$labelproductservice = str_replace("\n", '<br>', $labelproductservice);
 			}
-			$libelleproduitservice .= '<br><b style="color:#333666;" ><em>'.$period.'</em></b>';
+			$labelproductservice .= '<br><b style="color:#333666;" ><em>'.$period.'</em></b>';
 		} else {
-			$libelleproduitservice = dol_concatdesc($libelleproduitservice, $period);
+			$labelproductservice = dol_concatdesc($labelproductservice, $period);
 		}
-		//print $libelleproduitservice;
+		//print $labelproductservice;
 	}
 
 	// Show information for lot
@@ -1968,8 +2356,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			}
 
 			// Add also info of planned warehouse for lot
-			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
-				$resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock);
+			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {    // @phan-suppress-current-line PhanUndeclaredProperty    // $detail is an ExpeditionLineBatch that owns the property fk_origin_stock
+				$resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock); // @phan-suppress-current-line PhanUndeclaredProperty
 				if ($resproductbatch > 0) {
 					$reswarehouse = $tmpwarehouse->fetch($tmpproductbatch->warehouseid);
 					if ($reswarehouse > 0) {
@@ -1978,7 +2366,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				}
 			}
 
-			$libelleproduitservice .= "__N__  ".implode(" - ", $dte);
+			$labelproductservice .= "__N__  ".implode(" - ", $dte);
 		}
 	} else {
 		if (getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
@@ -1987,14 +2375,14 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 
 	// Now we convert \n into br
-	if (dol_textishtml($libelleproduitservice)) {
-		$libelleproduitservice = preg_replace('/__N__/', '<br>', $libelleproduitservice);
+	if (dol_textishtml($labelproductservice)) {
+		$labelproductservice = preg_replace('/__N__/', '<br>', $labelproductservice);
 	} else {
-		$libelleproduitservice = preg_replace('/__N__/', "\n", $libelleproduitservice);
+		$labelproductservice = preg_replace('/__N__/', "\n", $labelproductservice);
 	}
-	$libelleproduitservice = dol_htmlentitiesbr($libelleproduitservice, 1);
+	$labelproductservice = dol_htmlentitiesbr($labelproductservice, 1);
 
-	return $libelleproduitservice;
+	return $labelproductservice;
 }
 
 /**
@@ -2090,6 +2478,7 @@ function pdf_getlineref_supplier($object, $i, $outputlangs, $hidedetails = 0)
 		$result .= $hookmanager->resPrint;
 	}
 	if (empty($reshook)) {
+		// ref_supplier is not defined on some object lines, for example on Contract lines @phan-suppress-next-line PhanUndeclaredProperty
 		$result .= dol_htmlentitiesbr($object->lines[$i]->ref_supplier);
 	}
 	return $result;
@@ -2405,7 +2794,7 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line unit
  *
- *	@param	SupplierProposal|CommandeFournisseur|Propal|Facture|FactureFournisseur|Commande|StockTransfer	$object	Object
+ *	@param	SupplierProposal|CommandeFournisseur|Propal|Facture|FactureFournisseur|Commande|StockTransfer|Expedition	$object	Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
@@ -2562,7 +2951,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 					// new mode: we need to compute the total (sum of previous + delta)
 					$prev_progress + $object->lines[$i]->situation_percent;
 			}
-			$result = round($result, 1).'%';
+			$result = round($result, getDolGlobalInt('INVOICE_SITUATION_PROGRESS_DECIMALS', 2)).'%';
 		}
 	}
 	return $result;
@@ -2700,7 +3089,7 @@ function canDisplayLinkedObjectInPDF($object, $elementobject)
  * 	@param	Translate		$outputlangs	Object lang for output
  * 	@return	array<string,array<string,null|int|float|string>>	Linked objects
  */
-function pdf_getLinkedObjects(&$object, $outputlangs)
+function pdf_getLinkedObjects($object, $outputlangs)
 {
 	global $db, $hookmanager;
 
@@ -2993,6 +3382,8 @@ function pdfExtractMetadata($file, $field = 'Keywords')
 
 /**
  * Render subtotals line with a colored background and adapted text color .
+ * The hook 'pdf_render_subtotals' can replace this rendering (return > 0). A hook that does it must write the description
+ * of the line and call $generator->setAfterColsLinePositionsData('desc', ...) itself, and must not open/close a PDF transaction.
  *
  * @param  TCPDF              $pdf                PDF instance
  * @param  CommonDocGenerator $generator          Generator object
@@ -3021,9 +3412,21 @@ function pdf_render_subtotals(
 	bool               $isSubtotal = false,
 	bool               $applySubtotalLogic = true
 ) {
+	global $hookmanager;
+
+	if (is_object($hookmanager)) {
+		$parameters = array('pdf' => $pdf, 'generator' => $generator, 'curY' => $curY, 'i' => $i, 'outputlangs' => $outputlangs, 'hideref' => $hideref, 'hidedesc' => $hidedesc, 'bgColor' => $bgColor, 'isSubtotal' => $isSubtotal, 'applySubtotalLogic' => $applySubtotalLogic);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('pdf_render_subtotals', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return;
+		}
+	}
+
 	$savePage = $pdf->getPage();
 	$saveX = $pdf->GetX();
 	$prevAlign = $generator->cols['desc']['content']['align'];
+	$prevDesc = $object->lines[$i]->desc;
 
 	if ($isSubtotal && $applySubtotalLogic && $object->lines[$i]->qty < 0) {
 		$outputlangs->load("subtotals");
@@ -3069,4 +3472,86 @@ function pdf_render_subtotals(
 	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 
 	$generator->cols['desc']['content']['align'] = $prevAlign;
+	// The text "Subtotal of ..." must not stay in the line: a second generation of the document would prefix it again
+	$object->lines[$i]->desc = $prevDesc;
+}
+
+
+/**
+ * Truncates text to fit a specified width in TCPDF, with configurable ellipsis position.
+ *
+ * @param TCPDF  $pdf           TCPDF instance.
+ * @param string $text          Text to truncate.
+ * @param float  $max_width     Maximum allowed width in user units.
+ * @param int|'left'|'right'    $ellipsis_pos  Ellipsis position: 0 = none, < 0 = start, > 0 = end.
+ * @param string $ellipsis      Ellipsis string (default: UTF-8 ellipsis '\u{2026}').
+ * @return string Truncated text with ellipsis if necessary.
+ */
+function pdf_truncate_text($pdf, $text, $max_width, $ellipsis_pos = 1, $ellipsis = "\u{2026}")
+{
+	if ($ellipsis_pos == 0) {
+		$ellipsis = '';
+	}
+	if ($ellipsis_pos == 'left') {
+		// Keep left part of the string
+		$ellipsis_pos = 1;
+	}
+	if ($ellipsis_pos == 'right') {
+		// Keep right part of the string
+		$ellipsis_pos = 0;
+	}
+
+	$ellipsis_width = $pdf->GetStringWidth($ellipsis);
+	$available_width = $max_width - $ellipsis_width;
+
+	if ($available_width <= 0) {
+		return ($ellipsis_pos <= 0) ? $ellipsis : '';
+	}
+
+	$text_width = $pdf->GetStringWidth($text);
+	if ($text_width <= $max_width) {
+		return $text;
+	}
+
+	if ($ellipsis_pos < 0) {
+		// Ellipsis at start: truncate from the beginning
+		$low = 0;
+		$high = dol_strlen($text, 'UTF-8');
+		$best = $high;
+
+		while ($low <= $high) {
+			$mid = (int) (($low + $high) / 2);
+			$substring = dol_substr($text, $mid, null, 'UTF-8');
+			$substring_width = $pdf->GetStringWidth($substring);
+
+			if ($substring_width <= $available_width) {
+				$best = $mid;
+				$high = $mid - 1;
+			} else {
+				$low = $mid + 1;
+			}
+		}
+
+		return $ellipsis . dol_substr($text, $best, null, 'UTF-8');
+	} else {
+		// Ellipsis at end (default)
+		$low = 0;
+		$high = dol_strlen($text, 'UTF-8');
+		$best = 0;
+
+		while ($low <= $high) {
+			$mid = (int) (($low + $high) / 2);
+			$substring = dol_substr($text, 0, $mid, 'UTF-8');
+			$substring_width = $pdf->GetStringWidth($substring);
+
+			if ($substring_width <= $available_width) {
+				$best = $mid;
+				$low = $mid + 1;
+			} else {
+				$high = $mid - 1;
+			}
+		}
+
+		return dol_substr($text, 0, $best, 'UTF-8') . $ellipsis;
+	}
 }

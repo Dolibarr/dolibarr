@@ -503,16 +503,16 @@ class PriceGlobalVariableUpdater
 				$this->error = $langs->trans("ErrorGlobalVariableUpdater1", $this->parameters);
 				return -1;
 			}
-			$url = $parameters['URL'];
-			if (!isset($url)) {
+			if (!isset($parameters['URL'])) {
 				$this->error = $langs->trans("ErrorGlobalVariableUpdater2", 'URL');
 				return -1;
 			}
-			$value = $parameters['VALUE'];
-			if (!isset($value)) {
+			$url = $parameters['URL'];
+			if (!isset($parameters['VALUE'])) {
 				$this->error = $langs->trans("ErrorGlobalVariableUpdater2", 'VALUE');
 				return -1;
 			}
+			$value = $parameters['VALUE'];
 			$result = "";
 			if ($this->type == 0) {
 				// Call JSON request
@@ -533,21 +533,21 @@ class PriceGlobalVariableUpdater
 				//Decode returned response
 				$result = json_decode($result, true);
 			} elseif ($this->type == 1) {
-				$ns = $parameters['NS'];
-				if (!isset($ns)) {
+				if (!isset($parameters['NS'])) {
 					$this->error = $langs->trans("ErrorGlobalVariableUpdater2", 'NS');
 					return -1;
 				}
-				$method = $parameters['METHOD'];
-				if (!isset($method)) {
+				$ns = $parameters['NS'];
+				if (!isset($parameters['METHOD'])) {
 					$this->error = $langs->trans("ErrorGlobalVariableUpdater2", 'METHOD');
 					return -1;
 				}
-				$data = $parameters['DATA'];
-				if (!isset($data)) {
+				$method = $parameters['METHOD'];
+				if (!isset($parameters['DATA'])) {
 					$this->error = $langs->trans("ErrorGlobalVariableUpdater2", 'DATA');
 					return -1;
 				}
+				$data = $parameters['DATA'];
 
 				//SOAP client
 				require_once NUSOAP_PATH.'/nusoap.php';

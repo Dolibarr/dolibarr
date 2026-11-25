@@ -239,7 +239,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			$pdf->SetSubject($outputlangs->transnoentities("AccountancyLedger"));
 		}
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
+		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getAnonymisableFullName($outputlangs)));
 		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyLedger"));
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
@@ -300,7 +300,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		}
 
 		$account = '';
-		$accountDebit = $accountCredit = $totalDebit = $totalCredit = 0;
+		$accountDebit = $accountCredit = $totalDebit = $totalCredit = $cumulativeBalance = 0;
 		for ($i = 0; $i < $nblines; $i++) {
 			// Show total line / title line when account has changed
 			if ($this->ledgerType == "sub") {
@@ -365,7 +365,7 @@ class pdf_ledger extends ModelePdfAccountancy
 						$nexY,
 						$default_font_size,
 						'piece_num',
-						$langs->transnoentities('AccountAccountingShort') . ' ' . length_accountg($accountingAccount->ref) . ' - ' . $accountingAccount->label,
+						$langs->transnoentities('AccountAccountingShort') . ' ' . length_accountg((string) $accountingAccount->ref) . ' - ' . $accountingAccount->label,
 						$tab_top_newpage
 					);
 
@@ -378,6 +378,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			$accountCredit += $object->lines[$i]->credit;
 			$totalDebit += $object->lines[$i]->debit;
 			$totalCredit += $object->lines[$i]->credit;
+			$cumulativeBalance += $accountCredit - $accountDebit;
 
 			$curY = $nexY;
 			$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
@@ -484,7 +485,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			if ($this->getColumnStatus('balance')) {
 				// Running balance of the account, not of the single line: the screen ledger shows the
 				// accumulated balance per account, and the accumulators are already fed above (#40789).
-				$solde = $accountCredit - $accountDebit;
+				$solde = $cumulativeBalance;
 				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 				$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 				$nexY = max($pdf->GetY(), $nexY);
@@ -709,8 +710,8 @@ class pdf_ledger extends ModelePdfAccountancy
 
 		// Name of soc
 		$pdf->SetXY($this->marge_gauche + 2, $posy + 2);
-		$text = $this->emetteur->name;
-		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset($text), 0, $ltrdirection);
+		$text = (string) $this->emetteur->name;
+		$pdf->MultiCell($w / 3, 4, $outputlangs->convToOutputCharset((string) $text), 0, $ltrdirection);
 		$nexY = max($pdf->GetY(), $nexY);
 
 		// Date of document
@@ -793,7 +794,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		$rank = 0; // do not use negative rank
 		$this->cols['position'] = [
 			'rank' => $rank,
-			'width' => 10,
+			'width' => 10.0,
 			'status' => (bool) getDolGlobalInt('PDF_ACCOUNTANCY_LEDGER_ADD_POSITION'),
 			'title' => [
 				'textkey' => '#', // use lang key is useful in some case with module
@@ -804,14 +805,14 @@ class pdf_ledger extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'C',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 		];
 
 		$rank += 10; // do not use negative rank
 		$this->cols['date'] = [
 			'rank' => $rank,
-			'width' => 18, // only for desc
+			'width' => 18.0, // only for desc
 			'status' => true,
 			'title' => [
 				'textkey' => 'Date', // use lang key is useful in some case with module
@@ -822,14 +823,14 @@ class pdf_ledger extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 		];
 
 		$rank += 10;
 		$this->cols['journal'] = [
 			'rank' => $rank,
-			'width' => 15,
+			'width' => 15.0,
 			'status' => true,
 			'title' => [
 				'textkey' => 'Journal', // use lang key is useful in some case with module
@@ -840,7 +841,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -848,7 +849,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['piece_num'] = [
 			'rank' => $rank,
-			'width' => 15,
+			'width' => 15.0,
 			'status' => true,
 			'title' => [
 				'textkey' => 'Piece', // use lang key is useful in some case with module
@@ -859,7 +860,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -878,7 +879,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'L',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -887,7 +888,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['lettering_code'] = [
 			'rank' => $rank,
-			'width' => 14,
+			'width' => 14.0,
 			'status' => true,
 			'title' => [
 				'textkey' => 'Lettering', // use lang key is useful in some case with module
@@ -898,7 +899,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'R',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -906,7 +907,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['debit'] = [
 			'rank' => $rank,
-			'width' => 15,
+			'width' => 15.0,
 			'status' => true,
 			'title' => [
 				'textkey' => 'AccountingDebit', // use lang key is useful in some case with module
@@ -917,7 +918,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'R',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];
@@ -925,7 +926,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['credit'] = array(
 			'rank' => $rank,
-			'width' => 15,
+			'width' => 15.0,
 			'status' => true,
 			'title' => array(
 				'textkey' => 'AccountingCredit', // use lang key is useful in some case with module
@@ -936,7 +937,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			),
 			'content' => array(
 				'align' => 'R',
-				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(1.0, 0.5, 1.0, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -944,7 +945,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		$rank += 10;
 		$this->cols['balance'] = [
 			'rank' => $rank,
-			'width' => 20,
+			'width' => 20.0,
 			'status' => true,
 			'title' => [
 				'textkey' => 'Balance', // use lang key is useful in some case with module
@@ -955,7 +956,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			],
 			'content' => [
 				'align' => 'R',
-				'padding' => [1, 0.5, 1, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => [1.0, 0.5, 1.0, 1.5], // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			],
 			'border-left' => true, // add left line separator
 		];

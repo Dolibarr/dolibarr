@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2021	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/user/ldap.php
  *      \ingroup    ldap
- *      \brief      Page fiche LDAP utilisateur
+ *      \brief      LDAP user record page
  */
 
 // Load Dolibarr environment
@@ -61,6 +61,10 @@ $object = new User($db);
 $object->fetch($id, '', '', 1);
 $object->loadRights();
 
+// Same rule as in user/card.php to edit a user
+$permissiontoedit = (!empty($user->admin) || ($user->id == $object->id && $user->hasRight('user', 'self', 'write')) || ($user->id != $object->id && $user->hasRight('user', 'user', 'write')));
+$permissiontoedit = $permissiontoedit && (empty($user->socid) || $user->socid == $object->socid);
+
 
 /*
  * Actions
@@ -74,7 +78,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'dolibarr2ldap') {
+	if ($action == 'dolibarr2ldap' && $permissiontoedit) {
 		$ldap = new Ldap();
 		$result = $ldap->connectBind();
 
@@ -169,7 +173,7 @@ print dol_get_fiche_end();
 print '<div class="tabsAction">';
 
 if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+	print dolGetButtonAction('', $langs->trans("ForceSynchronize"), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dolibarr2ldap&token='.newToken(), '', $permissiontoedit);
 }
 
 print "</div>\n";

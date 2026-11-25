@@ -33,6 +33,8 @@ require '../main.inc.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_restrict_os_commands
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -107,7 +109,9 @@ if ($action == 'updateform') {
 
 		$res8 = dolibarr_set_const($db, "MAIN_SECURITY_MAXFILESIZE_DOWNLOADED", GETPOST('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', 'alpha'), 'chaine', 0, '', $conf->entity);
 
-		if ($res3 && $res4 && $res5 && $res6 && $res7 && $res8) {
+		$res9 = dolibarr_set_const($db, "MAIN_DOCUMENT_KEEP_VERSIONS", max(0, GETPOSTINT('MAIN_DOCUMENT_KEEP_VERSIONS')), 'chaine', 0, '', $conf->entity);
+
+		if ($res3 && $res4 && $res5 && $res6 && $res7 && $res8 && $res9) {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	}
@@ -115,7 +119,7 @@ if ($action == 'updateform') {
 	// Delete file
 	$langs->load("other");
 	$file = $conf->admin->dir_temp.'/'.GETPOST('urlfile', 'alpha');
-	$ret = dol_delete_file($file);
+	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');
 	} else {
@@ -135,11 +139,10 @@ llxHeader('', $langs->trans("Files"), $wikihelp, '', 0, 0, '', '', '', 'mod-admi
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("SecurityFilesDesc")."</span><br>\n";
-print "<br>\n";
+print '<div class="info">'.$langs->trans("SecurityFilesDesc")."</div>\n";
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" spellcheck="false">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateform">';
 
@@ -187,7 +190,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max = @ini_get('upload_max_filesize');
-if (isset($max)) {
+if (!empty($max)) {
 	print '<br><span class="opacitymedium">'.$langs->trans("MustBeLowerThanPHPLimit", ((int) $max) * 1024, $langs->trans("Kb")).'.</span>';
 } else {
 	print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
@@ -216,6 +219,16 @@ print '<input type="text" name="MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION" class="m
 print "</td>";
 print '</tr>';
 
+// Previous versions kept when a file is replaced by an upload
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("DocumentKeepVersions").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("DocumentKeepVersionsDesc", $langs->transnoentitiesnoconv("OverwriteIfExists")).'</span>';
+print '</td>';
+print '<td class="nowrap">';
+print '<input class="flat width75 right" name="MAIN_DOCUMENT_KEEP_VERSIONS" type="number" min="0" spellcheck="false" value="'.getDolGlobalInt('MAIN_DOCUMENT_KEEP_VERSIONS').'">';
+print '</td>';
+print '</tr>';
+
 
 // Use anti virus
 
@@ -225,7 +238,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseAntivirusOnUploadedFile").'</td>';
 print '<td class="">';
 if (defined('MAIN_ANTIVIRUS_UPLOAD_ON') && constant('MAIN_ANTIVIRUS_UPLOAD_ON')) {
-	print img_picto($langs->trans("Enabled")." - Can't be disabled (MAIN_ANTIVIRUS_UPLOAD_ON is set)", 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
+	print img_picto($langs->trans("Enabled")." - Can't be disabled (PHP constant MAIN_ANTIVIRUS_UPLOAD_ON is set)", 'switch_on', '', 0, 0, 0, '', 'opacitymedium');
 } else {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_ANTIVIRUS_UPLOAD_ON', array(), null, 0, 0, 1);
@@ -248,7 +261,7 @@ if (getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON')) {
 	// Check that command is inside safe_mode
 	if (ini_get('safe_mode') && getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 		$langs->load("errors");
-		$basedir = preg_replace('/"/', '', dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
+		$basedir = preg_replace('/"/', '', dirname(getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')));
 		$listdir = explode(';', ini_get('safe_mode_exec_dir'));
 		if (!in_array($basedir, $listdir)) {
 			print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));

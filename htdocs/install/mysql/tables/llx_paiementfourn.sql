@@ -34,5 +34,6 @@ create table llx_paiementfourn
   note					text,
   fk_bank				integer NOT NULL,
   statut				smallint NOT NULL DEFAULT 0,
-  model_pdf				varchar(255)
+  model_pdf				varchar(255),
+  import_key			varchar(14)		-- import key
 )ENGINE=innodb;

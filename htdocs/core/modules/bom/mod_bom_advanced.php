@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,7 @@ class mod_bom_advanced extends ModeleNumRefBoms
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
-		// Parametrage du prefix
+		// Setting of prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskBom" value="'.getDolGlobalString('BOM_ADVANCED_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
@@ -106,15 +106,10 @@ class mod_bom_advanced extends ModeleNumRefBoms
 	 */
 	public function getExample()
 	{
-		global $langs, $mysoc;
+		global $db, $langs;
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-		$old_code_client = $mysoc->code_client;
-		$old_code_type = $mysoc->typent_code;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, null);
-		$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;
+		$numExample = $this->getNextValue(new Product($db), null);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -143,7 +138,7 @@ class mod_bom_advanced extends ModeleNumRefBoms
 			return 0;
 		}
 
-		$date = ($object->date_bom ? $object->date_bom : $object->date);
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'bom_bom', 'ref', '', '', $date);
 

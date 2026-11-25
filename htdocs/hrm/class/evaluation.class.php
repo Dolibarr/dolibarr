@@ -5,7 +5,7 @@
  * Copyright (C) 2021 		Jean-Pascal BOUDET 			<jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 		Grégory BLEMAND 			<gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class Evaluation extends CommonObject
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:>:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")')
@@ -92,7 +92,7 @@ class Evaluation extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>,searchmulti?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -348,15 +348,6 @@ class Evaluation extends CommonObject
 			}
 		}
 
-		if (!$error) {
-			// copy external contacts if same company
-			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0) {
-					$error++;
-				}
-			}
-		}
-
 		unset($object->context['createfromclone']);
 
 		// End
@@ -584,14 +575,14 @@ class Evaluation extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'evaluation/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'evaluation/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'evaluation/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'evaluation/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'evaluation/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filepath = 'evaluation/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -682,7 +673,80 @@ class Evaluation extends CommonObject
 			return 0;
 		}
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'HRM_EVALUATION_UNVALIDATE');
+		$oldstatus = $this->status;
+
+		$this->db->begin();
+
+		$result = $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'HRM_EVALUATION_UNVALIDATE');
+		if ($result > 0) {
+			// The job profile may have been modified while the evaluation was not a draft
+			$result = $this->updateLinesFromJob($user, $notrigger);
+		}
+
+		if ($result > 0) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			$this->status = $oldstatus;
+			return -1;
+		}
+	}
+
+	/**
+	 * Align the lines of the evaluation with the skills currently required by its job profile:
+	 * refresh the required rank of the evaluated skills and add the skills added to the job profile since.
+	 * The ranks already given to the employee are kept, and the lines of skills no longer required are not deleted.
+	 *
+	 * @param	User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int<-1,1>				Return integer <0 if KO, >0 if OK
+	 */
+	public function updateLinesFromJob(User $user, $notrigger = 0)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/hrm/class/skillrank.class.php';
+
+		$skillRank = new SkillRank($this->db);
+		$TRequiredRanks = $skillRank->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $this->fk_job).") AND (objecttype:=:'job')");
+		if (!is_array($TRequiredRanks)) {
+			$this->setErrorsFromObject($skillRank);
+			return -1;
+		}
+
+		if ($this->fetchLines() < 0) {
+			return -1;
+		}
+		$TLinesBySkill = array();
+		foreach ($this->lines as $line) {
+			$TLinesBySkill[(int) $line->fk_skill] = $line;
+		}
+
+		foreach ($TRequiredRanks as $required) {
+			if (isset($TLinesBySkill[(int) $required->fk_skill])) {
+				$line = $TLinesBySkill[(int) $required->fk_skill];
+				if ((int) $line->required_rank == (int) $required->rankorder) {
+					continue;
+				}
+				$line->required_rank = $required->rankorder;
+				$result = $line->update($user, $notrigger);
+			} else {
+				$line = new EvaluationLine($this->db);
+				$line->fk_evaluation = $this->id;
+				$line->fk_skill = $required->fk_skill;
+				$line->rankorder = 0;
+				$line->required_rank = $required->rankorder;
+				$result = $line->create($user, $notrigger);
+				if ($result > 0) {
+					$this->lines[] = $line;
+				}
+			}
+			if ($result <= 0) {
+				$this->setErrorsFromObject($line);
+				return -1;
+			}
+		}
+
+		return 1;
 	}
 
 	/**
@@ -793,14 +857,16 @@ class Evaluation extends CommonObject
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				list($class, $module) = explode('@', $this->picto);
+				$tmparray = explode('@', $this->picto);
+				$class = $tmparray[0];
+				$module = $tmparray[1];
 				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];
 				if (!empty($filename)) {
 					$pospoint = strpos($filearray[0]['name'], '.');
 
-					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
+					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.dol_substr($filename, 0, $pospoint).'_mini'.dol_substr($filename, $pospoint);
 					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {

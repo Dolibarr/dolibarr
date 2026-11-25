@@ -41,7 +41,7 @@ class modContrat extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 		$this->numero = 54;
@@ -97,6 +97,26 @@ class modContrat extends DolibarrModules
 		$this->boxes = array(
 			0=>array('file'=>'box_contracts.php', 'enabledbydefaulton'=>'Home'),
 			1=>array('file'=>'box_services_expired.php', 'enabledbydefaulton'=>'Home')
+		);
+
+		// Cronjobs
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label' => 'SendReminderForExpiredServicesTitle',
+				'jobtype' => 'method', 'class' => 'contrat/class/contrat.class.php',
+				'objectname' => 'Contrat',
+				'method' => 'sendReminderForExpiredServices',
+				'parameters' => '10;0',
+				'comment' => 'SendReminderForExpiredServices',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 1,
+				'test' => 'isModEnabled("contract")',
+				'datestart' => $datestart
+			),
 		);
 
 		// Permissions
@@ -208,9 +228,15 @@ class modContrat extends DolibarrModules
 		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'contrat as co ON co.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'contratdet as cod ON co.rowid = cod.fk_contrat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (cod.fk_product = p.rowid)';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as coextra on (co.rowid = coextra.fk_object)';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'contratdet_extrafields as codextra on (cod.rowid = codextra.fk_object)';
 		$this->export_sql_end[$r] .= ' WHERE co.entity IN ('.getEntity('contract').')';
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
+			$this->export_sql_end[$r] .= ' AND (co.fk_soc IS NULL OR sc.fk_user = '.((int) $user->id).')';
+		}
 	}
 
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Florian HENRY           <florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,7 @@ class CLeadStatus extends CommonDict
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape(trim($this->label))."'").",";
 		$sql .= " ".(!isset($this->position) ? 'NULL' : (int) $this->position).",";
 		$sql .= " ".(!isset($this->percent) ? 'NULL' : (float) $this->percent).",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active)).",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active));
 		$sql .= ")";
 
 		$this->db->begin();
@@ -183,7 +183,7 @@ class CLeadStatus extends CommonDict
 	 * @param  int         $offset       Offset
 	 * @param  string      $filter       Filter USF
 	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @return self[]|int                int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -216,7 +216,7 @@ class CLeadStatus extends CommonDict
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= " AND ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				$sql .= " AND ".implode(' '.$this->db->sanitize($filtermode).' ', $sqlwhere);
 			}
 
 			$filter = '';
@@ -278,10 +278,10 @@ class CLeadStatus extends CommonDict
 	{
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
-		$sql .= " code=".(isset($this->code) ? ((int) $this->code) : "null").",";
+		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape(trim($this->code))."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape(trim($this->label))."'" : "null").",";
 		$sql .= " position=".(isset($this->position) ? (int) $this->position : "null").",";
-		$sql .= " percent=".(isset($this->label) ? (float) $this->percent : "null").",";
+		$sql .= " percent=".(isset($this->percent) ? (float) $this->percent : "null").",";
 		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
 		$sql .= " WHERE rowid=".(int) $this->id;
 

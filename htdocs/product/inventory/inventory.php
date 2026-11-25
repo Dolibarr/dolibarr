@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose MARTINEZ							<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,14 +26,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,6 +33,13 @@ include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
  * @var Translate $langs
  * @var User $user
  */
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch"));
@@ -278,7 +278,7 @@ if (empty($reshook)) {
 						// is the accountancy-codes flag; using it to gate the pmp write here means we
 						// silently write into a row that fetch never looks at (#37773).
 						if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
-							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
+							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.((int) $conf->entity);
 							$resqlpmp = $db->query($sqlpmp);
 							if (! $resqlpmp) {
 								$error++;
@@ -361,6 +361,9 @@ if (empty($reshook)) {
 
 				if ($result < 0 || $resultupdate < 0) {
 					$error++;
+					if ($resultupdate < 0) {
+						setEventMessages($inventoryline->error, $inventoryline->errors, 'errors');
+					}
 				}
 
 				$i++;
@@ -391,7 +394,7 @@ if (empty($reshook)) {
 
 	// Action 'update' of this page is the recording of the inventory (done above or refused), never the
 	// generic update of the object: it would overwrite the fields of the inventory with empty values.
-	if ($action == 'update') {	// Test on permission not required here
+	if ($action == 'update') {	// Test on permission not required, this only resets the action and does nothing
 		$action = '';
 	}
 
@@ -410,7 +413,7 @@ if (empty($reshook)) {
 	$trackid='stockinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
-	if (GETPOST('addline', 'alpha')) {
+	if (GETPOST('addline', 'alpha') && $permissiontoupdatestock && ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED)) {
 		$qty = (GETPOST('qtytoadd') != '' ? ((float) price2num(GETPOST('qtytoadd'), 'MS')) : null);
 		if ($fk_warehouse <= 0) {
 			$error++;
@@ -821,7 +824,7 @@ if ($action == 'updatebyscaning') {
 							console.log("We change #"+product.Id+"_input to match input in scanner box");
 							if(product.hasOwnProperty("reelqty")){
 								$.ajax({ url: \''.DOL_URL_ROOT.'/product/inventory/ajax/searchfrombarcode.php\',
-									data: { "token":"'.newToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":'.dol_escape_js((string) $object->id).', "fk_product":product.fk_product, "reelqty":product.reelqty},
+									data: { "token":"'.currentToken().'", "action":"addnewlineproduct", "fk_entrepot":product.Warehouse, "batch":product.Batch, "fk_inventory":\''.dol_escape_js((string) $object->id).'\', "fk_product":product.fk_product, "reelqty":product.reelqty},
 									type: \'POST\',
 									async: false,
 									success: function(response) {
@@ -850,33 +853,33 @@ if ($action == 'updatebyscaning') {
 							}
 						}
 					});
-					jQuery("#scantoolmessage").text("'.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\n");
+					jQuery("#scantoolmessage").text(\''.dol_escape_js($langs->transnoentities("QtyWasAddedToTheScannedBarcode")).'\'+"\n");
 					/* document.forms["formrecord"].submit(); */
 				} else {
 					let stringerror = "";
 					if (Object.keys(errortab1).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorSameBatchNumber')).': \';
 						errortab1.forEach(element => {
 							stringerror += (element + ", ")
 						});
 						stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 					}
 					if (Object.keys(errortab2).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorCantFindCodeInInventory')).': \';
 						errortab2.forEach(element => {
 							stringerror += (element + ", ")
 						});
 						stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 					}
 					if (Object.keys(errortab3).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorCodeScannedIsBothProductAndSerial')).': \';
 						errortab3.forEach(element => {
 							stringerror += (element + ", ")
 						});
 						stringerror = stringerror.slice(0, -2);	/* Remove last ", " */
 					}
 					if (Object.keys(errortab4).length > 0) {
-						stringerror += "<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': ";
+						stringerror += \'<br>'.dol_escape_js($langs->transnoentities('ErrorBarcodeNotFoundForProductWarehouse')).': \';
 						errortab4.forEach(element => {
 							stringerror += (element + ", ")
 						});
@@ -884,7 +887,7 @@ if ($action == 'updatebyscaning') {
 					}
 
 					jQuery("#scantoolmessage").html(\''.dol_escape_js($langs->transnoentities("ErrorOnElementsInventory")).'\' + stringerror);
-					//alert("'.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n" + stringerror);
+					//alert(\''.dol_escape_js($langs->trans("ErrorOnElementsInventory")).' :\n\' + stringerror);
 				}
 			}
 
@@ -1026,7 +1029,7 @@ if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STAT
 } else {
 	// Actions or link to stock movement
 	print '<td class="right">';
-	//print $langs->trans("StockMovement");
+	print $langs->trans("StockMovement");
 	print '</td>';
 }
 print '</tr>';
@@ -1275,11 +1278,12 @@ if ($resql) {
 				print $obj->qty_view;	// qty found
 				print '</td>';
 			}
-			print '<td>';
+			print '<td class="right nowraponall">';
 			if ($obj->fk_movement > 0) {
 				$stockmovment = new MouvementStock($db);
 				$stockmovment->fetch($obj->fk_movement);
 				print $stockmovment->getNomUrl(1, 'movements');
+				print ' <span class="opacitymedium">('.dol_print_date($stockmovment->datem, 'dayhour').')</span>';
 			}
 			print '</td>';
 		}
@@ -1362,7 +1366,7 @@ print '<script type="text/javascript">
         					data: form.serialize(),
         					cache: false,
         					success: function(result){
-           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'&action=record";
+           				 	window.location.href = "'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&page='.($page).$paramwithsearch.'&action=record&token='.newToken().'";
        					 	}});
 							return false;
 						});

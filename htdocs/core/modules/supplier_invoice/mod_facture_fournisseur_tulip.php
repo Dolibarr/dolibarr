@@ -5,7 +5,7 @@
  * Copyright (C) 2013-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2016-2021  Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of model
 	 * @deprecated
 	 * @see $name
 	 */

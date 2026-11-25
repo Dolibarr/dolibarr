@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019-2020 Andreu Bisquerra Gaya		<jove@bisquerra.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Jose Martinez           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 
 	$res = dolibarr_set_const($db, "TAKEPOS_COLOR_THEME", GETPOST('TAKEPOS_COLOR_THEME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_LINES_TO_SHOW", GETPOST('TAKEPOS_LINES_TO_SHOW', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_SORTPRODUCTFIELD", GETPOST('TAKEPOS_SORTPRODUCTFIELD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET('TAKEPOS_SHOW_PRODUCT_REFERENCE')) {
 		$res = dolibarr_set_const($db, "TAKEPOS_SHOW_PRODUCT_REFERENCE", GETPOST('TAKEPOS_SHOW_PRODUCT_REFERENCE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
@@ -107,7 +109,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("ColorTheme");
 print '</td><td>';
 $array = array(0=>"Eldy", 1=>$langs->trans("Colorful"));
-print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (!getDolGlobalString('TAKEPOS_COLOR_THEME') ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
+print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (!getDolGlobalString('TAKEPOS_COLOR_THEME') ? '0' : getDolGlobalString('TAKEPOS_COLOR_THEME')), 0);
 print "</td></tr>\n";
 
 // Don't display category section
@@ -142,6 +144,14 @@ print $form->selectarray('TAKEPOS_SHOW_PRODUCT_REFERENCE', $array, getDolGlobalI
 //print ajax_constantonoff("TAKEPOS_SHOW_PRODUCT_REFERENCE", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
+// Sort product
+print '<tr class="oddeven"><td>';
+print $langs->trans("SortProductField");
+print '</td><td>';
+$array = array('rowid' => 'TechnicalID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
+print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD', 'rowid'), 0, 0, 0, '', 1);
+print "</td></tr>\n";
+
 // Lines to show
 print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfLinesToShow");
@@ -155,6 +165,13 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('HideStockOnLine');
 print '</td><td>';
 print ajax_constantonoff("TAKEPOS_HIDE_STOCK_ON_LINE", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Show price without vat
+print '<tr class="oddeven"><td>';
+print $langs->trans('ShowPriceHT');
+print '</td><td>';
+print ajax_constantonoff("TAKEPOS_SHOW_HT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Only the products in stock

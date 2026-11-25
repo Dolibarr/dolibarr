@@ -41,6 +41,7 @@ class Ctypent extends CommonDict
 	 * @var string
 	 */
 	public $libelle;
+
 	/**
 	 * @var string
 	 */
@@ -113,8 +114,8 @@ class Ctypent extends CommonDict
 			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
-		if (!$error) {
-			$this->id = $this->db->last_insert_id($this->db->prefix()."c_typent");
+		if (!$error && empty($this->id)) {
+			$this->id = $this->db->last_insert_id($this->db->prefix()."c_typent", 'id');	// When the id was given, last_insert_id() returns 0
 		}
 
 		// Commit or rollback
@@ -216,7 +217,7 @@ class Ctypent extends CommonDict
 		$sql .= " libelle=".(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null").",";
 		$sql .= " module=".(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null");
-		$sql .= " WHERE id=".$this->id;
+		$sql .= " WHERE id = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -251,11 +252,10 @@ class Ctypent extends CommonDict
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix()."c_typent";
-		$sql .= " WHERE id = ".$this->id;
+		$sql .= " WHERE id = ".((int) $this->id);
 
 		$this->db->begin();
 

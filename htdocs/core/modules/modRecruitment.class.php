@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ class modRecruitment extends DolibarrModules
 			//      'frequency' => 2,
 			//      'unitfrequency' => 3600,
 			//      'status' => 0,
-			//      'test' => '$conf->recruitment->enabled',
+			//      'test' => 'isModEnabled('recruitment')',
 			//      'priority' => 50,
 			//  ),
 		);
@@ -261,7 +261,7 @@ class modRecruitment extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu' => 'hrm',
 			'leftmenu' => 'recruitmentjobposition',
-			'url' => '/recruitment/index.php',
+			'url' => '/recruitment/index.php?leftmenu=recruitmentjobposition',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled.
@@ -275,7 +275,7 @@ class modRecruitment extends DolibarrModules
 			'titre' => 'NewPositionToBeFilled',
 			'mainmenu' => 'hrm',
 			'leftmenu' => 'recruitment_recruitmentjobposition_new',
-			'url' => '/recruitment/recruitmentjobposition_card.php?action=create',
+			'url' => '/recruitment/recruitmentjobposition_card.php?action=create&leftmenu=recruitmentjobposition',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -289,7 +289,7 @@ class modRecruitment extends DolibarrModules
 			'titre' => 'ListOfPositionsToBeFilled',
 			'mainmenu' => 'hrm',
 			'leftmenu' => 'recruitment_recruitmentjobposition_list',
-			'url' => '/recruitment/recruitmentjobposition_list.php',
+			'url' => '/recruitment/recruitmentjobposition_list.php?leftmenu=recruitmentjobposition',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -303,7 +303,7 @@ class modRecruitment extends DolibarrModules
 			'titre' => 'NewCandidature',
 			'mainmenu' => 'hrm',
 			'leftmenu' => 'recruitment_recruitmentcandidature_new',
-			'url' => '/recruitment/recruitmentcandidature_card.php?action=create',
+			'url' => '/recruitment/recruitmentcandidature_card.php?action=create&leftmenu=recruitmentjobposition',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -317,7 +317,7 @@ class modRecruitment extends DolibarrModules
 			'titre' => 'ListOfCandidatures',
 			'mainmenu' => 'hrm',
 			'leftmenu' => 'recruitment_recruitmentcandidature_list',
-			'url' => '/recruitment/recruitmentcandidature_list.php',
+			'url' => '/recruitment/recruitmentcandidature_list.php?leftmenu=recruitmentjobposition',
 			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("recruitment")', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -433,11 +433,11 @@ class modRecruitment extends DolibarrModules
 				}
 
 				$sql = array_merge($sql, array(
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".$this->db->escape(strtolower($myTmpObjectKey))."',".((int) $conf->entity).")",
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".$this->db->escape(strtolower($myTmpObjectKey))."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".$this->db->escape(strtolower($myTmpObjectKey))."','".$this->db->escape(strtolower($myTmpObjectKey))."',".((int) $conf->entity).")",
 
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".$this->db->escape(strtolower($myTmpObjectKey))."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".$this->db->escape(strtolower($myTmpObjectKey))."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
 				));
 			}
 		}

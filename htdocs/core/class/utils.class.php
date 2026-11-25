@@ -3,7 +3,7 @@
  * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2022		Anthony Berton		<anthony.berton@bb2a.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -121,7 +121,7 @@ class Utils
 					if ($choice == 'tempfilesold') {
 						foreach ($filesarray as $key => $val) {
 							if ($val['date'] > ($now - ($nbsecondsold))) {
-								unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
+								unset($filesarray[$key]); // Discard temp dir if modified during the last $nbsecondsold
 							}
 						}
 					}
@@ -250,6 +250,73 @@ class Utils
 
 
 	/**
+	 * Check a dump command (mysqldump, pg_dump, ...) and return its sanitized and validated value.
+	 * When a full path is provided, the path must point to an existing binary, so the path is resolved with realpath()
+	 * to be sure it can be quoted and executed without any shell interpretation.
+	 * When a command name without path is provided, it must not contain any char that can be interpreted by the shell.
+	 * When the parameter $dolibarr_main_restrict_os_commands is set, the command must also be into the list of allowed commands.
+	 *
+	 * @param	string		$cmddump	Path or name of the dump command (value taken from constant or user input)
+	 * @return	string					Validated command to use ('' if KO). If KO, $this->error is filled with the error message.
+	 */
+	public function checkDumpCommand($cmddump)
+	{
+		global $langs, $dolibarr_main_restrict_os_commands;
+
+		if ($cmddump === '' || $cmddump === null) {
+			if (!empty($dolibarr_main_restrict_os_commands)) {
+				$langs->loadLangs(array("admin", "errors"));
+				$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
+				$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
+			}
+			return '';
+		}
+
+		$cmddump = dol_sanitizePathName($cmddump);		// Sanitize path
+		$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
+		$cmddump = trim($cmddump);
+
+		if (preg_match('/[\/\\\\]/', $cmddump)) {
+			// This is a full path, it must point to an existing binary, so we can resolve it with realpath()
+			// Note: the resolved path can be safely quoted at execution time (see dumpDatabase) even if it contains
+			// chars like spaces or parenthesis (for example on Windows "C:\Program Files (x86)\...").
+			$resolvedcmddump = realpath($cmddump);
+			if ($resolvedcmddump === false || !is_file($resolvedcmddump)) {
+				dol_syslog("Utils::checkDumpCommand canceled because path ".$cmddump." is not an existing file.", LOG_WARNING);
+				$langs->load("errors");
+				$this->error = $langs->transnoentitiesnoconv('ErrorFileNotFound', $cmddump);
+				return '';
+			}
+			$cmddump = $resolvedcmddump;
+		} else {
+			// This is a command name without path, it must not contain any char that can be interpreted by the shell
+			if (!preg_match('/^[A-Za-z0-9\._\-]+$/', $cmddump)) {
+				dol_syslog("Utils::checkDumpCommand canceled because command name ".$cmddump." contains chars that can be interpreted by a shell.", LOG_WARNING);
+				$langs->load("errors");
+				$this->error = $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $cmddump, 'Dump command');
+				$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
+				return '';
+			}
+		}
+
+		if (!empty($dolibarr_main_restrict_os_commands)) {
+			$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+			$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
+			dol_syslog("Utils::checkDumpCommand: Commands are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
+			$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
+			if (!in_array($basenamecmddump, $arrayofallowedcommand)) {	// the provided command $cmddump must be an allowed command
+				$langs->loadLangs(array("admin", "errors"));
+				$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
+				$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
+				return '';
+			}
+		}
+
+		return $cmddump;
+	}
+
+
+	/**
 	 *  Make a backup of database
 	 *  CAN BE A CRON TASK
 	 *
@@ -264,9 +331,10 @@ class Utils
 	 */
 	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0, $lowmemorydump = 0)
 	{
-		global $db, $conf, $langs, $dolibarr_main_data_root;
+		global $db, $conf, $langs;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
 		global $dolibarr_main_db_character_set;
+		global $dolibarr_main_restrict_os_commands;
 
 		$langs->load("admin");
 
@@ -336,11 +404,33 @@ class Utils
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
+			// Sanitize and validate $cmddump, and check it is an allowed command
+			$cmddump = $this->checkDumpCommand($cmddump);
+			if ($cmddump === '') {
+				return -1;
+			}
+
+			if (!empty($dolibarr_main_restrict_os_commands)) {
+				$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+				$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
+				// In low memory mode, the output of the dump is piped into an OS compressor that must be allowed too
+				$compressorcommands = array('gz' => 'gzip', 'bz' => 'bzip2', 'zstd' => 'zstd');
+				if ($lowmemorydump && !empty($compressorcommands[$compression]) && !in_array($compressorcommands[$compression], $arrayofallowedcommand)) {
+					$langs->loadLangs(array("admin", "errors"));
+					dol_syslog("Compression command ".$compressorcommands[$compression]." is not inside the allowed commands", LOG_WARNING);
+					$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
+					$this->error .= '<br>'.$langs->trans('NotAvailableCommandNotAllowed', $compressorcommands[$compression]);
+					return -1;
+				}
+			}
+
 			// Parameters execution
 			$command = $cmddump;
 			$command = preg_replace('/(\$|%)/', '', $command); // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
-			if (preg_match("/\s/", $command)) {
-				$command = escapeshellarg($command); // If there is spaces, we add quotes on command to be sure $command is only a program and not a program+parameters
+			if (!preg_match('/^[A-Za-z0-9\._\-\/\\\\:]+$/', $command)) {
+				// If the command is not a simple command name or path (it contains chars like spaces, parenthesis, ...),
+				// we quote the whole string to be sure $command is only a program and not a program+parameters or a shell syntax
+				$command = escapeshellarg($command);
 			}
 
 			//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
@@ -349,7 +439,9 @@ class Utils
 			if (!empty($dolibarr_main_db_port)) {
 				$param .= " -P ".$dolibarr_main_db_port." --protocol=tcp";
 			}
-			if (GETPOST("use_transaction", "alpha")) {
+			// The default (scheduled job) uses a transaction too, as the form does, instead of locking
+			// all the tables, which blocks every write into the database during the backup.
+			if (GETPOST("use_transaction", "alpha") || $usedefault) {
 				$param .= " --single-transaction";
 			}
 			if (GETPOST("disable_fk", "alpha") || $usedefault) {
@@ -591,7 +683,7 @@ class Utils
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
 					@dol_move($outputfile, $outputerror, '0', 1, 0, 0);
-					// Si safe_mode on et command hors du parameter exec, on a un fichier out vide donc errormsg vide
+					// If safe_mode is on and command is outside the exec parameter, we get an empty out file so errormsg is empty
 					if (!$errormsg) {
 						$langs->load("errors");
 						$errormsg = $langs->trans("ErrorFailedToRunExternalCommand");
@@ -649,11 +741,19 @@ class Utils
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
+			// Sanitize and validate $cmddump, and check it is an allowed command
+			$cmddump = $this->checkDumpCommand($cmddump);
+			if ($cmddump === '' && $this->error !== '') {
+				return -1;
+			}
+
 			// Parameters execution
 			$command = $cmddump;
 			$command = preg_replace('/(\$|%)/', '', $command); // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
-			if (preg_match("/\s/", $command)) {
-				$command = escapeshellarg($command); // If there is spaces, we add quotes on command to be sure $command is only a program and not a program+parameters
+			if (!preg_match('/^[A-Za-z0-9\._\-\/\\\\:]+$/', $command)) {
+				// If the command is not a simple command name or path (it contains chars like spaces, parenthesis, ...),
+				// we quote the whole string to be sure $command is only a program and not a program+parameters or a shell syntax
+				$command = escapeshellarg($command);
 			}
 
 			//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
@@ -747,6 +847,26 @@ class Utils
 		$output = '';
 		$error = '';
 
+		global $dolibarr_main_restrict_os_commands;
+		if (!empty($dolibarr_main_restrict_os_commands)) {
+			$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+			$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
+
+			$commands = preg_split('/\|\||&&|\||&/', $command);
+			foreach ($commands as $newcommand) {
+				$newcommand = trim($newcommand);
+				$matches = array();
+				// If command is "'ab cd.exe' param1 param2" or '"ab cd.exe" param1 param2' or 'abcd.exe param1 param2', we must extract ab...cd.exe only.
+				if (preg_match('/^(?:\'([^\']*)\'|"([^"]*)"|(\S+))/', $newcommand, $matches)) {
+					$newcommand = $matches[1] ?: ($matches[2] ?: $matches[3]);
+				}
+				if (!in_array(basename($newcommand), $arrayofallowedcommand)) {
+					dol_syslog("files.lib.php::executeCLI canceled because target filename ".basename($newcommand)." is not in the whitelist of allowed commands (param dolibarr_main_restrict_os_commands).", LOG_WARNING);
+					return array('result' => -1, 'output' => '', 'error' => 'Command '.basename($newcommand).' is not in the whitelist of allowed commands (param dolibarr_main_restrict_os_commands)');
+				}
+			}
+		}
+
 		if (empty($noescapecommand)) {
 			$command = escapeshellcmd($command);
 		}
@@ -818,7 +938,7 @@ class Utils
 	 */
 	public function generateDoc($module)
 	{
-		global $conf, $langs, $user, $mysoc;
+		global $langs, $user, $mysoc;
 		global $dirins;
 
 		$error = 0;
@@ -835,6 +955,7 @@ class Utils
 		dol_include_once($modulelowercase.'/core/modules/mod'.$module.'.class.php');
 		$class = 'mod'.$module;
 
+		$moduleobj = null;
 		if (class_exists($class)) {
 			try {
 				$moduleobj = new $class($this->db);
@@ -849,7 +970,7 @@ class Utils
 			exit;
 		}
 
-		$arrayversion = explode('.', $moduleobj->version, 3);
+		$arrayversion = $moduleobj === null ? array() : explode('.', $moduleobj->version, 3);
 		if (count($arrayversion)) {
 			$FILENAMEASCII = strtolower($module).'.asciidoc';
 			$FILENAMEDOC = strtolower($module).'.html';
@@ -973,7 +1094,8 @@ class Utils
 					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
-				if ($result < 0 && empty($this->errors)) {
+				if ($result == 0) {
+					// Add a human readable message to the raw output of the command
 					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOC);
 					$this->errors[] = $this->error;
 				}
@@ -987,7 +1109,8 @@ class Utils
 					$this->errors[] = $this->error;
 				}
 				$result = ($resarray['result'] == 0) ? 1 : 0;
-				if ($result < 0 && empty($this->errors)) {
+				if ($result == 0) {
+					// Add a human readable message to the raw output of the command
 					$this->error = $langs->trans("ErrorFailToGenerateFile", $FILENAMEDOCPDF);
 					$this->errors[] = $this->error;
 				}
@@ -1039,7 +1162,7 @@ class Utils
 			$mainlogdir = DOL_DATA_ROOT;
 			$mainlog = 'dolibarr.log';
 		} else {
-			$mainlogfull = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
+			$mainlogfull = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, getDolGlobalString('SYSLOG_FILE'));
 			$mainlogdir = dirname($mainlogfull);
 			$mainlog = basename($mainlogfull);
 		}
@@ -1172,6 +1295,11 @@ class Utils
 			$errormsg = $langs->trans("ErrorFailedToWriteInDir");
 			return -1;
 		}
+
+		// Read all the tables inside one transaction, so the dump is a consistent snapshot of the
+		// database even if data is changed during the backup (same as mysqldump --single-transaction).
+		// Only reads (SHOW CREATE TABLE, SELECT) are done inside it.
+		$db->begin();
 
 		// Print headers and global mysql config vars
 		$sqlhead = '';
@@ -1308,6 +1436,8 @@ class Utils
 		fwrite($handle, $sqlfooter);
 
 		fclose($handle);
+
+		$db->commit();
 
 		return 1;
 	}

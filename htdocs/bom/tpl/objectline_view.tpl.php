@@ -6,7 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -203,7 +203,13 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 	if ($res > 0) {
 		$unit = new CUnits($object->db);
 		$fk_defaultUnit = $unit->getUnitFromCode('h', 'short_label', 'time');
-		$nbPlannedHour = $unit->unitConverter($line->qty, $line->fk_unit, $fk_defaultUnit);
+		// Convert qty of line into hours without rounding (unitConverter() rounds to 2 decimals, so 1 minute
+		// would become 0.02 h). Only the resulting amount is rounded, as done by BOM::calculateCosts().
+		$nbPlannedHour = (float) price2num($line->qty) * $unit->scaleOfUnitPow($line->fk_unit);
+		$scaleOfHour = $unit->scaleOfUnitPow($fk_defaultUnit);
+		if (!empty($scaleOfHour)) {
+			$nbPlannedHour /= $scaleOfHour;
+		}
 		$line->total_cost = 0;
 		if ($workstation->thm_machine_estimated) {
 			$line->total_cost += $nbPlannedHour * $workstation->thm_machine_estimated;
@@ -211,6 +217,7 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 		if ($workstation->thm_operator_estimated) {
 			$line->total_cost += $nbPlannedHour * $workstation->thm_operator_estimated;
 		}
+		$line->total_cost = (float) price2num($line->total_cost, 'MT');
 		echo $workstation->getNomUrl(1);
 	}
 	print '</td>';
@@ -245,7 +252,7 @@ if ($this->status == 0 && $user->hasRight('bom', 'write') && $action != 'selectl
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
 	if (empty($disableremove)) {
-		//La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
+		// Deletion is authorised only when there is no line in a previous situation
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';

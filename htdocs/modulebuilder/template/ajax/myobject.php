@@ -37,15 +37,29 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', '1');
-}
 
 // Load Dolibarr environment
 $res = 0;
+// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
+if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
+	$res = @include str_replace("..", "", $_SERVER["CONTEXT_DOCUMENT_ROOT"])."/main.inc.php";
+}
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
+$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
+$tmp2 = realpath(__FILE__);
+$i = strlen($tmp) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+$j = strlen($tmp2) - 1;  // @phan-suppress-current-line DolibarrForbiddenFunctionPlugin
+while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
+	$i--;
+	$j--;
+}
+if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
+	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
+}
+if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
+	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
+}
+// Try main.inc.php using relative path
 if (!$res && file_exists("../../main.inc.php")) {
 	$res = @include "../../main.inc.php";
 }
@@ -53,10 +67,9 @@ if (!$res && file_exists("../../../main.inc.php")) {
 	$res = @include "../../../main.inc.php";
 }
 if (!$res) {
+	http_response_code(500);
 	die("Include of main fails");
 }
-dol_include_once('/mymodule/class/myobject.class.php');
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -64,6 +77,9 @@ dol_include_once('/mymodule/class/myobject.class.php');
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+dol_include_once('/mymodule/class/myobject.class.php');
+
 
 $mode = GETPOST('mode', 'aZ09');
 $objectId = GETPOSTINT('objectId');
@@ -74,8 +90,12 @@ $value = GETPOST('value', 'aZ09');
 $object = new MyObject($db);
 
 // Security check
-if (!$user->hasRight('mymodule', 'myobject', 'write')) {
+if (!isModEnabled('mymodule') || !$user->hasRight('mymodule', 'myobject', 'write')) {
 	accessforbidden();
+}
+// Data are modified, so only POST (with its CSRF token) is allowed
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+	httponly_accessforbidden('Only POST method is allowed');
 }
 
 /*
@@ -89,10 +109,15 @@ top_httphead();
 // Update the object field with the new value
 if ($objectId && $field && isset($value)) {
 	$object->fetch($objectId);
-	if ($object->id > 0) {
+	// Check access to the record (entity, external user...)
+	restrictedArea($user, $object->module, $object, $object->table_element, $object->element, 'fk_soc', 'rowid');
+
+	// Only fields of type stars can be updated with this ajax page
+	$result = -1;
+	if ($object->id > 0 && !empty($object->fields[$field]['type']) && preg_match('/^stars\(/', $object->fields[$field]['type'])) {
 		$object->$field = $value;
+		$result = $object->update($user);
 	}
-	$result = $object->update($user);
 
 	if ($result < 0) {
 		print json_encode(['status' => 'error', 'message' => 'Error updating '. $field]);

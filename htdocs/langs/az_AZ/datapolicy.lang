@@ -56,3 +56,4 @@ MailSent = E-poçt göndərildi
 NUMBER_MONTH_BEFORE_DELETION = Silinmədən əvvəlki ayların sayı
 TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
 OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:
+QualifiedNumber=Qualified record count

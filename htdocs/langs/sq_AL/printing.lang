@@ -46,6 +46,10 @@ IPP_Color=Ngjyrë
 IPP_Device=Pajisja
 IPP_Media=Media printer
 IPP_Supported=Lloji i medias
+STATE_IPP_idle=Idle printer
+STATE_IPP_none=None
+IPP_COLOR_print-black=Black and White
+IPP_COLOR_print-color=Color
 DirectPrintingJobsDesc=Kjo faqe liston punët e printimit të gjetura për printerët e disponueshëm.
 GoogleAuthNotConfigured=Google OAuth nuk është konfiguruar. Aktivizo modulin OAuth dhe cakto një ID/Sekret të Google.
 GoogleAuthConfigured=Kredencialet e Google OAuth u gjetën në konfigurimin e modulit OAuth.
@@ -53,4 +57,4 @@ PrintingDriverDescprintgcp=Variablat e konfigurimit për drejtuesin e printimit 
 PrintingDriverDescprintipp=Variablat e konfigurimit për printimin e kupave të shoferit.
 PrintTestDescprintgcp=Lista e printerëve për Google Cloud Print.
 PrintTestDescprintipp=Lista e printerëve për gota.
-Testbbbb
+PrinterLocation=Printer location

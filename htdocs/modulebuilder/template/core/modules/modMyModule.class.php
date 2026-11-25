@@ -27,6 +27,7 @@
  *  \brief      Description and activation file for module MyModule
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 
 
 /**
@@ -70,6 +71,10 @@ class modMyModule extends DolibarrModules
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "MyModuleDescription";
 
+		// Enables the module for all entities (Multicompany)
+		// Can be enabled / disabled only from the main company with superadmin account
+		// $this->core_enabled = 1;
+
 		// Author
 		$this->editor_name = 'Editor name';
 		$this->editor_url = 'https://www.example.com';		// Must be an external online web site
@@ -81,7 +86,7 @@ class modMyModule extends DolibarrModules
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		$this->const_name = 'MAIN_MODULE_'.dol_strtoupper($this->name);
 
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
@@ -90,6 +95,18 @@ class modMyModule extends DolibarrModules
 		$this->picto = 'generic';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
+		// If your module use the parameter "core_enabled" and you would like to activate the parts in all entities (Multicompany):
+		// 'xxxxxx' => array(
+		//		'data' => 1 or '/mymodule/xxx/mymodule.xxx.php',
+		//		'entity' => '0'
+		//	),
+		// 'hooks' => array(
+		//		'data' => array(
+		//			'hookcontext1',
+		//			'hookcontext2',
+		//		)
+		//		'entity' => '0'
+		//	)
 		$this->module_parts = array(
 			// Set this to 1 if module has its own trigger directory (core/triggers)
 			'triggers' => 0,
@@ -120,11 +137,8 @@ class modMyModule extends DolibarrModules
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
 			/* BEGIN MODULEBUILDER HOOKSCONTEXTS */
 			'hooks' => array(
-				//   'data' => array(
-				//       'hookcontext1',
-				//       'hookcontext2',
-				//   ),
-				//   'entity' => '0',
+				// 'hookcontext1',
+				// 'hookcontext2',
 			),
 			/* END MODULEBUILDER HOOKSCONTEXTS */
 			// Set this to 1 if features of module are opened to external users
@@ -158,9 +172,10 @@ class modMyModule extends DolibarrModules
 		// Prerequisites
 		$this->phpmin = array(7, 2); // Minimum version of PHP required by module
 		// $this->phpmax = array(8, 0); // Maximum version of PHP required by module
-		$this->need_dolibarr_version = array(19, -3); // Minimum version of Dolibarr required by module
+		$this->need_dolibarr_version = array(25, -3); // Minimum version of Dolibarr required by module
 		// $this->max_dolibarr_version = array(19, -3); // Maximum version of Dolibarr required by module
 		$this->need_javascript_ajax = 0;
+		// $this->need_setup = 1; // Set to 1 if the module must be configured after its activation to work (a warning is shown after activation)
 
 		// Messages at activation
 		$this->warnings_activation = array(); 		// Warning to show when we activate a module. Example: array('always'='text') or array('FR'='textfr','MX'='textmx'...)
@@ -193,9 +208,9 @@ class modMyModule extends DolibarrModules
 		/* END MODULEBUILDER TABS */
 		// Example:
 		// To add a new tab identified by code tabname1
-		// $this->tabs[] = array('data' => 'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight('mymodule', 'myobject', 'read'):/mymodule/mynewtab1.php?id=__ID__');
+		// $this->tabs[] = array('data' => 'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight("mymodule", "myobject", "read"):/mymodule/mynewtab1.php?id=__ID__');
 		// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-		// $this->tabs[] = array('data' => 'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@mymodule:$user->hasRight('othermodule', 'otherobject', 'read'):/mymodule/mynewtab2.php?id=__ID__',
+		// $this->tabs[] = array('data' => 'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@mymodule:$user->hasRight("othermodule", "otherobject", "read"):/mymodule/mynewtab2.php?id=__ID__',
 		// To remove an existing tab identified by code tabname
 		// $this->tabs[] = array('data' => 'objecttype:-tabname:NU:conditiontoremove');
 		//
@@ -347,7 +362,7 @@ class modMyModule extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle paddingright"'),
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'myobject',
-			'url' => '/mymodule/mymoduleindex.php',
+			'url' => '/mymodule/mymoduleindex.php?leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => "isModEnabled('mymodule')", // Define condition to show or hide menu entry. Use isModEnabled("mymodule") if entry must be visible if module is enabled.
@@ -362,7 +377,7 @@ class modMyModule extends DolibarrModules
 			'titre' => 'New_MyObject',
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'mymodule_myobject_new',
-			'url' => '/mymodule/myobject_card.php?action=create',
+			'url' => '/mymodule/myobject_card.php?action=create&leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => "isModEnabled('mymodule')", // Define condition to show or hide menu entry. Use isModEnabled("mymodule") if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -377,7 +392,7 @@ class modMyModule extends DolibarrModules
 			'titre' => 'List_MyObject',
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'mymodule_myobject_list',
-			'url' => '/mymodule/myobject_list.php',
+			'url' => '/mymodule/myobject_list.php?leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position' => 1000 + $r,
 			'enabled' => "isModEnabled('mymodule')", // Define condition to show or hide menu entry. Use isModEnabled("mymodule") if entry must be visible if module is enabled.
@@ -486,6 +501,8 @@ class modMyModule extends DolibarrModules
 		//$result3=$extrafields->addExtraField('mymodule_myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
 		//$result4=$extrafields->addExtraField('mymodule_myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
 		//$result5=$extrafields->addExtraField('mymodule_myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")');
+		// Set 'module' into $moreparams to declare the field is owned by the module (a warning is shown if an admin tries to delete it)
+		//$result6=$extrafields->addExtraField('mymodule_myattr6', "New Attr 6 label", 'varchar', 1, 10, 'thirdparty',   0, 0, '', '', 1, '', -1, 0, '', '', 'mymodule@mymodule', 'isModEnabled("mymodule")', 0, 0, array('module' => 'mymodule'));
 
 		// Permissions
 		$this->remove($options);
@@ -498,7 +515,7 @@ class modMyModule extends DolibarrModules
 		$myTmpObjects['MyObject'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectArray['includerefgeneration']) {
+			if ($myTmpObjectArray['includedocgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_myobjects.odt';
 				$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/'.$moduledir;
 				$dest = $dirodt.'/template_myobjects.odt';
@@ -515,10 +532,10 @@ class modMyModule extends DolibarrModules
 				}
 
 				$sql = array_merge($sql, array(
-					"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".$this->db->prefix()."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
-					"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
-					"INSERT INTO ".$this->db->prefix()."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
+					"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'standard_".$this->db->escape(dol_strtolower($myTmpObjectKey))."' AND type = '".$this->db->escape(dol_strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".$this->db->prefix()."document_model (nom, type, entity) VALUES('standard_".$this->db->escape(dol_strtolower($myTmpObjectKey))."', '".$this->db->escape(dol_strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")",
+					"DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'generic_".$this->db->escape(dol_strtolower($myTmpObjectKey))."_odt' AND type = '".$this->db->escape(dol_strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".$this->db->prefix()."document_model (nom, type, entity) VALUES('generic_".$this->db->escape(dol_strtolower($myTmpObjectKey))."_odt', '".$this->db->escape(dol_strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
 				));
 			}
 		}

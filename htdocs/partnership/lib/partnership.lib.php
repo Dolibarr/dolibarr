@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021       Dorian Laurent              <i.merraha@sofimedmaroc.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,11 +30,10 @@
  */
 function partnershipAdminPrepareHead()
 {
-	global $langs, $conf, $db;
+	global $langs, $conf, $extrafields;
 
 	$langs->loadLangs(array("members", "partnership"));
 
-	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('partnership');
 
 	$h = 0;
@@ -46,7 +45,7 @@ function partnershipAdminPrepareHead()
 	$h++;
 
 
-	$head[$h][0] = DOL_URL_ROOT . '/partnership/admin/partnership_extrafields.php';
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/admin/extrafields.php', array('elementtype' => 'partnership'));
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['partnership']['count'];
 	if ($nbExtrafields > 0) {
@@ -103,7 +102,7 @@ function partnershipPrepareHead($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT . '/partnership/partnership_note.php?id=' . $object->id;
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT . '/core/note.php', ['element' => 'partnership', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');

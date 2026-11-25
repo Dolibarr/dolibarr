@@ -9,31 +9,31 @@ ActionsOnResource=இந்த வளத்தைப் பற்றிய ந�
 ResourcePageIndex=வளங்களின் பட்டியல்
 ResourceSingular=வளம்
 ResourceCard=ஆதார அட்டை
+NewResource=New resource
 AddResource=ஒரு வளத்தை உருவாக்கவும்
 ResourceFormLabel_ref=வளத்தின் பெயர்
-ResourceType=வள வகை
 ResourceFormLabel_description=வள விளக்கம்
-
+ResourceType=வள வகை
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=உறுப்புடன் இணைக்கப்பட்ட வளங்கள்
 
 ShowResource=ஆதாரத்தைக் காட்டு
-
 ResourceElementPage=உறுப்பு வளங்கள்
 ResourceCreatedWithSuccess=வளம் வெற்றிகரமாக உருவாக்கப்பட்டது
 RessourceLineSuccessfullyDeleted=ஆதார வரி வெற்றிகரமாக நீக்கப்பட்டது
 RessourceLineSuccessfullyUpdated=ஆதார வரி வெற்றிகரமாக புதுப்பிக்கப்பட்டது
 ResourceLinkedWithSuccess=வெற்றியுடன் தொடர்புடைய வளம்
-
 ConfirmDeleteResource=இந்த ஆதாரத்தை நீக்குவதை உறுதிப்படுத்தவும்
 RessourceSuccessfullyDeleted=ஆதாரம் வெற்றிகரமாக நீக்கப்பட்டது
 DictionaryResourceType=வளங்களின் வகை
-
 SelectResource=வளத்தைத் தேர்ந்தெடுக்கவும்
-
 IdResource=ஐடி ஆதாரம்
 AssetNumber=வரிசை எண்
 ResourceTypeCode=ஆதார வகை குறியீடு
 ImportDataset_resource_1=வளங்கள்
-
 ErrorResourcesAlreadyInUse=சில ஆதாரங்கள் பயன்பாட்டில் உள்ளன
 ErrorResourceUseInEvent=%s %s நிகழ்வில் பயன்படுத்தப்பட்டது
+MaxUsers=Maximum number of users
+MaxUsersResourceDesc=If the resource can be used by several people at once (car, room, ...), you can enter here the maximum number of users allowed to use the resource at the same time (number of seats, places, ...).
+MaxUsersLabel=Maximum users

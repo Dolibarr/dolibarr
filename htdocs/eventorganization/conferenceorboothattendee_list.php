@@ -3,7 +3,7 @@
  * Copyright (C) 2021		Florian Henry 				<florian.henry@scopen.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,8 +72,11 @@ $withproject = GETPOSTINT('withproject');
 $fk_project = GETPOSTINT('fk_project') ? GETPOSTINT('fk_project') : GETPOSTINT('projectid');
 $projectid = $fk_project;
 $projectref = GETPOST('projectref');
+$withthirdparty = GETPOSTINT('withthirdparty');
+$thirdpartyid  = GETPOSTINT('thirdpartyid');
 
 $withProjectUrl = '';
+$withThirdpartyUrl = '';
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -94,7 +97,11 @@ $project = new Project($db);
 $projectstatic = new Project($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('conferenceorboothattendeelist')); // Note that conf->hooks_modules contains array
+if ($thirdpartyid > 0) {
+	$hookmanager->initHooks(array('thirdpartyattendee', 'globalcard'));
+} else {
+	$hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
+}
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -113,6 +120,7 @@ if (!$sortorder) {
 
 // Initialize array of search criteria
 $search_all = GETPOST('search_all', 'alphanohtml');
+$search_projecttitle = GETPOST('search_projecttitle', 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -147,8 +155,22 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+
+// Add the "Project label" column (from a joined table so not into $object->fields)
+$arrayfields['prj.title'] = array('label' => 'ProjectLabel', 'checked' => 1, 'enabled' => 1, 'position' => null, 'help' => '');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
+// Set the position of the "Project label" column right after the "Project" column, when the user has not already positioned it
+if (!isset($arrayfields['prj.title']['position']) && isset($arrayfields['t.fk_project']['position'])) {
+	$arrayfields['prj.title']['position'] = $arrayfields['t.fk_project']['position'] + 0.5;
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -220,6 +242,7 @@ if (empty($reshook)) {
 				$search[$key.'_dtend'] = '';
 			}
 		}
+		$search_projecttitle = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -247,9 +270,6 @@ $now = dol_now();
 
 $help_url = "EN:Module_Event_Organization";
 
-$morejs = array();
-$morecss = array();
-
 $confOrBooth = new ConferenceOrBooth($db);
 if ($conf_or_booth_id > 0) {
 	$result = $confOrBooth->fetch($conf_or_booth_id);
@@ -259,19 +279,29 @@ if ($conf_or_booth_id > 0) {
 		$fk_project = $confOrBooth->fk_project;
 	}
 }
+$title = $langs->trans('Attendees');
+
+$subtitle = $title;
 
 if ($fk_project > 0) {
 	$result = $projectstatic->fetch($fk_project);
 	if ($result < 0) {
 		setEventMessages(null, $projectstatic->errors, 'errors');
 	}
+
+	$title = $projectstatic->ref . ' ' . $projectstatic->name . ' - ' . $title;
 }
+
+
+$morejs = array();
+$morecss = array();
 
 
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
+$sql .= ", prj.title as projecttitle";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -294,6 +324,8 @@ if (!empty($confOrBooth->id)) {
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
+// Add the project table to be able to show the project label
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as prj ON prj.rowid = t.fk_project";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -305,6 +337,12 @@ if ($object->ismultientitymanaged == 1) {
 }
 if (!empty($projectstatic->id)) {
 	$sql .= " AND t.fk_project = ".((int) $projectstatic->id);
+}
+if (!empty($thirdpartyid)) {
+	$sql .= " AND t.fk_soc = ".((int) $thirdpartyid);
+}
+if ($search_projecttitle != '') {
+	$sql .= natural_search('prj.title', $db->sanitize($search_projecttitle), 0);
 }
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
@@ -326,10 +364,10 @@ foreach ($search as $key => $val) {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->sanitize($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -389,18 +427,79 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 	exit;
 }
 
-if ($confOrBooth->id > 0) {
-	$title = $langs->trans('ListOfAttendeesPerConference');
-} else {
-	$title = $langs->trans('ListOfAttendeesOfEvent');
-}
-
 // Output page
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-eventorganization page-attendee-list classforhorizontalscrolloftabs');
 
+// Copied almost verbertum from htdocs/ticket/list.php and modified based on the project one below
+if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 0) {
+	$withThirdpartyUrl = '';
 
+	if (!empty($withthirdparty)) {
+		// Tabs for thirdparty
+		$tab = 'eventorganisation';	// yes, it is called eventorganisation with s here and eventorganization with z elsewhere :-(
+		$withThirdpartyUrl = "&withthirdparty=1";
+
+		$socstat = new Societe($db);
+		$res = $socstat->fetch($thirdpartyid);
+		if ($res > 0) {
+			$tmpobject = $object;
+			$object = $socstat; // $object must be of type Societe when calling societe_prepare_head
+			$head = societe_prepare_head($socstat, 'attendees');
+			$object = $tmpobject;
+
+			print dol_get_fiche_head($head, 'eventorganization', $langs->trans("ThirdParty"), -1, 'company');
+
+			dol_banner_tab($socstat, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+
+			print '<div class="fichecenter">';
+
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border centpercent tableforfield">';
+
+			// Type Prospect/Customer/Supplier
+			print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+			print $socstat->getTypeUrl(1);
+			print '</td></tr>';
+
+			// Customer code
+			if ($socstat->client && !empty($socstat->code_client)) {
+				print '<tr><td class="titlefield">';
+				print $langs->trans('CustomerCode').'</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_client));
+				$tmpcheck = $socstat->check_codeclient();
+				if ($tmpcheck != 0 && $tmpcheck != -5) {
+					print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+				}
+				print '</td>';
+				print '</tr>';
+			}
+			// Supplier code
+			if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
+				print '<tr><td class="titlefield">';
+				print $langs->trans('SupplierCode').'</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_fournisseur));
+				$tmpcheck = $socstat->check_codefournisseur();
+				if ($tmpcheck != 0 && $tmpcheck != -5) {
+					print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+				}
+				print '</td>';
+				print '</tr>';
+			}
+
+			print '</table>';
+			print '</div>';
+			print dol_get_fiche_end();
+
+			if (empty($confOrBooth->id)) {
+				$head = conferenceorboothThirdpartyPrepareHead($socstat);
+				$tab = 'attendees';
+				print dol_get_fiche_head($head, $tab, $langs->trans("ThirdParty"), -1, 'company', 0, '', 'reposition');
+			}
+		}
+	}
+}
 
 if ($projectstatic->id > 0 || $confOrBooth > 0) {
 	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
@@ -443,6 +542,10 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+		// Define $urlwithroot
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
@@ -526,7 +629,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		// Location event
 		print '<tr><td>'.$langs->trans("Location").'</td><td>';
-		print $projectstatic->location;
+		print dolPrintHTML($projectstatic->location);
 		print '</td></tr>';
 
 		// Other attributes
@@ -548,7 +651,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		// Categories
 		if (isModEnabled('category')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-			print $form->showCategories($projectstatic->id, 'project', 1);
+			print $form->showCategories($projectstatic->id, Categorie::TYPE_PROJECT, 1);
 			print "</td></tr>";
 		}
 
@@ -565,32 +668,32 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print '<tr><td class="nowrap">';
 		$typeofdata = 'checkbox:'.($projectstatic->accept_conference_suggestions ? ' checked="checked"' : '');
 		$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
-		print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? '1' : '0', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+		print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? '1' : '0', $projectstatic, $permissiontoadd, $typeofdata, '&withproject=1', 0, 0, 'projectid', $htmltext);
 		print '</td><td>';
-		print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', null, null, '', 0, '', 'projectid');
+		print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', $projectstatic->accept_conference_suggestions ? 1 : 0, $projectstatic, $permissiontoadd, $typeofdata, '', null, null, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
 		$typeofdata = 'checkbox:'.($projectstatic->accept_booth_suggestions ? ' checked="checked"' : '');
 		$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
-		print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? '1' : '0', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
+		print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? '1' : '0', $projectstatic, $permissiontoadd, $typeofdata, '&withproject=1', 0, 0, 'projectid', $htmltext);
 		print '</td><td>';
-		print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? 1 : 0, $projectstatic, 0, $typeofdata, '', null, null, '', 0, '', 'projectid');
+		print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', $projectstatic->accept_booth_suggestions ? 1 : 0, $projectstatic, $permissiontoadd, $typeofdata, '', null, null, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $projectstatic, $permissiontoadd, 'amount', '&withproject=1', 0, 0, 'projectid');
 		print '</td><td>';
-		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', null, null, '', 0, '', 'projectid');
+		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, $permissiontoadd, 'amount:6', '', null, null, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, $permissiontoadd, 'amount', '&withproject=1', 0, 0, 'projectid');
 		print '</td><td>';
-		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', null, null, '', 0, '', 'projectid');
+		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, $permissiontoadd, 'amount:6', '', null, null, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="">';
 		print $form->editfieldkey($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', '', $projectstatic, $permissiontoadd, 'integer:3', '&withproject=1', 0, 0, 'projectid');
 		print '</td><td class="valuefield">';
 		print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $projectstatic->max_attendees, $projectstatic, $permissiontoadd, 'integer:3', '', null, null, '&withproject=1', 0, '', 'projectid');
@@ -598,22 +701,20 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		// Link to ICS for the event
 		print '<tr><td class="titlefield valignmiddle">'.$langs->trans("EventOrganizationICSLinkProject").'</td><td class="valuefield">';
-		// Define $urlwithroot
-		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 		// Show message
 		$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 		$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
 		$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 		print $message;
+		if (empty($project->date_start_event) || empty($project->date_end_event)) {
+			print img_warning($langs->trans("EventStartOrEndDateNotDefined"), '', 'marginleftonlyshort');
+		}
 		print "</td></tr>";
 
-		print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
-		// Define $urlwithroot
-		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
-
+		// Link for ICS for conference or booth
+		print '<tr><td class="valignmiddle">'.$langs->trans("EventOrganizationICSLink");
+		print '</td><td class="valuefield">';
 		// Show message
 		$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 		$message .= '&exportkey='.(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') ? urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) : '...');
@@ -626,13 +727,13 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		//print '<span class="opacitymedium">';
 		print $form->textwithpicto($langs->trans("SuggestOrVoteForConfOrBooth"), $langs->trans("EvntOrgRegistrationHelpMessage"));
 		//print '</span>';
-		print '</td><td>';
+		print '</td><td class="valuefield nowrap">';
 		$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.$projectstatic->id;
 		$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
 		$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
-		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
+		print '<div class="tdoverflowmax150 inline-block valignmiddle"><a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
 		print '<a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
 		//print '</div>';
 		//print ajax_autoselect("linkregister");
@@ -643,14 +744,14 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		//print '<span class="opacitymedium">';
 		print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 		//print '</span>';
-		print '</td><td>';
+		print '</td><td class="valuefield nowrap">';
 		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.$projectstatic->id.'&type=global';
 		$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
-		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
-		print '<a target="_blank" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+		print '<div class="tdoverflowmax150 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
+		print '<a target="_blank" rel="noopener noreferrer" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
 		//print '</div>';
 		//print ajax_autoselect("linkregister");
 		print '</td></tr>';
@@ -667,7 +768,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		if (empty($confOrBooth->id)) {
 			$head = conferenceorboothProjectPrepareHead($projectstatic);
 			$tab = 'attendees';
-			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, (!empty($project->public) ? 'projectpub' : 'project'), 0, '', 'reposition');
+			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, '', 0, '', 'reposition');
 		}
 	}
 
@@ -716,6 +817,12 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($confOrBooth->id > 0) {
+	$param .= '&conforboothid='.urlencode((string) $confOrBooth->id);
+}
+if ($projectstatic->id > 0) {
+	$param .= '&fk_project='.urlencode((string) ($projectstatic->id));
+}
 foreach ($search as $key => $val) {
 	if (is_array($search[$key])) {
 		foreach ($search[$key] as $skey) {
@@ -731,11 +838,8 @@ foreach ($search as $key => $val) {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }
-if ($confOrBooth->id > 0) {
-	$param .= '&conforboothid='.urlencode((string) $confOrBooth->id);
-}
-if ($projectstatic->id > 0) {
-	$param .= '&fk_project='.urlencode((string) ($projectstatic->id));
+if ($search_projecttitle != '') {
+	$param .= '&search_projecttitle='.urlencode($search_projecttitle);
 }
 $param .= $withProjectUrl;
 
@@ -761,7 +865,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].(!empty($conf_or_booth_id) ? '?conforboothid='.$conf_or_booth_id : '').'">'."\n";
+print '<form method="POST" id="searchFormList" spellcheck="false" action="'.$_SERVER["PHP_SELF"].(!empty($conf_or_booth_id) ? '?conforboothid='.$conf_or_booth_id : '').'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -779,12 +883,12 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $params = array('morecss' => 'reposition');
 
-$urlnew = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl);
+$urlnew = DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').($withProjectUrl ? $withProjectUrl : '&withproject=0').'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl);
 
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $urlnew, '', $permissiontoadd, $params);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($subtitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 
 // Add code for pre mass action (confirmation or email presend form)
@@ -826,7 +930,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -839,7 +943,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -862,7 +966,8 @@ foreach ($object->fields as $key => $val) {
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
-			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
+			$searchcss = (($key == 'fk_project') ? 'width125' : 'maxwidth250');
+			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' '.$searchcss, 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -879,6 +984,13 @@ foreach ($object->fields as $key => $val) {
 		}
 		print '</td>';
 	}
+
+	// Add the "Project label" column after the "Project" column (it is not a field of the object)
+	if ($key == 'fk_project' && !empty($arrayfields['prj.title']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input type="text" class="flat maxwidth75" name="search_projecttitle" value="'.dol_escape_htmltag($search_projecttitle).'">';
+		print '</td>';
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -888,7 +1000,7 @@ $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -903,7 +1015,7 @@ $totalarray['nbfield'] = 0;
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -923,6 +1035,12 @@ foreach ($object->fields as $key => $val) {
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''), 0, (empty($val['helplist']) ? '' : $val['helplist']))."\n";
 		$totalarray['nbfield']++;
 	}
+
+	// Add the "Project label" column after the "Project" column (it is not a field of the object)
+	if ($key == 'fk_project' && !empty($arrayfields['prj.title']['checked'])) {
+		print getTitleFieldOfList($arrayfields['prj.title']['label'], 0, $_SERVER['PHP_SELF'], 'prj.title', '', $param, 'class="left tdoverflowmax250"', $sortfield, $sortorder, 'left tdoverflowmax250 ')."\n";
+		$totalarray['nbfield']++;
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -931,7 +1049,7 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
@@ -988,7 +1106,7 @@ while ($i < $imaxinloop) {
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1055,6 +1173,16 @@ while ($i < $imaxinloop) {
 					$totalarray['val']['t.'.$key] += $object->$key;
 				}
 			}
+
+			// Add the "Project label" column after the "Project" column (it is not a field of the object)
+			if ($key == 'fk_project' && !empty($arrayfields['prj.title']['checked'])) {
+				print '<td class="left tdoverflowmax250 classfortooltip" title="'.dol_escape_htmltag(dol_trunc($obj->projecttitle, 120)).'">';
+				print '<span class="spantitle">'.dolPrintLabel($obj->projecttitle).'</span>';
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -1063,7 +1191,7 @@ while ($i < $imaxinloop) {
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

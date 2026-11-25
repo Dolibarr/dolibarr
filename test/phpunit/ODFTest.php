@@ -24,13 +24,12 @@
  * \brief   PHPUnit test for odf class.
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
 require_once dirname(__FILE__).'/../../htdocs/includes/odtphp/odf.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -331,6 +330,19 @@ class ODFTest extends CommonClassTest
 				'encode' => false,
 				'charset' => 'UTF-8',
 				'expected' => 'text with <text:span text:style-name="boldText">strong text </text:span>, a line'."\n".'break and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>',
+			],
+			// A <br> followed by a newline, as stored by the WYSIWYG editor, must give only one line break.
+			34 => [
+				'to_convert' => "<strong>Title</strong><br>\r\nFirst line<br>\r\nSecond line",
+				'encode' => true,
+				'charset' => null,
+				'expected' => '<text:span text:style-name="boldText">Title</text:span><text:line-break/>First line<text:line-break/>Second line',
+			],
+			35 => [
+				'to_convert' => "Break<br />\nline<br>\n<br>\nafter an empty line",
+				'encode' => true,
+				'charset' => null,
+				'expected' => 'Break<text:line-break/>line<text:line-break/><text:line-break/>after an empty line',
 			],
 		];
 

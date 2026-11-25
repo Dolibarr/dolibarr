@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Cédric Salvado				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2016-2023	Ferran Marcet				<fmarcet@2byte.es>
@@ -42,6 +42,15 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -54,20 +63,13 @@ if (isModEnabled('margin')) {
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies', 'compta', 'bills', 'stocks', 'products'));
@@ -80,7 +82,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'orderlist';
 $optioncss = GETPOST('optioncss', 'alpha');
-$mode        = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
+$mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 	$userschilds = $user->getAllChildIds();
@@ -113,7 +115,7 @@ if (GETPOSTISSET('formfilteraction')) {
 }
 $searchCategoryOrderList = GETPOST('search_category_order_list', 'array');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
-$search_id = GETPOST('search_id', 'int');
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_ext = GETPOST('search_ref_ext', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
@@ -160,13 +162,6 @@ $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
 	$search_status = '-2';
 }
-$search_orderday = '';
-$search_ordermonth = '';
-$search_orderyear = '';
-$search_deliveryday = '';
-$search_deliverymonth = '';
-$search_deliveryyear = '';
-
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 
 $diroutputmassaction = $conf->order->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
@@ -195,7 +190,6 @@ $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Commande($db);
 $hookmanager->initHooks(array('orderlist'));
-$extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -221,7 +215,7 @@ $showpos = (isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalI
 
 $checkedtypetiers = '0';
 $arrayfields = array(
-	'c.rowid' => array('label' => "ID", 'checked' => '1', 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
+	'c.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'c.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5, 'searchall' => 1),
 	'c.ref_ext' => array('label' => "RefExt", 'checked' => '1', 'position' => 5, 'visible' => 0, 'searchall' => 1),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => '-1', 'position' => 10, 'searchall' => 1),
@@ -280,10 +274,18 @@ if ($reshook > 0) {
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// Add hook to complete $arrayfield
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Add hook to complete $arrayfields
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 
 // Security check
@@ -302,6 +304,21 @@ $objectclass = null;
 
 
 $result = restrictedArea($user, 'commande', $id, '');
+
+$permissiontoread = $user->hasRight("commande", "lire");
+$permissiontoadd = $user->hasRight("commande", "creer");
+$permissiontodelete = $user->hasRight("commande", "supprimer");
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+	$permissiontovalidate = $user->hasRight("commande", "order_advance", "validate");
+	$permissiontoclose = $user->hasRight("commande", "order_advance", "close");
+	$permissiontocancel = $user->hasRight("commande", "order_advance", "annuler");
+	$permissiontosendbymail = $user->hasRight("commande", "order_advance", "send");
+} else {
+	$permissiontovalidate = $user->hasRight("commande", "creer");
+	$permissiontoclose = $user->hasRight("commande", "creer");
+	$permissiontocancel = $user->hasRight("commande", "creer");
+	$permissiontosendbymail = $user->hasRight("commande", "creer");
+}
 
 $error = 0;
 
@@ -391,28 +408,14 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Commande';
 	$objectlabel = 'Orders';
-	$permissiontoread = $user->hasRight("commande", "lire");
-	$permissiontoadd = $user->hasRight("commande", "creer");
-	$permissiontodelete = $user->hasRight("commande", "supprimer");
-	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-		$permissiontovalidate = $user->hasRight("commande", "order_advance", "validate");
-		$permissiontoclose = $user->hasRight("commande", "order_advance", "close");
-		$permissiontocancel = $user->hasRight("commande", "order_advance", "annuler");
-		$permissiontosendbymail = $user->hasRight("commande", "order_advance", "send");
-	} else {
-		$permissiontovalidate = $user->hasRight("commande", "creer");
-		$permissiontoclose = $user->hasRight("commande", "creer");
-		$permissiontocancel = $user->hasRight("commande", "creer");
-		$permissiontosendbymail = $user->hasRight("commande", "creer");
-	}
 	$uploaddir = $conf->order->multidir_output[$conf->entity];
 	$triggersendname = 'ORDER_SENTBYMAIL';
 	$year = "";
 	$month = "";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if ($massaction == 'confirm_createbills') {   // Create bills from orders.
-		$orders = GETPOST('toselect', 'array:int');
+	if (!$error && $massaction == 'confirm_createbills' && $user->hasRight('facture', 'creer')) {   // @phpstan-ignore-line $error may have been modified by the actions_massactions.inc.php. Create bills from orders.
+		$orders = $toselect;	// Ids already checked for access by the mass actions include
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -429,6 +432,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$nbOrders = is_array($orders) ? count($orders) : 1;
+		$reuseNotesOnCreateFrom = getDolGlobalString('FACTURE_REUSE_NOTES_ON_CREATE_FROM');
 
 		$currentIndex = 0;
 		foreach ($orders as $id_order) {
@@ -448,10 +452,21 @@ if (empty($reshook)) {
 			$cmd->fetch_thirdparty();
 
 			$objecttmp = new Facture($db);
+			$notesUpdated = false;
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
 				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we reuse it.
 				$currentIndex++;
 				$objecttmp = $TFactThird[$cmd->socid];
+				if ($reuseNotesOnCreateFrom) {
+					if (!empty($cmd->note_public)) {
+						$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $cmd->note_public);
+						$notesUpdated = true;
+					}
+					if (!empty($cmd->note_private)) {
+						$objecttmp->note_private = dol_concatdesc($objecttmp->note_private, $cmd->note_private);
+						$notesUpdated = true;
+					}
+				}
 			} else {
 				// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
 				$objecttmp->socid = $cmd->socid;
@@ -463,12 +478,17 @@ if (empty($reshook)) {
 				$objecttmp->demand_reason_id = !empty($cmd->demand_reason_id) ? $cmd->demand_reason_id : $cmd->thirdparty->demand_reason_id;
 
 				$objecttmp->fk_project = $cmd->fk_project;
-				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
+				if (isModEnabled('multicurrency')) {
+					$objecttmp->multicurrency_code = $cmd->multicurrency_code;
+				}
 				if (empty($createbills_onebythird)) {
 					$objecttmp->ref_client = $cmd->ref_client;
 				}
 
-				if (empty($objecttmp->note_public) && getDolGlobalInt("MAXREFONDOC", 10)>0) {
+				$objecttmp->note_public = $objecttmp->getDefaultCreateValueFor('note_public', ($reuseNotesOnCreateFrom ? $cmd->note_public : null));
+				$objecttmp->note_private = $objecttmp->getDefaultCreateValueFor('note_private', ($reuseNotesOnCreateFrom ? $cmd->note_private : null));
+
+				if (!$reuseNotesOnCreateFrom && empty($objecttmp->note_public) && getDolGlobalInt("MAXREFONDOC", 10)>0) {
 					$objecttmp->note_public =  $langs->transnoentities("Orders");
 				}
 
@@ -557,6 +577,7 @@ if (empty($reshook)) {
 							$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
 						}
 
+						// If order line has a negative unit price, we will include it as a discount for the generated invoice
 						if ($lines[$i]->subprice < 0 && !getDolGlobalString('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
@@ -577,7 +598,7 @@ if (empty($reshook)) {
 								$error++;
 								break;
 							}
-						} else {
+						} else {	// We are here if INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN (a hidden option not supported and deprecated that should not be used)
 							// Positive line
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 							// Date start
@@ -676,9 +697,15 @@ if (empty($reshook)) {
 				}
 			}
 
-			if ($currentIndex <= getDolGlobalInt("MAXREFONDOC", 10)) {
+			if (!$reuseNotesOnCreateFrom && $currentIndex <= getDolGlobalInt("MAXREFONDOC", 10)) {
 				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')'));
-				$objecttmp->update($user);
+				if ($objecttmp->update($user) < 0) {
+					$error++;
+					$errors[] = $objecttmp->error;
+				}
+			} elseif ($notesUpdated && $objecttmp->update($user) < 0) {
+				$error++;
+				$errors[] = $objecttmp->error;
 			}
 
 			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
@@ -773,24 +800,6 @@ if (empty($reshook)) {
 			if ($search_option) {
 				$param .= "&search_option=".urlencode($search_option);
 			}
-			if ($search_orderday) {
-				$param .= '&search_orderday='.urlencode($search_orderday);
-			}
-			if ($search_ordermonth) {
-				$param .= '&search_ordermonth='.urlencode($search_ordermonth);
-			}
-			if ($search_orderyear) {
-				$param .= '&search_orderyear='.urlencode($search_orderyear);
-			}
-			if ($search_deliveryday) {
-				$param .= '&search_deliveryday='.urlencode($search_deliveryday);
-			}
-			if ($search_deliverymonth) {
-				$param .= '&search_deliverymonth='.urlencode($search_deliverymonth);
-			}
-			if ($search_deliveryyear) {
-				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
-			}
 			if ($search_id) {
 				$param .= '&search_id='.urlencode((string) $search_id);
 			}
@@ -837,8 +846,8 @@ if (empty($reshook)) {
 			$db->rollback();
 
 			$action = 'create';
-			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
-			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
+			$_GET["origin"] = GETPOST("origin", 'alpha');
+			$_GET["originid"] = GETPOSTINT("originid");
 			if (!empty($errors)) {
 				setEventMessages(null, $errors, 'errors');
 			} else {
@@ -858,8 +867,8 @@ if ($action == 'validate' && $permissiontoadd && $objectclass !== null) {
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
 				if ($objecttmp->status == $objecttmp::STATUS_DRAFT) {
-					if (!empty($objecttmp->fk_warehouse)) {
-						$idwarehouse = $objecttmp->fk_warehouse;
+					if (!empty($objecttmp->warehouse_id)) {
+						$idwarehouse = $objecttmp->warehouse_id;
 					} else {
 						$idwarehouse = 0;
 					}
@@ -960,6 +969,7 @@ if (!$error && $massaction === 'setbilled' && $permissiontoclose && $objectclass
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formproduct = new FormProduct($db);
 $formmargin = null;
 if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
@@ -1034,15 +1044,15 @@ if ($socid > 0) {
 }
 // Restriction on sale representative
 if (empty($user->socid) && !$permissiontoreadallthirdparty) {
-	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+	$sql .= " AND (".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $user->id);
 	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES') && $userschilds) {
-		$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
+		$sql .= " OR ".getSalesRepresentativeSqlFilter('c.fk_soc', $db->sanitize(implode(',', $userschilds)));
 	}
 	$sql .= ")";
 }
 
-if ($search_id > 0) {
-	$sql .= natural_search('c.rowid', $search_id);
+if ($search_id != '') {
+	$sql .= natural_search('c.rowid', $search_id, 1);
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
@@ -1165,7 +1175,12 @@ if ($search_login) {
 	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);
 }
 if ($search_project_ref != '') {
-	$sql .= natural_search("p.ref", $search_project_ref);
+	if (empty($arrayfields['p.title']['checked'])) {
+		// The project label is shown into the ref column, so search on both
+		$sql .= natural_search(array("p.ref", "p.title"), $search_project_ref);
+	} else {
+		$sql .= natural_search("p.ref", $search_project_ref);
+	}
 }
 if ($search_project != '') {
 	$sql .= natural_search("p.title", $search_project);
@@ -1203,9 +1218,9 @@ if ($search_user > 0) {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', 0, 1);
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND ".getSalesRepresentativeSqlFilter('c.fk_soc', (int) $search_sale);
 	}
 }
 
@@ -1634,6 +1649,7 @@ if (!empty($socid)) {
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/commande/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', (int) (($contextpage == 'orderlist' || $contextpage == 'billableorders') && $permissiontoadd));
 
@@ -1769,8 +1785,6 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire")) {
 }
 // If Stock is enabled
 if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Warehouse');
 	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle, 0, 0, array(), 'maxwidth250 widthcentpercentminusx');
@@ -1792,7 +1806,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -1813,7 +1827,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
@@ -1822,8 +1836,8 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 
 // Line numbering
 if (!empty($arrayfields['c.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 
@@ -1894,7 +1908,7 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), '', 1);
 	print '</td>';
 }
 // Date order
@@ -2114,7 +2128,7 @@ if (!empty($arrayfields['c.fk_statut']['checked'])) {
 	print '</td>';
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -2138,7 +2152,7 @@ $totalarray = array(
 print '<tr class="liste_titre">';
 
 // Action column
-if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
@@ -2224,11 +2238,11 @@ if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.module_source']['checked'])) {
-	print_liste_field_titre($arrayfields['c.module_source']['label'], $_SERVER["PHP_SELF"], "f.module_source", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['c.module_source']['label'], $_SERVER["PHP_SELF"], "c.module_source", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.pos_source']['checked'])) {
-	print_liste_field_titre($arrayfields['c.pos_source']['label'], $_SERVER["PHP_SELF"], "f.pos_source", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['c.pos_source']['label'], $_SERVER["PHP_SELF"], "c.pos_source", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.total_ht']['checked'])) {
@@ -2336,7 +2350,7 @@ if (!empty($arrayfields['c.fk_statut']['checked'])) {
 	$totalarray['nbfield']++;
 }
 // Action column
-if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
@@ -2373,6 +2387,7 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -2458,7 +2473,7 @@ while ($i < $imaxinloop) {
 		print '<tr data-rowid="'.$object->id.'" class="oddeven row-with-select status'.$generic_commande->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -2527,9 +2542,14 @@ while ($i < $imaxinloop) {
 
 		// Project ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nocellnopadd nowraponall">';
+			// When the project label column is not displayed, we show the project label under the project ref
+			$showprojectlabelunderref = (empty($arrayfields['p.title']['checked']) && (string) $obj->project_label !== '');
+			print '<td class="tdoverflowmax150'.($showprojectlabelunderref ? ' tdlineheightsmall' : '').'">';
 			if ($obj->project_id > 0) {
 				print $projectstatic->getNomUrl(1);
+				if ($showprojectlabelunderref) {
+					print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->project_label).'"><span class="spantitle">'.dolPrintLabel($obj->project_label).'</span></div>';
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -2539,9 +2559,9 @@ while ($i < $imaxinloop) {
 
 		// Project label
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($projectstatic->title).'">';
 			if ($obj->project_id > 0) {
-				print $projectstatic->title;
+				print '<span class="spantitle">'.dol_escape_htmltag($projectstatic->title).'</span>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2575,8 +2595,10 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
+			print '<td class="nocellnopadd tdoverflowmax100" title="'.dolPrintHTMLForAttribute($obj->alias).'">';
+			print '<span class="spantitle">';
 			print dolPrintLabel($obj->alias);
+			print '</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2636,7 +2658,11 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			$tmparray = getCountry($obj->fk_pays, 'all');
 			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($tmparray['label']).'">';
-			print dolPrintHTML($tmparray['label']);
+			if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
+				print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);
+			} else {
+				print dolPrintHTML($tmparray['label']);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -3012,116 +3038,22 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['shippable']['checked'])) {
 			print '<td class="center">';
 			if (!empty($show_shippable_command) && isModEnabled('stock')) {
-				$text_icon = '';
-				if (($obj->fk_statut > $generic_commande::STATUS_DRAFT) && ($obj->fk_statut < $generic_commande::STATUS_CLOSED)) {
-					$generic_commande->getLinesArray(); 	// Load array ->lines
-					$generic_commande->loadExpeditions();	// Load array ->expeditions
+				$commande = new Commande($db);
+				$commande->id     = (int) $obj->rowid;
+				$commande->status = (int) $obj->fk_statut;
+				$commande->statut = (int) $obj->fk_statut;
 
-					$stock = [];
+				$shippableInfos = $commande->getShippableInfos();
 
-					$numlines = count($generic_commande->lines); // Loop on each line of order
-					for ($lig = 0; $lig < $numlines; $lig++) {
-						$orderLine = $generic_commande->lines[$lig];
-						'@phan-var-force OrderLine $orderLine';
-						if (isset($generic_commande->expeditions[$orderLine->id])) {
-							$reliquat =  $orderLine->qty - $generic_commande->expeditions[$orderLine->id];
-						} else {
-							$reliquat = $orderLine->qty;
-						}
-						if ($orderLine->product_type == 0 && $orderLine->fk_product > 0) {  // If line is a product and not a service
-							$nbprod++; // order contains real products
-							$generic_product->id = $orderLine->fk_product;
-
-							// Get local and virtual stock and store it into cache
-							if (empty($productstat_cache[$orderLine->fk_product])) {
-								$generic_product->load_stock('nobatch,warehouseopen'); // ->load_virtual_stock() is already included into load_stock()
-								$productstat_cache[$orderLine->fk_product]['stock_reel'] = $generic_product->stock_reel;
-								$productstat_cachevirtual[$orderLine->fk_product]['stock_reel'] = $generic_product->stock_theorique;
-							} else {
-								$generic_product->stock_reel = $productstat_cache[$orderLine->fk_product]['stock_reel'];
-								// @phan-suppress-next-line PhanTypeInvalidDimOffset
-								$generic_product->stock_theorique = $productstat_cachevirtual[$orderLine->fk_product]['stock_reel'];
-							}
-
-							if (!array_key_exists($orderLine->fk_product, $stock)) {
-								$stock[$orderLine->fk_product] = $generic_product->stock_reel;
-							}
-
-							if ($reliquat > $stock[$orderLine->fk_product]) {
-								$notshippable++;
-							}
-
-							$stock[$orderLine->fk_product] = $stock[$orderLine->fk_product] - $reliquat;
-							if (!getDolGlobalString('SHIPPABLE_ORDER_ICON_IN_LIST')) {  // Default code. Default should be this case.
-								$text_info .= $reliquat.' x '.$orderLine->product_ref.'&nbsp;'.dol_trunc($orderLine->product_label, 20);
-								$text_info .= ' - '.$langs->trans("Stock").': <span class="'.($generic_product->stock_reel > 0 ? 'ok' : 'error').'">'.$generic_product->stock_reel.'</span>';
-								$text_info .= ' - '.$langs->trans("VirtualStock").': <span class="'.($generic_product->stock_theorique > 0 ? 'ok' : 'error').'">'.$generic_product->stock_theorique.'</span>';
-								$text_info .= ($reliquat != $orderLine->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($orderLine->qty - $reliquat).')</span>' : '');
-								$text_info .= '<br>';
-							} else {  // BUGGED CODE.
-								// DOES NOT TAKE INTO ACCOUNT MANUFACTURING. THIS CODE SHOULD BE USELESS. PREVIOUS CODE SEEMS COMPLETE.
-								// COUNT STOCK WHEN WE SHOULD ALREADY HAVE VALUE
-								// Detailed virtual stock, looks bugged, incomplete and need heavy load.
-								// stock order and stock order_supplier
-								$stock_order = 0;
-								$stock_order_supplier = 0;
-								if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {    // What about other options ?
-									if (isModEnabled('order')) {
-										if (empty($productstat_cache[$orderLine->fk_product]['stats_order_customer'])) {
-											$generic_product->load_stats_commande(0, '1,2');
-											$productstat_cache[$orderLine->fk_product]['stats_order_customer'] = $generic_product->stats_commande['qty'];
-										} else {
-											// @phan-suppress-next-line PhanTypeInvalidDimOffset
-											$generic_product->stats_commande['qty'] = $productstat_cache[$orderLine->fk_product]['stats_order_customer'];
-										}
-										$stock_order = $generic_product->stats_commande['qty'];
-									}
-									if (isModEnabled("supplier_order")) {
-										if (empty($productstat_cache[$orderLine->fk_product]['stats_order_supplier'])) {
-											$generic_product->load_stats_commande_fournisseur(0, '3');
-											$productstat_cache[$orderLine->fk_product]['stats_order_supplier'] = $generic_product->stats_commande_fournisseur['qty'];
-										} else {
-											// @phan-suppress-next-line PhanTypeInvalidDimOffset
-											$generic_product->stats_commande_fournisseur['qty'] = $productstat_cache[$orderLine->fk_product]['stats_order_supplier'];
-										}
-										$stock_order_supplier = $generic_product->stats_commande_fournisseur['qty'];
-									}
-								}
-								$text_info .= $reliquat.' x '.$orderLine->ref.'&nbsp;'.dol_trunc($orderLine->product_label, 20);
-								$text_stock_reel = $generic_product->stock_reel.'/'.$stock_order;
-								if ($stock_order > $generic_product->stock_reel && !($generic_product->stock_reel < $orderLine->qty)) {
-									$warning++;
-									$text_warning .= '<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
-								}
-								if ($reliquat > $generic_product->stock_reel) {
-									$text_info .= '<span class="warning">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
-								} else {
-									$text_info .= '<span class="ok">'.$langs->trans('Available').'&nbsp;:&nbsp;'.$text_stock_reel.'</span>';
-								}
-								if (isModEnabled("supplier_order")) {
-									$text_info .= '&nbsp;'.$langs->trans('SupplierOrder').'&nbsp;:&nbsp;'.$stock_order_supplier;
-								}
-								$text_info .= ($reliquat != $orderLine->qty ? ' <span class="opacitymedium">('.$langs->trans("QtyInOtherShipments").' '.($orderLine->qty - $reliquat).')</span>' : '');
-								$text_info .= '<br>';
-							}
-						}
-					}
-					if ($notshippable == 0) {
-						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'green paddingleft');
-						$text_info = $text_icon.' '.$langs->trans('Shippable').'<br>'.$text_info;
-					} else {
-						$text_icon = img_picto('', 'dolly', '', 0, 0, 0, '', 'error paddingleft');
-						$text_info = $text_icon.' '.$langs->trans('NonShippable').'<br>'.$text_info;
-					}
-				}
-
-				if ($nbprod) {	// If there is at least one product to ship, we show the shippable icon
-					print '<a href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.((int) $obj->rowid).'">';
-					print $form->textwithtooltip('', $text_info, 2, 1, $text_icon, '', 2);
+				if ($shippableInfos['has_product']) {
+					print '<a href="'.DOL_URL_ROOT.'/expedition/shipment.php?id='.(int) $obj->rowid.'">';
+					print $form->textwithtooltip('', $shippableInfos['textinfo'], 2, 1, $shippableInfos['texticon'], '', 2);
 					print '</a>';
-				}
-				if ($warning) {     // Always false in default mode
-					print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'), '', 2);
+
+					if (!empty($shippableInfos['warning'])) {
+						// We no longer show the textwarning detail, but we keep the warning icon
+						print $form->textwithtooltip('', $langs->trans("NotEnoughForAllOrders"), 2, 1, img_picto('', 'error', '', 0, 0, 0, '', '2'), '', 2);
+					}
 				}
 			}
 			print '</td>';
@@ -3166,7 +3098,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Action column
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

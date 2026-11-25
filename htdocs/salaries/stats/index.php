@@ -27,9 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("salaries", "companies", "bills"));
@@ -53,6 +53,7 @@ if ($socid < 0) {
 	$socid = 0;
 }
 $id = GETPOSTINT('id');
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'salariesstats' to show the tab with the custom reports tool
 
 // Security check
 $socid = GETPOSTINT("socid");
@@ -66,6 +67,18 @@ $year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
+$object = new Salary($db);
+
+$permissiontoread = $user->hasRight('salaries', 'read');
+$permissiontoadd = $user->hasRight('salaries', 'write');
+$permissiontodelete = $user->hasRight('salaries', 'delete');
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
@@ -76,20 +89,79 @@ $form = new Form($db);
 
 llxHeader();
 
-$title = $langs->trans("SalariesStatistics");
+$title = $langs->trans("Salaries");
 $dir = $conf->salaries->dir_temp;
 
-print load_fiche_titre($title, '', 'salary');
+
+$url = DOL_URL_ROOT.'/salaries/card.php?action=create';
+if (!empty($socid)) {
+	$url .= '&socid='.$socid;
+}
+
+$param = '';
+$sortfield = '';
+$sortorder = '';
+$massactionbutton = '';
+$num = -1;
+$nbtotalofrecords = $langs->trans("Statistics");
+$limit = 0;
+
+$newcardbutton  = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/salaries/list.php?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/salaries/list.php?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', 1, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', DOL_URL_ROOT.'/salaries/stats/index.php?'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', 2, array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewSalary'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+// The custom reports tool does not filter on the salaries of the user and its subordinates, so it needs the permission to read all salaries
+$showtabcustomreports = (empty($user->socid) && $user->hasRight('salaries', 'readall'));
+
+$h = 0;
+$head = array();
+$head[$h][0] = DOL_URL_ROOT.'/salaries/stats/index.php';
+$head[$h][1] = $langs->trans("ByMonthYear");
+$head[$h][2] = 'byyear';
+$h++;
+
+if ($showtabcustomreports) {
+	$head[$h][0] = DOL_URL_ROOT.'/salaries/stats/index.php?tabfamily=salariesstats';
+	$head[$h][1] = $langs->trans("CustomReport");
+	$head[$h][2] = 'customreports';
+	$h++;
+}
+
+complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_stats');
+
+// Show the tab with the custom reports tool
+if ($showtabcustomreports && $tabfamily == 'salariesstats') {
+	print dol_get_fiche_head($head, 'customreports', '', -1);
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	$customreportobjecttype = 'salary';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
 
 dol_mkdir($dir);
 
 $useridtofilter = $userid; // Filter from parameters
 
-if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
-	$useridtofilter = $user->id;
-}
-if (!$user->hasRight('salaries', 'readall') && empty($useridtofilter)) {
-	$useridtofilter = $user->getAllChildIds(1);
+if (!$user->hasRight('salaries', 'readall')) {
+	if (!$user->hasRight('salaries', 'readchild')) {
+		$useridtofilter = $user->id;	// Only his own salaries, whatever is the user in parameter
+	} else {
+		$childids = $user->getAllChildIds(1);
+		if (empty($useridtofilter) || !in_array($useridtofilter, $childids)) {
+			$useridtofilter = $childids;
+		}
+	}
 }
 
 $stats = new SalariesStats($db, $socid, $useridtofilter);
@@ -201,15 +273,6 @@ if (!count($arrayyears)) {
 }
 
 
-$h = 0;
-$head = array();
-$head[$h][0] = DOL_URL_ROOT.'/salaries/stats/index.php';
-$head[$h][1] = $langs->trans("ByMonthYear");
-$head[$h][2] = 'byyear';
-$h++;
-
-complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_stats');
-
 print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
@@ -224,7 +287,7 @@ print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->tra
 
 // User
 print '<tr><td>'.$langs->trans("Employee").'</td><td>';
-if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
+if ($user->hasRight('salaries', 'readall') || $user->hasRight('salaries', 'readchild')) {
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, null, 0, !$user->hasRight('salaries', 'readall') ? 'hierarchyme' : '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 } else {

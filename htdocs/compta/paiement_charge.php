@@ -213,7 +213,7 @@ if ($action == 'create') {
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
-	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOSTISSET("remonth") ? $datepaye : -1) : '';
+	$datepayment = getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : (GETPOSTISSET("remonth") ? $datepaye : -1);
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1, 0, '', '', $charge->date_ech, '', 1, $langs->trans("DateOfSocialContribution"));
 	print "</td>";
 	print '</tr>';
@@ -289,18 +289,14 @@ if ($action == 'create') {
 		print '<td class="right nowraponall"><span class="amount">'.price($objp->amount - $sumpaid)."</span></td>";
 
 		print '<td class="center nowraponall">';
-		if ($sumpaid < $objp->amount) {
-			$namef = "amount_".$objp->id;
-			$nameRemain = "remain_".$objp->id;
-			if (!empty($conf->use_javascript_ajax)) {
-				print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
-			}
-			$remaintopay = $objp->amount - $sumpaid;
-			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'" value="'.GETPOST('amount_'.$objp->id, 'alpha').'">';
-		} else {
-			print '-';
+		$namef = "amount_".$objp->id;
+		$nameRemain = "remain_".$objp->id;
+		if (!empty($conf->use_javascript_ajax)) {
+			print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
 		}
+		$remaintopay = $objp->amount - $sumpaid;
+		print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
+		print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'" value="'.GETPOST('amount_'.$objp->id, 'alpha').'">';
 		print "</td>";
 
 		print "</tr>\n";

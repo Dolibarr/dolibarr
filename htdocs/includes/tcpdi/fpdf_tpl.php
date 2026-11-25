@@ -17,7 +17,7 @@
 //  limitations under the License.
 //
 
-class FPDF_TPL extends FPDF {
+class FPDF_TPL extends TCPDF {
     /**
      * Array of Tpl-Data
      * @var array

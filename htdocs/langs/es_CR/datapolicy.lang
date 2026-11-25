@@ -1,5 +1,13 @@
 # Dolibarr language file - Source file is en_US - datapolicy
+datapolicySetupPage =Según las leyes de su país (Ejemplo: <a href="http://www.privacy-regulation.eu/">RGPD</a>), puede ser necesario anonimizar o eliminar datos personales.
 DATAPOLICY_TIERS_PROSPECT_CLIENT =Cliente Potencial/Cliente
 DATAPOLICY_TIERS_NIPROSPECT_NICLIENT =Ni cliente potencial/ni cliente
 DATAPOLICY_CONTACT_PROSPECT_CLIENT =Cliente Potencial/Cliente
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT =Ni cliente potencial/ni cliente
+DATAPOLICY_RECRUITMENT_CANDIDATURE =Aplicación
+DATAPOLICY_Tooltip_SETUP=La anonimización se realiza mediante la tarea programada "%s" ejecutada por el módulo "%s", por lo que ese módulo debe estar activo.
+DelayForAnonymization=Retraso para anonimización
+DelayForDeletion=Retraso para eliminación
+DATAPOLICY_send =Fecha de envío del correo de acuerdo
+OtherFieldsAreReplaceWithStaticValues=Otros campos son reemplazados por un valor estático:
+QualifiedNumber=Cantidad de registros calificados

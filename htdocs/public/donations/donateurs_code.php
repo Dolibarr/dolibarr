@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,9 +45,10 @@ if (!defined('NOIPCHECK')) {
  * @param 	int    		$disablehead		More content into html header
  * @param 	string[]|string	$arrayofjs			Array of complementary js files
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
+ * @param 	string			$ws					Website ref if we are called from a website
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $ws = '')  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '<html><title>List of donators</title><body>';
 }
@@ -63,6 +64,11 @@ function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 	print '</body></html>';
 }
 
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+define("DOLENTITY", $entity);
+
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
@@ -74,6 +80,9 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 // Security check
 if (!isModEnabled('don')) {
 	httponly_accessforbidden('Module Donation not enabled');
+}
+if (!getDolGlobalString('DONATION_ENABLE_PUBLIC')) {
+	httponly_accessforbidden("Donation pages for public visitors have not been enabled");
 }
 
 
@@ -88,7 +97,9 @@ llxHeaderVierge("");
 
 $sql = "SELECT d.datedon as datedon, d.lastname, d.firstname, d.amount, d.public, d.societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d";
-$sql .= " WHERE d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
+$sql .= " WHERE d.fk_statut in (2, 3)";
+$sql .= " AND d.entity IN (".getEntity('donation').")";
+$sql .= " ORDER BY d.datedon DESC";
 
 $resql = $db->query($sql);
 if ($resql) {

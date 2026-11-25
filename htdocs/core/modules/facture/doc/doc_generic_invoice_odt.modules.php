@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke				<charlie@patas-monkey.com>
- * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -46,6 +46,11 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 70;
 
 
 	/**
@@ -125,7 +130,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// List of directories area
 		$texte .= '<tr><td valign="middle">';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->FACTURE_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('FACTURE_ADDON_PDF_ODT_PATH'))));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -149,26 +154,17 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
-		$texte .= getDolGlobalString('FACTURE_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '<br></div></div>';
-
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if (getDolGlobalString('FACTURE_ADDON_PDF_ODT_PATH')) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
+			$texte .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b></span><br>';
 		}
 		if ($nbofiles) {
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx opacitylow">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
 				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=invoices/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
@@ -177,8 +173,22 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 			}
 			$texte .= '</div>';
 		}
+		$texte .= '<br>';
+		// Link to show/hide the area to manage directories of ODT models and template files
+		$texte .= '<span class="classlink cursorpointer" onclick="javascript: jQuery(\'.div_odtmodelsof'.get_class($this).'\').toggle();">'.img_picto('', 'add').' '.$langs->trans("UploadNewTemplate").'...</span>';
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none; margin-top: 6px;">';
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$texte .= getDolGlobalString('FACTURE_ADDON_PDF_ODT_PATH');
+		$texte .= '</textarea>';
+		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<br></div></div>';
+		$texte .= '</div>';
+
 		// Add input to upload a new template file.
-		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$texte .= '<div class="div_odtmodelsof'.get_class($this).'" style="display: none;">';
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
 		if ($maxmin > 0) {
@@ -315,7 +325,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+					if ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1')) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
@@ -335,7 +345,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$propal_object = null;
 				if (!empty($object->linkedObjects['propal'])) {
 					$array_propal_object = $object->linkedObjects['propal'];
-					if (isset($array_propal_object) && is_array($array_propal_object) && count($array_propal_object) > 0) {
+					if (is_array($array_propal_object) && count($array_propal_object) > 0) {
 						$tmparrayofvalue = array_values($array_propal_object);
 						$propal_object = $tmparrayofvalue[0];
 					}
@@ -346,16 +356,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$nbProduct = 0;
 				$nbService = 0;
 				foreach ($object->lines as $line) {
-					// Do not take into account lines of the type “deposit.”
-					$is_deposit = false;
-					if (preg_match('/^\((.*)\)$/', $line->desc, $reg)) {
-						if ($reg[1] == 'DEPOSIT') {
-							$is_deposit = true;
-						}
-					}
-
 					// If DEPOSIT, this line is completely ignored for calculations.
-					if ($is_deposit) {
+					if ($line->isDepositLine()) {
 						continue;
 					}
 

@@ -1,39 +1,39 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=ຊັບ​ພະ​ຍາ​ກອນ
-MenuResourceAdd=ຊັບພະຍາກອນໃຫມ່
+MenuResourceIndex=ຊັບພະຍາກອນ
+MenuResourceAdd=ຊັບພະຍາກອນໃໝ່
 DeleteResource=ລຶບຊັບພະຍາກອນ
-ConfirmDeleteResourceElement=ຢືນຢັນການລຶບຊັບພະຍາກອນສໍາລັບອົງປະກອບນີ້
-NoResourceInDatabase=ບໍ່ມີຊັບພະຍາກອນຢູ່ໃນຖານຂໍ້ມູນ.
-NoResourceLinked=ບໍ່ມີການເຊື່ອມໂຍງຊັບພະຍາກອນ
+ConfirmDeleteResourceElement=ຢືນຢັນການລຶບຊັບພະຍາກອນສຳລັບລາຍການນີ້
+NoResourceInDatabase=ບໍ່ມີຊັບພະຍາກອນໃນຖານຂໍ້ມູນ
+NoResourceLinked=ບໍ່ມີຊັບພະຍາກອນທີ່ເຊື່ອມໂຍງ
 ActionsOnResource=ເຫດການກ່ຽວກັບຊັບພະຍາກອນນີ້
 ResourcePageIndex=ລາຍການຊັບພະຍາກອນ
 ResourceSingular=ຊັບພະຍາກອນ
 ResourceCard=ບັດຊັບພະຍາກອນ
+NewResource=ຊັບພະຍາກອນໃໝ່
 AddResource=ສ້າງຊັບພະຍາກອນ
 ResourceFormLabel_ref=ຊື່ຊັບພະຍາກອນ
+ResourceFormLabel_description=ຄຳອະທິບາຍຊັບພະຍາກອນ
 ResourceType=ປະເພດຊັບພະຍາກອນ
-ResourceFormLabel_description=ລາຍລະອຽດຊັບພະຍາກອນ
-
-ResourcesLinkedToElement=ຊັບພະຍາກອນທີ່ເຊື່ອມໂຍງກັບອົງປະກອບ
+ResourceTypeID=ລະຫັດປະເພດຊັບພະຍາກອນ
+ResourceTypeLabel=ປ້າຍຊື່ປະເພດຊັບພະຍາກອນ
+ResourcesLinkedToElement=ຊັບພະຍາກອນທີ່ເຊື່ອມໂຍງກັບລາຍການ
 
 ShowResource=ສະແດງຊັບພະຍາກອນ
-
-ResourceElementPage=ຊັບພະຍາກອນອົງປະກອບ
-ResourceCreatedWithSuccess=ສ້າງຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
-RessourceLineSuccessfullyDeleted=ລຶບແຖວຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
-RessourceLineSuccessfullyUpdated=ອັບເດດແຖວຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
-ResourceLinkedWithSuccess=ຊັບພະຍາກອນເຊື່ອມໂຍງກັບຄວາມສໍາເລັດ
-
+ResourceElementPage=ຊັບພະຍາກອນຂອງລາຍການ
+ResourceCreatedWithSuccess=ສ້າງຊັບພະຍາກອນສຳເລັດແລ້ວ
+RessourceLineSuccessfullyDeleted=ລຶບແຖວຊັບພະຍາກອນສຳເລັດແລ້ວ
+RessourceLineSuccessfullyUpdated=ແກ້ໄຂແຖວຊັບພະຍາກອນສຳເລັດແລ້ວ
+ResourceLinkedWithSuccess=ເຊື່ອມໂຍງຊັບພະຍາກອນສຳເລັດແລ້ວ
 ConfirmDeleteResource=ຢືນຢັນການລຶບຊັບພະຍາກອນນີ້
-RessourceSuccessfullyDeleted=ລຶບຊັບພະຍາກອນ ສຳ ເລັດແລ້ວ
+RessourceSuccessfullyDeleted=ລຶບຊັບພະຍາກອນສຳເລັດແລ້ວ
 DictionaryResourceType=ປະເພດຂອງຊັບພະຍາກອນ
-
 SelectResource=ເລືອກຊັບພະຍາກອນ
-
-IdResource=ຊັບພະຍາກອນ Id
-AssetNumber=Serາຍເລກຊີຣຽວ
+IdResource=ລະຫັດຊັບພະຍາກອນ
+AssetNumber=ເລກລຳດັບຊັບສິນ
 ResourceTypeCode=ລະຫັດປະເພດຊັບພະຍາກອນ
-ImportDataset_resource_1=ຊັບ​ພະ​ຍາ​ກອນ
-
-ErrorResourcesAlreadyInUse=ມີການ ນຳ ໃຊ້ຊັບພະຍາກອນບາງອັນ
-ErrorResourceUseInEvent=%s ໃຊ້ໃນເຫດການ %s
+ImportDataset_resource_1=ຊັບພະຍາກອນ
+ErrorResourcesAlreadyInUse=ບາງຊັບພະຍາກອນກຳລັງຖືກນຳໃຊ້ຢູ່
+ErrorResourceUseInEvent=%s ຖືກນຳໃຊ້ໃນເຫດການ %s
+MaxUsers=ຈຳນວນຜູ້ໃຊ້ສູງສຸດ
+MaxUsersResourceDesc=ຖ້າຊັບພະຍາກອນສາມາດນຳໃຊ້ໄດ້ຫຼາຍຄົນພ້ອມກັນ (ລົດ, ຫ້ອງ, ...), ທ່ານສາມາດລະບຸຈຳນວນຜູ້ໃຊ້ສູງສຸດທີ່ອະນຸຍາດໃຫ້ນຳໃຊ້ຊັບພະຍາກອນໃນເວລາດຽວກັນໄດ້ຢູ່ບ່ອນນີ້ (ຈຳນວນບ່ອນນັ່ງ, ສະຖານທີ່, ...).
+MaxUsersLabel=ຜູ້ໃຊ້ສູງສຸດ

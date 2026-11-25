@@ -103,7 +103,7 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr dev/build/tgz/*     $RPM_BUILD_ROOT%{_datadir}/%{name}/dev/build/tgz
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT%{_datadir}/%{name}
 %{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
-%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/ckeditor/_source
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/public/includes/ckeditor/_source
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/nusoap
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
 
@@ -208,12 +208,12 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
 %_datadir/dolibarr/htdocs/partnership
-%_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
 %_datadir/dolibarr/htdocs/printing
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
+%_datadir/dolibarr/htdocs/quickmemo
 %_datadir/dolibarr/htdocs/recruitment
 %_datadir/dolibarr/htdocs/reception
 %_datadir/dolibarr/htdocs/resource
@@ -221,6 +221,8 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/societe
 %_datadir/dolibarr/htdocs/stripe
 %_datadir/dolibarr/htdocs/subtotals
+%_datadir/dolibarr/htdocs/supplier_invoice
+%_datadir/dolibarr/htdocs/supplier_order
 %_datadir/dolibarr/htdocs/supplier_proposal
 %_datadir/dolibarr/htdocs/theme
 %_datadir/dolibarr/htdocs/takepos

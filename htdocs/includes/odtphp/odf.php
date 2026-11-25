@@ -226,7 +226,8 @@ class Odf
 		$value = html_entity_decode($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
 
 		// fix breaklines.
-		$value = preg_replace('/<br\s*\/?>/', "<br />", $value);
+		// A newline that follows a <br> (as stored by the WYSIWYG editor) belongs to the same line break, so it is removed too.
+		$value = preg_replace('/<br\s*\/?>(\r\n|\r|\n)?/', "<br />", $value);
 		$convertedValue = $value;
 
 		// Check if the value includes html tags
@@ -896,23 +897,34 @@ IMG;
 		if (getDolGlobalString('MAIN_ODT_AS_PDF') == 'libreoffice') {
 			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
 
-			// We delete and recreate a subdir because the soffice may have change pemrissions on it
+			// We delete and recreate a subdir because the soffice may have change permissions on it
 			// The cleanup is best effort: on Windows, a soffice still exiting from the previous conversion keeps
 			// a lock on its profile (extensions.pmap), and each file it holds raised an unlink/rmdir warning
 			$countdeleted = 0;
 			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf', 0, 1, 0, $countdeleted, 0, 1);
 			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
 
-			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
-			// using windows libreoffice that must be in path
-			// using linux/mac libreoffice that must be in path
-			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
 			$userinstallation = dol_sanitizePathName($conf->user->dir_temp).'/odtaspdf';
 			// A Windows path (C:/...) needs the empty host of a file URL (file:///C:/...): on file:C:/... soffice fails, and hangs when run by a service
 			if (getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') || preg_match('/^[a-z]:/i', $userinstallation)) {
 				$userinstallation = '///'.$userinstallation;
 			}
-			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg($userinstallation).' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+
+			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
+			// using windows libreoffice that must be in path
+			// using linux/mac libreoffice that must be in path
+			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
+			// By default LibreOffice exports a plain PDF. If MAIN_ODT_AS_PDFA is set to
+			// 1, 2 or 3, ask LibreOffice for a PDF/A archival format through the
+			// SelectPdfVersion export filter (1 = PDF/A-1b, 2 = PDF/A-2b, 3 = PDF/A-3b).
+			// PDF/A is suited for long term archival and is the required base format for
+			// electronic invoicing (for example Factur-X needs a PDF/A-3 file).
+			$converttarget = 'pdf';
+			$pdfaversion = getDolGlobalInt('MAIN_ODT_AS_PDFA');
+			if ($pdfaversion >= 1 && $pdfaversion <= 3) {
+				$converttarget = 'pdf:writer_pdf_Export:{"SelectPdfVersion":{"type":"long","value":"'.$pdfaversion.'"}}';
+			}
+			$command ='soffice --headless -env:UserInstallation=file:'.escapeshellarg($userinstallation).' --convert-to '.escapeshellarg($converttarget).' --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
 			// This feature is now disabled by default. Must set var in conf.php to allow it.
 			global $dolibarr_main_allow_unoconv;
@@ -1030,7 +1042,7 @@ IMG;
 			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
-			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr, true), LOG_DEBUG);
+			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.formatLogObject($output_arr), LOG_DEBUG);
 
 			if ($retval == 126) {
 				throw new OdfException('Permission execute convert script : ' . $command);

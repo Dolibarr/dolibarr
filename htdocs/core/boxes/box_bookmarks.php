@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class box_bookmarks extends ModeleBoxes
 	 *  @param  DoliDB  $db         Database handler
 	 *  @param  string  $param      More parameters
 	 */
-	public function __construct($db, $param)
+	public function __construct($db, $param)  // @phpstan-ignore constructor.unusedParameter
 	{
 		global $user;
 
@@ -79,8 +79,11 @@ class box_bookmarks extends ModeleBoxes
 		if ($user->hasRight('bookmark', 'lire')) {
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
-			$sql .= " WHERE fk_user = ".((int) $user->id);
-			$sql .= " AND b.entity = ".$conf->entity;
+			// The widget shows the caller's own bookmarks plus the global ones
+			// (fk_user NULL or 0), the same filter the bookmarks list applies to
+			// a non-admin user — not the bookmarks of other users.
+			$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user IS NULL OR fk_user = 0)";
+			$sql .= " AND b.entity = ".((int) $conf->entity);
 			$sql .= $this->db->order("position", "ASC");
 			$sql .= $this->db->plimit($max, 0);
 

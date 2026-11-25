@@ -65,7 +65,7 @@ class Validate
 			return;
 		}
 
-		$this->outputLang->loadLangs(array('validate', 'errors'));
+		$this->outputLang->loadLangs(array('errors'));
 
 		$this->db = $db;
 	}
@@ -146,7 +146,7 @@ class Validate
 	public function isPhone($phone)
 	{
 		if (!preg_match('/^[+0-9. ()-]*$/ui', $phone)) {
-			$this->error = $this->outputLang->trans('RequireValidPhone');
+			$this->error = $this->outputLang->trans('ErrorRequireValidPhone');
 			return false;
 		}
 		return true;
@@ -277,12 +277,13 @@ class Validate
 		}
 
 		if (!count($value_arr)) {
-			$this->error = $this->outputLang->trans('RequireValue');
+			$this->error = $this->outputLang->trans('ErrorRequireValue');
 			return false;
 		}
 
 		foreach ($value_arr as $val) {
-			$sql = "SELECT ".$col." FROM ".$this->db->prefix().$table." WHERE ".$col." = '".$this->db->escape($val)."' LIMIT 1"; // more quick than count(*) to check existing of a row
+			$sql = "SELECT ".$this->db->sanitize($col)." FROM ".$this->db->prefix().$this->db->sanitize($table);
+			$sql .= " WHERE ".$this->db->sanitize($col)." = '".$this->db->escape($val)."' LIMIT 1"; // more quick than count(*) to check existing of a row
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);

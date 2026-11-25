@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -161,15 +161,16 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	// Show logo company
 	if (!getDolGlobalString('MAIN_MENU_INVERT') && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
-		$mysoc->logo_squarred_mini = (!getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI') ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
+		// Use a local variable: $mysoc may not be loaded (pages defining NOREQUIRESOC)
+		$logosquarredmini = getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 
 		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND')) {
 			$logoContainerAdditionalClass = '';
 		}
 
-		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
-			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+		if (!empty($logosquarredmini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosquarredmini)) {
+			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosquarredmini);
 			/*} elseif (!empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 			{
 			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
@@ -330,7 +331,7 @@ function print_end_menu_array_auguria()
  * @param	DoliDB		$db                 Database handler
  * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}> 	$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
  * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}>		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
- * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string}> 	$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	array<array{rowid:string,fk_menu:string,module?:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}> 	$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu				Object Menu to return back list of menu entries
  * @param	int<0,1>	$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
@@ -382,7 +383,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 		$sql = "SELECT rowid, label, courant, rappro, courant";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		$sql .= " AND clos = 0";
 		$sql .= " ORDER BY label";
 
@@ -415,7 +416,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if (getDolGlobalString('ACCOUNTING_MODE') == 'RECETTES-DEPENSES') {
 			$sql .= " AND nature = 4"; // only bank journal when using treasury accounting mode
 		}
@@ -451,7 +452,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if ($objp->nature == 1 && (isModEnabled('asset') || isModEnabled('invoice') || isModEnabled('supplier_invoice'))) {
 						$nature = "various";
 					}
-					if ($objp->nature == 8) {
+					if ($objp->nature == 8 && isModEnabled('stock') && getDolGlobalString('ACCOUNTING_INVENTORY_MODE') && getDolGlobalString('ACCOUNTING_INVENTORY_MODE') != 'none') {
 						$nature = "inventory";
 					}
 					if ($objp->nature == 9) {
@@ -460,7 +461,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 					// To enable when page exists
 					if (!getDolGlobalString('ACCOUNTANCY_SHOW_DEVELOP_JOURNAL')) {
-						if ($nature == 'hasnew' || $nature == 'inventory') {
+						if ($nature == 'hasnew') {
 							$nature = '';
 						}
 					}
@@ -497,7 +498,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 			if (getDolGlobalString($paramkey)) {
 				$link = "/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
 
-				$newmenu->add($link, dol_trunc($conf->global->$paramkey, 24));
+				$newmenu->add($link, dol_trunc(getDolGlobalString($paramkey), 24));
 			}
 			$i++;
 		}
@@ -630,7 +631,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					}
 
 					// print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '');
-					print ucfirst($menu_array[$i]['titre']);
+					print '<span class="vmenutext">'.dol_ucfirst($menu_array[$i]['titre']).'</span>';
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -644,7 +645,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if (!empty($menu_array[$i]['prefix'])) {
 						print $menu_array[$i]['prefix'];
 					}
-					print ucfirst($menu_array[$i]['titre']);
+					print '<span class="vmenutext">'.dol_ucfirst($menu_array[$i]['titre']).'</span>';
 					print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'greyed';
@@ -672,7 +673,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					} else {
 						print '<span class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'">';
 					}
-					print ucfirst($menu_array[$i]['titre']);
+					print dol_ucfirst($menu_array[$i]['titre']);
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -687,7 +688,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					// Not enabled but visible (so greyed), except if parent was not enabled.
 					print '<div class="menu_contenu'.$cssmenu.'">';
 					print $tabstring;
-					print '<span class="spanlilevel0 vsmenudisabled vsmenudisabledmargin">'.ucfirst($menu_array[$i]['titre']).'</span><br>';
+					print '<span class="spanlilevel0 vsmenudisabled vsmenudisabledmargin">'.dol_ucfirst($menu_array[$i]['titre']).'</span><br>';
 					print '</div>'."\n";
 				}
 			}
@@ -717,7 +718,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
  * Function to test if an entry is enabled or not
  *
  * @param	int		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
- * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level:int,prefix:string,module:string}	$menuentry	Array for menu entry
+ * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull?:int|string,showtopmenuinframe:int,level?:int,prefix:string,module?:string}	$menuentry	Array for menu entry
  * @param	string[]	$listofmodulesforexternal	Array with list of modules allowed to external users
  * @return	int<0,2>								0=Hide, 1=Show, 2=Show gray
  */
