@@ -95,7 +95,7 @@ class LesscTest extends CommonClassTest
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
 
-		$lesscobj = new Lessc();
+		$lesscobj = new lessC();
 
 		$cssfile = "
         a { font-size: 10px; }
@@ -128,5 +128,49 @@ class LesscTest extends CommonClassTest
 		$this->assertEquals(trim($result), trim($cssexpected));
 
 		return;
+	}
+
+	/**
+	 * Data provider for testLesscCompileFeatures
+	 *
+	 * @return array<string,array{0:string,1:string}>	Array of (LESS source, CSS expected with spaces reduced)
+	 */
+	public static function lesscFeaturesProvider()
+	{
+		return array(
+			'operation in parenthesis' => array(".a { height: (2px + 3px) * 2; }", ".a { height: 10px; }"),
+			'addition' => array(".a { width: 2px + 3px; }", ".a { width: 5px; }"),
+			'mixin with argument' => array(".m(@w: 5px) { width: @w; }\n.a { .m(10px); }", ".a { width: 10px; }"),
+			'mixin without argument' => array(".m { width: 1px; }\n.a { .m; }", ".m { width: 1px; } .a { width: 1px; }"),
+			'mixin with important' => array(".m() { width: 1px; }\n.a { .m() !important; }", ".a { width: 1px !important; }"),
+			'mixin with guards' => array(".m(@a) when (@a > 10) { width: @a; }\n.m(@a) when (@a =< 10) { height: @a; }\n.a { .m(20); }\n.b { .m(5); }", ".a { width: 20; } .b { height: 5; }"),
+			'media only' => array("@media only screen and (max-width: 600px) { .a { color: red; } }", "@media only screen and (max-width: 600px) { .a { color: red; } }"),
+			'media without value' => array("@media (color) { .a { color: red; } }", "@media (color) { .a { color: red; } }"),
+			'unknown function alpha' => array(".a { filter: alpha(opacity=50); }", ".a { filter: alpha(opacity=50); }"),
+			'operation not supported' => array(".a { width: 2 - #fff; }", ".a { width: 2 - #ffffff; }"),
+		);
+	}
+
+	/**
+	 * Test compilation of several LESS features (non regression of the parser and of the compiler)
+	 *
+	 * @param	string	$source		LESS source
+	 * @param	string	$expected	CSS expected (with spaces reduced)
+	 * @return	void
+	 *
+	 * @dataProvider lesscFeaturesProvider
+	 */
+	public function testLesscCompileFeatures($source, $expected)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
+
+		$lesscobj = new lessC();
+		try {
+			$result = $lesscobj->compile($source);
+		} catch (Exception $e) {
+			$result = 'Error: '.$e->getMessage();
+		}
+
+		$this->assertEquals($expected, preg_replace('/\s+/', ' ', trim($result)));
 	}
 }

@@ -502,7 +502,7 @@ function hash_call($methodName, $nvpStr)
 	curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
 	curl_setopt($ch, CURLOPT_VERBOSE, true);
 	// TLSv1 by default or change to TLSv1.2 in module configuration
-	curl_setopt($ch, CURLOPT_SSLVERSION, (!getDolGlobalString('PAYPAL_SSLVERSION') ? 1 : $conf->global->PAYPAL_SSLVERSION));
+	curl_setopt($ch, CURLOPT_SSLVERSION, (!getDolGlobalString('PAYPAL_SSLVERSION') ? 1 : getDolGlobalString('PAYPAL_SSLVERSION')));
 
 	$ssl_verifypeer = -1;
 

@@ -67,6 +67,28 @@ if ($id > 0) {
 }
 restrictedArea($user, 'salaries', $object->fk_salary, 'salary', '');	// $object is payment of salary
 
+// restrictedArea() called without a feature2 only checks that the salaries read permission
+// exists, and checkUserAccessToObject() lists 'salaries' among the features tested on the
+// entity alone, so neither of them looks at who the salary belongs to. Without the check
+// below, any holder of salaries->read reads the payment card of a colleague.
+// Same condition as salaries/card.php and payment_salary.php, the screens this page is reached from.
+if ($object->id > 0) {
+	if ($object->fk_salary > 0) {
+		$salary->fetch($object->fk_salary);
+	}
+	$childids = $user->getAllChildIds(1);
+	$canread = 0;
+	if ($user->hasRight('salaries', 'readall')) {
+		$canread = 1;
+	}
+	if ($user->hasRight('salaries', 'read') && $salary->fk_user > 0 && in_array($salary->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
+
 
 /*
  * Actions

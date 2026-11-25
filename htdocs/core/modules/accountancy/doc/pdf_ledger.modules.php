@@ -300,7 +300,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		}
 
 		$account = '';
-		$accountDebit = $accountCredit = $totalDebit = $totalCredit = 0;
+		$accountDebit = $accountCredit = $totalDebit = $totalCredit = $cumulativeBalance = 0;
 		for ($i = 0; $i < $nblines; $i++) {
 			// Show total line / title line when account has changed
 			if ($this->ledgerType == "sub") {
@@ -378,6 +378,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			$accountCredit += $object->lines[$i]->credit;
 			$totalDebit += $object->lines[$i]->debit;
 			$totalCredit += $object->lines[$i]->credit;
+			$cumulativeBalance += $accountCredit - $accountDebit;
 
 			$curY = $nexY;
 			$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
@@ -484,7 +485,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			if ($this->getColumnStatus('balance')) {
 				// Running balance of the account, not of the single line: the screen ledger shows the
 				// accumulated balance per account, and the accumulators are already fed above (#40789).
-				$solde = $accountCredit - $accountDebit;
+				$solde = $cumulativeBalance;
 				$soldeText = price(price2num(abs($solde), 'MT')) . ($solde >= 0 ? ' ' . $langs->trans('CreditShort') : ' ' . $langs->trans('DebitShort'));
 				$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 				$nexY = max($pdf->GetY(), $nexY);

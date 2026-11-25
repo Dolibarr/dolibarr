@@ -1478,7 +1478,7 @@ if ($action == 'create') {
 		$list = ModelePDFFactures::liste_modeles($db);
 		print img_picto('', 'generic', 'class="pictofixedwidth"');
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		print $form->selectarray('modelpdf', $list, $conf->global->FACTURE_ADDON_PDF);
+		print $form->selectarray('modelpdf', $list, getDolGlobalString('FACTURE_ADDON_PDF'));
 		print "</td></tr>";
 
 		// Public note

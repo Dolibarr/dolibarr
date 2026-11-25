@@ -768,7 +768,8 @@ function print_end_menu_array()
 
 /**
  * Return if the left menu must show the entries under a level 0 title only when the mouse is over this title.
- * This needs option MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER, javascript and a left menu shown as a column on a large screen.
+ * This needs javascript and a left menu shown as a column on a large screen.
+ * Enabled by default, it can be disabled with option MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER.
  *
  * @return	bool		True if entries of the left menu are expanded on hover of their title
  */
@@ -776,7 +777,7 @@ function isLeftMenuExpandOnHover()
 {
 	global $conf;
 
-	return (getDolGlobalString('MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER')
+	return (!getDolGlobalString('MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER')
 		&& !empty($conf->use_javascript_ajax)
 		&& empty($conf->dol_optimize_smallscreen)
 		&& !getDolGlobalString('MAIN_MENU_INVERT')
@@ -818,7 +819,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	global $usemenuhider;
 	$usemenuhider = 0;
 
-	// With MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER, sub entries of all blocks are loaded, then shown only when mouse is over their title
+	// When the left menu is expanded on hover, sub entries of all blocks are loaded, then shown only when mouse is over their title
 	$expandonhover = (empty($noout) && isLeftMenuExpandOnHover());
 	if ($expandonhover) {
 		$usemenuhider = 1;
@@ -948,7 +949,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				//print $paramkey;
 				if (getDolGlobalString($paramkey)) {
 					$link = "/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
-					$newmenu->add($link, dol_trunc($conf->global->$paramkey, 24));
+					$newmenu->add($link, dol_trunc(getDolGlobalString($paramkey), 24));
 				}
 				$i++;
 			}
@@ -1143,7 +1144,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 							print $menu_array[$i]['prefix'];
 						}
 					}
-					print ucfirst($menu_array[$i]['titre']);
+					print '<span class="vmenutext">'.dol_ucfirst($menu_array[$i]['titre']).'</span>';
 					if ($expandonhover && isset($blockswithsubentries[$i])) {	// Arrow shown at the end of line on the right of the left menu, rotated down when the block is expanded
 						print img_picto('', 'fa-chevron-right', '', 0, 0, 0, '', 'menuexpandarrow');
 					}
@@ -1165,7 +1166,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 							print $menu_array[$i]['prefix'];
 						}
 					}
-					print ucfirst($menu_array[$i]['titre']);
+					print '<span class="vmenutext">'.dol_ucfirst($menu_array[$i]['titre']).'</span>';
 					print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'greyed';
@@ -1197,7 +1198,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					} else {
 						print '<span class="vsmenu" title="'.dolPrintHTMLForAttribute($menu_array[$i]['titre']).'">';
 					}
-					print ucfirst($menu_array[$i]['titre']);
+					print dol_ucfirst($menu_array[$i]['titre']);
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -1696,7 +1697,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=17", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=17", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -1732,7 +1733,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			// Categories
 			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=21", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=21", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -2178,7 +2179,8 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 			// Bilan, resultats
 			$newmenu->add("/compta/resultat/index.php?leftmenu=accountancy_report&mainmenu=accountancy", $langs->trans("Reportings"), 0, $user->hasRight('compta', 'resultat', 'lire'), '', $mainmenu, 'ca', 0, '', '', '', img_picto('', 'accountancy', 'class="paddingright pictofixedwidth"'));
 
-			if ($usemenuhider || empty($leftmenu) || preg_match('/report/', $leftmenu)) {
+			// Match 'report' or 'xxx_report' but not 'intracommreport'
+			if ($usemenuhider || empty($leftmenu) || preg_match('/(^|_)report/', $leftmenu)) {
 				$newmenu->add("/compta/resultat/index.php?leftmenu=accountancy_report", $langs->trans("MenuReportInOut"), 1, $user->hasRight('compta', 'resultat', 'lire'));
 				$newmenu->add("/compta/resultat/clientfourn.php?leftmenu=accountancy_report", $langs->trans("ByPredefinedAccountGroups"), 2, $user->hasRight('compta', 'resultat', 'lire'));
 				$newmenu->add("/compta/resultat/projects.php?leftmenu=accountancy_report", $langs->trans("ByProject"), 2, $user->hasRight('compta', 'resultat', 'lire'));

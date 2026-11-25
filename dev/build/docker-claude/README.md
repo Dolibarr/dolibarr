@@ -67,6 +67,10 @@ claudes --rc
 The sessions are then started with `--permission-mode auto`: the safe actions are approved automatically, the risky or
 outward-facing ones (push, pull request, ...) are still asked. Add `--yolo` to have all the permissions automatically
 accepted with `--permission-mode bypassPermissions`.
+The confirmation `Enable Remote Control? (y/n)` is answered at launch: `--rc` sets `remoteDialogSeen` into the state
+file of the container (`~/.claude/.claude.json`, copied from the host at each launch, so the answer was lost before).
+The spawn mode is always `same-dir` (`--spawn same-dir` is added), so the choice between same-dir and worktree is not
+asked either. Use `claudes --rc --spawn worktree` to get a git worktree per session instead.
 
 The other arguments are passed to claude, for example to resume the last conversation:
 ````
@@ -95,7 +99,7 @@ Without `--no-cache`, `claudes.sh` builds the image only when its build context 
 The build context does not contain any file of the repository: the pre-commit hooks are not preloaded into the image, they are kept into the directory `~/.cache/docker-claude/pre-commit` of the host, mounted into the container (see the pre-commit section of `dev/build/docker-vibe/README.md`).
 
 ### Send emails
-The outbound SMTP ports are blocked like for docker-vibe. To start a container that is allowed to send emails, run it with:
+The outbound SMTP ports are blocked like for docker-vibe: on a machine with the unified cgroup v2 hierarchy (Ubuntu 21.10+), the block is scoped to the only container (`--cgroup` into `smtpblock.sh`, with the cgroup path seen from the host thanks to `--cgroupns=host`, done by `claudes.sh`), so the other processes of the machine can still connect to these ports; without it, the block applies to the whole machine. To start a container that is allowed to send emails, run it with:
 ````
 DOCKER_ALLOW_SMTP=1 claudes
 ````

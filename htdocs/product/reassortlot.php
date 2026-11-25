@@ -675,33 +675,46 @@ print '<tr class="liste_titre">';
 // Action column
 if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre('');
+	$totalarray['nbfield']++;
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", '', $param, "", $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", '', $param, "", $sortfield, $sortorder);
+$totalarray['nbfield']++;
 if (isModEnabled("service") && $type == 1) {
 	print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration", '', $param, "", $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 print_liste_field_titre("Warehouse", $_SERVER["PHP_SELF"], "e.ref", '', $param, "", $sortfield, $sortorder);
+$totalarray['nbfield']++;
 //print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'',$sortfield,$sortorder, 'right );
 print_liste_field_titre("Batch", $_SERVER["PHP_SELF"], "pb.batch", '', $param, "", $sortfield, $sortorder, 'center ');
+$totalarray['nbfield']++;
 if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 	print_liste_field_titre("SellByDate", $_SERVER["PHP_SELF"], "pl.sellby", '', $param, "", $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 	print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pl.eatby", '', $param, "", $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", '', $param, "", $sortfield, $sortorder, 'right ');
+$totalarray['nbfield']++;
 // TODO Add info of running suppliers/customers orders
 //print_liste_field_titre("TheoreticalStock",$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'',$sortfield,$sortorder, 'right ');
 print_liste_field_titre('');
+$totalarray['nbfield']++;
 print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'right ');
+$totalarray['nbfield']++;
 print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'right ');
+$totalarray['nbfield']++;
 // Hook fields
-$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre('');
+	$totalarray['nbfield']++;
 }
 print "</tr>\n";
 

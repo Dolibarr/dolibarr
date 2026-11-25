@@ -310,11 +310,12 @@ class modAccounting extends DolibarrModules
 			'b.credit'=>"Credit",
 			'b.sens'=>'Direction'	// This field is still used by accounting export. We can remove it once it has been replaced into accountancyexport.class.php by a detection using ->debit and ->credit
 		);
-		$this->import_fieldshidden_array[$r] = array('b.doc_type'=>'const-import_from_external', 'b.fk_doc'=>'const-0', 'b.fk_docdet'=>'const-0', 'b.fk_user_author'=>'user->id', 'b.date_creation'=>'const-'.dol_print_date(dol_now(), 'standard')); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_fieldshidden_array[$r] = array('b.doc_type'=>'const-import_from_external', 'b.fk_doc'=>'const-0', 'b.fk_docdet'=>'const-0', 'b.fk_user_author'=>'user->id', 'b.date_creation'=>'const-'.dol_print_date(dol_now(), 'standard'), 'b.doc_date_hour'=>'rule-computeDocDateHour'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_regex_array[$r] = array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
 		$this->import_convertvalue_array[$r] = array(
 			'b.numero_compte' => array('rule' => 'accountingaccount'),
-			'b.subledger_account' => array('rule' => 'accountingaccount')
+			'b.subledger_account' => array('rule' => 'accountingaccount'),
+			'b.doc_date_hour' => array('rule' => 'compute', 'type' => 'varchar', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeDocDateHour', 'element' => 'Accountancy'),
 		);
 		$this->import_examplevalues_array[$r] = array(
 			'b.piece_num'=>'123 (!!! use next value not already used)',
@@ -366,7 +367,8 @@ class modAccounting extends DolibarrModules
 			'b.fk_docdet'=>'const-0',
 			'b.fk_user_author'=>'user->id',
 			'b.montant'=>'rule-computeAmount',
-			'b.sens'=>'rule-computeDirection'
+			'b.sens'=>'rule-computeDirection',
+			'b.doc_date_hour'=>'rule-computeDocDateHour'
 		); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r]=array(
 			'b.piece_num' => array('rule' => 'compute', 'type' => 'int', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computePieceNum', 'element' => 'Accountancy'),
@@ -377,6 +379,7 @@ class modAccounting extends DolibarrModules
 			'b.multicurrency_amount' => array('rule' => 'compute', 'type' => 'double', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'cleanAmount', 'element' => 'Accountancy'),
 			'b.montant' => array('rule' => 'compute', 'type' => 'double', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeAmount', 'element' => 'Accountancy'),
 			'b.sens' => array('rule' => 'compute', 'type' => 'varchar', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeDirection', 'element' => 'Accountancy'),
+			'b.doc_date_hour' => array('rule' => 'compute', 'type' => 'varchar', 'classfile' => '/accountancy/class/accountancyimport.class.php', 'class' => 'AccountancyImport', 'method' => 'computeDocDateHour', 'element' => 'Accountancy'),
 		);
 		$this->import_regex_array[$r] = array(
 			//'b.doc_date'=>'^\d{4}\d{2}\d{2}$',

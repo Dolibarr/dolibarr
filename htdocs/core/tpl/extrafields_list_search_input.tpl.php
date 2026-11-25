@@ -24,6 +24,7 @@
  * @var array<string,mixed> $arrayfields
  * @var ?string $extrafieldsobjectkey
  * @var	?string $extrafieldsobjectprefix
+ * @var ?string $extrafieldsonlykey		If set, only the column of this extrafield (code without prefix) is output
  * @var ?string $search_options_pattern
  * @var array<string,mixed> $search_array_options
  */
@@ -51,6 +52,9 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 		}
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+			if (!empty($extrafieldsonlykey) && (string) $key !== (string) $extrafieldsonlykey) {
+				continue;
+			}
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
 					continue;
