@@ -459,7 +459,7 @@ function ai_convert_office_attachment_to_text($mime, $base64, &$error)
 	}
 
 	$text = '';
-	$maxsize = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000);
+	$maxsize = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);
 	try {
 		if ($type == 'docx' || $type == 'odt') {
 			// Text is in one XML entry of the zip: paragraph ends and tabs are kept, other tags are removed
@@ -1062,6 +1062,25 @@ function getAiAssistantDefaultModel()
 }
 
 /**
+ * Return the default system prompt of the AI Assistant, used when the constant AI_INTENT_PROMPT is empty.
+ *
+ * @return string	The default system prompt
+ */
+function getAiAssistantDefaultPrompt()
+{
+	return "ROLE: Dolibarr ERP AI.
+GOAL: Map user intent to specific JSON commands, or answer directly when no Dolibarr data or action is needed.
+
+CONSTRAINTS:
+1. OUTPUT: Single valid JSON object ONLY. No text outside the JSON.
+   Format: {\"tool\": \"tool_name\", \"arguments\": {\"argument_name\": \"argument_value\", ...}} or {\"type\": \"message\", \"content\": \"...\"}
+2. TOOLS: For Dolibarr data or actions, use ONLY provided tools. If no tool or thirdparty fits, you must first use 'respond_to_user' to inform user. For a request that needs no Dolibarr data (writing a text, translating, summarizing, general question), answer it yourself with {\"type\": \"message\", \"content\": \"...\"}.
+3. ARGS: strict adherence to schema. Do not invent parameters.
+4. MISSING INFO: If a required argument (like an ID) is missing, use 'ask_for_clarification'.
+5. SAFETY: For DELETE/UPDATE actions, you MUST use 'ask_for_confirmation'.";
+}
+
+/**
  * Resolve the API URL used by the AI Assistant for the configured provider
  * (same resolution order as assistant/parse_intent.php).
  *
@@ -1215,7 +1234,7 @@ function getAiChatAssistantConfig()
 		'AIAttachmentBlockedByPrivacy', 'AIAttachmentMustBeConvertedToText', 'AIAttachmentTypeNotAllowed', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
-		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
+		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC', 'UserGroups', 'Group',
 		// General UI
 		'NoDataAvailable',
 		'Error',
@@ -1427,7 +1446,7 @@ function getAiChatAssistantConfig()
 		// back on every request is not a default the module takes by itself.
 		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
 		// Max size (in characters) of the context sent back to the model, also the cap of one tool result.
-		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000),
+		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000),
 		// The "/" palette of the chat input, always on.
 		'palette' => 1,
 		// The raw API tools in the "/" palette (testing, advanced use); the commands are always there.
@@ -2715,7 +2734,8 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 				// -----------------------------------------------------------
 				// Paging, sort and filter params of list tools are kept (without description): without them,
 				// the model can't answer "the last 5 ..." or filter a list, and gets the 25 first records.
-				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters'))) {
+				// count is kept so a "how many ..." question is answered without loading the records.
+				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters', 'count'))) {
 					continue;
 				}
 

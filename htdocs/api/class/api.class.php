@@ -489,6 +489,30 @@ class DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
+	 * Return the number of records found by the SQL request of a list method. Used by list methods called with count=1.
+	 *
+	 * @param	string		$sql	SQL request of the list, with its filters but without its ORDER BY and LIMIT
+	 * @return	array{count:int}	Array with the number of records found into the key 'count'
+	 * @throws	RestException 503
+	 */
+	protected function _getCountOfRecords($sql)
+	{
+		// phpcs:enable
+		// A sub-request counts the records whatever the SELECT of the list is (several fields, DISTINCT, GROUP BY)
+		$sqlcount = "SELECT COUNT(*) as total FROM (".$sql.") as tmpcount";
+
+		$resql = $this->db->query($sqlcount);
+		if (!$resql) {
+			throw new RestException(503, 'Error when counting records: '.$this->db->lasterror());
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		return array('count' => ($obj ? (int) $obj->total : 0));
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
 	 * Check access by user to a given resource
 	 *
 	 * @param 	string				$resource				Element code to check
