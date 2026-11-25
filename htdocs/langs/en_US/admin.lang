@@ -3017,6 +3017,7 @@ ToolDescription=Tool Description
 ToolDefinitionSentToLLM=Technical definition of the tool, as sent to the LLM
 ToolRightsAndDefinition=Permissions required and technical definition of the tool
 ToolRequiredPermissions=Permissions required to run the tool
+McpToolFamily=MCP tool family
 ToolRightsNone=None (the tool reads no business data)
 ToolRightsCheckedDownstream=Checked by the code the tool calls, depending on the data requested
 ToolRightsUndeclared=None declared: the tool is always refused
