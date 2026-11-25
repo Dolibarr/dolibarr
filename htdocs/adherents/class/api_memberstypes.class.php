@@ -79,19 +79,22 @@ class MembersTypes extends DolibarrApi
 	 *
 	 * Get a list of members types
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string    $sortfield  Sort field
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param int		$count		Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array                Array of member type objects
-	 * @phan-return AdherentType[]
-	 * @phpstan-return AdherentType[]
+	 * @phan-return AdherentType[]|array{count:int}
+	 * @phpstan-return AdherentType[]|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		$obj_ret = array();
 
@@ -110,6 +113,11 @@ class MembersTypes extends DolibarrApi
 			if ($errormessage) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
+		}
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

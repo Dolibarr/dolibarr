@@ -235,7 +235,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			if ($action == 'addline') {
+			if ($action == 'addline') { // Test on permission already done
 				$result = $object->addLine($user, $linedesc, (float) price2num($lineqty, 'MS'), $lineproductid);
 			} else {
 				$result = $object->updateLine($user, $lineid, $linedesc, (float) price2num($lineqty, 'MS'), $lineproductid);

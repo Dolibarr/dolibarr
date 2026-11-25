@@ -993,10 +993,10 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	// Remove the joins whose alias is not used by filters (in reverse order, a join may use the alias of a previous one, like country with s)
-	foreach (array_reverse($sqljoinsonuniquekey, true) as $tmpalias => $tmpjoin) {
-		$tmpsqlforcount = str_replace($tmpjoin, '', $sqlforcount);
-		if (!preg_match('/\b'.preg_quote($tmpalias, '/').'\./i', $tmpsqlforcount)) {
-			$sqlforcount = $tmpsqlforcount;
+	foreach (array_reverse($sqljoinsonuniquekey, true) as $tmpalias => $tmpval) {
+		$sqltmpforcount = str_replace($tmpval, '', $sqlforcount);
+		if (!preg_match('/\b'.preg_quote($tmpalias, '/').'\./i', $sqltmpforcount)) {
+			$sqlforcount = $sqltmpforcount;
 		}
 	}
 	$resql = $db->query($sqlforcount);
@@ -1463,7 +1463,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 // Filter on customer categories
 if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth200imp minwidth200 widthcentpercentminusx', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth200imp minwidth200 widthcentpercentminusx', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0);
 }
 
 // alert on late date
@@ -2068,7 +2068,7 @@ while ($i < $imaxinloop) {
 						$assignedcontactstatic->phone_pro = $contactproject['phone'];
 						$assignedcontactstatic->phone_perso = $contactproject['phone_perso'];
 						$assignedcontactstatic->phone_mobile = $contactproject['phone_mobile'];
-						$stringassignedusers .= $assignedcontactstatic->getNomUrl(-2, '', 0, 0, -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
+						$stringassignedusers .= $assignedcontactstatic->getNomUrl(-2, '', 0, '', -1, 0, 'valignmiddle'.($ifisrt ? '' : ' notfirst'));
 					}
 					$ifisrt = 0;
 				}
