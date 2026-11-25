@@ -993,8 +993,8 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	// Remove the joins whose alias is not used by filters (in reverse order, a join may use the alias of a previous one, like country with s)
-	foreach (array_reverse($sqljoinsonuniquekey, true) as $tmpalias => $tmpjoin) {
-		$sqltmpforcount = str_replace($tmpjoin, '', $sqlforcount);
+	foreach (array_reverse($sqljoinsonuniquekey, true) as $tmpalias => $tmpval) {
+		$sqltmpforcount = str_replace($tmpval, '', $sqlforcount);
 		if (!preg_match('/\b'.preg_quote($tmpalias, '/').'\./i', $sqltmpforcount)) {
 			$sqlforcount = $sqltmpforcount;
 		}

@@ -934,8 +934,8 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		's2' => " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid",
 		'ef' => " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)",
 	);
-	foreach ($arrayofjoinsforcount as $aliasforcount => $tmpjoin) {
-		$sqltmpforcount = str_replace($tmpjoin, '', $sqlforcount);
+	foreach ($arrayofjoinsforcount as $aliasforcount => $tmpval) {
+		$sqltmpforcount = str_replace($tmpval, '', $sqlforcount);
 		if (!preg_match('/\b'.preg_quote($aliasforcount, '/').'\./', $sqltmpforcount)) {
 			$sqlforcount = $sqltmpforcount;
 		}
