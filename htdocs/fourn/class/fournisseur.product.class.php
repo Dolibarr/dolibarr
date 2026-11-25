@@ -1139,9 +1139,11 @@ class ProductFournisseur extends Product
 		global $conf;
 
 		// Use a cache to avoid a full fetch of the same supplier on each line of a list
+		$thirdparty = null;
 		if ($this->fourn_id > 0 && !empty($conf->cache['thirdparty'][$this->fourn_id])) {
 			$thirdparty = $conf->cache['thirdparty'][$this->fourn_id];
-		} else {
+		}
+		if (!($thirdparty instanceof Societe)) {
 			$thirdparty = new Fournisseur($this->db);
 			$result = $thirdparty->fetch($this->fourn_id);
 			if ($result > 0) {
