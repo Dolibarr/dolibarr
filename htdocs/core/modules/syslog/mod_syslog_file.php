@@ -130,7 +130,7 @@ class mod_syslog_file extends LogHandler
 		if (!getDolGlobalString('SYSLOG_FILE')) {
 			$tmp = DOL_DATA_ROOT.'/dolibarr.log';
 		} else {
-			$tmp = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
+			$tmp = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, getDolGlobalString('SYSLOG_FILE'));
 		}
 
 		// Deprecated, use instead the constant 'SYSLOG_FILE_ADDSUFFIX' and/or 'SYSLOG_FILE_ONEPERIP'

@@ -1162,7 +1162,7 @@ class Utils
 			$mainlogdir = DOL_DATA_ROOT;
 			$mainlog = 'dolibarr.log';
 		} else {
-			$mainlogfull = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
+			$mainlogfull = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, getDolGlobalString('SYSLOG_FILE'));
 			$mainlogdir = dirname($mainlogfull);
 			$mainlog = basename($mainlogfull);
 		}

@@ -1170,7 +1170,8 @@ class CommonObjectTest extends CommonClassTest
 			'Propal' => array(new Propal($db), 'propal'),
 		);
 		foreach ($documents as $classname => $def) {
-			list($object, $module) = $def;
+			$object = $def[0];
+			$module = $def[1];
 			$method = new ReflectionMethod($object, 'isFieldBlockedByObjectState');
 			$method->setAccessible(true);
 
@@ -1317,7 +1318,8 @@ class CommonObjectTest extends CommonClassTest
 			'Propal' => array(new Propal($db), 'propal'),
 		);
 		foreach ($documents as $classname => $def) {
-			list($object, $module) = $def;
+			$object = $def[0];
+			$module = $def[1];
 			$canWrite = (bool) $user->hasRight($module, 'creer');
 
 			foreach (array($object::STATUS_DRAFT, $object::STATUS_VALIDATED) as $status) {

@@ -58,6 +58,10 @@ if (!isModEnabled('ai')) {
 	accessforbidden('Module AI not enabled');
 }
 
+if (empty($user->admin) && !$user->hasRight('ai', 'assistant', 'use')) {
+	accessforbidden();
+}
+
 
 /*
  * View

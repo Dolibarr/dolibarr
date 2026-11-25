@@ -1817,7 +1817,9 @@ function getMaxFileSizeArray()
  */
 function checkIPInCidr($ip, $cidr)
 {
-	list($network, $prefix) = explode('/', $cidr, 2);
+	$tmparray = explode('/', $cidr, 2);
+	$network = $tmparray[0];
+	$prefix = $tmparray[1];
 
 	// Convert IPs to binary format
 	$ip_bin = @inet_pton($ip);

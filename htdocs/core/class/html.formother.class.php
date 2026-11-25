@@ -508,6 +508,15 @@ class FormOther
 
 		$reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectSalesRep', array(), $this, $action);
 
+		// If the ajax "search to select" mode is enabled for users (USER_USE_SEARCH_TO_SELECT), we use the ajax combo of select_dolusers()
+		// instead of loading all users. Not possible with a hook filter, with the entry "no sales representative" or for a restricted user.
+		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('USER_USE_SEARCH_TO_SELECT') && empty($reshook) && empty($norepresentative)
+			&& $user->hasRight('user', 'user', 'lire') && empty($user->socid)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form = new Form($this->db);
+			return $form->select_dolusers(((int) $selected > 0 ? (int) $selected : ''), $htmlname, $showempty, null, 0, '', '', '', 0, $showstatus, '', 0, '', $morecss);
+		}
+
 		// Select each sales and print them in a select input
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 		if ($showempty) {

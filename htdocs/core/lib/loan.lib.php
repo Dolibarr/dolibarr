@@ -475,7 +475,9 @@ function loanRecalculateSchedule($db, $user, $loan, $lines, $from, $capital, $ra
 	}
 
 	// Write the lines: update existing ones, add the missing ones, delete the ones no longer needed
-	list($charge, $chargeregul) = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $loan->nbterm);
+	$tmparray = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $loan->nbterm);
+	$charge = $tmparray[0];
+	$chargeregul = $tmparray[1];
 	$enddate = $lastdate;
 	foreach ($new as $i => $amounts) {
 		if ($i < $total) {
@@ -660,7 +662,9 @@ function loanNextPayment($db, $loan)
 		$amort = (float) price2num($mens - $interest, 'MT');
 	}
 
-	list($charge, $chargeregul) = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $nbterm);
+	$tmparray = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $nbterm);
+	$charge = $tmparray[0];
+	$chargeregul = $tmparray[1];
 	if ($index == 0) {
 		$charge = (float) price2num($charge + $chargeregul, 'MT');
 	}

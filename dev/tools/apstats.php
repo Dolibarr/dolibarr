@@ -116,7 +116,7 @@ $url_commit = 'https://github.com/'.$repo.'/commit/';
 $url_issue = 'https://github.com/'.$repo.'/issues/';
 $url_contributors = 'https://github.com/'.$repo.'/graphs/contributors';
 $reposhort = (strpos($repo, '/') !== false ? substr($repo, strpos($repo, '/') + 1) : $repo);
-// Widgets (OSS Insight, OpenCollective) are available for the Dolibarr repository only
+// Widgets (Star History, OpenCollective) are available for the Dolibarr repository only
 $showwidgets = (strtolower($repo) == 'dolibarr/dolibarr');
 
 // Count lines of code of application
@@ -678,7 +678,7 @@ $html .= '</table>';
 $html .= '</div>';
 $html .= '</div>';
 
-// OSSINSIGHT graph
+// OSSINSIGHT graph (service shut down on December 4, 2026, widgets no longer updated)
 /*
 $html .= <<<END
 <br>
@@ -700,7 +700,9 @@ $html .= "</section>\n";
 
 
 // Contributions (OSS Insight widgets are available for the Dolibarr repository only)
+// Disabled: OSS Insight shut down on December 4, 2026. A Repobeats widget (https://repobeats.axiom.co) can replace it.
 
+/*
 if ($showwidgets) {
 	$html .= "<section class=\"chapter\" id=\"projectvalue\">\n";
 	$html .= "<h2><span class=\"fas fa-tasks pictofixedwidth\"></span>Contributions</h2>\n";
@@ -723,10 +725,10 @@ if ($showwidgets) {
 <!-- Copy-paste in your Readme.md file -->
 
 <a href="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month?repo_id=1957456" target="_blank" style="display: block" align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
-    <img alt="Pull Request Size of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
-  </picture>
+	<picture>
+		<source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
+		<img alt="Pull Request Size of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
+	</picture>
 </a>
 
 <!-- Made with [OSS Insight](https://ossinsight.io/) -->
@@ -738,6 +740,7 @@ END;
 
 	$html .= "</section>\n";
 }
+*/
 
 
 // Community - Contributors
@@ -779,14 +782,14 @@ if ($showwidgets) {
 <br>
 <!-- Copy-paste in your Readme.md file -->
 
-<a href="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history?repo_id=1957456" target="_blank" style="display: block" align="center">
+<a href="https://www.star-history.com/#Dolibarr/dolibarr&amp;Date" target="_blank" style="display: block" align="center">
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
-<img alt="Star History of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
+<source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=dolibarr/dolibarr&amp;type=Date&amp;theme=dark" width="721" height="auto">
+<img alt="Star History of Dolibarr/dolibarr" src="https://api.star-history.com/svg?repos=dolibarr/dolibarr&amp;type=Date" width="721" height="auto">
 </picture>
 </a>
 
-<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+<!-- Made with [Star History](https://www.star-history.com) -->
 END;
 }
 
