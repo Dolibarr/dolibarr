@@ -92,21 +92,24 @@ class Partnerships extends DolibarrApi
 	 *
 	 * Get a list of partnerships
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param int			$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                               Array of order objects
-	 * @phan-return Partnership[]
-	 * @phpstan-return Partnership[]
+	 * @phan-return Partnership[]|array{count:int}
+	 * @phpstan-return Partnership[]|array{count:int}
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /partnerships/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		$obj_ret = array();
 		$tmpobject = new Partnership($this->db);
@@ -150,6 +153,11 @@ class Partnerships extends DolibarrApi
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
+		}
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

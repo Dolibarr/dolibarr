@@ -744,7 +744,7 @@ while ($i < $imaxinloop) {
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, (string) $object->id, '');
+					print (int) $object->id;	// Not showOutputField() that returns nothing when the Technical ID is hidden by the object (MAIN_SHOW_TECHNICAL_ID off)
 				} elseif ($key == 'label') {
 					print '<span class="spantitle">'.$object->showOutputField($val, $key, $object->$key, '').'</span>';
 				} else {

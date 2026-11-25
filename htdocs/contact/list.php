@@ -301,7 +301,12 @@ $arrayfields['p.note_private'] = array('label' => 'NotePrivate', 'position' => 3
 
 
 // Extra fields
+$extrafieldspositionoffset = 1000;	// To keep extrafields after the hardcoded fields by default
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// By default, the status is the last column, after the extrafields
+if (isset($arrayfields['p.statut'])) {
+	$arrayfields['p.statut']['position'] = (int) max(array_column($arrayfields, 'position')) + 1;
+}
 
 // Add hook to complete $arrayfields
 $parameters = array('arrayfields' => &$arrayfields);
@@ -1257,9 +1262,17 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
-// Fields with position ordered by user setup
+// Fields and extrafields with position ordered by user setup (fields of hooks are output after)
 foreach ($arrayfields as $key => $val) {
 	if (empty($val['checked'])) {
+		continue;
+	}
+	// Extra fields
+	$regkey = array();
+	if (preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		$extrafieldsonlykey = '';
 		continue;
 	}
 	switch ($key) {
@@ -1379,8 +1392,8 @@ foreach ($arrayfields as $key => $val) {
 		case 'p.fk_stcommcontact':
 			print '<td class="liste_titre maxwidthonsmartphone center">';
 			$arraystcomm = array();
-			foreach ($contactstatic->cacheprospectstatus as $key => $val) {
-				$arraystcomm[$val['id']] = ($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
+			foreach ($contactstatic->cacheprospectstatus as $statuskey => $statusval) {
+				$arraystcomm[$statusval['id']] = ($langs->trans("StatusProspect".$statusval['id']) != "StatusProspect".$statusval['id'] ? $langs->trans("StatusProspect".$statusval['id']) : $statusval['label']);
 			}
 			print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2, 0, 0, '', 0, 0, 0, '', 'nowrap ');
 			print '</td>';
@@ -1450,9 +1463,6 @@ foreach ($arrayfields as $key => $val) {
 	}
 }
 
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1476,9 +1486,17 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-// Fields with position ordered by user setup
+// Fields and extrafields with position ordered by user setup (fields of hooks are output after)
 foreach ($arrayfields as $key => $val) {
 	if (empty($val['checked'])) {
+		continue;
+	}
+	// Extra fields
+	$regkey = array();
+	if (preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		$extrafieldsonlykey = '';
 		continue;
 	}
 	switch ($key) {
@@ -1602,7 +1620,7 @@ foreach ($arrayfields as $key => $val) {
 			$totalarray['nbfield']++;
 			break;
 		case 'p.statut':
-			print_liste_field_titre($arrayfields['p.statut']['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, '', $sortfield, $sortorder, 'center ');
 			$totalarray['nbfield']++;
 			break;
 		case 'p.import_key':
@@ -1619,8 +1637,6 @@ foreach ($arrayfields as $key => $val) {
 	}
 }
 
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1717,9 +1733,17 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		// Fields with position ordered by user setup
+		// Fields and extrafields with position ordered by user setup (fields of hooks are output after)
 		foreach ($arrayfields as $key => $val) {
 			if (empty($val['checked'])) {
+				continue;
+			}
+			// Extra fields
+			$regkey = array();
+			if (preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+				$extrafieldsonlykey = $regkey[1];
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+				$extrafieldsonlykey = '';
 				continue;
 			}
 			switch ($key) {
@@ -1968,13 +1992,13 @@ while ($i < $imaxinloop) {
 					print '<td class="center nowrap"><div class="nowrap">';
 					print '<div class="inline-block">'.$contactstatic->libProspCommStatut($obj->stcomm_id, 2, $contactstatic->cacheprospectstatus[$obj->stcomm_id]['label'] ?? '', $obj->stcomm_picto);
 					print '</div> - <div class="inline-block">';
-					foreach ($contactstatic->cacheprospectstatus as $key => $val) {
+					foreach ($contactstatic->cacheprospectstatus as $statuskey => $statusval) {
 						$titlealt = 'default';
-						if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
-							$titlealt = $val['label'];
+						if (!empty($statusval['code']) && !in_array($statusval['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
+							$titlealt = $statusval['label'];
 						}
-						if ($obj->stcomm_id != $val['id']) {
-							print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.urlencode((string) ($val['code'])).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode((string) ($page)) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+						if ($obj->stcomm_id != $statusval['id']) {
+							print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.urlencode((string) ($statusval['code'])).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode((string) ($page)) : '').'">'.img_action($titlealt, $statusval['code'], $statusval['picto']).'</a>';
 						}
 					}
 					print '</div></div></td>';
@@ -2070,9 +2094,6 @@ while ($i < $imaxinloop) {
 					}
 			}
 		}
-
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
