@@ -197,10 +197,12 @@ set -o nounset
 set -o pipefail
 
 # Build image (only when the image is missing or built from another build context, see CONTEXT_HASH above)
+# The RUN steps use the network of the host (--network=host), like the container at run time: the default bridge
+# network (docker0) may have no DNS nor outbound access (VPN like NetBird, firewall rules reset, ...).
 if [ "${#BUILD_ARGS[@]}" -eq 0 ] && [ "$IMAGE_HASH" = "$CONTEXT_HASH" ]; then
     echo "The image docker-vibe is up to date with the build context (${CONTEXT_HASH:0:12}), it is used without build."
     echo "Use --no-cache to rebuild it."
-elif ! build_context | sudo docker build -t docker-vibe --label "$VIBES_LABEL=1" --label "$VIBES_HASH_LABEL=$CONTEXT_HASH" "${BUILD_ARGS[@]}" -; then
+elif ! build_context | sudo docker build --network=host -t docker-vibe --label "$VIBES_LABEL=1" --label "$VIBES_HASH_LABEL=$CONTEXT_HASH" "${BUILD_ARGS[@]}" -; then
     echo "ERROR: Build of the docker-vibe image failed."
     echo "The container is not started to avoid running an outdated image."
     exit 1
