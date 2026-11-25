@@ -752,7 +752,7 @@ try {
 
 
 		// Build System Prompt
-		$systemPrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are an Assistant for Dolibarr ERP CRM ".DOL_VERSION." with access to a set of tools.";
+		$systemPrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: getAiAssistantDefaultPrompt();
 		$systemPrompt .= "\n\n";
 
 		$systemRules = "## Rules:\n";
@@ -764,7 +764,9 @@ try {
 			// The chat runs the search, then calls back with its result so the action can follow.
 			$systemRules .= "* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it if the requested search is itself the FINAL answer.\n";
 		}
-		$systemRules .= "* Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say so plainly instead of guessing a business reason.\n";
+		// Pure LLM tasks need no tool: without this rule, the model refuses them because no tool "generates text".
+		$systemRules .= "* When the request needs no Dolibarr data and no Dolibarr action (write or rewrite a text, an article or an email, translate, summarize, explain, answer a general question...), do it yourself and answer directly with {\"type\": \"message\", \"content\": \"...\"}. Never refuse such a request because no tool matches it.\n";
+		$systemRules .= "* Only when the request needs Dolibarr data or a Dolibarr action that genuinely NO tool can do, use `respond_to_user` to say so plainly instead of guessing a business reason.\n";
 		$systemRules .= "\n";
 
 		$systemPrompt .= $systemRules;
@@ -942,7 +944,7 @@ try {
 					}
 				}
 
-				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000);	// in characters
+				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);	// in characters
 				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
 				foreach ($histTurns as $turn) {
 					if (is_array($turn) && !empty($turn['id'])) {
@@ -1611,9 +1613,10 @@ function aiQueryAsksForWrite($query, $langs)
 		}
 	}
 	$verbs = array_merge($verbs, array(
-		'create', 'add', 'modify', 'update', 'delete', 'remove', 'validate', 'send', 'change', 'set', 'edit', 'rename', 'close', 'cancel',
+		'create', 'add', 'modify', 'update', 'delete', 'remove', 'validate', 'send', 'change', 'set', 'edit', 'rename', 'close', 'cancel', 'push', 'publish',
 		'crée', 'cree', 'créer', 'creer', 'ajoute', 'ajouter', 'modifie', 'modifier', 'mets', 'met', 'mettre', 'change', 'changer', 'passe', 'passer',
-		'supprime', 'supprimer', 'efface', 'effacer', 'retire', 'retirer', 'valide', 'valider', 'envoie', 'envoyer', 'enregistre', 'enregistrer', 'renomme', 'renommer', 'clôture', 'cloture', 'annule', 'annuler'
+		'supprime', 'supprimer', 'efface', 'effacer', 'retire', 'retirer', 'valide', 'valider', 'envoie', 'envoyer', 'enregistre', 'enregistrer', 'renomme', 'renommer', 'clôture', 'cloture', 'annule', 'annuler',
+		'pousse', 'pousser', 'publie', 'publier'
 	));
 	$escaped = array();
 	foreach (array_unique(array_filter($verbs)) as $verb) {

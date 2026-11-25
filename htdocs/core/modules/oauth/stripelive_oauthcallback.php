@@ -144,7 +144,8 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page code=".dol_trunc(GETPOST('code'), 5));
 
 	// This was a callback request from service, get the token
-	if ($apiService === null) {
+	// There is no Stripe service into the OAuth library yet, so $apiService is not instantiated (same test than into stripetest_oauthcallback.php)
+	if (!is_object($apiService)) {
 		dol_syslog("No API Service", LOG_ERR);
 	} else {
 		'@phan-var-force OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService';
@@ -175,7 +176,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
 	if (GETPOST('state')) {
-		if ($apiService === null) {
+		if (!is_object($apiService)) {
 			dol_syslog("No API Service", LOG_ERR);
 		} else {
 			'@phan-var-force OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService';

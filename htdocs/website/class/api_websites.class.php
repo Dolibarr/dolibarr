@@ -103,21 +103,24 @@ class Websites extends DolibarrApi
 	 *
 	 * Get a list of websites
 	 *
+	 * @since   25.0.0   Parameter count
+	 *
 	 * @param   string  $sortfield      Sort field
 	 * @param   string  $sortorder      Sort order
 	 * @param   int     $limit          Limit for list
 	 * @param   int     $page           Page number
 	 * @param   string  $sqlfilters     Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%')"
 	 * @param   string  $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param   int		$count			Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                   Array of website objects
-	 * @phan-return Website[]
-	 * @phpstan-return Website[]
+	 * @phan-return Website[]|array{count:int}
+	 * @phpstan-return Website[]|array{count:int}
 	 *
 	 * @throws  RestException   400     Bad sqlfilters
 	 * @throws  RestException   403     Access denied
 	 * @throws  RestException   503     Error retrieving list of websites
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
 			throw new RestException(403);
@@ -139,6 +142,11 @@ class Websites extends DolibarrApi
 		}
 
 		$sqlTotals = str_replace('SELECT t.rowid, t.ref', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -191,6 +199,8 @@ class Websites extends DolibarrApi
 	 *
 	 * Get a list of pages for a given website
 	 *
+	 * @since   25.0.0   Parameter count
+	 *
 	 * @param   int     $id             ID of website
 	 * @param   string  $sortfield      Sort field
 	 * @param   string  $sortorder      Sort order
@@ -198,9 +208,10 @@ class Websites extends DolibarrApi
 	 * @param   int     $page           Page number
 	 * @param   string  $sqlfilters     Other criteria to filter answers separated by a comma. Syntax example "(t.pageurl:like:'home')"
 	 * @param   string  $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param   int		$count			Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                   Array of website page objects
-	 * @phan-return WebsitePage[]
-	 * @phpstan-return WebsitePage[]
+	 * @phan-return WebsitePage[]|array{count:int}
+	 * @phpstan-return WebsitePage[]|array{count:int}
 	 *
 	 * @url     GET {id}/pages
 	 *
@@ -209,7 +220,7 @@ class Websites extends DolibarrApi
 	 * @throws  RestException   404     Website not found
 	 * @throws  RestException   503     Error retrieving list of pages
 	 */
-	public function indexPages($id, $sortfield = "t.pageurl", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function indexPages($id, $sortfield = "t.pageurl", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
 			throw new RestException(403);
@@ -240,6 +251,11 @@ class Websites extends DolibarrApi
 		}
 
 		$sqlTotals = str_replace('SELECT t.rowid, t.pageurl', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -335,15 +351,18 @@ class Websites extends DolibarrApi
 	 *
 	 * Get a list of pages (and blog posts), whatever is their website
 	 *
+	 * @since   25.0.0   Parameter count
+	 *
 	 * @param   string  $sortfield      Sort field
 	 * @param   string  $sortorder      Sort order
 	 * @param   int     $limit          Limit for list
 	 * @param   int     $page           Page number
 	 * @param   string  $sqlfilters     Other criteria to filter answers separated by a comma. Syntax example "(t.fk_website:=:1) and (t.type_container:=:'blogpost')"
 	 * @param   string  $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param   int		$count			Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                   Array of website page objects
-	 * @phan-return WebsitePage[]
-	 * @phpstan-return WebsitePage[]
+	 * @phan-return WebsitePage[]|array{count:int}
+	 * @phpstan-return WebsitePage[]|array{count:int}
 	 *
 	 * @url     GET pages
 	 *
@@ -351,7 +370,7 @@ class Websites extends DolibarrApi
 	 * @throws  RestException   403     Access denied
 	 * @throws  RestException   503     Error retrieving list of pages
 	 */
-	public function indexAllPages($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function indexAllPages($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('website', 'read')) {
 			throw new RestException(403);
@@ -374,6 +393,11 @@ class Websites extends DolibarrApi
 		}
 
 		$sqlTotals = str_replace('SELECT t.rowid, t.pageurl', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
