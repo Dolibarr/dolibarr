@@ -452,7 +452,9 @@ if ($i == $num) {
 	if (count($resources) > 0) {
 		echo "Once translations are fixed into Transifex, you can refresh local files with:\n";
 		foreach (array_keys($resources) as $resourcekey) {
-			list($resourcelang, $resourcename) = explode('/', $resourcekey, 2);
+			$tmparray = explode('/', $resourcekey, 2);
+			$resourcelang = $tmparray[0];
+			$resourcename = $tmparray[1];
 			echo "  ./dev/translation/txpull.sh ".$resourcelang." -r dolibarr.".$resourcename."\n";
 		}
 	} else {

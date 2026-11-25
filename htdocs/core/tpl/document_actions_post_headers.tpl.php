@@ -80,7 +80,7 @@ if (empty($langs) || !is_object($langs)) {
 ';
 
 
-$langs->load("link");
+$langs->load("companies");
 if (empty($relativepathwithnofile)) {
 	$relativepathwithnofile = '';
 }

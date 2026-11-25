@@ -715,7 +715,9 @@ class Workstation extends CommonObject
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				list($class, $module) = explode('@', $this->picto);
+				$tmparray = explode('@', $this->picto);
+				$class = $tmparray[0];
+				$module = $tmparray[1];
 				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];
@@ -882,7 +884,7 @@ class Workstation extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("workstation");
+		$langs->load("mrp");
 
 		if (!getDolGlobalString('WORKSTATION_WORKSTATION_ADDON')) {
 			$conf->global->WORKSTATION_WORKSTATION_ADDON = 'mod_workstation_standard';
@@ -949,7 +951,7 @@ class Workstation extends CommonObject
 
 		$result = 0;
 
-		$langs->load("workstation");
+		$langs->load("mrp");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_workstation';

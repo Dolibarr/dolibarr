@@ -77,6 +77,7 @@ class modPaypal extends DolibarrModules
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
+		$this->need_setup = 1; // The module can't work without a setup of the PayPal API credentials
 		$this->langfiles = array("paypal");
 
 		// Constants

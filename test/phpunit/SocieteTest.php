@@ -320,6 +320,19 @@ class SocieteTest extends CommonClassTest
 		print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
 		$this->assertNotEquals($localobject->date_creation, '');
 
+		// Sales representatives loaded for several thirdparties with one request must be the same than with getSalesRepresentatives()
+		$result = $localobject->add_commercial($user, $user->id);
+		print __METHOD__." id=".$localobject->id." add_commercial result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
+
+		$result = $localobject->getSalesRepresentativesOfThirdparties(array($localobject->id, 0));
+		print __METHOD__." id=".$localobject->id." getSalesRepresentativesOfThirdparties result=".var_export($result, true)."\n";
+		$this->assertEquals(array($localobject->id => $localobject->getSalesRepresentatives($user)), $result);
+		$this->assertCount(1, $result[$localobject->id]);
+
+		$result = $localobject->getSalesRepresentativesOfThirdparties(array());
+		$this->assertEquals(array(), $result);
+
 		return $localobject->id;
 	}
 

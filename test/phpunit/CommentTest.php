@@ -100,7 +100,8 @@ class CommentTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($id, $projectid) = $data;
+		$id = $data[0];
+		$projectid = $data[1];
 
 		$localobject = new Comment($db);
 		$result = $localobject->fetch($id);

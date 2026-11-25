@@ -215,7 +215,7 @@ print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("TakeposTerminalDisabled"), $langs->trans("TakeposTerminalDisabledHelp"));
 print '</td>';
 print '<td>';
-print ajax_constantonoff("TAKEPOS_TERMINAL_DISABLED_".$terminal, array(), $conf->entity, 0, 0, 1, 0);
+print ajax_constantonoff("TAKEPOS_TERMINAL_DISABLED_".$terminal, array(), $conf->entity, 0, 0, 1, 0, 0, 0, array('ifoff' => '', 'ifon' => '_red'));
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("ForbidSalesToTheDefaultCustomer").'</td>';

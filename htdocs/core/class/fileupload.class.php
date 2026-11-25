@@ -313,7 +313,9 @@ class FileUpload
 
 		if (dol_mkdir($options['upload_dir']) >= 0) {
 			$imagesize = @getimagesize($file_path);	// false if the file is not an image, and destructuring false raises a warning since PHP 8.5
-			list($img_width, $img_height) = (is_array($imagesize) ? $imagesize : array(null, null));
+			$tmparray = (is_array($imagesize) ? $imagesize : array(null, null));
+			$img_width = $tmparray[0];
+			$img_height = $tmparray[1];
 			if (!$img_width || !$img_height) {
 				return false;
 			}
@@ -384,7 +386,9 @@ class FileUpload
 		}
 		// getimagesize() throws a ValueError on an empty path since PHP 8, so it is not called when the file was not found
 		$imagesize = (empty($uploaded_file) ? false : @getimagesize($uploaded_file));	// false if the file is not an image, and destructuring false raises a warning since PHP 8.5
-		list($img_width, $img_height) = (is_array($imagesize) ? $imagesize : array(null, null));
+		$tmparray = (is_array($imagesize) ? $imagesize : array(null, null));
+		$img_width = $tmparray[0];
+		$img_height = $tmparray[1];
 		if (is_numeric($img_width)) {
 			if ($this->options['max_width'] && $img_width > $this->options['max_width'] ||
 					$this->options['max_height'] && $img_height > $this->options['max_height']) {
