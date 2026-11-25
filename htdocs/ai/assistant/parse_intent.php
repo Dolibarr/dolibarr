@@ -1613,9 +1613,10 @@ function aiQueryAsksForWrite($query, $langs)
 		}
 	}
 	$verbs = array_merge($verbs, array(
-		'create', 'add', 'modify', 'update', 'delete', 'remove', 'validate', 'send', 'change', 'set', 'edit', 'rename', 'close', 'cancel',
+		'create', 'add', 'modify', 'update', 'delete', 'remove', 'validate', 'send', 'change', 'set', 'edit', 'rename', 'close', 'cancel', 'push', 'publish',
 		'crée', 'cree', 'créer', 'creer', 'ajoute', 'ajouter', 'modifie', 'modifier', 'mets', 'met', 'mettre', 'change', 'changer', 'passe', 'passer',
-		'supprime', 'supprimer', 'efface', 'effacer', 'retire', 'retirer', 'valide', 'valider', 'envoie', 'envoyer', 'enregistre', 'enregistrer', 'renomme', 'renommer', 'clôture', 'cloture', 'annule', 'annuler'
+		'supprime', 'supprimer', 'efface', 'effacer', 'retire', 'retirer', 'valide', 'valider', 'envoie', 'envoyer', 'enregistre', 'enregistrer', 'renomme', 'renommer', 'clôture', 'cloture', 'annule', 'annuler',
+		'pousse', 'pousser', 'publie', 'publier'
 	));
 	$escaped = array();
 	foreach (array_unique(array_filter($verbs)) as $verb) {

@@ -1062,6 +1062,25 @@ function getAiAssistantDefaultModel()
 }
 
 /**
+ * Return the default system prompt of the AI Assistant, used when the constant AI_INTENT_PROMPT is empty.
+ *
+ * @return string	The default system prompt
+ */
+function getAiAssistantDefaultPrompt()
+{
+	return "ROLE: Dolibarr ERP AI.
+GOAL: Map user intent to specific JSON commands, or answer directly when no Dolibarr data or action is needed.
+
+CONSTRAINTS:
+1. OUTPUT: Single valid JSON object ONLY. No text outside the JSON.
+   Format: {\"tool\": \"tool_name\", \"arguments\": {\"argument_name\": \"argument_value\", ...}} or {\"type\": \"message\", \"content\": \"...\"}
+2. TOOLS: For Dolibarr data or actions, use ONLY provided tools. If no tool or thirdparty fits, you must first use 'respond_to_user' to inform user. For a request that needs no Dolibarr data (writing a text, translating, summarizing, general question), answer it yourself with {\"type\": \"message\", \"content\": \"...\"}.
+3. ARGS: strict adherence to schema. Do not invent parameters.
+4. MISSING INFO: If a required argument (like an ID) is missing, use 'ask_for_clarification'.
+5. SAFETY: For DELETE/UPDATE actions, you MUST use 'ask_for_confirmation'.";
+}
+
+/**
  * Resolve the API URL used by the AI Assistant for the configured provider
  * (same resolution order as assistant/parse_intent.php).
  *
