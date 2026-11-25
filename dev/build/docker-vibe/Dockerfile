@@ -50,6 +50,7 @@ RUN apt-get update \
 		postgresql-client \
 		python3 \
 		python3-pip \
+		rsync \
 		shellcheck \
 		sox \
 		sshpass \
