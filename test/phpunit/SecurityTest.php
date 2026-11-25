@@ -1805,6 +1805,28 @@ class SecurityTest extends CommonClassTest
 		return 0;
 	}
 
+	/**
+	 * testDolPrintTextForTextArea
+	 *
+	 * @return int
+	 */
+	public function testDolPrintTextForTextArea()
+	{
+		// Line feeds and indentation are kept, double quotes and special chars are escaped once
+		$s = "Line 1: {\"tool\": 'x'} & é < b\n\n  Line 3";
+		$expectedresult = "Line 1: {&quot;tool&quot;: 'x'} &amp; &eacute; &lt; b\n\n  Line 3";
+		$result = dolPrintTextForTextArea($s);
+		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintTextForTextArea with text');
+
+		// HTML tags, including javascript, are removed
+		$s = "<b>Bold</b> <script>alert(1)</script>\" onclick=\"alert(2)";
+		$expectedresult = "Bold alert(1)&quot; onclick=&quot;alert(2)";
+		$result = dolPrintTextForTextArea($s);
+		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintTextForTextArea with html');
+
+		return 0;
+	}
+
 
 	/**
 	 * testDolHtmlWithNoJs()

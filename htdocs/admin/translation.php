@@ -384,14 +384,11 @@ if ($mode == 'overwrite') {
 
 	$text = $langs->trans("SomeTranslationAreUncomplete");
 	$urlwikitranslatordoc = 'https://wiki.dolibarr.org/index.php/Translator_documentation';
-	$text .= ' - <a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeAlso", $langs->transnoentitiesnoconv("Here")).' '.img_picto('', 'url').'</a>.<br>';
-	$infoOnTransProcess = info_admin($text);
-
-	$infoOnTransProcess .= '<div class="justify info">';
-	$infoOnTransProcess .= '<span class="">';
-	$infoOnTransProcess .= $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
-	$infoOnTransProcess .= ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
-	$infoOnTransProcess .= '</span></div>';
+	$text .= ' - <a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeAlso", $langs->transnoentitiesnoconv("Here")).' '.img_picto('', 'url').'</a>.<br><br>';
+	$text .= $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"));
+	$text .= ' ('.$langs->trans("TranslationOverwriteDesc2").').';
+	// No 'hideonsmartphone' css, so the help to fill the table below stays visible on smartphone
+	$infoOnTransProcess = info_admin($text, 0, 0, '1', '');
 
 	// If a cache for translation is on, show a warning.
 	if (isModEnabled('memcached') || getDolGlobalInt('MAIN_USE_CACHE_FOR_TRANSLATION')) {
