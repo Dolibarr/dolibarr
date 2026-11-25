@@ -862,7 +862,7 @@ body.ai-fullpage {
 }
 
 .chat-table td {
-    padding: 9px 10px;
+    padding: 9px 14px;
     border-bottom: 1px solid var(--ai-border);
 }
 
@@ -874,6 +874,16 @@ body.ai-fullpage {
     overflow: hidden;
     height: auto !important;
     word-break: break-word;
+}
+
+/* Min width only on text cells: on all cells, it gives the same width to every column, even a short id */
+.chat-table tbody td.tdoverflowmax100 .chat-cell {
+    min-width: 75px;
+}
+
+/* Ids, amounts and dates keep their own width and are never cut on 2 lines */
+.chat-table tbody td:not(.tdoverflowmax100) {
+    white-space: nowrap;
 }
 
 .chat-table tbody tr:last-child td {
@@ -909,6 +919,12 @@ body.ai-fullpage {
 .chat-object ul {
     padding-left: 18px;
     margin: 0;
+}
+
+/* Title of a table nested into a single-object result (e.g. the groups of a user) */
+.chat-nested-title {
+    margin-top: 12px;
+    font-weight: 600;
 }
 
 /* Toolbar under a result (e.g. Download PDF / Open record) */

@@ -498,6 +498,7 @@ Modules=Modules/Applications
 Option=Option
 Filters=Filters
 List=List
+Lists=Lists
 FullList=Full list
 FullConversation=Full conversation
 Statistics=Statistics

@@ -1234,7 +1234,7 @@ function getAiChatAssistantConfig()
 		'AIAttachmentBlockedByPrivacy', 'AIAttachmentMustBeConvertedToText', 'AIAttachmentTypeNotAllowed', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
-		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
+		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC', 'UserGroups', 'Group',
 		// General UI
 		'NoDataAvailable',
 		'Error',
@@ -2734,7 +2734,8 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 				// -----------------------------------------------------------
 				// Paging, sort and filter params of list tools are kept (without description): without them,
 				// the model can't answer "the last 5 ..." or filter a list, and gets the 25 first records.
-				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters'))) {
+				// count is kept so a "how many ..." question is answered without loading the records.
+				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters', 'count'))) {
 					continue;
 				}
 
