@@ -1436,6 +1436,7 @@ class Users extends DolibarrApi
 		unset($object->search_sid);
 		unset($object->ldap_sid);
 		unset($object->clicktodial_loaded);
+		unset($object->flagdelsessionsbefore);	// Technical date used to invalidate the sessions of the user
 
 		unset($object->lines);
 		unset($object->model_pdf);

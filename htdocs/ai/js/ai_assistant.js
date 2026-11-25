@@ -3130,7 +3130,8 @@ export function initAiAssistant(container) {
         date: 'DateInvoice', datef: 'DateInvoice', date_lim_reglement: 'DateMaxPayment',
         total_ht: 'TotalHT', total_ttc: 'TotalTTC', total_tva: 'AmountVAT',
         remaintopay: 'RemainderToPay', price: 'Price', price_ttc: 'PriceTTC', tva_tx: 'VATRate',
-        code_client: 'CustomerCode', code_fournisseur: 'SupplierCode', fournisseur: 'Supplier'
+        code_client: 'CustomerCode', code_fournisseur: 'SupplierCode', fournisseur: 'Supplier',
+        user_group_list: 'UserGroups'
     };
     const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
         'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
@@ -3230,6 +3231,12 @@ export function initAiAssistant(container) {
         if (k === 'paye') return (String(v) === '1' ? '✓' : '✗');
         return escapeHtml(decodeHtmlEntities(String(v)));
     }
+    // True if the value is a text (not an amount, a date or a number sent as a string by the API)
+    function isTextCell(k, v) {
+        if (typeof v !== 'string' || v.trim() === '') return false;
+        if (MONEY_FIELDS.has(k) || isDateField(k)) return false;
+        return isNaN(Number(v.trim()));
+    }
     // socid -> customer name, resolved once per render through the bridge.
     async function resolveThirdpartyNames(container) {
         const cells = container.querySelectorAll('td[data-socid]');
@@ -3292,10 +3299,11 @@ export function initAiAssistant(container) {
                         }
                     }
                     // Content is wrapped into a div: the 2 lines max clamp can't be set on a td (it needs display -webkit-box)
+                    // A socid cell is a text cell too: its id is replaced later by the name of the third party
                     if ((k === 'socid' || k === 'fk_soc') && row[k]) {
-                        content += `<td data-socid="${escapeHtml(String(row[k]))}"><div class="chat-cell">${val}</div></td>`;
+                        content += `<td class="tdoverflowmax100" data-socid="${escapeHtml(String(row[k]))}"><div class="chat-cell">${val}</div></td>`;
                     } else {
-                        content += `<td><div class="chat-cell">${val}</div></td>`;
+                        content += `<td${isTextCell(k, row[k]) ? ' class="tdoverflowmax100"' : ''}><div class="chat-cell">${val}</div></td>`;
                     }
                 });
                 content += '</tr>';
@@ -3316,6 +3324,10 @@ export function initAiAssistant(container) {
                 // in {count, offset, limit, results} would otherwise show only the
                 // counters, and the rows would never reach the user.
                 else if (Array.isArray(value) && value.length && typeof value[0] === 'object') {
+                    // Title of the table, except for the rows of a wrapper (data, results) that are the answer itself
+                    if (key !== 'data' && key !== 'results') {
+                        nested += `<div class="chat-nested-title">${escapeHtml(fieldLabel(key))}</div>`;
+                    }
                     nested += formatResult(value, true, toolName);
                 }
             }
