@@ -1,2 +1,3 @@
-# Order allow,deny<br>
-# Deny from all<br>
+# Order allow,deny
+
+# Deny from all

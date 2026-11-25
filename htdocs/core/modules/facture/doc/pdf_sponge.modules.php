@@ -2393,7 +2393,8 @@ class pdf_sponge extends ModelePDFFactures
 		}
 		$pdf->MultiCell($w, 4, $textref, '', 'R');*/
 
-		$posy += 3;
+		//$posy += 3;
+		// $posy is already at the bottom of the title line (see $pdf->GetY() above), so we do not add extra space here
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if ($object->ref_customer) {
@@ -2410,7 +2411,6 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".pdf_truncate_text($pdf, $object->project->title, 50), '', 'R');
-				$posy = $pdf->getY();
 			}
 		}
 
@@ -2439,7 +2439,7 @@ class pdf_sponge extends ModelePDFFactures
 			$objectreplaced = new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
 
-			$posy += 4;
+			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
