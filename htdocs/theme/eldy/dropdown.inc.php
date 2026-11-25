@@ -184,7 +184,8 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 
 
 .open>.dropdown-toggle::after {
-	transform: rotate(180deg);
+	/* Flip instead of rotate(180deg): the arrow box is 50px high, so a rotation makes it overflow the page width during the transition */
+	transform: scaleY(-1);
 }
 
 /*
@@ -335,8 +336,9 @@ a.top-menu-dropdown-link {
 }
 
 /* Any element (picto of a module added into the group of tools of the top right menu via the hook
- * printTopRightMenu) can apply the class topmenu-any to get the same padding as the pictos of the core. */
-.topmenu-any,
+ * printTopRightMenu) can apply the class topmenu-any to get the same padding as the pictos of the core.
+ * The :hover is required, else .atoplogin:hover of the reduction 3 wins and the picto moves on hover. */
+.topmenu-any, .topmenu-any:hover,
 #topmenu-tool,
 #topmenu-global-search-dropdown,
 #topmenu-ai-dropdown,
@@ -509,7 +511,7 @@ li.liinputsearch span.deletepositionfields_dropdownselectedfields::after {
 	height: 100%;
 	pointer-events: none;
 	background-image:
-		linear-gradient(160deg, transparent calc(50% - 0.5px), currentColor calc(50% - 0.5px), currentColor calc(50% + 0.5px), transparent calc(50% + 0.5px));
+		linear-gradient(135deg, transparent calc(50% - 0.5px), currentColor calc(50% - 0.5px), currentColor calc(50% + 0.5px), transparent calc(50% + 0.5px));
 }
 
 /* Column selector: the label of each field fills the row and the picto of

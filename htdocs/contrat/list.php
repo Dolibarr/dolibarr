@@ -352,16 +352,14 @@ $sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_modification, 
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias, s.email, s.town, s.zip, s.fk_pays as country_id, s.phone, s.phone_mobile, s.client, s.code_client, s.status as company_status, s.logo as company_logo,';
 $sql .= " typent.code as typent_code, c.note_public, c.note_private,";
-$sql .= " state.code_departement as state_code, state.nom as state_name,";
+$sql .= " state.code_departement as state_code, state.nom as state_name";
+// Subrequest to get the lowest expiration date among open service lines (kept into the main request because the field can be sorted)
 // TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove this subrequests ?
+$sqllowerplannedenddate = "(SELECT MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid)";
 if ($arrayfields['lower_planned_end_date']['checked'] || ($search_dfyear > 0 && $search_op2df)) {
-	$sql .= " (SELECT MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid) as lower_planned_end_date,";	// lowest expiration date among open service lines
+	$sql .= ", ".$sqllowerplannedenddate." as lower_planned_end_date";	// lowest expiration date among open service lines
 }
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=0", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_initial,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_running,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_expired,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contract->services->expires->warning_delay)."')", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_late,';
-$sql .= " (SELECT SUM(".$db->ifsql("cd.statut=5", '1', '0').') FROM '.MAIN_DB_PREFIX.'contratdet as cd WHERE cd.fk_contrat = c.rowid) as nb_closed';
+// Note: The number of service lines per status (nb_initial, nb_running, ...) is loaded later, with one request, for the records of the page only
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -384,10 +382,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (c.rowid = ef.fk_object)";
-}
-if ($search_user > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
-	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 // Add table from hooks
 $parameters = array();
@@ -434,7 +428,12 @@ if (!empty($search_ref_supplier)) {
 	$sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
 }
 if ($search_project_ref != '') {
-	$sql .= natural_search('p.ref', $search_project_ref);
+	if (empty($arrayfields['p.title']['checked'])) {
+		// The project label is shown into the ref column, so search on both
+		$sql .= natural_search(array('p.ref', 'p.title'), $search_project_ref);
+	} else {
+		$sql .= natural_search('p.ref', $search_project_ref);
+	}
 }
 if ($search_project != '') {
 	$sql .= natural_search('p.title', $search_project);
@@ -467,8 +466,12 @@ if (!empty($search_note_public)) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+// Search on user. Done with an EXISTS so a contract is not returned twice if the user has several roles on it.
 if ($search_user > 0) {
-	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
+	$sql .= " AND EXISTS (";
+	$sql .= " SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc ON ec.fk_c_type_contact = tc.rowid AND tc.element = 'contrat' AND tc.source = 'internal'";
+	$sql .= " WHERE ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user).")";
 }
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
@@ -569,6 +572,19 @@ if ($search_date_modif_end) {
 if ($search_signed_status != '' && $search_signed_status >= 0) {
 	$sql .= " AND c.signed_status = ".((int) $search_signed_status);
 }
+// Search on the lowest planned end date. Done into the WHERE (and not into a HAVING) so the request to count records can be a simple COUNT(*).
+if ($search_dfyear > 0 && $search_op2df) {
+	if ($search_op2df == '<=') {
+		//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
+		$sql .= " AND ".$sqllowerplannedenddate." <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
+	} elseif ($search_op2df == '>=') {
+		//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
+		$sql .= " AND ".$sqllowerplannedenddate." >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
+	} else {
+		//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
+		$sql .= " AND ".$sqllowerplannedenddate." BETWEEN '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."' AND '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
+	}
+}
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -584,21 +600,7 @@ $sql .= $hookmanager->resPrint;
 $parameters = array('search_dfyear' => $search_dfyear, 'search_op2df' => $search_op2df);
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
-	if ($search_dfyear > 0 && $search_op2df) {
-		if ($search_op2df == '<=') {
-			//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
-			$sql .= " HAVING lower_planned_end_date <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
-		} elseif ($search_op2df == '>=') {
-			//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
-			$sql .= " HAVING lower_planned_end_date >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
-		} else {
-			//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
-			$sql .= " HAVING lower_planned_end_date <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND lower_planned_end_date >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
-		}
-		$sql .= empty($hookmanager->resPrint) ? "" : " AND ".$hookmanager->resPrint;
-	} else {
-		$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
-	}
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 } else {
 	$sql = $hookmanager->resPrint;
 }
@@ -609,7 +611,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	//$result = $db->query($sql);
 	//$nbtotalofrecords = $db->num_rows($result);
 
-	if ($search_dfyear > 0 && $search_op2df) {
+	if (preg_match('/\sHAVING\s/i', $sql)) {	// A HAVING (added by a hook) can't be kept into a request converted into a COUNT(*)
 		$resql = $db->query($sql, 0, 'auto', 1);
 		if ($resql) {
 			while ($db->fetch_object($resql)) {
@@ -1323,11 +1325,63 @@ $typenArray = array();
 $cacheCountryIDCode = array();
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 $showinvalidemail = getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST', 1); // in list, we check only syntax of emails
-while ($i < $imaxinloop) {
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
+
+// Load the records of the page first, so data needed by all lines are loaded with one request instead of one per line
+$arrayofobj = array();
+$listofcontractids = array();
+for ($k = 0; $k < $imaxinloop; $k++) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break;
+	}
+	$arrayofobj[] = $obj;
+	$listofcontractids[] = (int) $obj->rowid;
+}
+// Number of service lines per status of the contracts of the page
+$nbofservicesbycontract = array();
+if (!empty($listofcontractids)) {
+	$sqlnbofservices = "SELECT cd.fk_contrat,";
+	$sqlnbofservices .= " SUM(".$db->ifsql("cd.statut=0", '1', '0').") as nb_initial,";
+	$sqlnbofservices .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", '1', '0').") as nb_running,";
+	$sqlnbofservices .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", '1', '0').") as nb_expired,";
+	$sqlnbofservices .= " SUM(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contract->services->expires->warning_delay)."')", '1', '0').") as nb_late,";
+	$sqlnbofservices .= " SUM(".$db->ifsql("cd.statut=5", '1', '0').") as nb_closed";
+	$sqlnbofservices .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+	$sqlnbofservices .= " WHERE cd.fk_contrat IN (".$db->sanitize(implode(',', $listofcontractids)).")";
+	$sqlnbofservices .= " GROUP BY cd.fk_contrat";
+	$resqlnbofservices = $db->query($sqlnbofservices);
+	if ($resqlnbofservices) {
+		while ($objnbofservices = $db->fetch_object($resqlnbofservices)) {
+			$nbofservicesbycontract[(int) $objnbofservices->fk_contrat] = $objnbofservices;
+		}
+		$db->free($resqlnbofservices);
+	} else {
+		dol_print_error($db);
+	}
+}
+// Sales representatives of the thirdparties of the page
+$salesrepresentativesbysoc = array();
+if (!empty($arrayfields['sale_representative']['checked']) && !empty($arrayofobj)) {
+	$salesrepresentativesbysoc = $socstatic->getSalesRepresentativesOfThirdparties(array_column($arrayofobj, 'socid'));
+	if (!is_array($salesrepresentativesbysoc)) {
+		$salesrepresentativesbysoc = array();
+	}
+}
+
+while ($i < $imaxinloop) {
+	$obj = (empty($arrayofobj[$i]) ? null : $arrayofobj[$i]);
 	if (empty($obj)) {
 		break; // Should not happen
 	}
+
+	// Number of service lines per status (null if the contract has no line, like the previous subrequests did)
+	$nbofservices = (empty($nbofservicesbycontract[(int) $obj->rowid]) ? null : $nbofservicesbycontract[(int) $obj->rowid]);
+	$obj->nb_initial = ($nbofservices ? $nbofservices->nb_initial : null);
+	$obj->nb_running = ($nbofservices ? $nbofservices->nb_running : null);
+	$obj->nb_expired = ($nbofservices ? $nbofservices->nb_expired : null);
+	$obj->nb_late = ($nbofservices ? $nbofservices->nb_late : null);
+	$obj->nb_closed = ($nbofservices ? $nbofservices->nb_closed : null);
 
 	$contracttmp->ref = $obj->ref;
 	$contracttmp->id = $obj->rowid;
@@ -1443,12 +1497,17 @@ while ($i < $imaxinloop) {
 		}
 		// Project ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="tdoverflowmax150">';
+			// When the project label column is not displayed, we show the project label under the project ref
+			$showprojectlabelunderref = (empty($arrayfields['p.title']['checked']) && (string) $obj->project_label !== '');
+			print '<td class="tdoverflowmax150'.($showprojectlabelunderref ? ' tdlineheightsmall' : '').'">';
 			if ($obj->project_id > 0) {
 				$projectstatic->id = $obj->project_id;
 				$projectstatic->ref = $obj->project_ref;
 				$projectstatic->title = $obj->project_label;
 				print $projectstatic->getNomUrl(1);
+				if ($showprojectlabelunderref) {
+					print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->project_label).'"><span class="spantitle">'.dolPrintLabel($obj->project_label).'</span></div>';
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1508,7 +1567,11 @@ while ($i < $imaxinloop) {
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($socstatic->country).'">';
-			print dol_escape_htmltag($socstatic->country);
+			if (!empty($socstatic->country_code) && !$showcountrylabelinlist) {
+				print picto_from_langcode($socstatic->country_code, 'title="'.dolPrintHTMLForAttribute($socstatic->country).'"', 1);
+			} else {
+				print dolPrintHTML($socstatic->country);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1516,11 +1579,11 @@ while ($i < $imaxinloop) {
 		}
 		// Phone
 		if (!empty($arrayfields['s.phone']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute((empty($socstatic->country_code) ? '' : $socstatic->country_code.': ').$obj->phone).'">'.dol_print_phone($obj->phone, $socstatic->country_code, 0, $socstatic->id).'</td>';
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $socstatic->country_code, 0, $socstatic->id, 'AC_TEL', ' ', 'phone', '', 0, '', 2).'</td>';
 		}
 		// Phone mobile
 		if (!empty($arrayfields['s.phone_mobile']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute((empty($socstatic->country_code) ? '' : $socstatic->country_code.': ').$obj->phone_mobile).'">'.dol_print_phone($obj->phone_mobile, $socstatic->country_code, 0, $socstatic->id).'</td>';
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $socstatic->country_code, 0, $socstatic->id, 'AC_TEL', ' ', 'mobile', '', 0, '', 2).'</td>';
 		}
 		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
@@ -1543,10 +1606,8 @@ while ($i < $imaxinloop) {
 			// Sales representatives
 			print '<td>';
 			if ($obj->socid > 0) {
-				$listsalesrepresentatives = $socstatic->getSalesRepresentatives($user);
-				if ($listsalesrepresentatives < 0) {
-					dol_print_error($db);
-				}
+				// Sales representatives were loaded before the loop for all thirdparties of the page
+				$listsalesrepresentatives = (empty($salesrepresentativesbysoc[$obj->socid]) ? array() : $salesrepresentativesbysoc[$obj->socid]);
 				$nbofsalesrepresentative = count($listsalesrepresentatives);
 				if ($nbofsalesrepresentative > 6) {
 					// We print only number

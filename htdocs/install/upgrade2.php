@@ -3093,7 +3093,9 @@ function migrate_element_time($db, $langs, $conf)
 				if ($obj->element_duration > 0) {
 					// convert to second
 					// only for int time and float time ex: 1.75 for 1h45
-					list($hour, $min) = explode('.', $obj->element_duration);
+					$tmparray = explode('.', $obj->element_duration);
+					$hour = $tmparray[0];
+					$min = $tmparray[1];
 					$hour = (int) $hour * 60 * 60;
 					$min = (int) ((float) ('.'.$min)) * 3600;
 					$newtime = $hour + $min;
@@ -4975,7 +4977,8 @@ function migrate_holiday_path()
 			if ($entity > 1) {
 				$dir = DOL_DATA_ROOT.'/'.$entity.'/holiday';
 			} else {
-				$dir = $conf->holiday->multidir_output[$entity]; // $conf->user->multidir_output[] for each entity is construct by the multicompany module
+				// $conf->holiday is not set when the Leave module is disabled: its files, if any, are still in the default directory
+				$dir = empty($conf->holiday->multidir_output[$entity]) ? DOL_DATA_ROOT.'/holiday' : $conf->holiday->multidir_output[$entity];
 			}
 
 			if ($dir) {

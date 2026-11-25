@@ -43,7 +43,12 @@ if (!empty($user->conf->$tmpvar)) {        // A list of fields was already custo
 	foreach ($arrayfields as $key => $val) {
 		if (isset($tmparray[$key])) {
 			$arrayfields[$key]['position'] = $tmparray[$key];
-			$object->fields[explode('.', $key)[1]]['position'] = $tmparray[$key];
+			// Set the position of the field, only if it is a real object field, to avoid creating phantom entries
+			// Keys without prefix (like 'author') are not object fields
+			$fieldkey = (strpos($key, '.') !== false) ? explode('.', $key)[1] : '';
+			if ($fieldkey !== '' && isset($object->fields[$fieldkey])) {
+				$object->fields[$fieldkey]['position'] = $tmparray[$key];
+			}
 		}
 	}
 }

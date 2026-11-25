@@ -351,7 +351,7 @@ class MailmanSpip
 					}
 
 					//We call Mailman to subscribe the user
-					$result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_URL, $list);
+					$result = $this->callMailman($object, getDolGlobalString('ADHERENT_MAILMAN_URL'), $list);
 
 					if ($result === false) {
 						$this->mladded_ko[$list] = $object->email;
@@ -421,7 +421,7 @@ class MailmanSpip
 					}
 
 					//We call Mailman to unsubscribe the user
-					$result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_UNSUB_URL, $list);
+					$result = $this->callMailman($object, getDolGlobalString('ADHERENT_MAILMAN_UNSUB_URL'), $list);
 
 					if ($result === false) {
 						$this->mlremoved_ko[$list] = $object->email;
