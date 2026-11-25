@@ -1657,7 +1657,9 @@ class ExtraFields
 						}
 					}
 					if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-						list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+						$tmparray = explode('|', $InfoFieldList[3]);
+						$parentName = $tmparray[0];
+						$parentField = $tmparray[1];
 						if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 							$keyList .= ', main.'.$parentField;
 						} else {
@@ -1714,7 +1716,7 @@ class ExtraFields
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
 
-								// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list
+								// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list. Written '1:=:1' because a '1 = 1' is rejected by forgeSQLFromUniversalSearchCriteria()
 								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
 								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 								// Replace '$ID$ = column' by an always true test
@@ -2007,7 +2009,9 @@ class ExtraFields
 						}
 					}
 					if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-						list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+						$tmparray = explode('|', $InfoFieldList[3]);
+						$parentName = $tmparray[0];
+						$parentField = $tmparray[1];
 						if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 							$keyList .= ', main.'.$parentField;
 						} else {
@@ -2065,6 +2069,9 @@ class ExtraFields
 								// Replace '$ID$ = column' by "word"
 								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
 								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								// Same with the Universal Search Filter syntax, '(column:=:$ID$)'
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *: *[<>!=]?= *: *\$ID\$#';
+								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
@@ -2735,6 +2742,8 @@ class ExtraFields
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 					return 'Error bad setup of extrafield';
 				}
+			} else {
+				$value = '';	// No linked object (id 0 or empty), so we show nothing instead of the raw id
 			}
 		} elseif ($type == 'point') {
 			if (!empty($value)) {
@@ -3375,7 +3384,7 @@ class ExtraFields
 			return empty($v);
 		}
 		if ($type == 'link') {
-			return ($v == '-1');
+			return in_array((string) $v, array('-1', '0'), true);
 		}
 		if ($type == 'sellist') {
 			return ($v == '0');

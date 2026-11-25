@@ -1741,6 +1741,89 @@ abstract class CommonObject
 		}
 	}
 
+	/**
+	 *  Return contacts of several objects with one request (to use into lists instead of a liste_contact() on each line)
+	 *
+	 *  @param	int[]		$ids		Array of IDs of objects (of the same type than $this)
+	 *  @param	'external'|'thirdparty'|'internal'	$source		Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
+	 *  @param	int			$status		Status of user or contact (-1=all)
+	 *  @return	array<int,array<int,array{id:int,rowid:int,source:string,code:string,fk_c_type_contact:int,status:int,statuscontact:int,socid:int,entity:int,civility:string,lastname:string,firstname:string,email:string,photo:string,login:string,gender:string,job:string,phone:string,phone_perso:string,phone_mobile:string,office_fax:string}>>|int<-1,-1>	Array (ID of object => array of its contacts sorted on lastname) or -1 if KO
+	 */
+	public function getContactsOfObjects(array $ids, $source = 'external', $status = -1)
+	{
+		$reparray = array();
+
+		$listofids = array();
+		foreach ($ids as $id) {
+			if ((int) $id > 0) {
+				$listofids[(int) $id] = (int) $id;
+			}
+		}
+		if (empty($listofids)) {
+			return $reparray;
+		}
+
+		// Fields of llx_user and llx_socpeople are returned with the same keys
+		$sql = "SELECT ec.element_id, ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_c_type_contact, tc.source, tc.code";
+		$sql .= ", t.statut as statuscontact, t.fk_soc as socid, t.entity, t.civility, t.lastname, t.firstname, t.email, t.photo";
+		if ($source == 'internal') {
+			$sql .= ", t.login, t.gender, t.job, t.office_phone as phone, '' as phone_perso, t.user_mobile as phone_mobile, t.office_fax";
+		} else {
+			$sql .= ", '' as login, '' as gender, t.poste as job, t.phone, t.phone_perso, t.phone_mobile, '' as office_fax";
+		}
+		$sql .= " FROM ".$this->db->prefix()."element_contact as ec";
+		$sql .= " INNER JOIN ".$this->db->prefix()."c_type_contact as tc ON tc.rowid = ec.fk_c_type_contact";
+		if ($source == 'internal') {
+			$sql .= " LEFT JOIN ".$this->db->prefix()."user as t ON t.rowid = ec.fk_socpeople";
+		} else {
+			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople as t ON t.rowid = ec.fk_socpeople";
+		}
+		$sql .= " WHERE ec.element_id IN (".$this->db->sanitize(implode(',', $listofids)).")";
+		$sql .= " AND tc.element = '".$this->db->escape($this->element)."'";
+		$sql .= " AND tc.source = '".($source == 'internal' ? 'internal' : 'external')."'";
+		$sql .= " AND tc.active = 1";
+		if ($status >= 0) {
+			$sql .= " AND t.statut = ".((int) $status);	// t is llx_user or llx_socpeople
+		}
+		$sql .= $this->db->order('t.lastname', 'ASC');
+
+		dol_syslog(get_class($this)."::getContactsOfObjects", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			dol_print_error($this->db);
+			return -1;
+		}
+		while ($obj = $this->db->fetch_object($resql)) {
+			$reparray[(int) $obj->element_id][] = array(
+				'id' => (int) $obj->id,
+				'rowid' => (int) $obj->rowid,
+				'source' => (string) $obj->source,
+				'code' => (string) $obj->code,
+				'fk_c_type_contact' => (int) $obj->fk_c_type_contact,
+				'status' => (int) $obj->statuslink,
+				'statuscontact' => (int) $obj->statuscontact,
+				'socid' => (int) $obj->socid,
+				'entity' => (int) $obj->entity,
+				'civility' => (string) $obj->civility,
+				'lastname' => (string) $obj->lastname,
+				'firstname' => (string) $obj->firstname,
+				'email' => (string) $obj->email,
+				'photo' => (string) $obj->photo,
+				'login' => (string) $obj->login,
+				'gender' => (string) $obj->gender,
+				'job' => (string) $obj->job,
+				'phone' => (string) $obj->phone,
+				'phone_perso' => (string) $obj->phone_perso,
+				'phone_mobile' => (string) $obj->phone_mobile,
+				'office_fax' => (string) $obj->office_fax,
+			);
+		}
+		$this->db->free($resql);
+
+		return $reparray;
+	}
+
 
 	/**
 	 * 		Update status of a contact linked to object
@@ -3305,7 +3388,9 @@ abstract class CommonObject
 			if ($this->db->query($sql)) {
 				$this->multicurrency_code = $code;
 
-				list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+				$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+				$fk_multicurrency = $tmparray[0];
+				$rate = $tmparray[1];
 				if ($rate) {
 					$this->setMulticurrencyRate($rate, 2);
 				}
@@ -6227,7 +6312,13 @@ abstract class CommonObject
 		$this->printObjectLineWithHooks($action, $line, $num, $i, $context['dateSelector'], $context['seller'], $context['buyer'], ($action == 'editline' ? (int) $line->id : 0), $extrafields, '/core/tpl');
 		$out = ob_get_clean();
 
-		list($object, $form, $extrafields, $forceall, $senderissupplier, $inputalsopricewithtax, $usemargins) = $savedGlobals;
+		$object = $savedGlobals[0];
+		$form = $savedGlobals[1];
+		$extrafields = $savedGlobals[2];
+		$forceall = $savedGlobals[3];
+		$senderissupplier = $savedGlobals[4];
+		$inputalsopricewithtax = $savedGlobals[5];
+		$usemargins = $savedGlobals[6];
 
 		return (string) $out;
 	}
@@ -7750,7 +7841,7 @@ abstract class CommonObject
 					$InfoFieldList = explode(":", $param_list[0]);
 					dol_include_once($InfoFieldList[1]);
 					if ($InfoFieldList[0] && class_exists($InfoFieldList[0])) {
-						if ($value == '-1') {	// -1 is key for no defined in combo list of objects
+						if (ExtraFields::isEmptyValue($value, 'link')) {	// -1 from a combo list, 0 from an autocomplete hidden input
 							$new_array_options[$key] = '';
 						} elseif ($value) {
 							$object = new $InfoFieldList[0]($this->db);
@@ -8103,7 +8194,7 @@ abstract class CommonObject
 			// Similar code than into insertExtraFields
 			if ($attributeRequired) {	// If attribute is "Mandatory", then it is also in database as "Not null", so we must check even if attribute is not 'enabled'.
 				$mandatorypb = false;
-				if ($attributeType == 'link' && $this->array_options["options_".$key] == '-1') {
+				if ($attributeType == 'link' && ExtraFields::isEmptyValue($this->array_options["options_".$key], 'link')) {
 					$mandatorypb = true;
 				}
 				if ($this->array_options["options_".$key] === '') {
@@ -8251,7 +8342,7 @@ abstract class CommonObject
 					}
 					break;
 				case 'link':
-					if ($this->array_options["options_".$key] === '') {
+					if (ExtraFields::isEmptyValue($this->array_options["options_".$key], 'link')) {
 						$new_array_options["options_".$key] = null;
 
 						$this->array_options["options_".$key] = $new_array_options["options_".$key];
@@ -8773,7 +8864,9 @@ abstract class CommonObject
 					continue;
 				}
 				if (strpos($valb, "|") !== false) {
-					list($valb, $parent) = explode('|', $valb);
+					$tmparray = explode('|', $valb);
+					$valb = $tmparray[0];
+					$parent = $tmparray[1];
 				}
 				$nbchoice++;
 				$tmpselect .= '<option value="'.$keyb.'"';
@@ -8860,7 +8953,9 @@ abstract class CommonObject
 					}
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$tmparray = explode('|', $InfoFieldList[3]);
+					$parentName = $tmparray[0];
+					$parentField = $tmparray[1];
 					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList .= ', main.'.$parentField;
 					} else {
@@ -9106,7 +9201,9 @@ abstract class CommonObject
 					}
 				}
 				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$tmparray = explode('|', $InfoFieldList[3]);
+					$parentName = $tmparray[0];
+					$parentField = $tmparray[1];
 					if (!empty($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList .= ', main.'.$parentField;
 					} else {
@@ -9300,7 +9397,9 @@ abstract class CommonObject
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
 					&& empty($val['disabled']) && empty($nonewbutton)) {	// and to avoid to show the button if the field is protected by a "disabled".
-					list($class, $classfile) = explode(':', $param_list[0]);
+					$tmparray = explode(':', $param_list[0]);
+					$class = $tmparray[0];
+					$classfile = $tmparray[1];
 					if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) {
 						$url_path = dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
 					} else {
@@ -9437,8 +9536,8 @@ abstract class CommonObject
 		if (isset($val['type']) && preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
 			$type = 'link';
 			$stringforoptions = $reg[1].':'.$reg[2];
-			// Special case: Force addition of getnomurlparam1 to -1 for users
-			if ($reg[1] == 'User') {
+			// Special case: Force addition of getnomurlparam1 to -1 for users and members (to show photo)
+			if ($reg[1] == 'User' || $reg[1] == 'Adherent') {
 				$stringforoptions .= ':#getnomurlparam1=-1';
 			}
 			$param['options'] = array($stringforoptions => $stringforoptions);
@@ -11075,7 +11174,7 @@ abstract class CommonObject
 
 		$buyPrice = 0;
 
-		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && getDolGlobalInt('ForceBuyingPriceIfNull') > 0)) {
+		if (($unitPrice > 0) && (getDolGlobalInt('ForceBuyingPriceIfNull') > 0)) {
 			// When ForceBuyingPriceIfNull is set
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
 		} else {
@@ -11117,7 +11216,7 @@ abstract class CommonObject
 						$result = $productFournisseur->find_min_price_product_fournisseur($fk_product);
 					}
 					if ($result > 0) {
-						$buyPrice = $productFournisseur->fourn_unitprice;
+						$buyPrice = $productFournisseur->fourn_unitprice_with_discount;
 					} elseif ($result < 0) {
 						$this->errors[] = $productFournisseur->error;
 						return -2;
@@ -12077,7 +12176,8 @@ abstract class CommonObject
 				if ($resqlupdate === false) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
-				} else {
+				} elseif ((string) $this->ref === '' || $this->ref === '(PROV)') {
+					// Same condition as the WHERE above: an object created with its final ref keeps it in memory too
 					$this->ref = '(PROV'.$this->id.')';
 				}
 			}
@@ -12231,6 +12331,8 @@ abstract class CommonObject
 		}
 		if (isset($objectline->fields['position'])) {
 			$sql .= $this->db->order('position', 'ASC');
+		} elseif (isset($objectline->fields['rang'])) {
+			$sql .= $this->db->order('rang', 'ASC');	// 'rang' is the position field used by line_up(), line_down() and line_max()
 		}
 
 		$resql = $this->db->query($sql);

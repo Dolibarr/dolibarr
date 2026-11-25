@@ -459,7 +459,7 @@ function ai_convert_office_attachment_to_text($mime, $base64, &$error)
 	}
 
 	$text = '';
-	$maxsize = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000);
+	$maxsize = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);
 	try {
 		if ($type == 'docx' || $type == 'odt') {
 			// Text is in one XML entry of the zip: paragraph ends and tabs are kept, other tags are removed
@@ -1274,6 +1274,7 @@ function getAiChatAssistantConfig()
 		'AIContextPinOff',
 		'AIContextCounter',
 		'AIContextLabel',
+		'AIContextLabelHelp',
 		'AIContextTokens',
 		'AIContextAuto',
 		'AIContextAutoTitle',
@@ -1426,7 +1427,7 @@ function getAiChatAssistantConfig()
 		// back on every request is not a default the module takes by itself.
 		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
 		// Max size (in characters) of the context sent back to the model, also the cap of one tool result.
-		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000),
+		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000),
 		// The "/" palette of the chat input, always on.
 		'palette' => 1,
 		// The raw API tools in the "/" palette (testing, advanced use); the commands are always there.
@@ -2022,7 +2023,8 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$exactIds = array();
 			$firstIds = array();
 			foreach ($wordlists as $wl) {
-				list($id, $ws) = $wl;
+				$id = $wl[0];
+				$ws = $wl[1];
 				if (count($ws) < $len) {
 					continue;
 				}
@@ -2073,7 +2075,11 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$i++;
 			continue;
 		}
-		list($len, $ids, $key, $exact, $first) = $hit;
+		$len = $hit[0];
+		$ids = $hit[1];
+		$key = $hit[2];
+		$exact = $hit[3];
+		$first = $hit[4];
 		$start = $words[$i][1];
 		$end = $words[$i + $len - 1][2];
 		$cands = array();
@@ -2707,7 +2713,9 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 				// from the prompt entirely. This saves massive amounts of tokens
 				// on list/search functions (limit, sortorder, sqlfilters, etc).
 				// -----------------------------------------------------------
-				if (!$isRequired && isset($propData['default'])) {
+				// Paging, sort and filter params of list tools are kept (without description): without them,
+				// the model can't answer "the last 5 ..." or filter a list, and gets the 25 first records.
+				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters'))) {
 					continue;
 				}
 

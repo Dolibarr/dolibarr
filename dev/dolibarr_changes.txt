@@ -35,6 +35,12 @@ modified lines.
         -   touch($p_entry['filename'], $p_entry['mtime']);
         +   @touch($p_entry['filename'], $p_entry['mtime']);
 
+==> FILE   : pclzip.lib.php (7 occurrences)
+    REASON : Remove deprecated PHP alias is_integer().
+    DIFF   :
+        -   is_integer(...)
+        +   is_int(...)
+
 
 
 ####################################################################################################
@@ -169,6 +175,14 @@ modified lines.
     DIFF   :
         -   if (count($attrs) > 0) {
         +   if (is_array($attrs) && count($attrs) > 0) {
+
+==> FILE   : nusoap.php, function serialize_val() (around line 528)
+    REASON : Remove deprecated PHP aliases is_long() and is_double() (redundant with is_int() and is_float()).
+    DIFF   :
+        -   case (is_int($val) || is_long($val) || $type == 'int'):
+        +   case (is_int($val) || $type == 'int'):
+        -   case (is_float($val) || is_double($val) || $type == 'float'):
+        +   case (is_float($val) || $type == 'float'):
 
 
 
