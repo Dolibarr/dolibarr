@@ -129,7 +129,14 @@ if ($action == 'update') {
 	}
 
 	if (GETPOSTISSET('AI_INTENT_PROMPT')) {
-		$res = dolibarr_set_const($db, "AI_INTENT_PROMPT", GETPOST("AI_INTENT_PROMPT"), 'chaine', 0, '', $conf->entity);
+		$intentPrompt = GETPOST("AI_INTENT_PROMPT", "nohtml");
+		// The default prompt is saved as empty, so a later change of the default prompt in code still applies.
+		// Compared with spaces and line feeds normalized: browser sends \r\n and the nohtml filter merges double spaces.
+		$defaultIntentPrompt = dol_string_nohtmltag(getAiAssistantDefaultPrompt(), 0);
+		if (preg_replace('/\s+/', ' ', trim($intentPrompt)) === preg_replace('/\s+/', ' ', trim($defaultIntentPrompt))) {
+			$intentPrompt = '';
+		}
+		$res = dolibarr_set_const($db, "AI_INTENT_PROMPT", $intentPrompt, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -235,16 +242,7 @@ $form = new Form($db);
 $apiKey = getDolGlobalString('AI_MCP_API_KEY');
 
 // Default Prompt Logic
-$defaultPromptText = "ROLE: Dolibarr ERP AI.
-GOAL: Map user intent to specific JSON commands.
-
-CONSTRAINTS:
-1. OUTPUT: Single valid JSON object ONLY. No Markdown. No text.
-   Format: {\"tool\": \"tool_name\", \"arguments\": {\"argument_name\": \"argument_value\", ...}}
-2. TOOLS: Use ONLY provided tools. If no tool or thirdparty fits, you must first use 'respond_to_user' to inform user.
-3. ARGS: strict adherence to schema. Do not invent parameters.
-4. MISSING INFO: If a required argument (like an ID) is missing, use 'ask_for_clarification'.
-5. SAFETY: For DELETE/UPDATE actions, you MUST use 'ask_for_confirmation'.";
+$defaultPromptText = getAiAssistantDefaultPrompt();
 
 $currentPrompt = getDolGlobalString('AI_INTENT_PROMPT', $defaultPromptText);
 
@@ -410,8 +408,8 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">';
 	print $form->textwithpicto($langs->trans("SystemPrompt"), $langs->trans("SystemPromptHelp")) . '<br><br>';
-	$doleditor = new DolEditor('AI_INTENT_PROMPT', $currentPrompt, '', 300, 'dolibarr_notes', 'In', false, false, false, ROWS_9, '90%');
-	$doleditor->Create();
+	$doleditor = new DolEditor('AI_INTENT_PROMPT', $currentPrompt, '', 260, 'dolibarr_notes', 'In', false, false, false, 0, '90%');
+	$doleditor->Create(0, '', true, '', '', 'spellcheck="false"');
 	print '</td>';
 	print '</tr>';
 
