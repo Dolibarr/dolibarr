@@ -6897,15 +6897,17 @@ abstract class CommonObject
 					break;
 				case 'date':
 				case 'datetime':
-					// If data is a string instead of a timestamp, we convert it
-					if (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key])) {
+					// If data is a string instead of a timestamp, we convert it.
+					// An empty date (null or '') is kept as is, it is stored as NULL: strtotime(null) is deprecated since PHP 8.1.
+					if (isset($this->array_options[$key]) && $this->array_options[$key] !== '' && (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key]))) {
 						$this->array_options[$key] = strtotime($this->array_options[$key]);
 					}
 					$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
 					break;
 				case 'datetimegmt':
-					// If data is a string instead of a timestamp, we convert it
-					if (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key])) {
+					// If data is a string instead of a timestamp, we convert it.
+					// An empty date (null or '') is kept as is, it is stored as NULL: strtotime(null) is deprecated since PHP 8.1.
+					if (isset($this->array_options[$key]) && $this->array_options[$key] !== '' && (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key]))) {
 						$this->array_options[$key] = strtotime($this->array_options[$key]);
 					}
 					$new_array_options[$key] = $this->db->idate($this->array_options[$key], 'gmt');
