@@ -114,6 +114,20 @@ if ($action == 'update') {
 		}
 	}
 
+	if (GETPOSTISSET('AI_ATTACHMENT_MAX_FILES')) {
+		$res = dolibarr_set_const($db, "AI_ATTACHMENT_MAX_FILES", max(1, GETPOSTINT("AI_ATTACHMENT_MAX_FILES")), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
+	if (GETPOSTISSET('AI_ATTACHMENT_MAX_MB')) {
+		$res = dolibarr_set_const($db, "AI_ATTACHMENT_MAX_MB", max(1, GETPOSTINT("AI_ATTACHMENT_MAX_MB")), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
 	if (GETPOSTISSET('AI_INTENT_PROMPT')) {
 		$res = dolibarr_set_const($db, "AI_INTENT_PROMPT", GETPOST("AI_INTENT_PROMPT"), 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
@@ -355,7 +369,19 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	// Max size of the context sent back with the question
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIContextMaxSize"), $langs->trans("AIContextMaxSizeHelp")) . '</td>';
-	print '<td><input class="width100" type="number" min="0" name="AI_CHAT_CONTEXT_MAX_SIZE" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000) . '"></td>';
+	print '<td><input class="width100" type="number" min="0" name="AI_CHAT_CONTEXT_MAX_SIZE" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000) . '"></td>';
+	print '</tr>';
+
+	// Max number of files attached to one message
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIAttachmentMaxFiles"), $langs->trans("AIAttachmentMaxFilesHelp")) . '</td>';
+	print '<td><input class="width50" type="number" min="1" name="AI_ATTACHMENT_MAX_FILES" value="' . getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5) . '"></td>';
+	print '</tr>';
+
+	// Max size of the files attached to one message
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIAttachmentMaxSize"), $langs->trans("AIAttachmentMaxSizeHelp", ini_get('post_max_size'))) . '</td>';
+	print '<td><input class="width50" type="number" min="1" name="AI_ATTACHMENT_MAX_MB" value="' . getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10) . '"></td>';
 	print '</tr>';
 
 	// API tools in the palette of the chat input (the palette itself is always on)

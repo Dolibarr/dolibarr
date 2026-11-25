@@ -113,10 +113,10 @@ foreach ($arrayofai as $ia => $iarecord) {
 	if ($ia == 'anthropic') {
 		$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MAX_TOKENS')->setAsNumber(1);
 		$item->nameText = $langs->trans("AI_API_MAX_TOKENS").' ('.$ialabel.')';
-		$item->defaultFieldValue = '1024';
+		$item->defaultFieldValue = '100000';
 		$item->fieldParams['trClass'] = 'iaservice '.$ia;
 		$item->cssClass = 'width100 input'.$ia;
-		$item->helpText = $langs->trans("AI_API_MAX_TOKENSHelp");
+		$item->helpText = $langs->trans("AI_API_MAX_TOKENSHelp", $item->defaultFieldValue);
 	}
 }
 
