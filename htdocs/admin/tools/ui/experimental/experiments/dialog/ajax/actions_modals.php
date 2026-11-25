@@ -12,6 +12,11 @@ require '../../../../../../../main.inc.php';
  * @var User        $user
  */
 
+// Protection if external user
+if ($user->socid > 0) {
+	accessforbidden();
+}
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/jsonResponse.class.php';
 
 //
@@ -21,7 +26,7 @@ top_httphead('application/json');
 $langs->load('errors');
 
 //
-$action = GETPOST('action');
+$action = GETPOST('action', 'aZ09');
 
 if ($action == 'addticketexample') {
 	$ref = GETPOST('ref', 'aZ09');

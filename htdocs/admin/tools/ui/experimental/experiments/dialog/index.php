@@ -56,7 +56,6 @@ if ($action == 'addticketexample') {
 }
 
 $experimentAssetsPath = $documentation->baseUrl . '/experimental/experiments/dialog/assets/';
-$experimentAssetsPath2 = $documentation->baseUrl . '/experimental/experiments/dolibarr-context/assets/';
 $js = [
 	'/includes/ace/src/ace.js',
 	'/includes/ace/src/ext-statusbar.js',
