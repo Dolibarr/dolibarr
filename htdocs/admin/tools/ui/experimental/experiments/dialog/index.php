@@ -427,10 +427,13 @@ $documentation->showSidebar(); ?>
 
 		await Dolibarr.tools.langs.load('uxdocumentation');
 
+		// All the examples are served by the same page
+		const modalBaseUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/examples.php', 1); ?>?example=';
+
 		// Basic usage
 		const uiDialogTitleCenter = Dolibarr.tools.langs.trans('UiDolibarrDialogCenter');
 		const uiDialogTitleRight = Dolibarr.tools.langs.trans('UiDolibarrDialogRight');
-		let modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-simple.php', 1); ?>';
+		let modalUrl = modalBaseUrl + 'simple';
 		Dolibarr.tools.uiDialog('#btn-dialog-center', {
 			dialogId: 'dialog-center',
 			align: 'center',
@@ -447,7 +450,7 @@ $documentation->showSidebar(); ?>
 
 		// Single call arming several triggers (shared class selector)
 		const uiDialogTitleMultiTrigger = 'Multiple triggers, one call';
-		const multiTriggerUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-basic-multi.php', 1); ?>';
+		const multiTriggerUrl = modalBaseUrl + 'basic-multi';
 		Dolibarr.tools.uiDialog('.dialog-multi-trigger', {
 			dialogId: 'dlg-basic-multi',
 			align: 'center',
@@ -536,7 +539,7 @@ $documentation->showSidebar(); ?>
 
 		// Header
 		const uiDialogTitleWithIcon = 'Dialog with Custom Icon';
-		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-header.php', 1); ?>';
+		modalUrl = modalBaseUrl + 'header';
 		Dolibarr.tools.uiDialog('#btn-dialog-without-title', {
 			dialogId: 'dialog-without-title',
 			align: 'center',
@@ -557,7 +560,7 @@ $documentation->showSidebar(); ?>
 
 		// Footer
 		const uiDialogTitleFooter = 'Dialog with footer';
-		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-simple.php', 1); ?>';
+		modalUrl = modalBaseUrl + 'simple';
 		Dolibarr.tools.uiDialog('#btn-dialog-footer-default', {
 			dialogId: 'dialog-footer-default',
 			align: 'center',
@@ -596,7 +599,7 @@ $documentation->showSidebar(); ?>
 
 		// Data attributes
 		const uiDialogTitleWithData = 'How to pass variables to a dialog?';
-		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-data.php', 1); ?>';
+		modalUrl = modalBaseUrl + 'data';
 		Dolibarr.tools.uiDialog('#btn-dialog-with-data-a', {
 			dialogId: 'dialog-with-data-a',
 			align: 'center',
@@ -612,7 +615,7 @@ $documentation->showSidebar(); ?>
 
 		// Forms
 		const uiDialogTitleForm = 'Add a new ticket';
-		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-form.php', 1); ?>';
+		modalUrl = modalBaseUrl + 'form';
 		Dolibarr.tools.uiDialog('#btn-dialog-with-form', {
 			dialogId: 'dialog-with-form',
 			align: 'right',
@@ -633,7 +636,7 @@ $documentation->showSidebar(); ?>
 
 		// Control size
 		const uiDialogTitleSizeControl = 'Very large dialog';
-		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-size.php', 1); ?>';
+		modalUrl = modalBaseUrl + 'size';
 		Dolibarr.tools.uiDialog('#btn-dialog-params-size-center', {
 			dialogId: 'dialog-size-c',
 			align: 'center',
@@ -652,7 +655,7 @@ $documentation->showSidebar(); ?>
 
 		// No animation
 		const uiDialogTitleNoAnimation = 'No animation on opening';
-		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-no-animation.php', 1); ?>';
+		modalUrl = modalBaseUrl + 'no-animation';
 		Dolibarr.tools.uiDialog('#btn-dialog-params-animation-center', {
 			dialogId: 'dialog-noanim-c',
 			align: 'center',
@@ -671,7 +674,7 @@ $documentation->showSidebar(); ?>
 		// Persist
 		const uiDialogTitlePersistYes = 'Persistant Dialog';
 		const uiDialogTitlePersistNo = 'Non-persistent dialog';
-		modalUrl = '<?php echo dol_buildpath('/'.$documentation->baseUrl.'/experimental/experiments/dialog/modals/example-persist.php', 1); ?>';
+		modalUrl = modalBaseUrl + 'persist';
 		Dolibarr.tools.uiDialog('#btn-dialog-params-persist', {
 			dialogId: 'dialog-persist',
 			align: 'right',

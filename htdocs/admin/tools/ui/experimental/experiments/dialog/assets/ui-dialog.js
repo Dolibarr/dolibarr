@@ -398,7 +398,7 @@ document.addEventListener('Dolibarr:Init', function () {
 				// Close button (×)
 				dialogEl.querySelector('.dol-dialog-close').addEventListener('click', function () { closeDialog(); });
 
-				// Boutons data-dol-dialog-close / data-dol-dialog-confirm du footer JS (sans AJAX)
+				// data-dol-dialog-close / data-dol-dialog-confirm buttons of the JS footer (no AJAX)
 				bindCloseButtons();
 				bindConfirmButtons();
 

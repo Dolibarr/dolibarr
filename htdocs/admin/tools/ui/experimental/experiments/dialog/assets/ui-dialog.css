@@ -55,7 +55,7 @@ dialog.dol-dialog[open] {
 }
 
 /* ============================================================
-   Header (optionnel)
+   Header (optional)
    ============================================================ */
 
 dialog.dol-dialog .dol-dialog-header {
@@ -82,7 +82,7 @@ dialog.dol-dialog .dol-dialog-title .dol-dialog-icon {
 }
 
 /* ============================================================
-   Bouton fermer
+   Close button
    ============================================================ */
 
 dialog.dol-dialog .dol-dialog-close {
@@ -105,7 +105,7 @@ dialog.dol-dialog .dol-dialog-close:hover {
 	color: #000;
 }
 
-/* Bouton standalone (sans header) : absolu en haut à droite */
+/* Standalone button (no header): absolute, top right */
 dialog.dol-dialog > .dol-dialog-close {
 	position: absolute;
 	top: 0.4rem;
@@ -113,7 +113,7 @@ dialog.dol-dialog > .dol-dialog-close {
 }
 
 /* ============================================================
-   Contenu
+   Content
    ============================================================ */
 
 dialog.dol-dialog .dol-dialog-content {
@@ -122,13 +122,13 @@ dialog.dol-dialog .dol-dialog-content {
 	flex: 1;
 }
 
-/* Sans header : espace pour ne pas chevaucher le bouton fermer */
+/* No header: spacing to avoid overlapping the close button */
 dialog.dol-dialog:not(:has(.dol-dialog-header)) .dol-dialog-content {
 	padding-top: 2rem;
 }
 
 /* ============================================================
-   Spinner de chargement
+   Loading spinner
    ============================================================ */
 
 dialog.dol-dialog .dol-dialog-spinner {
@@ -153,13 +153,13 @@ dialog.dol-dialog .dol-dialog-spinner span {
 }
 
 /* ============================================================
-   Footer (optionnel)
+   Footer (optional)
    ============================================================ */
 
 dialog.dol-dialog .dol-dialog-footer {
 	display: flex;
 	align-items: center;
-	justify-content: flex-end; /* right par défaut */
+	justify-content: flex-end; /* right by default */
 	gap: 0.75rem;
 	padding: 1rem 1.25rem;
 	border-top: 1px solid #e0e0e0;
@@ -234,7 +234,7 @@ dialog.dol-dialog.dol-dialog__right::backdrop {
 }
 
 /* ============================================================
-   Erreur formulaire AJAX
+   AJAX form error
    ============================================================ */
 
 dialog.dol-dialog .dol-dialog-form-error {
@@ -249,7 +249,7 @@ dialog.dol-dialog .dol-dialog-form-error {
 }
 
 /* ============================================================
-   No animation override — doit être en dernier
+   No animation override — must be last
    ============================================================ */
 
 dialog.dol-dialog.no-animation,
@@ -260,7 +260,7 @@ dialog.dol-dialog.no-animation.is-closing {
 
 
 /* ============================================================
-   No animation override — doit être en dernier
+   No animation override — must be last
    ============================================================ */
 /* Base button */
 .dialog-btn {
