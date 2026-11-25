@@ -80,6 +80,7 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'statistics';
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'myobjectstats' to show the tab with the custom reports tool
 
 $userid = GETPOSTINT('userid');
 $categ_id = GETPOSTINT('categ_id');
@@ -93,9 +94,9 @@ $object = new MyObject($db);
 $usercanreadstatistic = 1;
 $enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
 if ($enablepermissioncheck) {
-	$usercanreadstatistic = $user->hasRight($objecttype, 'read');
+	$usercanreadstatistic = $user->hasRight('mymodule', $objecttype, 'read');
 	if (getDolGlobalInt('MAIN_NEED_EXPORT_PERMISSION_TO_READ_STATISTICS')) {
-		$usercanreadstatistic = $user->hasRight($objecttype, 'export');
+		$usercanreadstatistic = $user->hasRight('mymodule', $objecttype, 'export');
 	}
 }
 
@@ -132,7 +133,7 @@ $langs->loadLangs(array('companies', 'other', 'mymodule@mymodule'));
 $form = new Form($db);
 
 $title = $langs->trans("Statistics");
-$dir = getMultidirTemp($object);
+$dir = getMultidirTemp($object, $object->module);
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-order page-stats');
 
@@ -143,7 +144,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars i
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', dol_buildpath('/mymodule/myobject_list.php', 1).'?mode=kanban'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 //$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanbanGroupBy'), '', 'fa fa-grip-vertical imgforviewmode', dol_buildpath('/mymodule/aaa_index.php', 1).'?mode=kanbangroupby&groupby=p.fk_opp_status'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanbangroupby' ? 2 : 1), array('morecss' => 'reposition'));
 //$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', dol_buildpath('/mymodule/aaa_index.php', 1).'?mode=hierarchy'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/mymodule/stats/mymodule_index.php', 1).'?mode=statistics&objecttype=myobject@mymodule'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('Statistics'), '', 'fa fa-chart-bar imgforviewmode', dol_buildpath('/mymodule/stats/myobject_index.php', 1).'?mode=statistics&objecttype=myobject@mymodule'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'statistics' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
@@ -160,6 +161,43 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 
 
 //print load_fiche_titre($title, '', $picto);
+
+// The custom reports tool is not available to external users
+$showtabcustomreports = empty($user->socid);
+
+$h = 0;
+$head = array();
+$head[$h][0] = $_SERVER["PHP_SELF"].'?mode='.$mode;
+$head[$h][1] = $langs->trans("ByMonthYear");
+$head[$h][2] = 'byyear';
+$h++;
+
+if ($showtabcustomreports) {
+	$head[$h][0] = $_SERVER["PHP_SELF"].'?tabfamily=myobjectstats';
+	$head[$h][1] = $langs->trans("CustomReport");
+	$head[$h][2] = 'customreports';
+	$h++;
+}
+
+$type = 'myobject_stats';
+
+complete_head_from_modules($conf, $langs, null, $head, $h, $type);
+
+// Show the tab with the custom reports tool
+if ($showtabcustomreports && $tabfamily == 'myobjectstats') {
+	print dol_get_fiche_head($head, 'customreports', '', -1);
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	// This object type must be declared by the hook loadDataForCustomReports (see class/actions_mymodule.class.php)
+	$customreportobjecttype = 'mymodule_myobject';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
 
 dol_mkdir($dir);
 
@@ -320,17 +358,6 @@ if (!count($arrayyears)) {
 
 
 
-$h = 0;
-$head = array();
-$head[$h][0] = $_SERVER["PHP_SELF"].'?mode='.$mode;
-$head[$h][1] = $langs->trans("ByMonthYear");
-$head[$h][2] = 'byyear';
-$h++;
-
-$type = 'myobject_stats';
-
-complete_head_from_modules($conf, $langs, null, $head, $h, $type);
-
 print dol_get_fiche_head($head, 'byyear', '', -1);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -362,11 +389,12 @@ if (array_key_exists('fk_user_creat', $object->fields)) {
 	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	print '</td></tr>';
 }
 // Status
 if (array_key_exists('status', $object->fields)) {
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	$liststatus = $object->fields['status']['arrayofkeyvalue'];
+	$liststatus = $object->fields['status']['arrayofkeyval'];
 	print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
 	print '</td></tr>';
 }
@@ -392,7 +420,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
-print '<td class="right">'.$langs->trans("NbOfOrders").'</td>';
+print '<td class="right">'.$langs->trans("Number").'</td>';
 print '<td class="right">%</td>';
 print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="right">%</td>';
@@ -400,34 +428,48 @@ print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
 print '<td class="right">%</td>';
 print '</tr>';
 
+// Lines after $MAXLINES are hidden and shown with the link "More..."
+$MAXLINES = 5;
+$nbline = 0;
+$cssline = '';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
 	while (!empty($year) && $oldyear > (int) $year + 1) { // If we have empty year
 		$oldyear--;
+		$nbline++;
+		$cssline = ($nbline > $MAXLINES ? ' hidden statsyearmorelines' : '');
 
-		print '<tr class="oddeven" height="24">';
+		print '<tr class="oddeven'.$cssline.'" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		print '<td class="right"></td>';
-		print '<td class="right">0</td>';
+		print '<td class="right amount">0</td>';
 		print '<td class="right"></td>';
-		print '<td class="right">0</td>';
+		print '<td class="right amount">0</td>';
 		print '<td class="right"></td>';
 		print '</tr>';
 	}
 
+	$nbline++;
+	$cssline = ($nbline > $MAXLINES ? ' hidden statsyearmorelines' : '');
 
-	print '<tr class="oddeven" height="24">';
+	print '<tr class="oddeven'.$cssline.'" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? round($val['nb_diff']) : "0").'%</td>';
-	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['total_diff']) || $val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['total_diff']) ? round($val['total_diff']) : "0").'%</td>';
-	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['avg_diff']) || $val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['avg_diff']) ? round($val['avg_diff']) : "0").'%</td>';
+	print '<td class="right opacitylow '.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'growthup' : 'growthdown').'">'.(isset($val['nb_diff']) ? round($val['nb_diff']) : "0").'%</td>';
+	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
+	print '<td class="right opacitylow '.((!isset($val['total_diff']) || $val['total_diff'] >= 0) ? 'growthup' : 'growthdown').'">'.(isset($val['total_diff']) ? round($val['total_diff']) : "0").'%</td>';
+	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
+	print '<td class="right opacitylow '.((!isset($val['avg_diff']) || $val['avg_diff'] >= 0) ? 'growthup' : 'growthdown').'">'.(isset($val['avg_diff']) ? round($val['avg_diff']) : "0").'%</td>';
 	print '</tr>';
 	$oldyear = $year;
+}
+
+if ($nbline > $MAXLINES) {
+	print '<tr class="liste_total"><td colspan="7" class="center">';
+	print '<a href="#" class="showmoreoptions" onclick="jQuery(\'.statsyearmorelines\').toggle(); jQuery(this).toggle(); return false;">'.img_picto('', 'chevron-down', 'class="paddingright"').$langs->trans("More").'...</a>';
+	print '</td></tr>';
 }
 
 print '</table>';

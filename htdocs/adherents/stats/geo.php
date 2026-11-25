@@ -46,6 +46,7 @@ $mode = GETPOST('mode');
 if (empty($mode)) {
 	$mode = 'memberbycountry';
 }
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'memberstats' to show the tab with the custom reports tool
 
 // Security check
 if ($user->socid > 0) {
@@ -92,6 +93,23 @@ $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', dolBuildUrl(DOL_URL_ROOT.'/adherents/card.php', ['action' => 'create']), '', $user->hasRight('adherent', 'creer'));
 
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $langs->trans("Statistics"), $memberstatic->picto, 0, $newcardbutton, '', 0, 0, 0, 1);
+
+// Show the tab with the custom reports tool (not available to external users)
+if (empty($user->socid) && $tabfamily == 'memberstats') {
+	$head = member_stats_prepare_head($memberstatic);
+
+	print dol_get_fiche_head($head, 'customreports', '', -1, '');
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	$customreportobjecttype = 'member';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
 
 //dol_mkdir($dir);
 $data = array();

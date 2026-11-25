@@ -126,7 +126,6 @@ ErrorObjectMustHaveStatusDraftToBeValidated=O objeto %s deve ter status 'Rascunh
 ErrorObjectMustHaveLinesToBeValidated=O objeto %s deve ter linhas a serem validadas.
 ErrorFileNotFoundWithSharedLink=Arquivo não encontrado. Pode ser que a chave do compartilhamento tenha sido modificada ou o arquivo tenha sido removido recentemente.
 ErrorDuringChartLoad=Erro ao carregar o plano de contas. Se algumas contas não foram carregadas, você ainda pode inseri-las manualmente.
-ErrorBadSyntaxForParamKeyForContent=Má sintaxe para o parâmetro keyforcontent . Deve ter um valor começando com %s ou %s
 ErrorVariableKeyForContentMustBeSet=Erro, a constante com nome %s (com conteúdo de texto para mostrar) ou %s (com URL externo para mostrar) deve ser definida.
 ErrorURLMustStartWithHttp=O URL %s deve começar com http:// ou https://
 ErrorNewRefIsAlreadyUsed=Erro, a nova referência já está sendo usada

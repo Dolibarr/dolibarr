@@ -73,6 +73,10 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$caneditselfperms = ($user->id == $id && $user->hasRight("user", "self_advance", "writeperms"));
 	$caneditperms = (($caneditperms || $caneditselfperms) ? 1 : 0);
 }
+// Permissions are given by user groups only: read only
+if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+	$caneditperms = 0;
+}
 
 // Security check
 $socid = 0;
@@ -182,7 +186,7 @@ $excludedModules = getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD') ? array('modFourn
 // every disabled module found on disk. If we are looking at our own entity, $conf->global already
 // has this cached from bootstrap and no query is needed at all.
 if ($entity == $conf->entity) {
-	$enabledmoduleconst = (array) $conf->global;
+	$enabledmoduleconst = get_object_vars($conf->global);
 } else {
 	$enabledmoduleconst = array();
 	$sql = "SELECT ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value";
@@ -488,6 +492,9 @@ if ($user->admin) {
 	}
 	print info_admin($s);
 }
+if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+	print info_admin($langs->trans("PermissionsManagedByGroupsOnly").' <a href="'.dolBuildUrl(DOL_URL_ROOT.'/user/card.php', ['id' => $object->id]).'">'.$langs->trans("ListOfGroupsForUser").'</a>', 0, 0, '0');
+}
 // If edited user is an extern user, we show warning for external users
 if (!empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
@@ -612,6 +619,13 @@ foreach ($arrayofpermission as $i => $obj) {
 			continue;
 		}
 		if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
+			$i++;
+			continue;
+		}
+	}
+	if (!getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+		// Permissions on delivery receipts are hidden when the delivery receipt feature is disabled
+		if ($obj->module == 'expedition' && in_array($obj->perms, array('delivery', 'delivery_advance'))) {
 			$i++;
 			continue;
 		}

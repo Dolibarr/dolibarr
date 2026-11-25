@@ -115,7 +115,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 	 * @return bool					True if login ok, false if not
 	 */
 	static function ($username, $password) {
-		global $user, $conf;
+		global $user, $conf, $db;
 		global $dolibarr_main_authentication, $dolibarr_auto_user;
 
 		if (empty($user->login)) {
@@ -151,6 +151,12 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 		$entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 		if (checkLoginPassEntity($username, $password, $entity, $authmode, 'dav') != $username) {
+			return false;
+		}
+
+		// A password alone must not be enough for a user with a two-factor authentication, or who must set one up, and the DAV access has no other credential
+		if (!dolTotpIsDisabledByConf() && (dolTotpGetEnrollment($db, $user->id) !== null || dolTotpIsRequired($db, $user))) {
+			dol_syslog("DAV access refused for ".$username.": two-factor authentication is enabled or required", LOG_WARNING);
 			return false;
 		}
 
@@ -229,9 +235,21 @@ $baseUri = DOL_URL_ROOT.'/dav/fileserver.php/';
 $server->setBaseUri($baseUri);
 
 // Add authentication function
+// Exception for URL of Sabre browser resources (assets of the browser view), so they can be served
+// without authentication. Allowed only for a GET request on the root of the file server, and only
+// when the public dir can be browsed anonymously, so the exception can not be used to bypass authentication.
+$browserAssetWithoutAuth = false;
+if (getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')
+	&& !getDolGlobalString('DAV_DISABLE_BROWSER')
+	&& ($_SERVER['REQUEST_METHOD'] === 'GET')
+	&& preg_match('/^'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php', '/').'\/?$/', Sabre\Uri\normalize($_SERVER["PHP_SELF"]))
+	&& preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])
+) {
+	$browserAssetWithoutAuth = true;
+}
 if ((!getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')
 	|| !preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public', '/').'/', Sabre\Uri\normalize($_SERVER["PHP_SELF"])))
-	&& !preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
+	&& !$browserAssetWithoutAuth	// URL for Sabre browser resources
 ) {
 	//var_dump($_SERVER["QUERY_STRING"]);exit;
 	$server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend));

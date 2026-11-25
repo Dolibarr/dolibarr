@@ -27,6 +27,7 @@ Earnings=Ganancias
 TotalEarnings=Ingresos totales
 TotalDeductions=Deducciones totales
 NetPaid=Total pagado
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta (del plan de cuentas) utilizada de forma predeterminada para los "usuarios" en materia de salarios
@@ -55,8 +56,6 @@ FillFieldFirst=Primero rellene el campo de empleado
 UpdateAmountWithLastSalary=Fijar el monto del último salario
 MakeTransferRequest=Realizar solicitud de transferencia
 VirementOrder=Solicitud de transferencia de crédito
-WithdrawalReceipt=Orden de transferencia bancaria
-OrderWaiting=Orden pendiente
 FillEndOfMonth=Fin de mes
 
 # Shortcuts

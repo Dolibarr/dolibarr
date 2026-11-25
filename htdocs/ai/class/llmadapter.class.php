@@ -35,6 +35,9 @@ class UniversalLLMAdapter
 	/** @var array{input?:int,output?:int,model?:string} Token usage reported by the provider for the LAST call (empty when the call failed before a usable response) */
 	public $lastUsage = array();
 
+	/** @var bool True when the answer of the LAST call was cut because it reached the max number of tokens of the answer */
+	public $lastTruncated = false;
+
 	/** @var string The type of LLM (e.g., 'openai', 'ollama') */
 	private $type;
 
@@ -76,11 +79,13 @@ class UniversalLLMAdapter
 	 * (with thinking models, the reasoning tokens count inside this limit)
 	 *
 	 * @param int $maxTokens Maximum number of tokens, 0 = default of each provider
-	 * @return void
+	 * @return bool Always true
 	 */
-	public function setMaxTokens(int $maxTokens): void
+	public function setMaxTokens(int $maxTokens): bool
 	{
 		$this->maxTokens = max(0, $maxTokens);
+
+		return true;
 	}
 
 	/**
@@ -179,7 +184,9 @@ class UniversalLLMAdapter
 
 		$this->lastRequest = $this->encodeRequestForLog($data);
 
-		dol_syslog('callOpenAI url='.$url, LOG_DEBUG, 0, '_ai');
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog('callOpenAI url='.$url, LOG_DEBUG, 0, '_ai');
+		}
 
 		$answer = $this->curl($url, $data, array("Content-Type: application/json", "Authorization: Bearer " . $this->key));
 
@@ -205,7 +212,10 @@ class UniversalLLMAdapter
 		// With attachments, content becomes an array of typed blocks: PDFs go as
 		// 'document' blocks, images as 'image' blocks (Anthropic native formats).
 		$userContent = $msg;
-		$maxTokens = 1024;
+		$maxTokens = getDolGlobalInt('AI_API_ANTHROPIC_MAX_TOKENS', 1024);
+		if ($maxTokens <= 0) {
+			$maxTokens = 1024;	// max_tokens is mandatory for Anthropic, an empty setup must not send 0
+		}
 		if (!empty($attachments)) {
 			$userContent = array();
 			foreach ($attachments as $att) {
@@ -217,7 +227,7 @@ class UniversalLLMAdapter
 				);
 			}
 			$userContent[] = array("type" => "text", "text" => $msg);
-			$maxTokens = 8192;	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
+			$maxTokens = max($maxTokens, 8192);	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
 		}
 
 		$messages = array();
@@ -426,12 +436,23 @@ class UniversalLLMAdapter
 		// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 		global $dolibarr_ai_allow_local_endpoints;
 
-		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
+		// 0 or empty = external only, 1 = local only, 2 = both (same rule as Ai::generateContent())
+		$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : (int) $dolibarr_ai_allow_local_endpoints;
+
+		// Hooks of the calling page context (for example 'main'): a module can refuse the request (quota...) then read the answer (token usage...)
+		global $hookmanager;
+		$hookparameters = array('service' => $this->type, 'model' => $this->model, 'function' => 'assistant');
+		if (is_object($hookmanager)) {
+			if ($hookmanager->executeHooks('beforeAIRequest', $hookparameters) < 0) {
+				return "Error: " . $hookmanager->error;
+			}
+		}
 
 		// Pass $this->timeout as the response timeout so the LLM-specific value configured
 		// at construction time is honored (getURLContent's $timeoutresponse is the 10th arg;
 		// preceding args $ssl_verifypeer=-1 and $timeoutconnect=0 keep their defaults).
 		$this->lastUsage = array();	// never carry over the previous call's usage
+		$this->lastTruncated = false;
 
 		$result = getURLContent($url, 'POST', json_encode($data), 1, $headers, array('http', 'https'), $localurl, -1, 0, $this->timeout);
 
@@ -447,24 +468,32 @@ class UniversalLLMAdapter
 		// a bare "Invalid JSON response from API." with an empty body.
 		$this->lastResponse = "HTTP " . $httpCode . " from " . $effectiveUrl . "\n--- body (" . strlen($body) . " bytes) ---\n"	. $body;
 
-		dol_syslog('curl answer received, HTTP = '.$httpCode.', size of response string = '.strlen($body), LOG_DEBUG, 0, '_ai');
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog('curl answer received, HTTP = '.$httpCode.', size of response string = '.strlen($body), LOG_DEBUG, 0, '_ai');
+		}
 
 		if (!empty($result['curl_error_no'])) {
-			dol_syslog("Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")", LOG_DEBUG, 0, '_ai');
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")", LOG_DEBUG, 0, '_ai');
+			}
 			return "Error: cURL #" . $result['curl_error_no'] . " " . $result['curl_error_msg'] . " (url=" . $effectiveUrl . ")";
 		}
 
 		$json = json_decode($body, true);
 
-		dol_syslog("curl answer body=" . var_export($body, true), LOG_DEBUG, 0, '_ai');
-		dol_syslog("curl answer json_decoded=" . var_export($json, true), LOG_DEBUG, 0, '_ai');
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("curl answer body=" . var_export($body, true), LOG_DEBUG, 0, '_ai');
+			dol_syslog("curl answer json_decoded=" . var_export($json, true), LOG_DEBUG, 0, '_ai');
+		}
 
 		if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
 			// Common real-world causes: HTTP 4xx/5xx with empty body, HTML error page
 			// from a proxy, gateway timeout, etc. Surface the HTTP code and a short
 			// body snippet so the admin can diagnose without re-running with curl.
 			$snippet = substr($body, 0, 500);
-			dol_syslog("Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>'), LOG_DEBUG, 0, '_ai');
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>'), LOG_DEBUG, 0, '_ai');
+			}
 			return "Error: Invalid JSON response from API (HTTP " . $httpCode . ", " . strlen($body) . " bytes). Body snippet: " . ($snippet !== '' ? $snippet : '<empty>');
 		}
 
@@ -480,8 +509,14 @@ class UniversalLLMAdapter
 				$msg = json_encode($msg);
 			}
 			$this->recordModelFailure($httpCode, (string) $msg);
-			dol_syslog("Error: API " . $msg, LOG_DEBUG, 0, '_ai');
+			if (getDolGlobalString("AI_DEBUG")) {
+				dol_syslog("Error: API " . $msg, LOG_DEBUG, 0, '_ai');
+			}
 			return "Error: API " . $msg;
+		}
+
+		if (is_object($hookmanager) && is_array($json)) {
+			$hookmanager->executeHooks('afterAIRequest', $hookparameters + array('response' => $json));
 		}
 
 		// Token usage as reported by the provider, for the cost columns of the
@@ -501,6 +536,23 @@ class UniversalLLMAdapter
 		} else {
 			$this->lastUsage['input']  = (int) ($json['usage']['prompt_tokens'] ?? 0);
 			$this->lastUsage['output'] = (int) ($json['usage']['completion_tokens'] ?? 0);
+		}
+
+		// An answer cut by the max tokens limit is unusable (half a JSON, half a page content): never return it as a valid answer
+		if ($isClaude) {
+			$stopReason = (string) ($json['stop_reason'] ?? '');
+			$this->lastTruncated = ($stopReason === 'max_tokens');
+		} elseif ($isGemini) {
+			$stopReason = (string) ($json['candidates'][0]['finishReason'] ?? '');
+			$this->lastTruncated = ($stopReason === 'MAX_TOKENS');
+		} else {
+			$stopReason = (string) ($json['choices'][0]['finish_reason'] ?? '');
+			$this->lastTruncated = ($stopReason === 'length');
+		}
+		if ($this->lastTruncated) {
+			$maxTokensUsed = (int) ($data['max_tokens'] ?? ($data['generationConfig']['maxOutputTokens'] ?? 0));
+			dol_syslog("Answer truncated by the provider (stop reason = ".$stopReason.", max tokens = ".($maxTokensUsed > 0 ? $maxTokensUsed : 'default of provider').", model = ".$this->model.")", LOG_WARNING, 0, '_ai');
+			return "Error: Answer truncated, the max number of tokens of the answer was reached (".($maxTokensUsed > 0 ? $maxTokensUsed : 'default of provider').")";
 		}
 
 		// Extraction Logic

@@ -172,15 +172,15 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if ($odtPath) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
+			$texte .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b></span>';
 		}
 
 		if ($nbofiles) {
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx opacitylow">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
 				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=mymodule_myobject/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
@@ -280,7 +280,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1];
+			$dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1].'/'.$object->element;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -340,7 +340,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+					if ($object->contact->socid != $object->thirdparty->id && getDolGlobalInt('MAIN_USE_COMPANY_NAME_OF_CONTACT', 1)) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;

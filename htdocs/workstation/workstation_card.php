@@ -494,6 +494,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		print '</div>'."\n";
 	}
+
+	// Documents
+	if ($action != 'presend' && $action != 'editline') {
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
+
+		$objref = dol_sanitizeFileName($object->ref);
+		$filedir = $conf->workstation->dir_output.'/'.$objref;
+		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+		$genallowed = $permissiontoread;
+		$delallowed = $permissiontoadd;
+
+		print $formfile->showdocuments('workstation', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+
+		print '</div><div class="fichehalfright">';
+		print '</div></div>';
+	}
 }
 
 // End of page

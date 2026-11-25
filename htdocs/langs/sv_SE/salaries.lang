@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net betalas
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (från kontoplanen) används som standard för "användare" på löner
@@ -55,8 +56,6 @@ FillFieldFirst=Fyll i fällt om den anställda först
 UpdateAmountWithLastSalary=Fastställt belopp för senaste lön
 MakeTransferRequest=Gör överföringsbegäran
 VirementOrder=Begäran om kreditöverföring
-WithdrawalReceipt=Kreditöverföringsorder
-OrderWaiting=Väntande beställning
 FillEndOfMonth=Slutet av månaden
 
 # Shortcuts

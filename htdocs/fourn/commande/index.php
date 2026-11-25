@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Vinicius Nogueira           <viniciusvgn@gmail.com>
  * Copyright (C) 2019       Nicolas ZABOURI             <info@inovea-conseil.com>
  * Copyright (C) 2024-2026  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter              <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -279,7 +280,7 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).' ';
+	print '<th colspan="4">'.$langs->trans("LastModifiedSupplierOrders", $max).' ';
 	print '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?sortfield=cf.tms&sortorder=DESC">';
 	print '<span class="badge">...</span>';
 	print '</a>';

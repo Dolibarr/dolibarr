@@ -53,29 +53,37 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		$now      = dol_now();
 		$encoding = "";
 
+		// A line of a calendar file ends with CRLF (RFC 5545 section 3.1). An iCal line is folded at 75 octets, and the control
+		// characters of a value (a line break in an uid, an url or an email) are removed so they can not add a property.
+		/** @param string $line */
+		$writeline = function ($line) use ($calfileh, $format) {
+			if ($format === "ical") {
+				$line = calFoldLine((string) preg_replace('/[\x00-\x08\x0A-\x1F\x7F]+/', ' ', $line));
+			}
+			fwrite($calfileh, $line."\r\n");
+		};
+
 		if ($format === "vcal") {
 			$encoding = "ENCODING=QUOTED-PRINTABLE:";
 		}
 
 		// Print header
-		fwrite($calfileh, "BEGIN:VCALENDAR\n");
+		$writeline("BEGIN:VCALENDAR");
 
 		// version is always "2.0"
-		fwrite($calfileh, "VERSION:2.0\n");
+		$writeline("VERSION:2.0");
 
-		fwrite($calfileh, "METHOD:PUBLISH\n");
-		fwrite($calfileh, "PRODID:-//DOLIBARR ".DOL_VERSION."\n");
-		fwrite($calfileh, "CALSCALE:GREGORIAN\n");
-		fwrite($calfileh, "X-WR-CALNAME:".$encoding.format_cal($format, $title)."\n");
-		fwrite($calfileh, "X-WR-CALDESC:".$encoding.format_cal($format, $desc)."\n");
+		$writeline("METHOD:PUBLISH");
+		$writeline("PRODID:-//DOLIBARR ".DOL_VERSION);
+		$writeline("CALSCALE:GREGORIAN");
+		$writeline("X-WR-CALNAME:".$encoding.format_cal($format, $title));
+		$writeline("X-WR-CALDESC:".$encoding.format_cal($format, $desc));
 		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
 
 		if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE') && getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE') > 60) {
-			$hh = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "hour");
-			$mm = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "min");
-			$ss = convertSecondToTime(getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE'), "sec");
+			$ttl = getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE');
 
-			fwrite($calfileh, "X-PUBLISHED-TTL: P".$hh."H".$mm."M".$ss."S\n");
+			$writeline("X-PUBLISHED-TTL:PT".intdiv($ttl, 3600)."H".intdiv($ttl % 3600, 60)."M".($ttl % 60)."S");
 		}
 
 		foreach ($events_array as $key => $event) {
@@ -147,55 +155,55 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			if ($type === "event") {
 				$nbevents++;
 
-				fwrite($calfileh, "BEGIN:VEVENT\n");
-				fwrite($calfileh, "UID:".$uid."\n");
+				$writeline("BEGIN:VEVENT");
+				$writeline("UID:".$uid);
 
 				if (!empty($email)) {
-					fwrite($calfileh, "ORGANIZER:MAILTO:".$email."\n");
-					fwrite($calfileh, "CONTACT:MAILTO:".$email."\n");
+					$writeline("ORGANIZER:MAILTO:".$email);
+					$writeline("CONTACT:MAILTO:".$email);
 				}
 
 				if (!empty($url)) {
-					fwrite($calfileh, "URL:".$url."\n");
+					$writeline("URL:".$url);
 				}
 
 				if (is_array($assignedUsers)) {
 					foreach ($assignedUsers as $assignedUser) {
-						if ($assignedUser->email === $email) {
+						if (empty($assignedUser->email) || $assignedUser->email === $email) {
 							continue;
 						}
 
-						fwrite($calfileh, "ATTENDEE;RSVP=TRUE:mailto:".$assignedUser->email."\n");
+						$writeline("ATTENDEE;RSVP=TRUE:mailto:".$assignedUser->email);
 					}
 				}
 
 				if ($created) {
-					fwrite($calfileh, "CREATED:".dol_print_date($created, "dayhourxcard", true)."\n");
+					$writeline("CREATED:".dol_print_date($created, "dayhourxcard", true));
 				}
 
 				if ($modified) {
-					fwrite($calfileh, "LAST-MODIFIED:".dol_print_date($modified, "dayhourxcard", true)."\n");
+					$writeline("LAST-MODIFIED:".dol_print_date($modified, "dayhourxcard", true));
 				}
 
-				fwrite($calfileh, "SUMMARY:".$encoding.$summary."\n");
-				fwrite($calfileh, "DESCRIPTION:".$encoding.$description."\n");
+				$writeline("SUMMARY:".$encoding.$summary);
+				$writeline("DESCRIPTION:".$encoding.$description);
 
 				if (!empty($location)) {
-					fwrite($calfileh, "LOCATION:".$encoding.$location."\n");
+					$writeline("LOCATION:".$encoding.$location);
 				}
 
 				if ($fulldayevent) {
-					fwrite($calfileh, "X-FUNAMBOL-ALLDAY:1\n");
+					$writeline("X-FUNAMBOL-ALLDAY:1");
 				}
 
 				// see https://docs.microsoft.com/en-us/openspecs/exchange_server_protocols/ms-oxcical/0f262da6-c5fd-459e-9f18-145eba86b5d2
 				if ($fulldayevent) {
-					fwrite($calfileh, "X-MICROSOFT-CDO-ALLDAYEVENT:TRUE\n");
+					$writeline("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE");
 				}
 
 				// Date must be GMT dates
 				// Current date
-				fwrite($calfileh, "DTSTAMP:".dol_print_date($now, "dayhourxcard", 'gmt')."\n");
+				$writeline("DTSTAMP:".dol_print_date($now, "dayhourxcard", 'gmt'));
 
 				// Start date
 				$prefix     = "";
@@ -216,7 +224,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 					}
 				}
 
-				fwrite($calfileh, "DTSTART".$prefix.":".$startdatef."\n");
+				$writeline("DTSTART".$prefix.":".$startdatef);
 
 				// End date
 				if ($fulldayevent) {
@@ -243,59 +251,63 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 					$enddatef = dol_print_date($enddate + 1, "dayxcard", 'tzserver');
 				}
 
-				fwrite($calfileh, "DTEND".$prefix.":".$enddatef."\n");
-				fwrite($calfileh, "STATUS:CONFIRMED\n");
+				$writeline("DTEND".$prefix.":".$enddatef);
+				$writeline("STATUS:CONFIRMED");
 
 				if (!empty($transparency)) {
-					fwrite($calfileh, "TRANSP:".$transparency."\n");
+					$writeline("TRANSP:".$transparency);
 				}
 
 				if (!empty($category)) {
-					fwrite($calfileh, "CATEGORIES:".$encoding.$category."\n");
+					$writeline("CATEGORIES:".$encoding.$category);
 				}
 
-				fwrite($calfileh, "END:VEVENT\n");
+				$writeline("END:VEVENT");
 			}
 
 			// Output the vCard/iCal VJOURNAL object
 			if ($type === "journal") {
 				$nbevents++;
 
-				fwrite($calfileh, "BEGIN:VJOURNAL\n");
-				fwrite($calfileh, "UID:".$uid."\n");
+				$writeline("BEGIN:VJOURNAL");
+				$writeline("UID:".$uid);
 
 				if (!empty($email)) {
-					fwrite($calfileh, "ORGANIZER:MAILTO:".$email."\n");
-					fwrite($calfileh, "CONTACT:MAILTO:".$email."\n");
+					$writeline("ORGANIZER:MAILTO:".$email);
+					$writeline("CONTACT:MAILTO:".$email);
 				}
 
 				if (!empty($url)) {
-					fwrite($calfileh, "URL:".$url."\n");
+					$writeline("URL:".$url);
 				}
 
 				if ($created) {
-					fwrite($calfileh, "CREATED:".dol_print_date($created, "dayhourxcard", 'gmt')."\n");
+					$writeline("CREATED:".dol_print_date($created, "dayhourxcard", 'gmt'));
 				}
 
 				if ($modified) {
-					fwrite($calfileh, "LAST-MODIFIED:".dol_print_date($modified, "dayhourxcard", 'gmt')."\n");
+					$writeline("LAST-MODIFIED:".dol_print_date($modified, "dayhourxcard", 'gmt'));
 				}
 
-				fwrite($calfileh, "SUMMARY:".$encoding.$summary."\n");
-				fwrite($calfileh, "DESCRIPTION:".$encoding.$description."\n");
-				fwrite($calfileh, "STATUS:CONFIRMED\n");
-				fwrite($calfileh, "CATEGORIES:".$category."\n");
-				fwrite($calfileh, "LOCATION:".$location."\n");
-				fwrite($calfileh, "TRANSP:OPAQUE\n");
-				fwrite($calfileh, "CLASS:CONFIDENTIAL\n");
-				fwrite($calfileh, "DTSTAMP:".dol_print_date($startdate, "dayhourxcard", 'gmt')."\n");
+				$writeline("SUMMARY:".$encoding.$summary);
+				$writeline("DESCRIPTION:".$encoding.$description);
+				$writeline("STATUS:CONFIRMED");
+				if (!empty($category)) {
+					$writeline("CATEGORIES:".$encoding.$category);
+				}
+				if (!empty($location)) {
+					$writeline("LOCATION:".$encoding.$location);
+				}
+				$writeline("TRANSP:OPAQUE");
+				$writeline("CLASS:CONFIDENTIAL");
+				$writeline("DTSTAMP:".dol_print_date($now, "dayhourxcard", 'gmt'));
 
-				fwrite($calfileh, "END:VJOURNAL\n");
+				$writeline("END:VJOURNAL");
 			}
 		}
 
 		// Footer
-		fwrite($calfileh, "END:VCALENDAR");
+		$writeline("END:VCALENDAR");
 
 		fclose($calfileh);
 		dolChmod($outputfile);
@@ -363,22 +375,20 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		}
 		//fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-		fwrite($fichier, "<link>".getRootURLFromURL($url)."</link>\n");
+		fwrite($fichier, "<link>".rssUrl(getRootURLFromURL($url))."</link>\n");
 
 		// Image
 		if (!empty($mysoc->logo_squarred_small)) {
-			$urlimage = $urlwithroot.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small);
+			$urlimage = $urlwithroot.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small);
 			//$urlimage = $GLOBALS['website']->virtualhost
 			if ($urlimage && (empty($GLOBALS['website']) || preg_match('/'.preg_quote($GLOBALS['website']->virtualhost, '/').'/', $urlwithroot))) {
-				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>".htmlspecialchars($title)."</title><link><![CDATA[".$url."]]></link></image>\n");
+				fwrite($fichier, "<image><url>".rssCdata($urlimage)."</url><title>".dol_escape_xml($title)."</title><link>".rssCdata($url)."</link></image>\n");
 			}
 		}
 
 		// Add a tag for some readers (Google / Feed readers) to detect that this is a RSS feed and not a generic XML file
 		// For Atom link, the & must be &amp; instead of &.
-		$urlforatomlink = $url;
-		$urlforatomlink = preg_replace('/&(?!amp;|lt;|gt;|quot;|apos;)/', '&amp;', $urlforatomlink);
-		fwrite($fichier, '<atom:link href="'.$urlforatomlink.'" rel="self" type="application/rss+xml"/>'."\n");
+		fwrite($fichier, '<atom:link href="'.rssUrl($url).'" rel="self" type="application/rss+xml"/>'."\n");
 
 		foreach ($events_array as $key => $event) {
 			$eventqualified = true;
@@ -460,32 +470,32 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$description = dol_string_nohtmltag(preg_replace("/<br[\s\/]?>/i", "\n", $event["desc"]), 0);
 
 				fwrite($fichier, "<item>\n");
-				fwrite($fichier, "<title><![CDATA[".$summary."]]></title>\n");
+				fwrite($fichier, "<title>".rssCdata($summary)."</title>\n");
 				//fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
-				fwrite($fichier, "<link>".$url."</link>\n");
+				fwrite($fichier, "<link>".rssUrl($url)."</link>\n");
 
 				//fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
 				if (!empty($category)) {
-					fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
+					fwrite($fichier, "<category>".rssCdata($category)."</category>\n");
 				}
 				//fwrite($fichier, "<description><![CDATA[".$summary."]]></description>\n");
-				fwrite($fichier, "<description><![CDATA[");
+				$descriptionhtml = '';
 				if (!empty($image)) {
-					fwrite($fichier, '<p><img class="center" src="'.$image.'"/></p>');
+					$descriptionhtml .= '<p><img class="center" src="'.htmlspecialchars($image, ENT_QUOTES).'"/></p>';
 				}
 				if ($description) {
-					fwrite($fichier, $description);
+					$descriptionhtml .= $description;
 				}
-				fwrite($fichier, "]]></description>\n");
+				fwrite($fichier, "<description>".rssCdata($descriptionhtml)."</description>\n");
 				// Note: We may also add description into content:encoded tag.
 
 				fwrite($fichier, "<pubDate>".date("r", $startdate)."</pubDate>\n");
 				if ($useurlforguid) {
-					fwrite($fichier, '<guid isPermaLink="true">'.$url.'</guid>'."\n");
+					fwrite($fichier, '<guid isPermaLink="true">'.rssUrl($url).'</guid>'."\n");
 				} else {
-					fwrite($fichier, '<guid isPermaLink="false"><![CDATA['.str_pad($uid, 10, "0", STR_PAD_LEFT).']]></guid>'."\n");
+					fwrite($fichier, '<guid isPermaLink="false">'.rssCdata(str_pad($uid, 10, "0", STR_PAD_LEFT)).'</guid>'."\n");
 				}
-				fwrite($fichier, '<source url="'.$url.'"><![CDATA[Dolibarr]]></source>'."\n");
+				fwrite($fichier, '<source url="'.rssUrl($url).'"><![CDATA[Dolibarr]]></source>'."\n");
 				fwrite($fichier, "</item>\n");
 			}
 		}
@@ -499,6 +509,36 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 	}
 
 	return $nbevents;
+}
+
+/**
+ *  Return a text as a CDATA section of a XML file.
+ *  The end of a CDATA section ("]]>") found in the text is split so the text can not leave the section, and the
+ *  characters not allowed in XML 1.0 are removed.
+ *
+ *  @param      string  $string     Text
+ *  @return     string              CDATA section
+ */
+function rssCdata($string)
+{
+	$string = (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $string);
+
+	return '<![CDATA['.str_replace(']]>', ']]]]><![CDATA[>', $string).']]>';
+}
+
+/**
+ *  Return an URL ready to be written in a XML file, as a text or as an attribute value.
+ *  An "&" that already starts an entity is kept, so an URL that was already escaped is not escaped twice.
+ *
+ *  @param      string  $url        URL
+ *  @return     string              URL escaped
+ */
+function rssUrl($url)
+{
+	$url = (string) preg_replace('/[\x00-\x1F\x7F]/', '', $url);
+	$url = (string) preg_replace('/&(?!amp;|lt;|gt;|quot;|apos;)/', '&amp;', $url);
+
+	return str_replace(array('"', "'", '<', '>'), array('&quot;', '&apos;', '&lt;', '&gt;'), $url);
 }
 
 /**
@@ -517,21 +557,40 @@ function format_cal($format, $string)
 	}
 
 	if ($format === "ical") {
-		// Replace new lines chars by "\n"
-		$newstring = preg_replace("/\r\n/i", "\\n", $newstring);
-		$newstring = preg_replace("/\n\r/i", "\\n", $newstring);
-		$newstring = preg_replace("/\n/i", "\\n", $newstring);
-
-		// Must not exceed 75 char. Cut with "\r\n"+Space
-		$newstring = calEncode($newstring);
+		// Escape a TEXT value as RFC 5545 section 3.3.11: backslash, semicolon, comma and new lines.
+		// The line is folded at 75 octets when it is written (see calFoldLine()).
+		$newstring = str_replace(array("\\", ";", ",", "\r\n", "\n\r", "\r", "\n"), array("\\\\", "\\;", "\\,", "\\n", "\\n", "\\n", "\\n"), $newstring);
 	}
 
 	return $newstring;
 }
 
 /**
+ *  Fold a line of an iCal file as RFC 5545 section 3.1 asks: no more than 75 octets per line, the next lines start with a space.
+ *  A UTF-8 character is never cut.
+ *
+ *  @param      string    $line     Line, without end of line
+ *  @return     string              Line folded, without end of line at the end
+ */
+function calFoldLine($line)
+{
+	$out = "";
+	while (strlen($line) > 75) {
+		$cut = 75;
+		while ($cut > 0 && (ord($line[$cut]) & 0xC0) == 0x80) {	// Do not cut in the middle of a UTF-8 character
+			$cut--;
+		}
+		$out .= substr($line, 0, $cut)."\r\n";
+		$line = " ".substr($line, $cut);
+	}
+
+	return $out.$line;
+}
+
+/**
  *  Cut string after 75 chars. Add CRLF+Space.
  *  line must be encoded in UTF-8
+ *  No more used by build_calfile(): see calFoldLine() that counts the octets.
  *
  *  @param      string    $line     String to convert
  *  @return     string              String converted

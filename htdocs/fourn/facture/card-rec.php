@@ -394,7 +394,13 @@ if (empty($reshook)) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
 	} elseif ($action == 'setmulticurrencyrate' && $permissiontoadd) {
 		// Multicurrency rate
-		$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
+		if (!in_array(GETPOSTINT('calculation_mode'), array(1, 2))) {
+			$langs->load("compta");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CalculationMode")), null, 'errors');
+			$action = 'editmulticurrencyrate';
+		} else {
+			$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
+		}
 	} elseif ($action == 'setlabel' && $permissiontoadd) {
 		// Set bank account
 		$result = $object->setValueFrom('libelle', $label, '', null, 'text', '', $user);
@@ -849,7 +855,7 @@ if (empty($reshook)) {
 
 		// Update line
 		if (! $error) {
-			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax1_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
+			$result = $object->updateline(GETPOSTINT('lineid'), GETPOSTINT('productid'), $ref_fourn, $label, $description, (float) $pu_ht, (float) $qty, (float) $remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $type, $date_start_fill, $date_end_fill, $info_bits, $special_code, -1);
 			if ($result >= 0) {
 				$object->fetch($object->id); // Reload lines
 

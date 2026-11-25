@@ -149,11 +149,11 @@ class doc_generic_product_odt extends ModelePDFProduct
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if (getDolGlobalString('PRODUCT_ADDON_PDF_ODT_PATH')) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b><br>';
+			$texte .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b></span><br>';
 		}
 
 		if ($nbofiles) {
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx opacitylow">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
 				$texte .= '- '.$file['name'];
@@ -311,7 +311,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+					if ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1')) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;

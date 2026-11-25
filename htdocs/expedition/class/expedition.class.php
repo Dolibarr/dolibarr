@@ -96,7 +96,27 @@ class Expedition extends CommonObject
 	/**
 	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,visible:int<-6,6>|string,langfile?:string,notnull?:int<-1,1>,noteditable?:int<0,1>,alwayseditable?:int<0,1>|string,default?:string|int,index?:int<0,1>,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,helplist?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>|string,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>|string,showonheader?:int<0,1>,searchmulti?:int<0,1>,picto?:string,required?:int<0,1>,placeholder?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields = array();
+	public $fields = array(
+		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 10),
+		'ref_customer' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 15),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'visible' => -1, 'notnull' => 1, 'position' => 20),
+		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 25),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 30),
+		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'date_delivery' => array('type' => 'datetime', 'label' => 'DateDeliveryPlanned', 'langfile' => 'sendings', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'date_expedition' => array('type' => 'datetime', 'label' => 'DateShipping', 'langfile' => 'sendings', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'tracking_number' => array('type' => 'varchar(50)', 'label' => 'TrackingNumber', 'langfile' => 'sendings', 'enabled' => 1, 'visible' => -1, 'position' => 50),
+		'billed' => array('type' => 'smallint', 'label' => 'Billed', 'enabled' => 1, 'visible' => -1, 'position' => 55, 'arrayofkeyval' => array(0 => 'No', 1 => 'Yes')),
+		'weight' => array('type' => 'double', 'label' => 'Weight', 'enabled' => 1, 'visible' => -1, 'position' => 60, 'isameasure' => 1),
+		'weight_units' => array('type' => 'integer', 'label' => 'WeightUnits', 'langfile' => 'products', 'enabled' => 1, 'visible' => -1, 'position' => 61, 'arrayofkeyval' => array(3 => 'WeightUnitton', 0 => 'WeightUnitkg', -3 => 'WeightUnitg', -6 => 'WeightUnitmg', 98 => 'WeightUnitounce', 99 => 'WeightUnitpound')),
+		'height' => array('type' => 'double', 'label' => 'Height', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'isameasure' => 1),
+		'width' => array('type' => 'double', 'label' => 'Width', 'enabled' => 1, 'visible' => -1, 'position' => 66, 'isameasure' => 1),
+		'size' => array('type' => 'double', 'label' => 'Depth', 'enabled' => 1, 'visible' => -1, 'position' => 67, 'isameasure' => 1),
+		'size_units' => array('type' => 'integer', 'label' => 'SizeUnits', 'langfile' => 'products', 'enabled' => 1, 'visible' => -1, 'position' => 68, 'arrayofkeyval' => array(0 => 'SizeUnitm', -1 => 'SizeUnitdm', -2 => 'SizeUnitcm', -3 => 'SizeUnitmm', 98 => 'SizeUnitfoot', 99 => 'SizeUnitinch')),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'position' => 300),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 305),
+		'fk_statut' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'position' => 500, 'arrayofkeyval' => array(-1 => 'StatusSendingCanceled', 0 => 'StatusSendingDraft', 1 => 'StatusSendingValidated', 2 => 'StatusSendingProcessed')),
+	);
 
 	/**
 	 * @var int ID of user author
@@ -111,7 +131,7 @@ class Expedition extends CommonObject
 	public $fk_user_author;
 
 	/**
-	 * @var ?int ID of user that validates
+	 * @var ?int ID of user who validates
 	 * @deprecated use $user_validation_id
 	 */
 	public $fk_user_valid;
@@ -783,7 +803,8 @@ class Expedition extends CommonObject
 		}
 
 		if (($lineId = $expeditionline->insert($user)) < 0) {
-			$this->errors[] = $expeditionline->error;
+			// insert() reports through errors[], so copying the singular error only lost the message
+			$this->setErrorsFromObject($expeditionline);
 		}
 		return $lineId;
 	}
@@ -868,7 +889,7 @@ class Expedition extends CommonObject
 		$sql .= ', s.libelle as shipping_method';
 		$sql .= ", el.fk_source as origin_id, el.sourcetype as origin_type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."' AND el.sourcetype = 'commande'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_shipment_mode as s ON e.fk_shipping_method = s.rowid';
 		$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
@@ -1922,7 +1943,8 @@ class Expedition extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$line_id = (int) $obj->expeditiondet_id;
 
-					if ($can_update_stock && (empty($obj->iskit) || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) && !empty($obj->incdec)) {
+					// Reverse stock only if a movement was actually recorded at validation, incdec may have changed since.
+					if ($can_update_stock && (empty($obj->iskit) || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) && (!empty($obj->incdec) || $this->hasShippingMovement($obj->fk_product, $obj->fk_entrepot))) {
 						$mouvS = new MouvementStock($this->db);
 						// we do not log origin because it will be deleted
 						$mouvS->origin = '';
@@ -2119,7 +2141,8 @@ class Expedition extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$line_id = (int) $obj->expeditiondet_id;
 
-					if ($can_update_stock && (empty($obj->iskit) || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) && !empty($obj->incdec)) {
+					// Reverse stock only if a movement was actually recorded at validation, incdec may have changed since.
+					if ($can_update_stock && (empty($obj->iskit) || getDolGlobalInt('PRODUIT_SOUSPRODUITS_ALSO_ENABLE_PARENT_STOCK_MOVE')) && (!empty($obj->incdec) || $this->hasShippingMovement($obj->fk_product, $obj->fk_entrepot))) {
 						$mouvS = new MouvementStock($this->db);
 						// we do not log origin because it will be deleted
 						$mouvS->origin = '';
@@ -2502,6 +2525,33 @@ class Expedition extends CommonObject
 			$this->error = $this->db->error();
 			return -3;
 		}
+	}
+
+	/**
+	 *	Count the standalone shipments (shipments without source object, like a sales order) of the current entity.
+	 *	A shipment is standalone when no object is linked as its source, the same rule as for origin_id into fetch().
+	 *
+	 *	@return	int		Number of standalone shipments, <0 if KO
+	 */
+	public function countStandalone()
+	{
+		global $conf;
+
+		$sql = "SELECT COUNT(e.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as e";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."' AND el.sourcetype = 'commande'";
+		$sql .= " WHERE e.entity = ".((int) $conf->entity);
+		$sql .= " AND el.rowid IS NULL";
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		return (int) $obj->nb;
 	}
 
 
@@ -3150,9 +3200,10 @@ class Expedition extends CommonObject
 				foreach ($order->lines as $line) {
 					$lineid = $line->id;
 					$qty = $line->qty;
-					if (($line->product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && $order->expeditions[$lineid] != $qty) {
+					$expQty = isset($order->expeditions[$lineid]) ? $order->expeditions[$lineid] : 0;
+					if (($line->product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && $expQty != $qty) {
 						$shipments_match_order = 0;
-						$text = 'Qty for order line id '.$lineid.' is '.$qty.'. However in the shipments with status Expedition::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->expeditions[$lineid].', so we can t close order';
+						$text = 'Qty for order line id '.$lineid.' is '.$qty.'. However in the shipments with status Expedition::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$expQty.', so we can t close order';
 						dol_syslog($text);
 						break;
 					}
@@ -3198,6 +3249,24 @@ class Expedition extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 * Check whether a stock movement was recorded for a given product/warehouse at shipment validation.
+	 *
+	 * @param	int		$productId		Product id
+	 * @param	int		$warehouseId	Warehouse id
+	 * @return	bool					True if a movement exists
+	 */
+	private function hasShippingMovement($productId, $warehouseId)
+	{
+		$sql = "SELECT sm.rowid FROM ".MAIN_DB_PREFIX."stock_mouvement sm";
+		$sql .= " WHERE sm.fk_origin = ".(int) $this->id." AND sm.origintype = 'shipping'";
+		$sql .= " AND sm.fk_product = ".(int) $productId;
+		$sql .= " AND sm.fk_entrepot = ".(int) $warehouseId;
+		$sql .= " LIMIT 1";
+		$resql = $this->db->query($sql);
+		return ($resql && $this->db->num_rows($resql) > 0);
 	}
 
 	/**

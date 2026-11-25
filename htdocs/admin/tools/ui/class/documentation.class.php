@@ -258,7 +258,11 @@ class Documentation
 						'JSContextCompatAndDeprecations' => '#titlesection-compat',
 						'SetEventMessageTool' => '#titlesection-tool-seteventmessage',
 						'FetchTool' => '#titlesection-tool-fetch',
+						'ReplaceContentTool' => '#titlesection-tool-replacecontent',
+						'ObjectTool' => '#titlesection-tool-object',
+						'CardTool' => '#titlesection-tool-card',
 						'SetAndUseContextVars' => '#titlesection-contextvars',
+						'AddContextVarsFromModule' => '#titlesection-contextvars-module',
 					),
 				),
 				'UxDolibarrContextLangsTool' => array(

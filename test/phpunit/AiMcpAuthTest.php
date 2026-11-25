@@ -80,6 +80,21 @@ class AiMcpAuthTest extends CommonClassTest
 	}
 
 	/**
+	 * The probe of the admin page must see the header wherever getCredential()
+	 * reads it, the republished name included, and say no when none came: it
+	 * reads the request headers with dolGetRequestHeaders(), which also works
+	 * where getallheaders() does not exist (this test runs from the CLI).
+	 *
+	 * @return void
+	 */
+	public function testProbeSeesTheAuthorizationHeaderWhereverItIsRead()
+	{
+		$this->assertTrue(McpAuth::seesAuthorizationHeader(array('HTTP_AUTHORIZATION' => 'Bearer x')));
+		$this->assertTrue(McpAuth::seesAuthorizationHeader(array('REDIRECT_HTTP_AUTHORIZATION' => 'Bearer x')));
+		$this->assertFalse(McpAuth::seesAuthorizationHeader(array()));
+	}
+
+	/**
 	 * No credential, and an encrypted value read straight out of the database,
 	 * are answered differently: the second is an administrator's mistake worth
 	 * naming rather than a silent 401.

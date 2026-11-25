@@ -47,9 +47,13 @@ HideLots=Chargen/Seriennr. ausblenden
 OutOfOrder=Nicht in Ordnung
 InWorkingOrder=In Ordnung
 ToReplace=Ersetzen
-CantMoveNonExistantSerial=Fehler. Sie bitten um die Versendung für einen Datensatzes mit einer Seriennummer, die nicht mehr existiert. Möglicherweise verwenden Sie dieselbe Seriennummer mehrmals in derselben Sendung aus demselben Lager oder sie wurde von einer anderen Sendung verwendet. Entfernen Sie diese Sendung und bereiten Sie eine andere vor.
+CantMoveNonExistantSerial=Fehler: Sie haben eine Lagerbewegung für einen Datensatz mit einer Seriennummer angefordert, die nicht mehr existiert. Möglicherweise haben Sie dieselbe Seriennummer mehrmals aus demselben Lager in derselben Sendung verwendet, oder sie wurde von einer anderen Sendung verwendet. Entfernen Sie diese Sendung und bereiten Sie eine andere vor.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Chargen-Tabelle unvollständig, Reparatur mit URL-Parameter '...repair.php?standard=confirmed' durchführen
 IlligalQtyForSerialNumbers= Lagerbestandskorrektur erforderlich, da eindeutige Seriennummer.
 ErrorBatchesNeedStockManagement=Fehler. Ein Produkt mit Batch-/Chargen-Verwaltung muss auch in der Lagerverwaltung geführt werden.
 ForceBatchesNeedStockManagement=Ein Produkt mit Los-/Chargen-Management muss im Lagerbestand verwaltet werden (Lagerbestand-Management auf „Ja“ setzen).
 BatchInformationNotfound=Chargen-Informationen nicht gefunden
+EnterMultipleSerialNumbers=Mehrere Seriennummern eingeben
+EnterOneSerialNumberPerLine=Seriennummern eingeben, einfügen oder scannen, eine pro Zeile
+NbOfSerialNumbersDetected=%s Seriennummer(n) erkannt
+ErrorDuplicateSerialNumberInList=Die Seriennummer %s ist mehrmals in der Liste enthalten

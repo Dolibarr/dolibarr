@@ -52,7 +52,6 @@ SupplierAbsoluteDiscountAllUsers=Absolute leverancierskortingen (ingevoerd door 
 SupplierAbsoluteDiscountMy=Absolute verkopers-kortingen (zelf ingevoerd)
 Vendor=Verkoper
 Supplier=Verkoper
-AccountancyCode=Boekhouder account
 CustomerCode=Klantcode
 SupplierCode=Leverancierscode
 CustomerCodeShort=Klantcode

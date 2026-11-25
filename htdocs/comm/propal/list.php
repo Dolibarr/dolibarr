@@ -93,6 +93,7 @@ if ($search_user == -1) {
 	$search_user = 0;
 }
 $search_sale 	= GETPOSTINT('search_sale');
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref 	= GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refcustomer = GETPOST('search_refcustomer', 'alpha');
 $search_refproject = GETPOST('search_refproject', 'alpha');
@@ -202,6 +203,7 @@ if (!empty($socid)) {
 	$dbtable = '&societe';
 }
 $hookmanager->initHooks(array('propallist'));
+dolRedirectPostSearchListRequestToGetIfPossible('propallist');
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $diroutputmassaction = $conf->propal->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
@@ -232,6 +234,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
+	'p.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'p.ref' => array('label' => "Ref", 'checked' => '1'),
 	'p.ref_client' => array('label' => "RefCustomer", 'checked' => '-1'),
 	'pr.ref' => array('label' => "ProjectRef", 'checked' => '1', 'enabled' => (isModEnabled('project') ? '1' : '0')),
@@ -363,6 +366,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_user = '';
 		$search_sale = '';
+		$search_id = '';
 		$search_ref = '';
 		$search_refcustomer = '';
 		$search_refproject = '';
@@ -654,6 +658,9 @@ if ($search_country) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 }
+if ($search_id != '') {
+	$sql .= natural_search('p.rowid', $search_id, 1);
+}
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
 }
@@ -661,7 +668,12 @@ if ($search_refcustomer) {
 	$sql .= natural_search('p.ref_client', $search_refcustomer);
 }
 if ($search_refproject) {
-	$sql .= natural_search('pr.ref', $search_refproject);
+	if (empty($arrayfields['pr.title']['checked'])) {
+		// The project label is shown into the ref column, so search on both
+		$sql .= natural_search(array('pr.ref', 'pr.title'), $search_refproject);
+	} else {
+		$sql .= natural_search('pr.ref', $search_refproject);
+	}
 }
 if ($search_project) {
 	$sql .= natural_search('pr.title', $search_project);
@@ -1054,6 +1066,9 @@ if ($search_date_delivery_endmonth) {
 if ($search_date_delivery_endyear) {
 	$param .= '&search_date_delivery_endyear='.urlencode((string) ($search_date_delivery_endyear));
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -1339,6 +1354,11 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 
+if (!empty($arrayfields['p.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
@@ -1631,6 +1651,10 @@ if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"], 'p.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1863,6 +1887,7 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1964,6 +1989,12 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		if (!empty($arrayfields['p.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="nowraponall">';
 
@@ -2008,9 +2039,14 @@ while ($i < $imaxinloop) {
 
 		if (!empty($arrayfields['pr.ref']['checked'])) {
 			// Project ref
-			print '<td class="nowraponall">';
+			// When the project label column is not displayed, we show the project label under the project ref
+			$showprojectlabelunderref = (empty($arrayfields['pr.title']['checked']) && (string) $obj->project_label !== '');
+			print '<td class="nowraponall'.($showprojectlabelunderref ? ' tdlineheightsmall' : '').'">';
 			if ($obj->project_id > 0) {
 				print $projectstatic->getNomUrl(1);
+				if ($showprojectlabelunderref) {
+					print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->project_label).'"><span class="spantitle">'.dolPrintLabel($obj->project_label).'</span></div>';
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -2020,9 +2056,9 @@ while ($i < $imaxinloop) {
 
 		if (!empty($arrayfields['pr.title']['checked'])) {
 			// Project label
-			print '<td class="nowrap">';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($projectstatic->title).'">';
 			if ($obj->project_id > 0) {
-				print dol_escape_htmltag($projectstatic->title);
+				print '<span class="spantitle">'.dol_escape_htmltag($projectstatic->title).'</span>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2081,7 +2117,11 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			$tmparray = getCountry($obj->fk_pays, 'all');
 			print '<td class="center tdoverflowmax100" title="'.dolPrintHTML($tmparray['label']).'">';
-			print $tmparray['label'];
+			if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
+				print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);
+			} else {
+				print dolPrintHTML($tmparray['label']);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

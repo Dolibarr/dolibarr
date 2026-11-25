@@ -533,10 +533,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$this->tva[$vatrate] = 0;
 					}
 					if (empty($this->localtax1[$localtax1rate])) {
-						$this->localtax1[$localtax1rate] = 0;
+						$this->localtax1[$localtax1rate] = 0.0;
 					}
 					if (empty($this->localtax2[$localtax2rate])) {
-						$this->localtax2[$localtax2rate] = 0;
+						$this->localtax2[$localtax2rate] = 0.0;
 					}
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate] += $localtax1ligne;
@@ -1268,7 +1268,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $mysoc;

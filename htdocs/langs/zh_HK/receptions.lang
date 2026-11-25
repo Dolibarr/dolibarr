@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=已驗證
 StatusReceptionProcessedShort=已處理
 ReceptionSheet=接收單
 ValidateReception=驗證接收
+DeleteReception=Delete reception
 ConfirmDeleteReception=您確定要刪除此接收記錄嗎？
 ConfirmValidateReception=您確定要驗證此參考編號為 <b>%s</b> 的接收記錄嗎？
 ConfirmCancelReception=您確定要取消此接收記錄嗎？

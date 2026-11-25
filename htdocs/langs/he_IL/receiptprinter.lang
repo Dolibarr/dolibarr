@@ -69,7 +69,6 @@ DOL_VALUE_DAY=יום חשבונית
 DOL_VALUE_DAY_LETTERS=יום חשבונית באותיות
 DOL_LINE_FEED_REVERSE=הזנת קו הפוך
 InvoiceID=מזהה חשבונית
-InvoiceRef=ר' חשבונית
 DOL_PRINT_OBJECT_LINES=שורות חשבונית
 DOL_VALUE_CUSTOMER_FIRSTNAME=שם פרטי הלקוח
 DOL_VALUE_CUSTOMER_LASTNAME=שם משפחה של הלקוח

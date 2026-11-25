@@ -221,9 +221,11 @@ class Projects extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -308,7 +310,7 @@ class Projects extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -875,9 +877,11 @@ class Projects extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -910,9 +914,9 @@ class Projects extends DolibarrApi
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
 			if ($search_sale == -2) {
-				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', 0, 1);
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', 0, 1);
 			} elseif ($search_sale > 0) {
-				$sql .= " AND ".getSalesRepresentativeSqlFilter('t.fk_soc', (int) $search_sale);
+				$sql .= " AND ".getSalesRepresentativeSqlFilter('p.fk_soc', (int) $search_sale);
 			}
 		}
 		// Select projects of given category
@@ -922,8 +926,32 @@ class Projects extends DolibarrApi
 
 		// Add sql filters
 		if ($sqlfilters) {
+			// List of properties we can't filter on, whatever are permissions (to avoid guess by search binary attack).
+			// This includes sensitive properties of table llx_user joined by the request
+			$forbiddenfilterfields = array(
+				'pass',
+				'pass_crypted',
+				'pass_temp',
+				'api_key',
+				'openid',
+				'national_registration_number',
+				'birth',
+				'address',
+				'personal_mobile',
+				'personal_email',
+				'note_private',
+				'iplastlogin',
+				'ippreviouslogin'
+			);
+			// Salary data of user is sensitive payroll data, so it is forbidden if the caller has no permission to read salaries (same rule as for the users API)
+			if (!$canreadsalary) {
+				$forbiddenfilterfields[] = 'salary';
+				$forbiddenfilterfields[] = 'salaryextra';
+				$forbiddenfilterfields[] = 'thm';
+				$forbiddenfilterfields[] = 'tjm';
+			}
 			$errormessage = '';
-			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage, 0, 0, 0, $forbiddenfilterfields);
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
@@ -969,7 +997,7 @@ class Projects extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}

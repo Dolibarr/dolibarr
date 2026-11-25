@@ -131,7 +131,8 @@ if (empty($reshook)) {
 	// Action to set a temporary password and send email for reset
 	if ($action == 'buildnewpassword' && $username) {	// Test on permission not required here. This action is done anonymously.
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code'))));
+		unset($_SESSION[$sessionkey]);	// A code can be used only once. The page shows a new image, so a new code is set.
 
 		// Verify code
 		if (!$ok) {

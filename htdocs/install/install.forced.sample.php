@@ -34,7 +34,7 @@ $force_install_message = 'Welcome to your Dolibarr install...';
 $force_install_main_data_root = null;
 
 /** @var boolean	$force_install_mainforcehttps	Force HTTPS */
-$force_install_mainforcehttps = true;
+$force_install_mainforcehttps = false;
 
 /** @var string	$force_install_database				Database name */
 $force_install_database = getenv('DOLI_DATABASE', true) ?: 'dolibarr';

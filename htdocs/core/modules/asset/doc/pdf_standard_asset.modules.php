@@ -805,7 +805,7 @@ class pdf_standard_asset extends ModelePDFAsset
 
 		// Show Draft Watermark
 		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->FACTURE_DRAFT_WATERMARK);
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('FACTURE_DRAFT_WATERMARK'));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -964,7 +964,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			}
 
 			// Recipient name
-			if (is_object($object->contact) && is_object($object->thirdparty) && $object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+			if (is_object($object->contact) && is_object($object->thirdparty) && $object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1')) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

@@ -145,7 +145,7 @@ class Contact extends CommonObject
 		'photo' => array('type' => 'varchar(255)', 'label' => 'Photo', 'enabled' => 1, 'visible' => 3, 'position' => 170),
 		'priv' => array('type' => 'smallint(6)', 'label' => 'ContactVisibility', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 175),
 		'fk_stcommcontact' => array('type' => 'integer', 'label' => 'ProspectStatus', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 220),
-		'fk_prospectcontactlevel' => array('type' => 'varchar(12)', 'label' => 'ProspectLevel', 'enabled' => 1, 'visible' => -1, 'position' => 255),
+		'fk_prospectlevel' => array('type' => 'varchar(12)', 'label' => 'ProspectLevel', 'enabled' => 1, 'visible' => -1, 'position' => 255),
 		//no more used. Replace by a scan of email into mailing_unsubscribe. 'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 195, 'searchall' => 1),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 200, 'searchall' => 1),
@@ -240,7 +240,7 @@ class Contact extends CommonObject
 	 */
 	public $socid;		// both socid and fk_soc are used
 	/**
-	 * @var int
+	 * @var int Thirdparty ID
 	 */
 	public $fk_soc;		// both socid and fk_soc are used
 
@@ -428,7 +428,7 @@ class Contact extends CommonObject
 		// If THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES not set, there is no prospect level on contact level, only on thirdparty
 		if (getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') || !getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES')) {	// Default behaviour
 			$this->fields['fk_stcommcontact']['enabled'] = 0;
-			$this->fields['fk_prospectcontactlevel']['enabled'] = 0;
+			$this->fields['fk_prospectlevel']['enabled'] = 0;
 		}
 
 		// Unset fields that are disabled
@@ -1105,7 +1105,7 @@ class Contact extends CommonObject
 				$this->ref_ext = $obj->ref_ext;
 
 				$this->civility_code = $obj->civility_code;
-				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility = $obj->civility_code ? ((is_object($langs) && $langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->name_alias	= $obj->name_alias;
 				$this->lastname		= $obj->lastname;
@@ -1125,7 +1125,7 @@ class Contact extends CommonObject
 
 				$this->country_id	= $obj->country_id;
 				$this->country_code	= $obj->country_id ? $obj->country_code : '';
-				$this->country		= $obj->country_id ? ($langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
+				$this->country		= $obj->country_id ? ((is_object($langs) && $langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code) ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
 				$this->fk_soc		= $obj->fk_soc;		// Both fk_soc and socid are used
 				$this->socid		= $obj->fk_soc;		// Both fk_soc and socid are used
@@ -1219,8 +1219,7 @@ class Contact extends CommonObject
 
 				return $this->id;
 			} else {
-				$langs->load('errors');
-				$this->error = $langs->trans("ErrorRecordNotFound");
+				$this->error = 'ErrorRecordNotFound';		// We return a technical error code. We must not translate it.
 				return 0;
 			}
 		} else {
@@ -2875,7 +2874,7 @@ class Contact extends CommonObject
 	public function libProspCommStatut($statut, $mode = 0, $label = '', $picto = '')
 	{
 		global $langs;
-		$langs->load('customers');
+		$langs->load('companies');
 
 		if ($mode == 2) {
 			if ($statut == '-1' || $statut == 'ST_NO') {
@@ -2948,7 +2947,7 @@ class Contact extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creation) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;

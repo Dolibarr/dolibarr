@@ -132,7 +132,7 @@ body.dolibarr-doc {
 
   .doc-wrapper .doc-toc {display: block;position: sticky;top: 24px;margin: 24px 32px 24px 0;max-height: calc(100vh - 48px);overflow-y: auto;box-sizing: border-box;background: #fff;padding: 16px;border-radius: 4px;animation: doc-toc-fadein .15s ease-out;}
   @keyframes doc-toc-fadein {from {opacity: 0;} to {opacity: 1;}}
-  .doc-wrapper .doc-toc .doc-toc-header {display: flex;align-items: baseline;justify-content: space-between;gap: 12px;margin: 0 0 12px 0;}
+  .doc-wrapper .doc-toc .doc-toc-header {display: flex;align-items: baseline;justify-content: space-between;gap: 12px;margin: -16px -16px 12px -16px;padding: 16px 16px 8px 16px;position: sticky;top: -16px;z-index: 1;background: #fff;} /* Sticky so that 'Back to top' stays visible when the summary scrolls */
   .doc-wrapper .doc-toc .doc-toc-title {color: rgb(38,60,92);font-weight: 600;font-size: 1.1em;}
   .doc-wrapper .doc-toc .doc-toc-backtop {color: rgba(64, 64, 64, .7);text-decoration: none;font-size: .9em;white-space: nowrap;}
   .doc-wrapper .doc-toc .doc-toc-backtop:hover {color: rgb(0, 123, 140);}

@@ -130,7 +130,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// List of directories area
 		$texte .= '<tr><td valign="middle">';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->FACTURE_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('FACTURE_ADDON_PDF_ODT_PATH'))));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -157,14 +157,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if (getDolGlobalString('FACTURE_ADDON_PDF_ODT_PATH')) {
-			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
+			$texte .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b><br>';
+			$texte .= '</b></span><br>';
 		}
 		if ($nbofiles) {
-			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx opacitylow">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
 				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=invoices/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
@@ -325,7 +325,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+					if ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1')) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;

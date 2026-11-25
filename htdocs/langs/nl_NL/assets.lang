@@ -18,10 +18,8 @@ AccountancyCodeDepreciationAsset=Grootboekrekening (Afschrijving grootboekrekeni
 AccountancyCodeDepreciationExpense=Grootboekrekening (Afschrijving kosten grootboekrekening)
 AssetsLines=Bezittingen
 ConfirmValidateAsset=Weet u zeker dat u dit bestand wilt valideren met de referentie <b>%s</b>?
-DeleteType=Verwijderen
 DeleteAnAssetType=Een activamodel verwijderen
 ConfirmDeleteAssetType=Weet u zeker dat u dit itemmodel wilt verwijderen?
-ShowTypeCard=Toon model '%s'
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Bezittingen
 # Module description 'ModuleAssetsDesc'
@@ -29,13 +27,18 @@ ModuleAssetsDesc=Omschrijving bezit
 # Admin page
 AssetSetup=Bezittingen instellen
 AssetSetupPage=Bezittingen instellingenpagina
-ExtraFieldsAssetModel=Complementaire kenmerken (model van Asset)
+ExtraFieldsAssetModel=Aanvullende velden (activa-model)
 AssetsType=Activamodel
 AssetsTypeId=ID van itemmodel
 AssetsTypeLabel=Label itemmodel
 AssetsTypes=Activamodellen
 ASSET_ACCOUNTANCY_CATEGORY=Boekhoudgroep voor vaste activa
 ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportionele periode in dagen voor de berekening van de afschrijving over één jaar
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTION=Dagtellingconventie van de prorata temporis
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTIONTooltip=Hoe de afschrijving van een <b>gedeeltelijke</b> periode wordt berekend, wat betekent het eerste en het laatste jaar van een actief. Een volledige lijfrente is altijd de waarde gedeeld door de duur en wordt nooit beïnvloed door deze instelling.<br><br>Een conventie definieert <b>zowel</b>hoe de dagen van de periode worden geteld <b>als</b> door hoeveel dagen een volledig jaar is verdeeld. De twee moeten altijd overeenkomen: het tellen van de werkelijke kalenderdagen en deze delen door 360 leidt tot een overschatting van elke gedeeltelijke periode met ongeveer 1,39 procent.<br><br><b>30/360</b>: elke maand telt 30 dagen en elk jaar 360 dagen. De conventie die door de meeste accountantskantoren in Frankrijk wordt toegepast.<br><b>Werkelijke dagen / 365</b>: werkelijke kalenderdagen van de periode, gedeeld door 365.<br><b>Werkelijke dagen / werkelijk jaar</b>: werkelijke kalenderdagen, elk jaar gedeeld door zijn eigen werkelijke lengte, 365 of 366. De meest nauwkeurige voor een periode die een schrikkeldag omvat.<br><br>Voorbeeld: een actief van 13000 dat over 5 jaar wordt afgeschreven, in gebruik genomen op 10 maart en verkocht op 23 februari van het vierde jaar, met boekjaren die lopen van augustus tot juli. Cumulatieve afschrijving bij beschikking: 7684,44 met 30/360, 7700,27 met werkelijke dagen / 365, 7697,29 met werkelijke dagen / werkelijk jaar.<br><br><b>Waarschuwing</b>: het wijzigen van deze instelling herberekent de reeds gegenereerde plannen niet. Sla de afschrijvingsopties van een activum opnieuw op om het plan te regenereren.
+AssetDayCountConventionThirty360=30/360 - elke maand telt 30 dagen, elk jaar 360 dagen (gebruikelijk in Frankrijk)
+AssetDayCountConventionAct365=Werkelijke dagen / 365 - werkelijke kalenderdagen gedeeld door 365
+AssetDayCountConventionActAct=Werkelijke dagen / werkelijk jaar - werkelijke kalenderdagen, elk jaar gedeeld door zijn eigen lengte (365 of 366)
 # Menu
 MenuAssets=Bezittingen
 MenuNewAsset=Nieuw bezit
@@ -142,5 +145,6 @@ AssetErrorCalculationDepreciationLines=Fout bij het berekenen van de afschrijvin
 AssetErrorReversalDateNotProvidedForMode=De terugboekingsdatum is niet voorzien voor de afschrijvingsmethode '%s'
 AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=De terugboekingsdatum moet groter zijn dan of gelijk zijn aan het begin van het huidige fiscale jaar voor de afschrijvingsmethode '%s'
 AssetErrorReversalAmountNotProvidedForMode=Het terugboekingsbedrag is niet voorzien voor de afschrijvingsmodus '%s'.
+AssetErrorDegressiveDailyDurationForMode=A degressive depreciation needs a duration in years or in months for the depreciation mode '%s'.
 AssetErrorFetchCumulativeDepreciation=Fout bij het ophalen van het geaccumuleerde afschrijvingsbedrag van de afschrijvingsregel
 AssetErrorSetLastCumulativeDepreciation=Fout bij het registreren van het laatste geaccumuleerde afschrijvingsbedrag

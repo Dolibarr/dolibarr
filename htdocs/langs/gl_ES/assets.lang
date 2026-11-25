@@ -18,10 +18,8 @@ AccountancyCodeDepreciationAsset=Código contable (conta depreciación activo)
 AccountancyCodeDepreciationExpense=Código contable (conta depreciación gastos)
 AssetsLines=Activos
 ConfirmValidateAsset=Está certo de  querer validar este activo coa referencia <b>%s</b>?
-DeleteType=Eliminar
 DeleteAnAssetType=Eliminar un modelo de activo
 ConfirmDeleteAssetType=¿Está certo de querer eliminar este tipo de activo?
-ShowTypeCard=Amosar o modelo '%s'
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Activos
 # Module description 'ModuleAssetsDesc'
@@ -29,13 +27,18 @@ ModuleAssetsDesc=Descrición de activos
 # Admin page
 AssetSetup=Configuración activos
 AssetSetupPage=Configuración activos
-ExtraFieldsAssetModel=Atributos complementarios (modelo de activos)
+ExtraFieldsAssetModel=Campos adicionais (modelo de activo)
 AssetsType=Tipo de activo
 AssetsTypeId=Id tipo de activo
 AssetsTypeLabel=Etiqueta tipo de activo
 AssetsTypes=Tipos de activos
 ASSET_ACCOUNTANCY_CATEGORY=Grupo de contabilidade de activos fixos
 ASSET_DEPRECIATION_DURATION_PER_YEAR=Período proporcional en días para o cálculo da amortización ao longo dun ano
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTION=Convención de reconto de días do prorata temporis
+ASSET_DEPRECIATION_DAY_COUNT_CONVENTIONTooltip=Como se calcula a depreciación dun período <b>parcial</b>, é dicir, o primeiro e o último ano dun activo. Unha renda vitalicia completa é sempre o valor dividido pola duración e nunca se ve afectada por esta configuración.<br><br>Unha convención define <b>tanto</b>como se contan os días do período <b>como</b> polo número de días que se divide un ano completo. Os dous deben coincidir sempre: contar os días do calendario reais e dividilos entre 360 sobrestima cada período parcial nun 1,39 por cento aproximadamente.<br><br><b>30/360</b>: cada mes conta 30 días e cada ano 360 días. O convenio aplicado pola maioría das empresas de contabilidade en Francia.<br><b>Días reais / 365</b>: días naturais reais do período, divididos por 365.<br><b>Días reais / ano real</b>: días naturais reais, cada ano dividido pola súa propia duración real, 365 ou 366. O máis preciso nun período que abrangue un día bisesto.<br><br>Exemplo nun activo de 13000 amortizado durante 5 anos, posto en servizo o 10 de marzo e vendido o 23 de febreiro do cuarto ano, con exercicios fiscais que van de agosto a xullo. Depreciación acumulada na disposición: 7684,44 con 30/360, 7700,27 con días reais / 365, 7697,29 con días reais / ano real.<br><br><b>Aviso</b>: ao cambiar esta configuración non se recalculan os plans xa xerados. Garde de novo as opcións de depreciación dun activo para rexenerar o seu plan.
+AssetDayCountConventionThirty360=30/360 - cada mes conta 30 días, cada ano 360 días (normal en Francia)
+AssetDayCountConventionAct365=Días reais / 365 - días reais do calendario dividido por 365
+AssetDayCountConventionActAct=Días reais / ano real - días do calendario reais, cada ano dividido pola súa propia duración (365 ou 366)
 # Menu
 MenuAssets=Activos
 MenuNewAsset=Novo ben
@@ -142,5 +145,6 @@ AssetErrorCalculationDepreciationLines=Erro ao calcular as liñas de amortizaci�
 AssetErrorReversalDateNotProvidedForMode=Non se proporciona a data de reversión para o método de amortización "%s"
 AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=A data de reversión debe ser maior ou igual ao inicio do exercicio fiscal actual para o método de amortización "%s"
 AssetErrorReversalAmountNotProvidedForMode=O importe de reversión non se proporciona para o modo de amortización "%s".
+AssetErrorDegressiveDailyDurationForMode=Unha depreciación degresiva precisa unha duración en anos ou en meses para o modo de depreciación '%s'.
 AssetErrorFetchCumulativeDepreciation=Erro ao recuperar o importe acumulado da amortización da liña de amortización
 AssetErrorSetLastCumulativeDepreciation=Erro ao rexistrar o último importe de amortización acumulado

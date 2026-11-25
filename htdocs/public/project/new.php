@@ -210,7 +210,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 			$thirdparty->email = GETPOST('email', 'alpha');
 			$thirdparty->address = GETPOST('address', 'alpha');
-			$thirdparty->zip = GETPOST('zip', 'int');
+			$thirdparty->zip = GETPOST('zipcode', 'alphanohtml');
 			$thirdparty->town = GETPOST('town', 'alpha');
 			$thirdparty->country_id = GETPOSTINT('country_id');
 			$thirdparty->state_id = GETPOSTINT('state_id');
@@ -507,7 +507,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
 $country_id = GETPOST('country_id');
 if (!$country_id && getDolGlobalString('PROJECT_NEWFORM_FORCECOUNTRYCODE')) {
-	$country_id = getCountry($conf->global->PROJECT_NEWFORM_FORCECOUNTRYCODE, '2', $db, $langs);
+	$country_id = getCountry(getDolGlobalString('PROJECT_NEWFORM_FORCECOUNTRYCODE'), '2', $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
 	$country_code = dol_user_country();
