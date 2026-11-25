@@ -1139,7 +1139,9 @@ class Commande extends CommonOrder
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
-			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
+			$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
+			$this->fk_multicurrency = $tmparray[0];
+			$this->multicurrency_tx = $tmparray[1];
 		} else {
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
@@ -1800,8 +1802,10 @@ class Commande extends CommonOrder
 				return -1;
 			}
 
-			foreach ($items as list($line, $productsupplier)) {
-				$tva_tx = get_default_tva($order->thirdparty, $mysoc, $line->fk_product, $productsupplier->product_fourn_price_id);
+			foreach ($items as $tmparray) {
+				$line = $tmparray[0];
+				$productsupplier = $tmparray[1];
+				$tva_tx =get_default_tva($order->thirdparty, $mysoc, $line->fk_product, $productsupplier->product_fourn_price_id);
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $order->thirdparty);
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $order->thirdparty);
 				$ret = $order->addline($line->desc, $productsupplier->fourn_unitprice, $line->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $line->fk_product, $productsupplier->product_fourn_price_id, $productsupplier->ref_supplier, (float) $productsupplier->fourn_remise_percent, 'HT', 0, $line->product_type, 0, 0, null, null, array(), $line->fk_unit, 0, $this->element, $line->id);

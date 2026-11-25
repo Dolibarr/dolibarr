@@ -1026,7 +1026,12 @@ if ($search_multicurrency_montant_ttc != '') {
 	$sql .= natural_search('cf.multicurrency_total_ttc', $search_multicurrency_montant_ttc, 1);
 }
 if ($search_project_ref != '') {
-	$sql .= natural_search("p.ref", $search_project_ref);
+	if (empty($arrayfields['p.title']['checked'])) {
+		// The project label is shown into the ref column, so search on both
+		$sql .= natural_search(array("p.ref", "p.title"), $search_project_ref);
+	} else {
+		$sql .= natural_search("p.ref", $search_project_ref);
+	}
 }
 if ($search_project != '') {
 	$sql .= natural_search("p.title", $search_project);
@@ -1811,7 +1816,7 @@ if ($resql) {
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['cf.date_creation']['checked'])) {
@@ -1868,6 +1873,7 @@ if ($resql) {
 	$totalarray['val']['cf.total_tva'] = 0;
 
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 
@@ -1963,9 +1969,14 @@ if ($resql) {
 				$projectstatic->id = $obj->project_id;
 				$projectstatic->ref = $obj->project_ref;
 				$projectstatic->title = $obj->project_title;
-				print '<td class="tdoverflowmax150">';
+				// When the project label column is not displayed, we show the project label under the project ref
+				$showprojectlabelunderref = (empty($arrayfields['p.title']['checked']) && (string) $obj->project_title !== '');
+				print '<td class="tdoverflowmax150'.($showprojectlabelunderref ? ' tdlineheightsmall' : '').'">';
 				if ($obj->project_id > 0) {
 					print $projectstatic->getNomUrl(1);
+					if ($showprojectlabelunderref) {
+						print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->project_title).'"><span class="spantitle">'.dolPrintLabel($obj->project_title).'</span></div>';
+					}
 				}
 				print '</td>';
 				if (!$i) {
@@ -2054,7 +2065,11 @@ if ($resql) {
 			if (!empty($arrayfields['country.code_iso']['checked'])) {
 				print '<td class="center">';
 				$tmparray = getCountry($obj->fk_pays, 'all');
-				print $tmparray['label'];
+				if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
+					print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);
+				} else {
+					print dolPrintHTML($tmparray['label']);
+				}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

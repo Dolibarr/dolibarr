@@ -740,7 +740,7 @@ class pdf_standard_stock extends ModelePDFStock
 
 		// Show Draft Watermark
 		if ($object->statut == 0 && (getDolGlobalString('STOCK_DRAFT_WATERMARK'))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->STOCK_DRAFT_WATERMARK);
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('STOCK_DRAFT_WATERMARK'));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);

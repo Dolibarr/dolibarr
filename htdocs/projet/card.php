@@ -530,21 +530,21 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->setValid($user);
-		if ($result <= 0) {
+		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
 	if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->setClose($user);
-		if ($result <= 0) {
+		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
 	if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 		$result = $object->setValid($user);
-		if ($result <= 0) {
+		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -1403,7 +1403,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Title
-		$morehtmlref .= dol_escape_htmltag($object->title);
+		$morehtmlref .= '<span class="banner-object-name-alias">'.dol_escape_htmltag($object->title).'</span>';
 		$morehtmlref .= '<br>';
 		// Thirdparty
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {

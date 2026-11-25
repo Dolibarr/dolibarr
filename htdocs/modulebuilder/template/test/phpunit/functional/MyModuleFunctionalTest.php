@@ -259,7 +259,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase  // @
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
 		return $this->assertContains(
-			'interface_99_modMyModule_MyModuleTriggers.class.php',
+			'interface_50_modMyModule_MyModuleTriggers.class.php',
 			$this->byTag('body')->text(),
 			"Trigger declared"
 		);

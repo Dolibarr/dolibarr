@@ -96,7 +96,9 @@ if (isModEnabled('multicurrency')) {
 		print '</td><td'.($colspan == 2 ? ' colspan="2"' : '').'>';
 		if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
 			if ($action == 'actualizemulticurrencyrate') {
-				list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+				$tmparray = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+				$object->fk_multicurrency = $tmparray[0];
+				$object->multicurrency_tx = $tmparray[1];
 			}
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$object->id, $object->multicurrency_tx, ($usercancreate ? 'multicurrency_tx' : 'none'), $object->multicurrency_code);
 		} else {

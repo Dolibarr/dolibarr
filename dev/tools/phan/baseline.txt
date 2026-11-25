@@ -53,7 +53,6 @@ return [
         'htdocs/core/lib/product.lib.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/lib/project.lib.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/lib/xcal.lib.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/menus/standard/auguria.lib.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/asset/mod_asset_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/bom/mod_bom_advanced.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/cheque/modules_chequereceipts.php' => ['PhanTypeMismatchArgument'],

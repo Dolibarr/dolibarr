@@ -701,7 +701,7 @@ if ($this->status == 0 && $tmppermtoedit && $action != 'selectlines') {
 			}
 			$sql = "SELECT COUNT(*) AS found";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account";
-			$sql .= " WHERE pcg_type = '" . $this->db->escape($conf->global->ASSET_ACCOUNTANCY_CATEGORY) . "'";
+			$sql .= " WHERE pcg_type = '" . $this->db->escape(getDolGlobalString('ASSET_ACCOUNTANCY_CATEGORY')) . "'";
 			$sql .= " AND (" . implode(' OR ', $sanitized_filters). ")";
 			$resql_asset = $this->db->query($sql);
 			if (!$resql_asset) {

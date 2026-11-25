@@ -991,7 +991,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		// Show Draft Watermark
 		if ($object->status == 0 && (getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK'))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SHIPPING_DRAFT_WATERMARK);
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('SHIPPING_DRAFT_WATERMARK'));
 		}
 
 		//Prepare next
