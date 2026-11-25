@@ -403,9 +403,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	dolChmod($imgTargetName);
 
 	// Free memory. This does not delete image.
-	if ($img) {
-		imagedestroy($img);
-	}
+	imagedestroy($img);	// $img can't be null or false here, the function has already returned in that case
 	if ($imgTarget) {
 		imagedestroy($imgTarget);
 	}
