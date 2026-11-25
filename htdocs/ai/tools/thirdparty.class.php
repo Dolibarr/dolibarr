@@ -408,9 +408,9 @@ class ToolThirdParty extends McpTool
 		// Country Handling
 		if (! empty($args['country_code'])) {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-			// getCountry returns an array or false/0.
+			// getCountry returns an array only with 'all'; '1' returns a "CODE - Label" string.
 			/** @var array{id:int}|false $info */
-			$info = getCountry($args['country_code'], '1');
+			$info = getCountry($args['country_code'], 'all');
 			if ($info && isset($info['id'])) {
 				$soc->country_id = (int) $info['id'];
 			}
@@ -515,7 +515,7 @@ class ToolThirdParty extends McpTool
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 			/** @var array{id:int}|false $info */
-			$info = getCountry($args['country_code'], '1');
+			$info = getCountry($args['country_code'], 'all');
 
 			if ($info && isset($info['id'])) {
 				$soc->country_id = (int) $info['id'];
