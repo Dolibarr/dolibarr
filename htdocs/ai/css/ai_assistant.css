@@ -876,6 +876,22 @@ body.ai-fullpage {
     word-break: break-word;
 }
 
+/* Alignment of the columns of a markdown table */
+.chat-table th.right,
+.chat-table td.right {
+    text-align: right;
+}
+
+.chat-table th.center,
+.chat-table td.center {
+    text-align: center;
+}
+
+/* Table written by the model into a text answer: text may follow it, and its cells are never clamped */
+.chat-table-md {
+    margin-bottom: 8px;
+}
+
 .chat-table tbody tr:last-child td {
     border-bottom: none;
 }
