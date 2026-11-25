@@ -10206,7 +10206,7 @@ abstract class CommonObject
 						$result = $productFournisseur->find_min_price_product_fournisseur($fk_product);
 					}
 					if ($result > 0) {
-						$buyPrice = $productFournisseur->fourn_unitprice;
+						$buyPrice = $productFournisseur->fourn_unitprice_with_discount;
 					} elseif ($result < 0) {
 						$this->errors[] = $productFournisseur->error;
 						return -2;
@@ -11042,7 +11042,8 @@ abstract class CommonObject
 				if ($resqlupdate === false) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
-				} else {
+				} elseif ((string) $this->ref === '' || $this->ref === '(PROV)') {
+					// Same condition as the WHERE above: an object created with its final ref keeps it in memory too
 					$this->ref = '(PROV'.$this->id.')';
 				}
 			}

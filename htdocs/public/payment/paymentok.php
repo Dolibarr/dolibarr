@@ -415,6 +415,16 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
 			try {
+				// With Stripe Checkout, the id we have is the one of the Checkout Session (cs_...), we get the PaymentIntent from it
+				if (preg_match('/^cs_/', $TRANSACTIONID)) {
+					if (empty($stripeacc)) {
+						$checkoutsession = \Stripe\Checkout\Session::retrieve($TRANSACTIONID);
+					} else {
+						$checkoutsession = \Stripe\Checkout\Session::retrieve($TRANSACTIONID, array("stripe_account" => $stripeacc));
+					}
+					$TRANSACTIONID = (string) $checkoutsession->payment_intent;
+				}
+
 				if (empty($stripeacc)) {
 					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID);
 				} else {

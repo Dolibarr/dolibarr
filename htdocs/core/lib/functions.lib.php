@@ -13794,7 +13794,8 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 		}
 		$i1++;
 	}
-	$res = ($nofirstand ? "" : " AND ") . "(" . $res . ")";
+	// No valid criteria (for example only an operator like '>' in numeric mode): return a neutral condition instead of an empty "()"
+	$res = ($nofirstand ? "" : " AND ") . "(" . ($res !== '' ? $res : '1 = 1') . ")";
 
 	return $res;
 }

@@ -512,7 +512,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
 				$ecmfile->gen_or_uploaded = 'unknown';
 				if (is_object($object)) {
-					$ecmfile->src_object_type = $object->element;
+					$ecmfile->src_object_type = $object->table_element;
 					$ecmfile->src_object_id = $object->id;
 				}
 				$ecmfile->description = ''; // indexed content
