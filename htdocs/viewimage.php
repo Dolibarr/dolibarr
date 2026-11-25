@@ -472,6 +472,7 @@ if ($modulepart == 'barcode') {
 	if (!dol_is_file($fullpath_original_file) && !GETPOSTINT("noalt", 1)) {
 		// This test is to replace error images with a nice "notfound image" when image is not available (for example when thumbs not yet generated).
 		$fullpath_original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
+		$type = 'image/png';	// The replacement image is a PNG, so we must not keep the mime type of the requested file (svg, ...)
 		/*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
 		print $error;
 		exit;*/

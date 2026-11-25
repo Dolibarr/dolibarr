@@ -24,16 +24,16 @@ CREATE TABLE llx_blockedlog
 	pos_source varchar(32) DEFAULT '',			-- field included into line signature. The number of the terminal.
 	action varchar(50),							-- field included into line signature. The type of event.
 	entity integer DEFAULT 1 NOT NULL,			-- field included into line signature. For future usage of multi-entity.
-	date_creation	datetime,					-- field included into line signature. Date and time of event.
+	date_creation	datetime,					-- field included into line signature. Date and time of event - Warning: This date is TZ server if object_format = V1 else in UTC.
 	amounts double(24,8) NOT NULL,				-- field included into line signature (denormalized data from object_data)
 	amounts_taxexcl double(24,8) NULL,			-- field included into line signature (denormalized data from object_data)
 	ref_object varchar(255),					-- field included into line signature (denormalized data from object_data)
-	date_object	datetime,						-- field included into line signature (denormalized data from object_data)
+	date_object	datetime,						-- field included into line signature (denormalized data from object_data) - Warning: This date is TZ server if object_format = V1 else in UTC.
 	type_code varchar(8) DEFAULT '',			-- field included into line signature (denormalized data from object_data = payment mode code)
 	user_fullname varchar(255),					-- field included into line signature. User recording the event.
 	linktoref text,								-- field included into line signature. Link to another ref_object.
 	linktype varchar(16),						-- field included into line signature. Link type.
-	object_data	mediumtext,						-- field included into line signature
+	object_data	mediumtext,						-- field included into line signature.
 	-- the signature of line
 	signature varchar(100) NOT NULL,  			-- the hash of the key for signature with previous hash before
 	signature_backward varchar(100) DEFAULT '', -- the hash of the key for reverse signature with following hash after (not used)

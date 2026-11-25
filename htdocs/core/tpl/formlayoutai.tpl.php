@@ -22,6 +22,7 @@
  * @var DoliDB $db
  * @var CommonObject 	$object
  * @var Translate 		$langs
+ * @var User	 		$user
  *
  * @var ?FormMail 		$formmail
  * @var ?FormWebsite 	$formwebsite
@@ -76,6 +77,14 @@ if (!isset($aiprompt)) {	// Init to empty string if not defined
 	$aiprompt = '';
 }
 
+global $user;
+
+// Permission to use the AI features (send data to the configured LLM provider)
+$permissiontoai = false;
+if (is_object($user) && (!empty($user->admin) || $user->hasRight('ai', 'assistant', 'use'))) {
+	$permissiontoai = true;
+}
+
 $out .= '<!-- BEGIN PHP TEMPLATE htdocs/core/tpl/formlayoutai.tpl.php -->'."\n";
 
 // Add link to add layout
@@ -108,11 +117,19 @@ if (!empty($showlinktolayout)) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is 
 }
 // Add link to add AI content
 if (!empty($showlinktoai)) {
-	// TODO Diff between showlinktoai and htmlname ? Why not using one key only ?
-	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="notasortlink inline-block alink '.$morecss.'">';
-	$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
-	$out .= '<span class="hideobject hideonsmartphone">'.$showlinktoailabel.'...</span>';
-	$out .= '</a>';
+	if ($permissiontoai) {
+		// TODO Diff between showlinktoai and htmlname ? Why not using one key only ?
+		$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="notasortlink inline-block alink '.$morecss.'">';
+		$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
+		$out .= '<span class="hideobject hideonsmartphone">'.$showlinktoailabel.'...</span>';
+		$out .= '</a>';
+	} else {
+		// Same button but grayed and with no click handler when the user is not allowed to use the AI features
+		$out .= '<span class="notasortlink inline-block opacitymedium" title="'.dolPrintHTMLForAttribute($langs->trans('NotEnoughPermissions')).'">';
+		$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
+		$out .= '<span class="hideobject hideonsmartphone">'.$showlinktoailabel.'...</span>';
+		$out .= '</span>';
+	}
 
 	$out .= '<script>
 						$(document).ready(function() {
@@ -160,7 +177,7 @@ if (!empty($showlinktolayout)) {
 
 /** @var ?FormAI $formai */
 
-if (!empty($showlinktoai)) {
+if (!empty($showlinktoai) && $permissiontoai) {
 	if (empty($formai) || $formai instanceof FormAI) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
 		$formai = new FormAI($db);
@@ -180,7 +197,7 @@ if (!empty($showlinktoai)) {
 	}
 	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $format, $htmlname, $onlyenhancements, $aiprompt);
 } else {
-	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
+	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature, module ai must be enabled and user must have the ai->assistant->use right -->';
 }
 
 $out .= '<!-- END PHP TEMPLATE htdocs/core/tpl/formlayoutai.tpl.php -->'."\n";
