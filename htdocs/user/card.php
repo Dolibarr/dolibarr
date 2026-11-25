@@ -87,7 +87,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'us
 $backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
 
-if (empty($id) && $action != 'add' && $action != 'create') {
+if (empty($id) && $action != 'add' && $action != 'create' && $action!='adduserldap') {
 	$id = $user->id;
 }
 
@@ -196,7 +196,7 @@ if (empty($reshook)) {
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+			if (empty($id) && (($action != 'add' && $action != 'create' && $action!='adduserldap') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
 				$backtopage = DOL_URL_ROOT.'/user/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
@@ -414,6 +414,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$id = $object->create($user);
+
 			if ($id > 0) {
 				$resPass = 0;
 				if (GETPOST('password', 'password')) {
