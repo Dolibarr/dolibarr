@@ -1144,7 +1144,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 							print $menu_array[$i]['prefix'];
 						}
 					}
-					print dol_ucfirst($menu_array[$i]['titre']);
+					print '<span class="vmenutext">'.dol_ucfirst($menu_array[$i]['titre']).'</span>';
 					if ($expandonhover && isset($blockswithsubentries[$i])) {	// Arrow shown at the end of line on the right of the left menu, rotated down when the block is expanded
 						print img_picto('', 'fa-chevron-right', '', 0, 0, 0, '', 'menuexpandarrow');
 					}
@@ -1166,7 +1166,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 							print $menu_array[$i]['prefix'];
 						}
 					}
-					print dol_ucfirst($menu_array[$i]['titre']);
+					print '<span class="vmenutext">'.dol_ucfirst($menu_array[$i]['titre']).'</span>';
 					print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'greyed';

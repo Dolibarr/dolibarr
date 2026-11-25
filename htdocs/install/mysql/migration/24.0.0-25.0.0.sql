@@ -601,6 +601,7 @@ ALTER TABLE llx_oauth_token ADD COLUMN passkey_aaguid varchar(36) NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_eligible smallint NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
 ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
+ALTER TABLE llx_oauth_token ADD INDEX idx_oauth_token_fk_user (fk_user);
 
 -- RF or national reference the supplier provides to accept payments
 ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
@@ -770,3 +771,8 @@ ALTER TABLE llx_expensereport ADD COLUMN fk_user_approve_secondary integer DEFAU
 ALTER TABLE llx_expensereport ADD COLUMN date_approve_secondary datetime DEFAULT NULL;
 ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_validator_secondary (fk_user_validator_secondary);
 ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_approve_secondary (fk_user_approve_secondary);
+
+-- Remove the system prompt of the AI assistant saved by previous versions, so the new default prompt of v25 is used
+--noqa:disable=PRS
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'AI_INTENT_PROMPT';
+--noqa:enable=PRS

@@ -665,6 +665,7 @@ function ajax_event($htmlname, $events)
 				$.getJSON(url,
 						{
 							action: method,
+							token: \''.currentToken().'\',
 							id: id,
 							htmlname: htmlname,
 							showempty: showempty,

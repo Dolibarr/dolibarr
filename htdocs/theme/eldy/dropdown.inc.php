@@ -184,7 +184,8 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 
 
 .open>.dropdown-toggle::after {
-	transform: rotate(180deg);
+	/* Flip instead of rotate(180deg): the arrow box is 50px high, so a rotation makes it overflow the page width during the transition */
+	transform: scaleY(-1);
 }
 
 /*

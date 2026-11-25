@@ -301,7 +301,12 @@ $arrayfields['p.note_private'] = array('label' => 'NotePrivate', 'position' => 3
 
 
 // Extra fields
+$extrafieldspositionoffset = 1000;	// To keep extrafields after the hardcoded fields by default
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// By default, the status is the last column, after the extrafields
+if (isset($arrayfields['p.statut'])) {
+	$arrayfields['p.statut']['position'] = (int) max(array_column($arrayfields, 'position')) + 1;
+}
 
 // Add hook to complete $arrayfields
 $parameters = array('arrayfields' => &$arrayfields);
@@ -1257,9 +1262,17 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
-// Fields with position ordered by user setup
+// Fields and extrafields with position ordered by user setup (fields of hooks are output after)
 foreach ($arrayfields as $key => $val) {
 	if (empty($val['checked'])) {
+		continue;
+	}
+	// Extra fields
+	$regkey = array();
+	if (preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		$extrafieldsonlykey = '';
 		continue;
 	}
 	switch ($key) {
@@ -1450,9 +1463,6 @@ foreach ($arrayfields as $key => $val) {
 	}
 }
 
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1476,9 +1486,17 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-// Fields with position ordered by user setup
+// Fields and extrafields with position ordered by user setup (fields of hooks are output after)
 foreach ($arrayfields as $key => $val) {
 	if (empty($val['checked'])) {
+		continue;
+	}
+	// Extra fields
+	$regkey = array();
+	if (preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		$extrafieldsonlykey = '';
 		continue;
 	}
 	switch ($key) {
@@ -1619,8 +1637,6 @@ foreach ($arrayfields as $key => $val) {
 	}
 }
 
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1717,9 +1733,17 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		// Fields with position ordered by user setup
+		// Fields and extrafields with position ordered by user setup (fields of hooks are output after)
 		foreach ($arrayfields as $key => $val) {
 			if (empty($val['checked'])) {
+				continue;
+			}
+			// Extra fields
+			$regkey = array();
+			if (preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+				$extrafieldsonlykey = $regkey[1];
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+				$extrafieldsonlykey = '';
 				continue;
 			}
 			switch ($key) {
@@ -2070,9 +2094,6 @@ while ($i < $imaxinloop) {
 					}
 			}
 		}
-
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);

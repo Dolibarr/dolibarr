@@ -866,6 +866,16 @@ body.ai-fullpage {
     border-bottom: 1px solid var(--ai-border);
 }
 
+/* Content of a body cell is limited to 2 lines (same as Dolibarr class twolinesmax) */
+.chat-table tbody td .chat-cell {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    height: auto !important;
+    word-break: break-word;
+}
+
 .chat-table tbody tr:last-child td {
     border-bottom: none;
 }
