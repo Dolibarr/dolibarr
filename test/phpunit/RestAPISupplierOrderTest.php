@@ -435,8 +435,8 @@ class RestAPISupplierOrderTest extends AbstractRestAPITest
 	{
 		$test = "Update supplier order with an unknown supplier";
 
-		// The foreign key on fk_soc makes update() fail
-		$this->getUrl('supplierorders/'.$order_id, $test, 'PUT', array("socid" => 999999999), 500);
+		// The API checks the new thirdparty during the update and returns 404 before the order update
+		$this->getUrl('supplierorders/'.$order_id, $test, 'PUT', array("socid" => 999999999), 404);
 
 		$result = $this->getUrl('supplierorders/'.$order_id, $test, 'GET');
 		$this->assertEquals(1, $result['content']['socid'] ?? null, "$test The supplier must not change");

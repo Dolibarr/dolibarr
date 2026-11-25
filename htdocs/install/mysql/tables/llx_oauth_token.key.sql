@@ -16,3 +16,6 @@
 
 -- A passkey credential ID is globally unique: it is the key used to find the passkey at login (NULL for other services)
 ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
+
+-- To find the tokens or passkeys of a user (for example the count of passkeys of each user into the user list)
+ALTER TABLE llx_oauth_token ADD INDEX idx_oauth_token_fk_user (fk_user);

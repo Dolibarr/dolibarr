@@ -91,11 +91,10 @@ function init(){
 	console.log("init() Prepare tableDnd for #<?php echo $tagidfortablednd; ?>");
 
 	$(".tdlineupdown").each(function (tdindex, tdline) {
-		var gripimg = tdline.dataset.gripimg ?? 'grip.png';
-
-		$(tdline).css("background-image",'url(<?php echo DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'; ?>' + gripimg + ')');
-		$(tdline).css("background-repeat","no-repeat");
-		$(tdline).css("background-position","center center");
+		var gripimg = tdline.dataset.gripimg ?? 'grip';
+		<?php $gripHtml = img_picto('', 'grip', '', 0, 0, 0, '', 'linegripimg opacitymedium'); ?>
+		<?php $gripTitleHtml = img_picto('', 'grip_title', '', 0, 0, 0, '', 'linegripimg opacitymedium'); ?>
+		$(tdline).html(gripimg == 'grip_title.png' ? '<?php echo dol_escape_js($gripTitleHtml); ?>' : '<?php echo dol_escape_js($gripHtml); ?>');
 		/* console.log($(".tdlineupdown")[tdindex], tdline); */
 	})
 

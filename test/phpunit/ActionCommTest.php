@@ -2,6 +2,7 @@
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026       Joachim Kueter          <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -312,5 +313,56 @@ class ActionCommTest extends CommonClassTest
 		$localobject->delete($user);
 
 		print __METHOD__." id=".$id."\n";
+	}
+
+	/**
+	 * testActionCommUidOfClone
+	 *
+	 * Checks that a clone of an event (createFromClone(), used by the Clone button of the event
+	 * card) gets its own uid instead of the one of the source event, so it can be created at all
+	 * (the uid column is unique).
+	 *
+	 * @return	void
+	 */
+	public function testActionCommUidOfClone()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$now = dol_now();
+
+		$source = new ActionComm($db);
+		$source->type_code = 'AC_OTH';
+		$source->label = 'Event used to check the uid of a clone';
+		$source->datep = $now;
+		$source->datef = $now;
+		$source->percentage = -1;
+		$source->authorid = $user->id;
+		$source->userownerid = $user->id;
+
+		$sourceid = $source->create($user);
+		$this->assertLessThan($sourceid, 0, 'the source event could not be created');
+
+		$clone = new ActionComm($db);
+		$clone->fetch($sourceid);
+		$sourceuid = $clone->uid;
+		$cloneid = $clone->createFromClone($user, 0);
+		$this->assertLessThan($cloneid, 0, 'the clone could not be created: '.$clone->error.' '.implode(' ', $clone->errors));
+		$this->assertNotEquals($sourceid, $cloneid, 'the clone has the id of its source');
+
+		$uuidv4 = '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/';
+		$fetched = new ActionComm($db);
+		$fetched->fetch($cloneid);
+		$this->assertSame(1, preg_match($uuidv4, (string) $fetched->uid), 'the clone has no v4 uid');
+		$this->assertNotEquals($sourceuid, $fetched->uid, 'the clone got the uid of its source');
+
+		$fetched->delete($user);
+		$source->fetch($sourceid);
+		$source->delete($user);
+
+		print __METHOD__." id=".$cloneid."\n";
 	}
 }

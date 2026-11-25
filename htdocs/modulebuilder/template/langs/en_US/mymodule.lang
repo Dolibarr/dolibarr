@@ -36,6 +36,11 @@ MyModuleArea = Home MyModule
 MyPageName = My page name
 
 #
+# Lines of objects
+#
+ErrorAddOrModifyLineNotAllowedByObjectStatus = Adding or modifying a line is not allowed by current object status
+
+#
 # Sample widget
 #
 MyWidget = My widget

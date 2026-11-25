@@ -624,7 +624,7 @@ function societe_stats_prepare_head($object)
 	// Tab with the custom reports tool (it does not filter on sales representatives, so it needs the permission to see all third parties)
 	if (empty($user->socid) && $user->hasRight('societe', 'client', 'voir')) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/societe/stats/geo.php', ['tabfamily' => 'thirdpartystats']);
-		$head[$h][1] = $langs->trans("Custom");
+		$head[$h][1] = $langs->trans("CustomReport");
 		$head[$h][2] = 'customreports';
 		$h++;
 	}
@@ -824,17 +824,20 @@ function getState($id, $withcode = '0', $dbtouse = null, $withregion = 0, $outpu
 				}
 			}
 
+			// The key is prefixed by 'State' so a state code (like 'OK') is not mixed with a generic key of the language files.
+			$statelabel = ($obj->code && $langs->trans('State' . $obj->code) != 'State' . $obj->code) ? $langs->trans('State' . $obj->code) : ($obj->name != '-' ? $obj->name : '');
+
 			if ($withcode == 1) {
 				if ($withregion == 1) {
-					return $label = $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $obj->region_name . ' - ' . $obj->code . ' - ' . $statelabel;
 				} else {
-					return $label = $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $obj->code . ' - ' . $statelabel;
 				}
 			} elseif ($withcode == 2) {
 				if ($withregion == 1) {
-					return $label = $obj->region_name . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $obj->region_name . ' - ' . $statelabel;
 				} else {
-					return $label = ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $statelabel;
 				}
 			} elseif ($withcode === 'all') {
 				if ($withregion == 1) {

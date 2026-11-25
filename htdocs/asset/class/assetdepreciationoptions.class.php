@@ -561,7 +561,10 @@ class AssetDepreciationOptions extends CommonObject
 
 			if (!$error && !empty($this->deprecation_options[$mode_key])) {
 				if (!empty($mode_info['enabled_field'])) {
-					list($ref_mode, $ref_field, $required) = explode(':', $mode_info['enabled_field']);
+					$tmparray = explode(':', $mode_info['enabled_field']);
+					$ref_mode = $tmparray[0];
+					$ref_field = $tmparray[1];
+					$required = $tmparray[2];
 					$flag = $this->deprecation_options[$ref_mode][$ref_field] ?? null;
 					if ((string) $flag !== (string) $required) {
 						continue;

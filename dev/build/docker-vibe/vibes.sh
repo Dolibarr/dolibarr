@@ -55,6 +55,8 @@ Environment variables:
   DOCKER_ALLOW_SMTP=1      Start the container without the block of the outbound SMTP ports.
   DOL_CTI_ADMIN_LOGIN      Login used by the Dolibarr PHPUnit REST API and login tests.
   DOL_CTI_ADMIN_PASSWORD   Password used by the Dolibarr PHPUnit REST API and login tests.
+  DOLISTORE_API_KEY        API key used to call the DoliStore API.
+  DOLISTORE_API_URL        URL of the DoliStore API.
 EOF
 }
 
@@ -314,9 +316,10 @@ fi
 # Pass the Dolibarr PHPUnit credentials to the container: the REST API tests
 # (test/phpunit/AbstractRestAPITest.php) and SecurityLoginTest.php use them to
 # log in with a dedicated account instead of the admin/admin default.
+# The DoliStore API key and URL are also passed, to call the DoliStore API from the container.
 # Nothing is added when the variables are not set on the host.
 TEST_ARGS=()
-for VAR in DOL_CTI_ADMIN_LOGIN DOL_CTI_ADMIN_PASSWORD; do
+for VAR in DOL_CTI_ADMIN_LOGIN DOL_CTI_ADMIN_PASSWORD DOLISTORE_API_KEY DOLISTORE_API_URL; do
     VAR_VALUE=$(printenv "$VAR" || true)
     if [ -n "$VAR_VALUE" ]; then
         TEST_ARGS+=(-e "$VAR=$VAR_VALUE")
@@ -367,6 +370,12 @@ if [ "$(cat /sys/module/apparmor/parameters/enabled 2>/dev/null)" = "Y" ]; then
     SECURITY_ARGS+=(--security-opt apparmor=unconfined)
 fi
 
+# The cgroup path of the container must be seen the same way from inside the container
+# and by the kernel, so docker-entrypoint.sh can install an iptables rule scoped to the
+# only container instead of blocking the SMTP ports of the whole machine (see smtpblock.sh).
+# --cgroupns=host is required for that: with the private cgroup namespace of docker, the
+# path read from /proc/self/cgroup into the container is not the one known by the kernel.
+
 sudo docker run --rm -it \
   -e HOST_UID="$(id -u)" \
   -e HOST_GID="$(id -g)" \
@@ -380,6 +389,7 @@ sudo docker run --rm -it \
   "${TX_ARGS[@]}" \
   "${SECURITY_ARGS[@]}" \
   --network=host \
+  --cgroupns=host \
   --cap-add=NET_ADMIN \
   --mount "type=bind,src=/var/run/mysqld/mysqld.sock,dst=/var/run/mysqld/mysqld.sock" \
   --mount "type=bind,src=$WORK_DIR,dst=$WORK_DIR" \
