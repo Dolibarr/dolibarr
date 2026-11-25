@@ -525,6 +525,75 @@ class CashControl extends CommonObject
 	}
 
 	/**
+	 * Return the start and end dates of a cash control period, defined in the time zone of the server and shifted by an offset
+	 *
+	 * @param	int		$year		Year of the period
+	 * @param	int		$month		Month of the period (0 for a yearly period)
+	 * @param	int		$day		Day of the period (0 for a monthly or yearly period)
+	 * @param	int		$offset		Offset in seconds of the local time of the point of sale ahead of the time of the server
+	 * @return	array{0:int,1:int}	Array with the start date and the end date (timestamps)
+	 */
+	public static function getPeriodDates($year, $month, $day, $offset = 0)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		if (empty($month)) {
+			$datestart = (int) dol_get_first_day($year, 1, 'tzserver');
+			$dateend = (int) dol_get_last_day($year, 12, 'tzserver');
+		} elseif (empty($day)) {
+			$datestart = (int) dol_get_first_day($year, $month, 'tzserver');
+			$dateend = (int) dol_get_last_day($year, $month, 'tzserver');
+		} else {
+			$datestart = (int) dol_mktime(0, 0, 0, $month, $day, $year, 'tzserver');
+			$dateend = (int) dol_mktime(23, 59, 59, $month, $day, $year, 'tzserver');
+		}
+
+		return array($datestart - $offset, $dateend - $offset);
+	}
+
+	/**
+	 * Return the date at 00:00:00 UTC of the last day of a cash control period.
+	 * The closing time (hour_close, min_close, sec_close) is stored relatively to this date, so the hour may be < 0 or > 23.
+	 *
+	 * @param	int		$year		Year of the period
+	 * @param	int		$month		Month of the period (0 for a yearly period)
+	 * @param	int		$day		Day of the period (0 for a monthly or yearly period)
+	 * @return	int					Timestamp
+	 */
+	public static function getLastDayOfPeriod($year, $month, $day)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		if (empty($month)) {
+			return (int) dol_mktime(0, 0, 0, 12, 31, $year, 'gmt');
+		}
+		if (empty($day)) {
+			return (int) dol_get_last_day($year, $month, 'gmt') - (24 * 3600 - 1);
+		}
+
+		return (int) dol_mktime(0, 0, 0, $month, $day, $year, 'gmt');
+	}
+
+	/**
+	 * Return the start and end dates of the period of this cash control, deduced from its end date stored in UTC
+	 * (year_close, month_close, day_close, hour_close, min_close, sec_close).
+	 *
+	 * @return	array{0:int,1:int}	Array with the start date and the end date (timestamps)
+	 */
+	public function getPeriodStartAndEnd()
+	{
+		$dateend = self::getLastDayOfPeriod((int) $this->year_close, (int) $this->month_close, (int) $this->day_close);
+		$dateend += (int) $this->hour_close * 3600 + (int) $this->min_close * 60 + (int) $this->sec_close;
+
+		// The duration of the period is the one in the time zone of the server (a day lasts 23 or 25 hours when daylight saving time changes)
+		$tmparray = self::getPeriodDates((int) $this->year_close, (int) $this->month_close, (int) $this->day_close);
+		$tmpdatestart = $tmparray[0];
+		$tmpdateend = $tmparray[1];
+
+		return array($dateend - ($tmpdateend - $tmpdatestart), $dateend);
+	}
+
+	/**
 	 *  Return label of the status
 	 *
 	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto

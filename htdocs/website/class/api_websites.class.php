@@ -458,6 +458,8 @@ class Websites extends DolibarrApi
 	 *
 	 * Create a new page (or blog post with type_container = 'blogpost') into a website.
 	 * The request data can include any field of the website_page table (pageurl and title are mandatory).
+	 * It can also include 'header' and 'footer': alias (pageurl) of a page of type 'header' or 'footer' of the website,
+	 * to include in the page instead of the ones found automatically for a blog post.
 	 *
 	 * @param   int     $id             ID of website
 	 * @param   array   $request_data   Page data
@@ -467,7 +469,7 @@ class Websites extends DolibarrApi
 	 *
 	 * @url     POST {id}/pages
 	 *
-	 * @throws  RestException   400     Bad or missing value for a field
+	 * @throws  RestException   400     Bad or missing value for a field, or header/footer not found as a container of this type
 	 * @throws  RestException   403     Access denied
 	 * @throws  RestException   404     Website not found
 	 * @throws  RestException   409     A page with this pageurl already exists
@@ -497,6 +499,9 @@ class Websites extends DolibarrApi
 			}
 			if ($field == 'image') {
 				continue;	// The image used by the CMS is the one found into the content
+			}
+			if ($field == 'header' || $field == 'footer') {
+				continue;	// Alias of the header or footer container to include, checked later
 			}
 			if ($field === 'caller') {
 				$this->websitepage->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -540,6 +545,16 @@ class Websites extends DolibarrApi
 			throw new RestException(400, 'Field title is mandatory');
 		}
 
+		// Header and footer containers given by the caller must exist in the website with the right type
+		$headername = '';
+		if (isset($request_data['header']) && $request_data['header'] !== '') {
+			$headername = $this->_checkContainerForAPI($this->website, $request_data['header'], 'header');
+		}
+		$footername = '';
+		if (isset($request_data['footer']) && $request_data['footer'] !== '') {
+			$footername = $this->_checkContainerForAPI($this->website, $request_data['footer'], 'footer');
+		}
+
 		// Check there is no other page with the same name or alias
 		$websitepagetemp = new WebsitePage($this->db);
 		$result = $websitepagetemp->fetch(0, (string) $this->website->id, $this->websitepage->pageurl);
@@ -554,9 +569,10 @@ class Websites extends DolibarrApi
 		$this->websitepage->content = preg_replace('/<head>.*<\/head>/ims', '', (string) $this->websitepage->content);
 
 		// A blog post gets the header and footer containers of its language, and its structured data
+		// A header or footer container given by the caller is used instead, whatever the type of page
 		$phpwrappers = array();
-		if ($this->websitepage->type_container == 'blogpost') {
-			$phpwrappers = $this->_addBlogpostWrappers($this->website, $this->websitepage);
+		if ($this->websitepage->type_container == 'blogpost' || $headername !== '' || $footername !== '') {
+			$phpwrappers = $this->_addBlogpostWrappers($this->website, $this->websitepage, $headername, $footername);
 		}
 
 		// Create the page in database
@@ -919,32 +935,87 @@ class Websites extends DolibarrApi
 	}
 
 	/**
+	 * Return the alias of a header or footer container of a website, after checking it exists with this type.
+	 *
+	 * @param	Website		$website		Website
+	 * @param	mixed		$name			Alias (pageurl) of the container, as given in the request
+	 * @param	string		$type			Type of container expected: 'header' or 'footer'
+	 * @return	string						Alias of the container, as stored in database
+	 *
+	 * @throws	RestException	400			The alias is not the one of a container of this type in the website
+	 * @throws	RestException	500			Error reading the container
+	 */
+	private function _checkContainerForAPI($website, $name, $type)
+	{
+		if (is_array($name) || is_object($name) || !preg_match('/^[a-z0-9\-\_]+$/i', (string) $name)) {
+			throw new RestException(400, 'Field '.$type.' must be the alias (pageurl) of a page of type '.$type.' of the website');
+		}
+
+		$container = new WebsitePage($this->db);
+		$result = $container->fetch(0, (string) $website->id, (string) $name);
+		if ($result < 0) {
+			throw new RestException(500, $container->errorsToString());
+		}
+		if ($result == 0 || $container->type_container != $type) {
+			throw new RestException(400, 'No page of type '.$type.' with the alias '.$name.' was found in the website '.$website->ref);
+		}
+
+		return (string) $container->pageurl;
+	}
+
+	/**
 	 * Wrap the content of a blog post with the header and footer containers and the structured data.
-	 * A container is included only if the website has exactly one container of this type in the language of the post.
+	 * A container is included only if the website has exactly one container of this type in the language of the post
+	 * (or, if it has none in this language, in the main language of the website),
+	 * except when it is given by the caller (it is then included whatever the type of the page).
 	 *
 	 * @param	Website		$website		Website
 	 * @param	WebsitePage	$websitepage	Blog post to complete (its content is modified)
+	 * @param	string		$headername		Alias of the header container to use instead of the one found automatically
+	 * @param	string		$footername		Alias of the footer container to use instead of the one found automatically
 	 * @return	string[]					PHP wrappers added to the content (to pass to WebsitePage::create())
 	 */
-	private function _addBlogpostWrappers($website, $websitepage)
+	private function _addBlogpostWrappers($website, $websitepage, $headername = '', $footername = '')
 	{
 		dol_syslog("_addBlogpostWrappers");
 
 		$pagelang = (string) (empty($websitepage->lang) ? $website->lang : $websitepage->lang);
 
-		$websitepagetemp = new WebsitePage($this->db);
-		$containers = $websitepagetemp->fetchAll($website->id, '', '', 0, 0, "((t.type_container:=:'header') OR (t.type_container:=:'footer'))");
-		if (!is_array($containers)) {
-			throw new RestException(500, $websitepagetemp->errorsToString());
+		$found = array('header' => array(), 'footer' => array());
+
+		// Containers are searched automatically only for a blog post, and only if one of them is not given
+		if ($websitepage->type_container == 'blogpost' && ($headername === '' || $footername === '')) {
+			$websitepagetemp = new WebsitePage($this->db);
+			$containers = $websitepagetemp->fetchAll($website->id, '', '', 0, 0, "((t.type_container:=:'header') OR (t.type_container:=:'footer'))");
+			if (!is_array($containers)) {
+				throw new RestException(500, $websitepagetemp->errorsToString());
+			}
+
+			// Keep the containers of the language of the post (an empty language is the main language of the website)
+			// If there is none of a type in this language, the ones of the main language of the website are used instead
+			$foundmainlang = array('header' => array(), 'footer' => array());
+			foreach ($containers as $container) {
+				$containerlang = (string) (empty($container->lang) ? $website->lang : $container->lang);
+				if ($containerlang == $pagelang) {
+					$found[$container->type_container][] = $container->pageurl;
+				}
+				if ($containerlang == (string) $website->lang) {
+					$foundmainlang[$container->type_container][] = $container->pageurl;
+				}
+			}
+			foreach (array('header', 'footer') as $containertype) {
+				if (count($found[$containertype]) == 0) {
+					$found[$containertype] = $foundmainlang[$containertype];
+				}
+			}
 		}
 
-		// Keep the containers of the language of the post (an empty language is the main language of the website)
-		$found = array('header' => array(), 'footer' => array());
-		foreach ($containers as $container) {
-			$containerlang = (string) (empty($container->lang) ? $website->lang : $container->lang);
-			if ($containerlang == $pagelang) {
-				$found[$container->type_container][] = $container->pageurl;
-			}
+		// The containers given by the caller are used instead of the ones found automatically
+		if ($headername !== '') {
+			$found['header'] = array($headername);
+		}
+		if ($footername !== '') {
+			$found['footer'] = array($footername);
 		}
 
 		$phpwrappers = array();
