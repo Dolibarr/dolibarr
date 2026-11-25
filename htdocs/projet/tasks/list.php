@@ -390,10 +390,10 @@ $sqlfields = $sql; // $sql fields to remove for count total
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t ON t.fk_projet = p.rowid";
-$sqljointime = '';
+$sqltimejoin = '';
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
-	$sqljointime = " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype = 'task')";
-	$sql .= $sqljointime;
+	$sqltimejoin = " LEFT JOIN ".MAIN_DB_PREFIX."element_time as tt ON (tt.fk_element = t.rowid AND tt.elementtype = 'task')";
+	$sql .= $sqltimejoin;
 }
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
@@ -593,8 +593,8 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	if ($sqljointime) {
-		$sqlforcount = str_replace($sqljointime, '', $sqlforcount);	// Without the GROUP BY, the join on times would count lines of time spent instead of tasks
+	if ($sqltimejoin) {
+		$sqlforcount = str_replace($sqltimejoin, '', $sqlforcount);	// Without the GROUP BY, the join on times would count lines of time spent instead of tasks
 	}
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
