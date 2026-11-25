@@ -1392,8 +1392,8 @@ foreach ($arrayfields as $key => $val) {
 		case 'p.fk_stcommcontact':
 			print '<td class="liste_titre maxwidthonsmartphone center">';
 			$arraystcomm = array();
-			foreach ($contactstatic->cacheprospectstatus as $key => $val) {
-				$arraystcomm[$val['id']] = ($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
+			foreach ($contactstatic->cacheprospectstatus as $statuskey => $statusval) {
+				$arraystcomm[$statusval['id']] = ($langs->trans("StatusProspect".$statusval['id']) != "StatusProspect".$statusval['id'] ? $langs->trans("StatusProspect".$statusval['id']) : $statusval['label']);
 			}
 			print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2, 0, 0, '', 0, 0, 0, '', 'nowrap ');
 			print '</td>';
