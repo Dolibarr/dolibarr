@@ -7,10 +7,6 @@ GET http://{{hostnport}}/api/index.php/setup/dictionary/countries?sortfield=code
 HTTP 200
 
 # GET reverse sorted setup/dictionary/countries
-GET http://{{hostnport}}/api/index.php/setup/dictionary/countries?sortfield=code&sortorder=DSC
-HTTP 200
-
-# GET reverse sorted setup/dictionary/countries
 GET http://{{hostnport}}/api/index.php/setup/dictionary/countries?sortfield=code&sortorder=DESC
 HTTP 200
 

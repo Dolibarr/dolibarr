@@ -21,14 +21,34 @@ permissions:
 jobs:
   check-files:
     runs-on: ubuntu-latest
-    env:
-      # The Dolibarr maintainers are excluded from all the checks of this workflow,
-      # so they can, for example, publish a PR with more than 10 files.
-      MAINTAINERS_BYPASS: '["eldy", "rycks", "lvessiller-opendsi"]'
     steps:
+      - name: Check if the author of the last commit of the PR is a maintainer
+        id: maintainer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
+        run: |
+          # As for the quota check, if the author of the last commit of the PR is a maintainer (a github login found
+          # on a line "M: Name <email> / login" of the MAINTAINERS file of the target branch, never read from the PR),
+          # some checks are bypassed, so a maintainer can force the CI to green.
+          MAINTAINERS=$(gh api -H "Accept: application/vnd.github.raw" "repos/${GH_REPO}/contents/MAINTAINERS?ref=${PR_TARGET_BRANCH}" \
+            | grep -E '^[[:space:]]*M:.*<[^>]*@[^>]*>[[:space:]]*/[[:space:]]*[A-Za-z0-9-]+[[:space:]]*$' \
+            | sed -E 's|.*/[[:space:]]*([A-Za-z0-9-]+)[[:space:]]*$|\1|' | sort -u || true)
+          LAST_COMMIT_AUTHOR=$(gh api "repos/${GH_REPO}/pulls/${PR_NUMBER}/commits" --paginate \
+            -q '.[] | (.author.login // "")' | tail -n 1)
+          echo "Author of the last commit of the PR: ${LAST_COMMIT_AUTHOR:-unknown}"
+          if [ -n "${LAST_COMMIT_AUTHOR}" ] && printf '%s\n' "${MAINTAINERS}" | grep -qixF -- "${LAST_COMMIT_AUTHOR}"; then
+            echo "The author of the last commit, ${LAST_COMMIT_AUTHOR}, is a maintainer found into the MAINTAINERS file. Some checks will be skipped."
+            echo "bypass=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "bypass=0" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check that no translation files outside htdocs/langs/en_US are modified
-        # The checks are bypassed if the user that pushed is a Dolibarr maintainer.
-        if: ${{ !contains(fromJSON(env.MAINTAINERS_BYPASS), github.actor) }}
+        # The checks are bypassed if the author of the last commit of the PR is a Dolibarr maintainer.
+        if: ${{ steps.maintainer.outputs.bypass != '1' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_TITLE: ${{ github.event.pull_request.title }}
@@ -75,7 +95,7 @@ jobs:
           #fi
 
       - name: Check that no files into htdocs/includes are modified, except for PR on develop
-        if: ${{ !contains(fromJSON(env.MAINTAINERS_BYPASS), github.actor) }}
+        if: ${{ steps.maintainer.outputs.bypass != '1' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
@@ -103,7 +123,7 @@ jobs:
           echo "No files into htdocs/includes were modified. OK."
 
       - name: Check the number of modified files is not higher than 10, except for QUAL PR
-        if: ${{ !contains(fromJSON(env.MAINTAINERS_BYPASS), github.actor) }}
+        if: ${{ steps.maintainer.outputs.bypass != '1' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_TITLE: ${{ github.event.pull_request.title }}
@@ -180,3 +200,30 @@ jobs:
           fi
 
           echo "The PR does not mix database structure and code changes. OK."
+
+      - name: Check that User Interface and server components are not modified in the same PR
+        # The check is bypassed if the author of the last commit of the PR is a Dolibarr maintainer.
+        if: ${{ steps.maintainer.outputs.bypass != '1' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the list of files changed (whatever is the status) by the pull request,
+          # using the GitHub API so no git history is needed (no checkout).
+          ALL_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
+            --jq '.[] | .filename, (.previous_filename // empty)' | sort -u)
+
+          # Files of the User Interface (same detection than the screenshot check of ci-on-pull-checkdesc.yml)
+          UI_FILES=$(echo "$ALL_FILES" | grep -Ei '(^htdocs/theme/|\.(tpl|css|scss|html|js|vue)$)' | grep -Ev '^(htdocs/includes/|dev/|.*node_modules/)' || true)
+          # Files of server components: SOAP web services and REST API classes (api_*.php)
+          SERVER_FILES=$(echo "$ALL_FILES" | grep -E '(^htdocs/webservices/.*\.php$|(^|/)api_[^/]*\.php$)' | grep -v '^htdocs/includes/' || true)
+
+          if [ -n "$UI_FILES" ] && [ -n "$SERVER_FILES" ]; then
+            echo "::error::A PR must not modify the User Interface (.tpl, .css, .scss, .html, .js, .vue or htdocs/theme/ files) and the server components (SOAP web services into htdocs/webservices or REST API files api_*.php) at the same time. Please split the changes into dedicated PRs (see the CONTRIBUTING.md file)."
+            echo "User Interface files modified:"
+            echo "$UI_FILES" | sed 's/^/ - /'
+            echo "Server component files modified:"
+            echo "$SERVER_FILES" | sed 's/^/ - /'
+            exit 1
+          fi
+
+          echo "The PR does not mix User Interface and server component changes. OK."

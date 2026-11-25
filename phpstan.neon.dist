@@ -56,7 +56,6 @@ parameters:
 			- htdocs/includes/tcpdi/*
 			- htdocs/includes/tecnickcom/*
 			- htdocs/includes/webklex/*
-			- htdocs/core/class/lessc.class.php
 	# checkAlwaysTrueCheckTypeFunctionCall: false
 	# checkAlwaysTrueInstanceof: false
 	# checkAlwaysTrueStrictComparison: false
