@@ -965,7 +965,8 @@ class Websites extends DolibarrApi
 
 	/**
 	 * Wrap the content of a blog post with the header and footer containers and the structured data.
-	 * A container is included only if the website has exactly one container of this type in the language of the post,
+	 * A container is included only if the website has exactly one container of this type in the language of the post
+	 * (or, if it has none in this language, in the main language of the website),
 	 * except when it is given by the caller (it is then included whatever the type of the page).
 	 *
 	 * @param	Website		$website		Website
@@ -991,10 +992,20 @@ class Websites extends DolibarrApi
 			}
 
 			// Keep the containers of the language of the post (an empty language is the main language of the website)
+			// If there is none of a type in this language, the ones of the main language of the website are used instead
+			$foundmainlang = array('header' => array(), 'footer' => array());
 			foreach ($containers as $container) {
 				$containerlang = (string) (empty($container->lang) ? $website->lang : $container->lang);
 				if ($containerlang == $pagelang) {
 					$found[$container->type_container][] = $container->pageurl;
+				}
+				if ($containerlang == (string) $website->lang) {
+					$foundmainlang[$container->type_container][] = $container->pageurl;
+				}
+			}
+			foreach (array('header', 'footer') as $containertype) {
+				if (count($found[$containertype]) == 0) {
+					$found[$containertype] = $foundmainlang[$containertype];
 				}
 			}
 		}
