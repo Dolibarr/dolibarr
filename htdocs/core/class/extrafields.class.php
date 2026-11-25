@@ -1716,7 +1716,7 @@ class ExtraFields
 								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
 								// Do nothing if condition is using 'IN' keyword
 
-								// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list
+								// Replace 'column = $ID$' by an always true test, the parent object is unknown in a list. Written '1:=:1' because a '1 = 1' is rejected by forgeSQLFromUniversalSearchCriteria()
 								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
 								$InfoFieldList[4] = preg_replace($word, '1:=:1', $InfoFieldList[4]);
 								// Replace '$ID$ = column' by an always true test
