@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=已驗證
 StatusReceptionProcessedShort=已處理
 ReceptionSheet=進貨單表單
 ValidateReception=驗證進貨單
+DeleteReception=Delete reception
 ConfirmDeleteReception=您確定要刪除此進貨單嗎？
 ConfirmValidateReception=您確定要驗證此進貨單，編號為 <b>%s</b> 嗎？
 ConfirmCancelReception=您確定要取消此進貨單嗎？

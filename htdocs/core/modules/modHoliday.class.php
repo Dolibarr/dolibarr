@@ -313,7 +313,7 @@ class modHoliday extends DolibarrModules
 		$this->import_fields_array[$r] = array(
 			'd.ref' => 'Ref*', 'd.fk_user' => 'UserID*', 'd.fk_type' => 'TypeOfLeaveId*','d.fk_validator' => 'ApprovedBy*',
 			'd.date_debut' => 'DateStart*', 'd.date_fin' => 'DateEnd*', 'd.halfday' => 'HalfDay', 'd.description' => 'Description*',
-			'd.date_create' => 'DateCreation*'
+			'd.date_creation' => 'DateCreation*'
 		);
 
 		// Import of leave balance
@@ -344,25 +344,6 @@ class modHoliday extends DolibarrModules
 	{
 		// Permissions
 		$this->remove($options);
-
-		//ODT template
-		/*$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/holiday/template_holiday.odt';
-		$dirodt=DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/holiday';
-		$dest=$dirodt.'/template_order.odt';
-
-		if (file_exists($src) && ! file_exists($dest))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			dol_mkdir($dirodt);
-			$result=dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
-				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
-				return 0;
-			}
-		}
-		*/
 
 		$sql = array(
 			//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".((int) $conf->entity),

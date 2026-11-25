@@ -29,10 +29,9 @@
 global $conf, $user, $langs, $db, $mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -197,7 +196,7 @@ class LangTest extends CommonClassTest
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 
 		foreach ($this->langDataProvider() as $case) {
-			list($code) = $case;
+			$code = $case[0];
 			$prefix = __METHOD__."($code) ";
 			$tmplangs = new Translate('', $conf);
 			$langcode = $code;
@@ -317,7 +316,14 @@ class LangTest extends CommonClassTest
 		$db = $this->savdb;
 
 		foreach ($this->transDataProvider() as $casename => $case) {
-			list($description, $langcode, $dict, $expected, $key, $param1, $param2) = array_pad($case, 7, '');
+			$tmparray = array_pad($case, 7, '');
+			$description = $tmparray[0];
+			$langcode = $tmparray[1];
+			$dict = $tmparray[2];
+			$expected = $tmparray[3];
+			$key = $tmparray[4];
+			$param1 = $tmparray[5];
+			$param2 = $tmparray[6];
 
 			$tmplangs = new Translate('', $conf);
 			$tmplangs->setDefaultLang($langcode);

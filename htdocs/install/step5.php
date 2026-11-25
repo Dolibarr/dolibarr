@@ -154,7 +154,7 @@ $force_install_lockinstall = (int) (!empty($force_install_lockinstall) ? $force_
 
 
 // Case the password was in forced mode
-if (@$force_install_noedit == 2 && isset($force_install_dolibarrpassword)) {
+if (@$force_install_noedit == 2 && !empty($force_install_dolibarrpassword)) {
 	$pass = $force_install_dolibarrpassword;
 	$pass_verif = $force_install_dolibarrpassword;
 }
@@ -479,7 +479,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 				$tagdatabase = true; // We don't know what it was before, so now we consider we at the chosen version.
 			} else {
-				$mainversionlastupgradearray = preg_split('/[.-]/', $conf->global->MAIN_VERSION_LAST_UPGRADE);
+				$mainversionlastupgradearray = preg_split('/[.-]/', getDolGlobalString('MAIN_VERSION_LAST_UPGRADE'));
 				$targetversionarray = preg_split('/[.-]/', $targetversion);
 				if (versioncompare($targetversionarray, $mainversionlastupgradearray) > 0) {
 					$tagdatabase = true;

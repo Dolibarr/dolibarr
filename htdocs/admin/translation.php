@@ -235,9 +235,9 @@ $param = '&mode='.urlencode($mode);
 $enabledisablehtml = '<span class="divfilteralone">';
 if (!getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=1'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp unsetcolor small" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=1'.$param.'">';
 } else {
-	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=0'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp unsetcolor small" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=0'.$param.'">';
 }
 $enabledisablehtml .= $langs->trans("EnableOverwriteTranslation");
 if (!getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
@@ -312,6 +312,9 @@ $modulesdir = dolGetModulesDirs();
 
 $listoffiles = array();
 $listoffilesexternalmodules = array();
+$keytolangfile = array();
+// Record the lang file each key comes from only when the Transifex link that consumes it is shown
+$trackkeytolangfile = getDolGlobalInt('MAIN_FEATURES_LEVEL');
 
 // Search into dir of modules (the $modulesdir is already a list that loop on $conf->file->dol_document_root)
 $i = 0;
@@ -336,6 +339,16 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $newlang->load($langkey, 0, 0, '', 0); // Load translation files + database overwrite
+
+		// Record the lang file each key comes from, to know whether a key belongs to the core or to an external module
+		if ($trackkeytolangfile) {
+			foreach ($newlang->tab_translate as $key2 => $val2) {
+				if (!isset($keytolangfile[$key2])) {
+					$keytolangfile[$key2] = $langkey;
+				}
+			}
+		}
+
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $newlangfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
 		if ($result < 0) {
@@ -687,6 +700,7 @@ if ($mode == 'searchkey') {
 				$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
 				$sql .= " WHERE entity IN (".getEntity('overwrite_trans').")";
 				$sql .= " AND transkey = '".$db->escape($key)."'";
+				$sql .= " AND lang = '".$db->escape($langcode)."'";	// The same key may be overwritten for several languages
 				dol_syslog("translation::select from table", LOG_DEBUG);
 				$result = $db->query($sql);
 				$obj = null;
@@ -708,10 +722,19 @@ if ($mode == 'searchkey') {
 
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 				$transifexlangfile = '$'; // $ means 'All'
+				// The default Transifex project is the one of the core
+				$transifexprojectofkey = 'dolibarr-association/dolibarr';
+				$reg = array();
+				if (preg_match('/@([a-z0-9_]+)$/i', (string) ($keytolangfile[$key] ?? ''), $reg)) {
+					// The key comes from an external module, so use the Transifex project declared by the module and show nothing if there is none
+					$transifexprojectofkey = getDolGlobalString(strtoupper($reg[1]).'_TRANSIFEX_PROJECT');
+				}
 				//$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?key='.$key;
-				$transifexurl = 'https://app.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?q=key%3A'.$key;
+				if ($transifexprojectofkey) {
+					$transifexurl = 'https://app.transifex.com/'.$transifexprojectofkey.'/translate/#'.$langcode.'/'.$transifexlangfile.'?q=key%3A'.$key;
 
-				print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto($langs->trans('FixOnTransifex'), 'globe').'</a>';
+					print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto($langs->trans('FixOnTransifex'), 'globe').'</a>';
+				}
 			}
 		} else {
 			// retrieve rowid
@@ -719,6 +742,7 @@ if ($mode == 'searchkey') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."overwrite_trans";
 			$sql .= " WHERE entity IN (".getEntity('overwrite_trans').")";
 			$sql .= " AND transkey = '".$db->escape($key)."'";
+			$sql .= " AND lang = '".$db->escape($langcode)."'";	// The same key may be overwritten for several languages
 			dol_syslog("translation::select from table", LOG_DEBUG);
 			$result = $db->query($sql);
 			$obj = null;

@@ -586,7 +586,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		// Define new ref
 		$num = (string) $this->ref;
 		if (preg_match('/^[\(]?PROV/i', $num) || empty($num)) { // empty should not happened, but when it occurs, the test saves life
-			$num = $this->getNextNumRef();
+			$num = (string) $this->id;	// There is no numbering module, the ref is the id, as in create()
 		}
 
 		$this->newref = (string) $num;
@@ -853,7 +853,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				list($class, $module) = explode('@', $this->picto);
+				$tmparray = explode('@', $this->picto);
+				$class = $tmparray[0];
+				$module = $tmparray[1];
 				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];
@@ -1007,62 +1009,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 	}
 
 	/**
-	 *  Returns the reference to the following non used object depending on the active numbering module.
-	 *
-	 *  @return string      		Object free reference
-	 */
-	public function getNextNumRef()
-	{
-		global $langs, $conf;
-		$langs->load("eventorganization@eventorganization");
-
-		if (!getDolGlobalString('EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON')) {
-			$conf->global->EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON = 'mod_conferenceorboothattendee_standard';
-		}
-
-		if (getDolGlobalString('EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON')) {
-			$mybool = false;
-
-			$file = getDolGlobalString('EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON') . ".php";
-			$classname = getDolGlobalString('EVENTORGANIZATION_CONFERENCEORBOOTHATTENDEE_ADDON');
-
-			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/eventorganization/");
-
-				// Load file with numbering class (if found)
-				$mybool = ((bool) @include_once $dir.$file) || $mybool;
-			}
-
-			if (!$mybool) {
-				dol_print_error(null, "Failed to include file ".$file);
-				return '';
-			}
-
-			if (class_exists($classname)) {
-				$obj = new $classname();
-				'@phan-var-force CommonNumRefGenerator $obj';
-				$numref = $obj->getNextValue($this);
-
-				if ($numref != '' && $numref != '-1') {
-					return $numref;
-				} else {
-					$this->error = $obj->error;
-					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-					return "";
-				}
-			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
-				return "";
-			}
-		} else {
-			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
-			return "";
-		}
-	}
-
-	/**
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
@@ -1079,7 +1025,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		$result = 0;
 
-		$langs->load("eventorganization@eventorganization");
+		$langs->load("eventorganization");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_conferenceorboothattendee';

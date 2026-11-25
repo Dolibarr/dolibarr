@@ -273,7 +273,7 @@ class ActionsMyModule extends CommonHookActions
 		$h = 0;
 
 		if ($parameters['tabfamily'] == 'mymodule') {
-			$head[$h][0] = dol_buildpath('/module/index.php', 1);
+			$head[$h][0] = dol_buildpath('/mymodule/mymoduleindex.php', 1);
 			$head[$h][1] = $langs->trans("Home");
 			$head[$h][2] = 'home';
 			$h++;
@@ -297,34 +297,6 @@ class ActionsMyModule extends CommonHookActions
 	}
 
 
-
-	/**
-	 * Overload the restrictedArea function : check permission on an object
-	 *
-	 * @param	array<string,mixed>	$parameters		Hook metadata (context, etc...)
-	 * @param   CommonObject    	$object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-	 * @param	string				$action			Current action (if set). Generally create or edit or null
-	 * @param	HookManager			$hookmanager	Hook manager propagated to allow calling another hook
-	 * @return	int									Return integer <0 if KO,
-	 *												=0 if OK but we want to process standard actions too,
-	 *												>0 if OK and we want to replace standard actions.
-	 */
-	public function restrictedArea($parameters, $object, &$action, $hookmanager)
-	{
-		global $user;
-
-		if ($parameters['features'] == 'myobject') {
-			if ($user->hasRight('mymodule', 'myobject', 'read')) {
-				$this->results['result'] = 1;
-				return 1;
-			} else {
-				$this->results['result'] = 0;
-				return 1;
-			}
-		}
-
-		return 0;
-	}
 
 	/**
 	 * Execute action completeTabsHead
@@ -392,14 +364,18 @@ class ActionsMyModule extends CommonHookActions
 	 */
 	public function showLinkToObjectBlock($parameters, &$object, &$action, $hookmanager)
 	{
-		$myobject = new MyObject($object->db);
+		global $user;
+
+		dol_include_once('/mymodule/class/myobject.class.php');
+
+		$myobject = new MyObject($this->db);
 		$this->results = array('myobject@mymodule' => array(
 			'enabled' => isModEnabled('mymodule'),
-			'perms' => 1,
+			'perms' => $user->hasRight('mymodule', 'myobject', 'read'),
 			'label' => 'LinkToMyObject',
-			'sql' => "SELECT t.rowid, t.ref, t.ref as 'name' FROM " . $this->db->prefix() . $myobject->table_element. " as t "),);
+			'sql' => "SELECT t.rowid, t.ref, t.ref as name FROM " . $this->db->prefix() . $myobject->table_element. " as t".((int) $myobject->ismultientitymanaged == 1 ? " WHERE t.entity IN (".getEntity($myobject->element).")" : "")),);
 
-		return 1;
+		return 0;	// 0 to add MyObject to the list of linkable objects, 1 to replace the list
 	}
 	/* Add other hook methods here... */
 }

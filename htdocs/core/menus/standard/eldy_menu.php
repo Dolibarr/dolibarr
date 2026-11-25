@@ -134,6 +134,12 @@ class MenuManager
 			$leftmenu = $forceleftmenu;
 		}
 
+		// When left menu entries are expanded on hover, the menu entries of modules must be loaded for all values of leftmenu
+		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
+		if (empty($forceleftmenu) && isLeftMenuExpandOnHover()) {
+			$leftmenu = 'all';
+		}
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 		$tabMenu = array();
 		$menuArbo = new Menubase($this->db, 'eldy');
@@ -222,7 +228,7 @@ class MenuManager
 							print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 						}
 					}
-					print ucfirst($val['titre']);
+					print dol_ucfirst($val['titre']);
 					print '</a>'."\n";
 
 					// Search submenu for this mainmenu entry
@@ -258,14 +264,14 @@ class MenuManager
 							print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
 						}
 
-						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
+						if ($langs->trans(dol_ucfirst($val['mainmenu'])."Dashboard") == dol_ucfirst($val['mainmenu'])."Dashboard") {  // No translation
 							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
 								print $langs->trans("Access");
 							} else {
 								print $langs->trans("Dashboard");
 							}
 						} else {
-							print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+							print $langs->trans(dol_ucfirst($val['mainmenu'])."Dashboard");
 						}
 						print '</a>';
 						print '</li>'."\n";
@@ -273,10 +279,14 @@ class MenuManager
 
 					$lastlevel2 = array();
 					$lastlinelevel = $level;
+					$listurltoadd = '';	// Url of a list to add as first entry of the submenu of an entry of level 2
 
 					'@phan-var-force array<string> $lastlevel2';
 					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu','prefix']
 						$showmenu = true;
+						if ($val2['level'] == 0) {
+							$listurltoadd = '';
+						}
 						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;
 						}
@@ -296,6 +306,13 @@ class MenuManager
 							$newlinelevel = ($val2['level'] + 1);
 							if ($newlinelevel > $lastlinelevel) {
 								print str_repeat(' ', $newlinelevel).'<ul class="ullevel'.$newlinelevel.'" xx>'."\n";
+								// The url of the parent entry can't be followed because a click on it opens the submenu, so we add it as an entry "List"
+								if ($listurltoadd) {
+									print str_repeat(' ', $newlinelevel).'<li class="lilevel'.$newlinelevel.'">';
+									print '<a href="'.$listurltoadd.'"><i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth level'.$newlinelevel.'"></i>'.$langs->trans("List").'</a>';
+									print '</li>'."\n";
+									$listurltoadd = '';
+								}
 							}
 							$lastlinelevel = ($val2['level'] + 1);
 
@@ -350,7 +367,12 @@ class MenuManager
 
 							// Add font-awesome for level 0 and 1 (if $val2['level'] == 1, we are on level2, if $val2['level'] == 2, we are on level 3...)
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
-								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
+								$reg = array();
+								if (preg_match('/^(fa[rsb]? )?fa-/', $val2['prefix'], $reg)) {
+									print '<span class="'.(empty($reg[1]) ? 'fa ' : '').$val2['prefix'].' paddingright pictofixedwidth"></span>';
+								} else {
+									print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
+								}
 							} else {
 								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth level'.($val2['level'] + 1).'"></i>';
 							}
@@ -358,10 +380,24 @@ class MenuManager
 							$currentlevel = (empty($submenu->liste[$key2]) ? 1 : $submenu->liste[$key2]['level'] + 1);
 							$nextlevel = (empty($submenu->liste[$key2 + 1]) ? 1 : $submenu->liste[$key2 + 1]['level'] + 1);
 
-							print ucfirst($val2['titre']);
+							print dol_ucfirst($val2['titre']);
 							// If entry of level 2 has a submenu, we add '...' to show that a click will open the submenu
 							if ($val2['level'] == 0 && $nextlevel > $currentlevel) {
 								print ' ...';
+
+								// If the entry has an url of a list, it will be added as entry "List" of the submenu, except if a child has already this url
+								if ($relurl2 && $val2['enabled'] && preg_match('/list\.php$/', $canonurl2)) {
+									$listurltoadd = $relurl2;
+									$urltocompare = $this->getUrlToCompare($val2['url']);
+									$key3 = $key2 + 1;
+									while (!empty($submenu->liste[$key3]) && $submenu->liste[$key3]['level'] > 0) {
+										if ($this->getUrlToCompare(make_substitutions($submenu->liste[$key3]['url'], $substitarray)) == $urltocompare) {
+											$listurltoadd = '';
+											break;
+										}
+										$key3++;
+									}
+								}
 							}
 							if ($relurl2) {
 								print '</a>';
@@ -402,7 +438,7 @@ class MenuManager
 						print $val['prefix'];
 					}
 
-					print ucfirst($val['titre']);
+					print dol_ucfirst($val['titre']);
 					print '</span>';
 
 					print '</li>'."\n";		// close entry level 0
@@ -415,5 +451,25 @@ class MenuManager
 
 		//print 'xx'.$mode;
 		return 0;
+	}
+
+	/**
+	 *  Return an url of menu in a canonical form to compare it with another one: parameters mainmenu, leftmenu and idmenu
+	 *  (added on entries loaded from database) are removed and other parameters are sorted, so their order does not matter.
+	 *
+	 *  @param	string	$url	Url of menu entry (example: '/compta/facture/list.php?leftmenu=customers_bills&search_status=0')
+	 *  @return	string			Canonical url (example: '/compta/facture/list.php?search_status=0')
+	 */
+	private function getUrlToCompare($url)
+	{
+		$tmparray = explode('?', $url, 2);
+		$params = array();
+		if (!empty($tmparray[1])) {
+			parse_str(str_replace('&amp;', '&', $tmparray[1]), $params);
+		}
+		unset($params['mainmenu'], $params['leftmenu'], $params['idmenu']);
+		ksort($params);
+
+		return $tmparray[0].(count($params) ? '?'.http_build_query($params) : '');
 	}
 }

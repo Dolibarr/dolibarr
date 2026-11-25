@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = Просмотр Запланированных задач
-Permission23102 = Создать/обновить Запланированную задачу
-Permission23103 = Удалить Запланированную задачу
-Permission23104 = Выполнить запланированную задачу
 # Admin
 CronSetup=Настройки запланированных заданий
 URLToLaunchCronJobs=URL-адрес для проверки и запуска подходящих заданий cron из браузера
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=В среде Unix вы должны использов�
 CronExplainHowToRunWin=В среде Microsoft (tm) Windows вы можете использовать инструменты запланированного задания для запуска командной строки каждые 5 минут.
 CronMethodDoesNotExists=Класс %s не содержит методов %s
 CronMethodNotAllowed=Метод %s класса %s находится в черном списке запрещенных методов
-CronJobDefDesc=Профили заданий Cron определены в файле дескриптора модуля. Когда модуль активирован, они загружаются и становятся доступными, поэтому вы можете управлять заданиями из меню инструментов администратора %s.
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=Список предопределенных профилей заданий cron
 # Menu
 EnabledAndDisabled=Включено и отключено
@@ -27,7 +22,7 @@ CronDelete=Удалить запланированные задания
 CronConfirmDelete=Вы уверены, что хотите удалить эти запланированные задания?
 CronExecute=Запустить сейчас
 CronConfirmExecute=Вы уверены, что хотите выполнить эти запланированные задания сейчас?
-CronInfo=Модуль запланированных заданий позволяет планировать задания для их автоматического выполнения. Задания также можно запускать вручную.
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Задание
 CronNone=Следующий запуск запланированного задания
 CronNotYetRan=Никогда не выполнялось
@@ -79,7 +74,7 @@ CronType_command=Команда командной строки
 CronCannotLoadClass=Невозможно загрузить файл класса %s (для использования класса %s)
 CronModuleNotEnabledInThisEntity=Cron модуль не включен в этой сущности (чтобы использовать метод %s объекта %s)
 CronCannotLoadObject=Файл класса %s был загружен, но объект %s в нем не обнаружен
-UseMenuModuleToolsToAddCronJobs=Войдите в меню «<a href="%s">Главная - Инструменты администратора - Запланированные задания</a>», чтобы просмотреть и отредактировать запланированные задания.
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Задание отключено
 MakeLocalDatabaseDumpShort=Резервное копирование локальной базы данных
 MakeLocalDatabaseDump=Создайте дамп локальной базы данных. Параметры: сжатие ('gz' или 'bz' или 'none'), тип резервной копии ('mysql', 'pgsql', 'auto'), 1, 'auto' или имя файла для создания, количество файлов резервных копий для хранения

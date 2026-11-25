@@ -69,7 +69,7 @@ print "jQuery(document).ready(function () {\n";
 //print "	console.log('referrer=".dol_escape_js($_SERVER['HTTP_REFERER'])."');\n";
 
 print 'var nowtime = Date.now();'."\n";
-print 'var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY')).';'."\n"; // Always defined
+print 'var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY', 30)).';'."\n";
 print 'var time_js_next_test;'."\n";
 print 'var dolnotif_nb_test_for_page = 0;'."\n";
 print 'var dolnotif_idinterval = null;'."\n";
@@ -189,7 +189,7 @@ function check_events() {
 							if (value.type == 'agenda' && (value.event_date_start_formated != null || value.event_date_start_formated['event_date_start'] != '')) {
 								body += ' '+value.event_date_start_formated;
 							}
-							body += ' - <a href="'+url+'"><?php echo img_picto("", "url", 'class="pictofixedwidth"').dol_escape_js($langs->trans("ShowDetails")); ?></a>';  // Suppress - dol_escape_js is in '' @phan-suppress-current-line FunctionMissingSingleQuoteWrapping
+							body += ' - <a href="'+url+'"><?php echo dol_escape_js(img_picto("", "url", 'class="pictofixedwidth"').$langs->trans("ShowDetails"), 1); ?></a>';
 							body += '<br>'+value.label;
 							if (value.type == 'agenda' && value.location != null && value.location != '') {
 								body += '<br>' + value.location;

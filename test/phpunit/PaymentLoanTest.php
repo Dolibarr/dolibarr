@@ -24,10 +24,9 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/loan/class/loan.class.php';
 require_once dirname(__FILE__).'/../../htdocs/loan/class/paymentloan.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -131,7 +130,8 @@ class PaymentLoanTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($id, $loanid) = $data;
+		$id = $data[0];
+		$loanid = $data[1];
 
 		$localobject = new PaymentLoan($db);
 		$result = $localobject->fetch($id);

@@ -24,7 +24,8 @@ DonationsModels=ຮູບແບບເອກະສານສຳລັບໃບຢ�
 LastModifiedDonations=ລາຍການບໍລິຈາກ %s ຫຼ້າສຸດທີ່ມີການປ່ຽນແປງ
 DonationRecipient=ຜູ້ຮັບການບໍລິຈາກ
 IConfirmDonationReception=ຜູ້ຮັບຢັ້ງຢືນການໄດ້ຮັບເງິນບໍລິຈາກຕາມຈຳນວນດັ່ງຕໍ່ໄປນີ້
-MinimumAmount=ຈຳນວນຕ່ຳສຸດແມ່ນ %s
+DonationReceivedAmount=We hereby acknowledge receipt of the following donation, made without any consideration in return:
+ErrorMinimumAmount=ຈຳນວນຕ່ຳສຸດແມ່ນ %s
 FreeTextOnDonations=ຂໍ້ຄວາມອິດສະຫຼະທີ່ຈະສະແດງຢູ່ສ່ວນທ້າຍ
 FrenchOptions=Options for France=ຕົວເລືອກສຳລັບປະເທດຝຣັ່ງ
 DONATION_ART200=ສະແດງມາດຕາ 200 ຈາກ CGI ຖ້າທ່ານມີສ່ວນກ່ຽວຂ້ອງ

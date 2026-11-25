@@ -188,8 +188,8 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 					'class' => 'fourn/class/fournisseur.facture.class.php',
 					'objectname' => 'FactureFournisseur',
 					'method' => 'sendEmailsRemindersOnSupplierInvoiceDueDate',
-					'parameters' => '10,all,EmailTemplateCode,duedate',
-					'comment' => 'Send an email when we reach the supplier invoice due date (or supplier invoice date) - n days. First param is n, the number of days before due date (or supplier invoice date) to send the remind (or after if value is negative), second parameter is "all" or a payment mode code, third parameter is the code of the email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent supplier invoice). The fourth parameter is the string "duedate" (default) or "invoicedate" to define which date of the supplier invoice to use.',
+					'parameters' => '10,all,EmailTemplateCode,duedate,internalfollowingcontact',
+					'comment' => 'Send an email when we reach the supplier invoice due date (or supplier invoice date) - n days. First param is n, the number of days before due date (or supplier invoice date) to send the remind (or after if value is negative), second parameter is "all" or a payment mode code, third parameter is the code of the email template to use (an email template with the EmailTemplateCode must exists. The version of the email template in the language of the thirdparty will be used in priority. Language of the thirdparty will be also used to update the PDF of the sent supplier invoice). The fourth parameter is the string "duedate" (default) or "invoicedate" to define which date of the supplier invoice to use. The fifth parameter (Forced recipients) is mandatory: it is a list of values separated by ";" among a fixed email, "thirdpartyemail" (email of thirdparty), "internalfollowingcontact" (internal contacts of supplier invoice of type following-up) or "salesrepresentative" (emails of sales representatives of thirdparty).',
 					'frequency' => 1,
 					'unitfrequency' => 3600 * 24,
 					'priority' => 50,
@@ -742,8 +742,8 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->import_convertvalue_array[$r] = array(
 				'f.ref' => array(
 					'rule' => 'getrefifauto',
-					'class' => (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER),
-					'path' => "/core/modules/supplier_invoice/" . (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) . '.php',
+					'class' => (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER')),
+					'path' => "/core/modules/supplier_invoice/" . (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER')) . '.php',
 					'classobject' => 'FactureFournisseur',
 					'pathobject' => '/fourn/class/fournisseur.facture.class.php',
 				),
@@ -880,8 +880,8 @@ if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 			$this->import_convertvalue_array[$r] = array(
 				'c.ref' => array(
 					'rule' => 'getrefifauto',
-					'class' => (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER),
-					'path' => "/core/modules/supplier_order/" . (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) . '.php',
+					'class' => (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER')),
+					'path' => "/core/modules/supplier_order/" . (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER')) . '.php',
 					'classobject' => 'CommandeFournisseur',
 					'pathobject' => '/fourn/class/fournisseur.commande.class.php',
 				),

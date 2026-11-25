@@ -140,6 +140,10 @@ class FactureLigne extends CommonInvoiceLine
 	 * @var int		To store the warehouse where to consume stock when using a POS module
 	 */
 	public $fk_warehouse;
+	/**
+	 * @var int|null	To store the order printer of line when using a POS module (-N=to print on printer N, N=printed on printer N)
+	 */
+	public $pos_printer_id;
 
 
 	/**
@@ -228,7 +232,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
 		$sql .= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
 		$sql .= ' fd.fk_code_ventilation,';
-		$sql .= ' fd.batch, fd.fk_warehouse,';
+		$sql .= ' fd.batch, fd.fk_warehouse, fd.pos_printer_id,';
 		$sql .= ' fd.fk_unit, fd.fk_user_author, fd.fk_user_modif,';
 		$sql .= ' fd.situation_percent, fd.fk_prev_id, fd.extraparams,';
 		$sql .= ' fd.multicurrency_subprice,';
@@ -304,6 +308,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->fk_code_ventilation  = $objp->fk_code_ventilation;
 			$this->batch                = $objp->batch;
 			$this->fk_warehouse         = $objp->fk_warehouse;
+			$this->pos_printer_id       = $objp->pos_printer_id;
 			$this->rang					= $objp->rang;
 			$this->fk_fournprice = $objp->fk_fournprice;
 			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
@@ -509,6 +514,9 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fk_unit, fk_user_author, fk_user_modif,';
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,';
 		$sql .= ' batch, fk_warehouse';
+		if (!empty($this->extraparams)) {
+			$sql .= ', extraparams';
+		}
 		$sql .= ')';
 		$sql .= " VALUES (".((int) $this->fk_facture).",";
 		$sql .= " ".($this->fk_parent_line > 0 ? ((int) $this->fk_parent_line) : "null").",";
@@ -554,6 +562,9 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", ".price2num($this->multicurrency_total_ttc);
 		$sql .= ", '".$this->db->escape($this->batch)."'";
 		$sql .= ", ".((int) $this->fk_warehouse);
+		if (!empty($this->extraparams)) {
+			$sql .= ", '".$this->db->escape(dol_trunc(json_encode($this->extraparams), 250))."'";
+		}
 		$sql .= ')';
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
@@ -1005,12 +1016,13 @@ class FactureLigne extends CommonInvoiceLine
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns situation_percent of all the previous line. Used when INVOICE_USE_SITUATION = 2.
+	 * Returns cumulated situation_percent of all the previous lines excluding itself.
+	 * Used for all standard cases (so when INVOICE_USE_SITUATION != 1).
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
-	 * @param  int     $invoiceid      Invoice id
+	 * @param  int     $invoiceid      			Invoice id
 	 * @param  bool    $include_credit_note		Include credit note or not
-	 * @return float                   >= 0
+	 * @return float                   			Return percent progress (usually should be between 0 and 100)
 	 * @see get_prev_progress()
 	 */
 	public function getAllPrevProgress($invoiceid, $include_credit_note = true)
@@ -1042,12 +1054,13 @@ class FactureLigne extends CommonInvoiceLine
 					$obj = $this->db->fetch_object($resql);
 					$cumulated_percent += (float) $obj->situation_percent;
 
-					if ($include_credit_note) {
+					if ($include_credit_note) {	// Includes previous credit notes too (previous one only, not itself)
 						$sql_credit_note = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
 						$sql_credit_note .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
 						$sql_credit_note .= " WHERE fd.fk_prev_id = ".((int) $lastprevid);
 						$sql_credit_note .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
 						$sql_credit_note .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+						$sql_credit_note .= " AND f.rowid <> ".((int) $invoiceid);	// When invoice is a credit note, its own progress is not a previous one
 
 						$res_credit_note = $this->db->query($sql_credit_note);
 						if ($res_credit_note) {
@@ -1087,15 +1100,16 @@ class FactureLigne extends CommonInvoiceLine
 	 * New mode = the values on the line already represent the delta between the previous
 	 * state and the current state, so we don't need a conversion (we return 1).
 	 *
+	 * @param float|null $previousProgress Previous progress already loaded by the caller, null to fetch it
 	 * @return float
 	 */
-	public function getSituationRatio()
+	public function getSituationRatio($previousProgress = null)
 	{
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') === 1) {
 			// in legacy mode, the situation invoice line stores the (cumulative) state of the
 			// cycle at the current situation. To get the delta, we need to subtract the
 			// state at the previous situation (if applicable).
-			$prevProgress = $this->get_prev_progress($this->fk_facture);
+			$prevProgress = $previousProgress === null ? $this->get_prev_progress($this->fk_facture) : $previousProgress;
 
 			if ($this->situation_percent == 0) {
 				// should not happen
@@ -1104,7 +1118,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			return ($this->situation_percent - $prevProgress) / $this->situation_percent;
 		}
-		// new mode (INVOICE_USE_SITUATION == 2):
+		// new mode (INVOICE_USE_SITUATION != 1):
 		// no ratio needed (data stored on line is already a delta)
 		// or not a situation invoice: no ratio needed either
 		return 1;

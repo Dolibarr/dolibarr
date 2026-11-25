@@ -262,8 +262,9 @@ if (!$base || $sql === null) {
 				// privileges
 				print "<td>".(empty($row[7]) ? '' : $row[7])."</td>";
 
-				print "<td>".(isset($link[$row[0]][0]) ? $link[$row[0]][0] : '').".";
-				print(isset($link[$row[0]][1]) ? $link[$row[0]][1] : '')."</td>";
+				$linkoffield = (isset($link[$row[0]]) ? $link[$row[0]] : array('', ''));
+				print "<td>".$linkoffield[0].".";
+				print $linkoffield[1]."</td>";
 
 				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8mb4_unicode_ci; -->';
 				print '<!-- ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' CHARACTER SET utf8mb4; -->';

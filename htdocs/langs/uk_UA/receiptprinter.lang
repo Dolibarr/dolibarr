@@ -69,7 +69,6 @@ DOL_VALUE_DAY=День виставлення рахунку
 DOL_VALUE_DAY_LETTERS=День рахунку прописом
 DOL_LINE_FEED_REVERSE=Зворотне переведення рядка
 InvoiceID=Ідентифікатор рахунка-фактури
-InvoiceRef=Номер рахунку-фактури
 DOL_PRINT_OBJECT_LINES=Рядки рахунків-фактур
 DOL_VALUE_CUSTOMER_FIRSTNAME=Ім'я клієнта
 DOL_VALUE_CUSTOMER_LASTNAME=Прізвище клієнта

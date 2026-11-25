@@ -136,7 +136,8 @@ class box_invoices_dispute extends ModeleBoxes
 				if ($disputestatus == 1) {
 					$badgeclass = ($val['nb'] > 0 ? 'badge badge-danger' : 'badge badge-status4');
 				} else {
-					$badgeclass = ($val['nb'] > 0 ? 'badge badgeneutral' : 'badge badge-info');
+					//$badgeclass = ($val['nb'] > 0 ? 'badge badge-info' : 'badge badge-info');
+					$badgeclass = 'badge badge-info';
 				}
 
 				// Column picto

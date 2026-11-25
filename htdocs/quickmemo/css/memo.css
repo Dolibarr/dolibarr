@@ -1,4 +1,4 @@
-#quickmemo-create-dropdown {
+#topmenu-quickmemo-dropdown {
 	position: relative;
 }
 .dropdown-quickmemo-create{
@@ -21,9 +21,10 @@
 /* end fix Dolibarr < 22 */
 
 
-#quickmemo-create-dropdown .dropdown-menu{
+#topmenu-quickmemo-dropdown .dropdown-menu{
 	--colortextbackhmenu : #333;
 	/*color: var(--colortextbackhmenu) !important;*/
+	color: var(--colortextbackhmenu);
 	animation: dropdown-quickmemo-slide-up 0.3s ease-in-out;
 }
 
@@ -70,7 +71,7 @@
 .quickmemo-archive-list,.quickmemo-tpl-title{
 	margin: 20px 0 5px 0;
 }
-#quickmemo-create-dropdown a.top-menu-dropdown-quicknote-link{
+#topmenu-quickmemo-dropdown a.top-menu-dropdown-quicknote-link{
 	color: var(--colortextlink);;
 }
 .quickmemo-tpl-title{

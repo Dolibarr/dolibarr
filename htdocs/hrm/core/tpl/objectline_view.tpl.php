@@ -56,6 +56,12 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
+'
+@phan-var-force int $i
+@phan-var-force EvaluationLine $line
+@phan-var-force Evaluation $this
+';
+
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';
 $domData .= ' data-id="'.$line->id.'"';

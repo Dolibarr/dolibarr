@@ -73,7 +73,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$search_id = trim(GETPOST("search_id", "int"));
+$search_id = trim(GETPOST("search_id", 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_contract_id = trim(GETPOST("search_contract_id", "int"));
 $search_name = GETPOST("search_name", 'alpha');
 $search_subprice = GETPOST("search_subprice", 'alpha');
@@ -156,7 +156,7 @@ $staticcontratligne = new ContratLigne($db);
 $companystatic = new Societe($db);
 
 $arrayfields = array(
-	'cd.rowid' => array('label' => "TechnicalID", 'checked' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
+	'cd.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'c.rowid' => array('label' => "ContractID", 'checked' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 2),
 	'c.ref' => array('label' => "Contract", 'checked' => '1', 'position' => 80),
 	'c.fk_contract_type' => array('label' => "ContractType", 'checked' => '1', 'position' => 82),
@@ -347,7 +347,7 @@ if ($search_status == "4&filter=notexpired" || ($search_status == '4' && $filter
 if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
 }
-if ($search_id > 0) {
+if ($search_id != '') {
 	$sql .= natural_search("cd.rowid", $search_id, 1);
 }
 if ($search_contract_id > 0) {
@@ -516,7 +516,7 @@ if ($search_all != '') {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-if ($search_id > 0) {
+if ($search_id != '') {
 	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_contract_id > 0) {
@@ -678,8 +678,8 @@ if ($conf->main_checkbox_left_column) {
 	print '</td>';
 }
 if (!empty($arrayfields['cd.rowid']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['c.rowid']['checked'])) {
@@ -827,65 +827,83 @@ if ($conf->main_checkbox_left_column) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.rowid']['label'], $_SERVER["PHP_SELF"], "cd.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cd.rowid']['label'], $_SERVER["PHP_SELF"], "cd.rowid", "", $param, "", $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['c.rowid']['label'], $_SERVER["PHP_SELF"], "c.rowid", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
 	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.fk_contract_type']['checked'])) {
 	print_liste_field_titre($arrayfields['c.fk_contract_type']['label'], $_SERVER["PHP_SELF"], "c.fk_contract_type", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.description']['checked'])) {
 	print_liste_field_titre($arrayfields['p.description']['label'], $_SERVER["PHP_SELF"], "p.description", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.tva_tx']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.tva_tx']['label'], $_SERVER["PHP_SELF"], "cd.tva_tx", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.subprice']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.subprice']['label'], $_SERVER["PHP_SELF"], "cd.subprice", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.qty']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.qty']['label'], $_SERVER["PHP_SELF"], "cd.qty", "", $param, '', $sortfield, $sortorder, 'right nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.total_ht']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.total_ht']['label'], $_SERVER["PHP_SELF"], "cd.total_ht", "", $param, '', $sortfield, $sortorder, 'right nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.total_tva']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.total_tva']['label'], $_SERVER["PHP_SELF"], "cd.total_tva", "", $param, '', $sortfield, $sortorder, 'right nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.date_ouverture_prevue']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.date_ouverture_prevue']['label'], $_SERVER["PHP_SELF"], "cd.date_ouverture_prevue", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.date_ouverture']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.date_ouverture']['label'], $_SERVER["PHP_SELF"], "cd.date_ouverture", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.date_fin_validite']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.date_fin_validite']['label'], $_SERVER["PHP_SELF"], "cd.date_fin_validite", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.date_cloture']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.date_cloture']['label'], $_SERVER["PHP_SELF"], "cd.date_cloture", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['cd.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.datec']['label'], $_SERVER["PHP_SELF"], "cd.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cd.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.tms']['label'], $_SERVER["PHP_SELF"], "cd.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "cd.statut,c.statut", "", $param, '', $sortfield, $sortorder, 'right ');
+	$totalarray['nbfield']++;
 }
 // Action column
 if (!$conf->main_checkbox_left_column) {
@@ -952,7 +970,7 @@ while ($i < $imaxinloop) {
 
 	// Technical ID
 	if (!empty($arrayfields['cd.rowid']['checked'])) {
-		print '<td class="tdoverflowmax50" data-key="id">';
+		print '<td class="center tdoverflowmax50" data-key="id">';
 		print $obj->rowid;
 		print "</td>\n";
 		if (!$i) {
@@ -988,10 +1006,14 @@ while ($i < $imaxinloop) {
 	}
 	// Service
 	if (!empty($arrayfields['p.description']['checked'])) {
-		print '<td class="tdoverflowmax300">';
+		print '<td class="tdoverflowmax200 tdlineheightsmall">';
 		if ($obj->pid > 0) {
-			print $productstatic->getNomUrl(1, '', 24);
-			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
+			print '<div class="tdoverflowmax200 inline-block lineheightsmall">';
+			print $productstatic->getNomUrl(1);
+			if (!empty($obj->label)) {
+				print '<br><span class="spantitle">'.dolPrintHTML($obj->label).'</span>';
+			}
+			print '</div>';
 			if (!empty($obj->description) && getDolGlobalString('PRODUCT_DESC_IN_LIST')) {
 				print '<br><div class="small lineheightsmall">'.dol_nl2br($obj->description).'</div>';
 			}

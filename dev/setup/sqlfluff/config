@@ -1,0 +1,8 @@
+# sqlfluff configuration (used by pre-commit hook sqlfluff-lint)
+# Usage: sqlfluff lint --config dev/setup/sqlfluff/config <files>
+#
+# max_line_length: SQL statements (ALTER/INSERT) can not always be split without changing SQL,
+# so we allow lines longer than the sqlfluff default of 80 chars
+[sqlfluff]
+dialect = mysql
+max_line_length = 500

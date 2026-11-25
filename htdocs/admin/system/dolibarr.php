@@ -138,9 +138,11 @@ print '<a href="'.$urlofchangelog.'" target="_blank" rel="noopener noreferrer ex
 $newversion = '';
 if (function_exists('curl_init')) {
 	$conf->global->MAIN_USE_RESPONSE_TIMEOUT = 10;
-	print ' &nbsp; &nbsp; - &nbsp; &nbsp; ';
+	print($action == 'getlastversion' ? '<br>' : ' &nbsp; &nbsp; - &nbsp; &nbsp; ');
 	if ($action == 'getlastversion') {
 		if ($sfurl) {
+			$currentversionarray = explode('.', DOL_VERSION);
+			$branchversion = '';	// Latest version of the branch currently running
 			$i = 0;
 			while (!empty($sfurl->channel[0]->item[$i]->title) && $i < 10000) {
 				$title = $sfurl->channel[0]->item[$i]->title;
@@ -153,8 +155,23 @@ if (function_exists('curl_init')) {
 					if (versioncompare($newversionarray, $versionarray) > 0) {
 						$version = $newversion;
 					}
+					if (count($newversionarray) >= 2 && $newversionarray[0] == $currentversionarray[0] && $newversionarray[1] == $currentversionarray[1]
+						&& ($branchversion == '' || versioncompare($newversionarray, explode('.', $branchversion)) > 0)) {
+						$branchversion = $newversion;
+					}
 				}
 				$i++;
+			}
+
+			// Show first the latest version of the running branch, when it is not the latest stable one
+			$currentbranch = $currentversionarray[0].'.'.(isset($currentversionarray[1]) ? $currentversionarray[1] : '');
+			$versionarray = explode('.', $version);
+			if (!preg_match('/[a-z]+/i', DOL_VERSION) && $currentbranch != $versionarray[0].'.'.(isset($versionarray[1]) ? $versionarray[1] : '')) {
+				print $langs->trans("LastVersionOfBranch", $currentbranch).' : <b>'.($branchversion != '' ? $branchversion : $langs->trans("Unknown")).'</b>';
+				if ($branchversion != '') {
+					print ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$branchversion.'/ChangeLog" target="_blank" rel="noopener noreferrer external">'.img_picto('', 'url', 'class="paddingright"').$langs->trans("SeeChangeLog").'</a>';
+				}
+				print '<br>';
 			}
 
 			// Show version
@@ -302,7 +319,7 @@ if (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("LocalisationDolibarrParameters").'</td><td></td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("LanguageBrowserParameter", "HTTP_ACCEPT_LANGUAGE").'</td><td>'.$_SERVER["HTTP_ACCEPT_LANGUAGE"].'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("LanguageBrowserParameter", "HTTP_ACCEPT_LANGUAGE").'</td><td>'.dol_escape_htmltag($_SERVER["HTTP_ACCEPT_LANGUAGE"] ?? '').'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentUserLanguage").'</td><td>'.$langs->getDefaultLang().'</td></tr>'."\n";
 // Thousands
 $thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
@@ -452,7 +469,8 @@ $configfileparameters = array(
 	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
 	'?dolibarr_mail_allow_unrestricted_smtp_target' => 'Allow unrestricted SMTP target for emails',
 	'?dolibarr_strict_mode' => 'Strict mode for php syntax is on/off',
-	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
+	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks',
+	'?dolibarr_main_disable_totp' => 'Disable two-factor authentication (TOTP)'
 );
 
 print '<div class="div-table-responsive-no-min">';
@@ -545,7 +563,7 @@ foreach ($configfileparameters as $key => $value) {
 				if (empty($valuetoshow)) {
 					print img_warning($langs->trans('SwitchThisForABetterSecurity', 1));
 				}
-			} elseif ($newkey == 'dolibarr_nocsrfcheck') {
+			} elseif ($newkey == 'dolibarr_nocsrfcheck' || $newkey == 'dolibarr_main_disable_totp') {
 				print ${$newkey};
 
 				$valuetoshow = ${$newkey};

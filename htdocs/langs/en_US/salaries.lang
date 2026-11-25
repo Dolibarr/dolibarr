@@ -27,6 +27,7 @@ Earnings=Earnings
 TotalEarnings=Total earnings
 TotalDeductions=Total deductions
 NetPaid=Net paid
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
@@ -63,3 +64,4 @@ CurrentMonthShort=Current month
 NextMonthShort=Next month
 PreviousWeekShort=Previous week
 CurrentWeekShort=Current week
+TemplatePDFSalaries=Template for salaries PDF

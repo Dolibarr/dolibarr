@@ -148,6 +148,7 @@ if (empty($reshook)) {
 		}
 
 		$pos = 0;
+		$lotrecordofrow = array();	// For each shipment line with lots, the lot record updated by each posted row
 
 		foreach ($_POST as $key => $value) {
 			// without batch module enabled
@@ -178,6 +179,7 @@ if (empty($reshook)) {
 				$lot = '';
 				$dDLUO = '';
 				$dDLC = '';
+				$fk_origin_stock = 0;	// Record of the lot in the warehouse (llx_product_batch)
 				if ($modebatch == "batch") { //TODO: Make impossible to input non existing batch code
 					$lot = GETPOST('lot_number'.$dispatch_line_suffix);
 					$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo'.$dispatch_line_suffix.'month'), GETPOSTINT('dluo'.$dispatch_line_suffix.'day'), GETPOSTINT('dluo'.$dispatch_line_suffix.'year'));
@@ -232,6 +234,9 @@ if (empty($reshook)) {
 									dol_syslog('No dispatch for line '.$key.' as no combination warehouse, product, batch code was found.');
 									setEventMessages($langs->trans('ErrorNoCombinationBatchcode', $numline, $tmpwarehouse->ref, $tmpprod->ref, $lot), null, 'errors');
 									$error++;
+								} else {
+									$objbatch = $db->fetch_object($resql);
+									$fk_origin_stock = (int) $objbatch->rowid;	// Record of the lot in the warehouse, used for the stock movement
 								}
 								$db->free($resql);
 							}
@@ -253,6 +258,62 @@ if (empty($reshook)) {
 								$error++;
 							} else {
 								$qtystart = $expeditiondispatch->qty;
+								$newlotqty = $newqty;
+								$idlinebatch = 0;
+								if ($modebatch == "batch") {
+									// A line can have several lots: each row updates its own lot record and the qty of the line is the total of its lots
+									if (!isset($lotrecordofrow[$idline])) {
+										// First row of this line: find the lot record of each row of the line before any change,
+										// by lot code first, then in order for the rows whose lot code was changed.
+										$lotrecordofrow[$idline] = array();
+										$lotrecordsofline = array();
+										$sqllots = "SELECT rowid, batch FROM ".$db->prefix().$expeditionlinebatch->table_element;
+										$sqllots .= " WHERE fk_expeditiondet = ".((int) $idline);
+										$sqllots .= " ORDER BY rowid";
+										$resqllots = $db->query($sqllots);
+										if ($resqllots) {
+											while ($objlot = $db->fetch_object($resqllots)) {
+												$lotrecordsofline[(int) $objlot->rowid] = (string) $objlot->batch;
+											}
+											$db->free($resqllots);
+										} else {
+											dol_print_error($db);
+											$error++;
+										}
+										$lotofrow = array();
+										foreach (array_keys($_POST) as $keyofrow) {
+											$regofrow = array();
+											if (preg_match('/^productbatch([0-9]+_[0-9]+_[0-9]+)$/i', $keyofrow, $regofrow) && GETPOSTINT('idline'.$regofrow[1]) == $idline) {
+												$lotofrow[$regofrow[1]] = (string) GETPOST('lot_number'.$regofrow[1]);
+											}
+										}
+										foreach ($lotofrow as $suffixofrow => $lotcode) {
+											$idlotrecord = array_search($lotcode, $lotrecordsofline, true);
+											if ($idlotrecord !== false) {
+												$lotrecordofrow[$idline][$suffixofrow] = $idlotrecord;
+												unset($lotrecordsofline[$idlotrecord], $lotofrow[$suffixofrow]);
+											}
+										}
+										$freelotrecords = array_keys($lotrecordsofline);
+										foreach ($lotofrow as $suffixofrow => $lotcode) {
+											$lotrecordofrow[$idline][$suffixofrow] = (int) array_shift($freelotrecords);	// 0 if none left: a new lot record is created
+										}
+									}
+									$idlinebatch = (int) $lotrecordofrow[$idline][$dispatch_line_suffix];
+
+									$sqllots = "SELECT SUM(qty) as qty FROM ".$db->prefix().$expeditionlinebatch->table_element;
+									$sqllots .= " WHERE fk_expeditiondet = ".((int) $idline);
+									$sqllots .= " AND rowid <> ".((int) $idlinebatch);
+									$resqllots = $db->query($sqllots);
+									if ($resqllots) {
+										$objlot = $db->fetch_object($resqllots);
+										$newqty = $newlotqty + (float) $objlot->qty;
+										$db->free($resqllots);
+									} else {
+										dol_print_error($db);
+										$error++;
+									}
+								}
 								$expeditiondispatch->qty = $newqty;
 								$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
 
@@ -268,40 +329,30 @@ if (empty($reshook)) {
 								}
 
 								if (!$error && $modebatch == "batch") {
-									if ($newqty > 0) {
+									if ($newlotqty > 0) {
 										$suffixkeyfordate = preg_replace('/^productbatch/', '', $key);
 										$sellby = dol_mktime(12, 0, 0, GETPOSTINT('dlc'.$suffixkeyfordate.'month'), GETPOSTINT('dlc'.$suffixkeyfordate.'day'), GETPOSTINT('dlc'.$suffixkeyfordate.'year'), '');
 										$eatby = dol_mktime(12, 0, 0, GETPOSTINT('dluo'.$suffixkeyfordate.'month'), GETPOSTINT('dluo'.$suffixkeyfordate.'day'), GETPOSTINT('dluo'.$suffixkeyfordate.'year'));
 
-										$sqlsearchdet = "SELECT rowid FROM ".$db->prefix().$expeditionlinebatch->table_element;
-										$sqlsearchdet .= " WHERE fk_expeditiondet = ".((int) $idline);
-										$resqlsearchdet = $db->query($sqlsearchdet);
-
-										$objsearchdet = null;
-										if ($resqlsearchdet) {
-											$objsearchdet = $db->fetch_object($resqlsearchdet);
-										} else {
-											dol_print_error($db);
-										}
-
-										if ($objsearchdet) {
+										if ($idlinebatch > 0) {
 											$sql = "UPDATE ".$db->prefix().$expeditionlinebatch->table_element." SET";
 											$sql .= " batch = '".$db->escape($lot)."'";
 											$sql .= ", eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
 											$sql .= ", sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
-											$sql .= ", qty = ".((float) $newqty);
+											$sql .= ", qty = ".((float) $newlotqty);
 											$sql .= ", fk_warehouse = ".((int) $warehouse_id);
-											$sql .= " WHERE rowid = ".((int) $objsearchdet->rowid);
+											$sql .= ", fk_origin_stock = ".((int) $fk_origin_stock);
+											$sql .= " WHERE rowid = ".((int) $idlinebatch);
 										} else {
 											$sql = "INSERT INTO ".$db->prefix().$expeditionlinebatch->table_element." (";
 											$sql .= "fk_expeditiondet, eatby, sellby, batch, qty, fk_origin_stock, fk_warehouse)";
 											$sql .= " VALUES (".((int) $idline).", ".($eatby ? "'".$db->idate($eatby)."'" : "null").", ".($sellby ? "'".$db->idate($sellby)."'" : "null").", ";
-											$sql .= " '".$db->escape($lot)."', ".((float) $newqty).", 0, ".((int) $warehouse_id).")";
+											$sql .= " '".$db->escape($lot)."', ".((float) $newlotqty).", ".((int) $fk_origin_stock).", ".((int) $warehouse_id).")";
 										}
 									} else {
 										$sql = "DELETE FROM ".$db->prefix().$expeditionlinebatch->table_element;
 										$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
-										$sql .= " AND batch = '".$db->escape($lot)."'";
+										$sql .= " AND rowid = ".((int) $idlinebatch);
 									}
 
 									$resql = $db->query($sql);
@@ -673,17 +724,28 @@ if ($object->id > 0 || !empty($object->ref)) {
 			}
 			$sql .= $hookmanager->resPrint;
 
+			$sql .= " FROM ".$db->prefix().($isStandaloneShipment ? "expeditiondet" : "commandedet")." as l";
+			$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
+			// Enable hooks to alter the SQL query (FROM)
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks(
+				'printFieldListFrom',
+				$parameters,
+				$object,
+				$action
+			);
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			}
+			$sql .= $hookmanager->resPrint;
+
 			if ($isStandaloneShipment) {
-				$sql .= " FROM ".$db->prefix()."expeditiondet as l";
-				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
 				$sql .= " WHERE l.fk_expedition = ".((int) $object->id);
 				$sql .= " AND (l.fk_parent IS NULL OR l.fk_parent = 0)";
 				if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 					$sql .= " AND p.fk_product_type = 0";
 				}
 			} else {
-				$sql .= " FROM ".$db->prefix()."commandedet as l";
-				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON l.fk_product=p.rowid";
 				$sql .= " WHERE l.fk_commande = ".((int) $objectsrc->id);
 				if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 					$sql .= " AND l.product_type = 0";

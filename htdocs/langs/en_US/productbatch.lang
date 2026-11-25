@@ -43,6 +43,7 @@ FirstUseDate=First use date
 QCFrequency=Quality control frequency (in days)
 ShowAllLots=Show all lots
 HideLots=Hide lots
+NbOfLots=%s lot(s)
 #Traceability - qc status
 OutOfOrder=Out of order
 InWorkingOrder=In working order

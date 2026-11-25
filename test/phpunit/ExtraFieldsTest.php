@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 Jam <jambalaya.pyoncafe@gmail.com>
+ * Copyright (C) 2026		ATM Consulting		<support@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +27,14 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+if (!defined('NOREQUIREDB')) {
+	define('NOREQUIREDB', '1');
+}
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/extrafields.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-if (empty($user->id)) {
+if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->loadRights();
@@ -179,5 +182,108 @@ class ExtraFieldsTest extends CommonClassTest
 		$this->assertStringContainsString('value="childofb"', $out);
 		$this->assertStringContainsString('selected', $out);
 		$this->assertStringContainsString('value="childofa"', $out);
+	}
+
+	/**
+	 * Data provider for testShowInputFieldOnListIgnoresTheObjectIdFilter
+	 *
+	 * @return array<string,array{0:string}>
+	 */
+	public static function listTypeWithObjectIdFilterProvider()
+	{
+		return array(
+			'sellist' => array('sellist'),
+			'chkbxlst' => array('chkbxlst'),
+		);
+	}
+
+	/**
+	 * A list view has no current object, so a '(column:=:$ID$)' filter must not reach the SQL.
+	 *
+	 * @param	string	$type	Extrafield type
+	 * @return	void
+	 *
+	 * @dataProvider listTypeWithObjectIdFilterProvider
+	 */
+	public function testShowInputFieldOnListIgnoresTheObjectIdFilter($type)
+	{
+		global $db, $hookmanager;
+
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($db);
+		}
+
+		$extrafields = new ExtraFields($db);
+		$elementtype = 'societe';
+		$code = 'countryofobject';
+		$extrafields->attributes[$elementtype]['type'][$code] = $type;
+		$extrafields->attributes[$elementtype]['label'][$code] = $code;
+		$extrafields->attributes[$elementtype]['size'][$code] = '';
+		$extrafields->attributes[$elementtype]['default'][$code] = '';
+		$extrafields->attributes[$elementtype]['computed'][$code] = '';
+		$extrafields->attributes[$elementtype]['unique'][$code] = 0;
+		$extrafields->attributes[$elementtype]['required'][$code] = 0;
+		$extrafields->attributes[$elementtype]['perms'][$code] = '';
+		$extrafields->attributes[$elementtype]['langfile'][$code] = '';
+		$extrafields->attributes[$elementtype]['list'][$code] = '1';
+		$extrafields->attributes[$elementtype]['totalizable'][$code] = 0;
+		$extrafields->attributes[$elementtype]['help'][$code] = '';
+		$extrafields->attributes[$elementtype]['alwayseditable'][$code] = 0;
+		$extrafields->attributes[$elementtype]['param'][$code] = array('options' => array('c_country:label:rowid::(rowid:=:$ID$)' => null));
+
+		$savedphpself = $_SERVER['PHP_SELF'] ?? null;
+		$_SERVER['PHP_SELF'] = '/societe/list.php';
+		try {
+			$out = $extrafields->showInputField($code, '', '', '', 'search_', '', 0, $elementtype, 1);
+		} finally {
+			$_SERVER['PHP_SELF'] = $savedphpself;
+		}
+
+		print __METHOD__." type=".$type." out=".$out."\n";
+		$this->assertStringNotContainsString('Error', $out);
+		$this->assertSame(1, preg_match('/<option[^>]* value="1"/', $out), 'The filter on $ID$ did not exclude the current record option');		// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
+	}
+
+	/**
+	 * Data provider for testIsEmptyValue
+	 *
+	 * @return array<string,array{0:mixed,1:string,2:bool}>
+	 */
+	public static function isEmptyValueProvider()
+	{
+		return array(
+			'int null' => array(null, 'int', true),
+			'int empty string' => array('', 'int', true),
+			'int zero string' => array('0', 'int', false),
+			'int zero' => array(0, 'int', false),
+			'int value' => array('5', 'int', false),
+			'double zero string' => array('0', 'double', false),
+			'double zero decimal' => array('0.00', 'double', false),
+			'price zero string' => array('0', 'price', false),
+			'varchar zero string' => array('0', 'varchar', true),
+			'varchar value' => array('abc', 'varchar', false),
+			'select empty' => array('0', 'select', true),
+			'sellist zero' => array('0', 'sellist', true),
+			'link minus one' => array('-1', 'link', true),
+			'link zero string' => array('0', 'link', true),
+			'link zero' => array(0, 'link', true),
+			'link id' => array('5', 'link', false),
+		);
+	}
+
+	/**
+	 * Zero is a valid value for a mandatory numeric extrafield.
+	 *
+	 * @param	mixed	$value		Value to test
+	 * @param	string	$type		Extrafield type
+	 * @param	bool	$expected	Expected result
+	 * @return	void
+	 *
+	 * @dataProvider isEmptyValueProvider
+	 */
+	public function testIsEmptyValue($value, $type, $expected)
+	{
+		$this->assertSame($expected, ExtraFields::isEmptyValue($value, $type));
 	}
 }

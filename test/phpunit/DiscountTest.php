@@ -29,9 +29,8 @@
 global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/class/discount.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/class/discount.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -169,7 +168,17 @@ class DiscountTest extends CommonClassTest
 		$db = $this->savdb;
 
 		foreach ($this->providerSplitRemiseData() as $case) {
-			list($total_amount, $splitamount_1, $tva_tx, $localtax1_tx, $localtax1_type, $localtax2_tx, $localtax2_type, $ex_ht_amount1, $ex_total_amount1, $ex_ht_amount2, $ex_total_amount2) = $case;
+			$total_amount = $case[0];
+			$splitamount_1 = $case[1];
+			$tva_tx = $case[2];
+			$localtax1_tx = $case[3];
+			$localtax1_type = $case[4];
+			$localtax2_tx = $case[5];
+			$localtax2_type = $case[6];
+			$ex_ht_amount1 = $case[7];
+			$ex_total_amount1 = $case[8];
+			$ex_ht_amount2 = $case[9];
+			$ex_total_amount2 = $case[10];
 
 			/**
 			 * Create a DiscountAbsolute object from spec, split it and
@@ -238,7 +247,18 @@ class DiscountTest extends CommonClassTest
 		$db = $this->savdb;
 
 		foreach ($this->providerRemiseData() as $case) {
-			list($amount, $vat_tx, $localtax1_tx, $localtax1_type, $localtax2_tx, $localtax2_type, $price_base, $ex_total_tva, $ex_total_localtax1, $ex_total_localtax2, $ex_total_ttc, $ex_total_ht) = $case;
+			$amount = $case[0];
+			$vat_tx = $case[1];
+			$localtax1_tx = $case[2];
+			$localtax1_type = $case[3];
+			$localtax2_tx = $case[4];
+			$localtax2_type = $case[5];
+			$price_base = $case[6];
+			$ex_total_tva = $case[7];
+			$ex_total_localtax1 = $case[8];
+			$ex_total_localtax2 = $case[9];
+			$ex_total_ttc = $case[10];
+			$ex_total_ht = $case[11];
 
 			/**
 			 * Create a DiscountAbsolute object with spec and test with expected result

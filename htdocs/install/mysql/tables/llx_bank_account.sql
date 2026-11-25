@@ -48,6 +48,8 @@ create table llx_bank_account
   pti_in_ctti               smallint DEFAULT 0,
   sepa_category_purpose		varchar(4) DEFAULT 'CORE',	-- SEPA file, PmtTpInf/CtgyPurp/Cd (ISO 20022 code, see Account::SEPA_CATEGORY_PURPOSES)
   sepa_local_instrument		varchar(4) DEFAULT 'CORE',	-- SEPA file, PmtTpInf/LclInstrm/Cd (ISO 20022 code, see Account::SEPA_LOCAL_INSTRUMENTS)
+  sepa_transfer_schema_version	varchar(2),			-- Credit transfer file, see Account::SEPA_TRANSFER_SCHEMA_VERSIONS (null = PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION)
+  sepa_charge_bearer		varchar(4) DEFAULT 'SHAR',	-- Credit transfer file, ChrgBr of the payments outside SEPA (see Account::SEPA_CHARGE_BEARERS)
   state_id					integer        DEFAULT NULL,
   fk_pays					integer        NOT NULL,
   proprio					varchar(60),

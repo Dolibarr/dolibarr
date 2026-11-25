@@ -155,7 +155,7 @@ class doc_generic_user_odt extends ModelePDFUser
 
 		// Scan directories
 		if (count($listofdir)) {
-			$out .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b><br>';
+			$out .= '<span class="opacitylow">'.$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b></span><br>';
 
 			if ($odtChosen) {
 				// Model for creation
@@ -180,7 +180,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				$out .= "</td></tr>";
 				$out .= '</table>';
 			}
-			$out .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			$out .= '<div id="div_'.get_class($this).'" class="hiddenx opacitylow">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
 				$filetooltip = dol_print_date(dol_filemtime($file['fullname']), 'dayhour', 'tzserver');
@@ -338,7 +338,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				$contactobject = null;
 				// Recipient name
 				if (!empty($usecontact)) {
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+					if ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1')) {
 						$socobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;

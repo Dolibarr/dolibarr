@@ -93,6 +93,7 @@ if (!$sortfield) {
 }
 
 $search_all          = trim(GETPOST('search_all', 'alphanohtml'));
+$search_id           = trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref          = GETPOST('search_ref', 'alphanohtml');
 $search_day_create   = GETPOST('search_day_create', 'int');
 $search_month_create = GETPOST('search_month_create', 'int');
@@ -130,6 +131,7 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
+	'cp.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => '-1', 'enabled' => '1', 'position' => 1),
 	'cp.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
 	'cp.fk_user' => array('label' => $langs->trans("Employee"), 'checked' => '1', 'position' => 20),
 	'cp.fk_validator' => array('label' => $langs->trans("ValidatorCP"), 'checked' => '1', 'position' => 30),
@@ -139,7 +141,7 @@ $arrayfields = array(
 	'cp.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => '1', 'position' => 42),
 	'cp.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => '1', 'position' => 60),
 	'cp.date_approval' => array('label' => $langs->trans("DateApprove"), 'checked' => '1', 'position' => 70),
-	'cp.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'cp.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'cp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 501),
 	'cp.statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
 );
@@ -209,6 +211,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_id = '';
 		$search_ref = "";
 		$search_month_create = "";
 		$search_year_create = "";
@@ -281,7 +284,7 @@ $sql .= " cp.ref,";
 
 $sql .= " cp.fk_user,";
 $sql .= " cp.fk_type,";
-$sql .= " cp.date_create,";
+$sql .= " cp.date_creation,";
 $sql .= " cp.tms as date_modification,";
 $sql .= " cp.description,";
 $sql .= " cp.date_debut,";
@@ -333,12 +336,20 @@ $sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cp.rowid = ef.fk_object)";
 }
-$sql .= ", ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as uu ON uu.rowid = cp.fk_user";			// Needed for search on the list
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid = cp.fk_validator";		// Needed for search on the list
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack needed for search on the list
 // Search all
 if (!empty($search_all)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
+// Technical ID
+if ($search_id != '') {
+	$sql .= natural_search("cp.rowid", $search_id, 1);
 }
 // Ref
 if (!empty($search_ref)) {
@@ -349,7 +360,7 @@ $sql .= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start
 // End date
 $sql .= dolSqlDateFilter("cp.date_fin", $search_day_end, $search_month_end, $search_year_end);
 // Create date
-$sql .= dolSqlDateFilter("cp.date_create", $search_day_create, $search_month_create, $search_year_create);
+$sql .= dolSqlDateFilter("cp.date_creation", $search_day_create, $search_month_create, $search_year_create);
 // Update date
 $sql .= dolSqlDateFilter("cp.tms", 0, $search_month_update, $search_year_update);
 // Employee
@@ -434,6 +445,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -484,6 +498,11 @@ if ($search_status > 0) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -621,6 +640,11 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+if (!empty($arrayfields['cp.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="flat width50" type="text" name="search_id" value="'.dolPrintHTMLForAttribute($search_id).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['cp.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
@@ -724,7 +748,7 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $obje
 print $hookmanager->resPrint;
 
 // Create date
-if (!empty($arrayfields['cp.date_create']['checked'])) {
+if (!empty($arrayfields['cp.date_creation']['checked'])) {
 	print '<td class="liste_titre center width200">';
 	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
 	print $formother->selectyear($search_year_create, 'search_year_create', 1, $min_year, 0);
@@ -764,6 +788,10 @@ $totalarray['nbfield'] = 0;
 print '<tr class="liste_titre">';
 if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['cp.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['cp.rowid']['label'], $_SERVER["PHP_SELF"], "cp.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cp.ref']['checked'])) {
@@ -808,8 +836,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (!empty($arrayfields['cp.date_create']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.date_create']['label'], $_SERVER["PHP_SELF"], "cp.date_create", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['cp.date_creation']['checked'])) {
+	print_liste_field_titre($arrayfields['cp.date_creation']['label'], $_SERVER["PHP_SELF"], "cp.date_creation", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['cp.tms']['checked'])) {
@@ -885,14 +913,16 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$approbatorstatic->status = $obj->validator_status;
 		$approbatorstatic->photo = $obj->validator_photo;
 
-		$date = $obj->date_create;
-		$date_modif = $obj->date_modification;
+		$date = $db->jdate($obj->date_creation);
+		$date_modif = $db->jdate($obj->date_modification);
 
 		$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 		$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
 		$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday, $userstatic->country_id, $obj->fk_user);	// user jdate(..., 1) because num_open_day need UTC dates
-		$totalduration += $nbopenedday;
+		if (is_numeric($nbopenedday)) {	// num_open_day() returns a string on error (bad dates)
+			$totalduration += (float) $nbopenedday;
+		}
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
@@ -937,6 +967,13 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 				}
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Technical ID
+			if (!empty($arrayfields['cp.rowid']['checked'])) {
+				print '<td class="center">'.((int) $obj->rowid).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -1029,7 +1066,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 			print $hookmanager->resPrint;
 
 			// Date creation
-			if (!empty($arrayfields['cp.date_create']['checked'])) {
+			if (!empty($arrayfields['cp.date_creation']['checked'])) {
 				print '<td style="text-align: center;">'.dol_print_date($date, 'dayhour').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

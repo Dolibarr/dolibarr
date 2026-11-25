@@ -10,6 +10,7 @@
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW				        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -768,6 +769,8 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			$dayoffset = 0;
 			$monthoffset = 0;
 			$yearoffset = 0;
+			$monthlyanchor = 0;
+			$monthlyoccurrence = 0;
 			// Timezone in which days, months and years are added to build the next occurrences. It must be the
 			// same as the one used by the dol_mktime() calls below. Without it, dol_time_plus_duree() adds the
 			// delay in UTC, so it keeps the elapsed time instead of the wall clock and a series that crosses a
@@ -793,10 +796,9 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 				$monthoffset = 0;
 				$yearoffset = 0;
 			} elseif ($selectedrecurrulefreq == 'MONTHLY' && !empty($selectedrecurrulebymonthday)) {
-				$firstday = $selectedrecurrulebymonthday;
-				$firstmonth = GETPOST("apday") > $selectedrecurrulebymonthday ? GETPOSTINT("apmonth") + 1 : GETPOSTINT("apmonth");//We begin the month after
-				$datep = dol_mktime($fulldayevent ? 0 : GETPOSTINT("aphour"), $fulldayevent ? 0 : GETPOSTINT("apmin"), $fulldayevent ? 0 : GETPOSTINT("apsec"), $firstmonth, $firstday, GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
-				$datep = dol_time_plus_duree($datep, 1, 'm', 0, $tzforrecurrence);//We begin the month after
+				$monthlyanchor = (int) $object->datep;
+				$monthlyoccurrence = 1;
+				$datep = dol_time_plus_duree($monthlyanchor, $monthlyoccurrence, 'm', 1, $tzforrecurrence);
 				$dayoffset = 0;
 				$monthoffset = 1;
 				$yearoffset = 0;
@@ -824,7 +826,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 			while ($datep <= $repeateventlimitdate && !$error) {
 				$finalobject = clone $object;
-
+				$finalobject->uid = '';	// Each occurrence is a new event, create() gives it its own uid (the uid column is unique)
 
 				$finalobject->datep = $datep;
 				$finalobject->datef = $datef;
@@ -905,12 +907,18 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 				}
 
 				// increment date for recurrent events
-				$datep = dol_time_plus_duree($datep, $dayoffset, 'd', 0, $tzforrecurrence);
-				$datep = dol_time_plus_duree($datep, $monthoffset, 'm', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
-				$datep = dol_time_plus_duree($datep, $yearoffset, 'y', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
-				$datef = dol_time_plus_duree($datef, $dayoffset, 'd', 0, $tzforrecurrence);
-				$datef = dol_time_plus_duree($datef, $monthoffset, 'm', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
-				$datef = dol_time_plus_duree($datef, $yearoffset, 'y', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+				if ($selectedrecurrulefreq == 'MONTHLY' && !empty($selectedrecurrulebymonthday)) {
+					$monthlyoccurrence++;
+					$datep = dol_time_plus_duree($monthlyanchor, $monthlyoccurrence, 'm', 1, $tzforrecurrence);
+					$datef = dol_time_plus_duree($datep, $deltatime, 'd', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+				} else {
+					$datep = dol_time_plus_duree($datep, $dayoffset, 'd', 0, $tzforrecurrence);
+					$datep = dol_time_plus_duree($datep, $monthoffset, 'm', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+					$datep = dol_time_plus_duree($datep, $yearoffset, 'y', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+					$datef = dol_time_plus_duree($datef, $dayoffset, 'd', 0, $tzforrecurrence);
+					$datef = dol_time_plus_duree($datef, $monthoffset, 'm', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+					$datef = dol_time_plus_duree($datef, $yearoffset, 'y', 0, $tzforrecurrence);  // @phan-suppress-current-line PhanPluginSuspiciousParamOrder
+				}
 				if ($durationofevent > 0 && $datef <= $datep) {
 					$datef = $datep + $durationofevent;
 				}
@@ -1310,7 +1318,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 	$smin = (int) dol_print_date($object->datep, "%M", 'tzuserrel');
 
 	$newdate = GETPOST('newdate', 'alpha');
-	if (empty($newdate) || strpos($newdate, 'dayevent_') != 0) {
+	if (empty($newdate) || strpos($newdate, 'dayevent_') !== 0) {
 		header("Location: ".$backtopage, true, 307);
 		exit;
 	}
@@ -1360,7 +1368,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate' && $usercancr
 
 // Actions to delete doc
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$permissiontoadd = ($user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'read')));
+$permissiontoadd = ($user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create')));
 if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }

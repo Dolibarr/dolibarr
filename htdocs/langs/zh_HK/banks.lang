@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=銀行
 MenuBankCash=銀行 | 現金
+BankArea=Banks and cash area
+LatestBankTransactionsModified=Latest %s modified bank transactions
 MenuVariousPayment=Manual Journal Entries
 MenuNewVariousPayment=New manual journal entry
 BankName=銀行名
@@ -47,6 +49,9 @@ LastAccountStatements=最後的賬戶結單
 IOMonthlyReporting=按月報告
 BankAccountDomiciliation=銀行地址
 BankAccountCountry=賬戶國家/地區
+InstitutionNumber=Institution number
+TransitNumber=Branch (transit) number
+ABARoutingNumber=ABA routing number
 BankAccountOwner=帳戶擁有者姓名
 BankAccountOwnerAddress=賬戶擁有者地址
 BankAccountOwnerZip=帳戶擁有者郵政編碼
@@ -206,3 +211,7 @@ PendingDirectDebitToComplete=Direct debits to close
 PendingCreditTransferToCompleteShort=Credit transfers to close
 PendingCreditTransferToComplete=Credit transfers to close
 Requests=Requests
+PaymentReferenceOfAccount=Payment reference
+PaymentReferenceOfAccountHelp=Reference to give when paying to this account, the same for all the invoices: the RF (ISO 11649) or national reference a supplier gave you for your contract, meter or customer account. An RF reference is checked.
+ErrorPaymentReferenceOfAccountTooLong=The payment reference is too long (35 characters at most)
+ErrorPaymentReferenceOfAccountNotValid=The RF payment reference is not valid: check digits do not match

@@ -91,6 +91,10 @@ if (isModEnabled('comptabilite')) {
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
+// When no accountancy module is enabled, no permission covers this page, so we refuse the access.
+if (!isModEnabled('comptabilite') && !isModEnabled('accounting')) {
+	accessforbidden();
+}
 
 // Date range
 $year = GETPOSTINT("year");

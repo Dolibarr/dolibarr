@@ -24,10 +24,9 @@
  */
 
 global $conf,$user,$langs,$db,$mysoc;
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/class/comment.class.php';
 require_once dirname(__FILE__).'/../../htdocs/projet/class/project.class.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -101,7 +100,8 @@ class CommentTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($id, $projectid) = $data;
+		$id = $data[0];
+		$projectid = $data[1];
 
 		$localobject = new Comment($db);
 		$result = $localobject->fetch($id);
