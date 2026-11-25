@@ -260,7 +260,7 @@ class ModuleBuilderTemplateConventionsTest extends CommonClassTest
 		}
 
 		$this->assertStringNotContainsString('COMMENTED STATUSCHANGE', $activated);
-		$this->assertSame(1, preg_match('/^\h*print dolGetButtonAction\(.*Re-Open/m', $activated), 'Re-Open button is still commented out after activation');	// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
+		$this->assertSame(1, preg_match('/^\h*print dolGetButtonAction\(.*\'ReOpen\'/m', $activated), 'Re-Open button is still commented out after activation');	// Not assertMatchesRegularExpression(), only available since PHPUnit 9.1
 		$this->assertPhpSourceIsParsable($activated, 'Card page is not parsable once Cancel / Re-Open is activated');
 	}
 

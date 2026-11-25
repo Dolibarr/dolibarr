@@ -23,7 +23,7 @@
  * Copyright (C) 2026		Vincent de Grandpré			<vincent@de-grandpre.quebec>
  * Copyright (C) 2026		Joachim Küter				<git-jk@bloxera.com>
  * Copyright (C) 2026		Lionel Vessiller			<lvessiller@open-dsi.fr>
- * Copyright (C) 2026		José MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  * Copyright (C) 2026		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,7 +137,8 @@ $array_options = array();
 
 // Load object
 if ($id > 0 || !empty($ref)) {
-	if ($action != 'add') {
+	// The creation form posts ref=provisoire (action=add, or action=create when the page is reloaded after a thirdparty change): there is nothing to load
+	if ($action != 'add' && $action != 'create') {
 		if (!getDolGlobalString('INVOICE_USE_SITUATION')) {
 			$fetch_situation = false;
 		} else {
@@ -2069,9 +2070,8 @@ if (empty($reshook)) {
 						$exp->fetch($object->origin_id);
 						$exp->fetchObjectLinked();
 						if (!empty($exp->linkedObjectsIds['commande']) && is_array($exp->linkedObjectsIds['commande'])) {	// A shipment without sales order (SHIPMENT_STANDALONE) has no linked order
-							foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
-								$object->linked_objects['commande'] = $value;
-							}
+							// A shipment may be linked to several sales orders: link the invoice to all of them, not only to the last one
+							$object->linked_objects['commande'] = array_values($exp->linkedObjectsIds['commande']);
 						}
 					}
 
@@ -2732,7 +2732,10 @@ if (empty($reshook)) {
 			$action = 'create';
 			$_GET["origin"] = GETPOST("origin", 'alpha');
 			$_GET["originid"] = GETPOSTINT("originid");
-			setEventMessages($object->error, $object->errors, 'errors');
+			// A failed form check has already shown its own message and left $object->error empty
+			if (!empty($object->error) || !empty($object->errors)) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && (GETPOST('alldate_start', 'alpha') || GETPOST('alldate_end', 'alpha')) && $usercancreate) {
 		// Define date start and date end for all line

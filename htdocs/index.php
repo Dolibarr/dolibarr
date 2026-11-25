@@ -226,8 +226,6 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
  * Hidden for external users
  */
 
-print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
-
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
@@ -887,6 +885,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	$boxwork .= '</div>';
 
 	if (!empty($isIntopOpenedDashBoard)) {
+		print '<br>';
 		print '<div class="fichecenter">';
 		print '<div class="opened-dash-board-wrap"><div class="box-flex-container">'.$openedDashBoard.'</div></div>';
 		print '</div>';
@@ -895,6 +894,9 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 
 print '<div class="clearboth"></div>';
+
+// Show the combo list to add a widget (placed between the dashboard thumbs and the widget zone)
+print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
 print '<div class="fichecenter fichecenterbis">';
 

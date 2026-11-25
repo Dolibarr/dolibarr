@@ -133,8 +133,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Definition of fields for list
 $arrayfields = array();
-$arrayfields['t.planned_workload'] = array('label' => 'PlannedWorkload', 'checked' => '1', 'enabled' => '1', 'position' => 0);
-$arrayfields['t.progress'] = array('label' => 'ProgressDeclared', 'checked' => '1', 'enabled' => '1', 'position' => 0);
+$arrayfields['t.planned_workload'] = array('label' => 'PlannedWorkload', 'checked' => '1', 'enabled' => '1', 'position' => 5);
+$arrayfields['t.progress'] = array('label' => 'ProgressDeclared', 'checked' => '1', 'enabled' => '1', 'position' => 10);
 $arrayfields['timeconsumed'] = array('label' => 'TimeConsumed', 'checked' => '1', 'enabled' => '1', 'position' => 15);
 /*$arrayfields=array(
  // Project
@@ -149,6 +149,9 @@ $arrayfields['timeconsumed'] = array('label' => 'TimeConsumed', 'checked' => '1'
 $extrafieldsobjectkey = $object->table_element;
 $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -423,7 +426,7 @@ $search_options_pattern = 'search_task_options_';
 $extrafieldsobjectkey = 'projet_task';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
-$tasksarray = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, $search_project_ref, (string) $onlyopenedproject, $morewherefilter, ($search_usertoprocessid ? $search_usertoprocessid : 0), 0, $extrafields); // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
+$tasksarray = $taskstatic->getTasksArray(null, null, ($project->id ? $project->id : 0), $socid, 0, $search_project_ref, (string) $onlyopenedproject, $morewherefilter, ($search_usertoprocessid ? $search_usertoprocessid : 0), 0, $extrafields, 0, array(), 1); // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 
 $tasksarraywithoutfilter = array();
 if ($morewherefilter) {	// Get all task without any filter, so we can show total of time spent for not visible tasks
@@ -570,7 +573,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, '', 1); // This also change content of $arrayfields
 
 // This must be after the $selectedfields
 $addcolspan = 0;
@@ -602,15 +605,23 @@ $search_options_pattern = 'search_task_options_';
 $extrafieldsobjectkey = 'projet_task';
 $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-if (!empty($arrayfields['t.planned_workload']['checked'])) {
-	print '<td class="liste_titre"></td>';
-}
-if (!empty($arrayfields['t.progress']['checked'])) {
-	print '<td class="liste_titre right"><input type="text" class="width50" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
-}
-if (!empty($arrayfields['timeconsumed']['checked'])) {
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
+// Fields with position ordered by user setup
+foreach ($arrayfields as $key => $val) {
+	if (empty($val['checked'])) {
+		continue;
+	}
+	switch ($key) {
+		case 't.planned_workload':
+			print '<td class="liste_titre"></td>';
+			break;
+		case 't.progress':
+			print '<td class="liste_titre right"><input type="text" class="width50" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+			break;
+		case 'timeconsumed':
+			print '<td class="liste_titre"></td>';
+			print '<td class="liste_titre"></td>';
+			break;
+	}
 }
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -634,20 +645,28 @@ print '<th>'.$langs->trans("Task").'</th>';
 $extrafieldsobjectkey = 'projet_task';
 $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-if (!empty($arrayfields['t.planned_workload']['checked'])) {
-	print '<th class="leftborder plannedworkload minwidth75 maxwidth100 right" title="'.dol_escape_htmltag($langs->trans("PlannedWorkload")).'">'.$form->textwithpicto($langs->trans("PlannedWorkloadShort"), $langs->trans("PlannedWorkload")).'</th>';
-}
-if (!empty($arrayfields['t.progress']['checked'])) {
-	print '<th class="right minwidth75 maxwidth100 title="'.dol_escape_htmltag($langs->trans("ProgressDeclared")).'">'.$langs->trans("ProgressDeclared").'</th>';
-}
-if (!empty($arrayfields['timeconsumed']['checked'])) {
-	print '<th class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
-	print '<span class="nowraponall">';
-	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphotosmall" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
-	print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
-	print '</span>';
-	print '</th>';
-	print '<th class="right maxwidth75 maxwidth100">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-3).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
+// Fields with position ordered by user setup
+foreach ($arrayfields as $key => $val) {
+	if (empty($val['checked'])) {
+		continue;
+	}
+	switch ($key) {
+		case 't.planned_workload':
+			print '<th class="leftborder plannedworkload minwidth75 maxwidth100 right" title="'.dol_escape_htmltag($langs->trans("PlannedWorkload")).'">'.$form->textwithpicto($langs->trans("PlannedWorkloadShort"), $langs->trans("PlannedWorkload")).'</th>';
+			break;
+		case 't.progress':
+			print '<th class="right minwidth75 maxwidth100 title="'.dol_escape_htmltag($langs->trans("ProgressDeclared")).'">'.$langs->trans("ProgressDeclared").'</th>';
+			break;
+		case 'timeconsumed':
+			print '<th class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
+			print '<span class="nowraponall">';
+			print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphotosmall" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
+			print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
+			print '</span>';
+			print '</th>';
+			print '<th class="right maxwidth75 maxwidth100">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-3).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
+			break;
+	}
 }
 print '<th class="center leftborder">'.$langs->trans("HourStart").'</td>';
 

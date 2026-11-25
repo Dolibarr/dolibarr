@@ -838,7 +838,7 @@ if ($id > 0) {
 				}
 
 				// Emit payment
-				if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->hasRight('tax', 'charges', 'creer')) {
+				if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') <= 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') >= 0)) && $user->hasRight('tax', 'charges', 'creer')) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement_charge.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment")."</a></div>";
 				}
 

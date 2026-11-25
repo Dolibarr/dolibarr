@@ -72,7 +72,7 @@ $jsConf = [
 	'tagIdForTableDND' => (empty($tagidfortablednd) ? 'tablelines' : $tagidfortablednd),
 	'filePath' => (empty($filepath) ? '' : $filepath),
 	'activeAjaxReorder' => GETPOST('action', 'aZ09') != 'editline' && $nboflines > 1 && $conf->browser->layout != 'phone',
-	'gripImg' => DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/grip.png',
+	'gripHtml' => img_picto('', 'grip', '', 0, 0, 0, '', 'linegripimg opacitymedium'),
 	'token' => currentToken(), // We use old 'token' and not 'newtoken' for Ajax call because the ajax page has the NOTOKENRENEWAL constant set.
 	'DOL_URL_ROOT' => DOL_URL_ROOT,
 	'redirectURL' => $redirectURL
@@ -95,7 +95,7 @@ Dolibarr.on('Ready', function() {
 	 * @property {number} forceReloadPage
 	 * @property {string} tagIdForTableDND
 	 * @property {string} filePath
-	 * @property {string} gripImg
+	 * @property {string} gripHtml
 	 * @property {string} token
 	 * @property {string} DOL_URL_ROOT
 	 * @property {string} redirectURL
@@ -110,9 +110,7 @@ Dolibarr.on('Ready', function() {
 		$(".lineupdown").removeAttr('href');
 
 		if(jsConf.activeAjaxReorder) {
-			$(".tdlineupdown").css("background-image",`url(${jsConf.gripImg})`);
-			$(".tdlineupdown").css("background-repeat","no-repeat");
-			$(".tdlineupdown").css("background-position","center center");
+			$(".tdlineupdown").html(jsConf.gripHtml);
 		}
 	}
 
