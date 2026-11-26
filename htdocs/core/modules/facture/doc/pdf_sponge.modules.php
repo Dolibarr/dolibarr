@@ -469,8 +469,8 @@ class pdf_sponge extends ModelePDFFactures
 				// $pdf->GetY() here can't be used. It is bottom of the second address box but first one may be higher
 
 				// $this->tab_top is y where we must continue content (80 = 32 + 48: 32 is height of logo and ref, 48 is address blocks)
-				$this->tab_top = $this->marge_haute + 80 + $top_shift + $shipp_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)
-				$this->tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? $this->marge_haute + 32 + $top_shift : $this->marge_haute);
+				$this->tab_top = $this->marge_haute + 80 + $top_shift + $shipp_shift;		// top_shift accounts for header content above the address frames
+				$this->tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? max($this->marge_haute + 32, $pagehead['header_bottom'] + 2) : $this->marge_haute);
 
 				// You can add more thing under header here, if you increase $extra_under_address_shift too.
 				$extra_under_address_shift = 0;
@@ -2215,7 +2215,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param  ?Translate	$outputlangsbis	Object lang for output bis
-	 *  @return	array{top_shift:float,shipp_shift:float}	Top shift of linked object lines
+	 *  @return	array{top_shift:float,shipp_shift:float,header_bottom:float}	Header bounds and address shifts
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
@@ -2313,13 +2313,14 @@ class pdf_sponge extends ModelePDFFactures
 			$title .= ' - '.$outputlangs->transnoentities("NotValidated");
 		}
 
+		$fieldgap = 0.5;
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 		$posy = $pdf->GetY();
 
 		if (!empty($subtitle)) {
 			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->SetXY($posx, $posy);
-			$pdf->MultiCell($w, 6, $subtitle, '', 'R');
+			$pdf->SetXY($posx, $posy + $fieldgap);
+			$pdf->MultiCell($w, 3, $subtitle, '', 'R');
 			$posy = $pdf->GetY();
 		}
 
@@ -2339,11 +2340,10 @@ class pdf_sponge extends ModelePDFFactures
 		}
 		$pdf->MultiCell($w, 4, $textref, '', 'R');*/
 
-		$posy += 3;
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if ($object->ref_customer) {
-			$posy += 4;
+			$posy = $pdf->GetY() + $fieldgap;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefCustomer")." : ".dol_trunc($outputlangs->convToOutputCharset($object->ref_customer), 65), '', 'R');
@@ -2352,11 +2352,10 @@ class pdf_sponge extends ModelePDFFactures
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
 			$object->fetchProject();
 			if (!empty($object->project->title)) {
-				$posy += 3;
+				$posy = $pdf->GetY() + $fieldgap;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".dol_trunc($object->project->title, 50), '', 'R');
-				$posy = $pdf->getY();
 			}
 		}
 
@@ -2364,7 +2363,7 @@ class pdf_sponge extends ModelePDFFactures
 			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
-				$posy += 3;
+				$posy = $pdf->GetY() + $fieldgap;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".$object->project->ref, '', 'R');
@@ -2376,7 +2375,7 @@ class pdf_sponge extends ModelePDFFactures
 			$objectreplacing = new Facture($this->db);
 			$objectreplacing->fetch($objectidnext);
 
-			$posy += 3;
+			$posy = $pdf->GetY() + $fieldgap;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ReplacementByInvoice").' : '.$outputlangs->convToOutputCharset($objectreplacing->ref), '', 'R');
@@ -2385,7 +2384,7 @@ class pdf_sponge extends ModelePDFFactures
 			$objectreplaced = new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
 
-			$posy += 4;
+			$posy = $pdf->GetY() + $fieldgap;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
@@ -2394,13 +2393,13 @@ class pdf_sponge extends ModelePDFFactures
 			$objectreplaced = new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
 
-			$posy += 3;
+			$posy = $pdf->GetY() + $fieldgap;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
 		}
 
-		$posy += 4;
+		$posy = $pdf->GetY() + $fieldgap;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 
@@ -2411,14 +2410,14 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
 
 		if (getDolGlobalString('INVOICE_POINTOFTAX_DATE')) {
-			$posy += 4;
+			$posy = $pdf->GetY() + $fieldgap;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DatePointOfTax")." : ".dol_print_date($object->date_pointoftax, "day", false, $outputlangs), '', 'R');
 		}
 
 		if ($object->type != 2) {
-			$posy += 3;
+			$posy = $pdf->GetY() + $fieldgap;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$title = $outputlangs->transnoentities("DateDue");
@@ -2429,14 +2428,14 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && $object->thirdparty->code_client) {
-			$posy += 3;
+			$posy = $pdf->GetY() + $fieldgap;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_client), '', 'R');
 		}
 
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_ACCOUNTING_CODE') && $object->thirdparty->code_compta_client) {
-			$posy += 3;
+			$posy = $pdf->GetY() + $fieldgap;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerAccountancyCode")." : ".$outputlangs->transnoentities((string) $object->thirdparty->code_compta_client), '', 'R');
@@ -2448,25 +2447,25 @@ class pdf_sponge extends ModelePDFFactures
 			if (count($arrayidcontact) > 0) {
 				$usertmp = new User($this->db);
 				$usertmp->fetch($arrayidcontact[0]);
-				$posy += 4;
+				$posy = $pdf->GetY() + $fieldgap;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 
-		$posy += 1;
-
-		$top_shift = 0;
+		$posy = $pdf->GetY();
 		$shipp_shift = 0;
 		// Show list of linked objects
 		if (!getDolGlobalString('INVOICE_HIDE_LINKED_OBJECT')) {
-			$current_y = $pdf->getY();
-			$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
-			if ($current_y < $pdf->getY()) {
-				$top_shift = $pdf->getY() - $current_y;
-			}
+			$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size, $fieldgap);
 		}
+
+		$header_bottom = $posy;
+		$address_top = $this->marge_haute + (getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 30 : 32);
+		// Reserve space for the address captions above both frames.
+		$top_shift = max(0, $header_bottom + $fieldgap + 5 - $address_top);
+		$address_top += $top_shift;
 
 		if ($showaddress) {
 			// Sender properties
@@ -2484,8 +2483,7 @@ class pdf_sponge extends ModelePDFFactures
 
 			// Show sender
 			// $posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
-			$posy = (getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? $this->marge_haute + 30 : $this->marge_haute + 32);
-			$posy += $top_shift;
+			$posy = $address_top;
 			$posx = $this->marge_gauche;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
@@ -2544,8 +2542,7 @@ class pdf_sponge extends ModelePDFFactures
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? $this->marge_haute + 30 : $this->marge_haute + 32;
-			$posy += $top_shift;
+			$posy = $address_top;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
@@ -2621,7 +2618,7 @@ class pdf_sponge extends ModelePDFFactures
 
 		$pdf->SetTextColor(0, 0, 0);
 
-		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
+		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift, 'header_bottom' => $header_bottom);
 
 		return $pagehead;
 	}
