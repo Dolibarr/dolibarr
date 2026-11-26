@@ -1186,7 +1186,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		// Home - dashboard
 		$landingpage = getDolUserString('MAIN_LANDING_PAGE', getDolGlobalString('MAIN_LANDING_PAGE'));
 		if (!empty($landingpage)) {
-			$landingpage = dol_buildpath($landingpage, 1);
+			$landingpage = '/'.ltrim($landingpage, '/');
 		} else {
 			$landingpage = dolBuildUrl('/index.php', ['mainmenu' => 'home', 'leftmenu' => 'home']);
 		}
