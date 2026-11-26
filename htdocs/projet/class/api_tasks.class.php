@@ -594,7 +594,7 @@ class Tasks extends DolibarrApi
 
 		$timespent = new TimeSpent($this->db);
 		$timeresult = $timespent->fetch($timespent_id);
-		if (!$timeresult ) {
+		if ($timeresult <= 0 || $timespent->elementtype !== 'task' || $timespent->fk_element != $this->task->id) {
 			throw new RestException(404, 'Timespent with id='.$timespent_id.' not found');
 		}
 		if (!DolibarrApi::_checkAccessToResource('time', $timespent->id)) {
