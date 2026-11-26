@@ -1658,8 +1658,17 @@ class FormFile
 					}
 					print '</td>';
 
-					// Date
-					print '<td class="center nowraponall">'.dol_print_date($file['date'], "dayhour", "tzuser").'</td>';
+					// Date, with the date until which the file should be kept (document retention of the module Data privacy)
+					$keepuntil = 0;
+					if (isModEnabled('datapolicy')) {
+						require_once DOL_DOCUMENT_ROOT.'/datapolicy/lib/datapolicy.lib.php';
+						$keepuntil = datapolicyGetFileKeepUntilDate((int) $file['date']);
+						if ($keepuntil) {
+							$langs->load('datapolicy');
+						}
+					}
+					$keepuntiltext = ($keepuntil ? $langs->trans("FileKeepUntil").': '.dol_print_date($keepuntil, 'day') : '');
+					print '<td class="center nowraponall"'.($keepuntiltext ? ' title="'.dolPrintHTMLForAttribute($keepuntiltext).'"' : '').'>'.dol_print_date($file['date'], "dayhour", "tzuser").'</td>';
 
 					// Preview
 					$fileinfo = pathinfo($file['name']);
@@ -1838,7 +1847,7 @@ class FormFile
 								$useajax = 0;
 							}
 
-							print '<a href="'.((($useinecm && $useinecm != 3 && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink paddingright marginleftonly" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.((($useinecm && $useinecm != 3 && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink paddingright marginleftonly" rel="'.$filepath.'"'.($keepuntil > dol_now() ? ' data-keepuntilwarning="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv('FileToKeepUntil', dol_print_date($keepuntil, 'day'))).'"' : '').'>'.img_delete().'</a>';
 						}
 						print "</td>";
 

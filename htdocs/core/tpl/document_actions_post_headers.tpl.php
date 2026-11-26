@@ -116,10 +116,20 @@ if ($reshook) {
 
 if ($action == 'deletefile' || $action == 'deletelink') {
 	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
+	$questiondeletefile = $langs->trans('ConfirmDeleteFile');
+	// The file may still have to be kept (document retention of the module Data privacy)
+	if ($action == 'deletefile' && isModEnabled('datapolicy') && GETPOST('urlfile', 'alpha') && !empty($upload_dir)) {
+		require_once DOL_DOCUMENT_ROOT.'/datapolicy/lib/datapolicy.lib.php';
+		$keepuntil = datapolicyGetFileKeepUntilDate((int) dol_filemtime($upload_dir.'/'.basename(GETPOST('urlfile', 'alpha'))));
+		if ($keepuntil > dol_now()) {
+			$langs->load('datapolicy');
+			$questiondeletefile .= '<br><br><span class="warning">'.$langs->trans('FileToKeepUntil', dol_print_date($keepuntil, 'day')).'</span>';
+		}
+	}
 	print $form->formconfirm(
 		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOSTINT('linkid').(empty($param) ? '' : $param),
 		$langs->trans('DeleteFile'),
-		$langs->trans('ConfirmDeleteFile'),
+		$questiondeletefile,
 		'confirm_deletefile',
 		'',
 		'',

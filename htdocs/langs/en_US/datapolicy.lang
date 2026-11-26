@@ -57,3 +57,12 @@ NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
 TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
 OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:
 QualifiedNumber=Qualified record count
+# Document retention
+DocumentRetention=Document retention
+DocumentRetentionSetupPage=Depending on the laws of your country, business documents (invoices, receipts, contracts...) must be kept for a number of years, for example 5 years in Australia, 6 in the United Kingdom, 10 in France or Germany. When a number of years is set here, Dolibarr shows the date until which each file should be kept and warns before deleting a file that should still be kept. Nothing is deleted or blocked.
+DocumentRetentionYears=Number of years to keep business documents
+DocumentRetentionYearsDesc=The date until which a file should be kept is the end of the fiscal year of the file date, plus this number of years. 0 = not used.
+FileKeepUntil=Keep until
+FileKeepUntilHelp=End of the fiscal year of the file date, plus %s years (setup of the module Data privacy)
+FileKeepUntilPassed=date passed
+FileToKeepUntil=This document should be kept until %s (document retention).
