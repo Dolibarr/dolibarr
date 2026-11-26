@@ -56,10 +56,16 @@ if ($user->socid) {
 }
 
 $object = new Product($db);
-$result = $object->fetch($id, $ref);
-if (!$result) {
-	print 'Record not found';
-	exit;
+$result = 0;
+if ($id > 0 || !empty($ref)) {
+	$result = $object->fetch($id, $ref);
+	if ($result < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+		exit;
+	}
+}
+if ($result == 0) {
+	recordNotFound();
 }
 
 if ($object->id > 0) {
