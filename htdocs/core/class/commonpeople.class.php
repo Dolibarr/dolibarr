@@ -110,7 +110,7 @@ trait CommonPeople
 		if ($this->element == 'user') {
 			/** @var User $this */
 			$contactid = $this->contact_id;
-			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
+			$thirdpartyid = empty($this->socid) ? 0 : $this->socid;
 		}
 
 		$out = '';
