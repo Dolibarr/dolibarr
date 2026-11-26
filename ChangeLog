@@ -3,6 +3,77 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 24.0.4 compared to 24.0.3 *****
+
+FIX: #31043 Move the new test to avoid a conflict with develop
+FIX: #31043 Project ODT generation failed when a block is missing
+FIX: #32802 phan: cast the nullable values given to str_replace
+FIX: #32802 Receipt printer test must not need the module tables
+FIX: #32802 Receipt printer: tag without text must not print null
+FIX: #42888 public ticket list: open filter leaves out Assigned and Waiting tickets
+FIX: #42897 Email collector: event linked to contact id, not 0
+FIX: #42912 TakePOS customer list shows suppliers after a search
+FIX: #42921 checkUserAccessToObject must not replace the table given by the caller for feature produit
+FIX: #42947 Edited line quantity of 1000 or more divided by 1000 when thousands separator is '.'
+FIX: #43011 Standalone shipment: report an SQL error when the shipment is reloaded to update a line
+FIX: #43012 Invoice from a shipment without sales order: no warning Undefined array key "commande"
+FIX: #43130 Notes tab of EMailing: Bad value for parameter features
+FIX: #43146 The amount in words of the CERFA donation receipt drops the units of the cents
+FIX: #43163 Respect cross-company MO project selection
+FIX: #43236 Quadratus export: account lines shifted when thirdparty name is shorter than 7 chars
+FIX: #43250 Bank journal: loan payments split wrongly, division by zero
+FIX: #43255 Prevent duplicate supplier subtotal URL prefixes
+FIX: #43273 PaiementFourn::create() does not set $this->ref before the PAYMENT_SUPPLIER_CREATE trigger
+FIX: #43280 Do not translate the state code as a language key
+FIX: Add missing authorization checks on REST APIs for mos and eventattendees (cross-customer access)
+FIX: add missing CSRF token on agenda setup select all/none links
+FIX: Allow entering VAT payment when remaining to pay is 0 (rejected direct debit / offsetting entries)
+FIX: Avoid fatal error in Contact->fetch() when called with NOREQUIRETRAN mode
+FIX: Avoid PHP deprecations when fetching mailings
+FIX: Check that the requested entity is visible in dol_check_secure_access_document
+FIX: checkUserAccessToDocumentObject() checks a table that doesn't exist
+FIX: Contact list not refreshed when selecting a third party: getContacts ajax call refused by CSRF protection (token not provided)
+FIX: cron list: show last run date in the same timezone as next run date
+FIX: Do not cache denied image responses
+FIX: docker-dev image does not build anymore (Debian bullseye)
+FIX: dolOutputDates() warnings for an event without start date
+FIX: dol_banner_tab(): fatal error when $form does not exist (pages opened with hidden menus)
+FIX: Draft supplier orders always counted in virtual stock
+FIX: drag and drop of a file on a card always failed on Windows
+FIX: Expense report: PHP warnings when updating a line without project and when linking a file (backport of #37903)
+FIX: Extrafield of type stars output without object: Attempt to read property "id" on null
+FIX: getBrowserInfo() returns linux instead of android in browseros for an Android phone
+FIX: getCommonSubstitutionArray() discarded extrafields not yet saved on the object
+FIX: getCommonSubstitutionArray(): no SQL access, use the extrafields loaded by the caller
+FIX: getEntity('fichinter') must return the entities sharing interventions
+FIX: HRM: an evaluation set back to draft is aligned again with its job profile
+FIX: Intervention: update() did not save the thirdparty (fk_soc)
+FIX: Invoice template card truncated when INVOICE_REC_DATE_TO_YES is set
+FIX: Leave request list shows creation/modification dates from raw SQL strings
+FIX: Mass action close and reopen on ticket list bypass the TICKET_LIMIT_VIEW_ASSIGNED_ONLY restriction
+FIX: Payment pages pass the payment type id instead of its code to Account::addline()
+FIX: persist scheduled job alert email on creation
+FIX: phan CI error about $newforbiddenfields in dolForgeSQLCriteriaCallback()
+FIX: phan: sanitize table name in account.php (backport of 2fe99778145)
+FIX: Print the short unit label on the espadon shipment PDF
+FIX: Project overview logs a dol_print_date warning for each expense report line
+FIX: proposal classify billed / close: third party not loaded before reading its language
+FIX: Search documents of shared objects into the entity of the object
+FIX: selectSituationInvoices() logs an SQL error when the thirdparty has no situation invoice
+FIX: Social contribution - Allow payment button when remaining amount to pay is 0 on social contributions
+FIX: supplier_proposal/card.php fatal error when the proposal is not found
+FIX: TCPDI: warning on pages without annotation, link lost on pages with a single one
+FIX: ticket customer email listed the extrafield codes and labels, never their values
+FIX: Undefined array key "label" in getCommonSubstitutionArray()
+FIX: Undefined array key label in substitution array of extrafields
+FIX: Use planned dates for receptions and MO in virtual stock at date
+FIX: UserBankAccount::create() stores the current entity
+FIX: Warning "Undefined array key" on the thirdparty card for a thirdparty of another entity
+FIX: Warning "Undefined property $errors" when a cron job class has no error properties
+FIX: warnings on prospect status when its dictionary entry is disabled
+FIX: Wrong month in __INVOICE_PREVIOUS_MONTH__ / __INVOICE_NEXT_MONTH__ at end of month
+
+
 ***** ChangeLog for 24.0.3 compared to 24.0.2 *****
 
 FIX: #30326 agenda assigned resources not shown on the event card (#41247)

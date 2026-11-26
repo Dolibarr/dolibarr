@@ -697,7 +697,7 @@ if ($sql_select && $sql !== '') {
 				echo $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, '');
 
 				// Show range
-				echo get_date_range($objp->date_start, $objp->date_end);
+				echo get_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 
 				// Add description in form
 				if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
@@ -720,7 +720,7 @@ if ($sql_select && $sql !== '') {
 				}
 
 				// Show range
-				echo get_date_range($objp->date_start, $objp->date_end);
+				echo get_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 			}
 		}
 

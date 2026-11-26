@@ -1819,6 +1819,9 @@ if (empty($reshook)) {
 
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
+			} else {
+				// A check before the insert failed (e.g. price lower than minimum price): close the transaction opened above
+				$db->rollback();
 			}
 		}
 	} elseif ($action == 'addline' && $usercancreate && (

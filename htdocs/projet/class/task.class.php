@@ -1705,19 +1705,17 @@ class Task extends CommonObjectLine
 			$sql .= " SET duration_effective = (SELECT SUM(element_duration) FROM ".MAIN_DB_PREFIX."element_time as ptt where ptt.elementtype = 'task' AND ptt.fk_element = ".((int) $this->id).")";
 			if (isset($this->progress)) {
 				$sql .= ", progress = ".((float) $this->progress); // Do not overwrite value if not provided
-				if ($this->progress == 100) {
-					$this->status = Task::STATUS_CLOSED;
-				} elseif ($this->progress != 0) {
-					$this->status = Task::STATUS_ONGOING;
-				} else {
-					$this->status = Task::STATUS_VALIDATED;
-				}
-				$sql .= ", fk_statut = ".((int) $this->status);
-			} else {
-				$this->status = Task::STATUS_ONGOING;
-				$sql .= ", fk_statut = ".((int) $this->status);
 			}
+			// Recording time spent means work has started: a draft, validated or ongoing task becomes ongoing,
+			// or closed if progress is 100%. A task already closed, transferred or canceled keeps its status,
+			// so time can still be recorded on it without reopening it.
+			$statusestokeep = array(Task::STATUS_CLOSED, Task::STATUS_TRANSFERRED, Task::STATUS_CANCELED);
+			$newstatus = ((isset($this->progress) && $this->progress == 100) ? Task::STATUS_CLOSED : Task::STATUS_ONGOING);
+			$sql .= ", fk_statut = ".$this->db->ifsql("fk_statut IN (".$this->db->sanitize(implode(',', $statusestokeep)).")", "fk_statut", (string) ((int) $newstatus));
 			$sql .= " WHERE rowid = ".((int) $this->id);
+			if (!in_array((int) $this->status, $statusestokeep)) {
+				$this->status = $newstatus;
+			}
 
 			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {

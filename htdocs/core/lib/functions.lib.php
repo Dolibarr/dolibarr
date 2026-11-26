@@ -800,13 +800,15 @@ function getBrowserInfo($user_agent)
 		}
 	}
 
-	// OS
-	if (preg_match('/linux/i', $user_agent)) {
-		$os = 'linux';
-	} elseif (preg_match('/macintosh/i', $user_agent)) {
-		$os = 'macintosh';
-	} elseif (preg_match('/windows/i', $user_agent)) {
-		$os = 'windows';
+	// OS, when not already found as a mobile OS (the user agent of Android contains "Linux")
+	if ($os == 'unknown') {
+		if (preg_match('/linux/i', $user_agent)) {
+			$os = 'linux';
+		} elseif (preg_match('/macintosh/i', $user_agent)) {
+			$os = 'macintosh';
+		} elseif (preg_match('/windows/i', $user_agent)) {
+			$os = 'windows';
+		}
 	}
 
 	// Name
@@ -4535,7 +4537,7 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
 /**
  * Print decorated date-hour
  *
- * @param	int			$datep			Date
+ * @param	int|''|null	$datep			Date ('' or null when there is no start date, as $db->jdate() of an empty field)
  * @param	int|null	$datef			Second date
  * @param	int			$fullday		Set to 1 for full day (hours are hidden)
  * @param	int			$addseconds		Add also seconds
@@ -4549,6 +4551,11 @@ function dol_print_email($email, $contactid = 0, $socid = 0, $addlink = 0, $max 
  */
 function dolOutputDates($datep, $datef = null, $fullday = 0, $addseconds = 0, $pictotoadd = '', $tzoutput = 'tzuserrel', $reduceformat = 0)
 {
+	// An event may have no start date (a to-do, for example): dol_getdate() would return an empty array to compare
+	if ($datep === '' || $datep === null) {
+		return $pictotoadd;
+	}
+
 	$tmpa = dol_getdate($datep);
 	if (empty($datef)) {
 		$tmpb = $tmpa;
@@ -13787,7 +13794,8 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0, $sqltoadd =
 		}
 		$i1++;
 	}
-	$res = ($nofirstand ? "" : " AND ") . "(" . $res . ")";
+	// No valid criteria (for example only an operator like '>' in numeric mode): return a neutral condition instead of an empty "()"
+	$res = ($nofirstand ? "" : " AND ") . "(" . ($res !== '' ? $res : '1 = 1') . ")";
 
 	return $res;
 }
@@ -16495,13 +16503,13 @@ function dolForgeSQLCriteriaCallback($matches)
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_<>=!\s]/i', '', $tmpelem);	// it can be a full subrequest (should be removed in a future as it allows blind SQL injection)
 				// No word of the subrequest must be a forbidden field (it could be guessed by comparison)
 				$tmpwords = preg_split('/[^a-z0-9_]+/', dol_strtolower($tmpelemarray[$tmpkey]), -1, PREG_SPLIT_NO_EMPTY);
-				if (is_array($tmpwords) && count(array_intersect($tmpwords, $newforbiddenfields)) > 0) {
+				if (is_array($tmpwords) && !empty($newforbiddenfields) && count(array_intersect($tmpwords, $newforbiddenfields)) > 0) {
 					return '1=1';
 				}
 			} else {
 				$tmpelemarray[$tmpkey] = preg_replace('/[^a-z0-9_]/i', '', $tmpelem);	// it can be a name of field or a substitution variable like '__NOW__'
 				// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
-				if (in_array(dol_strtolower($tmpelemarray[$tmpkey]), $newforbiddenfields)) {
+				if (!empty($newforbiddenfields) && in_array(dol_strtolower($tmpelemarray[$tmpkey]), $newforbiddenfields)) {
 					return '1=1';
 				}
 			}
@@ -16530,7 +16538,7 @@ function dolForgeSQLCriteriaCallback($matches)
 		} else {
 			$tmpescaped = preg_replace('/[^a-z0-9_]/i', '', $tmpescaped);	// it can be a name of field or a substitution variable like '__NOW__'
 			// A field name used as a value must not be a forbidden field (it could be guessed by comparison)
-			if (in_array(dol_strtolower($tmpescaped), $newforbiddenfields)) {
+			if (!empty($newforbiddenfields) && in_array(dol_strtolower($tmpescaped), $newforbiddenfields)) {
 				return '1=1';
 			}
 		}
