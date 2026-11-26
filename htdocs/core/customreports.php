@@ -34,6 +34,13 @@
  * $search_groupby = array('t.column2');
  * $customreportkey='abc';
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+ *
+ * To show the full tool into a tab of another PHP page (the parent page prints the header and the tabs, and shows this
+ * tab when it receives its own value for the parameter tabfamily, value that is kept by the forms and links of the tool):
+ *
+ * define('USE_CUSTOM_REPORT_AS_TAB', 1);
+ * $customreportobjecttype = 'order';		// Object type preselected
+ * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
 
 /**
@@ -44,9 +51,11 @@
  * @var User $user
  *
  * @var ?int[]		$toselect  			Items selected on page, only used to see if not empty here
+ * @var ?string		$customreportobjecttype	Object type preselected when page is shown as a tab of another page
  */
 '
 @phan-var-force ?int[] $toselect
+@phan-var-force ?string $customreportobjecttype
 ';
 
 // Initialise values
@@ -54,7 +63,9 @@ $tabfamily = null;
 $objecttype = null;
 
 if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
-	require '../main.inc.php';
+	if (!defined('USE_CUSTOM_REPORT_AS_TAB')) {		// When shown as a tab, main.inc.php is already loaded by the parent page
+		require '../main.inc.php';
+	}
 
 	// Get parameters
 	$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -64,6 +75,13 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$objecttype = (string) GETPOST('objecttype', 'aZ09arobase');
 	if ($objecttype == '-1') {	// -1 is the empty value of the combo of object types
 		$objecttype = '';
+	}
+	if (defined('USE_CUSTOM_REPORT_AS_TAB')) {
+		// When shown as a tab, the parameter mode is used by the parent page, and the parent page defines the object type preselected
+		$mode = '';
+		if (!GETPOSTISSET('objecttype') && !empty($customreportobjecttype)) {
+			$objecttype = (string) $customreportobjecttype;
+		}
 	}
 	$tabfamily  = GETPOST('tabfamily', 'aZ09');
 
@@ -210,19 +228,32 @@ $ObjectClassName = '';
 $arrayoftype = array(
 	'thirdparty' => array('label' => 'ThirdParties', 'picto' => 'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php", 'langs' => 'companies'),
 	'contact' => array('label' => 'Contacts', 'picto' => 'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/contact/class/contact.class.php"),
+	'product' => array('label' => 'ProductsAndServices', 'picto' => 'product', 'ObjectClassName' => 'Product', 'enabled' => (isModEnabled('product') || isModEnabled('service')), 'ClassPath' => "/product/class/product.class.php", 'langs' => 'products'),
 	'proposal' => array('label' => 'Proposals', 'picto' => 'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php", 'langs' => 'propal'),
 	'proposaldet' => array('label' => 'ProposalLines', 'picto' => 'proposal', 'ObjectClassName' => 'PropaleLigne', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propaleligne.class.php", 'langs' => 'propal'),
 	'order' => array('label' => 'Orders', 'picto' => 'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/commande.class.php", 'langs' => 'orders'),
 	'orderdet' => array('label' => 'SaleOrderLines', 'picto' => 'order', 'ObjectClassName' => 'OrderLine', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/orderline.class.php", 'langs' => 'orders'),
+	'shipping' => array('label' => 'Shipments', 'picto' => 'dolly', 'ObjectClassName' => 'Expedition', 'enabled' => isModEnabled('shipping'), 'ClassPath' => "/expedition/class/expedition.class.php", 'langs' => 'sendings'),
+	'reception' => array('label' => 'Receptions', 'picto' => 'dollyrevert', 'ObjectClassName' => 'Reception', 'enabled' => isModEnabled('reception'), 'ClassPath' => "/reception/class/reception.class.php", 'langs' => 'receptions'),
 	'invoice' => array('label' => 'Invoices', 'picto' => 'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture.class.php", 'langs' => 'bills'),
 	'invoice_template' => array('label' => 'PredefinedInvoices', 'picto' => 'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture-rec.class.php", 'langs' => 'bills'),
+	'supplier_proposal' => array('label' => 'SupplierProposals', 'picto' => 'supplier_proposal', 'ObjectClassName' => 'SupplierProposal', 'enabled' => isModEnabled('supplier_proposal'), 'ClassPath' => "/supplier_proposal/class/supplier_proposal.class.php", 'langs' => 'supplier_proposal'),
+	// The permission check done later on the vendor order or invoice tests only the read permission on vendors, so the read permission on the object is tested here
+	'supplier_order' => array('label' => 'SuppliersOrders', 'picto' => 'supplier_order', 'ObjectClassName' => 'CommandeFournisseur', 'enabled' => (isModEnabled('supplier_order') && $user->hasRight('fournisseur', 'commande', 'lire')), 'ClassPath' => "/fourn/class/fournisseur.commande.class.php", 'langs' => 'orders'),
+	'supplier_invoice' => array('label' => 'SupplierInvoices', 'picto' => 'supplier_invoice', 'ObjectClassName' => 'FactureFournisseur', 'enabled' => (isModEnabled('supplier_invoice') && $user->hasRight('fournisseur', 'facture', 'lire')), 'ClassPath' => "/fourn/class/fournisseur.facture.class.php", 'langs' => 'suppliers'),
 	'contract' => array('label' => 'Contracts', 'picto' => 'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
 	'contractdet' => array('label' => 'ContractLines', 'picto' => 'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
+	'fichinter' => array('label' => 'Interventions', 'picto' => 'intervention', 'ObjectClassName' => 'Fichinter', 'enabled' => isModEnabled('intervention'), 'ClassPath' => "/fichinter/class/fichinter.class.php", 'langs' => 'interventions'),
+	'project' => array('label' => 'Projects', 'picto' => 'project', 'ObjectClassName' => 'Project', 'enabled' => isModEnabled('project'), 'ClassPath' => "/projet/class/project.class.php", 'langs' => 'projects'),
 	'bom' => array('label' => 'BOM', 'picto' => 'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
 	'mrp' => array('label' => 'MO', 'picto' => 'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'picto' => 'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
 	'member' => array('langs' => 'members', 'label' => 'Adherent', 'picto' => 'member', 'ObjectClassName' => 'Adherent', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/adherent.class.php"),
 	'cotisation' => array('langs' => 'members', 'label' => 'Subscriptions', 'picto' => 'member', 'ObjectClassName' => 'Subscription', 'enabled' => isModEnabled('member'), 'ClassPath' => "/adherents/class/subscription.class.php"),
+	// The custom reports do not filter on the salaries of the user and its subordinates, so the permission to read all salaries is required
+	'salary' => array('langs' => 'salaries', 'label' => 'Salaries', 'picto' => 'salary', 'ObjectClassName' => 'Salary', 'enabled' => (isModEnabled('salaries') && $user->hasRight('salaries', 'readall')), 'ClassPath' => "/salaries/class/salary.class.php"),
+	// The custom reports do not filter on the expense reports of the user and its subordinates, so the permission to read all expense reports is required
+	'expensereport' => array('langs' => 'trips', 'label' => 'ExpenseReports', 'picto' => 'trip', 'ObjectClassName' => 'ExpenseReport', 'enabled' => (isModEnabled('expensereport') && ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous'))), 'ClassPath' => "/expensereport/class/expensereport.class.php"),
 );
 
 
@@ -247,6 +278,11 @@ if ($reshook < 0) {
 			$arrayoftype[$key] = $val;
 		}
 	}
+}
+
+// An object type of a disabled module, or not allowed to the user, must not be loaded even if forced in the URL
+if ($objecttype && isset($arrayoftype[$objecttype]['enabled']) && !dol_eval((string) $arrayoftype[$objecttype]['enabled'], 1, 1, '1')) {
+	$objecttype = '';
 }
 
 // Load the main $object for statistics
@@ -442,7 +478,7 @@ if ($features) {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE') && !defined('USE_CUSTOM_REPORT_AS_TAB')) {
 	llxHeader('', $langs->transnoentitiesnoconv('CustomReports'), '');
 
 	if (empty($head)) {
@@ -450,6 +486,23 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	} else {
 		print dol_get_fiche_head($head, 'customreports', $title, -1, $picto);
 	}
+}
+
+// If the user is not allowed to read the selected type of object, we show only the error, without running any request on data
+if (!$resultcheck) {
+	print '<div class="error">';
+	print $langs->trans("NotEnoughPermissions");
+	print '</div>';
+
+	if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE') && !defined('USE_CUSTOM_REPORT_AS_TAB')) {
+		print dol_get_fiche_end();
+
+		llxFooter();
+		$db->close();
+		exit;
+	}
+
+	return;		// When included into another page, the parent page ends the page
 }
 
 // Define $newarrayoftype that is array of object available for report
@@ -604,7 +657,7 @@ if (count($sanitized_search_groupby)) {
 			$regs = array();
 			if (isset($object->fields[$gvalwithoutprefix])) {
 				if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
-					$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
+					$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val] ?? null;
 					if (is_null($valuetranslated)) {
 						$valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
 					}
@@ -688,11 +741,6 @@ if (count($sanitized_search_groupby)) {
 //var_dump($arrayofvaluesforgroupby);exit;
 
 
-if (!$resultcheck) {
-	print '<div class="error">';
-	print $langs->trans("NotEnoughPermissions");
-	print '</div>';
-}
 
 
 
@@ -706,6 +754,9 @@ $param = '';
 
 
 if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
+	if (!defined('USE_CUSTOM_REPORT_AS_TAB')) {	// When shown as a tab, the parent page already renders the tab bar, so no br needed
+		print '<br>';
+	}
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" autocomplete="off">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="viewgraph">';
@@ -713,7 +764,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 
 	$viewmode = '';
 
-	$viewmode .= '<div class="divadvancedsearchfield">';
+	$viewmode .= '<div class="divadvancedsearchfield floatnone inline-block">';
 	$arrayofgraphs = array('bars' => 'Bars', 'lines' => 'Lines'); // also 'pies'
 	$viewmode .= '<div class="inline-block opacitymedium"><span class="fas fa-chart-area paddingright" title="'.$langs->trans("Graph").'"></span>'.$langs->trans("Graph").'</div> ';
 	// The class onrightofpage allows to align the popup list on the right of the select component (so it can't go out of screen on the right).
@@ -729,7 +780,8 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	$newcardbutton = '';
 	$limit = 0;
 
-	print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+	// The title bar is empty now that the selection of graph type is shown below the filters, so we do not output it
+	//print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, 'nomarginbottom', $limit, 1, 0, 1, '');
 
 
 	foreach ($newarrayoftype as $tmpkey => $tmpval) {
@@ -890,6 +942,22 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	}
 
 	print '</div>';
+
+	// Selection of the type of graph, centered below the filter section.
+	// With javascript, it stays hidden (but still posted) until a graph is shown (see the section to show the result).
+	print '<div class="center customreportsgraphtype'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').'">';
+	print $viewmode;
+	print '</div>';
+	if (!empty($conf->use_javascript_ajax)) {
+		// A change of the type of graph submits the form like a click on the Refresh button (if there is one)
+		print '<script nonce="'.getNonce().'">jQuery(document).ready(function() {
+			jQuery("#search_graph").change(function() {
+				console.log("Change of graph type, we click on the refresh button");
+				jQuery(".customreportsrefresh").trigger("click");
+			});
+		});</script>';
+	}
+
 	print '</form>';
 }
 
@@ -979,7 +1047,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby);
 			$tmpforloop = explode(',', $arrayofxaxis[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1007,7 +1077,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby[$val]); var_dump($tmpval);
 			$tmpforloop = explode(',', $arrayofgroupby[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1035,7 +1107,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 			//var_dump($arrayofgroupby);
 			$tmpforloop = explode(',', $arrayofmesures[$val]['tablefromt']);
 			foreach ($tmpforloop as $tmptableandalias) {
-				list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+				$tmptable = $tmparray[0];
+				$tmptablealias = $tmparray[1];
 				if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 					$tmpforexplode = explode('__', $tmptablealias);
 					$endpart = end($tmpforexplode);
@@ -1071,7 +1145,9 @@ if (!empty($sanitized_search_measures) && !empty($sanitized_search_xaxis)) {
 				$tmpval = explode('.', $val);
 				$tmpforloop = explode(',', $arrayoffilterfields[$val]['tablefromt']);
 				foreach ($tmpforloop as $tmptableandalias) {
-					list($tmptable, $tmptablealias) = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+					$tmparray = array_pad(explode('=', $tmptableandalias, 2), 2, '');
+					$tmptable = $tmparray[0];
+					$tmptablealias = $tmparray[1];
 					if (! in_array($tmptablealias, $listoftablesalreadyadded)) {	// We do not add join for main table and tables already added
 						$tmpforexplode = explode('__', $tmptablealias);
 						$endpart = end($tmpforexplode);
@@ -1253,7 +1329,10 @@ if ($sql) {
 
 				// Define $xlabel
 				if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
-					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
+					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey] ?? null;
+					if (!is_null($xlabel)) {
+						$xlabel = $langs->transnoentitiesnoconv($xlabel);	// Values of arrayofkeyval are translation keys
+					}
 				}
 				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
 
@@ -1335,7 +1414,10 @@ if ($sql) {
 
 				// Define $xlabel
 				if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
-					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
+					$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey] ?? null;
+					if (!is_null($xlabel)) {
+						$xlabel = $langs->transnoentitiesnoconv($xlabel);	// Values of arrayofkeyval are translation keys
+					}
 				}
 
 				$labeltouse = (($xlabel || $xlabel == '0') ? dol_trunc($xlabel, 20, 'middle') : ($xlabel === '' ? $langs->transnoentitiesnoconv("Empty") : $langs->transnoentitiesnoconv("NotDefined")));
@@ -1416,6 +1498,11 @@ if ($mode == 'graph') {
 		}
 
 		print $px1->show($totalnbofrecord ? 0 : $texttoshow);
+
+		// A graph is shown, so we can show the selection of the type of graph (done before document ready so select2 is initialized on a visible component)
+		if ($totalnbofrecord && !empty($conf->use_javascript_ajax) && !defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
+			print '<script nonce="'.getNonce().'">jQuery(".customreportsgraphtype").removeClass("hideobject");</script>';
+		}
 	}
 }
 
@@ -1427,7 +1514,7 @@ if ($sql && !defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 }
 
 
-if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
+if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE') && !defined('USE_CUSTOM_REPORT_AS_TAB')) {
 	print dol_get_fiche_end();
 
 	llxFooter();

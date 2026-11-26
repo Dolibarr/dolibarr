@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
-$langs->loadLangs(array("contacts", "companies", "projects"));
+$langs->loadLangs(array("companies", "projects"));
 
 $action = GETPOST('action', 'aZ09');
 

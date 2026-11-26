@@ -458,8 +458,8 @@ if (!empty($disablelinefree)) {
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if ($search_id) {
-	$sql .= natural_search('cdet.rowid', $search_id);
+if ($search_id != '') {
+	$sql .= natural_search('cdet.rowid', $search_id, 1);
 }
 if ($search_refProduct) {
 	$sql .= natural_search('pr.ref', $search_refProduct);
@@ -673,8 +673,6 @@ if (empty($reshook)) {
 	$sql = $hookmanager->resPrint;
 }
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -692,6 +690,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	}
 }
 
+$sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 //print $sql;
 $resql = $db->query($sqlSelect . $sql);
@@ -836,6 +835,9 @@ if ($resql) {
 	}
 	if ($search_project_ref >= 0) {
 		$param .= "&search_project_ref=".urlencode($search_project_ref);
+	}
+	if ($search_project != '') {
+		$param .= "&search_project=".urlencode($search_project);
 	}
 	if ($search_town != '') {
 		$param .= '&search_town='.urlencode($search_town);
@@ -1030,8 +1032,8 @@ if ($resql) {
 	}
 	// ID
 	if (!empty($arrayfields['rowid']['checked'])) {
-		print '<td class="liste_titre right" data-key="id">';
-		print '<input class="flat searchstring width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
+		print '<td class="liste_titre center" data-key="id">';
+		print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
 		print '</td>';
 	}
 	// Ref order
@@ -1326,7 +1328,7 @@ if ($resql) {
 	// Detail order
 	if (!empty($arrayfields['rowid']['checked'])) {
 		// @phan-suppress-next-line PhanTypeInvalidDimOffset
-		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['c.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
@@ -1526,6 +1528,7 @@ if ($resql) {
 	$totalarray['val']['cdet.total_tva'] = 0;
 	$totalarray['val']['cdet.total_ttc'] = 0;
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 
@@ -1607,7 +1610,7 @@ if ($resql) {
 
 		// ID
 		if (!empty($arrayfields['rowid']['checked'])) {
-			print '<td class="nowrap right">'.$obj->rowid.'</td>';
+			print '<td class="nowrap center">'.$obj->rowid.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1688,7 +1691,7 @@ if ($resql) {
 
 		// Project ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowrap">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->project_id > 0) {
 				print $projectstatic->getNomUrl(1);
 			}
@@ -1700,9 +1703,9 @@ if ($resql) {
 
 		// Project label
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="nowrap">';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->project_label).'">';
 			if ($obj->project_id > 0) {
-				print $projectstatic->title;
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->project_label).'</span>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -1767,7 +1770,11 @@ if ($resql) {
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
-			print $tmparray['label'];
+			if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
+				print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);
+			} else {
+				print dolPrintHTML($tmparray['label']);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

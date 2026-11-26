@@ -121,7 +121,7 @@ class Conf extends stdClass
 	/**
 	 * @var array<string,array<string,mixed>>  List of activated modules
 	 */
-	public $modules_parts;
+	public $modules_parts = array();
 
 	/**
 	 * @var array<string,mixed> An array to store cache results ->cache['nameofcache']=...
@@ -604,6 +604,7 @@ class Conf extends stdClass
 								$modulename = strtolower($reg[1]);
 								$partname = strtolower($reg[2]);
 								if (!array_key_exists($partname, $this->modules_parts) || !is_array($this->modules_parts[$partname])) {
+									// @phan-suppress-next-line PhanTypeMismatchProperty
 									$this->modules_parts[$partname] = array();
 								}
 
@@ -701,12 +702,6 @@ class Conf extends stdClass
 			}
 			if (empty($this->global->MAIN_MENUFRONT_STANDARD)) {
 				$this->global->MAIN_MENUFRONT_STANDARD = "eldy_menu.php";
-			}
-			if (empty($this->global->MAIN_MENU_SMARTPHONE)) {
-				$this->global->MAIN_MENU_SMARTPHONE = "eldy_menu.php"; // Use eldy by default because smartphone does not work on all phones
-			}
-			if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) {
-				$this->global->MAIN_MENUFRONT_SMARTPHONE = "eldy_menu.php"; // Use eldy by default because smartphone does not work on all phones
 			}
 			if (!isset($this->global->FACTURE_TVAOPTION)) {
 				$this->global->FACTURE_TVAOPTION = 1;

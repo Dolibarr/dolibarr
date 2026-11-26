@@ -411,10 +411,18 @@ class Export
 		// build the input field on depend of the type of file
 		switch ($InfoFieldList[0]) {
 			case 'Text':
+				// A leading ! excludes the value (empty values are kept)
+				$exclude = (strlen($ValueField) > 1 && $ValueField[0] == '!');
+				if ($exclude) {
+					$ValueField = substr($ValueField, 1);
+				}
 				if (!(strpos($ValueField, '%') === false)) {
-					$szFilterQuery = " ".$this->db->sanitize($NameField)." LIKE '".$this->db->escape($ValueField)."'";
+					$szFilterQuery = " ".$this->db->sanitize($NameField).($exclude ? " NOT" : "")." LIKE '".$this->db->escape($ValueField)."'";
 				} else {
-					$szFilterQuery = " ".$this->db->sanitize($NameField)." = '".$this->db->escape($ValueField)."'";
+					$szFilterQuery = " ".$this->db->sanitize($NameField).($exclude ? " <>" : " =")." '".$this->db->escape($ValueField)."'";
+				}
+				if ($exclude) {
+					$szFilterQuery = " (".$this->db->sanitize($NameField)." IS NULL OR".$szFilterQuery.")";
 				}
 				break;
 			case 'Date':
@@ -727,6 +735,16 @@ class Export
 				$this->error = "ErrorBadParameter can't find dataset ".$datatoexport." into preload arrays this->array_export_code";
 				return -1;
 			}
+
+			// A saved export model may still list a field that does not exist anymore (a deleted extrafield for example).
+			// build_sql() does not select it, so it must not be written either: the writers would read an undefined property on each line.
+			foreach (array_keys($array_selected) as $key) {
+				if (!array_key_exists($key, $this->array_export_fields[$indice])) {
+					dol_syslog(__METHOD__." field ".$key." is not available anymore in dataset ".$datatoexport.", it is ignored", LOG_WARNING);
+					unset($array_selected[$key]);
+				}
+			}
+
 			$sql = $this->build_sql($indice, $array_selected, $array_filterValue);  // @phan-suppress-current-line SqlInjection
 		}
 

@@ -17,6 +17,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  * Copyright (C) 2026		Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -488,7 +489,7 @@ class User extends CommonObject
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
 		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Warehouse', 'enabled' => "isModEnabled('stock')", 'visible' => 1, 'notnull' => 0, 'showoncombobox' => 1, 'index' => 1, 'position' => 50, 'searchall' => 1, 'bi' => 0),
 		'ref_employee' => array('type' => 'varchar(50)', 'label' => 'RefEmployee', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 30, 'searchall' => 1),
-		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
+		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 0, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
 
 	const STATUS_DISABLED = 0;
@@ -524,6 +525,12 @@ class User extends CommonObject
 		$this->rights->user->user_advance = new stdClass();
 		$this->rights->user->self_advance = new stdClass();
 		$this->rights->user->group_advance = new stdClass();
+
+		// Show the national registration number into combo lists only to users allowed to read HR personal information
+		global $user;
+		if (isModEnabled('hrm') && $user instanceof User && ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write'))) {
+			$this->fields['national_registration_number']['showoncombobox'] = 1;
+		}
 	}
 
 	/**
@@ -1121,6 +1128,10 @@ class User extends CommonObject
 
 		if (empty($this->id)) {
 			$this->error = 'Try to call addrights on an object user with an empty id';
+			return -1;
+		}
+		if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+			$this->error = 'PermissionsManagedByGroupsOnly';
 			return -1;
 		}
 
@@ -1854,6 +1865,13 @@ class User extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
+		// Remove the passkeys of the user
+		$sql = "DELETE FROM ".$this->db->prefix()."oauth_token WHERE fk_user = ".((int) $this->id)." AND service = 'passkey'";
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
 		// If contact, remove link
 		if ($this->contact_id > 0) {
 			$sql = "UPDATE ".$this->db->prefix()."socpeople SET fk_user_creat = null WHERE rowid = ".((int) $this->contact_id);
@@ -2237,6 +2255,11 @@ class User extends CommonObject
 		// phpcs:enable
 		global $conf;
 
+		// Permissions are given by user groups only
+		if (getDolGlobalInt('MAIN_USER_PERMISSIONS_ONLY_BY_GROUPS')) {
+			return 0;
+		}
+
 		$rd = array();
 		$num = 0;
 		$sql = "SELECT id FROM ".$this->db->prefix()."rights_def";
@@ -2331,6 +2354,9 @@ class User extends CommonObject
 		$this->user_modification_id = $user->id;
 
 		$this->accountancy_code_user_general = trim((string) $this->accountancy_code_user_general);
+		if ($this->accountancy_code_user_general === '-1') {	// '-1' is the value of the empty option of the select of accounting accounts
+			$this->accountancy_code_user_general = '';
+		}
 		$this->accountancy_code				= trim((string) $this->accountancy_code);
 		$this->color						= trim(str_replace('#', '', (string) $this->color));
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
@@ -2469,6 +2495,20 @@ class User extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nbrowsaffected += $this->db->affected_rows($resql);
+
+			// A clear password may remain in database from the time before the encryption of passwords was enabled.
+			// When it matches the encrypted one, it is of no use for the login: we remove it.
+			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED') && !empty($this->pass_indatabase) && !empty($this->pass_indatabase_crypted) && dol_verifyHash($this->pass_indatabase, $this->pass_indatabase_crypted)) {
+				dol_syslog(get_class($this)."::update remove the clear password that matches the encrypted one", LOG_DEBUG);
+				$sql = "UPDATE ".$this->db->prefix()."user SET pass = NULL WHERE rowid = ".((int) $this->id);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->error = $this->db->error();
+					$this->db->rollback();
+					return -5;
+				}
+				$this->pass_indatabase = '';
+			}
 
 			// Update password
 			if (!empty($this->pass)) {
@@ -3190,6 +3230,24 @@ class User extends CommonObject
 	}
 
 	/**
+	 * Return the thirdparty of an external user. A cache is used so each thirdparty is fetched only once per page.
+	 *
+	 * @return	Societe		Thirdparty of the user
+	 */
+	private function getThirdpartyWithCache()
+	{
+		global $conf;
+
+		if (empty($conf->cache['thirdparty'][$this->socid]) || !($conf->cache['thirdparty'][$this->socid] instanceof Societe)) {
+			$thirdparty = new Societe($this->db);
+			$thirdparty->fetch($this->socid);
+			$conf->cache['thirdparty'][$this->socid] = $thirdparty;
+		}
+
+		return $conf->cache['thirdparty'][$this->socid];
+	}
+
+	/**
 	 * getTooltipContentArray
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
@@ -3245,8 +3303,7 @@ class User extends CommonObject
 		}
 		$company = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users
-			$thirdpartystatic = new Societe($this->db);
-			$thirdpartystatic->fetch($this->socid);
+			$thirdpartystatic = $this->getThirdpartyWithCache();
 			$companyimg = '';
 			if (empty($params['hidethirdpartylogo'])) {
 				$companyimg = ' '.$thirdpartystatic->getNomUrl(2, 'nolink', 0, 1); // picto only of company
@@ -3332,12 +3389,9 @@ class User extends CommonObject
 		}
 
 		$companylink = '';
-		if (!empty($this->socid)) {	// Add thirdparty for external users
-			$thirdpartystatic = new Societe($this->db);
-			$thirdpartystatic->fetch($this->socid);
-			if (empty($hidethirdpartylogo)) {
-				$companylink = ' '.$thirdpartystatic->getNomUrl(2, 'nolink', 0, 1); // picto only of company
-			}
+		if (!empty($this->socid) && empty($hidethirdpartylogo)) {	// Add thirdparty for external users. The fetch is useless if logo is hidden.
+			$thirdpartystatic = $this->getThirdpartyWithCache();
+			$companylink = ' '.$thirdpartystatic->getNomUrl(2, 'nolink', 0, 1); // picto only of company
 		}
 
 		if ($infologin < 0) {
@@ -4323,7 +4377,7 @@ class User extends CommonObject
 	{
 		global $langs;
 
-		$langs->load("user");
+		$langs->load("users");
 
 		// Set the '$modele' to the name of the document template (model) to use
 		if (!dol_strlen($modele)) {

@@ -276,6 +276,10 @@ if ($action == 'update') {
 			dolibarr_set_const($db, "MAIN_CHECKBOX_LEFT_COLUMN", GETPOSTINT("MAIN_CHECKBOX_LEFT_COLUMN"), 'chaine', 0, '', $conf->entity);
 		}
 
+		if (GETPOSTISSET("MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST")) {
+			dolibarr_set_const($db, "MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST", GETPOSTINT("MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST"), 'chaine', 0, '', $conf->entity);
+		}
+
 		if (GETPOSTISSET("MAIN_ROW_SINGLECLICK_TOSELECT")) {
 			dolibarr_set_const($db, "MAIN_ROW_SINGLECLICK_TOSELECT", GETPOSTINT("MAIN_ROW_SINGLECLICK_TOSELECT"), 'chaine', 0, '', $conf->entity);
 		}
@@ -429,69 +433,10 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
-	print '</table>' . "\n";
-	print '</div>';
-
-	print '<div class="center">';
-	print '<input class="button button-save reposition" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
-	print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
-	print '</div>';
-
-	print '<br>';
-	print '<br>';
-
-	// Other
-	print '<div class="div-table-responsive-no-min">';
-	print '<table summary="otherparameters" class="noborder centpercent editmode tableforfield">';
-
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
-	print $langs->trans("Miscellaneous");
-	print '</td>';
-	print '<td></td>';
-	print '</tr>';
-
-	if (!empty($conf->use_javascript_ajax)) {
-		// Show Quick Add link
-		print '<tr class="oddeven"><td>' . $langs->trans("ShowQuickAddLink") . '</td><td>';
-		print ajax_constantonoff("MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-		print '</td>';
-		print '</tr>';
-	}
-
-	// Hide wiki link on login page
-	$pictohelp = '<span class="fa fa-question-circle"></span>';
-	print '<tr class="oddeven"><td>' . str_replace('{picto}', $pictohelp, $langs->trans("DisableLinkToHelp", '{picto}')) . '</td><td>';
-	print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	print '</td>';
-	print '</tr>';
-
-	// Max size of lists
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat width50" name="MAIN_SIZE_LISTE_LIMIT" value="';
-	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') > 0) {
-		print getDolGlobalString('MAIN_SIZE_LISTE_LIMIT');
-	}
-	print '">';
-	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') <= 0) {
-		print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Automatic").')</span>';
-	}
-	print '</td>';
-	print '</tr>';
-
-	// Max size of short lists on customer card
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeShortList") . '</td><td><input class="flat width50" name="MAIN_SIZE_SHORTLIST_LIMIT" value="' . getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT') . '"></td>';
-	print '</tr>';
-
-	// Display checkboxes and fields menu left / right
-	print '<tr class="oddeven"><td>' . $langs->trans("MAIN_CHECKBOX_LEFT_COLUMN") . '</td><td>';
-	print ajax_constantonoff("MAIN_CHECKBOX_LEFT_COLUMN", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
-	print '</td>';
-	print '</tr>';
-
-	// Single click to select/unselect a list row
-	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("RowSingleClickToSelect"), $langs->trans("RowSingleClickToSelectDesc")) . '</td><td>';
-	print ajax_constantonoff("MAIN_ROW_SINGLECLICK_TOSELECT", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
-	print '</td>';
-	print '</tr>';
+	print $langs->trans("Locales");
+	print '</td><td>';
+	print '</td></tr>';
 
 	// First day for weeks
 	print '<tr class="oddeven"><td>' . $langs->trans("WeekStartOnDay") . '</td><td>';
@@ -518,6 +463,49 @@ if ($mode == 'other') {
 	print '</td>';
 	print '</tr>';
 
+	print '</table>' . "\n";
+	print '</div>';
+
+	print '<div class="center">';
+	print '<input class="button button-save reposition" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
+	print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
+	print '</div>';
+
+	print '<br>';
+	print '<br>';
+	print '<br>';
+
+	// Other
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="otherparameters" class="noborder centpercent editmode tableforfield">';
+
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
+	print $langs->trans("Menus");
+	print '</td>';
+	print '<td></td>';
+	print '</tr>';
+
+	// Show search area in top menu
+	print '<tr class="oddeven"><td>' . img_picto('', 'search', 'class="pictofixedwidth"'). ' '.$langs->trans("ShowSearchAreaInTopMenu") .'</td><td>';
+	print ajax_constantonoff("MAIN_USE_TOP_MENU_SEARCH_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	if (!empty($conf->use_javascript_ajax)) {
+		// Show Quick Add link
+		print '<tr class="oddeven"><td>' . $langs->trans("ShowQuickAddLink") . '</td><td>';
+		print ajax_constantonoff("MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+		print '</td>';
+		print '</tr>';
+	}
+
+	// Hide wiki link on login page
+	$pictohelp = '<span class="fa fa-question-circle"></span>';
+	print '<tr class="oddeven"><td>' . str_replace('{picto}', $pictohelp, $langs->trans("DisableLinkToHelp", '{picto}')) . '</td><td>';
+	print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
 	// Hide unauthorized menus
 	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("HideUnauthorizedMenu"), $langs->trans("JustGrayedOtherwise")) . '</td><td>';
 	print ajax_constantonoff("MAIN_MENU_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
@@ -527,6 +515,62 @@ if ($mode == 'other') {
 	// Hide unauthorized button
 	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("ButtonHideUnauthorized"), $langs->trans("JustGrayedOtherwise")) . '</td><td>';
 	print ajax_constantonoff("MAIN_BUTTON_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Show bugtrack link
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
+	print '</td><td>';
+	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') . '">';
+	print '</td>';
+	print '</tr>';
+
+	// Option to show entries of menu level 2 only when mouse is over the menu title of level 1 (also available on page admin/menus.php)
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("MenuExpandLeftLevel2OnHover"), $langs->trans("MenuExpandLeftLevel2OnHoverDesc")) . '</td><td>';
+	print ajax_constantonoff("MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER", array(), $conf->entity, 1, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Title for lists options
+	print '<tr class="liste_titre"><td>';
+	print $langs->trans("Lists");
+	print '</td>';
+	print '<td></td>';
+	print '</tr>';
+
+	// Max size of lists
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat width50" name="MAIN_SIZE_LISTE_LIMIT" value="';
+	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') > 0) {
+		print getDolGlobalString('MAIN_SIZE_LISTE_LIMIT');
+	}
+	print '">';
+	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') <= 0) {
+		print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Automatic").')</span>';
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Max size of short lists on customer card
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeShortList") . '</td><td><input class="flat width50" name="MAIN_SIZE_SHORTLIST_LIMIT" value="' . getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT') . '"></td>';
+	print '</tr>';
+
+	// Display checkboxes and fields menu left / right
+	print '<tr class="oddeven"><td>' . $langs->trans("MAIN_CHECKBOX_LEFT_COLUMN") . '</td><td>';
+	print ajax_constantonoff("MAIN_CHECKBOX_LEFT_COLUMN", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Display country as a flag or as a label in lists
+	print '<tr class="oddeven"><td>' . $langs->trans("CountryDisplayModeInLists") . '</td><td>';
+	$array = array(0 => $langs->trans("CountryFlag"), 1 => $langs->trans("CountryLabel"));
+	print $form->selectarray('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST', $array, getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST'));
+	print '</td>';
+	print '</tr>';
+
+	// Single click to select/unselect a list row
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("RowSingleClickToSelect"), $langs->trans("RowSingleClickToSelectDesc")) . '</td><td>';
+	print ajax_constantonoff("MAIN_ROW_SINGLECLICK_TOSELECT", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
 	print '</td>';
 	print '</tr>';
 
@@ -540,18 +584,11 @@ if ($mode == 'other') {
 	*/
 
 
-	// Show search area in top menu
-	print '<tr class="oddeven"><td>' . img_picto('', 'search', 'class="pictofixedwidth"'). ' '.$langs->trans("ShowSearchAreaInTopMenu") .'</td><td>';
-	print ajax_constantonoff("MAIN_USE_TOP_MENU_SEARCH_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	// Title for other options
+	print '<tr class="liste_titre"><td>';
+	print $langs->trans("Other");
 	print '</td>';
-	print '</tr>';
-
-	// Show bugtrack link
-	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
-	print '</td><td>';
-	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . getDolGlobalString('MAIN_BUGTRACK_ENABLELINK') . '">';
-	print '</td>';
+	print '<td></td>';
 	print '</tr>';
 
 	// Disable javascript and ajax
@@ -607,80 +644,80 @@ if ($mode == 'dashboard') {
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableGlobal') . '</td><td>';
-	print ajax_constantonoff("MAIN_DISABLE_GLOBAL_WORKBOARD", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_red', 'dashboard');
+	print ajax_constantonoff("MAIN_DISABLE_GLOBAL_WORKBOARD", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '_warning', 'dashboard');
 	print '</td>';
 	print '</tr>';
 
 	if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
 		// Block meteo
 		print '<tr class="oddeven"><td>' . $langs->trans('MAIN_DISABLE_METEO') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_METEO", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_METEO", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block agenda
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockAgenda') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_AGENDA", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_AGENDA", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block agenda
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockProject') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_PROJECT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_PROJECT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block customer
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockCustomer') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CUSTOMER", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CUSTOMER", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block supplier
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockSupplier') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_SUPPLIER", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_SUPPLIER", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block contract
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockContract') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CONTRACT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_CONTRACT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block ticket
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockTicket') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_TICKET", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_TICKET", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block bank
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockBank') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_BANK", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_BANK", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block adherent
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockAdherent') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_ADHERENT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_ADHERENT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block expense report
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockExpenseReport') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_EXPENSEREPORT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_EXPENSEREPORT", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block holiday
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockHoliday') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_HOLIDAY", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_HOLIDAY", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 
 		// Block mrp
 		print '<tr class="oddeven"><td>' . $langs->trans('DashboardDisableBlockMrp') . '</td><td>';
-		print ajax_constantonoff("MAIN_DISABLE_BLOCK_MRP", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_red', 'dashboard');
+		print ajax_constantonoff("MAIN_DISABLE_BLOCK_MRP", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '_warning', 'dashboard');
 		print '</td>';
 		print '</tr>';
 	}

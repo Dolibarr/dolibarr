@@ -49,7 +49,7 @@ if (empty($conf) || !is_object($conf)) {
 print "<!-- BEGIN PHP TEMPLATE mrp/tpl/linkedobjectblock.tpl.php -->\n";
 
 // Load translation files required by the page
-$langs->load("bom");
+$langs->load("mrp");
 
 $total = 0;
 $ilink = 0;

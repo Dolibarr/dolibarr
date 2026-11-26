@@ -39,6 +39,7 @@
 @phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $this
 @phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force int $num
+@phan-var-force int $i
 ';
 
 global $inputalsopricewithtax;
@@ -65,6 +66,12 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 if ($line->qty > 0) { ?>
 	<td class="linecollabel" <?php echo !colorIsLight($line_color) ? ' style="color: white"' : ' style="color: black"' ?>><?php echo str_repeat('&nbsp;', (int) ($line->qty - 1) * 8); ?>
 		<?php
+		// Button to collapse/expand the lines of the block (state is managed in javascript, see subtotal_collapse.tpl.php)
+		if (!empty($conf->use_javascript_ajax)) {
+			echo '<span class="cursorpointer subtotalcollapse marginrightonly">';
+			echo img_picto($langs->trans("CollapseBlock"), 'chevron-down', '', 0, 0, 0, '', 'subtotalcollapsepicto');
+			echo '</span>';
+		}
 		echo dol_escape_htmltag($line->desc);
 		if (array_key_exists('titleshowuponpdf', $line_options)) {
 			echo '&nbsp;' . img_picto($langs->trans("ShowUPOnPDF"), 'invoicing');
@@ -74,6 +81,12 @@ if ($line->qty > 0) { ?>
 		}
 		if (array_key_exists('titleforcepagebreak', $line_options)) {
 			echo '&nbsp;' . img_picto($langs->trans("ForcePageBreak"), 'file');
+		}
+		// Button to duplicate the block (the title line, the lines it contains and the subtotal line)
+		if ($this->status == 0 && in_array($object->element, array('propal', 'commande', 'facture', 'facturerec'))) {
+			echo '&nbsp;<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&action=ask_duplicate_subtotalblock&token=' . newToken() . '&lineid=' . $line->id . '">';
+			echo img_picto($langs->trans("DuplicateBlock"), 'clone');
+			echo '</a>';
 		}
 		// Handling td for ref supplier
 		if (in_array($object->element, ['supplier_proposal'])) {
@@ -194,7 +207,7 @@ if ($line->qty > 0) { ?>
 
 	if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$colspan += 2;
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$colspan += 1;
 		}
 	}
@@ -261,7 +274,7 @@ if ($line->qty > 0) { ?>
 
 	if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$colspan += 2;
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$colspan += 1;
 		}
 	}

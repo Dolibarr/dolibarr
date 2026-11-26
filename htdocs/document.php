@@ -262,18 +262,28 @@ if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 	$attachment = false;
 }
 
+// A previous version of a file, kept when the file was replaced (.versions/file.ext.v<timestamp>): its type and its name
+// on download are the ones of the file, so it can be opened
+$original_file_for_type = $original_file;
+$versiontimestamp = 0;
+$reg = array();
+if (preg_match('/(^|\/)\.versions\/[^\/]+(\.v(\d+))$/', $original_file, $reg)) {
+	$original_file_for_type = substr($original_file, 0, -strlen($reg[2]));
+	$versiontimestamp = (int) $reg[3];
+}
+
 // Define mime type
 $type = 'application/octet-stream'; // By default
 $type = GETPOST('type', 'alpha');
 // Security: The type given into the URL must not turn a file (like a .txt or a .png that a user can upload) into a page (html, xhtml, svg, xml)
 // that the browser displays instead of downloading it. For such a file, the type is the one of the file extension.
 if (empty($type) || preg_match('/(html|xml|svg)/i', $type)) {
-	$type = dol_mimetype($original_file);
+	$type = dol_mimetype($original_file_for_type);
 }
 // Security: Force to octet-stream if file is a dangerous file. For example when it is a .noexe file
 // We do not force if file is a javascript to be able to get js from website module with <script src="
 // Note: Force whatever is $modulepart seems ok.
-if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($original_file)) {
+if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($original_file_for_type)) {
 	$type = 'application/octet-stream';
 }
 
@@ -284,7 +294,7 @@ $original_file = str_replace('..\\', '/', $original_file);
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
-if ($refname == 'thumbs' || $refname == 'temp') {
+if ($refname == 'thumbs' || $refname == 'temp' || $refname == '.versions') {	// .versions: previous versions of the files of the object
 	// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
 	$refname = basename(dirname(dirname($original_file))."/");
 }
@@ -293,6 +303,8 @@ if ($refname == 'thumbs' || $refname == 'temp') {
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
+
+$hookmanager->initHooks(array('document'));
 
 // Check security and set return info with full path of file
 $check_access = dol_check_secure_access_document($modulepart, $original_file, (int) $entity, $user, $refname, 'read');
@@ -350,6 +362,12 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 clearstatcache();
 
 $filename = basename($fullpath_original_file);
+if ($versiontimestamp) {
+	// Previous version: file.ext.v<timestamp> is downloaded as "file (date of the version).ext"
+	$filename = basename($original_file_for_type);
+	$fileext = pathinfo($filename, PATHINFO_EXTENSION);
+	$filename = ($fileext !== '' ? substr($filename, 0, -strlen($fileext) - 1) : $filename).' ('.dol_print_date($versiontimestamp, '%Y-%m-%d %H%M', 'tzuser').')'.($fileext !== '' ? '.'.$fileext : '');
+}
 $filename = preg_replace('/\.noexe$/i', '', $filename);
 
 // Output file on browser
@@ -364,7 +382,6 @@ if (!file_exists($fullpath_original_file_osencoded)) {
 }
 
 // Hooks
-$hookmanager->initHooks(array('document'));
 $parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
 	'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
 	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
@@ -373,8 +390,7 @@ $reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, 
 if ($reshook < 0) {
 	$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').implode(', ', $hookmanager->errors) : '');
 	dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : ".$errors);
-	print "ErrorDownloadDocumentHooks: ".$errors;
-	exit;
+	httponly_accessforbidden("ErrorDownloadDocumentHooks: ".$errors, 403);
 }
 
 // Set this for test

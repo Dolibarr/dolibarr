@@ -370,7 +370,7 @@ if ($mode == 'dolibarr' || !$disabled) {
 
 <?php
 if (getDolGlobalString('MAIN_HTML_FOOTER')) {
-	print $conf->global->MAIN_HTML_FOOTER;
+	print getDolGlobalString('MAIN_HTML_FOOTER');
 }
 
 if (!empty($morelogincontent) && is_array($morelogincontent)) {

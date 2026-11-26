@@ -199,18 +199,6 @@ if ($modulepart == 'fckeditor') {
  * View
  */
 
-$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int, or a hash
-if ($cachestring) {
-	// Important: The following code is to avoid a page request by the browser and PHP CPU at each Dolibarr page access.
-	// We are here when param cache=xxx to force a cache policy:
-	//  xxx=1 means cache of 3600s
-	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
-	$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
-	header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
-	header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-	header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
-}
-
 // If we have a hash public (hashp), we guess the original_file.
 if (!empty($hashp) && $hashp != 'shared') {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -272,6 +260,17 @@ $original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... 
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
+// Security: Remove remaining '.', '..' and empty ('//' -> '/') segments, so the reference of the object
+// extracted from the subdirectory can not be faked with a path like 'REF/./file' or 'REF//file'.
+// The reference must also stay the same than the one resolved into dol_check_secure_access_document().
+$pathsegments = explode('/', $original_file);
+foreach ($pathsegments as $key => $pathsegment) {
+	if ($pathsegment === '.' || $pathsegment === '..' || $pathsegment === '') {
+		unset($pathsegments[$key]);
+	}
+}
+$original_file = implode('/', $pathsegments);
+
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
 if ($refname == 'thumbs' || $refname == 'temp') {
@@ -295,6 +294,8 @@ if ($modulepart === 'medias' && $entity != $conf->entity) {
 	$conf->entity = $entity;
 	$conf->setValues($db);
 }
+
+$hookmanager->initHooks(array('viewimage'));
 
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname, 'read');
 $accessallowed              = $check_access['accessallowed'];
@@ -352,6 +353,19 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 	exit;
 }
 
+
+// Cache only responses that have passed the access and path checks.
+$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int, or a hash
+if ($cachestring) {
+	// Important: The following code is to avoid a page request by the browser and PHP CPU at each Dolibarr page access.
+	// We are here when param cache=xxx to force a cache policy:
+	//  xxx=1 means cache of 3600s
+	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
+	$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
+	header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
+	header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
+}
 
 if ($modulepart == 'barcode') {
 	$generator = GETPOST("generator", "aZ09");
@@ -439,12 +453,26 @@ if ($modulepart == 'barcode') {
 
 	$filename = basename($fullpath_original_file);
 
+	// Hooks (same hook as document.php, so a module can control the output of a file by both pages)
+	$parameters = array('ecmfile' => null, 'modulepart' => $modulepart, 'original_file' => $original_file,
+		'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
+		'filename' => $filename, 'fullpath_original_file_osencoded' => dol_osencode($fullpath_original_file));
+	$object = new stdClass();
+	$action = 'view';
+	$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) {
+		$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').implode(', ', $hookmanager->errors) : '');
+		dol_syslog("viewimage.php - Errors when executing the hook 'downloadDocument' : ".$errors);
+		httponly_accessforbidden("ErrorDownloadDocumentHooks: ".$errors, 403);
+	}
+
 	// Output files on browser
 	dol_syslog("viewimage.php return file $fullpath_original_file filename=$filename content-type=$type");
 
 	if (!dol_is_file($fullpath_original_file) && !GETPOSTINT("noalt", 1)) {
 		// This test is to replace error images with a nice "notfound image" when image is not available (for example when thumbs not yet generated).
 		$fullpath_original_file = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
+		$type = 'image/png';	// The replacement image is a PNG, so we must not keep the mime type of the requested file (svg, ...)
 		/*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
 		print $error;
 		exit;*/

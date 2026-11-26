@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries'));
+$langs->loadLangs(array('compta', 'bills', 'donations', 'salaries'));
 
 $date_startday = GETPOSTINT('date_startday');
 $date_startmonth = GETPOSTINT('date_startmonth');
@@ -135,6 +135,10 @@ if (isModEnabled('comptabilite')) {
 }
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
+}
+// When no accountancy module is enabled, no permission covers this page, so we refuse the access.
+if (!isModEnabled('comptabilite') && !isModEnabled('accounting')) {
+	accessforbidden();
 }
 
 

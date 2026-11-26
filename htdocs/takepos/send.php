@@ -203,7 +203,7 @@ function SendMail() {
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: '<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&token='.newToken().'&facid='.((int) $facid).'&email='; ?>' + $("#email").val(),
+		url: '<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&token='.newToken().'&facid='.((int) $facid).'&email='; ?>' + encodeURIComponent($("#email").val()),
 		success: function(response) {
 			console.log("Email sent");
 			alert("Email sent");
@@ -211,9 +211,13 @@ function SendMail() {
 		error: function(xhr, status, error) {
 			console.log("Failed to send email");
 			alert("Failed to send email : " + error);
+		},
+		complete: function() {
+			// Close the popup only once the request is finished. Closing it before destroys the iframe,
+			// which aborts the request client side and triggers the error callback while the email is sent.
+			parent.$.colorbox.close();
 		}
 	});
-	parent.$.colorbox.close();
 }
 
 </script>

@@ -616,7 +616,7 @@ class ChargeSociales extends CommonObject
 		global $langs;
 
 		// Load translation files required by the page
-		$langs->loadLangs(array("customers", "bills"));
+		$langs->loadLangs(array("companies", "bills"));
 
 		// We reinit status array to force to redefine them because label may change according to properties values.
 		$this->labelStatus = array();
@@ -737,7 +737,7 @@ class ChargeSociales extends CommonObject
 			if ($txttoshow) {
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.$txttoshow;
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/compta/sociales/note.php?id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=compta_sociales&id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';

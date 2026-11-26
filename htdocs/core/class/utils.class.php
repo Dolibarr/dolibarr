@@ -250,6 +250,73 @@ class Utils
 
 
 	/**
+	 * Check a dump command (mysqldump, pg_dump, ...) and return its sanitized and validated value.
+	 * When a full path is provided, the path must point to an existing binary, so the path is resolved with realpath()
+	 * to be sure it can be quoted and executed without any shell interpretation.
+	 * When a command name without path is provided, it must not contain any char that can be interpreted by the shell.
+	 * When the parameter $dolibarr_main_restrict_os_commands is set, the command must also be into the list of allowed commands.
+	 *
+	 * @param	string		$cmddump	Path or name of the dump command (value taken from constant or user input)
+	 * @return	string					Validated command to use ('' if KO). If KO, $this->error is filled with the error message.
+	 */
+	public function checkDumpCommand($cmddump)
+	{
+		global $langs, $dolibarr_main_restrict_os_commands;
+
+		if ($cmddump === '' || $cmddump === null) {
+			if (!empty($dolibarr_main_restrict_os_commands)) {
+				$langs->loadLangs(array("admin", "errors"));
+				$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
+				$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
+			}
+			return '';
+		}
+
+		$cmddump = dol_sanitizePathName($cmddump);		// Sanitize path
+		$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
+		$cmddump = trim($cmddump);
+
+		if (preg_match('/[\/\\\\]/', $cmddump)) {
+			// This is a full path, it must point to an existing binary, so we can resolve it with realpath()
+			// Note: the resolved path can be safely quoted at execution time (see dumpDatabase) even if it contains
+			// chars like spaces or parenthesis (for example on Windows "C:\Program Files (x86)\...").
+			$resolvedcmddump = realpath($cmddump);
+			if ($resolvedcmddump === false || !is_file($resolvedcmddump)) {
+				dol_syslog("Utils::checkDumpCommand canceled because path ".$cmddump." is not an existing file.", LOG_WARNING);
+				$langs->load("errors");
+				$this->error = $langs->transnoentitiesnoconv('ErrorFileNotFound', $cmddump);
+				return '';
+			}
+			$cmddump = $resolvedcmddump;
+		} else {
+			// This is a command name without path, it must not contain any char that can be interpreted by the shell
+			if (!preg_match('/^[A-Za-z0-9\._\-]+$/', $cmddump)) {
+				dol_syslog("Utils::checkDumpCommand canceled because command name ".$cmddump." contains chars that can be interpreted by a shell.", LOG_WARNING);
+				$langs->load("errors");
+				$this->error = $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $cmddump, 'Dump command');
+				$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
+				return '';
+			}
+		}
+
+		if (!empty($dolibarr_main_restrict_os_commands)) {
+			$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
+			$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
+			dol_syslog("Utils::checkDumpCommand: Commands are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
+			$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
+			if (!in_array($basenamecmddump, $arrayofallowedcommand)) {	// the provided command $cmddump must be an allowed command
+				$langs->loadLangs(array("admin", "errors"));
+				$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
+				$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
+				return '';
+			}
+		}
+
+		return $cmddump;
+	}
+
+
+	/**
 	 *  Make a backup of database
 	 *  CAN BE A CRON TASK
 	 *
@@ -337,21 +404,15 @@ class Utils
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
-			$cmddump = dol_sanitizePathName($cmddump);											// Sanitize path
-			$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
-			$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
+			// Sanitize and validate $cmddump, and check it is an allowed command
+			$cmddump = $this->checkDumpCommand($cmddump);
+			if ($cmddump === '') {
+				return -1;
+			}
 
-			// Sanitize and validate $cmddump
 			if (!empty($dolibarr_main_restrict_os_commands)) {
 				$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
 				$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
-				dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
-				if (!in_array($basenamecmddump, $arrayofallowedcommand)) {	// the provided command $cmddump must be an allowed command
-					$langs->load("errors");
-					$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
-					$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
-					return -1;
-				}
 				// In low memory mode, the output of the dump is piped into an OS compressor that must be allowed too
 				$compressorcommands = array('gz' => 'gzip', 'bz' => 'bzip2', 'zstd' => 'zstd');
 				if ($lowmemorydump && !empty($compressorcommands[$compression]) && !in_array($compressorcommands[$compression], $arrayofallowedcommand)) {
@@ -366,8 +427,10 @@ class Utils
 			// Parameters execution
 			$command = $cmddump;
 			$command = preg_replace('/(\$|%)/', '', $command); // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
-			if (preg_match("/\s/", $command)) {
-				$command = escapeshellarg($command); // If there is spaces, we add quotes on command to be sure $command is only a program and not a program+parameters
+			if (!preg_match('/^[A-Za-z0-9\._\-\/\\\\:]+$/', $command)) {
+				// If the command is not a simple command name or path (it contains chars like spaces, parenthesis, ...),
+				// we quote the whole string to be sure $command is only a program and not a program+parameters or a shell syntax
+				$command = escapeshellarg($command);
 			}
 
 			//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
@@ -678,28 +741,19 @@ class Utils
 			$outputerror = $outputfile.'.err';
 			dol_mkdir($conf->admin->dir_output.'/backup');
 
-			// Sanitize and validate $cmddump
-			$cmddump = dol_sanitizePathName($cmddump);											// Sanitize path
-			$cmddump = dol_string_nospecial($cmddump, '', array("|", ";", "<", ">", "&", "+")); // Sanitize command
-			$basenamecmddump = basename(str_replace('\\', '/', $cmddump));
-
-			if (!empty($dolibarr_main_restrict_os_commands)) {
-				$arrayofallowedcommand = explode(',', $dolibarr_main_restrict_os_commands);
-				$arrayofallowedcommand = array_map('trim', $arrayofallowedcommand);
-				dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
-				if (!in_array($basenamecmddump, $arrayofallowedcommand)) {	// the provided command $cmddump must be an allowed command
-					$langs->load("errors");
-					$this->error = $langs->trans('CommandIsNotInsideAllowedCommands');
-					$this->error .= '<br>'.$langs->trans('ErrorCheckTheCommandInsideTheAdvancedOptions');
-					return -1;
-				}
+			// Sanitize and validate $cmddump, and check it is an allowed command
+			$cmddump = $this->checkDumpCommand($cmddump);
+			if ($cmddump === '' && $this->error !== '') {
+				return -1;
 			}
 
 			// Parameters execution
 			$command = $cmddump;
 			$command = preg_replace('/(\$|%)/', '', $command); // We removed chars that can be used to inject vars that contains space inside path of command without seeing there is a space to bypass the escapeshellarg.
-			if (preg_match("/\s/", $command)) {
-				$command = escapeshellarg($command); // If there is spaces, we add quotes on command to be sure $command is only a program and not a program+parameters
+			if (!preg_match('/^[A-Za-z0-9\._\-\/\\\\:]+$/', $command)) {
+				// If the command is not a simple command name or path (it contains chars like spaces, parenthesis, ...),
+				// we quote the whole string to be sure $command is only a program and not a program+parameters or a shell syntax
+				$command = escapeshellarg($command);
 			}
 
 			//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
@@ -1108,7 +1162,7 @@ class Utils
 			$mainlogdir = DOL_DATA_ROOT;
 			$mainlog = 'dolibarr.log';
 		} else {
-			$mainlogfull = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
+			$mainlogfull = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, getDolGlobalString('SYSLOG_FILE'));
 			$mainlogdir = dirname($mainlogfull);
 			$mainlog = basename($mainlogfull);
 		}
@@ -1212,6 +1266,7 @@ class Utils
 		// Set to UTF-8. Use utf8mb4 when the database uses it, as with utf8 the 4-byte
 		// characters (emojis...) are read as '?' and are lost when the dump is restored.
 		$charset = ($dolibarr_main_db_character_set == 'utf8mb4' ? 'utf8mb4' : 'utf8');
+		$sanitizedcharset = $db->sanitize($charset);
 		if (is_a($db, 'DoliDBMysqli')) {
 			/** @var DoliDBMysqli $db */
 			$db->db->set_charset($charset);
@@ -1257,7 +1312,7 @@ class Utils
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES ".$db->sanitize($charset)." */;
+/*!40101 SET NAMES ".$sanitizedcharset." */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -1295,7 +1350,7 @@ class Utils
 				fwrite($handle, "DROP TABLE IF EXISTS `".$table."`;\n"); // Dropping table if exists prior to re create it
 			}
 			fwrite($handle, "/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
-			fwrite($handle, "/*!40101 SET character_set_client = ".$db->sanitize($charset)." */;\n");
+			fwrite($handle, "/*!40101 SET character_set_client = ".$sanitizedcharset." */;\n");
 			$resqldrop = $db->query('SHOW CREATE TABLE '.$table);
 			$row2 = $db->fetch_row($resqldrop);
 			if (empty($row2[1])) {

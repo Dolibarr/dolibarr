@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Ověřeno
 StatusReceptionProcessedShort=Zpracované
 ReceptionSheet=Přijímací list
 ValidateReception=Ověření příjmu
+DeleteReception=Delete reception
 ConfirmDeleteReception=Opravdu chcete tento příjem smazat?
 ConfirmValidateReception=Opravdu chcete ověřit tento příjem s odkazem <b>%s</b>?
 ConfirmCancelReception=Opravdu chcete tento příjem zrušit?

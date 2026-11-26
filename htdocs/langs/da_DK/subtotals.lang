@@ -3,7 +3,6 @@
 #
 # Global
 #
-Subtotal=Subtotal
 SubTotalModuleDesc=Subtotal og titellinjer for bestemte dokumenter
 #
 # Admin
@@ -12,12 +11,19 @@ SubtotalSetup=Opsætning af subtotalmodul
 MaxSubtotalLevel=Maksimalt niveau
 SubtotalLineBackColor=Baggrundsfarve for niveau %s linjer
 NotSupportedByAllPDF=Vil fungere med nyere PDF-filer, men ikke med gamle. %s
+SubtotalsPredefinedTitles=Subtotaler for foruddefinerede titler
+SubtotalsPredefinedTexts=Subtotaler for foruddefinerede tekster
+SubtotalTextColumnTitle=Tekst
 
 #
 # Card
 #
 AddTitleLine=Tilføj titellinje
 AddSubtotalLine=Tilføj subtotallinje
+AddTextLine=Tilføj tekstlinje
+PredefinedTitle=Foruddefineret titel
+PredefinedText=Foruddefineret tekst
+SubtotalTextContent=Tekstindhold
 TitleNeedDesc=Du skal indtaste en gyldig beskrivelse for at oprette en titel.
 TitleAddedLevelTooHigh=Titelniveauet er for højt (tilføjet med niveau %s i stedet).
 TitleEditedLevelTooHigh=Redigeret titelniveau for højt (redigeret med niveau %s i stedet).

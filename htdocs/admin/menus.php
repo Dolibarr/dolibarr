@@ -50,11 +50,9 @@ if (!$user->admin) {
 }
 
 $dirstandard = array();
-$dirsmartphone = array();
 $dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 foreach ($dirmenus as $dirmenu) {
 	$dirstandard[] = $dirmenu.'standard';
-	$dirsmartphone[] = $dirmenu.'smartphone';
 }
 
 $error = 0;
@@ -76,21 +74,13 @@ if ($action == 'update' && !$cancel) {
 	$_SESSION["mainmenu"] = "home"; // The menu manager may have changed
 
 	dolibarr_set_const($db, "MAIN_MENU_STANDARD", GETPOST('MAIN_MENU_STANDARD', 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_MENU_SMARTPHONE", GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_MENUFRONT_STANDARD", GETPOST('MAIN_MENUFRONT_STANDARD', 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_MENUFRONT_SMARTPHONE", GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler = array();
 	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENU_STANDARD', 'alpha'))] = 1;
 	$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENUFRONT_STANDARD', 'alpha'))] = 1;
-	if (GETPOST('MAIN_MENU_SMARTPHONE', 'alpha')) {
-		$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENU_SMARTPHONE', 'alpha'))] = 1;
-	}
-	if (GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha')) {
-		$listofmenuhandler[preg_replace('/(_backoffice|_frontoffice|_menu)?\.php/i', '', GETPOST('MAIN_MENUFRONT_SMARTPHONE', 'alpha'))] = 1;
-	}
 
 	// Initialize menu handlers
 	foreach ($listofmenuhandler as $key => $val) {
@@ -180,8 +170,8 @@ print $form->textwithpicto($langs->trans("ExternalUsers"), $langs->trans("Intern
 print '</td>';
 print '</tr>';
 
-// Menu top
-print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
+// Menu manager
+print '<tr class="oddeven"><td>'.$langs->trans("MenuManager").'</td>';
 print '<td>';
 $formadmin->select_menu(getDolGlobalString('MAIN_MENU_STANDARD_FORCED', getDolGlobalString('MAIN_MENU_STANDARD')), 'MAIN_MENU_STANDARD', $dirstandard, !getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? '' : ' disabled');
 print '</td>';
@@ -190,25 +180,10 @@ $formadmin->select_menu(getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED', get
 print '</td>';
 print '</tr>';
 
-// Menu smartphone
-print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
-print '<td>';
-$formadmin->select_menu(getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED', getDolGlobalString('MAIN_MENU_SMARTPHONE')), 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') ? '' : ' disabled');
-
-if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED'))
-	|| (!getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENU_SMARTPHONE')))) {
-	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
-}
-
-print '</td>';
-print '<td>';
-$formadmin->select_menu(getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED', getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE')), 'MAIN_MENUFRONT_SMARTPHONE', array_merge($dirstandard, $dirsmartphone), !getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') ? '' : ' disabled');
-
-if (getDolGlobalString('MAIN_MENU_SMARTPHONE_FORCED') && preg_match('/smartphone/', getDolGlobalString("MAIN_MENUFRONT_SMARTPHONE_FORCED"))
-	|| (!getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE_FORCED') && getDolGlobalString('MAIN_MENU_SMARTPHONE') && preg_match('/smartphone/', getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE')))) {
-	print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
-}
-
+// Option to show entries of menu level 2 only when mouse is over the menu title of level 1
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("MenuExpandLeftLevel2OnHover"), $langs->trans("MenuExpandLeftLevel2OnHoverDesc")).'</td>';
+print '<td colspan="2" class="left">';
+print ajax_constantonoff('MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER', array(), null, 1, 0, 1);
 print '</td>';
 print '</tr>';
 

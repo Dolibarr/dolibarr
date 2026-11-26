@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("propal", "supplier_proposal", "facture", "orders", "sendings", "companies"));
+$langs->loadLangs(array("propal", "supplier_proposal", "bills", "orders", "sendings", "companies"));
 
 $id		= GETPOSTINT('id');
 $ref	= GETPOST('ref', 'alpha');

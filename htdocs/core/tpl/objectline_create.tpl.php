@@ -180,10 +180,10 @@ if ($nolinesbefore) {
 		<?php
 		// Fields for situation invoice
 		if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
-			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
-			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 				print '<td class="nobottom nowrap right"></td>';
 			}
+			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
 			print '<td class="linecolcycleref2 right"></td>';
 		}
 		if (!empty($usemargins)) {
@@ -451,6 +451,11 @@ if ($nolinesbefore) {
 			echo '<br>'.$langs->trans('AddLineOnPosition').' : <input type="number" name="rank" step="1" min="0" style="width: 5em;">';
 		}
 
+		// Reference the customer gives to the line (line of its purchase order)
+		if (getDolGlobalString('MAIN_ENABLE_LINE_REF_CUSTOMER') && $object->element == 'commande') {
+			echo '<div class="paddingtop">'.$langs->trans('RefCustomerLine').' : <input type="text" name="line_ref_customer" id="line_ref_customer" class="width150" maxlength="128" value="'.dol_escape_htmltag(GETPOST('line_ref_customer', 'alphanohtml')).'"></div>';
+		}
+
 		if (is_object($hookmanager) && empty($senderissupplier)) {
 			$parameters = array('fk_parent_line' => GETPOSTINT('fk_parent_line'));
 			$reshook = $hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);
@@ -488,14 +493,12 @@ if ($nolinesbefore) {
 		if (isModEnabled("service") && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
 			echo '<div class="divlinefordates"><br>';
 			echo $langs->trans('AutoFillDateFrom').' ';
-			if (getDolGlobalString('INVOICE_REC_DATE_TO_YES')) {
-				$line->date_start_fill = 1;
-				$line->date_end_fill = 1;
-			}
-			echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
+			// There is no $line in this template (it is included by formAddObjectLine()), so use the default from setup
+			$autofilldate = (getDolGlobalString('INVOICE_REC_DATE_TO_YES') ? 1 : 0);
+			echo $form->selectyesno('date_start_fill', $autofilldate, 1);
 			echo ' - ';
 			echo $langs->trans('AutoFillDateTo').' ';
-			echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
+			echo $form->selectyesno('date_end_fill', $autofilldate, 1);
 			echo '</div>';
 		}
 		if (is_object($objectline) && $extrafields instanceof ExtraFields) {
@@ -600,12 +603,12 @@ if ($nolinesbefore) {
 	<?php } ?>
 	<?php
 	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
-		$coldisplay++;
-		print '<td class="nobottom nowrap right"><input class="flat right" type="text" size="1" value="" name="progress"><span class="opacitymedium hideonsmartphone">%</span></td>';
-		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') > 1) {
 			$coldisplay++;
 			print '<td class="nobottom nowrap right"></td>';
 		}
+		$coldisplay++;
+		print '<td class="nobottom nowrap right"><input class="flat right" type="text" size="1" value="" name="progress"><span class="opacitymedium hideonsmartphone">%</span></td>';
 		$coldisplay++;
 		print '<td></td>';
 	}

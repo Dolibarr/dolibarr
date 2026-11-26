@@ -117,6 +117,18 @@ class ProjectTest extends CommonClassTest
 
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
+
+		// Contacts loaded for several projects with one request must be the same than with liste_contact()
+		$result = $localobject->add_contact($user->id, 'PROJECTLEADER', 'internal');
+		print __METHOD__." id=".$localobject->id." add_contact result=".$result."\n";
+		$this->assertGreaterThan(0, $result);
+		$result = $localobject->getContactsOfObjects(array($localobject->id, 0), 'internal');
+		print __METHOD__." id=".$localobject->id." getContactsOfObjects result=".var_export($result, true)."\n";
+		$this->assertIsArray($result);
+		$this->assertEquals(array_column($localobject->liste_contact(-1, 'internal'), 'id'), array_column($result[$localobject->id], 'id'));
+		$result = $localobject->getContactsOfObjects(array());
+		$this->assertEquals(array(), $result);
+
 		return $localobject;
 	}
 
@@ -229,6 +241,42 @@ class ProjectTest extends CommonClassTest
 		$this->assertEquals(count($tasksrole), 0);
 
 		return $localobject->fk_project;
+	}
+
+	/**
+	 * testProjectOdtTemplateWithoutOptionalBlocks: the ODT generator accepts a template without the blocks tasks, projectfiles and projectcontacts
+	 *
+	 * @return	void
+	 */
+	public function testProjectOdtTemplateWithoutOptionalBlocks()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/modules/project/doc/doc_generic_project_odt.modules.php';
+
+		$project = new Project($db);
+		$project->initAsSpecimen();
+		$project->ref = 'ODFTEST31043';
+		$this->assertGreaterThan(0, $project->create($user));
+		// A contact is needed to run the block of the contacts
+		$this->assertGreaterThan(0, $project->add_contact($user->id, 'PROJECTLEADER', 'internal'));
+
+		$objdoc = new doc_generic_project_odt($db);
+		try {
+			// An ODT with none of the blocks of a project template, then the template of the project that has all of them
+			$result = $objdoc->write_file($project, $langs, DOL_DOCUMENT_ROOT.'/install/doctemplates/invoices/template_invoice.odt');
+			$this->assertEquals(1, $result);
+			$result = $objdoc->write_file($project, $langs, DOL_DOCUMENT_ROOT.'/install/doctemplates/projects/template_project.odt');
+			$this->assertEquals(1, $result);
+		} finally {
+			dol_delete_dir_recursive($conf->project->dir_output.'/'.$project->ref);
+		}
+
+		print __METHOD__." result=".$result."\n";
 	}
 
 

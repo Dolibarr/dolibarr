@@ -126,6 +126,11 @@ class FactureRec extends CommonInvoice
 	public $tva;
 
 	/**
+	 * @var FactureLigneRec[]
+	 */
+	public $lines = array();
+
+	/**
 	 * @var int|string
 	 */
 	public $date_last_gen;
@@ -312,6 +317,8 @@ class FactureRec extends CommonInvoice
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**

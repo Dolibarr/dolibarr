@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=تصدیق شدہ
 StatusReceptionProcessedShort=پروسیس شدہ
 ReceptionSheet=استقبالیہ شیٹ
 ValidateReception=استقبال کی توثیق کریں۔
+DeleteReception=Delete reception
 ConfirmDeleteReception=کیا آپ واقعی اس استقبالیہ کو حذف کرنا چاہتے ہیں؟
 ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=کیا آپ واقعی اس استقبالیہ کو منسوخ کرنا چاہتے ہیں؟

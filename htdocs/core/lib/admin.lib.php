@@ -755,7 +755,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
 		$tmpname = preg_replace('/(_TEST|_PROD)$/', '', $name);
 		if (!preg_match('/^(MAIN_LOGEVENTS|MAIN_AGENDA_ACTIONAUTO)/', $name)
-			&& (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_TOKEN|_REFRESH)$/', $tmpname))) {
+			&& (preg_match('/(_KEY|_KEYFORHASH|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_TOKEN|_REFRESH)$/', $tmpname))) {
 			// This seems a sensitive constant, we encrypt its value
 			// To list all sensitive constant, you can make a
 			// SELECT * from llx_const WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' ...
@@ -958,6 +958,11 @@ function security_prepare_head()
 	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/openid_connect.php");
 	$head[$h][1] = $langs->trans("OpenIDconnectSetup");
 	$head[$h][2] = 'openid';
+	$h++;
+
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_passkey.php");
+	$head[$h][1] = $langs->trans("Passkeys");
+	$head[$h][2] = 'passkey';
 	$h++;
 
 
@@ -1241,7 +1246,7 @@ function purgeSessions($mysessionid)
  *  @param      int			$withdeps  				Activate/Disable also all dependencies
  * 	@param		int			$noconfverification		Remove verification of $conf->global->MODULE_NAME variable for module
  *  @param		string		$options				Option for init
- *  @return     array{nbmodules?:int,errors:string[],nbperms?:int}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
+ *  @return     array{nbmodules?:int,errors:string[],nbperms?:int,needsetup?:string[]}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added, 'needsetup'=>array of labels of activated modules that need a setup);
  */
 function activateModule($value, $withdeps = 1, $noconfverification = 0, $options = '')
 {
@@ -1255,7 +1260,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 		return $ret;
 	}
 
-	$ret = array('nbmodules' => 0, 'errors' => array(), 'nbperms' => 0);
+	$ret = array('nbmodules' => 0, 'errors' => array(), 'nbperms' => 0, 'needsetup' => array());
 	$modName = $value;
 	$modFile = $modName.".class.php";
 
@@ -1348,6 +1353,9 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 						if ($activate) {
 							$ret['nbmodules'] += $resarray['nbmodules'];
 							$ret['nbperms'] += $resarray['nbperms'];
+							if (!empty($resarray['needsetup'])) {
+								$ret['needsetup'] = array_merge($ret['needsetup'], $resarray['needsetup']);
+							}
 						} else {
 							if ($activateerr) {
 								$ret['errors'][] = $activateerr;
@@ -1375,6 +1383,9 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 	if (!count($ret['errors'])) {
 		$ret['nbmodules']++;
 		$ret['nbperms'] += (is_array($objMod->rights) ? count($objMod->rights) : 0);
+		if (!empty($objMod->need_setup)) {
+			$ret['needsetup'][] = $objMod->getName();
+		}
 	}
 
 	return $ret;
@@ -2633,14 +2644,14 @@ function GetContentPolicySources()
 		),
 		// Document directives
 		"document" => array(
-			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"none" => array("label" => "none", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source (*.mydomain.com)", "data-sourcetype" => "input"),
 		),
 		// Navigation directives
 		"navigation" => array(
-			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
+			"none" => array("label" => "none", "data-sourcetype" => "quoted"),
 			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),

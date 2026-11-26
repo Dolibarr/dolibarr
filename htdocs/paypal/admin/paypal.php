@@ -54,6 +54,12 @@ if (!$user->admin) {
 $action = GETPOST('action', 'aZ09');
 $error = 0;
 
+// The bank account is required when the module Bank is enabled, otherwise the online payments can't be recorded
+if ($action == 'setvalue' && $user->admin && isModEnabled('bank') && GETPOSTINT('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS') <= 0) {
+	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
+	$action = '';
+}
+
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 
@@ -258,7 +264,7 @@ print '</td></tr>';
 
 if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>';
-	print $langs->trans("BankAccount").'</td><td>';
+	print '<span class="fieldrequired">'.$langs->trans("BankAccount").'</span></td><td>';
 	print img_picto('', 'bank_account').' ';
 	$form->select_comptes(getDolGlobalString('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS'), 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 	print '</td></tr>';
@@ -313,14 +319,15 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("UrlGenerationParameters").'</td>';
+print '<td>'.$langs->trans("LinksToMakeAPayment").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 // Payment token for URL
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityToken").'</td><td>';
-print '<input class="minwidth300" type="text" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.getDolGlobalString('PAYMENT_SECURITY_TOKEN').'">';
+print '<input class="minwidth400 input-icon-password" type="password" id="PAYMENT_SECURITY_TOKEN" name="PAYMENT_SECURITY_TOKEN" value="'.getDolGlobalString('PAYMENT_SECURITY_TOKEN').'" spellcheck="false">';
+print showEyeForField('eyePAYMENT_SECURITY_TOKEN', 'PAYMENT_SECURITY_TOKEN');
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
@@ -329,6 +336,13 @@ if (getDolGlobalString('PAYMENT_SECURITY_ACCEPT_ANY_TOKEN')) {
 	print img_warning($langs->trans("WarningTheHiddenOptionIsOn", 'PAYMENT_SECURITY_ACCEPT_ANY_TOKEN'), '', 'pictowarning marginleftonly');
 }
 print '</td></tr>';
+
+// Link to open the popup to get the url of a payment
+if (!empty($conf->use_javascript_ajax)) {
+	print '<tr class="oddeven"><td colspan="2" class="center">';
+	print '<a href="#" id="linkforonlinepaymentlinks">'.img_picto('', 'globe', 'class="pictofixedwidth"').$langs->trans("GetAPaymentLink").'</a>';
+	print '</td></tr>';
+}
 
 print '</table>';
 print '</div>';
@@ -344,7 +358,7 @@ print '<br><br>';
 // Help doc
 print '<u>'.$langs->trans("InformationToFindParameters", "Paypal").'</u>:<br>';
 if (!empty($conf->use_javascript_ajax)) {
-	print '<a class="reposition" id="apidoca">'.$langs->trans("ClickHere").'...</a>';
+	print '<a class="reposition" id="apidoca">'.img_picto('', 'url', 'class="pictofixedwidth"').$langs->trans("ClickHere").'...</a>';
 }
 
 $realpaypalurl = 'www.paypal.com';
@@ -383,6 +397,7 @@ print '<br><br>';
 
 $token = '';
 
+$onlinepaymentlinksinpopup = 1;
 include DOL_DOCUMENT_ROOT.'/core/tpl/onlinepaymentlinks.tpl.php';
 
 // End of page

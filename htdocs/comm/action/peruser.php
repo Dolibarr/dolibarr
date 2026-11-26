@@ -273,7 +273,7 @@ while ($i < $MAXAGENDA) {
 			'cachedelay' => getDolGlobalInt('AGENDA_EXT_CACHE'.$i, 0),
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			'default' => dol_string_nohtmltag(getDolGlobalString($default)),
-			'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
+			'buggedfile' => dol_string_nohtmltag(getDolGlobalString($buggedfile))
 		);
 	}
 }
@@ -290,7 +290,10 @@ while ($i < $MAXAGENDA) {
 	$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 	$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
 
-	if (getDolUserString($source) && getDolUserString($name)) {
+	// A calendar set up before the switch of the user setup page existed holds no AGENDA_EXT_ENABLED_x_y
+	// at all, so the default here keeps it in the list instead of hiding it on upgrade. This is
+	// why it differs from the global calendars above, where a missing constant means disabled.
+	if (getDolUserString($source) && getDolUserString($name) && getDolUserString($enabled, '1')) {
 		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 		$listofextcals[] = array(
 			'type' => 'usersetup',
@@ -301,7 +304,7 @@ while ($i < $MAXAGENDA) {
 			'cachedelay' => getDolUserInt('AGENDA_EXT_CACHE_'.$user->id.'_'.$i, 0),
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			'default' => dol_string_nohtmltag(getDolUserString($default)),
-			'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
+			'buggedfile' => dol_string_nohtmltag(getDolUserString($buggedfile))
 		);
 	}
 }
@@ -420,7 +423,7 @@ $next_day   = $next['day'];
 // Define firstdaytoshow and lastdaytoshow. Warning: lastdaytoshow is last second to show + 1
 // $firstdaytoshow and lastdaytoshow become a gmt dates to use to search/compare because first_xxx are in tz idea and we used tzuserrel
 $firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'tzuserrel');
-$nb_weeks_to_show = (getDolGlobalString('AGENDA_NB_WEEKS_IN_VIEW_PER_USER')) ? ((int) $conf->global->AGENDA_NB_WEEKS_IN_VIEW_PER_USER * 7) : 7;
+$nb_weeks_to_show = (getDolGlobalString('AGENDA_NB_WEEKS_IN_VIEW_PER_USER')) ? (getDolGlobalInt('AGENDA_NB_WEEKS_IN_VIEW_PER_USER') * 7) : 7;
 $lastdaytoshow = dol_time_plus_duree($firstdaytoshow, $nb_weeks_to_show, 'd');
 //print $firstday.'-'.$first_month.'-'.$first_year;
 //print dol_print_date($firstdaytoshow, 'dayhour', 'gmt');
@@ -734,10 +737,11 @@ $sql .= $hookmanager->resPrint;
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca, ".MAIN_DB_PREFIX."actioncomm as a";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a ON a.fk_action = ca.id";
 // We must filter on resource table
 if ($resourceid > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as r ON r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 
 // We must filter on assignment table
@@ -760,8 +764,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " WHERE a.fk_action = ca.id";
-$sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+$sql .= " WHERE a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
 
 // Condition on actioncode
 if (!empty($actioncode)) {
@@ -798,9 +801,6 @@ if (!empty($actioncode)) {
 			}
 		}
 	}
-}
-if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
 	$sql .= " AND a.fk_project = ".((int) $pid);
@@ -891,6 +891,12 @@ if ($search_categ_cus != -1) {
 		$sql .= " AND EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id AND ca.fk_categorie IN (".$db->sanitize((string) $search_categ_cus)."))";
 	}
 }
+
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 // Sort on date
 $sql .= $db->order("fk_user_action, datep");
 //print $sql;

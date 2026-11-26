@@ -463,7 +463,10 @@ class ExportTest extends CommonClassTest
 		$user = $restricteduser;
 
 		foreach ($datasets as $modulefile => $datasetdef) {
-			list($exportcode, $modulename, $expectedclause, $expectedtable) = $datasetdef;
+			$exportcode = $datasetdef[0];
+			$modulename = $datasetdef[1];
+			$expectedclause = $datasetdef[2];
+			$expectedtable = $datasetdef[3];
 			$expectedclause = str_replace('ID', (string) $restricteduser->id, $expectedclause);
 
 			require_once DOL_DOCUMENT_ROOT.'/core/modules/'.$modulefile.'.class.php';
@@ -493,7 +496,10 @@ class ExportTest extends CommonClassTest
 		$user = $fulluser;
 
 		foreach ($datasets as $modulefile => $datasetdef) {
-			list($exportcode, $modulename, $expectedclause, $expectedtable) = $datasetdef;
+			$exportcode = $datasetdef[0];
+			$modulename = $datasetdef[1];
+			$expectedclause = $datasetdef[2];
+			$expectedtable = $datasetdef[3];
 			$expectedclause = str_replace('ID', (string) $fulluser->id, $expectedclause);
 
 			if (!isModEnabled($modulename) || !isModEnabled('societe')) {

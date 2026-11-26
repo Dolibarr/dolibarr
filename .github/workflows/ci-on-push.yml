@@ -13,7 +13,7 @@ on:
 
 jobs:
   # Check that the user that pushes/merges into the current branch is a maintainer (github id
-  # found on a "M:" line of the MAINTAINERS/MAINTENERS file, or "eldy" if the file does not exist).
+  # found on a "M:" line of the MAINTAINERS file, or "eldy" if the file does not exist).
   check-merger:
     if: github.repository == 'Dolibarr/dolibarr'
     runs-on: ubuntu-latest
@@ -28,9 +28,7 @@ jobs:
           BRANCH: ${{ github.ref_name }}
         run: |
           MAINTFILE=""
-          for f in MAINTAINERS MAINTENERS; do
-            if [ -f "$f" ]; then MAINTFILE="$f"; break; fi
-          done
+          if [ -f MAINTAINERS ]; then MAINTFILE="MAINTAINERS"; fi
           if [ -n "${MAINTFILE}" ]; then
             # Extract github ids from lines "M:	Name <email> / githubid"
             ALLOWED=$(grep -E '^M:' "${MAINTFILE}" | sed -n 's|.*/[[:space:]]*\(.*[^[:space:]]\)[[:space:]]*$|\1|p' | tr '[:upper:]' '[:lower:]' | sort -u)

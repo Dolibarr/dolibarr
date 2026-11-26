@@ -186,7 +186,7 @@ if ($savehandler == 'files') {
 		$i++;
 	}
 	if (count($listofsessions) == 0) {
-		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</span></td></tr>';
 	}
 	print "</table>";
 } elseif ($savehandler == 'user') {
@@ -237,7 +237,7 @@ if ($savehandler == 'files') {
 		$i++;
 	}
 	if (count($listofsessions) == 0) {
-		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</span></td></tr>';
 	}
 	print "</table>";
 } else {
