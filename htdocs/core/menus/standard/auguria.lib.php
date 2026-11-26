@@ -631,7 +631,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					}
 
 					// print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '');
-					print dol_ucfirst($menu_array[$i]['titre']);
+					print '<span class="vmenutext">'.dol_ucfirst($menu_array[$i]['titre']).'</span>';
 					if ($shorturlwithoutparam) {
 						print '</a>';
 					} else {
@@ -645,7 +645,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if (!empty($menu_array[$i]['prefix'])) {
 						print $menu_array[$i]['prefix'];
 					}
-					print dol_ucfirst($menu_array[$i]['titre']);
+					print '<span class="vmenutext">'.dol_ucfirst($menu_array[$i]['titre']).'</span>';
 					print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'greyed';

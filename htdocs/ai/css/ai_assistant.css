@@ -862,8 +862,49 @@ body.ai-fullpage {
 }
 
 .chat-table td {
-    padding: 9px 10px;
+    padding: 9px 14px;
     border-bottom: 1px solid var(--ai-border);
+}
+
+/* Content of a body cell is limited to 2 lines (same as Dolibarr class twolinesmax) */
+.chat-table tbody td .chat-cell {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    height: auto !important;
+    word-break: break-word;
+}
+
+/* Min width only on text cells: on all cells, it gives the same width to every column, even a short id */
+.chat-table tbody td.tdoverflowmax100 .chat-cell {
+    min-width: 75px;
+}
+
+/* Ids, amounts and dates keep their own width and are never cut on 2 lines */
+.chat-table tbody td:not(.tdoverflowmax100) {
+    white-space: nowrap;
+}
+
+/* Alignment of the columns of a markdown table */
+.chat-table th.right,
+.chat-table td.right {
+    text-align: right;
+}
+
+.chat-table th.center,
+.chat-table td.center {
+    text-align: center;
+}
+
+/* Table written by the model into a text answer: text may follow it, and its cells are never clamped */
+.chat-table-md {
+    margin-bottom: 8px;
+}
+
+/* Text of a markdown table wraps (the rule above is for the tool results): only its numbers, refs and dates do not */
+.chat-table-md .chat-table tbody td:not(.nowraponall) {
+    white-space: normal;
 }
 
 .chat-table tbody tr:last-child td {
@@ -899,6 +940,12 @@ body.ai-fullpage {
 .chat-object ul {
     padding-left: 18px;
     margin: 0;
+}
+
+/* Title of a table nested into a single-object result (e.g. the groups of a user) */
+.chat-nested-title {
+    margin-top: 12px;
+    font-weight: 600;
 }
 
 /* Toolbar under a result (e.g. Download PDF / Open record) */

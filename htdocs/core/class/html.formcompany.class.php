@@ -724,6 +724,7 @@ class FormCompany extends Form
 						$.getJSON(url,
 							{
 								action: method,
+								token: \'' . currentToken() . '\',
 								id: id,
 								htmlname: htmlname
 							},
@@ -1189,20 +1190,20 @@ class FormCompany extends Form
 	 *  @param	Contact|Client|null	$prospectstatic Prospect object
 	 *  @param  int					$statusprospect	status of prospect
 	 *  @param  int					$idprospect     id of prospect
-	 *  @param  'html'|'js'			$mode      		select whether to activate the HTML part or JS
+	 *  @param  'html'|'htmlnojs'|'js'	$mode      	'html'=Select with its combo, 'htmlnojs'=Select only (for lists, combo is enabled for all selects by mode 'js'), 'js'=JS code to call once after all the selects
 	 *  @return	void
 	 */
 	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")
 	{
 		global $user, $langs;
 
-		if ($mode === "html") {
+		if ($mode === "html" || $mode === "htmlnojs") {
 			$actioncode = empty($prospectstatic->cacheprospectstatus[$statusprospect]) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['code'];
 			$actionpicto = empty($prospectstatic->cacheprospectstatus[$statusprospect]['picto']) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['picto'];
 
 			//print $prospectstatic->LibProspCommStatut($statusprospect, 2, $prospectstatic->cacheprospectstatus[$statusprospect]['label'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto']);
 			print img_action('', $actioncode, $actionpicto, 'class="inline-block valignmiddle paddingright pictoprospectstatus"');
-			print '<select class="flat selectprospectstatus maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'"';
+			print '<select class="flat selectprospectstatus'.($mode === "htmlnojs" ? ' selectprospectstatusnojs' : '').' maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'"';
 			if (!$user->hasRight('societe', 'creer')) {
 				print ' disabled';
 			}
@@ -1221,8 +1222,12 @@ class FormCompany extends Form
 				print '</option>';
 			}
 			print '</select>';
-			print ajax_combobox($htmlname.$idprospect);
+			if ($mode === "html") {
+				print ajax_combobox($htmlname.$idprospect);
+			}
 		} elseif ($mode === "js") {
+			// Convert into combo, with one script instead of one per select (slow on long lists), the selects output with mode 'htmlnojs'
+			print ajax_combobox('.selectprospectstatusnojs');
 			print '<script>
 				jQuery(document).ready(function() {
 					$(".selectprospectstatus").on("change", function() {

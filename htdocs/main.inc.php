@@ -1855,6 +1855,10 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 			print '<meta name="MAIN_FEATURES_LEVEL" content="'.getDolGlobalInt('MAIN_FEATURES_LEVEL').'">'."\n";
 		}
+		// Read by lib_head.js.php, which is cached by the browser so can't contain the value of the option
+		if (getDolGlobalInt('MAIN_ROW_SINGLECLICK_TOSELECT')) {
+			print '<meta name="MAIN_ROW_SINGLECLICK_TOSELECT" content="1">'."\n";
+		}
 		// Favicon
 		$favicon = DOL_URL_ROOT.'/theme/dolibarr_256x256_color.png';
 		$appletouchicon = DOL_URL_ROOT.'/theme/apple-touch-icon.png';

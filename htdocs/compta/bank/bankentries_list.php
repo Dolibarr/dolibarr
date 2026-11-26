@@ -181,8 +181,9 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
-$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+// The access check by ref keeps only digits of the ref, so we check on the id of the account found with the ref
+$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $object->id : ''));
+$fieldtype = 'rowid';
 if ($fieldvalue) {
 	if ($user->socid) {
 		$socid = $user->socid;
