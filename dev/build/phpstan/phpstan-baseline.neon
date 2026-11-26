@@ -1,12 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
-			identifier: identical.alwaysTrue
-			count: 2
-			path: ../../../htdocs/core/modules/oauth/stripelive_oauthcallback.php
-
-		-
 			message: '#^Path in include\(\) "\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
 			identifier: include.fileNotFound
 			count: 1
@@ -149,15 +143,3 @@ parameters:
 			identifier: include.fileNotFound
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/stats/myobject_index.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between ''nolink'' and ''nolink'' will always evaluate to true\.$#'
-			identifier: identical.alwaysTrue
-			count: 1
-			path: ../../../htdocs/webportal/class/webportalorder.class.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between ''nolink'' and ''nolink'' will always evaluate to true\.$#'
-			identifier: identical.alwaysTrue
-			count: 1
-			path: ../../../htdocs/webportal/class/webportalpropal.class.php

@@ -1392,8 +1392,8 @@ foreach ($arrayfields as $key => $val) {
 		case 'p.fk_stcommcontact':
 			print '<td class="liste_titre maxwidthonsmartphone center">';
 			$arraystcomm = array();
-			foreach ($contactstatic->cacheprospectstatus as $key => $val) {
-				$arraystcomm[$val['id']] = ($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
+			foreach ($contactstatic->cacheprospectstatus as $statuskey => $statusval) {
+				$arraystcomm[$statusval['id']] = ($langs->trans("StatusProspect".$statusval['id']) != "StatusProspect".$statusval['id'] ? $langs->trans("StatusProspect".$statusval['id']) : $statusval['label']);
 			}
 			print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2, 0, 0, '', 0, 0, 0, '', 'nowrap ');
 			print '</td>';
@@ -1620,7 +1620,7 @@ foreach ($arrayfields as $key => $val) {
 			$totalarray['nbfield']++;
 			break;
 		case 'p.statut':
-			print_liste_field_titre($arrayfields['p.statut']['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "p.statut", "", $param, '', $sortfield, $sortorder, 'center ');
 			$totalarray['nbfield']++;
 			break;
 		case 'p.import_key':
@@ -1992,13 +1992,13 @@ while ($i < $imaxinloop) {
 					print '<td class="center nowrap"><div class="nowrap">';
 					print '<div class="inline-block">'.$contactstatic->libProspCommStatut($obj->stcomm_id, 2, $contactstatic->cacheprospectstatus[$obj->stcomm_id]['label'] ?? '', $obj->stcomm_picto);
 					print '</div> - <div class="inline-block">';
-					foreach ($contactstatic->cacheprospectstatus as $key => $val) {
+					foreach ($contactstatic->cacheprospectstatus as $statuskey => $statusval) {
 						$titlealt = 'default';
-						if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
-							$titlealt = $val['label'];
+						if (!empty($statusval['code']) && !in_array($statusval['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) {
+							$titlealt = $statusval['label'];
 						}
-						if ($obj->stcomm_id != $val['id']) {
-							print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.urlencode((string) ($val['code'])).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode((string) ($page)) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+						if ($obj->stcomm_id != $statusval['id']) {
+							print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommcontactid='.$obj->rowid.'&stcomm='.urlencode((string) ($statusval['code'])).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode((string) ($page)) : '').'">'.img_action($titlealt, $statusval['code'], $statusval['picto']).'</a>';
 						}
 					}
 					print '</div></div></td>';

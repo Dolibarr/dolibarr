@@ -227,10 +227,9 @@ class WebPortalPropal extends Propal
 		$linkstart .= $linkclose . '>';
 		$linkend = '</a>';
 
-		if ($option === 'nolink') {
-			$linkstart = '';
-			$linkend = '';
-		}
+		// No link, the web portal has no card page for the object ($option is always 'nolink')
+		$linkstart = '';
+		$linkend = '';
 
 		$result .= $linkstart;
 		if ($withpicto) {

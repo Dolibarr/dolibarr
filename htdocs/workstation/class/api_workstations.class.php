@@ -98,17 +98,20 @@ class Workstations extends DolibarrApi
 	 *
 	 * Get a list of workstations
 	 *
+	 * @since  25.0.0  Parameter count
+	 *
 	 * @param  string $sortfield			Sort field
 	 * @param  string $sortorder			Sort order
 	 * @param  int    $limit				Limit for list
 	 * @param  int    $page					Page number
 	 * @param  string $sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
 	 * @param string  $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param int	$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array						Array of workstation objects
-	 * @phan-return Workstation[]|array{data:Workstation[],pagination:array{total:int,page:int,pagecount:int,limit:int}}
-	 * @phpstan-return Workstation[]|array{data:Workstation[],pagination:array{total:int,page:int,pagecount:int,limit:int}}
+	 * @phan-return Workstation[]|array{data:Workstation[],pagination:array{total:int,page:int,pagecount:int,limit:int}}|array{count:int}
+	 * @phpstan-return Workstation[]|array{data:Workstation[],pagination:array{total:int,page:int,pagecount:int,limit:int}}|array{count:int}
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		global $db, $conf;
 
@@ -134,6 +137,11 @@ class Workstations extends DolibarrApi
 
 		// this query will return total products with the filters given
 		$sqlTotals =  str_replace('SELECT t.rowid, t.ref', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
