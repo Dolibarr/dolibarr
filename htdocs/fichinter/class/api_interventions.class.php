@@ -271,14 +271,8 @@ class Interventions extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->ficheinter->creer) {
 			throw new RestException(401, "Insuffisant rights");
 		}
-		// Check mandatory fields
-		$result = $this->_validateLine($request_data);
-
-		foreach ($request_data as $field => $value) {
-			$this->fichinter->$field = $value;
-		}
-
-		if (!$result) {
+		$result = $this->fichinter->fetch($id);
+		if ($result <= 0) {
 			throw new RestException(404, 'Intervention not found');
 		}
 
@@ -286,12 +280,15 @@ class Interventions extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Check mandatory fields
+		$line = $this->_validateLine($request_data);
+
 		$updateRes = $this->fichinter->addLine(
 			DolibarrApiAccess::$user,
-			$id,
-			$this->fichinter->description,
-			$this->fichinter->date,
-			$this->fichinter->duree
+			$this->fichinter->id,
+			$line['description'],
+			$line['date'],
+			$line['duree']
 		);
 
 		if ($updateRes > 0) {
