@@ -54,6 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 //show files
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan", "salaries"));
@@ -113,8 +114,9 @@ if ($id > 0 || !empty($ref)) {
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
 
 // Security check
-$fieldid = (!empty($ref) ? $ref : $id);
-$fieldname = (!empty($ref) ? 'ref' : 'rowid');
+// The access check by ref keeps only digits of the ref, so we check on the id of the account found with the ref
+$fieldid = $id;
+$fieldname = 'rowid';
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -234,6 +236,7 @@ if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($n
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $societestatic = new Societe($db);
 $chargestatic = new ChargeSociales($db);
 $memberstatic = new Adherent($db);
@@ -380,6 +383,9 @@ if (empty($numref)) {
 			print '<td>';
 			if ($action != 'editbankreceipt' || $objp->numr != $brref) {
 				print '<a href="releve.php?num='.$objp->numr.'&account='.$object->id.'">'.$objp->numr.'</a>';
+				// Picto with links to download files attached to the statement (nothing shown if there is no file)
+				$statementsubdir = $object->id.'/statement/'.dol_sanitizeFileName($objp->numr);
+				print $formfile->getDocumentsLink('bank', $statementsubdir, $conf->bank->dir_output.'/'.$statementsubdir, '', 'valignmiddle paddingleft2imp', 2);
 			} else {
 				print '<input type="hidden" name="oldbankreceipt" value="'.$objp->numr.'">';
 				print '<input type="text" name="newbankreceipt" value="'.$objp->numr.'">';

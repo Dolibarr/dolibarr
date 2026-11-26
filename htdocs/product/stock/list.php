@@ -713,7 +713,7 @@ foreach ($arrayfields as $arraykey => $arrayval) {
 	// Status
 	if ($key == 'statut') {
 		if (!empty($arrayfields['t.statut']['checked'])) {
-			print_liste_field_titre($arrayfields['t.statut']['label'], $_SERVER["PHP_SELF"], "t.statut", '', $param, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], "t.statut", '', $param, '', $sortfield, $sortorder, 'center ');
 			$totalarray['nbfield']++;
 		}
 		continue;

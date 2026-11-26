@@ -1404,7 +1404,9 @@ class FormOther
 	    				jQuery.ajax({
 	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\'
 	    		        }).done(function() {
-	        				window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'\';
+							/* Keep the scroll position after reload */
+							var page_y = Math.round(jQuery(dolGetMainScrollElement()).scrollTop());
+	        				window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'\' + (page_y > 0 ? \'&page_y=\' + page_y : \'\');
 						});
 	                }
 	        	});';

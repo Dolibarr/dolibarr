@@ -857,12 +857,19 @@ class Ai
 						if (!empty($vendoraddress['city'])) {
 							$tmparray['vendor_town'] = $vendoraddress['city'];
 						}
-						if (!empty($vendoraddress['country'])) {
+						if (!empty($vendoraddress['country_code'])) {
+							$tmparray['vendor_country'] = $vendoraddress['country_code'];
+						} elseif (!empty($vendoraddress['country'])) {
 							$tmparray['vendor_country'] = $vendoraddress['country'];
 						}
 					} else {
 						$tmparray['vendor_address'] = $arrayforthirdparty['address'];
 					}
+				}
+				// If no country found, guess it from the prefix of an intra-community VAT number (EL is the VAT prefix of Greece)
+				if (empty($tmparray['vendor_country']) && !empty($tmparray['vendor_vat_number']) && is_string($tmparray['vendor_vat_number'])
+					&& preg_match('/^([A-Z]{2})[0-9A-Z]/', dol_strtoupper(str_replace(array(' ', '.', '-'), '', $tmparray['vendor_vat_number'])), $reg)) {
+					$tmparray['vendor_country'] = ($reg[1] == 'EL' ? 'GR' : $reg[1]);
 				}
 				if (!empty($arrayforthirdparty['phone'])) {
 					$tmparray['vendor_phone'] = $arrayforthirdparty['phone'];
