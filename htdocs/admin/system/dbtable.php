@@ -69,6 +69,7 @@ if ($action == 'convertutf8') {
 
 				break;
 			}
+			$i++;
 		}
 	}
 }
@@ -99,6 +100,7 @@ if ($action == 'convertutf8mb4') {
 
 				break;
 			}
+			$i++;
 		}
 	}
 }
