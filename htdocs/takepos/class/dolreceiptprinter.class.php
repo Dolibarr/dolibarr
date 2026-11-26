@@ -669,7 +669,7 @@ class dolReceiptPrinter extends Printer
 			$this->template .= "{dol_print_text}{dol_value_mysoc_address}\r\n";
 			$this->template .= "{dol_print_text}{dol_value_mysoc_zip}{dol_value_mysoc_town}\r\n";
 			$this->template .= "{dol_print_text}{dol_value_mysoc_idprof1}\r\n";
-			$this->template .= "{dol_print_text}{dol_value_mysoc_vatnumber}\r\n";
+			$this->template .= "{dol_print_text}{dol_value_mysoc_tva_intra}\r\n";
 			$this->template .= "{dol_line_feed}\r\n";
 			$this->template .= "{dol_print_text}".$langs->transnoentitiesnoconv("Invoice")." {dol_value_object_ref}\r\n";
 			if ($object->status != 2) {
@@ -744,6 +744,8 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_mysoc_idprof5}', (string) $mysoc->idprof5, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_idprof6}', (string) $mysoc->idprof6, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_tva_intra}', (string) $mysoc->tva_intra, $this->template);
+		// Tags of the default template that are not managed yet: print nothing instead of the raw tag name
+		$this->template = str_replace(array('{dol_value_signaturehashstart}', '{dol_value_lnemention}'), '', $this->template);
 		$this->template = str_replace('{dol_value_mysoc_capital}', (string) $mysoc->capital, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_url}', (string) $mysoc->url, $this->template);
 
