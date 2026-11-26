@@ -357,6 +357,7 @@ class ToolApiBridge extends McpTool
 		'page' => "Zero-based page index for pagination.",
 		'sqlfilters' => "Dolibarr Universal Search Filter (see 'sqlfilters format' in instructions): (t.field:operator:'value') combined with AND/OR and parentheses. E.g. \"(t.ref:like:'AB%') AND (t.datefield:>=:'2026-01-01')\"",
 		'properties' => "Comma-separated list of properties to include in the response, to reduce its size (e.g. 'id,ref,label').",
+		'count' => "Set to 1 to get only the number of records matching the filters, as {\"count\": N}, instead of the records (limit, page and sort are then ignored). Use it to answer a 'how many' question.",
 		'id' => "Integer technical ID of the record."
 	];
 
@@ -442,7 +443,7 @@ class ToolApiBridge extends McpTool
 					'params' => [
 						'mode' => "Nature filter: 0=all (default), 1=customers/prospects, 2=prospects only, 3=neither customer nor prospect, 4=suppliers.",
 						'category' => "Rowid of a third-party category (tag) to restrict the list to.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}} instead of a bare list; use it to know the total count."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}} instead of a bare list. To know only how many third parties match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -662,7 +663,7 @@ class ToolApiBridge extends McpTool
 						'status' => "One of 'draft', 'unpaid' (validated and not fully paid), 'paid', 'cancelled'. Empty = all.",
 						'withLines' => "false to omit invoice lines from each record (recommended for lists).",
 						'loadlinkedobjects' => "1 to include linked objects (orders, proposals, shipments) — slower, default 0.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many invoices match."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many invoices match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -725,7 +726,7 @@ class ToolApiBridge extends McpTool
 					'params' => [
 						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
 						'loadlinkedobjects' => "1 to include linked objects (proposals, shipments, invoices) — slower, default 0.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many orders match."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many orders match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -767,7 +768,7 @@ class ToolApiBridge extends McpTool
 					'params' => [
 						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
 						'loadlinkedobjects' => "1 to include linked objects (orders, invoices) — slower, default 0.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many proposals match."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many proposals match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -1256,7 +1257,7 @@ class ToolApiBridge extends McpTool
 					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods left), 2=closed (billed / processed). Dates are unix timestamps: date_shipping (sent), date_delivery (planned delivery). Useful sqlfilters fields: t.ref, t.ref_customer, t.fk_soc, t.fk_statut, t.date_delivery.",
 					'params' => [
 						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many shipments match."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many shipments match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -1307,7 +1308,7 @@ class ToolApiBridge extends McpTool
 					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods received into stock), 2=closed / processed. Dates are unix timestamps: date_reception (received), date_delivery (planned). Useful sqlfilters fields: t.ref, t.ref_supplier, t.fk_soc, t.fk_statut, t.date_delivery. A draft created by the chat keeps its '(PROVnn)' reference: search it by id or with sqlfilters on t.ref_supplier.",
 					'params' => [
 						'thirdparty_ids' => "Comma-separated supplier rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many receptions match."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many receptions match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -1395,7 +1396,7 @@ class ToolApiBridge extends McpTool
 						'mode' => "0=all (default), 1=products only, 2=services only.",
 						'category' => "Rowid of a product category to restrict the list to.",
 						'variant_filter' => "0=all (default), 1=products without variants, 2=parents of variants only, 3=variants only.",
-						'ids_only' => "true to return only rowids (fast, use for counting).",
+						'ids_only' => "true to return only rowids (fast). To know only how many products match, use count=1 instead.",
 						'includestockdata' => "1 to add stock_reel / stock_theorique per product (slower; requires the Stock module).",
 						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
 					]
@@ -1687,7 +1688,10 @@ class ToolApiBridge extends McpTool
 	{
 		global $mysoc, $dolibarr_website_allow_custom_php;
 
-		$pagination = "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many records match.";
+		// pagination_data of the list methods, that also accept count=1 to only count the records
+		$pagination = "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many records match, use count=1 instead.";
+		// pagination_data of the list methods with no parameter count
+		$paginationnocount = "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many records match.";
 
 		$this->enrichments['bankaccounts'] = array(
 			'label' => 'bank and cash accounts',
@@ -2194,7 +2198,7 @@ class ToolApiBridge extends McpTool
 				'listProducts' => array(
 					'suffix' => 'products_list',
 					'description' => "Products stored in one warehouse, with their stock there when includestockdata=1. Answers \"what is in warehouse X\".",
-					'params' => array('id' => "Rowid of the warehouse.", 'includestockdata' => "1 to add the stock of each product.", 'pagination_data' => $pagination)
+					'params' => array('id' => "Rowid of the warehouse.", 'includestockdata' => "1 to add the stock of each product.", 'pagination_data' => $paginationnocount)
 				)
 			),
 			'products' => array(

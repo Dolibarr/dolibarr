@@ -1323,7 +1323,7 @@ class Form
 		$out .= $this->selectPhoneCode($selectedCode, $codename, 'maxwidth75 phone_code_select', 0, $country_id_hint);
 
 		// Visible number input (no name — not POSTed)
-		$out .= '<input type="tel" inputmode="numeric" pattern="[0-9]*" id="'.dol_escape_htmltag($htmlname).'_input" class="'.dol_escape_htmltag($morecss).'"';
+		$out .= '<input type="tel" inputmode="numeric" pattern="[0-9]*" id="'.dol_escape_htmltag($htmlname).'_input" class="valignmiddle'.($morecss ? ' '.dol_escape_htmltag($morecss) : '').'"';
 		if ($maxlength > 0) {
 			$out .= ' maxlength="'.$maxlength.'"';
 		}

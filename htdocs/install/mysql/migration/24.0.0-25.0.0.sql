@@ -759,3 +759,8 @@ ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN doc_date_hour datetime NUL
 -- VMYSQL4.1 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = TIMESTAMP(doc_date, '12:00:00') WHERE doc_date_hour IS NULL;
 -- VPGSQL8.2 UPDATE llx_accounting_bookkeeping SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
 -- VPGSQL8.2 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
+
+-- Remove the system prompt of the AI assistant saved by previous versions, so the new default prompt of v25 is used
+--noqa:disable=PRS
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'AI_INTENT_PROMPT';
+--noqa:enable=PRS

@@ -259,6 +259,8 @@ class Members extends DolibarrApi
 	 *
 	 * Get a list of members
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string    $sortfield  		Sort field
 	 * @param string    $sortorder  		Sort order
 	 * @param int       $limit      		Limit for list
@@ -269,16 +271,17 @@ class Members extends DolibarrApi
 	 *                              		Example: "(t.ref:like:'SO-%') and ((t.date_creation:>:'20160101') or (t.nature:is:NULL))"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array    					Array of member objects
-	 * @phan-return array<array<string,null|int|float|string>>
-	 * @phpstan-return array<array<string,null|int|float|string>>
+	 * @phan-return array<array<string,null|int|float|string>>|array{count:int}
+	 * @phpstan-return array<array<string,null|int|float|string>>|array{count:int}
 	 *
 	 * @throws	RestException	400		Error on SQL filters
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member found
 	 * @throws	RestException	503		Error when retrieving Member list
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		global $hookmanager;
 
@@ -323,6 +326,11 @@ class Members extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -836,6 +844,8 @@ class Members extends DolibarrApi
 	 *
 	 * Get a list of members types
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string    $sortfield  		Sort field
 	 * @param string    $sortorder  		Sort order
 	 * @param int       $limit      		Limit for list
@@ -843,9 +853,10 @@ class Members extends DolibarrApi
 	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array                		Array of member type objects
-	 * @phan-return array<array<string,null|int|float|string>>
-	 * @phpstan-return array<array<string,null|int|float|string>>
+	 * @phan-return array<array<string,null|int|float|string>>|array{count:int}
+	 * @phpstan-return array<array<string,null|int|float|string>>|array{count:int}
 	 *
 	 * @url GET /types/
 	 *
@@ -853,7 +864,7 @@ class Members extends DolibarrApi
 	 * @throws	RestException	404		No Member Type found
 	 * @throws	RestException	503		Error when retrieving Member list
 	 */
-	public function indexType($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function indexType($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		$obj_ret = array();
 
@@ -876,6 +887,11 @@ class Members extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
