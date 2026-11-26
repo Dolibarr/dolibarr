@@ -854,7 +854,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span>';
 			// TODO @LDR Implement this
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-				$jsonclose = 'TODO Not yet implemented';
+				// $jsonclose is printed as JS code: a text here is a syntax error that drops the whole popup script
+				$jsonclose = '';	// TODO Refresh the thirdparty combo when the popup is closed
 				print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', '', $jsonclose);
 			} else {
 				print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
