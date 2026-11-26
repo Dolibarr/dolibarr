@@ -49,6 +49,14 @@
 #   call DolibarrApi::_checkAccessToResource(). A 403 seen during the
 #   4-profile API-key matrix run is a permission finding, not a reason to
 #   change these pins.
+#   LOW-PRIVILEGE NEGATIVE CONTROL (OBSERVED 2026-11-25, key with zero
+#   granted rights): GET /supplierorders/0 -> 403 {"code":403} (NO
+#   specimen — the SOF1 falsy bypass does NOT bypass the permission
+#   gate) and GET ?sqlfilterlines=(t.qty...) -> 403 (NO raw SQL text
+#   leaks to unauthorized keys — the #43388 error body stays behind the
+#   permission gate). Permission checks run BEFORE both code paths.
+#   SOF1 and #43388 are consistency/error-semantics findings, not
+#   access-control findings.
 #
 # SOURCE-NOTED PARAMETER FACTS (doxygen, class SupplierOrders):
 #   - index(): sortfield="t.rowid", sortorder='ASC', limit=100, page=0,
@@ -80,7 +88,8 @@
 #     BARE (qty), the t.-alias convention fails on line columns
 #     (t.qty -> 503 "Unknown column 't.qty' in 'WHERE'"), unknown
 #     columns -> 503 with raw SQL message instead of 400.
-#     ISSUE FILED: issue_sqlfilterlines_supplierorders.md.
+#     UPSTREAM ISSUE: Dolibarr/dolibarr#43388
+#     ISSUE FILE (repo copy): issue_sqlfilterlines_supplierorders.md.
 #   SOF3 (divergence, not bug): index() strictly validates documented
 #     list params — thirdparty_ids/product_ids pattern violations and
 #     unknown status keywords answer 400 (no comparable strictness in
@@ -89,6 +98,10 @@
 #   SOF4 (divergence, confirmed fixed): limit=0 + pagination_data=true
 #     -> 200 data envelope (DivisionByZeroError fixed by PR #42952,
 #     present on this instance).
+#   SOF5 (OBSERVED 2026-11-25, diff probe): thirdparty_ids=0 DROPS the
+#     filter entirely and returns ALL orders (same pagination.total as
+#     the unfiltered list) — falsy-param family of projects category=0.
+#     No separate issue; same-class evidence for the falsy-param tally.
 #
 # ---------------------------------------------------------------- GET /supplierorders (index)
 
@@ -185,6 +198,12 @@ jsonpath "$.data" exists
 
 # thirdparty_ids — documented pattern /^[0-9,]*$/i; "0" matches nothing
 #   but is syntactically valid (never hardcoded to real ids — portability)
+#   SOF5 (OBSERVED 2026-11-25, diff probe of pagination.total against the
+#   unfiltered list): the filter is DROPPED for the falsy value —
+#   thirdparty_ids=0 returns ALL orders, identical total to no filter.
+#   Same falsy-param family as projects category=0 (projects FINDING 2
+#   parenthetical). Count NOT pinned (data-dependent); status pinned.
+# Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/supplierorders?thirdparty_ids=0
 HTTP 200
 [Asserts]
@@ -508,3 +527,12 @@ jsonpath "$" count == 0
 #        ${DOLIHOST}+${DOLAPIKEY}; diff the returned contact ids.
 #     3. If B's list contains A-only contact ids, file a BUG issue
 #        (cross-object contact leak) with the observed outputs only.
+#   RESOLVED (2026-11-25, fixtures on the instance): user 29 linked to
+#   order 7 ONLY via POST /supplierorders/7/contact/29/SALESREPFOLL/
+#   internal (NOTE: type BILLING/internal was rejected with HTTP 304 —
+#   write-side observation, outside this GET-only suite). Result:
+#   order 7 -> contacts ["28","29"], order 11 (never had contacts) ->
+#   []. Ownership IS enforced on the contacts subresource — NO
+#   projects-FINDING-5-class leak. LOWKEY side-note (OBSERVED): the
+#   zero-rights key still answers 403 on BOTH orders after the link —
+#   becoming a linked user does NOT open module access.
