@@ -73,6 +73,7 @@ class Categorie extends CommonObject
 	const TYPE_PROPOSAL	            = 'propal';
 	const TYPE_PROJECT_TASK			= 'project_task';
 	const TYPE_MO					= 'mo';
+	const TYPE_SKILL				= 'skill';
 
 
 	/**
@@ -109,6 +110,7 @@ class Categorie extends CommonObject
 		'propal'				=> 23,
 		'project_task'			=> 24,
 		'mo'					=> 25,
+		'skill'					=> 26,
 	);
 
 	/**
@@ -190,6 +192,7 @@ class Categorie extends CommonObject
 		'propal' 				=> 'Propal',
 		'project_task'			=> 'Task',
 		'mo'					=> 'Mo',
+		'skill'					=> 'Skill',
 	);
 
 	/**
@@ -220,7 +223,8 @@ class Categorie extends CommonObject
 		'propal' 				=> 'Proposals',
 		'supplier_proposal' 	=> 'SupplierProposals',
 		'project_task'			=> 'Tasks',
-		'mo'					=> 'MOs'
+		'mo'					=> 'MOs',
+		'skill'					=> 'Skills'
 	);
 
 	/**
@@ -242,7 +246,8 @@ class Categorie extends CommonObject
 		'supplier_order'		=> 'commande_fournisseur',
 		'supplier_invoice'		=> 'facture_fourn',
 		'project_task'			=> 'projet_task',
-		'mo'					=> 'mrp_mo'
+		'mo'					=> 'mrp_mo',
+		'skill'					=> 'hrm_skill'
 	);
 
 	/**
@@ -1071,7 +1076,11 @@ class Categorie extends CommonObject
 			if (!empty($filterlang)) {
 				$sql .= ", ".MAIN_DB_PREFIX.(empty($this->MAP_OBJ_TABLE[$type]) ? $type : $this->MAP_OBJ_TABLE[$type])."_lang as ol";
 			}
-			$sql .= " WHERE o.entity IN (".getEntity($tmpobj->element).")";
+			if (isset($tmpobj->ismultientitymanaged) && $tmpobj->ismultientitymanaged === 0) {
+				$sql .= " WHERE 1 = 1";
+			} else {
+				$sql .= " WHERE o.entity IN (".getEntity($tmpobj->element).")";
+			}
 			$sql .= " AND c.fk_categorie = ".((int) $this->id);
 			// Compatibility with actioncomm table which has id instead of rowid
 			if ((array_key_exists($type, $this->MAP_OBJ_TABLE) && $this->MAP_OBJ_TABLE[$type] == "actioncomm") || $type == "actioncomm") {

@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('categories', 'languages', 'mrp'));
+$langs->loadLangs(array('categories', 'hrm', 'languages', 'mrp'));
 
 $id     = GETPOSTINT('id');
 $label  = GETPOST('label', 'alpha');
