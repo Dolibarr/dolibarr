@@ -39,17 +39,6 @@ function aiChatContextMaxMessages()
 	return 20;
 }
 
-/**
- * Max value allowed for the setup AI_CHAT_CONTEXT_AUTO_EXCHANGES: one exchange is 2 messages
- * (question + answer), and one message is kept for the search result of a followup round.
- *
- * @return int
- */
-function aiChatContextMaxAutoExchanges()
-{
-	return (int) floor((aiChatContextMaxMessages() - 1) / 2);
-}
-
 
 /**
  * Prepare admin pages header
@@ -1462,11 +1451,10 @@ function getAiChatAssistantConfig()
 		// Attachment count cap, so the client mirrors the server-side guard
 		// of ai_validate_attachments() instead of hardcoding its own.
 		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
-		// Recent exchanges that follow the model by default (sliding window).
-		// Off (0) until an administrator decides otherwise: past answers carry
-		// business content the privacy masking does not cover, so sending them
-		// back on every request is not a default the module takes by itself.
-		'autoContext' => min(aiChatContextMaxAutoExchanges(), getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2)),
+		// Recent messages that follow the model by default (sliding window).
+		// 4 by default, 0 to disable: past answers carry business content the
+		// privacy masking does not cover, so the administrator can turn it off.
+		'autoContext' => min(aiChatContextMaxMessages(), getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_MESSAGES', 4)),
 		// Max size (in characters) of the context sent back to the model, also the cap of one tool result.
 		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000),
 		// The "/" palette of the chat input, always on.

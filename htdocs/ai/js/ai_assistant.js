@@ -1460,7 +1460,7 @@ export function initAiAssistant(container) {
             // A table does not size its bubble (it scrolls inside): such a bubble takes the whole row
             if (bubble.querySelector('.chat-table-wrap')) bubble.classList.add('msg-bubble-wide');
             if (actions) bubble.appendChild(buildActions(actions));
-            // Context pin: the last AUTO_CONTEXT exchanges follow the model by
+            // Context pin: the last AUTO_CONTEXT messages follow the model by
             // default (sliding window), the user pins older ones explicitly or
             // excludes recent ones - the token cost stays visible in the bar.
             if (rawText) {
@@ -2695,7 +2695,7 @@ export function initAiAssistant(container) {
         return '[' + (toolName || 'tool') + ' result] ' + s;
     }
 
-    // Number of recent exchanges (question + answer) that follow the model by
+    // Number of recent messages (questions and answers) that follow the model by
     // default. 0 = fully manual: nothing goes back unless the user pins it.
     const AUTO_CONTEXT = Math.max(0, parseInt(config.autoContext, 10) || 0);
 
@@ -2712,8 +2712,8 @@ export function initAiAssistant(container) {
         return msgs;
     }
 
-    // Effective context = the sliding window of the last AUTO_CONTEXT exchanges
-    // (counted from the questions) + explicit pins - explicit exclusions. Each
+    // Effective context = the sliding window of the last AUTO_CONTEXT messages
+    // (questions and answers) + explicit pins - explicit exclusions. Each
     // bubble holds its own decision in data-ctx: '' follows the window, 'on' is
     // pinned for good, 'off' is excluded. Recomputed after every change, so the
     // window slides as the conversation grows while the pins stay put.
@@ -2724,14 +2724,7 @@ export function initAiAssistant(container) {
         // waits outside the window until its answer arrives.
         const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
         if (pending) { pending.classList.remove('ctx-pinned', 'ctx-excluded'); pending.dataset.ctxWindow = ''; }
-        let windowStart = msgs.length;
-        if (AUTO_CONTEXT > 0) {
-            let questions = 0;
-            for (let i = msgs.length - 1; i >= 0; i--) {
-                if (msgs[i].dataset.aiRole === 'user' && ++questions === AUTO_CONTEXT) { windowStart = i; break; }
-                if (i === 0) windowStart = 0;
-            }
-        }
+        const windowStart = Math.max(0, msgs.length - AUTO_CONTEXT);
         msgs.forEach((m, i) => {
             const inWindow = i >= windowStart;
             const state = m.dataset.ctx || '';
@@ -2792,8 +2785,7 @@ export function initAiAssistant(container) {
         const pinned = collectPinnedContext();
         if (!past.length) { if (bar) bar.remove(); return; }
         const tokens = Math.round(pinned.reduce((n, p) => n + p.text.length, 0) / 4);
-        // The setting counts exchanges (question + answer), so the bar says
-        // both: exchanges, then messages - one unit on its own misleads.
+        // The setting counts messages; the bar also says how many questions they hold.
         const exchanges = pinned.filter((p) => p.role === 'user').length;
         if (!bar) {
             bar = document.createElement('div');

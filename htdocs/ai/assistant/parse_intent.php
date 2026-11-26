@@ -948,7 +948,8 @@ try {
 
 				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);	// in characters
 				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
-				foreach ($histTurns as $turn) {
+				// Newest first, so the budget drops the oldest turns; put back in chronological order after.
+				foreach (array_reverse($histTurns) as $turn) {
 					if (is_array($turn) && !empty($turn['id'])) {
 						$turn = $histRows[(int) $turn['id']] ?? null;
 					}
@@ -976,6 +977,13 @@ try {
 						break;
 					}
 					$history[] = array('role' => ((($turn['role'] ?? '') === 'assistant') ? 'assistant' : 'user'), 'text' => $htext);
+				}
+				$history = array_reverse($history);
+
+				// The cut may start the history on an answer whose question was dropped: remove such
+				// orphan answers (some providers want a user turn first), but never the search result of a followup.
+				while (count($history) > ($isFollowup ? 1 : 0) && $history[0]['role'] === 'assistant') {
+					array_shift($history);
 				}
 			}
 
