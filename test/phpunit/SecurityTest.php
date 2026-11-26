@@ -653,6 +653,13 @@ class SecurityTest extends CommonClassTest
 			print "result2 = ".$result."\n";
 			$this->assertFalse($result);
 
+			$conf->module4test = new stdClass();
+			$conf->module4test->enabled = 1;
+			$result = dol_eval('$conf->module4test->enabled', 1, 0);
+			print "result2b = ".$result."\n";
+			$this->assertEquals(1, $result, 'A module name with a digit must be accepted');
+			unset($conf->module4test);
+
 			if (empty($dolibarr_main_restrict_eval_methods)) {		// Old mode
 				$s = '(($var1 = ne SyntaxErrorOnNew($db)))';
 				$result3a = dol_eval($s, 1, 1, '2');
