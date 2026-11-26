@@ -1545,7 +1545,7 @@ if (!function_exists('dol_getprefix')) {
  *  To link to a module file from a module file, use include './mymodulefile';
  *  To link to a module file from a core file, then this function can be used (call by hook / trigger / speciales pages)
  *
- * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
+ * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ./myfile, ...)
  * 	@param	string	$classname	Class name (deprecated)
  *  @return bool                True if load is a success, False if it fails
  */
@@ -9703,13 +9703,18 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					if (!empty($object->fk_project) && $object->fk_project > 0) {
 						$project_id = $object->fk_project;
 					} elseif (!empty($object->fk_projet) && $object->fk_projet > 0) {
-						$project_id = $object->fk_project;
+						$project_id = $object->fk_projet;
 					}
 					if ($project_id > 0) {
 						// path:class:method:id
 						$substitutionarray['__PROJECT_ID__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
 						$substitutionarray['__PROJECT_REF__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
 						$substitutionarray['__PROJECT_NAME__@lazyload'] = '/projet/class/project.class.php:Project:fetchAndSetSubstitution:' . $project_id;
+					} else {
+						// Object is not linked to a project: substitute with an empty value instead of leaving the keys in the text
+						$substitutionarray['__PROJECT_ID__'] = '';
+						$substitutionarray['__PROJECT_REF__'] = '';
+						$substitutionarray['__PROJECT_NAME__'] = '';
 					}
 				}
 			}
@@ -10230,6 +10235,7 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null, $con
 
 						// load class file and init object list in memory
 						if (!isset($memory_object_list[$class])) {
+							require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';	// For dol_is_file(), not loaded by master.inc.php (CLI scripts, cron jobs)
 							if (dol_is_file(DOL_DOCUMENT_ROOT . $path)) {
 								require_once DOL_DOCUMENT_ROOT . $path;
 								if (class_exists($class)) {
@@ -14633,11 +14639,12 @@ function jsonOrUnserialize($stringtodecode)
  * @param	int<0,1>	$noand		1=Do not add the AND before the condition string.
  * @param	int<0,1>	$nopar		1=Do not add the parenthesis around the final condition string.
  * @param	int<0,1>	$noerror	1=If search criteria is not valid, does not return an error string but invalidate the SQL
+ * @param 	string[]	$forbiddenfields		List of fields that we can't use in the filter
  * @return	string					Return forged SQL string
  * @see dolSqlDateFilter()
  * @see natural_search()
  */
-function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0)
+function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 0, $nopar = 0, $noerror = 0, $forbiddenfields = array())
 {
 	global $db, $user;
 
@@ -14674,6 +14681,9 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 			return 'Filter error - '.$tmperrorstr;		// Bad syntax of the search string, we return an error message or force a SQL not found
 		}
 	}
+
+	global $globalforbiddenfields;	// For use by dolForgeSQLCriteriaCallback()
+	$globalforbiddenfields = $forbiddenfields;
 
 	$ret = ($noand ? "" : " AND ").($nopar ? "" : '(').preg_replace_callback('/'.$regexstring.'/i', 'dolForgeSQLCriteriaCallback', $filter).($nopar ? "" : ')');
 
@@ -14846,6 +14856,7 @@ function dolForgeDummyCriteriaCallback($matches)
 function dolForgeSQLCriteriaCallback($matches)
 {
 	global $db;
+	global $globalforbiddenfields;
 
 	//dol_syslog("Convert matches ".$matches[1]);
 	if (empty($matches[1])) {
@@ -14856,7 +14867,24 @@ function dolForgeSQLCriteriaCallback($matches)
 		return '';
 	}
 
+	// Add fields that are forbidden by the caller when using USF search criteria
+	// so we can't guess them using sequantial comparisons
+	$newforbiddenfields = $globalforbiddenfields;
+	if (!is_array($newforbiddenfields)) {
+		$newforbiddenfields = array();
+	}
+	// Add fields that are ALWAYS forbidden when using USF search criteria
+	$newforbiddenfields[] = 'pass';
+	$newforbiddenfields[] = 'pass_crypted';
+	$newforbiddenfields[] = 'api_key';
+
 	$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+	// Test that operand is not a forbidden search field
+	$operandwithoutprefix = preg_replace('/^[a-z0-9_]+\./i', '', $operand);	// Remove prefix like t. or o. or s. or u. or d. or ...
+	if (in_array($operandwithoutprefix, $newforbiddenfields)) {
+		return '1=1';
+	}
 
 	$operator = strtoupper(preg_replace('/[^a-z<>!=]/i', '', trim($tmp[1])));
 
