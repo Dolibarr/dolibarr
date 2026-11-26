@@ -145,8 +145,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 			}
 		}
 
-		//$date=time();
-		$date = $object->datec;
+		$date = empty($object->datec) ? dol_now() : $object->datec;
 		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
