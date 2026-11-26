@@ -244,8 +244,10 @@ $tabuser = array();
 $tabpay = array();
 $tabbq = array();
 $tabtp = array();
-$tabthirdpartyparts = array();	// Part of a bank line for each thirdparty, when a payment settles invoices of several thirdparties
-$tabthirdpartydone = array();	// Thirdparties of a bank line already added to $tabtp
+/** @var array<int,array<int,float>> $tabthirdpartyparts Part of a bank line for each thirdparty, when a payment settles invoices of several thirdparties */
+$tabthirdpartyparts = array();
+/** @var array<int,array<int,int>> $tabthirdpartydone Thirdparties of a bank line already added to $tabtp */
+$tabthirdpartydone = array();
 $tabtype = array();
 $tabmoreinfo = array();
 
