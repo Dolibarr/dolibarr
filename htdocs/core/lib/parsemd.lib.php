@@ -38,7 +38,11 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 	$content = preg_replace('/<a href="([^"]+)" target="([^"]+)">([^<]+)<\/a>/', '[\3](\1)', $content);
 
 	// Replace HTML comments
-	$content = preg_replace('/<!--.*-->/Ums', '', $content);	// We remove HTML comment that are not MD comment because they will be escaped and output when setSafeMode is set to true.
+	// We remove HTML comment that are not MD comment because they will be escaped and output when setSafeMode is set to true.
+	// Must be repeated because removing a nested comment may build a new one (and so a fake SPAN_STYLE marker, see later).
+	do {
+		$content = preg_replace('/<!--.*-->/Ums', '', $content, -1, $nbreplaced);
+	} while ($nbreplaced > 0);
 
 	if (is_array($replaceimagepath)) {
 		foreach ($replaceimagepath as $key => $val) {
@@ -53,12 +57,14 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 		$parsedown->setSafeMode(true);		// This will escape HTML link <a href=""> into html entities but markdown links are ok
 
 		// Because HTML will be HTML entity encoded, we replace tag we want to keep
-		$content = preg_replace('/<span style="([^"]+)">/', '<!-- SPAN_STYLE_\1 -->', $content);
+		// The style must contain only safe chars (no quote, no < or >, no / or \, no &) so it can't be used to escape from the style attribute
+		$regexstyle = '[a-z0-9 :;,.#%()-]+';
+		$content = preg_replace('/<span style="('.$regexstyle.')">/i', '<!-- SPAN_STYLE_\1 -->', $content);
 		$content = preg_replace('/<\/span>/', '<!-- SPAN_END -->', $content);
 
 		$content = $parsedown->text($content);
 
-		$content = preg_replace('/&lt;!-- SPAN_STYLE_([^-]+) --&gt;/', '<span style="\1">', $content);
+		$content = preg_replace('/&lt;!-- SPAN_STYLE_('.$regexstyle.') --&gt;/i', '<span style="\1">', $content);
 		$content = preg_replace('/&lt;!-- SPAN_END --&gt;/', '</span>', $content);
 	} else {
 		$content = nl2br($content);
