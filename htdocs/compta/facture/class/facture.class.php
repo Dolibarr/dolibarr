@@ -2627,7 +2627,7 @@ class Facture extends CommonInvoice
 	public function insert_discount($idremise)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -2686,7 +2686,7 @@ class Facture extends CommonInvoice
 
 			$lineid = $facligne->insert();
 			if ($lineid > 0) {
-				$result = $this->update_price(1);
+				$result = $this->update_price(1, 'none', 0, $mysoc);
 				if ($result > 0) {
 					// Create link between discount and invoice line
 					$result = $remise->link_to_invoice($lineid, 0);
@@ -3362,7 +3362,7 @@ class Facture extends CommonInvoice
 		$this->newref = dol_sanitizeFileName($num);
 
 		if ($num) {
-			$this->update_price(1);
+			$this->update_price(1, 'none', 0, $mysoc);
 
 			// Validate
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
@@ -4299,7 +4299,7 @@ class Facture extends CommonInvoice
 				}
 
 				// Mise a jour info denormalisees au niveau facture
-				$this->update_price(1, 'auto');
+				$this->update_price(1, 'auto', 0, $mysoc);
 				$this->db->commit();
 				return $result;
 			} else {
@@ -4380,7 +4380,7 @@ class Facture extends CommonInvoice
 
 		// sometimes it is better to not update price for each line, ie when updating situation on all lines
 		if ($update_price) {
-			$this->update_price(1);
+			$this->update_price(1, 'none', 0, $mysoc);
 		}
 	}
 
@@ -4393,7 +4393,7 @@ class Facture extends CommonInvoice
 	 */
 	public function deleteline($rowid, $id = 0)
 	{
-		global $user;
+		global $mysoc, $user;
 
 		dol_syslog(get_class($this)."::deleteline rowid=".((int) $rowid), LOG_DEBUG);
 
@@ -4425,7 +4425,7 @@ class Facture extends CommonInvoice
 		$line->oldline = $staticline;
 
 		if ($line->delete($user) > 0) {
-			$result = $this->update_price(1);
+			$result = $this->update_price(1, 'none', 0, $mysoc);
 
 			if ($result > 0) {
 				$this->db->commit();
@@ -4505,8 +4505,9 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$error) {
+				global $mysoc;
 				$this->remise_percent = $remise;
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $mysoc);
 
 				$this->db->commit();
 				return 1;
@@ -4560,9 +4561,10 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$error) {
+				global $mysoc;
 				$this->oldcopy = clone $this;
 				$this->remise_absolue = $remise;
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $mysoc);
 			}
 
 			if (!$notrigger && empty($error)) {

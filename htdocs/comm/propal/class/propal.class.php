@@ -478,7 +478,7 @@ class Propal extends CommonObject
 	public function insert_discount($idremise)
 	{
 		// phpcs:enable
-		global $langs;
+		global $mysoc, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -520,7 +520,7 @@ class Propal extends CommonObject
 
 			$result = $line->insert();
 			if ($result > 0) {
-				$result = $this->update_price(1);
+				$result = $this->update_price(1, 'none', 0, $mysoc);
 				if ($result > 0) {
 					$this->db->commit();
 					return 1;
@@ -971,7 +971,7 @@ class Propal extends CommonObject
 					$this->line_order(true, 'DESC');
 				}
 
-				$this->update_price(1, 'auto');
+				$this->update_price(1, 'auto', 0, $mysoc);
 
 				$this->fk_propal = $this->id;
 				$this->rowid = $rowid;
@@ -1000,7 +1000,7 @@ class Propal extends CommonObject
 	 */
 	public function deleteline($lineid, $id = 0)
 	{
-		global $user;
+		global $mysoc, $user;
 
 		if ($this->statut == self::STATUS_DRAFT) {
 			$this->db->begin();
@@ -1022,7 +1022,7 @@ class Propal extends CommonObject
 			$line->oldline = $staticline;
 
 			if ($line->delete($user) > 0) {
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $mysoc);
 
 				$this->db->commit();
 				return 1;
@@ -2515,9 +2515,10 @@ class Propal extends CommonObject
 			}
 
 			if (!$error) {
+				global $mysoc;
 				$this->oldcopy = clone $this;
 				$this->remise_percent = $remise;
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $mysoc);
 			}
 
 			if (!$notrigger && empty($error)) {
@@ -2580,8 +2581,9 @@ class Propal extends CommonObject
 			}
 
 			if (!$error) {
+				global $mysoc;
 				$this->oldcopy = clone $this;
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $mysoc);
 			}
 
 			if (!$notrigger && empty($error)) {
