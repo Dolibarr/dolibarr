@@ -62,7 +62,7 @@ print dol_get_fiche_head($head, 'info', $langs->trans("ExpenseReportPayment"), -
 
 //$linkback = '<a href="' . DOL_URL_ROOT . '/expensereport/payment/list.php">' . $langs->trans("BackToList") . '</a>';
 
-dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', '');
 
 
 print '<div class="fichecenter">';
