@@ -46,8 +46,8 @@ function dol_basename($pathfile)
  *  @param	string		$path        	Starting path from which to search. This is a full path.
  *  @param	string		$types        	Can be "directories", "files", or "all"
  *  @param	int			$recursive		Determines whether subdirectories are searched
- *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
- *                                      but must not contains the start and end '/'. Filter is checked into basename only.
+ *	@param	string|string[]|null	$filter Regex or Array of Regex filter to restrict list. The regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
+ *                                     		but must NOT contains the start and end '/'. Filter is checked into the basename onlyof each entry (so '^xxx' include dirscanned/xxx and dirscanned/dirscanned2/xxx).
  *  @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
  *  @param	string		$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
  *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
@@ -65,8 +65,42 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 	global $object;
 
 	if ($recursive <= 1) {	// Avoid too verbose log
-		dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
-		//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter);
+		$error_info = "";
+
+		// Verify filters (only on the first call of the function)
+		$filter_ok = true;
+		if (!empty($filter) && !is_array($filter)) {
+			if (strlen($filter) > 25000) {	// Note that limit depends on syntax of filter
+				dol_syslog("Value for filter is too large", LOG_ERR);
+				$filter_ok = false;
+			} else {
+				// Check that all '/' are escaped.
+				if ((int) preg_match('/(?:^|[^\\\\])\//', $filter) > 0) {
+					$excludefilter_ok = false;
+					$error_info .= " error='filter_has_unescaped_slash'";
+					dol_syslog("'$filter' has unescaped '/'", LOG_ERR);
+				}
+			}
+		}
+
+		// Ensure we have an array for the exclusions
+		$excludefilter_ok = true;
+		$exclude_array = ($excludefilter === null || $excludefilter === '') ? array() : (is_array($excludefilter) ? $excludefilter : array($excludefilter));
+		foreach ($exclude_array as $f) {
+			// Check that all '/' are escaped.
+			if ((int) preg_match('/(?:^|[^\\\\])\//', $f) > 0) {
+				$excludefilter_ok = false;
+				$error_info .= " error='excludefilter_has_unescaped_slash'";
+				dol_syslog("'$f' has unescaped '/'", LOG_ERR);
+			}
+		}
+
+		dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".json_encode($filter)." excludefilter=".json_encode($excludefilter).$error_info);
+		//print 'xxx'."files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".json_encode($filter)." excludefilter=".json_encode($exclude_array);
+		if (!$filter_ok || !$excludefilter_ok) {
+			// Return empty array when filters are invalid
+			return array();
+		}
 	}
 
 	$loaddate = ($mode == 1 || $mode == 2 || $nbsecondsold) ? true : false;
@@ -151,7 +185,28 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 								$fileperm = dol_fileperm($path."/".$file);
 							}
 
-							if (!$filter || preg_match('/'.$filter.'/i', $file)) {	// We do not search key $filter into all $path, only into $file part
+							$qualifiedforfilter = 0;
+							if (empty($filter)) {
+								$qualifiedforfilter = 1;
+							} else {
+								$testpregmatch = false;
+								if (is_array($filter)) {
+									$chunks = array_chunk($filter, 500);
+									foreach ($chunks as $chunk) {
+										$testpregmatch = preg_match('/'.implode('|', $chunk).'/i', $file);	// May fail if $filter too large
+										if ($testpregmatch) {
+											break;
+										}
+									}
+								} else {
+									$testpregmatch = preg_match('/'.$filter.'/i', $file);		// May fail if $filter too large
+								}
+								if ($testpregmatch) {
+									$qualifiedforfilter = 1;
+								}
+							}
+
+							if ($qualifiedforfilter) {	// We do not search key $filter into all $path, only into $file part
 								$reg = array();
 								preg_match('/([^\/]+)\/[^\/]+$/', $path.'/'.$file, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
@@ -185,7 +240,28 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 							$filesize = dol_filesize($path."/".$file);
 						}
 
-						if (!$filter || preg_match('/'.$filter.'/i', $file)) {	// We do not search key $filter into $path, only into $file
+						$qualifiedforfilter = 0;
+						if (empty($filter)) {
+							$qualifiedforfilter = 1;
+						} else {
+							$testpregmatch = false;
+							if (is_array($filter)) {
+								$chunks = array_chunk($filter, 500);
+								foreach ($chunks as $chunk) {
+									$testpregmatch = preg_match('/'.implode('|', $chunk).'/i', $file);	// May fail if $filter too large
+									if ($testpregmatch) {
+										break;
+									}
+								}
+							} else {
+								$testpregmatch = preg_match('/'.$filter.'/i', $file);		// May fail if $filter too large
+							}
+							if ($testpregmatch) {
+								$qualifiedforfilter = 1;
+							}
+						}
+
+						if ($qualifiedforfilter) {	// We do not search key $filter into $path, only into $file
 							if (empty($nbsecondsold) || $filedate <= ($now - $nbsecondsold)) {
 								preg_match('/([^\/]+)\/[^\/]+$/', $path.'/'.$file, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
