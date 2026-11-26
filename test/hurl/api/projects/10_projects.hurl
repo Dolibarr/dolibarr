@@ -36,32 +36,40 @@
 #   API-key matrix run, the matrix notes should record it as a permission
 #   finding rather than a change to these pins (a general READ failure
 #   profile, analogous to the product/member CLASS 2 pins in the categories
-#   suite). FINDING 5 below MUST be re-tested with a low-privilege key
-#   before filing upstream.
+#   suite). The over-exposure probes below MUST be re-tested with a
+#   low-privilege key (see FINDING 5).
 #
-# STATUS OF PINS: FULLY OBSERVED (full suite run green, 80 requests, then
-#   incremental corrections plus manual payload probes, all 2026-11-24).
-#   Every status code in this file has been confirmed against a live
-#   instance, either by the suite run or by manual curl probes. The
-#   deliberate-change rule applies to all pins: "Change this assert
+# STATUS OF PINS: FULLY OBSERVED (full suite run green, 80+ requests,
+#   2026-11-24; incremental corrections plus manual payload probes, all
+#   2026-11-24) + DELIBERATE POST-FIX CHANGES (2026-11-26): after the
+#   upstream fix for #43353 landed, the falsy-id pins for the four lookup
+#   endpoints were flipped 200-specimen -> 404 deliberately and re-verified
+#   live (instance on upstream develop, base commit 6e96f1694, 2026-11-26).
+#   Every status code in this file is confirmed against a live instance.
+#   The deliberate-change rule applies to all pins: "Change this assert
 #   deliberately, never accidentally."
 # FINDINGS pinned in this file (candidates for the upstream report):
-#   FINDING 1 (OBSERVED 2026-11-24): id=0 -> HTTP 200 with the all-null
-#     SPECIMEN object (every field null, "specimen": 0) on the main
-#     endpoint. /projects joins the 200-specimen camp of the cross-module
-#     falsy-id tally: 200-specimen (thirdparties, members, now projects),
-#     400 (invoices), 404 (memberstypes, objectlinks, expensereports,
-#     interventions), 500 (categories). Categories' 500 is thereby
-#     confirmed as a resource-specific anomaly, not general Dolibarr
-#     behaviour. UPSTREAM ISSUE: Dolibarr/dolibarr#43307 (cross-module tally).
+#   FINDING 1 — RESOLVED UPSTREAM (2026-11-26): id=0 -> 200 with the
+#     all-null SPECIMEN object (every field null, "specimen": 0) on the
+#     main endpoint; /projects was in the 200-specimen camp of the
+#     cross-module falsy-id tally (thirdparties, members, projects;
+#     cf. #43307, categories: 500, invoices: 400, memberstypes et al.:
+#     404). The #43353 fix makes /projects/0 answer 404 ("Project with
+#     supplied id not found") — verified live 2026-11-26; pin flipped
+#     deliberately below. Filed as issue #43353.
 #   FINDING 2 (OBSERVED 2026-11-24, RESOLVED same day): the documented
 #     category filter is BROKEN GENERALLY on the collection route:
 #     /projects?category=X -> 200 (works with both real and unknown ids),
 #     but /projects/alltimespent?category=X -> 503 for ANY category id —
 #     confirmed with a runtime-captured REAL id against a 200 baseline on
-#     the main list in the same run. The documented parameter is unusable
-#     on alltimespent. Suspect: structurally broken join in the
-#     alltimespent SQL chain. Ready for the upstream report.
+#     the main list in the same run. ROOT CAUSE CONFIRMED via the error
+#     body (2026-11-24): "Unknown column 'c.fk_categorie' in 'WHERE'" —
+#     the alltimespent handler builds its category filter with table
+#     alias 'c' but never adds the categorie_project join; additionally
+#     the copied comparison uses c.fk_project = t.rowid where t is
+#     projet_task, not projet (should be p.rowid). Copy-paste divergence
+#     between the list handlers. STILL 503 after the #43353 fix
+#     (2026-11-26) — separate root cause, ready for the upstream report.
 #     (Related, main list only: category=0 DROPS the filter entirely and
 #     returns ALL projects — falsy-param family.)
 #   FINDING 3 (OBSERVED 2026-11-24): all three by-value endpoints
@@ -76,23 +84,30 @@
 #     all three by-value endpoints — the filter is resource-independent.
 #     Verify whether the 403 originates from Dolibarr core or a
 #     WAF/proxy in front of the instance before filing upstream.
-#   FINDING 5 (OBSERVED 2026-11-24, manual probes; SECURITY-RELEVANT
-#     pending low-privilege re-test): id=0 on the tasks/roles/timespent
+#   FINDING 5 (OBSERVED 2026-11-24; CONFIRMED STILL PRESENT AFTER THE
+#     #43353 FIX, 2026-11-26): id=0 on the tasks/roles/timespent
 #     subresources does NOT return an empty result — the project
 #     constraint is IGNORED and data from OTHER, real projects comes
-#     back: /projects/0/tasks returned full task records with fk_project
-#     2/4/10, /projects/0/roles returned 13 role strings, /projects/0/
-#     timespent returned 3 aggregate rows with real dates. Contrast:
-#     /projects/0/contacts correctly answers []. If a low-privilege key
-#     without project rights reproduces the over-exposure, this crosses
-#     from consistency-quirk into a genuine cross-project data leak.
-#   FINDING 6 (OBSERVED 2026-11-24, manual probes): the STRING-typed
-#     by-value lookups accept the falsy value "0" and answer 200 with
-#     the all-null specimen object instead of 404:
-#     /projects/email_msgid/0, /projects/ref_ext/0, /projects/ref/0.
-#     The falsy-lookup family (FINDING 1) extends to the string-key
-#     routes. Note the contrast within the same family: numeric-lookalike
-#     "123" answers 404, but "0" answers 200-specimen.
+#     back: /projects/0/tasks returned full task records (fk_project
+#     2/4/10 in 2026-11-24; fk_project "4" records on 2026-11-26),
+#     /projects/0/roles returned 13 role strings, /projects/0/timespent
+#     returned aggregate rows with real dates (2026-11-26: max_date
+#     2026-11-25, total_duration 33300/3600). Contrast:
+#     /projects/0/contacts answers []. SCOPE OF THE #43353 FIX: handler-
+#     local guards in the four lookup handlers only — /projects/0/
+#     contacts STILL answers 200 [] after the fix, proving the root
+#     Project::fetch(0) still succeeds; the three subresource handlers
+#     lack the guard that get() itself demonstrates. Verification: a
+#     no-permission key gets 403 on all /projects/0/* endpoints (both
+#     2026-11-24 and 2026-11-26) — NOT a privilege-escalation path, only
+#     keys holding projet.lire reach the defect. ISSUE_3 (consistency
+#     bug) remains open with this sharpened evidence.
+#   FINDING 6 — RESOLVED UPSTREAM (2026-11-26): the STRING-typed by-value
+#     lookups accepted the falsy value "0" with 200 + specimen object
+#     instead of 404 (note the contrast: "123" answered 404 correctly).
+#     The #43353 fix makes all three routes answer 404 with their
+#     handler-specific "not found" messages — verified live 2026-11-26;
+#     pins flipped deliberately below. Filed as issue #43353.
 # CROSS-MODULE PATTERNS — status after the 2026-11-24 runs (formerly P1-P6):
 #   P1 CONFIRMED: non-numeric limit/page -> 400 strict validation.
 #   P2 CONFIRMED: unknown sortfield -> 503 on both /projects and
@@ -101,7 +116,8 @@
 #   P3 CONFIRMED: invalid sqlfilters syntax -> 400; unknown column ->
 #     503 (syntax validated, column names not).
 #   P4 CONFIRMED as FINDINGS 1/5/6 (id=0 -> 200 everywhere; constraint
-#     sometimes ignored with over-exposure).
+#     sometimes ignored with over-exposure). FINDING 1/6 portion since
+#     fixed upstream via #43353 (2026-11-26).
 #   P5 CONFIRMED: includetimespent junk -> 400 (strict validation).
 #   P6 CONFIRMED as FINDING 3 (string-path fuzz classes 404/400/403).
 #   Also observed: negative limit -> 200 (coerced, memberstypes camp);
@@ -173,8 +189,9 @@ jsonpath "$" isCollection
 # category=0 — OBSERVED (2026-11-24, manual probe): the filter is DROPPED
 #   for the falsy value and ALL projects come back (manual probe with
 #   properties=id showed the full id list, identical to no filter).
-#   Same falsy-param family as FINDINGS 1/6, here on a LIST PARAMETER:
-#   count is not pinned (depends on data), but the request must succeed.
+#   Same falsy-param family as former FINDINGS 1/6, here on a LIST
+#   PARAMETER: count is not pinned (depends on data), but the request
+#   must succeed.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects?category=0&limit=5
 HTTP 200
@@ -319,16 +336,18 @@ HTTP 200
 jsonpath "$.id" == "{{project_id}}"
 jsonpath "$.ref" exists
 
-# id=0 — FINDING 1 (see header). OBSERVED (2026-11-24, hurl run + manual
-#   payload inspection): HTTP 200 with the all-null SPECIMEN object (every
-#   field null, "specimen": 0, id/ref null) — /projects joins the
-#   200-specimen camp of the cross-module falsy-id tally, unlike
-#   categories (500), invoices (400) and the 404 camp.
+# id=0 — formerly FINDING 1: HTTP 200 with the all-null SPECIMEN object.
+#   FIXED UPSTREAM via #43353; CHANGED DELIBERATELY 2026-11-26 after a live
+#   re-probe on upstream develop (base 6e96f1694, 2026-11-26): the endpoint
+#   now answers 404 "Not Found: Project with supplied id not found" as it
+#   should. /projects leaves the 200-specimen camp of the falsy-id tally
+#   for the 404 camp; the specimen behaviour is archived in issue #43353
+#   and ISSUE_1 (resolved).
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/0
-HTTP 200
+HTTP 404
 [Asserts]
-jsonpath "$.specimen" exists
+jsonpath "$.error" exists
 
 # Negative: nonexistent id -> 404
 GET http://{{hostnport}}/api/index.php/projects/99999999
@@ -385,10 +404,13 @@ HTTP 400
 [Asserts]
 jsonpath "$.error.code" == 400
 
-# id=0 on the subresource — OBSERVED (2026-11-24, hurl run + manual
-#   payload inspection): HTTP 200 with [] — the constraint IS applied on
-#   contacts (unlike tasks/roles/timespent, see FINDING 5). Correct
-#   empty-set behaviour; pin: 200.
+# id=0 on the subresource — OBSERVED (2026-11-26, admin probe): HTTP 200
+#   with [] — UNCHANGED by the #43353 fix. Key evidence for the fix's
+#   scope: the root Project::fetch(0) still succeeds (otherwise this
+#   handler would now throw 404); the fix was handler-local (guards in
+#   the four lookup handlers only). The contact constraint IS applied,
+#   so [] is the still-wrong-shaped consequence of the unresolved falsy-id
+#   root — see ISSUE_3.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/0/contacts
 HTTP 200
@@ -433,13 +455,13 @@ HTTP 400
 [Asserts]
 jsonpath "$.error.code" == 400
 
-# id=0 on the roles subresource — FINDING 5 (see header). OBSERVED
-#   (2026-11-24, hurl run + manual payload inspection): HTTP 200, but the
-#   body contained 13 role strings ("PROJECTLEADER"...) although project 0
-#   does not exist — the project constraint is IGNORED, roles of REAL
-#   projects are returned. Contrast: /0/contacts correctly answers [].
-#   Payload-dependent, so only status is pinned; contents deliberately NOT
-#   asserted (portability). MUST be re-tested with a low-privilege key.
+# id=0 on the roles subresource — OVEREXPOSURE STILL PRESENT AFTER THE
+#   #43353 FIX (FINDING 5; 2026-11-26, admin probe): HTTP 200 with 13
+#   role strings from real projects (last row
+#   "PROJECTCONTRIBUTOR,PROJECTLEADER"). The fix added guards to the four
+#   lookup handlers only; this handler lacks the get()-style guard.
+#   Payload-dependent, so only status is pinned (portability). ISSUE_3
+#   remains open.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/0/roles
 HTTP 200
@@ -492,13 +514,13 @@ HTTP 400
 [Asserts]
 jsonpath "$.error.code" == 400
 
-# id=0 on the tasks subresource — FINDING 5 (see header). OBSERVED
-#   (2026-11-24, hurl run + manual payload inspection): HTTP 200, and the
-#   body contained FULL task records from real projects (fk_project 2, 4
-#   and 10) — the project constraint is IGNORED, i.e. id=0 effectively
-#   returns all tasks visible to the key. Payload-dependent, so only
-#   status is pinned (portability). MUST be re-tested with a low-privilege
-#   key before filing upstream.
+# id=0 on the tasks subresource — OVEREXPOSURE STILL PRESENT AFTER THE
+#   #43353 FIX (FINDING 5; 2026-11-26, admin probe): HTTP 200 with FULL
+#   task records from real projects (fk_project "4" observed on
+#   2026-11-26; fk_project 2/4/10 on 2026-11-24). The fix added guards to
+#   the four lookup handlers only; this handler lacks the get()-style
+#   guard. Payload-dependent, so only status is pinned (portability).
+#   ISSUE_3 remains open.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/0/tasks
 HTTP 200
@@ -525,12 +547,13 @@ HTTP 400
 [Asserts]
 jsonpath "$.error.code" == 400
 
-# id=0 on the timespent subresource — FINDING 5 (see header). OBSERVED
-#   (2026-11-24, hurl run + manual payload inspection): HTTP 200, and the
-#   body contained 3 aggregate rows with real dates/durations from OTHER
-#   projects — constraint ignored, same over-exposure family as tasks and
-#   roles. Payload-dependent, so only status is pinned (portability).
-#   MUST be re-tested with a low-privilege key before filing upstream.
+# id=0 on the timespent subresource — OVEREXPOSURE STILL PRESENT AFTER THE
+#   #43353 FIX (FINDING 5; 2026-11-26, admin probe): HTTP 200 with 3
+#   aggregate rows from OTHER projects (2026-11-26: max_date 2026-11-25,
+#   total_duration 33300; a 3600s row dated 2024-04-20). The fix added
+#   guards to the four lookup handlers only; this handler lacks the
+#   get()-style guard. Payload-dependent, so only status is pinned
+#   (portability). ISSUE_3 remains open.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/0/timespent
 HTTP 200
@@ -587,7 +610,8 @@ HTTP 200
 jsonpath "$" isCollection
 
 # category filter on the collection route — FINDING 2. OBSERVED
-#   (2026-11-24, hurl run): HTTP 503 for an unknown category id.
+#   (2026-11-24, hurl run): HTTP 503 for an unknown category id; STILL 503
+#   after the #43353 fix (2026-11-26) — separate root cause.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/alltimespent?category=99999999&limit=5
 HTTP 503
@@ -617,7 +641,7 @@ jsonpath "$" isCollection
 #   answered 200 with the very same id in the same run. CONCLUSION
 #   (FINDING 2 resolved): the category filter on /projects/alltimespent
 #   is broken for ALL ids, not just unknown ones. This is the upstream
-#   wording.
+#   wording. Re-confirmed 2026-11-26 (503, same c.fk_categorie SQL error).
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/alltimespent?category={{probe_category_id}}&limit=5
 HTTP 503
@@ -665,14 +689,15 @@ HTTP 404
 [Asserts]
 jsonpath "$.error" exists
 
-# Falsy "0" as msgid — FINDING 6. OBSERVED (2026-11-24, manual probe):
-#   HTTP 200 with the all-null specimen object ("specimen": 0) instead
-#   of 404 — the falsy lookup bypasses the not-found path.
+# Falsy "0" as msgid — formerly FINDING 6 (HTTP 200 + specimen object).
+#   FIXED UPSTREAM via #43353; CHANGED DELIBERATELY 2026-11-26: the
+#   endpoint now answers 404 "Not Found: Project with supplied email_msgid
+#   not found".
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/email_msgid/0
-HTTP 200
+HTTP 404
 [Asserts]
-jsonpath "$.specimen" exists
+jsonpath "$.error" exists
 
 # ---------------------------------------------------------------- GET /projects/ref_ext/{ref_ext}
 
@@ -700,13 +725,14 @@ HTTP 404
 [Asserts]
 jsonpath "$.error" exists
 
-# Falsy "0" as ref_ext — FINDING 6. OBSERVED (2026-11-24, manual probe):
-#   HTTP 200 with the all-null specimen object instead of 404.
+# Falsy "0" as ref_ext — formerly FINDING 6 (HTTP 200 + specimen object).
+#   FIXED UPSTREAM via #43353; CHANGED DELIBERATELY 2026-11-26: now answers
+#   404 "Not Found: Project with supplied ref_ext not found".
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/ref_ext/0
-HTTP 200
+HTTP 404
 [Asserts]
-jsonpath "$.specimen" exists
+jsonpath "$.error" exists
 
 # ---------------------------------------------------------------- GET /projects/ref/{ref}
 
@@ -736,10 +762,11 @@ HTTP 404
 [Asserts]
 jsonpath "$.error" exists
 
-# Falsy "0" as ref — FINDING 6. OBSERVED (2026-11-24, manual probe):
-#   HTTP 200 with the all-null specimen object instead of 404.
+# Falsy "0" as ref — formerly FINDING 6 (HTTP 200 + specimen object).
+#   FIXED UPSTREAM via #43353; CHANGED DELIBERATELY 2026-11-26: now answers
+#   404 "Not Found: Project with supplied ref not found".
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/ref/0
-HTTP 200
+HTTP 404
 [Asserts]
-jsonpath "$.specimen" exists
+jsonpath "$.error" exists
