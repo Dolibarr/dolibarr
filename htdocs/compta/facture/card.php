@@ -7444,6 +7444,7 @@ if ($action == 'create') {
 
 			// For situation invoice, create credit note
 			if ($object->status > Facture::STATUS_DRAFT
+				&& $object->type != Facture::TYPE_CREDIT_NOTE
 				&& $object->isSituationInvoice()
 				&& $usercancreate
 				&& !$objectidnext
