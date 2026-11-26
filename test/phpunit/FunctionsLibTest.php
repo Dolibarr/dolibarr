@@ -2748,6 +2748,20 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testNaturalSearchMultiselect
+	 *
+	 * @return void
+	 */
+	public function testNaturalSearchMultiselect()
+	{
+		$this->assertEquals('', natural_search_multiselect('f.x', array()));
+		$this->assertEquals('', natural_search_multiselect('f.x', array('', '0', '-1')));
+		$this->assertEquals(' AND ((f.x IN (4,5)))', natural_search_multiselect('f.x', array('4', '5')));
+		$this->assertEquals(' AND ((f.x IS NULL OR f.x = 0))', natural_search_multiselect('f.x', array('-2')));
+		$this->assertEquals(' AND ((f.x IN (4)) OR (f.x IS NULL OR f.x = 0))', natural_search_multiselect('f.x', array('-2', '4')));
+	}
+
+	/**
 	 * testDolExplodeKeepIfQuotes
 	 *
 	 * @return void

@@ -134,6 +134,7 @@ class SqlInjectionVisitor extends \Phan\PluginV3\PluginAwarePostAnalysisVisitor
 		'getSqlCalEvents', // Returns sql
 		'intval', // Returns int
 		'natural_search',
+		'natural_search_multiselect', // Casts values to int, sanitizes field
 		'price2num', // Returns formatted number
 		'sanititzekey', // Used with array_map
 		'setEntity', // Returns int
