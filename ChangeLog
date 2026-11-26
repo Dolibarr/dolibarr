@@ -7,6 +7,7 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
+NEW: Custom groups of accounts: option to select the accounts of a group by its account range #42803
 NEW: Two-factor authentication with a TOTP code (#41831)
 NEW: #35458 Passkey (WebAuthn): setup page, page to manage the passkeys of a user, login with a passkey, and a passkey fulfills the two-factor authentication required by the security setup
 NEW: Agenda: the day and week views are rendered as an hourly grid, an event can be moved by drag and drop (also to another day) and resized by its bottom edge (#42714, #42814)

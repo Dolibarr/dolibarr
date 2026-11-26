@@ -54,9 +54,10 @@ $id = 0;
 
 // Security check
 if (GETPOSTISSET("account") || GETPOSTISSET("ref")) {
-	$id = GETPOSTISSET("account") ? GETPOST("account") : (GETPOSTISSET("ref") ? GETPOST("ref") : '');
+	// The access check by ref keeps only digits of the ref, so we check on the id of the account found with the ref
+	$id = GETPOSTISSET("account") ? GETPOST("account") : (GETPOSTISSET("ref") ? dol_getIdFromCode($db, GETPOST("ref"), 'bank_account', 'ref', 'rowid', 1) : '');
 }
-$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
+$fieldid = 'rowid';
 if ($user->socid) {
 	$socid = $user->socid;
 }
