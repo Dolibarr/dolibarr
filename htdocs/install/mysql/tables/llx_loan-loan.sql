@@ -32,6 +32,8 @@ create table llx_loan
   charge_type					smallint DEFAULT 0 NOT NULL,	-- what insurance_amount is: 0 = insurance, 1 = account-keeping fee, 2 = other fee
   charge_per_payment			smallint DEFAULT 0 NOT NULL,	-- 0 = insurance_amount is a total spread over the payments, 1 = it is due with every payment
   balloon_amount				double(24,8) DEFAULT 0 NOT NULL,	-- balloon / residual: lump sum paid with the last payment
+  charge_tva_tx					double(7,4) DEFAULT 0,		-- VAT rate of insurance_amount (0 = no VAT). Only the charge: interest and capital are not subject to VAT
+  charge_vat_src_code			varchar(10) DEFAULT '',		-- VAT code (llx_c_tva.code) of that rate
 
   datestart						date,
   dateend						date,
