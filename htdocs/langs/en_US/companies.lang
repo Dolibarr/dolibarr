@@ -498,6 +498,7 @@ ErrorDigitariaAccountancyCodeExhausted=No free accountancy code is available for
 EnablePublicCompanyPages=Enable the public contact page
 PublicInterfaceCompanyDesc=This option offer a public page with an online contact form to allow any anonymous visitor to send you a message (creating also a thirdparty and/or contact, automatically).
 ImpossibleToCreateUserFromContact=Impossible to create user from this contact
+MonthlyReport=Monthly report
 ThirdPartiesByNature=By nature
 ThirdPartiesByCountryDesc=This screen shows you the statistics of third parties by country.
 ThirdPartiesByRegionDesc=This screen shows you the statistics of third parties by region.
