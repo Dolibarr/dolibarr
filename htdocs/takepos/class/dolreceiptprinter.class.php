@@ -685,7 +685,7 @@ class dolReceiptPrinter extends Printer
 
 			$this->template .= "{dol_value_date}\r\n";
 			$this->template .= "{dol_value_currentdate}\r\n";
-			$this->template .= "{dol_print_text}{dol_value_signaturehashstart}\r\n";
+			$this->template .= "{dol_value_signaturehashstart}\r\n";
 			$this->template .= "{dol_line_feed}\r\n";
 			$this->template .= "{dol_align_left}\r\n";
 			$this->template .= "{dol_print_object_lines}\r\n";
@@ -695,7 +695,7 @@ class dolReceiptPrinter extends Printer
 			$this->template .= "{dol_print_object_total}\r\n";
 			$this->template .= "{dol_line_feed}\r\n";
 			if ($islneverion) {
-				$this->template .= "{dol_print_text}{dol_value_lnemention}\r\n";
+				$this->template .= "{dol_value_lnemention}\r\n";
 				$this->template .= "{dol_line_feed}\r\n";
 			}
 			$this->template .= "{dol_cut_paper_full}";
@@ -744,32 +744,8 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_mysoc_idprof5}', (string) $mysoc->idprof5, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_idprof6}', (string) $mysoc->idprof6, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_tva_intra}', (string) $mysoc->tva_intra, $this->template);
-
-		// Tags of the default template for a LNE version, with the same content as takepos/receipt.php
-		$signaturehashstart = '';
-		if ($islneverion && isModEnabled('blockedlog') && $object->element == 'facture' && $object->status > $object::STATUS_DRAFT) {
-			$unalterablelogid = 'UNDEFINED';
-			$sql = "SELECT signature FROM ".MAIN_DB_PREFIX."blockedlog";
-			$sql .= " WHERE action = 'BILL_VALIDATE' AND element = 'facture' AND ref_object = '".$this->db->escape($object->ref)."'";
-			$sql .= $this->db->order('rowid', 'DESC');
-			$sql .= $this->db->plimit(1);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$obj = $this->db->fetch_object($resql);
-				if ($obj) {
-					$unalterablelogid = $obj->signature;
-				}
-			}
-			$langs->load("blockedlog");
-			$signaturehashstart = $langs->transnoentitiesnoconv("SignatureID").': '.dol_trunc(strtoupper($unalterablelogid), 10);
-		}
-		$this->template = str_replace('{dol_value_signaturehashstart}', $signaturehashstart, $this->template);
-		$lnemention = '';
-		if ($mysoc->country_code == 'FR' && isALNEQualifiedVersion(1, 1)) {
-			$langs->load("blockedlog");
-			$lnemention = $langs->transnoentitiesnoconv(preg_match('/\-/', DOL_VERSION) ? "LNECandidatePOSSystem" : "LNECertifiedPOSSystem");
-		}
-		$this->template = str_replace('{dol_value_lnemention}', $lnemention, $this->template);
+		// Tags of the default template that are not managed yet: print nothing instead of the raw tag name
+		$this->template = str_replace(array('{dol_value_signaturehashstart}', '{dol_value_lnemention}'), '', $this->template);
 		$this->template = str_replace('{dol_value_mysoc_capital}', (string) $mysoc->capital, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_url}', (string) $mysoc->url, $this->template);
 
