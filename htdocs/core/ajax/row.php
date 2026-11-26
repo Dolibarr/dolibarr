@@ -45,6 +45,9 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1'); // Lines are moved with a POST that must provide the token
+}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
@@ -65,12 +68,12 @@ top_httphead();
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
-if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
-	&& GETPOST('fk_element', 'aZ09', 3) && GETPOST('element_id', 'int', 3)) {
-	$roworder = GETPOST('roworder', 'alpha', 3);
-	$table_element_line = GETPOST('table_element_line', 'aZ09', 3);
-	$fk_element = GETPOST('fk_element', 'aZ09', 3);
-	$element_id = GETPOST('element_id', 'int', 3);
+if (GETPOST('roworder', 'alpha', 2) && GETPOST('table_element_line', 'aZ09', 2)
+	&& GETPOST('fk_element', 'aZ09', 2) && GETPOST('element_id', 'int', 2)) {
+	$roworder = GETPOST('roworder', 'alpha', 2);
+	$table_element_line = GETPOST('table_element_line', 'aZ09', 2);
+	$fk_element = GETPOST('fk_element', 'aZ09', 2);
+	$element_id = GETPOST('element_id', 'int', 2);
 
 	dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
 
@@ -140,6 +143,35 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		print 'Bad permission to modify position of lines for object in table '.$table_element_line;
 		dol_syslog('Bad permission to modify position of lines for object in table='.$table_element_line.', fk_element='.$fk_element, LOG_WARNING);
 		accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
+	}
+
+	// The lines must be the lines of an object the user can access, and this object must be a draft, as on its card.
+	// Table of lines => column with the id of the object, table of the object, its status field ('' = no status check), features for restrictedArea
+	$linetables = array(
+		'propaldet' => array('fk_propal', 'propal', 'fk_statut', 'propal', ''),
+		'commandedet' => array('fk_commande', 'commande', 'fk_statut', 'commande', ''),
+		'facturedet' => array('fk_facture', 'facture', 'fk_statut', 'facture', ''),
+		'facturedet_rec' => array('fk_facture', 'facture_rec', '', 'facture', ''),
+		'supplier_proposaldet' => array('fk_supplier_proposal', 'supplier_proposal', 'fk_statut', 'supplier_proposal', ''),
+		'commande_fournisseurdet' => array('fk_commande', 'commande_fournisseur', 'fk_statut', 'fournisseur', 'commande'),
+		'facture_fourn_det' => array('fk_facture_fourn', 'facture_fourn', 'fk_statut', 'fournisseur', 'facture'),
+		'facture_fourn_det_rec' => array('fk_facture_fourn', 'facture_fourn_rec', '', 'supplier_invoicerec', ''),
+	);
+	if (isset($linetables[$table_element_line])) {
+		$linetable = $linetables[$table_element_line];
+		if ($fk_element != $linetable[0]) {
+			dol_syslog('Bad parent field to modify position of lines for object in table='.$table_element_line.', fk_element='.$fk_element, LOG_WARNING);
+			accessforbidden('Bad parent field to modify position of lines for object in table '.$table_element_line);
+		}
+		restrictedArea($user, $linetable[3], $element_id, $linetable[1], $linetable[4]);
+		if ($linetable[2]) {
+			$resql = $db->query("SELECT ".$linetable[2]." as status FROM ".MAIN_DB_PREFIX.$linetable[1]." WHERE rowid = ".((int) $element_id));
+			$obj = ($resql ? $db->fetch_object($resql) : null);
+			if (!$obj || (int) $obj->status != 0) {
+				dol_syslog('Lines of a non draft object can not be moved, table='.$table_element_line.', element_id='.$element_id, LOG_WARNING);
+				accessforbidden('Lines of a non draft object can not be moved');
+			}
+		}
 	}
 
 	$rowordertab = explode(',', $roworder);
