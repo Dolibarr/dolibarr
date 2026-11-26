@@ -3461,7 +3461,7 @@ class BookKeeping extends CommonObject
 	 */
 	public function newClone($piecenum, $code_journal, $docdate)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$error = 0;
 
@@ -3490,7 +3490,7 @@ class BookKeeping extends CommonObject
 		$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
 
 		$cloneId = [];
-		$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = ".((int) $piecenum);
+		$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = ".((int) $piecenum)." AND entity = ".((int) $conf->entity);
 		$resqlRowidClone = $this->db->query($sqlRowidClone);
 
 		if ($resqlRowidClone) {
@@ -3508,6 +3508,7 @@ class BookKeeping extends CommonObject
 					$sql .= " fk_doc, fk_docdet, debit, credit, journal_label, sens, montant, subledger_account, subledger_label";
 					$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 					$sql .= " WHERE rowid = " . ((int) $toselectid);
+					$sql .= " AND entity = " . ((int) $conf->entity);
 					$resql = $this->db->query($sql);
 
 					if ($resql) {
@@ -3516,10 +3517,10 @@ class BookKeeping extends CommonObject
 
 							$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 							$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref,";
-							$sql_insert .= " fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant, subledger_account, subledger_label)";
+							$sql_insert .= " fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant, subledger_account, subledger_label, entity)";
 							$sql_insert .= " VALUES";
 							$sql_insert .= " (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
-							$sql_insert .= " ". ((int) $obj->fk_doc) . ", " . ((int) $obj->fk_docdet) . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($docdate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ", '" . $this->db->escape($obj->subledger_account) . "', '" . $this->db->escape($obj->subledger_label) . "')";
+							$sql_insert .= " ". ((int) $obj->fk_doc) . ", " . ((int) $obj->fk_docdet) . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($docdate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ", '" . $this->db->escape($obj->subledger_account) . "', '" . $this->db->escape($obj->subledger_label) . "', " . ((int) $conf->entity) . ")";
 
 							$resqlInsert = $this->db->query($sql_insert);
 
@@ -3554,7 +3555,7 @@ class BookKeeping extends CommonObject
 	 */
 	public function newCloneMass($toselect, $code_journal, $docdate)
 	{
-		global $langs, $user;
+		global $conf, $langs, $user;
 
 		$error = 0;
 		$this->db->begin();
@@ -3567,7 +3568,7 @@ class BookKeeping extends CommonObject
 		$idImplodeSelect = implode(',', $toselect);
 		$pieceNumT = [];
 
-		$sqlPieceNum = "SELECT DISTINCT(piece_num) FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid IN (".$this->db->sanitize($idImplodeSelect).")";
+		$sqlPieceNum = "SELECT DISTINCT(piece_num) FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid IN (".$this->db->sanitize($idImplodeSelect).") AND entity = ".((int) $conf->entity);
 		$resqlPieceNum = $this->db->query($sqlPieceNum);
 
 		if ($resqlPieceNum) {
@@ -3595,7 +3596,7 @@ class BookKeeping extends CommonObject
 				$bookKeepingInstance = new BookKeeping($this->db);
 				$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
 				$cloneId = [];
-				$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $pieceNum";
+				$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = ".((int) $pieceNum)." AND entity = ".((int) $conf->entity);
 				$resqlRowidClone = $this->db->query($sqlRowidClone);
 
 				if ($resqlRowidClone) {
@@ -3609,7 +3610,7 @@ class BookKeeping extends CommonObject
 							$code_journal = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $code_journal : $bookKeeping->code_journal;
 							$journal_label = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $accountingJournal->label : $bookKeeping->journal_label;
 							$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, subledger_account, subledger_label, doc_type, code_journal, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant";
-							$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping WHERE rowid = " . ((int) $toselectid);
+							$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping WHERE rowid = " . ((int) $toselectid) . " AND entity = " . ((int) $conf->entity);
 
 							$resql = $this->db->query($sql);
 							if ($resql) {
@@ -3636,6 +3637,7 @@ class BookKeeping extends CommonObject
 									$sql_insert .= ", journal_label";
 									$sql_insert .= ", sens";
 									$sql_insert .= ", montant";
+									$sql_insert .= ", entity";
 									$sql_insert .= ")";
 									$sql_insert .= " VALUES (";
 									$sql_insert .=  $pieceNumNext;
@@ -3657,6 +3659,7 @@ class BookKeeping extends CommonObject
 									$sql_insert .= ", '" . $this->db->escape($journal_label) . "'";
 									$sql_insert .= ", '" . $this->db->escape($obj->sens) . "'";
 									$sql_insert .= ", " . (float) $obj->montant;
+									$sql_insert .= ", " . ((int) $conf->entity);
 									$sql_insert .= ")";
 
 									$resqlInsert = $this->db->query($sql_insert);
@@ -3695,7 +3698,7 @@ class BookKeeping extends CommonObject
 	 */
 	public function newReturnAccount(array $toselect, $code_journal, $docdate)
 	{
-		global $langs, $user;
+		global $conf, $langs, $user;
 
 		$error = 0;
 
@@ -3708,7 +3711,7 @@ class BookKeeping extends CommonObject
 		$accountingJournal->fetch(0, $code_journal);
 
 		$this->db->begin();
-		$sqlAlreadyExtourne = "SELECT DISTINCT(piece_num) FROM " .MAIN_DB_PREFIX. "accounting_bookkeeping WHERE label_operation LIKE '%Extourne%'";
+		$sqlAlreadyExtourne = "SELECT DISTINCT(piece_num) FROM " .MAIN_DB_PREFIX. "accounting_bookkeeping WHERE label_operation LIKE '%Extourne%' AND entity = ".((int) $conf->entity);
 		$resqlAlreadyExtourne = $this->db->query($sqlAlreadyExtourne);
 		$alreadyExtourneT = array();
 		if ($resqlAlreadyExtourne) {
@@ -3718,7 +3721,7 @@ class BookKeeping extends CommonObject
 		}
 
 		$idImplode = implode(',', $toselect);
-		$sql1 = "SELECT DISTINCT(piece_num) from " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid IN (".$this->db->sanitize($idImplode).")";
+		$sql1 = "SELECT DISTINCT(piece_num) from " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid IN (".$this->db->sanitize($idImplode).") AND entity = ".((int) $conf->entity);
 		$resql1 = $this->db->query($sql1);
 		$pieceNumT = [];
 
@@ -3732,7 +3735,7 @@ class BookKeeping extends CommonObject
 				$newBookKeepingInstance = new BookKeeping($this->db);
 				$pieceNumNext = $newBookKeepingInstance->getNextNumMvt();
 				$extourneIds = [];
-				$sql2 = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = ".((int) $pieceNum);
+				$sql2 = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = ".((int) $pieceNum)." AND entity = ".((int) $conf->entity);
 				$resql2 = $this->db->query($sql2);
 
 				if ($resql2) {
