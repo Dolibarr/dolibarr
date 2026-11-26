@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 /**
  * API class for receptions
@@ -564,6 +565,19 @@ class Receptions extends DolibarrApi
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->reception->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
+			}
+
+			if ($field == 'socid' && (int) $value != $this->reception->socid) {
+				// Check access to the new thirdparty to avoid a cross-customer reception reassignment
+				$new_socid = (int) $value;
+				$thirdparty = new Societe($this->db);
+				$result = $thirdparty->fetch($new_socid);
+				if ($result < 1) {
+					throw new RestException(404, 'Thirdparty with id='.$new_socid.' not found or not allowed');
+				}
+				if (!DolibarrApi::_checkAccessToResource('societe', $new_socid)) {
+					throw new RestException(403, 'Access to new thirdparty='.$new_socid.' is not allowed for login '.DolibarrApiAccess::$user->login);
+				}
 			}
 
 			if ($field == 'array_options' && is_array($value)) {

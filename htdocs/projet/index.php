@@ -240,7 +240,7 @@ print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 
 // List of draft projects
-print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'), $max);
+print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'), $max);
 
 
 print $resultboxes['boxlista'];
@@ -279,7 +279,7 @@ if ($resql) {
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
-			print '<td class="minwidth100onall">';
+			print '<td class="tdlineheightsmall minwidth100onall">';
 
 			$projectstatic->id = $obj->rowid;
 			$projectstatic->ref = $obj->ref;

@@ -223,8 +223,8 @@ var select2arrayoflanguage = {
 	inputTooShort: function (input) {
 		var n = input.minimum;
 		/*console.log(input); console.log(input.minimum);*/
-		if (n > 1) return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters"))."'"; ?>;
-			else return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter"))."'"; ?>
+		if (n > 1) return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "' ".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters"))."'"; ?>;
+			else return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2Enter"))." '"; ?> + n + <?php echo "' ".dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter"))."'"; ?>
 		},
 	loadMore: function (pageNumber) { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2LoadingMoreResults"))."'"; ?>; },
 	searching: function () { return <?php echo "'".dol_escape_js($langs->transnoentitiesnoconv("Select2SearchInProgress"))."'"; ?>; }
@@ -720,7 +720,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 
 			/* reset page_y param */
-			var page_y = $(document).scrollTop();
+			var page_y = $(dolGetMainScrollElement()).scrollTop();
 			url = url.replace(/page_y=\d+/g, '');
 			if (page_y > 0) {
 				if (url.indexOf('?') > -1) {
@@ -825,7 +825,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 					url = url + "?dol_resetcache=1";
 				}
 			}
-			var page_y = $(document).scrollTop();
+			var page_y = $(dolGetMainScrollElement()).scrollTop();
 			url = url.replace(/page_y=\d+/g, '');
 			if (page_y > 0) {
 				if (url.indexOf('?') > -1) {
@@ -1092,6 +1092,17 @@ function document_preview(file, type, title)
 
 	console.log("document_preview A click was done: file="+file+", type="+type+", title="+title);
 
+	/* If we are into an iframe (like the media manager opened into a dialog popup), we show the preview into the parent window so the modal overlay covers the whole screen */
+	try {
+		if (window.parent && window.parent !== window && typeof window.parent.document_preview === 'function' && window.parent.jQuery && window.parent.jQuery("#dialogforpopup").length > 0) {
+			console.log("document_preview We are into an iframe, so we show the preview into the parent window");
+			window.parent.document_preview(new URL(file, window.location.href).href, type, title);
+			return;
+		}
+	} catch (e) {
+		console.log("document_preview Parent window is not reachable, so we show the preview into the current window");
+	}
+
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
 		var object_width = '100%';
@@ -1201,6 +1212,23 @@ function getParameterByName(name, valueifnotfound)
 	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
 		results = regex.exec(location.search);
 	return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+/*
+ * Return the element that scrolls the main area of the page: #id-right when the theme makes it scrollable, else the document
+ *
+ * @return	Element				Element to use with jQuery scrollTop()
+ */
+function dolGetMainScrollElement()
+{
+	var idright = document.getElementById("id-right");
+	if (idright) {
+		var overflowy = window.getComputedStyle(idright).overflowY;
+		if (overflowy == "auto" || overflowy == "scroll") {
+			return idright;
+		}
+	}
+	return document.scrollingElement || document.documentElement;
 }
 
 /*
@@ -1813,7 +1841,11 @@ $(document).on('select2:open', (e) => {
 		if (id.substr(-2) == '[]') {
 			id = id.substr(0,id.length-2);
 		}
-		document.querySelector('input[aria-controls*='+id+']').focus();
+		/* Quote the value: an unquoted id with a dot (like 'u.fk_socpeople') is not a valid CSS selector */
+		const searchinput = document.querySelector('input[aria-controls*="'+id.replace(/["\\]/g, '\\$&')+'"]');
+		if (searchinput) {
+			searchinput.focus();
+		}
 	}
 });
 
@@ -1927,7 +1959,8 @@ $(function() {
 	// MAIN_ROW_SINGLECLICK_TOSELECT: when enabled, a plain click anywhere on
 	// a .row-with-select row (not on a link/button/field) also toggles its
 	// checkbox, in addition to the Ctrl/Shift+click behaviour below.
-	let rowSingleClickToSelect = <?php echo getDolGlobalInt('MAIN_ROW_SINGLECLICK_TOSELECT') ? 'true' : 'false'; ?>;
+	// Option is read from a meta tag of the page because this file is cached by the browser.
+	let rowSingleClickToSelect = (jQuery('meta[name="MAIN_ROW_SINGLECLICK_TOSELECT"]').length > 0);
 
 	/**
 	 * @param {jQuery}  el
@@ -2061,6 +2094,9 @@ $(function() {
 
 	let isBlockToChange = function (block) {
 		if (block.hasClass('blockvmenuexpandonhover')) {
+			if (block.data('staycollapsed')) {
+				return false;
+			}
 			return !block.hasClass('blockvmenuexpanded');
 		}
 		return blocks.filter('.blockvmenuexpanded').length > 0;
@@ -2077,17 +2113,21 @@ $(function() {
 	}).on('mouseleave', function () {
 		clearTimeout(hoverTimer);
 		hoverTimer = null;
+		$(this).parent().removeData('staycollapsed');
 	}).on('focusin', function () {
 		activateBlock($(this).parent());
 	});
 
-	/* Click on the arrow expands a collapsed block or collapses an expanded one, instead of following the title link */
+	/* Click on the arrow expands a collapsed block or collapses an expanded one, instead of following the title link.
+	 * When collapsed, the block stays collapsed while the mouse stays on its title. */
 	$('.blockvmenuexpandonhover .menuexpandarrow').on('click', function (e) {
 		let block = $(this).closest('.blockvmenuexpandonhover');
 		e.preventDefault();
 		if (block.hasClass('blockvmenuexpanded')) {
+			block.data('staycollapsed', true);
 			collapseBlocks();
 		} else {
+			block.removeData('staycollapsed');
 			expandBlock(block);
 		}
 	});

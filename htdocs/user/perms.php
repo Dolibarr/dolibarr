@@ -186,7 +186,7 @@ $excludedModules = getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD') ? array('modFourn
 // every disabled module found on disk. If we are looking at our own entity, $conf->global already
 // has this cached from bootstrap and no query is needed at all.
 if ($entity == $conf->entity) {
-	$enabledmoduleconst = (array) $conf->global;
+	$enabledmoduleconst = get_object_vars($conf->global);
 } else {
 	$enabledmoduleconst = array();
 	$sql = "SELECT ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value";

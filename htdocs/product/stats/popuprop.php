@@ -169,7 +169,7 @@ $h++;
 // The custom reports tool is not available to external users
 if (empty($user->socid)) {
 	$head[$h][0] = DOL_URL_ROOT.'/product/stats/index.php?tabfamily=productstats';
-	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][1] = $langs->trans("CustomReport");
 	$head[$h][2] = 'customreports';
 	$h++;
 }
