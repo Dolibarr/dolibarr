@@ -2537,6 +2537,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Function used to replace a thirdparty id with another one.
+	 *  Events whose linked object is the thirdparty itself (elementtype 'societe') are moved too.
 	 *
 	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
 	 * @param 	int 	$origin_id 	Old thirdparty id
@@ -2549,7 +2550,19 @@ class ActionComm extends CommonObject
 			'actioncomm'
 		);
 
-		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
+		if (!CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables)) {
+			return false;
+		}
+
+		// Events linked to the thirdparty as object (automatic events COMPANY_CREATE, COMPANY_MODIFY, COMPANY_SENTBYMAIL...)
+		// must follow it too, otherwise they keep pointing to the deleted thirdparty.
+		$sql = 'UPDATE '.$dbs->prefix().'actioncomm SET fk_element = '.((int) $dest_id);
+		$sql .= " WHERE elementtype = 'societe' AND fk_element = ".((int) $origin_id);
+		if (!$dbs->query($sql)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
