@@ -27,6 +27,8 @@
 -- Generic to all countries
 insert into llx_c_holiday_types(entity, code, label, affect, delay, newbymonth, fk_country, sortorder, active) values (__ENTITY__, 'LEAVE_SICK',    'Sick leave',    0, 0, 0,    NULL, 1, 1);
 insert into llx_c_holiday_types(entity, code, label, affect, delay, newbymonth, fk_country, sortorder, active) values (__ENTITY__, 'LEAVE_OTHER',   'Other leave',   0, 0, 0,    NULL, 2, 1);
+insert into llx_c_holiday_types(entity, code, label, affect, delay, newbymonth, fk_country, sortorder, active) values (__ENTITY__, 'LEAVE_MATERNITY',   'Maternity leave',   0, 0, 0,    NULL, 2, 1);
+insert into llx_c_holiday_types(entity, code, label, affect, delay, newbymonth, fk_country, sortorder, active) values (__ENTITY__, 'LEAVE_PATERNITY',   'Paternity leave',   0, 0, 0,    NULL, 2, 1);
 
 -- Not enabled by default, we prefer to have an entry dedicated to the country
 insert into llx_c_holiday_types(entity, code, label, affect, delay, newbymonth, fk_country, sortorder, active) values (__ENTITY__, 'LEAVE_PAID',    'Paid vacation', 1, 7, 0,    NULL, 3, 0);
