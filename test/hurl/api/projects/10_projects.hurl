@@ -69,7 +69,11 @@
 #     the copied comparison uses c.fk_project = t.rowid where t is
 #     projet_task, not projet (should be p.rowid). Copy-paste divergence
 #     between the list handlers. STILL 503 after the #43353 fix
-#     (2026-11-26) — separate root cause, ready for the upstream report.
+#     (2026-11-26) — separate root cause. Filed upstream as #43355
+#     (+ #43383, closed as duplicate); fix in flight as PR #43361,
+#     which adds the missing join AND corrects the comparison to
+#     c.fk_project = p.rowid (a join-only patch would have produced
+#     silently wrong results).
 #     (Related, main list only: category=0 DROPS the filter entirely and
 #     returns ALL projects — falsy-param family.)
 #   FINDING 3 (OBSERVED 2026-11-24): all three by-value endpoints
@@ -100,25 +104,41 @@
 #     lack the guard that get() itself demonstrates. Verification: a
 #     no-permission key gets 403 on all /projects/0/* endpoints (both
 #     2026-11-24 and 2026-11-26) — NOT a privilege-escalation path, only
-#     keys holding projet.lire reach the defect. ISSUE_3 (consistency
-#     bug) remains open with this sharpened evidence.
+#     keys holding projet.lire reach the defect. Filed upstream as
+#     #43354 (consistency bug, with subset-key verification).
 #   FINDING 6 — RESOLVED UPSTREAM (2026-11-26): the STRING-typed by-value
 #     lookups accepted the falsy value "0" with 200 + specimen object
 #     instead of 404 (note the contrast: "123" answered 404 correctly).
 #     The #43353 fix makes all three routes answer 404 with their
 #     handler-specific "not found" messages — verified live 2026-11-26;
 #     pins flipped deliberately below. Filed as issue #43353.
+#   PAGINATION TOTAL (source review + live probe 2026-11-26; NOT caught
+#     by this suite's original loose asserts): with pagination_data=true,
+#     /projects/alltimespent always returned pagination.total=0 (probe:
+#     rows 3, total 0) — listTimespent() builds its count query via
+#     str_replace('SELECT t.rowid', ...) which never matches its
+#     'SELECT et.rowid, ...', so ->total was read off a data row. Filed
+#     as #43435; RESOLVED UPSTREAM same day via PR #43436 (merged by
+#     eldy; count now computed via DolibarrApi::_getCountOfRecords()).
+#     Tightening the envelope assert below with
+#     jsonpath "$.pagination.total" >= 1 was completed as a DELIBERATE
+#     change (2026-11-26): fix pulled, non-zero total observed on the
+#     local instance, assert added — suite green, 87/87.
 # CROSS-MODULE PATTERNS — status after the 2026-11-24 runs (formerly P1-P6):
 #   P1 CONFIRMED: non-numeric limit/page -> 400 strict validation.
 #   P2 CONFIRMED: unknown sortfield -> 503 on both /projects and
 #     /projects/alltimespent (unvalidated SQL flow, as on categories/
-#     memberstypes).
+#     memberstypes). ORDER BY alias divergence on alltimespent filed
+#     upstream as #43384.
 #   P3 CONFIRMED: invalid sqlfilters syntax -> 400; unknown column ->
 #     503 (syntax validated, column names not).
 #   P4 CONFIRMED as FINDINGS 1/5/6 (id=0 -> 200 everywhere; constraint
 #     sometimes ignored with over-exposure). FINDING 1/6 portion since
 #     fixed upstream via #43353 (2026-11-26).
 #   P5 CONFIRMED: includetimespent junk -> 400 (strict validation).
+#     (includetimespent=1/2 EFFECT confirmed working 2026-11-26 via
+#     payload diff — summary fields populate through task-object
+#     mutation; the suspected no-op was a NON-ISSUE, draft closed.)
 #   P6 CONFIRMED as FINDING 3 (string-path fuzz classes 404/400/403).
 #   Also observed: negative limit -> 200 (coerced, memberstypes camp);
 #   non-numeric userid -> 400; junk contacts `type` -> 200 ignored;
@@ -410,7 +430,7 @@ jsonpath "$.error.code" == 400
 #   handler would now throw 404); the fix was handler-local (guards in
 #   the four lookup handlers only). The contact constraint IS applied,
 #   so [] is the still-wrong-shaped consequence of the unresolved falsy-id
-#   root — see ISSUE_3.
+#   root — see #43354 (FINDING 5).
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/0/contacts
 HTTP 200
@@ -460,8 +480,8 @@ jsonpath "$.error.code" == 400
 #   role strings from real projects (last row
 #   "PROJECTCONTRIBUTOR,PROJECTLEADER"). The fix added guards to the four
 #   lookup handlers only; this handler lacks the get()-style guard.
-#   Payload-dependent, so only status is pinned (portability). ISSUE_3
-#   remains open.
+#   Payload-dependent, so only status is pinned (portability). Filed
+#   upstream as #43354; fix pending.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/0/roles
 HTTP 200
@@ -520,7 +540,7 @@ jsonpath "$.error.code" == 400
 #   2026-11-26; fk_project 2/4/10 on 2026-11-24). The fix added guards to
 #   the four lookup handlers only; this handler lacks the get()-style
 #   guard. Payload-dependent, so only status is pinned (portability).
-#   ISSUE_3 remains open.
+#   Filed upstream as #43354; fix pending.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/0/tasks
 HTTP 200
@@ -553,7 +573,7 @@ jsonpath "$.error.code" == 400
 #   total_duration 33300; a 3600s row dated 2024-04-20). The fix added
 #   guards to the four lookup handlers only; this handler lacks the
 #   get()-style guard. Payload-dependent, so only status is pinned
-#   (portability). ISSUE_3 remains open.
+#   (portability). Filed upstream as #43354; fix pending.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/0/timespent
 HTTP 200
@@ -577,7 +597,9 @@ HTTP 200
 jsonpath "$" count <= 5
 
 # OBSERVED (2026-11-24): unknown sortfield -> 503 on the collection route
-#   too (unvalidated SQL flow, P2)
+#   too (unvalidated SQL flow, P2). NOTE the ORDER BY alias divergence on
+#   this route (sortfield=t.element_date rejected, "unknown column") was
+#   filed upstream as #43384.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/alltimespent?sortfield=t.nosuchfield&sortorder=ASC&limit=5
 HTTP 503
@@ -596,12 +618,21 @@ HTTP 200
 [Asserts]
 jsonpath "$" isCollection
 
-# pagination_data envelope on the collection route
+# pagination_data envelope on the collection route — NOTE (#43435): the
+#   pagination.total=0 defect (str_replace count query never matched
+#   'SELECT et.rowid, ...'; live probe 2026-11-26: rows 3, total 0) was
+#   filed as #43435 and FIXED UPSTREAM same day via PR #43436 (merged by
+#   eldy; total now via DolibarrApi::_getCountOfRecords()). PIN TIGHTENED
+#   DELIBERATELY (2026-11-26): fix pulled, non-zero total observed on the
+#   local instance, jsonpath "$.pagination.total" >= 1 added — the old
+#   loose pin ($.data + $.pagination.limit only) existed precisely
+#   because the broken count query would have failed such an assert.
 GET http://{{hostnport}}/api/index.php/projects/alltimespent?limit=10&page=0&pagination_data=true
 HTTP 200
 [Asserts]
 jsonpath "$.data" exists
 jsonpath "$.pagination.limit" == 10
+jsonpath "$.pagination.total" >= 1
 
 # thirdparty_ids filter on the collection route
 GET http://{{hostnport}}/api/index.php/projects/alltimespent?thirdparty_ids=1&limit=5
@@ -611,7 +642,10 @@ jsonpath "$" isCollection
 
 # category filter on the collection route — FINDING 2. OBSERVED
 #   (2026-11-24, hurl run): HTTP 503 for an unknown category id; STILL 503
-#   after the #43353 fix (2026-11-26) — separate root cause.
+#   after the #43353 fix (2026-11-26) — separate root cause. Filed as
+#   #43355 (+ #43383, closed as duplicate); fix in flight as PR #43361 —
+#   when that lands and is observed locally, flip BOTH category pins
+#   below (this one and the real-id probe) deliberately to 200.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/alltimespent?category=99999999&limit=5
 HTTP 503
@@ -640,8 +674,9 @@ jsonpath "$" isCollection
 #   id — the baseline request /projects?category={{probe_category_id}}
 #   answered 200 with the very same id in the same run. CONCLUSION
 #   (FINDING 2 resolved): the category filter on /projects/alltimespent
-#   is broken for ALL ids, not just unknown ones. This is the upstream
-#   wording. Re-confirmed 2026-11-26 (503, same c.fk_categorie SQL error).
+#   is broken for ALL ids, not just unknown ones. Re-confirmed 2026-11-26
+#   (503, same c.fk_categorie SQL error). Filed as #43355; fix in flight
+#   as PR #43361.
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/projects/alltimespent?category={{probe_category_id}}&limit=5
 HTTP 503
