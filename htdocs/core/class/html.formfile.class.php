@@ -1610,6 +1610,10 @@ class FormFile
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
 						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'" spellcheck="false">';
+						// Keywords of the file, only for a file into the index (llx_ecm_files) where they are saved
+						if ($relativedir && !empty($filearray[$key]['rowid'])) {
+							print '<br><input type="text" name="renamefilekeywords" class="centpercentminusx small" value="'.dol_escape_htmltag((string) ($file['keywords'] ?? '')).'" placeholder="'.dol_escape_htmltag($langs->trans("FileKeywordsPlaceholder")).'" title="'.dol_escape_htmltag($langs->trans("FileKeywordsPlaceholder")).'" spellcheck="false">';
+						}
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
@@ -1619,6 +1623,17 @@ class FormFile
 					// Preview link
 					if (!$editline) {
 						print $this->showPreview($file, $modulepart, $filepath, 0, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
+					}
+
+					// Keywords of the file
+					if (!$editline && !empty($file['keywords'])) {
+						print '<div class="filekeywords">';
+						foreach (explode(',', (string) $file['keywords']) as $filekeyword) {
+							if (trim($filekeyword) !== '') {
+								print '<span class="badge badge-secondary marginrightonlyshort">'.dolPrintHTML(trim($filekeyword)).'</span>';
+							}
+						}
+						print '</div>';
 					}
 
 					// Previous versions of the file, kept when it was replaced by an upload (see MAIN_DOCUMENT_KEEP_VERSIONS)

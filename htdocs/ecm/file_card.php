@@ -152,6 +152,7 @@ if ($action == 'update' && $permissiontoadd) {
 	$oldlabel = GETPOST('urlfile', 'alpha');
 	$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'), '_', 0);
 	$shareenabled = GETPOST('shareenabled', 'alpha');
+	$keywords = dolCleanFileKeywords(GETPOST('keywords', 'alphanohtml'));
 
 	// Target directory, the current one if not changed
 	$newecmdir = $ecmdir;
@@ -230,6 +231,7 @@ if ($action == 'update' && $permissiontoadd) {
 		} else {
 			$object->share = '';
 		}
+		$object->keywords = $keywords;
 
 		if ($object->id > 0) {
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -258,7 +260,7 @@ if ($action == 'update' && $permissiontoadd) {
 			$object->fullpath_orig = '';
 			$object->gen_or_uploaded = 'unknown';
 			$object->description = ''; // indexed content
-			$object->keywords = ''; // keyword content
+			$object->keywords = $keywords;
 			$result = $object->create($user);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'warnings');
@@ -377,6 +379,19 @@ if (!empty($object->label)) {
 	print $object->label;
 } else {
 	print img_warning().' '.$langs->trans("FileNotYetIndexedInDatabase");
+}
+print '</td></tr>';
+
+// Keywords
+print '<tr><td>'.$langs->trans("Keywords").'</td><td>';
+if ($action == 'edit') {
+	print '<input type="text" name="keywords" class="quatrevingtpercent" value="'.dol_escape_htmltag((string) $object->keywords).'" placeholder="'.dol_escape_htmltag($langs->trans("FileKeywordsPlaceholder")).'" spellcheck="false">';
+} else {
+	foreach (explode(',', (string) $object->keywords) as $filekeyword) {
+		if (trim($filekeyword) !== '') {
+			print '<span class="badge badge-secondary marginrightonlyshort">'.dolPrintHTML(trim($filekeyword)).'</span>';
+		}
+	}
 }
 print '</td></tr>';
 

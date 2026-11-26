@@ -363,6 +363,28 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 				}
 			}
 		}
+
+		// Keywords of the file, saved into the index. The file is found from its directory (never from an id sent by the
+		// browser), with its new name if it was renamed, else with its current name.
+		if (empty($error) && GETPOSTISSET('renamefilekeywords') && !empty($filenamefrom)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			$fileforkeywords = '';
+			foreach (array($upload_dir, (empty($upload_dirold) ? '' : $upload_dirold)) as $dirforkeywords) {
+				foreach (array($filenameto, $filenameto.'.noexe', $filenamefrom) as $nameforkeywords) {
+					if (!$fileforkeywords && $dirforkeywords && $nameforkeywords && dol_is_file($dirforkeywords.'/'.$nameforkeywords)) {
+						$fileforkeywords = $dirforkeywords.'/'.$nameforkeywords;
+					}
+				}
+			}
+			if ($fileforkeywords) {
+				$result = dolSetFileKeywords($fileforkeywords, GETPOST('renamefilekeywords', 'alphanohtml'), $object);
+				if ($result < 0) {
+					setEventMessages($langs->trans("Error"), null, 'warnings');
+				} elseif ($result > 0 && $filenamefrom == $filenameto) {	// When renamed, the message of the rename is already shown
+					setEventMessages($langs->trans("RecordSaved"), null);
+				}
+			}
+		}
 	}
 
 	// Update properties in ECM table
