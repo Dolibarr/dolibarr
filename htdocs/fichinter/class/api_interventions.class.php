@@ -129,6 +129,7 @@ class Interventions extends DolibarrApi
 	 * Get a list of interventions
 	 *
 	 * @since	7.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param	string	$sortfield				Sort field
 	 * @param	string	$sortorder				Sort order
@@ -140,13 +141,14 @@ class Interventions extends DolibarrApi
 	 * @param	string	$contact_type			Type of contacts: thirdparty, internal or external
 	 * @param	bool	$pagination_data		If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @param	int		$loadlinkedobjects		Load also linked objects
+	 * @param	int		$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return	array							Array of order objects
-	 * @phan-return array<object>
-	 * @phpstan-return array<object>
+	 * @phan-return array<object>|array{count:int}
+	 * @phpstan-return array<object>|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '', $pagination_data = false, $loadlinkedobjects = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '', $pagination_data = false, $loadlinkedobjects = 0, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
@@ -203,6 +205,11 @@ class Interventions extends DolibarrApi
 
 		//this query will return total interventions with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {

@@ -580,6 +580,135 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Upload a file into the directory of an object with the admin user
+	 *
+	 * @param string				$modulepart		Modulepart
+	 * @param string				$ref			Ref (or id for some moduleparts) of the object
+	 * @param string				$filename		Name of the file
+	 * @param array<string,mixed>	$moredata		Other parameters of the route
+	 * @return array{code:int,content:mixed}		HTTP code and decoded JSON content
+	 */
+	private function uploadDocument($modulepart, $ref, $filename, $moredata = array())
+	{
+		$data = array_merge(array('filename' => $filename, 'modulepart' => $modulepart, 'ref' => $ref, 'filecontent' => 'content text', 'fileencoding' => ''), $moredata);
+
+		return $this->callApi('POST', 'documents/upload', $this->api_key, $data);
+	}
+
+	/**
+	 * Check a file can be uploaded into the directory of an object, then is listed by GET /documents
+	 *
+	 * @param string	$modulepart		Modulepart used for the upload
+	 * @param string	$ref			Ref (or id for some moduleparts) of the object
+	 * @param string	$filename		Name of the file
+	 * @param string	$query			Query string of the route that lists the documents of the object
+	 * @return void
+	 */
+	private function assertDocumentUploadedAndListed($modulepart, $ref, $filename, $query)
+	{
+		$result = $this->uploadDocument($modulepart, $ref, $filename);
+		$this->assertEquals(200, $result['code'], "Upload with modulepart $modulepart must work: ".var_export($result, true));
+		$this->assertEquals($filename, $result['content'], "Upload with modulepart $modulepart must return the name of the file");
+
+		$this->assertDocumentListed($query, $this->api_key, $filename);
+	}
+
+	/**
+	 * The aliases of modulepart for interventions accepted by GET /documents must be accepted by the upload too
+	 * ('fichinter' was not implemented: error 500), and the file must be stored where GET /documents lists it.
+	 * Checks too that the name returned is the one of the file really stored, that may be renamed with .noexe.
+	 *
+	 * @return void
+	 */
+	public function testUploadDocumentOfIntervention()
+	{
+		global $conf;
+
+		$id = $this->createObject('interventions', array("socid" => 1, "fk_project" => 0, "description" => "Intervention for upload"));
+
+		$result = $this->callApi('GET', 'interventions/'.$id, $this->api_key);
+		$this->assertEquals(200, $result['code'], 'Intervention must be found');
+		$ref = $result['content']['ref'];
+		$dir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($ref);
+		$this->dirstodelete[] = $dir;
+
+		foreach (array('intervention', 'fichinter', 'ficheinter') as $modulepart) {
+			$this->assertDocumentUploadedAndListed($modulepart, $ref, 'upload'.$modulepart.'.txt', 'modulepart=intervention&id='.$id);
+		}
+
+		$result = $this->uploadDocument('intervention', $ref, 'uploadscript.php');
+		$this->assertEquals(200, $result['code'], 'Upload of a php file must work: '.var_export($result, true));
+		$this->assertFileExists($dir.'/'.$result['content'], 'The name returned must be the one of the file stored');
+	}
+
+	/**
+	 * The aliases 'thirdparty', 'actioncomm' and 'entrepot' accepted by GET /documents were not implemented by the upload (error 500)
+	 *
+	 * @return void
+	 */
+	public function testUploadDocumentAliases()
+	{
+		global $conf;
+
+		$socid = $this->createObject('thirdparties', array("name" => "testRestUploadDocument".mt_rand()));
+		$this->dirstodelete[] = $conf->societe->dir_output.'/'.$socid;
+		$this->assertDocumentUploadedAndListed('thirdparty', (string) $socid, 'uploadthirdparty.txt', 'modulepart=thirdparty&id='.$socid);
+
+		$eventid = $this->createObject('agendaevents', array("userownerid" => 1, "type_code" => "AC_OTH", "label" => "Event for upload", "datep" => dol_now()));
+		$this->dirstodelete[] = $conf->agenda->dir_output.'/'.$eventid;
+		$this->assertDocumentUploadedAndListed('actioncomm', (string) $eventid, 'uploadactioncomm.txt', 'modulepart=event&id='.$eventid);
+
+		if (isModEnabled('stock')) {
+			$label = 'testRestUploadDocument'.mt_rand();
+			$warehouseid = $this->createObject('warehouses', array("label" => $label));
+			$this->dirstodelete[] = $conf->stock->dir_output.'/'.dol_sanitizeFileName($label);
+			$this->assertDocumentUploadedAndListed('entrepot', $label, 'uploadentrepot.txt', 'modulepart=stock&id='.$warehouseid);
+		}
+	}
+
+	/**
+	 * Files of a knowledge record were stored into knowledgemanagement/REF instead of knowledgemanagement/knowledgerecord/REF
+	 * where GET /documents lists them, and a user with the permission to write knowledge records was refused.
+	 *
+	 * @return void
+	 */
+	public function testUploadDocumentOfKnowledgeRecord()
+	{
+		global $conf;
+
+		if (!isModEnabled('knowledgemanagement')) {
+			$this->markTestSkipped('Module knowledgemanagement is not enabled');
+		}
+
+		$id = $this->createObject('knowledgemanagement/knowledgerecords', array("question" => "Question for upload", "status" => 0));
+
+		$result = $this->callApi('GET', 'knowledgemanagement/knowledgerecords/'.$id, $this->api_key);
+		$this->assertEquals(200, $result['code'], 'Knowledge record must be found');
+		$this->dirstodelete[] = $conf->knowledgemanagement->dir_output.'/knowledgerecord/'.dol_sanitizeFileName($result['content']['ref']);
+
+		$this->assertDocumentUploadedAndListed('knowledgemanagement', (string) $id, 'uploadknowledgerecord.txt', 'modulepart=knowledgemanagement&id='.$id);
+
+		$restricteduser = $this->createRestrictedUser(array(array('knowledgemanagement', 'knowledgerecord')));
+		$result = $this->callApi('POST', 'documents/upload', $restricteduser['apikey'], array('filename' => 'uploadbyuser.txt', 'modulepart' => 'knowledgemanagement', 'ref' => (string) $id, 'filecontent' => 'content text'));
+		$this->assertEquals(200, $result['code'], 'Upload by a user with the permission to write knowledge records must work: '.var_export($result, true));
+	}
+
+	/**
+	 * Bad values of parameters must return an error 4xx: an unknown encoding wrote an empty file, a task not found returned 500
+	 *
+	 * @return void
+	 */
+	public function testUploadDocumentBadParameters()
+	{
+		$result = $this->uploadDocument('medias', '', 'uploadbadencoding.txt', array('subdir' => 'tmpphpunit', 'fileencoding' => 'unknownencoding'));
+		$this->assertEquals(400, $result['code'], 'Upload with an unknown fileencoding must return 400: '.var_export($result, true));
+		$this->assertFileNotExistsCompat(DOL_DATA_ROOT.'/medias/tmpphpunit/uploadbadencoding.txt', 'No file must be written with an unknown fileencoding');
+
+		$result = $this->uploadDocument('project_task', 'NOTEXISTINGTASK'.mt_rand(), 'uploadtask.txt');
+		$this->assertEquals(404, $result['code'], 'Upload on a task not found must return 404: '.var_export($result, true));
+	}
+
+	/**
 	 * testModulepartAliases
 	 *
 	 * The aliases of modulepart must return a REST error on a file that does not exist, and not stop on an HTML error page.
