@@ -7,7 +7,7 @@ GET http://{{hostnport}}/api/index.php/contracts?sortfield=t.rowid&sortorder=ASC
 HTTP 200
 
 # GET sorted contracts
-GET http://{{hostnport}}/api/index.php/contracts?sortfield=t.rowid&sortorder=DSC
+GET http://{{hostnport}}/api/index.php/contracts?sortfield=t.rowid&sortorder=DESC
 HTTP 200
 
 # GET with limit and page

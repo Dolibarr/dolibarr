@@ -975,8 +975,8 @@ input.pageplusone {
 	opacity: 0;
 }
 .spantitle {
-	opacity: 0.6;
-	font-size: 0.95em;
+	opacity: 0.7;
+	font-size: 0.9em;
 }
 .noopacity {
 	opacity: unset !important;
@@ -4478,10 +4478,10 @@ div.tabBar {
 	padding-bottom: 23px;
 	margin: 0px 0px 20px 0px;
 	border-radius: 3px;
-	border-right: 1px solid #CCC;
-	border-left: 1px solid #CCC;
-	border-top: 1px solid #CCC;
-	border-bottom: 1px solid #CCC;
+	border-right: 1px solid #DDD;
+	border-left: 1px solid #DDD;
+	border-top: 1px solid #DDD;
+	border-bottom: 1px solid #DDD;
 	width: auto;
 	background: var(--colorbacktabcard1);
 }
@@ -4915,7 +4915,7 @@ table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:fi
 	background: var(--colorbacktitle1) !important;
 }
 table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type:not(:hover,.highlight) {
-	background: inherit;
+	/* background: inherit; */
 }
 table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type:not(:hover,.highlight) td {
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
@@ -5441,9 +5441,12 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre
 	border-bottom: 1px solid #aaa;
 }
 /* TODO Once the title line is moved under title search, make th border bottoms black and force to white when it's the first tr */
+/* Disabled: the title line is now under the search line, and it made a different border on th.liste_titre than on other th of the line */
+/*
 tr:first-child th.liste_titre, tr:first-child th.liste_titre_sel {
 	border-bottom: 1px solid #FFF ! important;
 }
+*/
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
 	font-family: <?php print $fontlist ?>;
@@ -5506,6 +5509,9 @@ input.liste_titre {
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
 	white-space: nowrap;
 	line-height: 1.5em;
+}
+.noborder tr.liste_total td, tr.liste_total td {
+	font-weight: bold;
 }
 .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
 	white-space: normal;
@@ -7743,7 +7749,7 @@ ul.filedirelem li {
 }
 
 ul.ecmjqft {
-	line-height: 16px;
+	line-height: 32px;
 	padding: 0px;
 	margin: 0px;
 	font-weight: normal;
@@ -7785,6 +7791,7 @@ div.ecmjqft {
 	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
+	height: 16px;
 }
 #ecm-layout-north {
 	min-height: 40px;
@@ -7795,14 +7802,21 @@ div#ecm-layout-west {
 	width: 380px;
 	vertical-align: top;
 }
+/* ECM filemanager: same height of 49px for the 3 first lines of the 2 panels: the td of data lines
+ * are 32px high (rule on td of table.liste), so the title lines of the panels "Répertoires" and
+ * "Documents" use the same height of content of 32px to stay aligned */
+#ecm-layout-west table.liste tr.liste_titre:first-of-type th.liste_titre,
+#ecmfileview #tablelines tr.liste_titre.nodrag > th {
+	height: 32px;
+}
 div#ecm-layout-center {
 	width: calc(100% - 405px);
 	vertical-align: top;
 	float: <?php echo $right; ?>;
 }
 
-.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; }
-.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png', 1); ?>) left top no-repeat; }
+.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
+.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
 .ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/'.$theme.'/img/working.gif', 1); ?>) left top no-repeat; }
 
 

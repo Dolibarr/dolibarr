@@ -1841,7 +1841,11 @@ $(document).on('select2:open', (e) => {
 		if (id.substr(-2) == '[]') {
 			id = id.substr(0,id.length-2);
 		}
-		document.querySelector('input[aria-controls*='+id+']').focus();
+		/* Quote the value: an unquoted id with a dot (like 'u.fk_socpeople') is not a valid CSS selector */
+		const searchinput = document.querySelector('input[aria-controls*="'+id.replace(/["\\]/g, '\\$&')+'"]');
+		if (searchinput) {
+			searchinput.focus();
+		}
 	}
 });
 
@@ -1955,7 +1959,8 @@ $(function() {
 	// MAIN_ROW_SINGLECLICK_TOSELECT: when enabled, a plain click anywhere on
 	// a .row-with-select row (not on a link/button/field) also toggles its
 	// checkbox, in addition to the Ctrl/Shift+click behaviour below.
-	let rowSingleClickToSelect = <?php echo getDolGlobalInt('MAIN_ROW_SINGLECLICK_TOSELECT') ? 'true' : 'false'; ?>;
+	// Option is read from a meta tag of the page because this file is cached by the browser.
+	let rowSingleClickToSelect = (jQuery('meta[name="MAIN_ROW_SINGLECLICK_TOSELECT"]').length > 0);
 
 	/**
 	 * @param {jQuery}  el
@@ -2089,6 +2094,9 @@ $(function() {
 
 	let isBlockToChange = function (block) {
 		if (block.hasClass('blockvmenuexpandonhover')) {
+			if (block.data('staycollapsed')) {
+				return false;
+			}
 			return !block.hasClass('blockvmenuexpanded');
 		}
 		return blocks.filter('.blockvmenuexpanded').length > 0;
@@ -2105,17 +2113,21 @@ $(function() {
 	}).on('mouseleave', function () {
 		clearTimeout(hoverTimer);
 		hoverTimer = null;
+		$(this).parent().removeData('staycollapsed');
 	}).on('focusin', function () {
 		activateBlock($(this).parent());
 	});
 
-	/* Click on the arrow expands a collapsed block or collapses an expanded one, instead of following the title link */
+	/* Click on the arrow expands a collapsed block or collapses an expanded one, instead of following the title link.
+	 * When collapsed, the block stays collapsed while the mouse stays on its title. */
 	$('.blockvmenuexpandonhover .menuexpandarrow').on('click', function (e) {
 		let block = $(this).closest('.blockvmenuexpandonhover');
 		e.preventDefault();
 		if (block.hasClass('blockvmenuexpanded')) {
+			block.data('staycollapsed', true);
 			collapseBlocks();
 		} else {
+			block.removeData('staycollapsed');
 			expandBlock(block);
 		}
 	});

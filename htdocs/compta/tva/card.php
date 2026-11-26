@@ -2,7 +2,7 @@
 /* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2015-2026  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -696,7 +696,7 @@ if ($id > 0) {
 	$sql .= " WHERE p.fk_tva = ".((int) $id);
 	$sql .= " AND p.fk_tva = tva.rowid";
 	$sql .= " AND tva.entity IN (".getEntity('tax').")";
-	$sql .= " ORDER BY dp DESC";
+	$sql .= " ORDER BY dp ASC, p.rowid ASC";
 
 	//print $sql;
 	$resql = $db->query($sql);
@@ -816,7 +816,7 @@ if ($id > 0) {
 			}
 
 			// Emit payment
-			if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->hasRight('tax', 'charges', 'creer')) {
+			if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') <= 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') >= 0)) && $user->hasRight('tax', 'charges', 'creer')) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement_vat.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment").'</a></div>';
 			}
 

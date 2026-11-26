@@ -1967,7 +1967,7 @@ class ToolApiBridge extends McpTool
 				),
 				'postPage' => array(
 					'suffix' => 'pages_create',
-					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, ".$websitephpcreate."). It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
+					'description' => "Create a page (type_container 'page') or a blog post (type_container 'blogpost') in a website. Give id (rowid of the website, or its exact ref), pageurl (alias, only a-z, 0-9, - and _), title and content (HTML, put inside a <section> tag, ".$websitephpcreate."). A blog post gets the header and footer of its language (or else of the main language of the website) found automatically; give header and/or footer (alias of a page of type 'header' or 'footer' of the website) only to choose them, never inside content. It is created offline (status 0) unless status 1 is given. The user confirms before anything is written.",
 					'write' => array(
 						'preview' => 'AIPreviewCreateWebsitePage',
 						'required' => array('id', 'pageurl', 'title'),
@@ -1977,7 +1977,7 @@ class ToolApiBridge extends McpTool
 						'right' => array('website', 'write')
 					),
 					'params' => array(
-						'id' => "Rowid of the website.",
+						'id' => "Rowid of the website, or its exact ref.",
 						'pageurl' => "Alias of the page, used in its URL: only a-z, 0-9, - and _.",
 						'title' => "Title of the page.",
 						'type_container' => "Kind of page: 'page' (default) or 'blogpost' for an article of a blog.",
@@ -1986,7 +1986,9 @@ class ToolApiBridge extends McpTool
 						'keywords' => "Keywords, separated by commas.",
 						'lang' => "Language code of the page, e.g. 'en' or 'fr'. Omit for the website language.",
 						'author_alias' => "Name of the author to show.",
-						'status' => "0 offline (default), 1 online."
+						'status' => "0 offline (default), 1 online.",
+						'header' => "Alias (pageurl) of a page of type 'header' of the website, included at the top of the page instead of the one found automatically. Pages of type header: api_websites_pages_list with sqlfilters \"(t.type_container:=:'header')\". Omit it to keep the automatic one.",
+						'footer' => "Alias (pageurl) of a page of type 'footer' of the website, included at the bottom of the page instead of the one found automatically. Pages of type footer: api_websites_pages_list with sqlfilters \"(t.type_container:=:'footer')\". Omit it to keep the automatic one."
 					)
 				),
 				'putPage' => array(
@@ -5919,9 +5921,12 @@ class ToolApiBridge extends McpTool
 	/**
 	 * Record a targeted write is about, from the id or the words the model sent.
 	 *
-	 * @param  array<string,mixed> $write The 'write' enrichment of the tool.
-	 * @param  mixed               $value Rowid, ref or name given by the model.
-	 * @return CommonObject|null          Record, or null when none or several fit (the reason is in writeProblems).
+	 * @param  array<string,mixed> $write 	The 'write' enrichment of the tool. Only 3 keys are used:
+	 *                                    	'object' (business class of the record, e.g. 'Website'),
+	 *                                    	'lookup' (how a non numeric value is found: 'ref', 'thirdparty' for a name, or '' for rowid only),
+	 *                                    	'label' (name of the record in messages, 'object' when not set).
+	 * @param  mixed               $value 	Rowid, ref or name given by the model.
+	 * @return CommonObject|null          	Record, or null when none or several fit (the reason is in writeProblems).
 	 */
 	private function resolveWriteTarget(array $write, $value)
 	{
@@ -7551,6 +7556,22 @@ class ToolApiBridge extends McpTool
 					$langs->load('other');
 					$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteProjectNotFound', (string) $given);
 				}
+			}
+		}
+		// A record named by an argument (the website a page is created in) may be given by its ref:
+		// resolved to its rowid here, or refused before the confirmation when not found.
+		$canCheck = !empty($this->db) && $this->user instanceof User;
+		foreach ((array) ($write['args_objects'] ?? array()) as $field => $class) {		// Loop on each arguments that designate an object that is not the object we want to create
+			$given = $args[$field] ?? '';
+			if (!$canCheck || is_array($given) || (string) $given === '' || (string) $given === '0') {
+				continue;
+			}
+			$obj = $this->resolveWriteTarget(array('object' => (string) $class, 'lookup' => 'ref'), $given);	// If $given is already an id, nothing is done, if a ref, it is converted in id if possible.
+			if ($obj && $this->userCanReach((string) $class, (int) $obj->id)) {
+				$args[$field] = (int) $obj->id;
+			} else {
+				$langs->load('other');
+				$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteRecordNotFound', dol_strtolower((string) $class), (string) $given);
 			}
 		}
 		foreach ((array) ($write['dates'] ?? array()) as $field) {

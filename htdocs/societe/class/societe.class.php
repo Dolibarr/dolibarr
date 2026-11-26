@@ -2265,6 +2265,40 @@ class Societe extends CommonObject
 	}
 
 	/**
+	 *  Insert an empty per-entity row into llx_societe_perentity for the given entity if none exists yet,
+	 *  so the set* overrides can then run a plain UPDATE. Avoids branching on affected_rows() == 0, which
+	 *  also returns 0 on an unchanged UPDATE and would re-insert, breaking the uk_societe_perentity key.
+	 *
+	 *  @param		int		$entity		Entity to create the per-entity row for
+	 *  @return		int					>0 if OK (row present or created), <0 if KO
+	 */
+	private function insertIfNotExistPerentityRow($entity)
+	{
+		$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix()."societe_perentity";
+		$sql .= " WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $entity);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$exists = ($obj && $obj->nb > 0);
+		$this->db->free($resql);
+
+		if (!$exists) {
+			$sql = "INSERT INTO ".$this->db->prefix()."societe_perentity (fk_soc, entity)";
+			$sql .= " VALUES (".((int) $this->id).", ".((int) $entity).")";
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				return -1;
+			}
+		}
+
+		return 1;
+	}
+
+	/**
 	 *  Change the bank account.
 	 *  Overridden to store the value per entity into llx_societe_perentity when MAIN_COMPANY_PERENTITY_SHARED is on
 	 *  (the thirdparty is shared between entities but not its default bank account).
@@ -2289,23 +2323,28 @@ class Societe extends CommonObject
 		if ($fk_account < 0) {
 			$fk_account = 'NULL';
 		}
-		dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
+		dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')', LOG_DEBUG);
+
+		$error = 0;
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_perentity SET fk_account = ".((int) $fk_account);
-		$sql .= " WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity);
-		$resql = $this->db->query($sql);
-		if ($resql && !$this->db->affected_rows($resql)) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (fk_soc, entity, fk_account)";
-			$sql .= " VALUES (".((int) $this->id).", ".((int) $conf->entity).", ".((int) $fk_account).")";
+		$result = $this->insertIfNotExistPerentityRow($conf->entity);
+		if ($result < 0) {
+			$error++;
+		} else {
+			$sql = "UPDATE ".$this->db->prefix()."societe_perentity SET fk_account = ".((int) $fk_account);
+			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity);
 			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error = $this->db->lasterror();
+			}
 		}
 
-		if (!$resql) {
-			dol_syslog(get_class($this).'::setBankAccount Error '.$this->db->error());
-			$this->error = $this->db->lasterror();
+		if ($error) {
 			$this->db->rollback();
+			dol_syslog(get_class($this).'::setBankAccount Error '.$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -2340,7 +2379,7 @@ class Societe extends CommonObject
 
 		global $conf;
 
-		dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.formatLogObject($deposit_percent).')');
+		dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.formatLogObject($deposit_percent).')', LOG_DEBUG);
 
 		$fieldname = (get_class($this) == 'Fournisseur') ? 'cond_reglement_supplier' : 'cond_reglement';
 
@@ -2351,24 +2390,38 @@ class Societe extends CommonObject
 			$deposit_percent = 100;
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET deposit_percent = ".(empty($deposit_percent) ? 'NULL' : "'".$this->db->escape((string) $deposit_percent)."'");
+		$error = 0;
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".$this->db->prefix()."societe SET deposit_percent = ".(empty($deposit_percent) ? 'NULL' : "'".$this->db->escape((string) $deposit_percent)."'");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
 
-		if ($resql) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe_perentity SET ".$this->db->sanitize($fieldname)." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity);
-			$resql = $this->db->query($sql);
-			if ($resql && !$this->db->affected_rows($resql)) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (fk_soc, entity, ".$this->db->sanitize($fieldname).")";
-				$sql .= " VALUES (".((int) $this->id).", ".((int) $conf->entity).", ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL').")";
-				$resql = $this->db->query($sql);
+		if (!$error) {
+			$result = $this->insertIfNotExistPerentityRow($conf->entity);
+			if ($result < 0) {
+				$error++;
 			}
 		}
 
-		if (!$resql) {
-			dol_syslog(get_class($this).'::setPaymentTerms Error '.$this->db->error());
-			$this->error = $this->db->lasterror();
+		if (!$error) {
+			$sql = "UPDATE ".$this->db->prefix()."societe_perentity SET ".$this->db->sanitize($fieldname)." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
+			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error = $this->db->lasterror();
+			}
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			dol_syslog(get_class($this).'::setPaymentTerms Error '.$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -2377,6 +2430,8 @@ class Societe extends CommonObject
 			$this->cond_reglement_supplier_id = $id;
 		}
 		$this->deposit_percent = $deposit_percent;
+
+		$this->db->commit();
 		return 1;
 	}
 
@@ -2395,22 +2450,30 @@ class Societe extends CommonObject
 
 		global $conf;
 
-		dol_syslog(get_class($this).'::setPaymentMethods('.$id.')');
+		dol_syslog(get_class($this).'::setPaymentMethods('.$id.')', LOG_DEBUG);
 
 		$fieldname = (get_class($this) == 'Fournisseur') ? 'mode_reglement_supplier' : 'mode_reglement';
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."societe_perentity SET ".$this->db->sanitize($fieldname)." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-		$sql .= " WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity);
-		$resql = $this->db->query($sql);
-		if ($resql && !$this->db->affected_rows($resql)) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perentity (fk_soc, entity, ".$this->db->sanitize($fieldname).")";
-			$sql .= " VALUES (".((int) $this->id).", ".((int) $conf->entity).", ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL').")";
+		$error = 0;
+
+		$this->db->begin();
+
+		$result = $this->insertIfNotExistPerentityRow($conf->entity);
+		if ($result < 0) {
+			$error++;
+		} else {
+			$sql = "UPDATE ".$this->db->prefix()."societe_perentity SET ".$this->db->sanitize($fieldname)." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
+			$sql .= " WHERE fk_soc = ".((int) $this->id)." AND entity = ".((int) $conf->entity);
 			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->error = $this->db->lasterror();
+			}
 		}
 
-		if (!$resql) {
-			dol_syslog(get_class($this).'::setPaymentMethods Error '.$this->db->error());
-			$this->error = $this->db->lasterror();
+		if ($error) {
+			$this->db->rollback();
+			dol_syslog(get_class($this).'::setPaymentMethods Error '.$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -2418,6 +2481,8 @@ class Societe extends CommonObject
 		if (get_class($this) == 'Fournisseur') {
 			$this->mode_reglement_supplier_id = $id;
 		}
+
+		$this->db->commit();
 		return 1;
 	}
 
@@ -3095,7 +3160,7 @@ class Societe extends CommonObject
 		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
 		$sql .= ", u.office_fax, u.user_mobile, u.personal_mobile";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
-		// Condition here should be the same than into select_dolusers()
+		// Condition here should be the same than into select_dolusers() and getSalesRepresentativesOfThirdparties()
 		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 			$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
 		} else {
@@ -3145,6 +3210,70 @@ class Societe extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 *  Return sales representatives of several third parties with one request (to use into lists instead of a getSalesRepresentatives() on each line)
+	 *
+	 *  @param	int[]		$socids			Array of IDs of third parties
+	 *	@return	int<-1,-1>|array<int,array<int,array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>>	Array (ID of third party => array of its sales representatives, sorted on lastname and firstname) or <0 if KO
+	 */
+	public function getSalesRepresentativesOfThirdparties(array $socids)
+	{
+		global $conf;
+
+		$reparray = array();
+
+		$listofsocids = array();
+		foreach ($socids as $socid) {
+			if ((int) $socid > 0) {
+				$listofsocids[(int) $socid] = (int) $socid;
+			}
+		}
+		if (empty($listofsocids)) {
+			return $reparray;
+		}
+
+		$sql = "SELECT sc.fk_soc, u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut as status, u.entity, u.photo, u.gender";
+		$sql .= ", u.office_fax, u.user_mobile, u.personal_mobile";
+		$sql .= " FROM ".$this->db->prefix()."societe_commerciaux as sc, ".$this->db->prefix()."user as u";
+		// Condition here should be the same than into getSalesRepresentatives()
+		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+			$sql .= " WHERE u.rowid IN (SELECT ug.fk_user FROM ".$this->db->prefix()."usergroup_user as ug WHERE ug.entity IN (".getEntity('usergroup')."))";
+		} else {
+			$sql .= " WHERE u.entity IN (0, ".((int) $conf->entity).")";
+		}
+		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc IN (".$this->db->sanitize(implode(',', $listofsocids)).")";
+		$sql .= $this->db->order('u.lastname,u.firstname', 'ASC,ASC');
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_print_error($this->db);
+			return -1;
+		}
+		while ($obj = $this->db->fetch_object($resql)) {
+			$reparray[(int) $obj->fk_soc][] = array(
+				'id' => (int) $obj->rowid,
+				'lastname' => $obj->lastname,
+				'firstname' => $obj->firstname,
+				'email' => $obj->email,
+				'phone' => $obj->office_phone,
+				'office_phone' => $obj->office_phone,			// Pro phone
+				'office_fax' => $obj->office_fax,
+				'user_mobile' => $obj->user_mobile,				// Pro mobile
+				'personal_mobile' => $obj->personal_mobile,		// Personal mobile
+				'job' => $obj->job,
+				'statut' => $obj->status, // deprecated
+				'status' => $obj->status,
+				'entity' => $obj->entity,
+				'login' => $obj->login,
+				'photo' => $obj->photo,
+				'gender' => $obj->gender,
+			);
+		}
+		$this->db->free($resql);
+
+		return $reparray;
 	}
 
 	/**

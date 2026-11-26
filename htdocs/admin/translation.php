@@ -235,9 +235,9 @@ $param = '&mode='.urlencode($mode);
 $enabledisablehtml = '<span class="divfilteralone">';
 if (!getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 	// Button off, click to enable
-	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=1'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp unsetcolor small" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=1'.$param.'">';
 } else {
-	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=0'.$param.'">';
+	$enabledisablehtml .= '<a class="reposition valignmiddle nounderlineimp unsetcolor small" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&token='.newToken().'&value=0'.$param.'">';
 }
 $enabledisablehtml .= $langs->trans("EnableOverwriteTranslation");
 if (!getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
@@ -384,14 +384,11 @@ if ($mode == 'overwrite') {
 
 	$text = $langs->trans("SomeTranslationAreUncomplete");
 	$urlwikitranslatordoc = 'https://wiki.dolibarr.org/index.php/Translator_documentation';
-	$text .= ' - <a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeAlso", $langs->transnoentitiesnoconv("Here")).' '.img_picto('', 'url').'</a>.<br>';
-	$infoOnTransProcess = info_admin($text);
-
-	$infoOnTransProcess .= '<div class="justify info">';
-	$infoOnTransProcess .= '<span class="">';
-	$infoOnTransProcess .= $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
-	$infoOnTransProcess .= ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
-	$infoOnTransProcess .= '</span></div>';
+	$text .= ' - <a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeAlso", $langs->transnoentitiesnoconv("Here")).' '.img_picto('', 'url').'</a>.<br><br>';
+	$text .= $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"));
+	$text .= ' ('.$langs->trans("TranslationOverwriteDesc2").').';
+	// No 'hideonsmartphone' css, so the help to fill the table below stays visible on smartphone
+	$infoOnTransProcess = info_admin($text, 0, 0, '1', '');
 
 	// If a cache for translation is on, show a warning.
 	if (isModEnabled('memcached') || getDolGlobalInt('MAIN_USE_CACHE_FOR_TRANSLATION')) {

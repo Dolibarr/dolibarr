@@ -113,10 +113,10 @@ class MyObjectStats extends Stats
 			$tmparray = explode('@', (string) $object->ismultientitymanaged);
 			$field = $tmparray[0];
 			$table = $tmparray[1];
-			$this->from = " INNER JOIN ".MAIN_DB_PREFIX.$table." as e ON c.".$this->db->sanitize($field)." = e.rowid AND e.entity IN (".getEntity($table.'@mymodule').")";
+			$this->join .= " INNER JOIN ".MAIN_DB_PREFIX.$table." as e ON c.".$this->db->sanitize($field)." = e.rowid AND e.entity IN (".getEntity($table.'@mymodule').")";
 		}
 		$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
-		$this->field = 'total_ht';
+		$this->field = 'amount';
 		$this->field_line = 'total_ht';
 		//$this->where .= " c.status > 0"; // Not draft and not cancelled
 		$this->categ_link = MAIN_DB_PREFIX.'categorie_societe';
@@ -273,13 +273,13 @@ class MyObjectStats extends Stats
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->db->sanitize($this->field_line).") as total, AVG(tl.".$this->db->sanitize($this->field_line).") as avg";
 		$sql .= " FROM ".$this->db->sanitize($this->from, 0, 1, 1);
-		$sql .= " INNER JOIN ".$this->db->sanitize($this->from_line, 0, 1, 1)." ON c.rowid = tl.fk_commande";
+		$sql .= " INNER JOIN ".$this->db->sanitize($this->from_line, 0, 1, 1)." ON c.rowid = tl.fk_myobject";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as product ON tl.fk_product = product.rowid";
 		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
-		$sql .= " WHERE ".$this->where;
+		$sql .= " WHERE 1 = 1".($this->where ? " AND ".$this->where : "");
 		$sql .= " AND c.date_creation BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
 		$sql .= " GROUP BY product.ref";
 		$sql .= $this->db->order('nb', 'DESC');
