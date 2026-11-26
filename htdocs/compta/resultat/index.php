@@ -140,6 +140,10 @@ if (isModEnabled('comptabilite')) {
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
+// When no accountancy module is enabled, no permission covers this page, so we refuse the access.
+if (!isModEnabled('comptabilite') && !isModEnabled('accounting')) {
+	accessforbidden();
+}
 
 
 /*
@@ -1070,7 +1074,7 @@ print '</tr>';
 
 
 // Loop on each month
-$nb_mois_decalage = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START - 1) : 0;
+$nb_mois_decalage = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') - 1) : 0;
 for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 	$mois_modulo = $mois;
 	if ($mois > 12) {

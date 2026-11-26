@@ -380,6 +380,17 @@ if (empty($groupedNormalTools) && empty($groupedSystemTools)) {
 				print img_picto($langs->trans('ToolRightsAndDefinition'), 'info');
 				print '</a>';
 				print '<div id="aitooldef' . $groupId . '_' . dol_escape_htmltag($name) . '" style="display: none;">';
+				// Categories (families) the tool belongs to
+				print '<strong>' . $langs->trans('McpToolFamily') . '</strong><br>';
+				$toolCategories = array_unique(array_filter((array) ($def['categories'] ?? array())));
+				if (!empty($toolCategories)) {
+					foreach ($toolCategories as $toolCategory) {
+						print '<span class="badgeneutral">' . dol_escape_htmltag((string) $toolCategory) . '</span> ';
+					}
+				} else {
+					print '<span class="opacitymedium">' . $langs->trans('None') . '</span>';
+				}
+				print '<br><br><br>';
 				print '<strong>' . $langs->trans('ToolRequiredPermissions') . '</strong><br>' . aiToolRightsHtml($mcpHandler, $name, $rightsLabels) . '<br><br>';
 				print '<strong>' . $langs->trans('ToolDefinitionSentToLLM') . '</strong>';
 				print '<pre class="small">' . dol_escape_htmltag($llmJson, 0, 1) . '</pre>';

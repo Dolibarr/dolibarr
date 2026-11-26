@@ -312,8 +312,8 @@ class IntracommReport extends CommonObject
 		$date_time->addChild('date', date('Y-m-d'));
 		$date_time->addChild('time', date('H:i:s'));
 		$party = $envelope->addChild('Party');
-		$party->addAttribute('partyType', $conf->global->INTRACOMMREPORT_TYPE_ACTEUR);
-		$party->addAttribute('partyRole', $conf->global->INTRACOMMREPORT_ROLE_ACTEUR);
+		$party->addAttribute('partyType', getDolGlobalString('INTRACOMMREPORT_TYPE_ACTEUR'));
+		$party->addAttribute('partyRole', getDolGlobalString('INTRACOMMREPORT_ROLE_ACTEUR'));
 		$party->addChild('partyId', $party_id);
 		$party->addChild('partyName', $declarant);
 		$envelope->addChild('softwareUsed', 'Dolibarr');
@@ -330,7 +330,7 @@ class IntracommReport extends CommonObject
 		$functionCode = $function->addChild('functionCode', $mode);
 		$declaration->addChild('declarationTypeCode', getDolGlobalString('INTRACOMMREPORT_NIV_OBLIGATION_'.strtoupper($type)));
 		$declaration->addChild('flowCode', ($type == 'introduction' ? 'A' : 'D'));
-		$declaration->addChild('currencyCode', $conf->global->MAIN_MONNAIE);
+		$declaration->addChild('currencyCode', getDolGlobalString('MAIN_MONNAIE'));
 
 		// Add lines of invoices
 		$res = $this->addItemsFact($declaration, $type, $period_reference);
@@ -464,7 +464,9 @@ class IntracommReport extends CommonObject
 			$tabledet = 'facture_fourn_det';
 			$field_link = 'fk_facture_fourn';
 		}
-		list($year, $month) = explode('-', $period_reference);
+		$tmparray = explode('-', $period_reference);
+		$year = $tmparray[0];
+		$month = $tmparray[1];
 		$period_end_of_month_day = cal_days_in_month(CAL_GREGORIAN, (int) $month, (int) $year);
 
 		$sql .= ", l.fk_product, l.qty
@@ -741,7 +743,9 @@ class IntracommReport extends CommonObject
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				list($class, $module) = explode('@', $this->picto);
+				$tmparray = explode('@', $this->picto);
+				$class = $tmparray[0];
+				$module = $tmparray[1];
 				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];

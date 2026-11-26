@@ -208,7 +208,7 @@ class MenuManager
 						print '<span class="fas fa-home fa-fw paddingright" aria-hidden="true"></span>';
 					}
 
-					print ucfirst($val['titre']);
+					print dol_ucfirst($val['titre']);
 					print '</a>'."\n";
 
 					// Search submenu for this mainmenu entry
@@ -252,14 +252,14 @@ class MenuManager
 						// We add sub entry
 						print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
-						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
+						if ($langs->trans(dol_ucfirst($val['mainmenu'])."Dashboard") == dol_ucfirst($val['mainmenu'])."Dashboard") {  // No translation
 							if (in_array($val['mainmenu'], array('cashdesk', 'websites'))) {
 								print $langs->trans("Access");
 							} else {
 								print $langs->trans("Dashboard");
 							}
 						} else {
-							print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+							print $langs->trans(dol_ucfirst($val['mainmenu'])."Dashboard");
 						}
 						print '</a>';
 						print '</li>'."\n";
@@ -365,7 +365,7 @@ class MenuManager
 						print $val['prefix'];
 					}
 
-					print ucfirst($val['titre']);
+					print dol_ucfirst($val['titre']);
 					print '</span>';
 				}
 				print '</li>';
@@ -476,7 +476,7 @@ class MenuManager
 								print '<span class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'">';
 							}
 							if ($menu_array[$i]['url']) {
-								print ucfirst($menu_array[$i]['titre']).'</a>';
+								print dol_ucfirst($menu_array[$i]['titre']).'</a>';
 							} else {
 								print '</span>';
 							}

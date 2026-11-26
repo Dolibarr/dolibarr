@@ -295,11 +295,9 @@ llxHeader('', $langs->trans("MassBarcodeInit"), '', '', 0, 0, '', '', '', 'mod-b
 
 if (!GETPOST('dol_openinpopup', 'aZ')) {
 	print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup');
-	print '<br>';
 }
 
-print '<span class="opacitymedium">'.$langs->trans("MassBarcodeInitDesc").'</span><br>';
-print '<br>';
+print '<div class="info">'.$langs->trans("MassBarcodeInitDesc").'</div>';
 print '<br>';
 
 

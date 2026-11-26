@@ -1300,6 +1300,18 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 						}
 					}
 				}
+				// Warn when enabling this module will disable other enabled modules declared in conflict with it
+				if (!empty($objMod->conflictwith) && is_array($objMod->conflictwith)) {
+					$conflictingmodulesenabled = array();
+					foreach ($objMod->conflictwith as $conflictmodname) {
+						if (getDolGlobalString('MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', $conflictmodname)))) {
+							$conflictingmodulesenabled[] = (empty($modules[$conflictmodname]) ? $conflictmodname : $modules[$conflictmodname]->getName());
+						}
+					}
+					if (!empty($conflictingmodulesenabled)) {
+						$warningmessage .= ($warningmessage ? "\n\n" : "").$langs->transnoentitiesnoconv("WarningModuleConflictWillBeDisabled", $objMod->getName(), implode(', ', $conflictingmodulesenabled));
+					}
+				}
 
 				$urltogo = $_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&token='.newToken().'&module_position='.$module_position.'&action=set&token='.newToken().'&value='.$modName.'&mode='.$mode.$param;
 				$popupWidth = 600;

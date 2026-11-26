@@ -117,7 +117,7 @@ class AdherentType extends CommonObject
 		"amountformuladescription" => array("type" => "longtext", "label" => "AmountFormulaDescription", "enabled" => "1", 'position' => 46, 'notnull' => 0, "visible" => "-1",),
 		"vote" => array("type" => "varchar(3)", "label" => "Vote", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "-1",),
 		"mail_valid" => array("type" => "longtext", "label" => "MailValidation", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "-3",),
-		"morphy" => array("type" => "varchar(3)", "label" => "MembersNature", "enabled" => "1", 'position' => 65, 'notnull' => 0, "visible" => "1",),
+		"morphy" => array("type" => "varchar(3)", "label" => "MembersNature", "enabled" => "1", 'position' => 31, 'notnull' => 0, "visible" => "1",),
 		"duration" => array("type" => "varchar(6)", "label" => "Duration", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "1",),
 		"note" => array("type" => "longtext", "label" => "Note", "enabled" => "1", 'position' => 100, 'notnull' => 0, "visible" => "-3",),
 		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 200, 'notnull' => 1, "visible" => "-1",),

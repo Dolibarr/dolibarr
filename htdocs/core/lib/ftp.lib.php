@@ -53,7 +53,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 	}
 
 	if ($ok) {
-		$connecttimeout = (!getDolGlobalString('FTP_CONNECT_TIMEOUT') ? 40 : $conf->global->FTP_CONNECT_TIMEOUT);
+		$connecttimeout = (!getDolGlobalString('FTP_CONNECT_TIMEOUT') ? 40 : getDolGlobalString('FTP_CONNECT_TIMEOUT'));
 		$tmp_conn_id = 0;
 		if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 			dol_syslog('Try to connect with ssh2_connect');

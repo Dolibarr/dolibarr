@@ -467,7 +467,43 @@ export function initAiAssistant(container) {
                 //   if it ever completes, is simply ignored).
                 const LOCAL_EXTRACT_TIMEOUT_MS = 20000;
                 const LOCAL_IMAGE_MAX_BYTES = 1500000;
+                // Option AI_ATTACHMENT_CONVERT_TO_TEXT: attachments are converted into
+                // text in the browser so the obfuscation applies on their content, and
+                // a file that cannot be converted is refused instead of sent as binary.
+                // 0=sent as is, 1=converted except a binary above the size threshold, 2=always converted.
+                const toTextMode = parseInt(config.attachmentToText || 0, 10);
+                const toTextMaxBytes = parseInt(config.attachmentToTextMaxBytes || 1500000, 10);
+
+                // With text conversion, a HEIC photo is handled from its JPEG transcoding.
+                // Renamed .jpg: the server keeps it under this name for an upload tool.
+                if (toTextMode && isHeic(file)) {
+                    try {
+                        file = new File([await transcodeImageToBlob(file, 'image/jpeg')], file.name.replace(/\.(heic|heif)$/i, '') + '.jpg', { type: 'image/jpeg' });
+                    } catch (errHeic) {
+                        throw new Error(t('AIAttachmentMustBeConvertedToText'));
+                    }
+                }
+
+                // BMP is taken by no provider: transcoded to PNG (lossless) by the browser, no external library.
+                if (file.type === 'image/bmp' || /\.bmp$/i.test(file.name)) {
+                    try {
+                        file = new File([await transcodeImageToBlob(file, 'image/png')], file.name.replace(/\.bmp$/i, '') + '.png', { type: 'image/png' });
+                    } catch (errBmp) {
+                        throw new Error(t('AIAttachmentTypeNotAllowed').replace('%s', file.type || file.name));
+                    }
+                }
+
                 const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|gif|bmp|webp)$/i.test(file.name);
+                // Image formats every provider takes natively (same list as ai_validate_attachments())
+                const isNativeImage = /^image\/(png|jpeg|gif|webp)$/.test(file.type);
+                // AI_SUPPORT_PRIVACY_ON_ALL_TYPE_OF_UPLOADED_FILES off: no conversion with external JS libraries,
+                // every file is handled as if above the threshold (native binary sent as is).
+                const convertSupported = !!parseInt(config.attachmentConvertSupport || 0, 10);
+                const isNativeBinary = (isNativeImage || file.type === 'application/pdf');
+                const isNativeText = (file.type === 'text/plain' || /^(text|application)\/xml$/.test(file.type) || /\.xml$/i.test(file.name));
+                // Mode 1: a native binary (image or PDF) above the threshold is sent as is
+                const sendAsIs = isNativeBinary && (!convertSupported || (toTextMode === 1 && file.size > toTextMaxBytes));
+                const toText = (toTextMode > 0 && !sendAsIs);
 
                 // HEIC/HEIF (iPhone photos): no provider-agnostic path exists — the
                 // in-browser OCR cannot decode it, Anthropic/OpenAI reject the MIME
@@ -475,14 +511,14 @@ export function initAiAssistant(container) {
                 // canvas where the browser can decode HEIC (Safari/iOS — precisely
                 // where those photos come from); otherwise send natively when the
                 // configured provider accepts it; otherwise explain clearly.
-                if (isHeic(file)) {
+                if (!toTextMode && isHeic(file)) {
                     let heicPayload = '';
                     try {
                         heicPayload = await transcodeImageToJpegMarker(file);
                     } catch (errHeic) {
                         if (parseInt(config.providerAcceptsHeic || 0, 10)) {
                             const b64 = String(await fileToBase64(file)).split(',').pop();
-                            heicPayload = `__FILE_ATTACHMENT__[image/heic]::${b64}`;
+                            heicPayload = `__FILE_ATTACHMENT__[${attachmentMarkerType('image/heic', file.name)}]::${b64}`;
                         } else {
                             throw new Error(t('AIAttachmentHeicUnsupported'));
                         }
@@ -493,31 +529,50 @@ export function initAiAssistant(container) {
                     input.focus();
                     return;
                 }
-                // Enforced privacy redaction: document contents cannot be masked,
-                // so the cloud-attachment fallback is off the table. Local
-                // extraction becomes the only route - attempt it even for large
-                // images (slow OCR beats a policy bypass), and fail with the
-                // policy message instead of silently shipping the file.
-                const redactOnly = !!parseInt(config.privacyRedaction || 0, 10);
-
                 let contentPayload = '';
-                if (redactOnly || !(isImage && file.size > LOCAL_IMAGE_MAX_BYTES)) {
+                const officeMime = officeMimeType(file);
+                if (officeMime) {
+                    // Office documents are always converted into text by the server with the bundled
+                    // libraries (ai_convert_office_attachment_to_text()), never in the browser.
+                    const b64 = String(await fileToBase64(file)).split(',').pop();
+                    contentPayload = `__FILE_ATTACHMENT__[${attachmentMarkerType(officeMime, file.name)}]::${b64}`;
+                } else if (toText) {
+                    // Local conversion is the only route: no timeout nor size limit
+                    // (slow OCR beats a binary send), any non empty text is accepted.
                     try {
-                        contentPayload = await Promise.race([
-                            processLocalFile(file),
-                            new Promise((resolve) => setTimeout(() => resolve(''), LOCAL_EXTRACT_TIMEOUT_MS))
-                        ]);
+                        contentPayload = await processLocalFile(file);
                     } catch (errLocal) {
                         contentPayload = '';
                     }
-                }
-                const usefulChars = (contentPayload || '').replace(/\s+/g, '').length;
-                if (usefulChars < 120) {
-                    if (redactOnly) {
-                        throw new Error(t('AIAttachmentBlockedByPrivacy'));
+                    if (!String(contentPayload || '').trim()) {
+                        throw new Error(t('AIAttachmentMustBeConvertedToText'));
                     }
-                    statusBar.innerText = t('ProcessingFile') + ` ${file.name} (cloud)...`;
+                } else if (sendAsIs || isNativeImage) {
+                    // No text conversion: the file is sent to the LLM as it is, without OCR.
                     contentPayload = await processCloudFile(file);
+                } else if (!convertSupported) {
+                    // No external library: text and XML files are read with the browser native API.
+                    if (isNativeText) {
+                        contentPayload = await processLocalFile(file);
+                    } else {
+                        throw new Error(t('AIAttachmentTypeNotAllowed').replace('%s', file.type || file.name));
+                    }
+                } else {
+                    if (!(isImage && file.size > LOCAL_IMAGE_MAX_BYTES)) {
+                        try {
+                            contentPayload = await Promise.race([
+                                processLocalFile(file),
+                                new Promise((resolve) => setTimeout(() => resolve(''), LOCAL_EXTRACT_TIMEOUT_MS))
+                            ]);
+                        } catch (errLocal) {
+                            contentPayload = '';
+                        }
+                    }
+                    const usefulChars = (contentPayload || '').replace(/\s+/g, '').length;
+                    if (usefulChars < 120) {
+                        statusBar.innerText = t('ProcessingFile') + ` ${file.name} (cloud)...`;
+                        contentPayload = await processCloudFile(file);
+                    }
                 }
 
                 if (!contentPayload || contentPayload.length < 5) {
@@ -546,20 +601,44 @@ export function initAiAssistant(container) {
     }
 
     /**
-     * Transcode an image file to a JPEG cloud-attachment marker via canvas.
+     * Transcode an image file to a blob of another type (image/jpeg, image/png) via canvas.
      * Only works where the browser can decode the source format (HEIC: Safari).
      */
-    async function transcodeImageToJpegMarker(file) {
+    async function transcodeImageToBlob(file, type) {
         const bitmap = await createImageBitmap(file);	// throws where HEIC is not decodable
         const canvas = document.createElement('canvas');
         canvas.width = bitmap.width;
         canvas.height = bitmap.height;
         canvas.getContext('2d').drawImage(bitmap, 0, 0);
-        const blob = await new Promise((resolve, reject) => {
-            canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.85);
+        return await new Promise((resolve, reject) => {
+            canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob failed'))), type, 0.85);
         });
+    }
+
+    /**
+     * Return the MIME type of an office document (docx, odt, xlsx, xls, ods) converted into text
+     * by the server, or '' for another file. Browsers may report an empty type for these files.
+     */
+    function officeMimeType(file) {
+        const mimes = {
+            docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            odt: 'application/vnd.oasis.opendocument.text',
+            xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            xls: 'application/vnd.ms-excel',
+            ods: 'application/vnd.oasis.opendocument.spreadsheet'
+        };
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        return mimes[ext] || '';
+    }
+
+    /**
+     * Transcode an image file to a JPEG cloud-attachment marker via canvas.
+     * Only works where the browser can decode the source format (HEIC: Safari).
+     */
+    async function transcodeImageToJpegMarker(file) {
+        const blob = await transcodeImageToBlob(file, 'image/jpeg');
         const base64 = String(await fileToBase64(blob)).split(',').pop();
-        return `__FILE_ATTACHMENT__[image/jpeg]::${base64}`;
+        return `__FILE_ATTACHMENT__[${attachmentMarkerType('image/jpeg', file.name.replace(/\.(heic|heif)$/i, '') + '.jpg')}]::${base64}`;
     }
 
     /** Pick a FontAwesome icon class from a file name extension. */
@@ -796,62 +875,6 @@ export function initAiAssistant(container) {
         return v;
     }
 
-    // =========================================================================
-    // LIBRARY LOADERS & EXTRACTORS
-    // =========================================================================
-
-    /**
-     * Loads Mammoth.js (for .docx) via script tag.
-     */
-    async function getMammothLib() {
-        if (window.mammoth) return window.mammoth;
-        const scriptUrl = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.11.0/mammoth.browser.min.js';
-        return loadScript(scriptUrl, 'mammoth');
-    }
-
-    /**
-     * Loads SheetJS (for .xls/.xlsx) via script tag.
-     */
-    async function getXlsxLib() {
-        if (window.XLSX) return window.XLSX;
-        const scriptUrl = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
-        return loadScript(scriptUrl, 'XLSX');
-    }
-
-    /**
-     * Loads JSZip (for .odt/.ods) via script tag.
-     */
-    async function getJszipLib() {
-        if (window.JSZip) return window.JSZip;
-        const scriptUrl = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
-        return loadScript(scriptUrl, 'JSZip');
-    }
-
-    /**
-     * Generic Helper to load a script and check for the global variable.
-     */
-    function loadScript(url, globalVarName) {
-        if (document.querySelector(`script[src="${url}"]`)) {
-            // If script exists but var isn't loaded yet, poll briefly
-            return new Promise((resolve) => {
-                const check = setInterval(() => {
-                    if (window[globalVarName]) {
-                        clearInterval(check);
-                        resolve(window[globalVarName]);
-                    }
-                }, 50);
-            });
-        }
-
-        return new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = url;
-            script.async = true;
-            script.onload = () => resolve(window[globalVarName]);
-            script.onerror = () => reject(new Error(`${t('NetworkError')}: ${url}`));
-            document.head.appendChild(script);
-        });
-    }
 
 
     // =========================================================================
@@ -899,6 +922,30 @@ export function initAiAssistant(container) {
         }
     }
 
+    /**
+     * Tesseract language list for OCR: the user language plus English.
+     * Each language is a separate traineddata download, so keep the list short.
+     */
+    function getOcrLangList() {
+        const tesseractCodes = {
+            am: 'amh', ar: 'ara', az: 'aze', bg: 'bul', bn: 'ben', br: 'bre', bs: 'bos', ca: 'cat',
+            cs: 'ces', cy: 'cym', da: 'dan', de: 'deu', el: 'ell', es: 'spa', et: 'est', eu: 'eus',
+            fa: 'fas', fi: 'fin', fr: 'fra', gl: 'glg', he: 'heb', hi: 'hin', hr: 'hrv', hu: 'hun',
+            id: 'ind', is: 'isl', it: 'ita', ja: 'jpn', ka: 'kat', kk: 'kaz', km: 'khm', kn: 'kan',
+            ko: 'kor', ku: 'kmr', lo: 'lao', lt: 'lit', lv: 'lav', mk: 'mkd', mn: 'mon', ms: 'msa',
+            my: 'mya', nb: 'nor', ne: 'nep', nl: 'nld', pl: 'pol', pt: 'por', ro: 'ron', ru: 'rus',
+            sk: 'slk', sl: 'slv', sq: 'sqi', sr: 'srp', sv: 'swe', sw: 'swa', ta: 'tam', tg: 'tgk',
+            th: 'tha', tr: 'tur', uk: 'ukr', ur: 'urd', uz: 'uzb', vi: 'vie', zh: 'chi_sim'
+        };
+        const locale = String(config.locale || '').toLowerCase();
+        let code = tesseractCodes[locale.split('-')[0]] || '';
+        if (locale === 'zh-tw' || locale === 'zh-hk') {
+            code = 'chi_tra';
+        }
+
+        return (code && code !== 'eng') ? code + '+eng' : 'eng';
+    }
+
     async function extractTextFromImage(file) {
         try {
             statusBar.innerText = t('TryingOCR');
@@ -907,16 +954,7 @@ export function initAiAssistant(container) {
             const Tesseract = module.default || window.Tesseract;
 
             if (Tesseract) {
-                const langList =
-                    'afr+amh+ara+asm+aze+aze_cyrl+bel+ben+bod+bos+bre+bul+cat+ceb+ces+' +
-                    'chi_sim+chi_tra+chr+cos+cym+dan+deu+dzo+ell+eng+enm+' +
-                    'epo+est+eus+fao+fas+fil+fin+fra+frk+frm+fry+gla+gle+glg+' +
-                    'grc+guj+hat+heb+hin+hrv+hun+hye+iku+ind+isl+ita+ita_old+jav+jpn+' +
-                    'kan+kat+kat_old+kaz+khm+kir+kmr+kor+kor_vert+lao+lat+lav+lit+' +
-                    'ltz+mal+mar+mkd+mlt+mon+mri+msa+mya+nep+nld+nor+oci+ori+osd+' +
-                    'pan+pol+por+pus+que+ron+rus+san+sin+slk+slv+snd+spa+spa_old+' +
-                    'sqi+srp+srp_latn+sun+swa+swe+syr+tam+tat+tel+tgk+tha+tir+ton+' +
-                    'tur+uig+ukr+urd+uzb+uzb_cyrl+vie+yid+yor';
+                const langList = getOcrLangList();
 
                 const { data: { text } } = await Tesseract.recognize(
                     file,
@@ -975,68 +1013,6 @@ export function initAiAssistant(container) {
         return JSON.stringify(jsonObject, null, 2);
     }
 
-    //Extractors for Office/ODF Files ---
-    async function extractTextFromWord(file) {
-        statusBar.innerText = t('ReadingWord');
-        try {
-            const mammoth = await getMammothLib();
-            statusBar.innerText = t('ReadingWord');
-            const arrayBuffer = await file.arrayBuffer();
-            const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-            return result.value;
-        } catch (e) {
-            throw new Error(t('Error') + ": " + e.message);
-        }
-    }
-
-    async function extractTextFromExcel(file) {
-        statusBar.innerText = t('ReadingExcel');
-        try {
-            const XLSX = await getXlsxLib();
-            statusBar.innerText = t('ReadingExcel');
-            const arrayBuffer = await file.arrayBuffer();
-            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-
-            // Grab the first sheet name
-            const firstSheetName = workbook.SheetNames[0];
-
-            // Convert sheet to CSV (good format for AI to understand data)
-            const csvData = XLSX.utils.sheet_to_csv(workbook.Sheets[firstSheetName], { header: 1 });
-
-            return `--- Excel Sheet: ${firstSheetName} ---\n${csvData}`;
-        } catch (e) {
-            throw new Error(t('Error') + ": " + e.message);
-        }
-    }
-
-    async function extractTextFromOdf(file) {
-        statusBar.innerText = t('ReadingOdf');
-        try {
-            const JSZip = await getJszipLib();
-            statusBar.innerText = t('ReadingOdf');
-            const zip = await JSZip.loadAsync(file);
-
-            // For ODT, the text is usually in 'content.xml'. For ODS, also 'content.xml'
-            let contentXml = null;
-            if (zip.file("content.xml")) {
-                contentXml = await zip.file("content.xml").async("string");
-            } else {
-                throw new Error("Invalid ODF file (content.xml missing).");
-            }
-
-            const textContent = contentXml.replace(/<[^>]+>/g, '\n')
-                .replace(/\s+/g, ' ')
-                .replace(/&nbsp;/g, ' ')
-                .replace(/&lt;/g, '<')
-                .replace(/&gt;/g, '>')
-                .replace(/&amp;/g, '&')
-                .trim();
-            return `--- ODF Content ---\n${textContent}`;
-        } catch (e) {
-            throw new Error(t('Error') + ": " + e.message);
-        }
-    }
-
     function fileToBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -1082,36 +1058,6 @@ export function initAiAssistant(container) {
         // PDF files
         if (file.type === 'application/pdf') {
             return await extractTextFromPDF(file);
-        }
-
-        // Word documents (.docx)
-        if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-            || file.name.endsWith('.docx')) {
-            return await extractTextFromWord(file);
-        }
-
-        // Excel files (.xlsx)
-        if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            || file.name.endsWith('.xlsx')) {
-            return await extractTextFromExcel(file);
-        }
-
-        // Legacy Excel files (.xls)
-        if (file.type === 'application/vnd.ms-excel'
-            || file.name.endsWith('.xls')) {
-            return await extractTextFromExcel(file);
-        }
-
-        // OpenDocument Text (.odt)
-        if (file.type === 'application/vnd.oasis.opendocument.text'
-            || file.name.endsWith('.odt')) {
-            return await extractTextFromOdf(file);
-        }
-
-        // OpenDocument Spreadsheet (.ods)
-        if (file.type === 'application/vnd.oasis.opendocument.spreadsheet'
-            || file.name.endsWith('.ods')) {
-            return await extractTextFromOdf(file);
         }
 
         // Image files
@@ -1184,7 +1130,15 @@ export function initAiAssistant(container) {
         // pure base64 after '::' and hands it to the LLM as a native multimodal
         // part — with the prefix left in, the marker is never recognized.
         const base64 = String(await fileToBase64(file)).split(',').pop();
-        return `__FILE_ATTACHMENT__[${file.type}]::${base64}`;
+        return `__FILE_ATTACHMENT__[${attachmentMarkerType(file.type, file.name)}]::${base64}`;
+    }
+
+    /**
+     * Type part of an attachment marker: the MIME type and the original file name, so the server
+     * keeps the file under its name for an upload tool (see ai_attachment_parse_marker_type()).
+     */
+    function attachmentMarkerType(mime, name) {
+        return `${mime};name=${encodeURIComponent(name || '')}`;
     }
 
     // =========================================================================
@@ -1506,7 +1460,7 @@ export function initAiAssistant(container) {
             // A table does not size its bubble (it scrolls inside): such a bubble takes the whole row
             if (bubble.querySelector('.chat-table-wrap')) bubble.classList.add('msg-bubble-wide');
             if (actions) bubble.appendChild(buildActions(actions));
-            // Context pin: the last AUTO_CONTEXT exchanges follow the model by
+            // Context pin: the last AUTO_CONTEXT messages follow the model by
             // default (sliding window), the user pins older ones explicitly or
             // excludes recent ones - the token cost stays visible in the bar.
             if (rawText) {
@@ -2364,7 +2318,7 @@ export function initAiAssistant(container) {
             const template = t('ConfirmAiAction');
             messageHtml = template.replace('%1$s', `<strong>${action}</strong>`).replace('%2$s', `<strong>${toolName}</strong>`);
         }
-        let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${details}</p>` : ''}</div></div>`;
+        let html = `<div class="confirmation-dialog"><div class="confirmation-header"><i class="fas fa-question-circle"></i><strong>${t('confirmation')}</strong></div><div class="confirmation-body"><p>${messageHtml}</p>${details ? `<p class="confirmation-details">${escapeHtml(details)}</p>` : ''}</div></div>`;
         const actions = [
             { text: t('YesProceed'), class: 'danger', icon: 'fa-check', onclick: () => confirmAction() },
             { text: t('Cancel'), icon: 'fa-times', onclick: () => cancelAction() }
@@ -2741,7 +2695,7 @@ export function initAiAssistant(container) {
         return '[' + (toolName || 'tool') + ' result] ' + s;
     }
 
-    // Number of recent exchanges (question + answer) that follow the model by
+    // Number of recent messages (questions and answers) that follow the model by
     // default. 0 = fully manual: nothing goes back unless the user pins it.
     const AUTO_CONTEXT = Math.max(0, parseInt(config.autoContext, 10) || 0);
 
@@ -2758,8 +2712,8 @@ export function initAiAssistant(container) {
         return msgs;
     }
 
-    // Effective context = the sliding window of the last AUTO_CONTEXT exchanges
-    // (counted from the questions) + explicit pins - explicit exclusions. Each
+    // Effective context = the sliding window of the last AUTO_CONTEXT messages
+    // (questions and answers) + explicit pins - explicit exclusions. Each
     // bubble holds its own decision in data-ctx: '' follows the window, 'on' is
     // pinned for good, 'off' is excluded. Recomputed after every change, so the
     // window slides as the conversation grows while the pins stay put.
@@ -2769,21 +2723,16 @@ export function initAiAssistant(container) {
         // The question being answered is the query itself, never context: it
         // waits outside the window until its answer arrives.
         const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
-        if (pending) { pending.classList.remove('ctx-pinned'); pending.dataset.ctxWindow = ''; }
-        let windowStart = msgs.length;
-        if (AUTO_CONTEXT > 0) {
-            let questions = 0;
-            for (let i = msgs.length - 1; i >= 0; i--) {
-                if (msgs[i].dataset.aiRole === 'user' && ++questions === AUTO_CONTEXT) { windowStart = i; break; }
-                if (i === 0) windowStart = 0;
-            }
-        }
+        if (pending) { pending.classList.remove('ctx-pinned', 'ctx-excluded'); pending.dataset.ctxWindow = ''; }
+        const windowStart = Math.max(0, msgs.length - AUTO_CONTEXT);
         msgs.forEach((m, i) => {
             const inWindow = i >= windowStart;
             const state = m.dataset.ctx || '';
             const on = state === 'on' || (state === '' && inWindow && !m.dataset.aiError);
             m.dataset.ctxWindow = inWindow ? '1' : '';
             m.classList.toggle('ctx-pinned', on);
+            // Bubbles left out of the context are dimmed (see .ctx-excluded in CSS).
+            m.classList.toggle('ctx-excluded', !on);
             const pin = m.querySelector('.ctx-pin');
             if (pin) {
                 // Two glyphs: a planted blue pin (travels with the next question)
@@ -2828,7 +2777,7 @@ export function initAiAssistant(container) {
     }
 
     // Small bar above the input: how many exchanges are pinned and their rough
-    // token weight (chars/4) - the cost of the selected context stays visible.
+    // token weight (chars/4) - the cost of the selected context is in the label tooltip.
     function updateContextBar() {
         let bar = container.querySelector('#ai-ctx-bar');
         // Past exchanges the user can act on (the pending question is not one).
@@ -2836,8 +2785,7 @@ export function initAiAssistant(container) {
         const pinned = collectPinnedContext();
         if (!past.length) { if (bar) bar.remove(); return; }
         const tokens = Math.round(pinned.reduce((n, p) => n + p.text.length, 0) / 4);
-        // The setting counts exchanges (question + answer), so the bar says
-        // both: exchanges, then messages - one unit on its own misleads.
+        // The setting counts messages; the bar also says how many questions they hold.
         const exchanges = pinned.filter((p) => p.role === 'user').length;
         if (!bar) {
             bar = document.createElement('div');
@@ -2848,11 +2796,11 @@ export function initAiAssistant(container) {
         // "Auto (3)" is lit as long as every bubble simply follows the window
         // (no manual pin, no exclusion): one glance says which mode is on.
         const isDefault = !contextAllMode && past.every((m) => !m.dataset.ctx);
-        bar.innerHTML = '<span class="fas fa-thumbtack"></span> ' + escapeHtml(t('AIContextLabel')) +
+        const counter = t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens));
+        bar.innerHTML = '<span class="ai-ctx-label" title="' + escapeHtml(t('AIContextLabelHelp') + '\n' + counter) + '"><span class="fas fa-thumbtack"></span> ' + escapeHtml(t('AIContextLabel')) + '</span>' +
             (AUTO_CONTEXT > 0 ? ' <a href="#" id="ai-ctx-auto" class="' + (isDefault ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAutoTitle').replace('%s', String(AUTO_CONTEXT))) + '"><span class="fa fa-history"></span> ' + t('AIContextAuto').replace('%s', String(AUTO_CONTEXT)) + '</a>' : '') +
             ' <a href="#" id="ai-ctx-all" class="' + (contextAllMode ? 'ai-ctx-active' : '') + '" title="' + escapeHtml(t('AIContextAllTitle')) + '"><span class="fa fa-check-double paddingright"></span>' + t('AIContextAll') + '</a>' +
-            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('None') + '</a>' +
-            ' <span class="opacitymedium marginleftonly" title="' + escapeHtml(t('AIContextCounter').replace('%s', String(exchanges)).replace('%s', String(pinned.length)).replace('%s', String(tokens))) + '">(' + escapeHtml(t('AIContextTokens').replace('%s', String(tokens))) + ')</span>';
+            ' <a href="#" id="ai-ctx-clear" title="' + escapeHtml(t('AIContextClearTitle')) + '"><span class="fa fa-eraser paddingright"></span>' + t('None') + '</a>';
         const auto = bar.querySelector('#ai-ctx-auto');
         if (auto) {
             auto.onclick = (ev) => {
@@ -3174,7 +3122,8 @@ export function initAiAssistant(container) {
         date: 'DateInvoice', datef: 'DateInvoice', date_lim_reglement: 'DateMaxPayment',
         total_ht: 'TotalHT', total_ttc: 'TotalTTC', total_tva: 'AmountVAT',
         remaintopay: 'RemainderToPay', price: 'Price', price_ttc: 'PriceTTC', tva_tx: 'VATRate',
-        code_client: 'CustomerCode', code_fournisseur: 'SupplierCode', fournisseur: 'Supplier'
+        code_client: 'CustomerCode', code_fournisseur: 'SupplierCode', fournisseur: 'Supplier',
+        user_group_list: 'UserGroups'
     };
     const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
         'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
@@ -3187,6 +3136,11 @@ export function initAiAssistant(container) {
         'no_email', 'typent_id', 'stcomm_id', 'fk_prospectlevel', 'country_id', 'fk_multicurrency', 'multicurrency_tx',
         'remise_supplier_percent'
         ]);
+    // Columns shown for a table nested into a single-object result, with their label key (null = default label).
+    // Display only: the LLM and the MCP still receive all fields.
+    const NESTED_COLUMNS = {
+        user_group_list: { id: null, name: 'Group' }
+    };
     // Local tax fields are shown only when the country of the company uses this local tax.
     [1, 2].forEach((x) => {
         if (!parseInt(config['useLocalTax' + x] || 0, 10)) {
@@ -3274,6 +3228,12 @@ export function initAiAssistant(container) {
         if (k === 'paye') return (String(v) === '1' ? '✓' : '✗');
         return escapeHtml(decodeHtmlEntities(String(v)));
     }
+    // True if the value is a text (not an amount, a date or a number sent as a string by the API)
+    function isTextCell(k, v) {
+        if (typeof v !== 'string' || v.trim() === '') return false;
+        if (MONEY_FIELDS.has(k) || isDateField(k)) return false;
+        return isNaN(Number(v.trim()));
+    }
     // socid -> customer name, resolved once per render through the bridge.
     async function resolveThirdpartyNames(container) {
         const cells = container.querySelectorAll('td[data-socid]');
@@ -3293,14 +3253,14 @@ export function initAiAssistant(container) {
             cells.forEach(c => {
                 const id = c.getAttribute('data-socid');
                 if (names[id]) {
-                    c.innerHTML = `<a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a>`;
+                    c.innerHTML = `<div class="chat-cell"><a href="${(config.urlRoot || '')}/societe/card.php?socid=${encodeURIComponent(id)}" target="_blank" class="chat-link">${escapeHtml(decodeHtmlEntities(names[id]))}</a></div>`;
                 }
             });
             saveChatHistory();
         } catch (e) { /* names stay as ids */ }
     }
 
-    function formatResult(data, isRecursive = false, toolName = '') {
+    function formatResult(data, isRecursive = false, toolName = '', columns = null) {
         if (!data) return t('NoDataAvailable');
         if (data.error) {
             // 'detail' is the reason given by the API (e.g. a 403 that explains itself), shown under the translated error
@@ -3316,12 +3276,16 @@ export function initAiAssistant(container) {
             if (data.length === 0) return t('NoRecordFound');
             isArray = true;
             let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid' && !HIDDEN_FIELDS.has(k));
+            // A table with its own list of columns shows only these ones, in this order
+            if (columns) {
+                keys = Object.keys(columns).filter(k => keys.includes(k));
+            }
             content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
             // Rows that are files (their url is a document.php download): the
             // "name" column is the file, not a third party, and the file gets a
             // magnifier opening Dolibarr's preview (same link, attachment=0).
             const isFileList = data.length > 0 && typeof data[0].url === 'string' && /\/document\.php\?/.test(data[0].url);
-            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : fieldLabel(k)}</th>`);
+            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : ((columns && columns[k]) ? escapeHtml(t(columns[k])) : fieldLabel(k))}</th>`);
             content += '</tr></thead><tbody>';
             data.forEach(row => {
                 content += '<tr>';
@@ -3335,10 +3299,12 @@ export function initAiAssistant(container) {
                             val += ` <a href="${previewUrl}" target="_blank" class="chat-link chat-preview" title="${escapeHtml(t('Preview'))}"><span class="fas fa-search-plus"></span></a>`;
                         }
                     }
+                    // Content is wrapped into a div: the 2 lines max clamp can't be set on a td (it needs display -webkit-box)
+                    // A socid cell is a text cell too: its id is replaced later by the name of the third party
                     if ((k === 'socid' || k === 'fk_soc') && row[k]) {
-                        content += `<td data-socid="${escapeHtml(String(row[k]))}">${val}</td>`;
+                        content += `<td class="tdoverflowmax100" data-socid="${escapeHtml(String(row[k]))}"><div class="chat-cell">${val}</div></td>`;
                     } else {
-                        content += `<td>${val}</td>`;
+                        content += `<td${isTextCell(k, row[k]) ? ' class="tdoverflowmax100"' : ''}><div class="chat-cell">${val}</div></td>`;
                     }
                 });
                 content += '</tr>';
@@ -3359,7 +3325,11 @@ export function initAiAssistant(container) {
                 // in {count, offset, limit, results} would otherwise show only the
                 // counters, and the rows would never reach the user.
                 else if (Array.isArray(value) && value.length && typeof value[0] === 'object') {
-                    nested += formatResult(value, true, toolName);
+                    // Title of the table, except for the rows of a wrapper (data, results) that are the answer itself
+                    if (key !== 'data' && key !== 'results') {
+                        nested += `<div class="chat-nested-title">${escapeHtml(fieldLabel(key))}</div>`;
+                    }
+                    nested += formatResult(value, true, toolName, NESTED_COLUMNS[key] || null);
                 }
             }
             content += '</ul></div>';

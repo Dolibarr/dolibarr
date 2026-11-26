@@ -2478,6 +2478,7 @@ function pdf_getlineref_supplier($object, $i, $outputlangs, $hidedetails = 0)
 		$result .= $hookmanager->resPrint;
 	}
 	if (empty($reshook)) {
+		// ref_supplier is not defined on some object lines, for example on Contract lines @phan-suppress-next-line PhanUndeclaredProperty
 		$result .= dol_htmlentitiesbr($object->lines[$i]->ref_supplier);
 	}
 	return $result;
@@ -2793,7 +2794,7 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line unit
  *
- *	@param	SupplierProposal|CommandeFournisseur|Propal|Facture|FactureFournisseur|Commande|StockTransfer	$object	Object
+ *	@param	SupplierProposal|CommandeFournisseur|Propal|Facture|FactureFournisseur|Commande|StockTransfer|Expedition	$object	Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
@@ -2995,10 +2996,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
-			if (!empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
-				if (method_exists($object->lines[$i], 'getSituationRatio')) {
-					$total_ht *= $object->lines[$i]->getSituationRatio();
-				}
+			// The property situation_percent and the method getSituationRatio() exist only on invoice lines (FactureLigne)
+			if ($object->lines[$i] instanceof FactureLigne && !empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
+				$total_ht *= $object->lines[$i]->getSituationRatio();
 			}
 			$result .= price($sign * $total_ht, 0, $outputlangs);
 		}
@@ -3045,7 +3045,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
-			if (isset($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
+			if ($object->lines[$i] instanceof FactureLigne && !empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
 				$total_ttc *= $object->lines[$i]->getSituationRatio();
 			}
 			$result .= price($sign * $total_ttc, 0, $outputlangs);
