@@ -25,16 +25,41 @@
 
 require "../../main.inc.php";
 
+$langs->loadLangs(array('errors'));
+
+if (!$user->hasRight('societe', 'creer')) {
+	accessforbidden();
+}
+
 $username = getDolGlobalString('AADE_WEBSERVICE_USER'); // Get username from request
 $password = getDolGlobalString('AADE_WEBSERVICE_KEY'); // Get password from request
 $myafm = preg_replace('/\D/', '', getDolGlobalString('MAIN_INFO_TVAINTRA')); // Get Vat from request after removing non-digit characters
-$afm = GETPOST('afm'); // Get client Vat from request
+$afm = preg_replace('/\D/', '', GETPOST('afm', 'alphanohtml')); // Get client Vat from request
 
 // Make call to check VAT for Greek client
-$result = checkVATGR($username, $password, $myafm, $afm);
+if (!class_exists('SoapClient')) {
+	dol_syslog("checkVatGr.php: PHP extension soap is not available", LOG_ERR);
+	$result = checkVATGRError(dol_string_nohtmltag($langs->transnoentitiesnoconv('ErrorPHPNeedModule', 'soap')));
+} else {
+	$result = checkVATGR($username, $password, $myafm, $afm);
+}
 
 top_httphead('application/json');
 echo json_encode($result); // Encode the result as JSON and output
+
+/**
+ * Build an error answer with the same structure as the web service, so the caller displays the message
+ *
+ * @param	string					$message	Error message
+ * @return	array<string,mixed>
+ */
+function checkVATGRError(string $message): array
+{
+	return array(
+		'RgWsPublicBasicRt_out' => array('afm' => null),
+		'pErrorRec_out' => array('errorDescr' => $message),
+	);
+}
 
 /**
 * Request VAT details
@@ -42,10 +67,12 @@ echo json_encode($result); // Encode the result as JSON and output
 * @param 	string 	$password 			Company AADE password
 * @param 	string 	$AFMcalledby 		Company vat number
 * @param 	string 	$AFMcalledfor 		Client vat number
-* @return   string
+* @return   mixed						Answer of the web service, or error array built by checkVATGRError()
 */
 function checkVATGR($username, $password, $AFMcalledby, $AFMcalledfor)
 {
+	global $langs;
+
 	/*
 	$WS_DOL_URL_WSDL = "https://www1.gsis.gr/webtax2/wsgsis/RgWsPublic/RgWsPublicPort?WSDL";
 
@@ -69,21 +96,27 @@ function checkVATGR($username, $password, $AFMcalledby, $AFMcalledfor)
 
 	*/
 
-	// TODO Replace this with code using nusoap_client() and remove phpstan tag
-	// @phpstan-ignore-next-line
-	$client = new SoapClient("https://www1.gsis.gr/webtax2/wsgsis/RgWsPublic/RgWsPublicPort?WSDL", array('trace' => true));
-	$authHeader = new stdClass();
-	$authHeader->UsernameToken = new stdClass();
-	$authHeader->UsernameToken->Username = "$username";
-	$authHeader->UsernameToken->Password = "$password";
-	$Headers[] = new SoapHeader('https://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd', 'Security', $authHeader, true);
-	$client->__setSoapHeaders($Headers);
-	$result = $client->rgWsPublicAfmMethod(
-		array(
-			'afmCalledBy' => "$AFMcalledby",
-			'afmCalledFor' => "$AFMcalledfor",
-		)
-	);
+	try {
+		// TODO Replace this with code using nusoap_client() and remove phpstan tag
+		// @phpstan-ignore-next-line
+		$client = new SoapClient("https://www1.gsis.gr/webtax2/wsgsis/RgWsPublic/RgWsPublicPort?WSDL", array('trace' => true));
+		$authHeader = new stdClass();
+		$authHeader->UsernameToken = new stdClass();
+		$authHeader->UsernameToken->Username = "$username";
+		$authHeader->UsernameToken->Password = "$password";
+		$Headers = array();
+		$Headers[] = new SoapHeader('https://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd', 'Security', $authHeader, true);
+		$client->__setSoapHeaders($Headers);
+		$result = $client->rgWsPublicAfmMethod(
+			array(
+				'afmCalledBy' => "$AFMcalledby",
+				'afmCalledFor' => "$AFMcalledfor",
+			)
+		);
+	} catch (Exception $e) {
+		dol_syslog("checkVatGr.php: call to the GSIS web service failed: ".$e->getMessage(), LOG_ERR);
+		return checkVATGRError($langs->transnoentitiesnoconv('ErrorServiceUnavailableTryLater'));
+	}
 
 	return $result;
 }
