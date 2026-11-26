@@ -146,7 +146,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		} else {
 			$disabled = 0;
 			if (getDolGlobalString("SUBTOTAL_CAN_USE_LONG_TITLE")) {
-				print '<textarea name="line_desc" class="marginrightonly minwidth300 valignmiddle" id="line_desc"';
+				print '<textarea name="line_desc" class="marginrightonly width200" rows="3" id="line_desc"';
 				if ($line_type == 'subtotal') {
 					print ' readonly="readonly"';
 					$disabled = 1;
@@ -174,26 +174,30 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		}
 		if ($line_type != 'text') {
 			$depth_array = $this->getPossibleLevels($langs);  // Suppose CommonSubtotal trait @phan-suppress-current-line PhanUndeclaredMethod
-			print $form->selectarray('line_depth', $depth_array, abs($line->qty), 0, 0, 0, '', 0, 0, $disabled);
+			print '<div class="margintoponly">';
+			print $form->selectarray('line_depth', $depth_array, abs($line->qty), 0, 0, 0, '', 0, 0, $disabled, '', 'minwidth75 valignmiddle');
+			print '</div>';
 		}
 		if ($disabled) {
 			print '<input type="hidden" name="line_depth" value="' . $line->qty . '">';
 		}
-		print '<div><ul class="ecmjqft">';
+		print '<div class="margintoponly">';
 		foreach ($line_options as $key => $value) {
 			if (in_array($line_type, $value['type'])) {
 				if ($line_type == 'title') {
-					print '<li><label for="' . $key . '">' . $langs->trans($value['trans_key']) . '</label>';
-					print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '" ';
-					print $value['checked'] ? 'checked' : '';
-					print '></li>';
+					print '<label for="' . $key . '" class="inline-block valignmiddle marginrightonly nowraponall">';
+					print '<input class="valignmiddle marginrightonlyshort" id="' . $key . '" type="checkbox" name="' . $key . '" value="' . $value['value'] . '"';
+					print $value['checked'] ? ' checked' : '';
+					print '>';
+					print '<span class="valignmiddle">' . $langs->trans($value['trans_key']) . '</span>';
+					print '</label>';
 				}
 				if ($line_type == 'subtotal') {
 					print '<input style="float: left;margin-top: 9px;" id="' . $key . '" type="hidden" name="' . $key . '" value="' . $value['value'] . '">';
 				}
 			}
 		}
-		print '</ul></div></td>';
+		print '</div></td>';
 		print '<td colspan="' . $colspan . '" class="right"></td>';
 	} else {
 		print '<input type="text" readonly name="line_desc" id="line_desc" value="';
