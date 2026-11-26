@@ -743,6 +743,7 @@ export function initAiAssistant(container) {
         for (; next < lines.length && lines[next].indexOf('|') >= 0; next++) {
             const row = splitMarkdownRow(lines[next]);
             while (row.length < header.length) row.push('');
+            row.length = header.length;
             rows.push(row);
         }
 

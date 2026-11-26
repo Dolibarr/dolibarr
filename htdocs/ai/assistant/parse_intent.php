@@ -1136,7 +1136,7 @@ try {
 
 					$intentJSON = json_decode($clean, true);
 					if ($intentJSON === null) {
-						// Some models write real newlines inside the json strings, which is not valid: escape them
+						// Some models write real control characters (newlines, tabs...) inside the json strings, which is not valid: escape them
 						// (and not remove them, the markdown of the answer needs its lines) and try again.
 						$cleanescaped = preg_replace_callback(
 							'/"(?:[^"\\\\]++|\\\\.)*+"/s',
@@ -1145,7 +1145,7 @@ try {
 							 * @return string
 							 */
 							static function ($reg) {
-								return str_replace(array("\r\n", "\r", "\n"), '\n', $reg[0]);
+								return (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', strtr($reg[0], array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', "\t" => '\t')));
 							},
 							$clean
 						);
