@@ -258,6 +258,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 $form = new Form($db);
 $formCron = new FormCron($db);
 
+if ($action != 'create' && empty($object->id)) {
+	recordNotFound();
+}
+
 llxHeader('', $langs->trans("CronTask"));
 
 $head = cron_prepare_head($object);
