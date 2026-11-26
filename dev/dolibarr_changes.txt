@@ -257,7 +257,6 @@ NOTES   :
             } elseif ( $this->allowLocalFiles && substr($imgsrc, 0, 7) === 'file://') {
         -       // get image type from a local file path
         -       $imgsrc = substr($imgsrc, 7);
-        -       $type = TCPDF_IMAGES::getImageFileType($imgsrc);
         +       // @CHANGE LDR Add support for src="file://..." links
         +       $imgsrc = str_replace('file://', '/', $imgsrc);
         +       $imgsrc = urldecode($imgsrc);
@@ -269,8 +268,14 @@ NOTES   :
         +           // convert URL to server path
         +           $imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
         +       }
+        +       // @CHANGE DOL Keep upstream's image type detection, otherwise SVG are sent to Image()/Imagick instead of ImageSVG()
+                $type = TCPDF_IMAGES::getImageFileType($imgsrc);
             } elseif ($this->hasExtForbiddenProtocol($imgsrc)) {
     NOTES  :
+      - The upstream "$type = TCPDF_IMAGES::getImageFileType($imgsrc);" line must be kept at the end of
+        the branch, computed on the translated local path. Without it, $type is undefined ("Undefined
+        variable $type" warning), so SVG images are passed to Image() instead of ImageSVG(): they are
+        rasterized by Imagick and ImageMagick 6 leaves a dangling /tmp/magick-* symlink for each one.
       - allowLocalFiles defaults to false upstream (new in 6.11.4, opt-in on purpose - it also gates a
         fileExists() check for "file://" paths). Dolibarr enables it itself by calling
         $pdf->setAllowLocalFiles(true) right after instantiating TCPDF/TCPDI in
