@@ -2725,7 +2725,10 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 		// Get parameters
 		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];
 		// requestState is set by the chat after the user confirmed a write, never by the model.
-		unset($toolParams['properties']['requestState']);
+		// The properties of a tool without parameter may be an empty object (encoded as {} in JSON) instead of an array.
+		if (isset($toolParams['properties']) && is_array($toolParams['properties'])) {
+			unset($toolParams['properties']['requestState']);
+		}
 
 		if ($isLargeSchema && isset($toolParams['properties']) && is_array($toolParams['properties'])) {
 			$requiredList = $toolParams['required'] ?? [];
