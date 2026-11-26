@@ -327,6 +327,7 @@ class Fichinter extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
+			$this->datec = $now;
 
 			if ($this->id) {
 				$this->ref = '(PROV'.$this->id.')';
