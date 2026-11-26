@@ -516,10 +516,12 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					'DB_ERROR_22P02'
 				);
 				// The foreign key of the category link tables can target a table owned by a module that is not
-				// enabled, llx_categorie_mo referencing llx_mrp_mo for instance, so the key can not be created
-				// yet. The module creates it when it is enabled. Elsewhere this error must stay fatal, since it
-				// is what reports orphans or duplicates when a key is added on corrupted data.
-				if (preg_match('/^\s*ALTER\s+TABLE\s+[^\s]+_categorie_mo\s.*REFERENCES\s+[^\s(]+_mrp_mo\s*\(/i', $newsql)) {
+				// enabled, llx_categorie_mo referencing llx_mrp_mo or llx_categorie_skill referencing llx_hrm_skill
+				// for instance, so the key can not be created yet. The module creates it when it is enabled.
+				// Elsewhere this error must stay fatal, since it is what reports orphans or duplicates when a
+				// key is added on corrupted data.
+				if (preg_match('/^\s*ALTER\s+TABLE\s+[^\s]+_categorie_mo\s.*REFERENCES\s+[^\s(]+_mrp_mo\s*\(/i', $newsql)
+					|| preg_match('/^\s*ALTER\s+TABLE\s+[^\s]+_categorie_skill\s.*REFERENCES\s+[^\s(]+_hrm_skill\s*\(/i', $newsql)) {
 					$okerrors[] = 'DB_ERROR_CANNOT_ADD_FOREIGN_KEY_CONSTRAINT';
 				}
 
