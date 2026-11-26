@@ -304,6 +304,9 @@ class DolibarrApi
 	protected function _cleanObjectDatas($object)
 	{
 		// phpcs:enable
+		// Keep table_element before it is removed, to know later if comments must be kept
+		$tableelement = isset($object->table_element) ? $object->table_element : '';
+
 		// Remove $db object property for object
 		unset($object->db);
 		unset($object->isextrafieldmanaged);
@@ -423,7 +426,7 @@ class DolibarrApi
 
 		unset($object->prefix_comm);
 
-		if (!isset($object->table_element) || ! in_array($object->table_element, array('expensereport_det', 'ticket'))) {
+		if (!in_array($tableelement, array('expensereport_det', 'ticket'))) {
 			unset($object->comments);
 		}
 
