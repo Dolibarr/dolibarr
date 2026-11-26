@@ -209,7 +209,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--tableforfieldcolor:#888;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008855;
-	--amountremaintopaybackcolor:none;
+	--amountremaintopaybackcolor:inherit;
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
@@ -267,7 +267,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	            --tableforfieldcolor:rgb(220,220,220);
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
-	            --amountremaintopaybackcolor:rbg(245,130,46);
+	            --amountremaintopaybackcolor:rgb(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 				--tablevalidbgcolor: rgb(80, 64, 33);
 				--colorblack: #fff;
@@ -2625,11 +2625,20 @@ td.showDragHandle {
 }
 <?php } ?>
 
-@media screen and (prefers-color-scheme: dark) {
+<?php
+if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
+		print "@media screen and (prefers-color-scheme: dark) {\n";
+	} else {
+		print "@media not print {\n";
+	} ?>
 	.side-nav-vert {
 		border-bottom: 1px solid #888;
 	}
+	<?php
+	print "}\n";
 }
+?>
 
 .side-nav {
 <?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>

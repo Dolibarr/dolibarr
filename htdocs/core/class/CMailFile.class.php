@@ -1127,6 +1127,8 @@ class CMailFile
 					$loginpass = getDolGlobalString($keyforsmtppw);
 					$this->smtps->setPW($loginpass);
 				}
+				// Authentication method of the send context (MAIN_MAIL_SMTPS_AUTH_TYPE_xxx when the context has its own setup)
+				$this->smtps->setAuthType(getDolGlobalString($keyforsmtpauthtype));
 
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
@@ -2196,7 +2198,10 @@ class CMailFile
 		// For example when:
 		// <img alt="" src="/src="data:image....;base64,...." />
 		$matches = array();
-		preg_match_all('/src="data:image\/('.implode('|', $extensions).');base64,([^"]+)"/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
+		// Optional MIME parameters may come before ";base64", for example when a screenshot is pasted into the WYSIWYG editor:
+		// src="data:image/png;filename=Screenshot%202024-10-09.png;base64,...". Without them in the regex, the image stays
+		// inline into the HTML body as one very long line that SMTP relays refuse ("line too long").
+		preg_match_all('/src="data:image\/('.implode('|', $extensions).')(?:;[a-z0-9_.+-]+=[^;",]*)*;base64,([^"]+)"/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
 
 		if (!empty($matches) && !empty($matches[1])) {
 			if (empty($images_dir)) {
@@ -2239,7 +2244,7 @@ class CMailFile
 					// type
 					$this->html_images[$i]["type"] = 'cidfromdata';
 
-					$this->html = str_replace('src="data:image/'.$ext.';base64,'.$filecontent.'"', 'src="cid:'.$this->html_images[$i]["cid"].'"', $this->html);
+					$this->html = str_replace($matches[0][$key], 'src="cid:'.$this->html_images[$i]["cid"].'"', $this->html);
 				}
 				$i++;
 			}

@@ -1215,6 +1215,7 @@ TheTranslationIsSearchedFromKey=The translation is searched from the translation
 TranslationKey=Translation key
 ValueOfConstantKey=Value of a configuration constant
 ConstantIsOn=Option %s is on
+ConstantExperimentalUnofficialIsOn=Unofficial experimental option %s is on
 NbOfDays=No. of days
 AtEndOfMonth=At end of month
 CurrentNext=A given day in month

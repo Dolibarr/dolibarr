@@ -136,7 +136,8 @@ $array_options = array();
 
 // Load object
 if ($id > 0 || !empty($ref)) {
-	if ($action != 'add') {
+	// The creation form posts ref=provisoire (action=add, or action=create when the page is reloaded after a thirdparty change): there is nothing to load
+	if ($action != 'add' && $action != 'create') {
 		if (!getDolGlobalString('INVOICE_USE_SITUATION')) {
 			$fetch_situation = false;
 		} else {
@@ -1745,7 +1746,7 @@ if (empty($reshook)) {
 						$exp = new Expedition($db);
 						$exp->fetch($object->origin_id);
 						$exp->fetchObjectLinked();
-						if (is_array($exp->linkedObjectsIds['commande']) && count($exp->linkedObjectsIds['commande']) > 0) {
+						if (!empty($exp->linkedObjectsIds['commande']) && is_array($exp->linkedObjectsIds['commande'])) {	// A shipment without sales order (SHIPMENT_STANDALONE) has no linked order
 							foreach ($exp->linkedObjectsIds['commande'] as $key => $value) {
 								$object->linked_objects['commande'] = $value;
 							}
@@ -1860,6 +1861,22 @@ if (empty($reshook)) {
 								}
 
 								$descline .= ' - '.$srcobject->ref;
+
+								// Cost price of the line: cost of the source lines with the same vat rate (all lines for a fixed amount), prorated
+								// to the amount of the line, like a down payment from a percent of all lines that keeps the cost price of each line.
+								$totalhtofsource = 0;
+								$totalcostofsource = 0;
+								foreach ((is_array($srcobject->lines) ? $srcobject->lines : array()) as $srcline) {
+									if (empty($srcline->qty) || !empty($srcline->special_code)) {
+										continue;
+									}
+									if (($typeamount == 'amount' && !getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) || price2num($srcline->tva_tx) == price2num(preg_replace('/\s*\(.*\)/', '', (string) $tva))) {
+										$totalhtofsource += (float) $srcline->total_ht;
+										$totalcostofsource += (float) $srcline->qty * (float) $srcline->pa_ht;
+									}
+								}
+								$pa_ht = ($totalhtofsource != 0 ? (float) price2num($amount * $totalcostofsource / $totalhtofsource, 'MU') : 0);
+
 								$result = $object->addline(
 									$descline,
 									(float) $amount, // subprice
@@ -1872,18 +1889,18 @@ if (empty($reshook)) {
 									0, // date_start
 									0, // date_end
 									0,
-									$i >= 0 ? $lines[$i]->info_bits : 0, // info_bits
+									isset($lines[$i]) ? $lines[$i]->info_bits : 0, // info_bits
 									0,
 									'HT',
 									0,
 									0, // product_type
 									1,
-									$i >= 0 ? $lines[$i]->special_code : 0,
+									isset($lines[$i]) ? $lines[$i]->special_code : 0,
 									$object->origin_type,
 									0,
 									0,
 									0,
-									0,
+									$pa_ht, // pa_ht
 									'',
 									array(), // array_options
 									100,
@@ -2340,7 +2357,10 @@ if (empty($reshook)) {
 			$action = 'create';
 			$_GET["origin"] = $_POST["origin"];		// Keep GET and POST here ?
 			$_GET["originid"] = $_POST["originid"]; // Keep GET and POST here ?
-			setEventMessages($object->error, $object->errors, 'errors');
+			// A failed form check has already shown its own message and left $object->error empty
+			if (!empty($object->error) || !empty($object->errors)) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && (GETPOST('alldate_start', 'alpha') || GETPOST('alldate_end', 'alpha')) && $usercancreate) {
 		// Define date start and date end for all line
@@ -3084,7 +3104,7 @@ if (empty($reshook)) {
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
 		$pu_ttc_devise = price2num(GETPOST('multicurrency_subprice_ttc'), '', 2);
 
-		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
+		$qty = price2num(GETPOST('qty', 'alpha'), 'MS', 2);
 
 		// Define info_bits
 		$info_bits = 0;

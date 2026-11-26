@@ -98,8 +98,8 @@ $hookmanager->initHooks(array('cli'));
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 
-if (getDolGlobalInt('MAILING_DELAY')) {
-	print 'A delay of '.((float) getDolGlobalInt('MAILING_DELAY')).' seconds has been set between each email'."\n";
+if (getDolGlobalFloat('MAILING_DELAY') > 0) {
+	print 'A delay of '.getDolGlobalFloat('MAILING_DELAY').' seconds has been set between each email'."\n";
 }
 
 //if (getDolGlobalString('MAILING_LIMIT_SENDBYCLI') == '-1') {
@@ -402,8 +402,8 @@ if ($resql) {
 									}
 								}
 
-								if (getDolGlobalInt('MAILING_DELAY')) {
-									usleep((int) ((float) getDolGlobalInt('MAILING_DELAY') * 1000000));
+								if (getDolGlobalFloat('MAILING_DELAY') > 0) {
+									usleep((int) (getDolGlobalFloat('MAILING_DELAY') * 1000000));
 								}
 							}
 						} else {

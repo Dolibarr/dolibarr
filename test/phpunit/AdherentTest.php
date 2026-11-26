@@ -155,6 +155,9 @@ class AdherentTest extends CommonClassTest
 		$localobject = new Adherent($db);
 		$result = $localobject->fetch($id);
 		print __METHOD__." id=".$id." result=".$result."\n";
+		if ($result < 0) {
+			print $localobject->error."\n";
+		}
 		$this->assertLessThan($result, 0);
 		$this->assertEquals('MR', $localobject->civility_code);		// Value set by initAsSpecimen() and stored by create()
 		return $localobject;

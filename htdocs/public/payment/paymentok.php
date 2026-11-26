@@ -418,6 +418,16 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
 
 			try {
+				// With Stripe Checkout, the id we have is the one of the Checkout Session (cs_...), we get the PaymentIntent from it
+				if (preg_match('/^cs_/', $TRANSACTIONID)) {
+					if (empty($stripeacc)) {
+						$checkoutsession = \Stripe\Checkout\Session::retrieve($TRANSACTIONID);
+					} else {
+						$checkoutsession = \Stripe\Checkout\Session::retrieve($TRANSACTIONID, array("stripe_account" => $stripeacc));
+					}
+					$TRANSACTIONID = (string) $checkoutsession->payment_intent;
+				}
+
 				if (empty($stripeacc)) {
 					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID);
 				} else {
@@ -425,7 +435,13 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 				}
 
 				// Check amount and currency
-				$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents
+				// Handle zero-decimal currencies that don't use cents/subunits
+				$zeroDecimalCurrencies = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+				if (in_array(strtoupper($currencyCodeType), $zeroDecimalCurrencies)) {
+					$expectedAmount = (int) round($FinalPaymentAmt); // No cents for these currencies
+				} else {
+					$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents for most currencies
+				}
 				$expectedCurrency = strtolower($currencyCodeType);
 
 				if ((int) $paymentIntent->amount !== $expectedAmount || strtolower($paymentIntent->currency) !== $expectedCurrency) {

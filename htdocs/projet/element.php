@@ -1587,7 +1587,7 @@ foreach ($listofreferent as $key => $value) {
 				$total_time_by_line = 0;
 				if ($tablename == 'expensereport_det') {
 					'@phan-var-force ExpenseReportLine $element';
-					$date = $element->date; // No draft status on lines
+					$date = $element->dates; // No draft status on lines. ->date is the raw SQL string, ->dates the timestamp
 				} elseif ($tablename == 'stock_mouvement') {
 					'@phan-var-force MouvementStock $element';
 					$date = $element->datem;

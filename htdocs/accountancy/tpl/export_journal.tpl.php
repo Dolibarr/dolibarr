@@ -46,6 +46,11 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
+// The journal pages do not define the export format, only the export of the general ledger does
+if (!isset($formatexportset)) {
+	$formatexportset = 0;
+}
+
 $code = getDolGlobalString('MAIN_INFO_ACCOUNTANT_CODE');
 $prefix = getDolGlobalString('ACCOUNTING_EXPORT_PREFIX_SPEC');
 $format = getDolGlobalString('ACCOUNTING_EXPORT_FORMAT');

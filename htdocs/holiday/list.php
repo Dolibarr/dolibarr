@@ -871,8 +871,8 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$approbatorstatic->status = $obj->validator_status;
 		$approbatorstatic->photo = $obj->validator_photo;
 
-		$date = $obj->date_create;
-		$date_modif = $obj->date_modification;
+		$date = $db->jdate($obj->date_create);
+		$date_modif = $db->jdate($obj->date_modification);
 
 		$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 		$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';

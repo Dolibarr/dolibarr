@@ -471,10 +471,10 @@ if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
 	print '<div class="info">' . $langs->trans("ConstantIsOn", "ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY") . '</div>';
 }
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-	print '<div class="info">' . $langs->trans("ConstantIsOn", "MAIN_COMPANY_PERENTITY_SHARED") . '</div>';
+	print '<div class="warning">' . $langs->trans("ConstantExperimentalUnofficialIsOn", "MAIN_COMPANY_PERENTITY_SHARED") . '</div>';
 }
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
-	print '<div class="info">' . $langs->trans("ConstantIsOn", "MAIN_PRODUCT_PERENTITY_SHARED") . '</div>';
+	print '<div class="warning">' . $langs->trans("ConstantExperimentalUnofficialIsOn", "MAIN_PRODUCT_PERENTITY_SHARED") . '</div>';
 }
 
 print '<br>';

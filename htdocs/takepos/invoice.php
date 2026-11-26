@@ -5,6 +5,7 @@
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +129,7 @@ function fail($message)
 
 
 
-$number = (float) GETPOST('number', 'alpha');
+$number = GETPOSTFLOAT('number', '', 0);	// Option 0: the value is typed in the free zone (user format) or sent by the numeric pad (always with a dot)
 $idline = GETPOSTINT('idline');
 $selectedline = GETPOSTINT('selectedline');
 $desc = GETPOST('desc', 'alphanohtml');
@@ -254,6 +255,10 @@ if (empty($reshook)) {
 
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
+
+		// Stock of products with lot/serial is moved below only when this call validates the draft sale.
+		// A later payment on an already validated sale must not move it a second time.
+		$invoicewasdraft = ($invoice->status == Facture::STATUS_DRAFT);
 
 		$invoice->oldcopy = dol_clone($invoice, 2);
 
@@ -400,7 +405,7 @@ if (empty($reshook)) {
 		$warehouseid = 0;
 		// Update stock for batch products
 		if (!$error && $res >= 0) {
-			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
+			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange && $invoicewasdraft) {
 				// Update stocks
 				dol_syslog("Now we record the stock movement for each qualified line");
 
@@ -670,6 +675,14 @@ if (empty($reshook)) {
 
 		$invoice = new Facture($db);
 		$invoice->fetch($placeid);
+
+		// The header (and what follows) must show the customer of this sale, not the one of the current cart
+		$soc = new Societe($db);
+		if ($invoice->socid > 0) {
+			$soc->fetch($invoice->socid);
+		} else {
+			$soc->fetch(getDolGlobalInt($constforcompanyid));
+		}
 	}
 
 	// If we add a line and no invoice yet, we create the invoice
@@ -2215,7 +2228,6 @@ if ($placeid > 0) {
 								if ($obj) {
 									$stock_real = price2num($obj->reel, 'MS');
 								}
-								$htmlforlines .= $line->qty;
 								$htmlforlines .= '&nbsp; ';
 								$htmlforlines .= '<span class="opacitylow" title="'.$langs->trans("Stock").' '.price($stock_real, 1, '', 1, 0).'">';
 								$htmlforlines .= '(';

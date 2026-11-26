@@ -1780,7 +1780,7 @@ while ($i < $imaxinloop) {
 		// Prospect status
 		if (!empty($arrayfields['p.fk_stcommcontact']['checked'])) {
 			print '<td class="center nowrap"><div class="nowrap">';
-			print '<div class="inline-block">'.$contactstatic->libProspCommStatut($obj->stcomm_id, 2, $contactstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
+			print '<div class="inline-block">'.$contactstatic->libProspCommStatut($obj->stcomm_id, 2, $contactstatic->cacheprospectstatus[$obj->stcomm_id]['label'] ?? '', $obj->stcomm_picto);
 			print '</div> - <div class="inline-block">';
 			foreach ($contactstatic->cacheprospectstatus as $key => $val) {
 				$titlealt = 'default';

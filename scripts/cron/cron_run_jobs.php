@@ -213,6 +213,9 @@ $nbofjobslaunchedko = 0;
 if (is_array($object->lines) && (count($object->lines) > 0)) {
 	$savconf = dol_clone($conf);
 
+	// Is module cron activated into the entity of $conf ? Updated each time we switch to another entity.
+	$cronenabledinentity = isModEnabled('cron');
+
 	// Loop over job
 	foreach ($object->lines as $line) {
 		/** @var Cronjob $line */
@@ -236,7 +239,8 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			$mysoc->setMysoc($conf);
 
 			// Check module cron is activated
-			if (!isModEnabled('cron')) {
+			$cronenabledinentity = isModEnabled('cron');
+			if (!$cronenabledinentity) {
 				print "Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity."\n";
 				dol_syslog("cron_run_jobs.php: Canceled - Module Scheduled jobs (cron) not activated into entity ".$line->entity, LOG_INFO);
 				continue;
@@ -269,6 +273,11 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				$langs->tab_translate = array();
 				$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 			}
+		} elseif (!$cronenabledinentity) {
+			// Same entity as the previous job (or first entity of the loop), and module cron is not activated into it
+			print " - Canceled - Module Scheduled jobs (cron) not activated into entity ".$conf->entity."\n";
+			dol_syslog("cron_run_jobs.php: Canceled - Module Scheduled jobs (cron) not activated into entity ".$conf->entity, LOG_INFO);
+			continue;
 		}
 
 		if (!verifCond($line->test)) {

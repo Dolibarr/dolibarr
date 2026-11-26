@@ -728,6 +728,16 @@ class Export
 				$this->error = "ErrorBadParameter can't find dataset ".$datatoexport." into preload arrays this->array_export_code";
 				return -1;
 			}
+
+			// A saved export model may still list a field that does not exist anymore (a deleted extrafield for example).
+			// build_sql() does not select it, so it must not be written either: the writers would read an undefined property on each line.
+			foreach (array_keys($array_selected) as $key) {
+				if (!array_key_exists($key, $this->array_export_fields[$indice])) {
+					dol_syslog(__METHOD__." field ".$key." is not available anymore in dataset ".$datatoexport.", it is ignored", LOG_WARNING);
+					unset($array_selected[$key]);
+				}
+			}
+
 			$sql = $this->build_sql($indice, $array_selected, $array_filterValue);
 		}
 

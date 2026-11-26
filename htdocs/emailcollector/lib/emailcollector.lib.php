@@ -164,38 +164,6 @@ function getFileData($jk, $fpos, $type, $mbox)
 }
 
 /**
- * Save the attached file into a directory with a given name
- *
- * @param 	string 		$path 		Path to file
- * @param 	string 		$filename 	Name of file
- * @param 	mixed 		$data 		Content to save
- * @return 	string|-1 				Return the path to the saved file, or -1 if error
- **/
-function saveAttachment($path, $filename, $data)
-{
-	$tmp = explode('.', $filename);
-	$ext = array_pop($tmp);
-	$filename = implode('.', $tmp);
-	if (!file_exists($path)) {
-		if (dol_mkdir($path) < 0) {
-			return -1;
-		}
-	}
-
-	$i = 1;
-	$filepath = $path . $filename . '.' . $ext;
-
-	while (file_exists($filepath)) {
-		$filepath = $path . $filename . '(' . $i . ').' . $ext;
-		$i++;
-	}
-	file_put_contents($filepath, $data);
-	dolChmod($filepath);
-
-	return $filepath;
-}
-
-/**
  * Decode content of a message
  *
  * @param 	string 		$message 	Message

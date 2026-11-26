@@ -281,7 +281,8 @@ class FileUpload
 		$new_file_path = $options['upload_dir'].$file_name;
 
 		if (dol_mkdir($options['upload_dir']) >= 0) {
-			list($img_width, $img_height) = @getimagesize($file_path);
+			$imagesize = @getimagesize($file_path);	// false if the file is not an image, and destructuring false raises a warning since PHP 8.5
+			list($img_width, $img_height) = (is_array($imagesize) ? $imagesize : array(null, null));
 			if (!$img_width || !$img_height) {
 				return false;
 			}
@@ -350,7 +351,9 @@ class FileUpload
 			$file->error = 'maxNumberOfFiles';
 			return false;
 		}
-		list($img_width, $img_height) = @getimagesize($uploaded_file);
+		// getimagesize() throws a ValueError on an empty path since PHP 8, so it is not called when the file was not found
+		$imagesize = (empty($uploaded_file) ? false : @getimagesize($uploaded_file));	// false if the file is not an image, and destructuring false raises a warning since PHP 8.5
+		list($img_width, $img_height) = (is_array($imagesize) ? $imagesize : array(null, null));
 		if (is_numeric($img_width)) {
 			if ($this->options['max_width'] && $img_width > $this->options['max_width'] ||
 					$this->options['max_height'] && $img_height > $this->options['max_height']) {
@@ -439,7 +442,9 @@ class FileUpload
 
 		// Sanitize to avoid stream execution when calling file_size(). Not that this is a second security because
 		// most streams are already disabled by stream_wrapper_unregister() in filefunc.inc.php
-		$uploaded_file = preg_replace('/\s*(http|ftp|sftp|)s?:/i', '', $uploaded_file);
+		// A scheme has at least 2 characters (http:, phar:, data:...), so the drive letter of a Windows path
+		// (C:\wamp64\tmp\php1A2.tmp) is kept: removing it made realpath() fail and every upload fail on Windows.
+		$uploaded_file = preg_replace('/\s*[a-z][a-z0-9+.\-]+:/i', '', (string) $uploaded_file);
 		$uploaded_file = realpath($uploaded_file);	// A hack to be sure the file point to an existing file on disk (and is not a SSRF attack)
 
 		$validate = $this->validate($uploaded_file, $file, $error, $index);

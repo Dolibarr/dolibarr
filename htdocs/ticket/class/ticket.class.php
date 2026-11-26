@@ -641,7 +641,6 @@ class Ticket extends CommonObject
 				return $this->id;
 			}
 		} else {
-			$this->db->rollback();
 			dol_syslog(get_class($this)."::Create fails verify ".implode(',', $this->errors), LOG_WARNING);
 			return -3;
 		}
@@ -2403,7 +2402,7 @@ class Ticket extends CommonObject
 			$sql .= ", t.office_phone as phone, t.user_mobile as phone_mobile";
 		}
 
-		if ($source == 'external') {
+		if ($source == 'external' || $source == 'thirdparty') {
 			$sql .= ", t.phone as phone, t.phone_mobile as phone_mobile, t.phone_perso as phone_perso";
 		}
 

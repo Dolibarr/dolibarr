@@ -129,22 +129,51 @@ if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'l
 if ($action == "addnewlineproduct" && $user->hasRight('stock', 'creer')) {
 	require_once DOL_DOCUMENT_ROOT."/product/inventory/class/inventory.class.php";
 	$inventoryline = new InventoryLine($db);
-	if (!empty($fk_inventory)) {
+	// Same permission and status as the counting form of the inventory page
+	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+		$permissiontoupdatestock = $user->hasRight('stock', 'mouvement', 'creer');
+	} else {
+		$permissiontoupdatestock = $user->hasRight('stock', 'inventory_advance', 'write');
+	}
+	$inventory = new Inventory($db);
+	if (!$permissiontoupdatestock) {
+		$response = array('status' => 'error', 'errorcode' => 'NotEnoughPermissions', 'message' => "Not enough permissions");
+	} elseif (!empty($fk_inventory) && ($inventory->fetch($fk_inventory) <= 0 || $inventory->status != $inventory::STATUS_VALIDATED)) {
+		$response = array('status' => 'error', 'errorcode' => 'BadStatus', 'message' => "Inventory not found or not in a status that allows counting");
+	} elseif (!empty($fk_inventory)) {
 		$inventoryline->fk_inventory = $fk_inventory;
 
 		$inventoryline->fk_warehouse = $fk_entrepot;
 		$inventoryline->fk_product = $fk_product;
 		$inventoryline->qty_stock = $reelqty;
-		if (!empty($batch)) {
-			$inventoryline->batch = $batch;
-		}
+		// Use '' and not NULL when there is no lot: NULL escapes the unique key, so a duplicate line would be created
+		$inventoryline->batch = (string) $batch;
 		$inventoryline->datec = dol_now();
 
-		$result = $inventoryline->create($user);
+		// Same checks on lot as when a line is added from the inventory page
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$langs->load("errors");
+		$errorcode = '';
+		$tmpproduct = new Product($db);
+		if (isModEnabled('productbatch') && $tmpproduct->fetch($fk_product) > 0) {
+			if ($tmpproduct->status_batch > 0 && $inventoryline->batch === '') {
+				$errorcode = 'ErrorProductNeedBatchNumber';	// The stock movement of a line without lot would be refused when recording
+			} elseif (empty($tmpproduct->status_batch) && $inventoryline->batch !== '') {
+				$errorcode = 'ErrorProductDoesNotNeedBatchNumber';
+			}
+		}
+
+		$result = (empty($errorcode) ? $inventoryline->create($user) : -1);
+		if ($result < 0 && empty($errorcode) && $db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+			$errorcode = 'ErrorRecordAlreadyExists';
+		}
 		if ($result > 0) {
 			$response = array('status' => 'success','message' => 'Success on creating line','id_line' => $result);
 		} else {
 			$response = array('status' => 'error','errorcode' => 'ErrorCreation','message' => "Error on line creation");
+		}
+		if (!empty($errorcode)) {
+			$response = array('status' => 'error', 'errorcode' => $errorcode, 'message' => $langs->transnoentitiesnoconv($errorcode, $tmpproduct->ref));
 		}
 	} else {
 		$response = array('status' => 'error','errorcode' => 'NoIdForInventory','message' => "No id for inventory");

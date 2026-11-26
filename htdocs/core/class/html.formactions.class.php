@@ -304,7 +304,7 @@ class FormActions
 					} else {
 						$tmpb = $tmpa;
 					}
-					if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+					if (!empty($tmpa) && $tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {	// $tmpa is empty for an event without start date
 						// The same day
 						print '<div class="center inline-block dateheight">';
 						if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {

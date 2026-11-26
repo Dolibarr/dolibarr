@@ -3832,7 +3832,7 @@ abstract class CommonObject
 		if ($absqty < (float) $packaging) {
 			return $sign * (float) $packaging;
 		}
-		if ((float) price2num(fmod($absqty, (float) $packaging), 'MS')) {
+		if ((float) price2num($absqty - round($absqty / (float) $packaging) * (float) $packaging, 'MS') != 0) {	// Not a multiple of the packaging (do not use fmod, it fails with decimal packaging)
 			$coeff = intval($absqty / (float) $packaging) + 1;
 			return $sign * (float) price2num((float) $packaging * $coeff, 'MS');
 		}
@@ -4643,7 +4643,7 @@ abstract class CommonObject
 									$object = new $className($this->db);
 									'@phan-var-force CommonObject $object';
 									$ret = $object->fetch($objectid);
-									if ($ret >= 0) {
+									if ($ret > 0) {
 										$this->linkedObjects[$objecttype][$i] = $object;
 									}
 								}
@@ -10034,7 +10034,7 @@ abstract class CommonObject
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 					$productFournisseur = new ProductFournisseur($this->db);
 					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0) {
-						$buyPrice = $productFournisseur->fourn_unitprice;
+						$buyPrice = $productFournisseur->fourn_unitprice_with_discount;
 					} elseif ($result < 0) {
 						$this->errors[] = $productFournisseur->error;
 						return -2;
@@ -10685,7 +10685,7 @@ abstract class CommonObject
 
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
-			$this->date_creation = $this->db->idate($now);
+			$this->date_creation = $now;
 		}
 		// For backward compatibility, if a property ->fk_user_creat exists and not filled.
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
@@ -10804,7 +10804,8 @@ abstract class CommonObject
 				if ($resqlupdate === false) {
 					$error++;
 					$this->errors[] = $this->db->lasterror();
-				} else {
+				} elseif ((string) $this->ref === '' || $this->ref === '(PROV)') {
+					// Same condition as the WHERE above: an object created with its final ref keeps it in memory too
 					$this->ref = '(PROV'.$this->id.')';
 				}
 			}

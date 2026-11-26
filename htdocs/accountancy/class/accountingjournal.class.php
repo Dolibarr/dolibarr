@@ -1013,9 +1013,10 @@ class AccountingJournal extends CommonObject
 						'entity' => $conf->entity,
 					);
 					$element['blocks'][] = $lines_book;
-				} else { // CSV
-					$element['blocks'][] = array(
-						$docdate,                         // Date
+				} elseif ($type == 'csv') {
+					$lines_csv = array();
+					$lines_csv[] = array(
+						$docdate_fmt,                     // Date
 						$invoice_static->ref,             // Piece
 						length_accountg($acc_disc_granted), // Account
 						$label_discount." (".$rateStr."%)",   // Label
@@ -1023,13 +1024,14 @@ class AccountingJournal extends CommonObject
 						'',                               // Credit
 					);
 					if ($tva_part > 0) {
-						$element['blocks'][] = array(
-							$docdate, $invoice_static->ref, length_accountg($acc_vat_coll), $label_discount." ". $langs->transnoentitiesnoconv('VAT') . " (".$rateStr."%)", price($tva_part), ''
+						$lines_csv[] = array(
+							$docdate_fmt, $invoice_static->ref, length_accountg($acc_vat_coll), $label_discount." ". $langs->transnoentitiesnoconv('VAT') . " (".$rateStr."%)", price($tva_part), ''
 						);
 					}
-					$element['blocks'][] = array(
-						$docdate, $invoice_static->ref, length_accountg($account_customer_general), $label_discount.' - '.$langs->transnoentitiesnoconv('Customer'), '', price($ttc_part)
+					$lines_csv[] = array(
+						$docdate_fmt, $invoice_static->ref, length_accountg($account_customer_general), $label_discount.' - '.$langs->transnoentitiesnoconv('Customer'), '', price($ttc_part)
 					);
+					$element['blocks'][] = $lines_csv;
 				}
 			}
 
@@ -1328,17 +1330,20 @@ class AccountingJournal extends CommonObject
 						$element['blocks'][] = $lines_view;
 					} elseif ($type == 'bookkeeping') {
 						$element['blocks'][] = $lines_book;
-					} else { // csv
-						$element['blocks'][] = array($docdate, $invoicesupplier_static->ref, length_accountg($account_supplier_general), $label_discount.' - '.$langs->transnoentitiesnoconv('Supplier'), price($ttc_part), '');
-						$element['blocks'][] = array($docdate, $invoicesupplier_static->ref, length_accountg($acc_disc_recv), $label_discount.' ('.$rateStr.'%)', '', price($ht_part));
 					}
 				}
 
 				// CSV
 				if ($type == 'csv') {
-					$element['blocks'][] = array(
-						$docdate, $invoicesupplier_static->ref, length_accountg($acc_vat_ded), $label_discount." ". $langs->transnoentitiesnoconv('VAT') . " (".$rateStr."%)", '', $tva_part > 0 ? price($tva_part) : ''
-					);
+					$lines_csv = array();
+					$lines_csv[] = array($docdate_fmt, $invoicesupplier_static->ref, length_accountg($account_supplier_general), $label_discount.' - '.$langs->transnoentitiesnoconv('Supplier'), price($ttc_part), '');
+					$lines_csv[] = array($docdate_fmt, $invoicesupplier_static->ref, length_accountg($acc_disc_recv), $label_discount.' ('.$rateStr.'%)', '', price($ht_part));
+					if ($tva_part > 0) {
+						$lines_csv[] = array(
+							$docdate_fmt, $invoicesupplier_static->ref, length_accountg($acc_vat_ded), $label_discount." ". $langs->transnoentitiesnoconv('VAT') . " (".$rateStr."%)", '', price($tva_part)
+						);
+					}
+					$element['blocks'][] = $lines_csv;
 				}
 			}
 
