@@ -151,7 +151,7 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 } elseif ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {
 	// Export CSV
 	$result = $object->exportCsv($journal_data, $date_end);
-	if ($result < 0) {
+	if (is_int($result) && $result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$reload = true;
 	} else {
