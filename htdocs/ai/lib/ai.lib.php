@@ -28,6 +28,28 @@
 
 include_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
+/**
+ * Max number of messages of past turns sent back to the AI as context with one question.
+ * Hard cap applied server-side, whatever the client sends (pins, "All" mode).
+ *
+ * @return int
+ */
+function aiChatContextMaxMessages()
+{
+	return 20;
+}
+
+/**
+ * Max value allowed for the setup AI_CHAT_CONTEXT_AUTO_EXCHANGES: one exchange is 2 messages
+ * (question + answer), and one message is kept for the search result of a followup round.
+ *
+ * @return int
+ */
+function aiChatContextMaxAutoExchanges()
+{
+	return (int) floor((aiChatContextMaxMessages() - 1) / 2);
+}
+
 
 /**
  * Prepare admin pages header
@@ -1444,7 +1466,7 @@ function getAiChatAssistantConfig()
 		// Off (0) until an administrator decides otherwise: past answers carry
 		// business content the privacy masking does not cover, so sending them
 		// back on every request is not a default the module takes by itself.
-		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
+		'autoContext' => min(aiChatContextMaxAutoExchanges(), getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2)),
 		// Max size (in characters) of the context sent back to the model, also the cap of one tool result.
 		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000),
 		// The "/" palette of the chat input, always on.
@@ -2735,7 +2757,8 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 				// Paging, sort and filter params of list tools are kept (without description): without them,
 				// the model can't answer "the last 5 ..." or filter a list, and gets the 25 first records.
 				// count is kept so a "how many ..." question is answered without loading the records.
-				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters', 'count'))) {
+				// subdir, search and recursive are kept so the file tools can list another directory than the root.
+				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters', 'count', 'subdir', 'search', 'recursive'))) {
 					continue;
 				}
 

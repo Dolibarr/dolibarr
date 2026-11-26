@@ -916,7 +916,9 @@ try {
 			// stay one-shot), per-turn and global caps, privacy redaction applied.
 			$history = array();
 			if (!empty($data['history']) && is_array($data['history'])) {
-				$histTurns = array_slice($data['history'], 0, 12);
+				// Keep the LAST turns: the most recent exchanges, and the search result
+				// appended at the end on a followup round, are the ones that matter.
+				$histTurns = array_slice($data['history'], -aiChatContextMaxMessages());
 
 				// Persisted turns arrive as ids only: the text is rebuilt here from
 				// the stored conversation (llx_ai_chat_message.content_raw), so the
@@ -1230,12 +1232,23 @@ try {
 							dol_syslog('parse_intent.php clean response is array', LOG_DEBUG, 0, '_ai');
 						}
 
+						// Only one tool runs per answer. When the model sent several calls, run the
+						// first and ask a followup round, so the model can do the next one with its result.
+						$nbFunctionCalls = 0;
+						foreach ($intentJSON as $f) {
+							if (is_array($f) && ($f['type'] ?? '') === 'function' && !empty($f['function']['name'])) {
+								$nbFunctionCalls++;
+							}
+						}
 						foreach ($intentJSON as $f) {
 							if (($f['type'] ?? '') === 'function' && isset($f['function']) && !empty($f['function']['name']) && !empty($f['function']['arguments'])) {
 								$intentJSON = [
 									"tool" => $f['function']['name'] ?? '',
 									'arguments' => json_decode($f['function']['arguments'], true) ?? []
 								];
+								if ($nbFunctionCalls > 1) {
+									$intentJSON['needs_followup'] = true;
+								}
 								break;
 							}
 						}

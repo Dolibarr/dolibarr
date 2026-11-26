@@ -73,7 +73,7 @@ if ($action == 'update') {
 	}
 
 	if (GETPOSTISSET('AI_CHAT_CONTEXT_AUTO_EXCHANGES')) {
-		$res = dolibarr_set_const($db, "AI_CHAT_CONTEXT_AUTO_EXCHANGES", max(0, GETPOSTINT("AI_CHAT_CONTEXT_AUTO_EXCHANGES")), 'int', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "AI_CHAT_CONTEXT_AUTO_EXCHANGES", min(aiChatContextMaxAutoExchanges(), max(0, GETPOSTINT("AI_CHAT_CONTEXT_AUTO_EXCHANGES"))), 'int', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -361,7 +361,8 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	// Context window of the chat
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIContextAutoExchanges"), $langs->trans("AIContextAutoExchangesHelp")) . '</td>';
-	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2) . '"></td>';
+	print '<td><input class="width50" type="number" min="0" max="' . aiChatContextMaxAutoExchanges() . '" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . min(aiChatContextMaxAutoExchanges(), getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2)) . '">';
+	print ' <span class="opacitymedium">(' . $langs->trans("Max") . ' ' . aiChatContextMaxAutoExchanges() . ')</span></td>';
 	print '</tr>';
 
 	// Max size of the context sent back with the question
