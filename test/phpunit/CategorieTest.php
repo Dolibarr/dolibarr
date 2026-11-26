@@ -31,6 +31,7 @@ global $conf,$user,$langs,$db,$mysoc;
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/categories/class/categorie.class.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/../../htdocs/hrm/class/skill.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -268,5 +269,53 @@ class CategorieTest extends CommonClassTest
 		print __METHOD__." retarray size=".count($retarray)."\n";
 		$this->assertTrue(is_array($retarray));
 		return $retarray;
+	}
+
+	/**
+	 * testCategorieSkill
+	 *
+	 * @return  void
+	 */
+	public function testCategorieSkill()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$category = new Categorie($db);
+		$category->label = 'Specimen Category for skill '.dol_now();
+		$category->type = Categorie::TYPE_SKILL;
+		$catid = $category->create($user, 1);
+		$this->assertGreaterThan(0, $catid, $category->errorsToString());
+
+		$skill = new Skill($db);
+		$skill->label = 'Specimen Skill for category '.dol_now();
+		$skill->skill_type = 0;
+		$skillid = $skill->create($user, 1);
+		$this->assertGreaterThan(0, $skillid, $skill->errorsToString());
+
+		$result = $skill->setCategories(array($catid));
+		$this->assertGreaterThan(0, $result, $skill->errorsToString());
+
+		$listofcateg = $category->containing($skillid, Categorie::TYPE_SKILL, 'id');
+		$this->assertTrue(is_array($listofcateg) && in_array($catid, $listofcateg), 'Skill category not found via containing()');
+
+		$objects = $category->getObjectsInCateg(Categorie::TYPE_SKILL, 1);
+		$this->assertTrue(is_array($objects) && in_array($skillid, $objects), 'Skill not found via getObjectsInCateg()');
+
+		$result = $skill->delete($user, 1);
+		$this->assertGreaterThan(0, $result, $skill->errorsToString());
+
+		$sql = "SELECT COUNT(*) AS nb FROM ".$db->prefix()."categorie_skill WHERE fk_skill = ".((int) $skillid);
+		$resql = $db->query($sql);
+		$this->assertNotFalse($resql, $db->lasterror());
+		$obj = $db->fetch_object($resql);
+		$db->free($resql);
+		$this->assertSame(0, (int) $obj->nb);
+
+		$result = $category->delete($user, 1);
+		$this->assertGreaterThan(0, $result, $category->errorsToString());
 	}
 }

@@ -2635,6 +2635,10 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			$newmenu->add(dolBuildUrl('/hrm/skill_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("Skills"), 1, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="paddingright pictofixedwidth"'));
 			//$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewSkill"), 1, $user->hasRight('hrm',  'all', 'write'));
 			//$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->hasRight('hrm',  'all', 'read'));
+			if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
+				$langs->load("categories");
+				$newmenu->add(dolBuildUrl('/categories/categorie_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm', 'type' => 26]), $langs->trans("Categories"), 2, $user->hasRight('categorie', 'read'), '', $mainmenu, 'hrm_sm');
+			}
 
 			// Job (Description of work to do and skills required)
 			$newmenu->add(dolBuildUrl('/hrm/job_list.php', ['mainmenu' => 'hrm', 'leftmenu' => 'hrm_sm']), $langs->trans("JobsProfiles"), 1, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
