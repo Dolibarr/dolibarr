@@ -175,7 +175,9 @@ final class PermissionsBlock
 				continue;
 			}
 
-			list($id, $text, $line) = $token;
+			$id = $token[0];
+			$text = $token[1];
+			$line = $token[2];
 
 			if (in_array($id, array(T_OPEN_TAG, T_WHITESPACE, T_COMMENT, T_DOC_COMMENT, T_INLINE_HTML), true)) {
 				continue;

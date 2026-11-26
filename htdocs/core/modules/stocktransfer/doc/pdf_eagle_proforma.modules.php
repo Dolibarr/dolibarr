@@ -1007,12 +1007,12 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 		// If payment mode not forced or forced to VIR, show payment with BAN
 		if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
 			if (!empty($object->fk_account) || !empty($object->fk_bank) || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
-				$bankid = (empty($object->fk_account) ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
+				$bankid = (empty($object->fk_account) ? getDolGlobalString('FACTURE_RIB_NUMBER') : $object->fk_account);
 				if (!empty($object->fk_bank)) {
 					$bankid = $object->fk_bank;
 				} // For backward compatibility when object->fk_account is forced with object->fk_bank
 				$account = new Account($this->db);
-				$account->fetch($bankid);
+				$account->fetch((int) $bankid);
 
 				$curx = $this->marge_gauche;
 				$cury = $posy;

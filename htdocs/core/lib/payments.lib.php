@@ -217,7 +217,7 @@ function showOnlinePaymentUrl($type, $ref, $amount = 0)
 	global $langs;
 
 	// Load translation files required by the page
-	$langs->loadLangs(array('payment', 'stripe'));
+	$langs->loadLangs(array('stripe'));
 
 	$servicename = '';	// Link is a generic link for all payments services (paypal, stripe, ...)
 

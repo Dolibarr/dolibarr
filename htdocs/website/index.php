@@ -1113,7 +1113,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 						// We try to convert the CSS we got by adding a prefix .bodywebsite with lessc to avoid conflict with CSS of Dolibarr.
 						include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
-						$lesscobj = new Lessc();
+						$lesscobj = new lessC();
 						try {
 							$contentforlessc = ".bodywebsite {\n".$tmpgeturl['content']."\n}\n";
 							//print '<pre>'.$contentforlessc.'</pre>';
@@ -2369,7 +2369,7 @@ if ((($action == 'updatesource' || $action == 'updatecontent' || $action == 'con
 		$db->begin();
 
 		$objectnew = new Website($db);
-		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOST('siteref'), (GETPOSTINT('newlang') ? GETPOSTINT('newlang') : ''));
+		$result = $objectnew->createFromClone($user, GETPOSTINT('id'), GETPOST('siteref'), GETPOST('newlang'));
 
 		if ($result < 0) {
 			$error++;
@@ -2645,25 +2645,23 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 
 // Overwrite site
 if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
-	if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
-		// Generate a zip of the website
-		$fileofzip = $object->exportWebSite();
-		$pathToExport = GETPOST('export_path');
-		if ($fileofzip) {
-			// Save the export path entered by user to prefill it next time (must be done before overwriteTemplate() that redirects on success)
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			dol_set_user_param($db, $conf, $user, array('WEBSITE_EXPORT_PATH_'.$object->id => $pathToExport));
+	// Generate a zip of the website
+	$fileofzip = $object->exportWebSite();
+	$pathToExport = GETPOST('export_path');
+	if ($fileofzip) {
+		// Save the export path entered by user to prefill it next time (must be done before overwriteTemplate() that redirects on success)
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		dol_set_user_param($db, $conf, $user, array('WEBSITE_EXPORT_PATH_'.$object->id => $pathToExport));
 
-			// Uncompress the exported web site into a destination directory
-			$result = $object->overwriteTemplate($fileofzip, $pathToExport);
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = 'preview';
-			}
-		} else {
+		// Uncompress the exported web site into a destination directory
+		$result = $object->overwriteTemplate($fileofzip, $pathToExport);
+		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'preview';
 		}
+	} else {
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'preview';
 	}
 }
 // Regenerate site
@@ -3332,7 +3330,7 @@ if (!GETPOST('hide_websitemenu')) {
 			}
 
 			// Edit website properties
-			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($object->ref).'&pageid='.((int) $pageid).'&action=editcss&token='.newToken().'" class="button bordertransp buttonpictoonly valignmiddle" title="'.dol_escape_htmltag($langs->trans("EditCss")).'"'.$disabled.'>';
 			print img_picto('', 'setup');
 			print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($langs->trans("EditCss")).'</span>';
 			print '</a>';
@@ -3355,20 +3353,16 @@ if (!GETPOST('hide_websitemenu')) {
 			print '</button>';
 
 			// // Export web site
-			$extraCssClass = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') ? 'hideobject' : '';
-			// Class hideobject is overwritten by the display of class button, so we also hide the button with an inline style
-			$extraCssStyle = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') ? ' style="display: none;"' : '';
-			print '<button type="submit" class="button bordertransp valignmiddle ' . $extraCssClass . '"' . $extraCssStyle . ' ' . $disabledexport . ' value="1" name="exportsite" title="' . dol_escape_htmltag($exportlabel) . '">';
+			// This button is kept hidden into the DOM, the export dialog simulates a click on it to download the zip
+			print '<button type="submit" class="button bordertransp valignmiddle hideobject" style="display: none;" '. $disabledexport . ' value="1" name="exportsite" title="'.dol_escape_htmltag($exportlabel).'">';
 			print img_picto('', 'download');
-			print '<span class="hideonsmartphone paddingleft">' . dol_escape_htmltag($exportlabel) . '</span>';
+			print '<span class="hideonsmartphone paddingleft">'.dol_escape_htmltag($exportlabel).'</span>';
 			print '</button>';
 
-			if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
-				// Overwrite template in sources
-				$overwriteGitUrl = $_SERVER["PHP_SELF"] . '?action=overwritesite&website=' . urlencode($website->ref);
-				print dolButtonToOpenExportDialog('exportpopup', $langs->trans('ExportOptions'), $langs->trans('ExportSite'), 'exportsite', $overwriteGitUrl, $website);
-				//print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp hideobject" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
-			}
+			// Button to open the dialog with the export options (download zip or export into a directory)
+			$overwriteGitUrl = $_SERVER["PHP_SELF"] . '?action=overwritesite&website=' . urlencode($website->ref);
+			print dolButtonToOpenExportDialog('exportpopup', $langs->trans('ExportOptions'), $langs->trans('ExportSite'), 'exportsite', $overwriteGitUrl, $website);
+			//print '<a href="'.$_SERVER["PHP_SELF"].'?action=overwritesite&website='.urlencode($website->ref).'" class="button bordertransp hideobject" title="'.dol_escape_htmltag($langs->trans("ExportIntoGIT").". Directory ".getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')).'">'.dol_escape_htmltag($langs->trans("ExportIntoGIT")).'</a>';
 
 			// Clone web site
 			print '<button type="submit" class="button bordertransp buttonpictoonly"'.$disabled.' value="1" name="createfromclone" title="'.dol_escape_htmltag($langs->trans("CloneSite")).'">'.img_picto('', 'clone_nocolor', 'class="fa-rotate-90"').'</button>';
@@ -3450,8 +3444,12 @@ if (!GETPOST('hide_websitemenu')) {
 			$htmltext .= '<!-- Message defined translate key set into WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER -->';
 			$htmltext .= '<br>'.$langs->trans(getDolGlobalString('WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER'));
 		} else {
-			$htmltext .= $langs->trans("ToDeployYourWebsiteOnLiveYouHave3Solutions").'<br><br>';
-			$htmltext .= '<div class="titre inline-block">1</div> - '.$langs->trans("SetHereVirtualHost", $dataroot);
+			$htmltext .= '<span class="opacitymedium">'.$langs->trans("ToDeployYourWebsiteOnLiveYouHave3Solutions").'</span><br><br>';
+			$htmltext .= '<div class="titre inline-block">1</div> - '.$langs->trans("YouCanAlsoTestWithPHPS");
+			$htmltext .= '<br><div class="urllink"><input type="text" id="cliphpserver" spellcheck="false" class="quatrevingtpercent" value="php -S 0.0.0.0:8080 -t '.$dataroot.'"></div>';
+			$htmltext .= ajax_autoselect("cliphpserver");
+			$htmltext .= '<br>';
+			$htmltext .= '<div class="titre inline-block">2</div> - '.$langs->trans("SetHereVirtualHost", $dataroot);
 			$htmltext .= '<br>';
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
@@ -3506,10 +3504,6 @@ if (!GETPOST('hide_websitemenu')) {
 			$htmltext .= '<br>'.$langs->trans("ExampleToUseInApacheVirtualHostConfig").':<br>';
 			$htmltext .= '<div class="quatrevingtpercent exampleapachesetup wordbreak" spellcheck="false">'.dol_nl2br(dol_escape_htmltag($examplewithapache, 1, 1)).'</div>';
 
-			$htmltext .= '<br>';
-			$htmltext .= '<div class="titre inline-block">2</div> - '.$langs->trans("YouCanAlsoTestWithPHPS");
-			$htmltext .= '<br><div class="urllink"><input type="text" id="cliphpserver" spellcheck="false" class="quatrevingtpercent" value="php -S 0.0.0.0:8080 -t '.$dataroot.'"></div>';
-			$htmltext .= ajax_autoselect("cliphpserver");
 			$htmltext .= '<br>';
 			$htmltext .= '<div class="titre inline-block">3</div> - '.$langs->trans("YouCanAlsoDeployToAnotherWHP");
 		}
@@ -5255,6 +5249,15 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 
 		$showlinktolayoutlabel = $langs->trans("FillPageWithALayout");
 		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		if ($showlinktoai) {
+			// Add the AI service and model that will be used
+			require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+			$aiobj = new Ai($db);
+			$aiservicemodellabel = $aiobj->getServiceAndModelLabel($showlinktoai);
+			if ($aiservicemodellabel) {
+				$showlinktoailabel .= ' ('.dol_escape_htmltag($aiservicemodellabel).')';
+			}
+		}
 		$htmlname = 'content';
 		// Fill $out
 		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
@@ -5381,7 +5384,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ? GETPOST('grabimagesinto') : 'root', 0, 0, 0, '', 0, 0, 0, '', 'minwidth75 valignmiddle', 1);
 		print '</div>';
 
-		print '<input class="button small" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
+		print '<input class="button small nomarginleft" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
 		print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 		print '</td></tr>';
@@ -5525,6 +5528,13 @@ if ($action == 'editsource') {
 		$showlinktolayout = '';
 		$showlinktoai = 'textgenerationwebpage';
 		$showlinktoailabel = $langs->trans("FillPageWithAIContent");
+		// Add the AI service and model that will be used
+		require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+		$aiobj = new Ai($db);
+		$aiservicemodellabel = $aiobj->getServiceAndModelLabel($showlinktoai);
+		if ($aiservicemodellabel) {
+			$showlinktoailabel .= ' ('.dol_escape_htmltag($aiservicemodellabel).')';
+		}
 		$htmlname = 'PAGE_CONTENT';
 		$out = '';
 		// Fill $out
@@ -6148,7 +6158,7 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
 		// so editable will be available only from container created from scratch
 		//$out.='<div id="bodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
-		$out .= '<div id="divbodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.'">'."\n";
+		$out .= '<div id="divbodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.' bodywebpagetype-'.dol_sanitizeKeyCode((string) $objectpage->type_container).'">'."\n";
 
 		$newcontent = $objectpage->content;
 

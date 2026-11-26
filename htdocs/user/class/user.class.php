@@ -489,7 +489,7 @@ class User extends CommonObject
 		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
 		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Warehouse', 'enabled' => "isModEnabled('stock')", 'visible' => 1, 'notnull' => 0, 'showoncombobox' => 1, 'index' => 1, 'position' => 50, 'searchall' => 1, 'bi' => 0),
 		'ref_employee' => array('type' => 'varchar(50)', 'label' => 'RefEmployee', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 30, 'searchall' => 1),
-		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 40, 'searchall' => 1)
+		'national_registration_number' => array('type' => 'varchar(50)', 'label' => 'NationalRegistrationNumber', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 0, 'index' => 1, 'position' => 40, 'searchall' => 1)
 	);
 
 	const STATUS_DISABLED = 0;
@@ -525,6 +525,12 @@ class User extends CommonObject
 		$this->rights->user->user_advance = new stdClass();
 		$this->rights->user->self_advance = new stdClass();
 		$this->rights->user->group_advance = new stdClass();
+
+		// Show the national registration number into combo lists only to users allowed to read HR personal information
+		global $user;
+		if (isModEnabled('hrm') && $user instanceof User && ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write'))) {
+			$this->fields['national_registration_number']['showoncombobox'] = 1;
+		}
 	}
 
 	/**
@@ -1859,6 +1865,13 @@ class User extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
+		// Remove the passkeys of the user
+		$sql = "DELETE FROM ".$this->db->prefix()."oauth_token WHERE fk_user = ".((int) $this->id)." AND service = 'passkey'";
+		if (!$error && !$this->db->query($sql)) {
+			$error++;
+			$this->error = $this->db->lasterror();
+		}
+
 		// If contact, remove link
 		if ($this->contact_id > 0) {
 			$sql = "UPDATE ".$this->db->prefix()."socpeople SET fk_user_creat = null WHERE rowid = ".((int) $this->contact_id);
@@ -2482,6 +2495,20 @@ class User extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nbrowsaffected += $this->db->affected_rows($resql);
+
+			// A clear password may remain in database from the time before the encryption of passwords was enabled.
+			// When it matches the encrypted one, it is of no use for the login: we remove it.
+			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED') && !empty($this->pass_indatabase) && !empty($this->pass_indatabase_crypted) && dol_verifyHash($this->pass_indatabase, $this->pass_indatabase_crypted)) {
+				dol_syslog(get_class($this)."::update remove the clear password that matches the encrypted one", LOG_DEBUG);
+				$sql = "UPDATE ".$this->db->prefix()."user SET pass = NULL WHERE rowid = ".((int) $this->id);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->error = $this->db->error();
+					$this->db->rollback();
+					return -5;
+				}
+				$this->pass_indatabase = '';
+			}
 
 			// Update password
 			if (!empty($this->pass)) {
@@ -3203,6 +3230,24 @@ class User extends CommonObject
 	}
 
 	/**
+	 * Return the thirdparty of an external user. A cache is used so each thirdparty is fetched only once per page.
+	 *
+	 * @return	Societe		Thirdparty of the user
+	 */
+	private function getThirdpartyWithCache()
+	{
+		global $conf;
+
+		if (empty($conf->cache['thirdparty'][$this->socid]) || !($conf->cache['thirdparty'][$this->socid] instanceof Societe)) {
+			$thirdparty = new Societe($this->db);
+			$thirdparty->fetch($this->socid);
+			$conf->cache['thirdparty'][$this->socid] = $thirdparty;
+		}
+
+		return $conf->cache['thirdparty'][$this->socid];
+	}
+
+	/**
 	 * getTooltipContentArray
 	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
@@ -3258,8 +3303,7 @@ class User extends CommonObject
 		}
 		$company = '';
 		if (!empty($this->socid)) {	// Add thirdparty for external users
-			$thirdpartystatic = new Societe($this->db);
-			$thirdpartystatic->fetch($this->socid);
+			$thirdpartystatic = $this->getThirdpartyWithCache();
 			$companyimg = '';
 			if (empty($params['hidethirdpartylogo'])) {
 				$companyimg = ' '.$thirdpartystatic->getNomUrl(2, 'nolink', 0, 1); // picto only of company
@@ -3345,12 +3389,9 @@ class User extends CommonObject
 		}
 
 		$companylink = '';
-		if (!empty($this->socid)) {	// Add thirdparty for external users
-			$thirdpartystatic = new Societe($this->db);
-			$thirdpartystatic->fetch($this->socid);
-			if (empty($hidethirdpartylogo)) {
-				$companylink = ' '.$thirdpartystatic->getNomUrl(2, 'nolink', 0, 1); // picto only of company
-			}
+		if (!empty($this->socid) && empty($hidethirdpartylogo)) {	// Add thirdparty for external users. The fetch is useless if logo is hidden.
+			$thirdpartystatic = $this->getThirdpartyWithCache();
+			$companylink = ' '.$thirdpartystatic->getNomUrl(2, 'nolink', 0, 1); // picto only of company
 		}
 
 		if ($infologin < 0) {
@@ -4336,7 +4377,7 @@ class User extends CommonObject
 	{
 		global $langs;
 
-		$langs->load("user");
+		$langs->load("users");
 
 		// Set the '$modele' to the name of the document template (model) to use
 		if (!dol_strlen($modele)) {

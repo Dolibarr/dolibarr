@@ -254,6 +254,10 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
+// If internal user has no permission to see all thirdparties, restrict on thirdparties he is sale representative for
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND (t.fk_soc IS NULL OR t.fk_soc = 0 OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $user->id)."))";
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -518,11 +522,18 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
+		$cssforsearchcombo = 'maxwidth250';
+		$reg = array();
+		if (((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) && preg_match('/tdoverflowmax(\d+)/', $cssforfield, $reg)) {
+			// For a search combo, the tdoverflowmax of the cell is replaced with a maxwidth on the combo itself
+			$cssforsearchcombo = 'maxwidth'.$reg[1];
+			$cssforfield = trim(preg_replace('/\s*tdoverflowmax\d+/', '', $cssforfield));
+		}
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').($key == 'status' ? ' parentonrightofpage' : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 1, 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
-			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
+			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', trim($cssforfield.' '.$cssforsearchcombo), 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -691,7 +702,7 @@ while ($i < $imaxinloop) {
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, (string) $object->id, '');
+					print (int) $object->id;	// Not showOutputField() that returns nothing when the Technical ID is hidden by the object (MAIN_SHOW_TECHNICAL_ID off)
 				} elseif ($key == 'ref' && empty($arrayfields['t.label']['checked'])) {
 					// Show label under the ref when label column is not enabled
 					print '<div class="tdoverflowmax150 inline-block lineheightsmall">';

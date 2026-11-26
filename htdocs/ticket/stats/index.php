@@ -70,7 +70,7 @@ $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 
 $endyear = $year;
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'companies', 'other', 'tickets'));
+$langs->loadLangs(array('orders', 'companies', 'other', 'ticket'));
 
 
 /*
@@ -116,7 +116,7 @@ $h++;
 
 if ($showtabcustomreports) {
 	$head[$h][0] = DOL_URL_ROOT.'/ticket/stats/index.php?tabfamily=ticketstats';
-	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][1] = $langs->trans("CustomReport");
 	$head[$h][2] = 'customreports';
 	$h++;
 }
@@ -270,7 +270,7 @@ foreach ($data as $val) {
 		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$oldyear.'</a></td>';
 		print '<td class="right">0</td>';
 		// Empty year just after a year with records: delta is -100%
-		print '<td class="right" style="color: red;">'.(($oldyear == (int) $year + 1 && $val['nb'] > 0) ? '-100%' : '').'</td>';
+		print '<td class="right growthdown">'.(($oldyear == (int) $year + 1 && $val['nb'] > 0) ? '-100%' : '').'</td>';
 		//print '<td class="right">0</td>';
 		//print '<td class="right"></td>';
 		//print '<td class="right">0</td>';
@@ -282,7 +282,7 @@ foreach ($data as $val) {
 	print '<tr class="oddeven" height="24">';
 	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right" style="'.((isset($val['nb_diff']) && $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? ($val['nb_diff'] < 0 ? '' : '+').round($val['nb_diff']).'%' : '').'</td>';
+	print '<td class="right '.((isset($val['nb_diff']) && $val['nb_diff'] >= 0) ? 'growthup' : 'growthdown').'">'.(isset($val['nb_diff']) ? ($val['nb_diff'] < 0 ? '' : '+').round($val['nb_diff']).'%' : '').'</td>';
 	//print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
 	//print '<td class="right" style="'.(($val['total_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['total_diff']).'</td>';
 	//print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';

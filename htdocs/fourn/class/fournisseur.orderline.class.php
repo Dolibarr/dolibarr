@@ -350,7 +350,9 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
 		// Multicurrency
 		if (!empty($this->multicurrency_code)) {
-			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+			$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+			$this->fk_multicurrency = $tmparray[0];
+			$this->multicurrency_tx = $tmparray[1];
 		}
 		if (empty($this->fk_multicurrency)) {
 			$this->multicurrency_code = $conf->currency;

@@ -1,8 +1,9 @@
 # How to run Claude Code into a container.
 
 This is the equivalent of `dev/build/docker-vibe` (Mistral Vibe) for Claude Code.
-The image provides the same tools (PHP, phpunit, phpstan, phan, phpcs, hurl, gh, tx, pre-commit, rtk, mariadb client, ...)
-and the same protections (no email can be sent from the container). See `dev/build/docker-vibe/README.md` for the details
+The image provides the same tools (PHP, phpunit, phpstan, phan, phpcs, hurl, gh, tx, pre-commit, rtk, mariadb client, ...),
+including Playwright for Python and Chromium (browsers into `/opt/pw-browsers`, full browser also at `/usr/local/bin/chromium`)
+to test pages in a browser and take screenshots, and the same protections (no email can be sent from the container). See `dev/build/docker-vibe/README.md` for the details
 of the common parts. The files `open-on-host`, `xdg-open-shim`, `smtpblock.sh`, `sendmail-stub` and `bashrc-prompt` are shared with docker-vibe: they are
 taken from the directory `dev/build/docker-vibe` when the image is built.
 
@@ -66,6 +67,10 @@ claudes --rc
 The sessions are then started with `--permission-mode auto`: the safe actions are approved automatically, the risky or
 outward-facing ones (push, pull request, ...) are still asked. Add `--yolo` to have all the permissions automatically
 accepted with `--permission-mode bypassPermissions`.
+The confirmation `Enable Remote Control? (y/n)` is answered at launch: `--rc` sets `remoteDialogSeen` into the state
+file of the container (`~/.claude/.claude.json`, copied from the host at each launch, so the answer was lost before).
+The spawn mode is always `same-dir` (`--spawn same-dir` is added), so the choice between same-dir and worktree is not
+asked either. Use `claudes --rc --spawn worktree` to get a git worktree per session instead.
 
 The other arguments are passed to claude, for example to resume the last conversation:
 ````
@@ -76,6 +81,8 @@ Each time the image is rebuilt with changes, the previous image is kept untagged
 ````
 claudes --clean-images
 ````
+To only list these images (the current one, with its status against the build context, and the obsolete ones) and the containers using them, without removing anything, run `claudes --list-images`.
+A container still running with an obsolete image prevents its removal (even with `docker rmi -f`), so the containers still using an obsolete image are stopped and removed first (the containers started by `claudes.sh` use `--rm`: stopping them removes them). Their Claude Code sessions are not lost, they are stored in `~/.claude` of the host and can be resumed with `claudes --continue`.
 
 Into the container, the directory `.claude` (with the links `skills`, `agents` and `hooks` to the same entries of `.agents`) and
 the link `CLAUDE.md` (to `.agents/AGENTS.md`) are created at the root of the repository when they do not exist, so Claude Code
@@ -88,9 +95,23 @@ Claude Code is installed into the image when it is built, and its auto-updater i
 ````
 claudes --no-cache
 ````
+Without `--no-cache`, `claudes.sh` builds the image only when its build context has changed since the last build (the directory `dev/build/docker-claude` without `claudes.sh` and `README.md`, and the files shared with `docker-vibe`; a hash of it is stored as a label of the image). Otherwise the last image built is used as is, whatever the directory `claudes.sh` is launched from: after a rebuild with `claudes --no-cache` from one repository, the containers launched later from the other repositories use this new image.
+The build context does not contain any file of the repository: the pre-commit hooks are not preloaded into the image, they are kept into the directory `~/.cache/docker-claude/pre-commit` of the host, mounted into the container (see the pre-commit section of `dev/build/docker-vibe/README.md`).
 
 ### Send emails
-The outbound SMTP ports are blocked like for docker-vibe. To start a container that is allowed to send emails, run it with:
+The outbound SMTP ports are blocked like for docker-vibe: on a machine with the unified cgroup v2 hierarchy (Ubuntu 21.10+), the block is scoped to the only container (`--cgroup` into `smtpblock.sh`, with the cgroup path seen from the host thanks to `--cgroupns=host`, done by `claudes.sh`), so the other processes of the machine can still connect to these ports; without it, the block applies to the whole machine. To start a container that is allowed to send emails, run it with:
 ````
 DOCKER_ALLOW_SMTP=1 claudes
 ````
+
+### Mail logs of the host
+Like for docker-vibe, the files `/var/log/mail.log`, `/var/log/phpmail.log` and `/var/log/phpsendmail.log` are each mounted
+read-only at the same path into the container when they exist on the host, and the user of the container is added to the groups
+owning them (except `root`). After a rotation of the log on the host, the container keeps showing the old file until it is restarted.
+
+## Documents produced by the agent
+Like for docker-vibe, `claudes.sh` creates the directory `/tmp/agents_documents` on the host and mounts it at the same path into the container,
+so the documents produced by the agent for the user (reports, slides, graphs, exports, test artifacts, ...) are shared with the host
+without touching the git working directory of the project. The directory is shared between the host and all the AI agent containers
+running on it: each agent should write into a subdirectory named after itself (for example `/tmp/agents_documents/claude/`).
+Beware: `/tmp` is purged at reboot: the documents must be taken out of the host directory before a reboot of the host.

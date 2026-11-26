@@ -2238,6 +2238,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$productCustomerPriceStatic = new ProductCustomerPrice($db);
+				// fk_soc and socid are declared in child classes: @phan-suppress-next-line PhanUndeclaredProperty
 				$filter = array('fk_product' => (string) $idprod, 'fk_soc' => (string) $object->socid);
 
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
@@ -2355,8 +2356,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			}
 
 			// Add also info of planned warehouse for lot
-			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
-				$resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock);
+			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {    // @phan-suppress-current-line PhanUndeclaredProperty    // $detail is an ExpeditionLineBatch that owns the property fk_origin_stock
+				$resproductbatch = $tmpproductbatch->fetch($detail->fk_origin_stock); // @phan-suppress-current-line PhanUndeclaredProperty
 				if ($resproductbatch > 0) {
 					$reswarehouse = $tmpwarehouse->fetch($tmpproductbatch->warehouseid);
 					if ($reswarehouse > 0) {
@@ -2477,6 +2478,7 @@ function pdf_getlineref_supplier($object, $i, $outputlangs, $hidedetails = 0)
 		$result .= $hookmanager->resPrint;
 	}
 	if (empty($reshook)) {
+		// ref_supplier is not defined on some object lines, for example on Contract lines @phan-suppress-next-line PhanUndeclaredProperty
 		$result .= dol_htmlentitiesbr($object->lines[$i]->ref_supplier);
 	}
 	return $result;
@@ -2792,7 +2794,7 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
 /**
  *	Return line unit
  *
- *	@param	SupplierProposal|CommandeFournisseur|Propal|Facture|FactureFournisseur|Commande|StockTransfer	$object	Object
+ *	@param	SupplierProposal|CommandeFournisseur|Propal|Facture|FactureFournisseur|Commande|StockTransfer|Expedition	$object	Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int<0,2>	$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
@@ -2994,10 +2996,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ht = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
-			if (!empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
-				if (method_exists($object->lines[$i], 'getSituationRatio')) {
-					$total_ht *= $object->lines[$i]->getSituationRatio();
-				}
+			// The property situation_percent and the method getSituationRatio() exist only on invoice lines (FactureLigne)
+			if ($object->lines[$i] instanceof FactureLigne && !empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
+				$total_ht *= $object->lines[$i]->getSituationRatio();
 			}
 			$result .= price($sign * $total_ht, 0, $outputlangs);
 		}
@@ -3044,7 +3045,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
 			$result .= $outputlangs->transnoentities("Option");
 		} elseif (empty($hidedetails) || $hidedetails > 1) {
 			$total_ttc = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ttc : $object->lines[$i]->total_ttc);
-			if (isset($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
+			if ($object->lines[$i] instanceof FactureLigne && !empty($object->lines[$i]->situation_percent) && $object->lines[$i]->situation_percent > 0) {
 				$total_ttc *= $object->lines[$i]->getSituationRatio();
 			}
 			$result .= price($sign * $total_ttc, 0, $outputlangs);

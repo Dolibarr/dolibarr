@@ -44,7 +44,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 /** @var MyObject[] $linkedObjectBlock */
 
 // Load translation files required by the page
-$langs->load("mymodule");
+$langs->load("mymodule@mymodule");
 
 $total = 0;
 $ilink = 0;

@@ -344,21 +344,23 @@ class FormCompany extends Form
 							$out .= '<option value="' . $obj->rowid . '">';
 						}
 
-						// If a translation exists, we use it, else we take the default label
+						// If a translation exists, we use it, else we take the default label.
+						// The key is prefixed by 'State' so a state code (like 'OK') is not mixed with a generic key of the language files.
+						$statelabel = ($obj->code && $langs->trans('State' . $obj->code) != 'State' . $obj->code) ? $langs->trans('State' . $obj->code) : ($obj->name != '-' ? $obj->name : '');
 						if (
 							getDolGlobalString('MAIN_SHOW_STATE_CODE') &&
 							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || getDolGlobalString('MAIN_SHOW_STATE_CODE') === 'all')
 						) {
 							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {
-								$out .= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+								$out .= $obj->region_name . ' - ' . $obj->code . ' - ' . $statelabel;
 							} else {
-								$out .= $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+								$out .= $obj->code . ' - ' . $statelabel;
 							}
 						} else {
 							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {
-								$out .= $obj->region_name . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+								$out .= $obj->region_name . ' - ' . $statelabel;
 							} else {
-								$out .= ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+								$out .= $statelabel;
 							}
 						}
 
@@ -675,7 +677,7 @@ class FormCompany extends Form
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 			// Use Ajax search
-			$minLength = (is_numeric(getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) ? $conf->global->COMPANY_USE_SEARCH_TO_SELECT : 2);
+			$minLength = (is_numeric(getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) ? getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT') : 2);
 
 			$socid = 0;
 			$name = '';
@@ -722,6 +724,7 @@ class FormCompany extends Form
 						$.getJSON(url,
 							{
 								action: method,
+								token: \'' . currentToken() . '\',
 								id: id,
 								htmlname: htmlname
 							},
@@ -892,7 +895,7 @@ class FormCompany extends Form
 	 * @param 	string 		$htmlname 		Html component name and id
 	 * @param 	Contact 	$contact 		Contact Object
 	 * @param 	string 		$rendermode 	view, edit
-	 * @param 	array<array{id:int}>	$selected 	$key=>$val $val is selected Roles for input mode
+	 * @param 	array<array{id:int}>|array<int|string>	$selected 	Selected roles for input mode: array of roles (with key 'id') or array of role ids
 	 * @param	string		$morecss		More css
 	 * @param	string		$placeholder	Placeholder text (used when $rendermode is 'edit')
 	 * @return 	string   					String with contacts roles
@@ -912,10 +915,10 @@ class FormCompany extends Form
 			if (count($selected) > 0) {
 				$newselected = array();
 				foreach ($selected as $key => $val) {
-					if (is_array($val) && array_key_exists('id', $val) && in_array($val['id'], array_keys($contactType))) {
-						$newselected[] = $val['id'];
-					} else {
-						break;
+					// $val may be a role array (from $contact->roles) or a role id (from a GETPOST array)
+					$roleid = (is_array($val) ? (array_key_exists('id', $val) ? $val['id'] : '') : $val);
+					if ($roleid !== '' && in_array($roleid, array_keys($contactType))) {
+						$newselected[] = $roleid;
 					}
 				}
 				if (count($newselected) > 0) {
@@ -1187,20 +1190,20 @@ class FormCompany extends Form
 	 *  @param	Contact|Client|null	$prospectstatic Prospect object
 	 *  @param  int					$statusprospect	status of prospect
 	 *  @param  int					$idprospect     id of prospect
-	 *  @param  'html'|'js'			$mode      		select whether to activate the HTML part or JS
+	 *  @param  'html'|'htmlnojs'|'js'	$mode      	'html'=Select with its combo, 'htmlnojs'=Select only (for lists, combo is enabled for all selects by mode 'js'), 'js'=JS code to call once after all the selects
 	 *  @return	void
 	 */
 	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")
 	{
 		global $user, $langs;
 
-		if ($mode === "html") {
+		if ($mode === "html" || $mode === "htmlnojs") {
 			$actioncode = empty($prospectstatic->cacheprospectstatus[$statusprospect]) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['code'];
 			$actionpicto = empty($prospectstatic->cacheprospectstatus[$statusprospect]['picto']) ? '' : $prospectstatic->cacheprospectstatus[$statusprospect]['picto'];
 
 			//print $prospectstatic->LibProspCommStatut($statusprospect, 2, $prospectstatic->cacheprospectstatus[$statusprospect]['label'], $prospectstatic->cacheprospectstatus[$statusprospect]['picto']);
 			print img_action('', $actioncode, $actionpicto, 'class="inline-block valignmiddle paddingright pictoprospectstatus"');
-			print '<select class="flat selectprospectstatus maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'"';
+			print '<select class="flat selectprospectstatus'.($mode === "htmlnojs" ? ' selectprospectstatusnojs' : '').' maxwidth150" id="'. $htmlname.$idprospect .'" data-socid="'.$idprospect.'" name="' . $htmlname .'"';
 			if (!$user->hasRight('societe', 'creer')) {
 				print ' disabled';
 			}
@@ -1219,8 +1222,12 @@ class FormCompany extends Form
 				print '</option>';
 			}
 			print '</select>';
-			print ajax_combobox($htmlname.$idprospect);
+			if ($mode === "html") {
+				print ajax_combobox($htmlname.$idprospect);
+			}
 		} elseif ($mode === "js") {
+			// Convert into combo, with one script instead of one per select (slow on long lists), the selects output with mode 'htmlnojs'
+			print ajax_combobox('.selectprospectstatusnojs');
 			print '<script>
 				jQuery(document).ready(function() {
 					$(".selectprospectstatus").on("change", function() {

@@ -593,7 +593,7 @@ function calendars_prepare_head($param)
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
  * @param	int<-1,1>	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
- * @param	array{}|array{help:'toreporttype',0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int}}	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
+ * @param	array{calendars?:array<int,array{id:int,label:string}>,availabilitieslink?:array<int,int>}	$bookcalcalendarsarray	 Bookcal calendars, as returned by agenda_get_bookcal_calendars()
  * @param	array<string,string[]>|null	$hourlybuckets	 When set, the html of each event is collected here instead of being printed, keyed by 'allday' or by the HHMM of its half-hour slot
  * @return	void
  */
@@ -669,7 +669,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	// Line with td contains all div of each events
 	if ($hourlybuckets === null) {
 		print '<div class="tagtr">';
-		print '<div class="tagtd centpercent agendacell sortable">';
+		print '<div class="tagtd centpercent agendacell sortable nopaddingtopimp">';
 	}
 
 	//$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
@@ -845,14 +845,20 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 						$ireallyshown++;
 					}
 
-					// Day view: a timed event is positioned from its real start and end, 1 px per minute from
-					// midnight (see the day branch of comm/action/index.php). An all-day one goes to the all-day row.
-					$dayminutes = ($hourlybuckets !== null) ? agenda_event_day_minutes($event) : null;
+					// Day and week grids: a timed event is positioned from its real start and end, 1 px per minute
+					// from midnight (see comm/action/index.php). An all-day one goes to the all-day row. The other
+					// views can collect the events too (comm/action/ajax/ajaxrefreshevents.php), unpositioned.
+					$hourlygridview = ($mode == 'show_day' || ($mode == 'show_week' && !getDolGlobalString('AGENDA_WEEK_VIEW_NO_HOURLY_GRID')));
+					$dayminutes = ($hourlybuckets !== null && $hourlygridview) ? agenda_event_day_minutes($event) : null;
 					$daypositionattr = '';
-					if ($hourlybuckets !== null && $dayminutes !== null) {
-						$daypositionattr = ' data-agenda-start="'.$dayminutes[0].'" data-agenda-end="'.$dayminutes[1].'"';
-						// The id of the event itself, for the ajax of the drag&drop (the id attribute of the div is an index of the loop)
+					// The id of the event itself, for the ajax of the drag&drop and of the autorefresh (the id attribute
+					// of the div is an index of the loop). Not for birthdays, holidays and ical events: their id comes
+					// from another table (contact, holiday) or is 0, and could be the one of a real event.
+					if (!in_array($event->type, array('birthdate', 'holiday', 'icalevent'), true)) {
 						$daypositionattr .= ' data-agenda-event-id="'.((int) $event->id).'"';
+					}
+					if ($dayminutes !== null) {
+						$daypositionattr .= ' data-agenda-start="'.$dayminutes[0].'" data-agenda-end="'.$dayminutes[1].'"';
 						$daypositionattr .= ' style="position: absolute; left: 0; right: 0; top: '.$dayminutes[0].'px; height: '.max($dayminutes[1] - $dayminutes[0], 20).'px; margin: 0; padding-right: 2px; overflow: hidden; box-sizing: border-box;"';
 					}
 
@@ -1105,8 +1111,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							// nowhere to drag an event to. The same row of the week view is the drop target of the
 							// drag between days (the .sortable cell printed by comm/action/index.php), so the event
 							// must keep the movable class there, otherwise jQuery sortable({items: "div.movable"})
-							// finds nothing to drag and the row is a target with no source.
-							if ($mode == 'show_week') {
+							// finds nothing to drag and the row is a target with no source. The cells of the month
+							// view are .sortable too: comm/action/ajax/ajaxrefreshevents.php collects their events
+							// through this same array.
+							if ($mode != 'show_day') {
 								$hourlybuckets['allday'][] = $eventhtml;
 							} else {
 								$hourlybuckets['allday'][] = str_replace(' movable cursormove', ' unmovable', $eventhtml);
@@ -1192,6 +1200,44 @@ function dol_color_minus($color, $minus, $minusunit = 16)
 }
 
 /**
+ * Load the Bookcal calendars whose availabilities can show up in the agenda views
+ *
+ * @param	DoliDB	$db			Database handler
+ * @param	string	$filtert	User filter of the agenda view ('' or '-1' for all users, else a list of user ids)
+ * @return	array{calendars?:array<int,array{id:int,label:string}>,availabilitieslink?:array<int,int>}	Calendars by id, and the calendar of each availability
+ */
+function agenda_get_bookcal_calendars($db, $filtert)
+{
+	$bookcalcalendars = array();
+	if (!isModEnabled("bookcal")) {
+		return $bookcalcalendars;
+	}
+
+	$sql = "SELECT ba.rowid, bc.label, bc.ref, bc.rowid as id_cal";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bookcal_availabilities as ba";
+	$sql .= " JOIN ".MAIN_DB_PREFIX."bookcal_calendar as bc";
+	$sql .= " ON bc.rowid = ba.fk_bookcal_calendar";
+	$sql .= " WHERE bc.status = 1";
+	$sql .= " AND ba.status = 1";
+	$sql .= " AND bc.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+	if (!empty($filtert) && $filtert != '-1') {
+		$sql .= " AND bc.visibility IN (".$db->sanitize($filtert, 0, 0, 0, 0).")";
+	}
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($objp = $db->fetch_object($resql)) {
+			$label = !empty($objp->label) ? $objp->label : $objp->ref;
+			$bookcalcalendars["calendars"][(int) $objp->id_cal] = array("id" => (int) $objp->id_cal, "label" => $label);
+			$bookcalcalendars["availabilitieslink"][(int) $objp->rowid] = (int) $objp->id_cal;
+		}
+	} else {
+		dol_print_error($db);
+	}
+
+	return $bookcalcalendars;
+}
+
+/**
  * Build $eventarray (list of ActionComm objects, indexed by day) for the agenda calendar views
  * (month/week/day), applying the exact same date-range and filter logic the calendar page itself uses.
  * Extracted from htdocs/comm/action/index.php so the same logic can be shared by other agenda views.
@@ -1249,7 +1295,8 @@ function agenda_build_eventarray($db, $hookmanager, $user, &$object, &$action, $
 
 	$sqlfields = $sql; // $sql fields to remove for count total
 
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca, ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a ON a.fk_action = ca.id";
 
 	// We must filter on assignment table
 	if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
@@ -1267,7 +1314,7 @@ function agenda_build_eventarray($db, $hookmanager, $user, &$object, &$action, $
 
 	// We must filter on resource table
 	if ($resourceid > 0) {
-		$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as r ON r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 	}
 
 	// Add table from hooks
@@ -1275,8 +1322,7 @@ function agenda_build_eventarray($db, $hookmanager, $user, &$object, &$action, $
 	$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " WHERE a.fk_action = ca.id";
-	$sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
 	// Condition on actioncode
 	if (!empty($actioncode)) {
 		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -1318,9 +1364,6 @@ function agenda_build_eventarray($db, $hookmanager, $user, &$object, &$action, $
 				}
 			}
 		}
-	}
-	if ($resourceid > 0) {
-		$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
 	}
 	if ($pid) {
 		$sql .= " AND a.fk_project=".((int) $pid);

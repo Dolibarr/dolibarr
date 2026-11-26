@@ -123,6 +123,7 @@ class Categories extends DolibarrApi
 	 * @since	5.0.0	Initial implementation
 	 * @since	19.0.0	Added properties parameter
 	 * @since	25.0.0	Added pagination_data parameter
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
@@ -132,13 +133,14 @@ class Categories extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array                Array of category objects
-	 * @phan-return Categorie[]|array{data:Categorie[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return Categorie[]|array{data:Categorie[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return Categorie[]|array{data:Categorie[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return Categorie[]|array{data:Categorie[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		$obj_ret = array();
 
@@ -169,6 +171,11 @@ class Categories extends DolibarrApi
 
 		//this query will return total categories with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -251,6 +258,8 @@ class Categories extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of category
+	 *
+	 * @throws	RestException	409	A category with this label already exists at the same level for this type
 	 */
 	public function post($request_data = null)
 	{
@@ -284,7 +293,10 @@ class Categories extends DolibarrApi
 
 			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
-		if ($this->category->create(DolibarrApiAccess::$user) < 0) {
+		$result = $this->category->create(DolibarrApiAccess::$user);
+		if ($result == -4) {
+			throw new RestException(409, 'A category with this label already exists at the same level for this type');
+		} elseif ($result < 0) {
 			throw new RestException(500, 'Error when creating category', array_merge(array($this->category->error), $this->category->errors));
 		}
 		return $this->category->id;
@@ -304,6 +316,8 @@ class Categories extends DolibarrApi
 	 * @return 	Object						Updated object
 	 * @phan-return Categorie
 	 * @phpstan-return Categorie
+	 *
+	 * @throws	RestException	409	A category with this label already exists at the same level for this type
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -351,8 +365,11 @@ class Categories extends DolibarrApi
 			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
 
-		if ($this->category->update(DolibarrApiAccess::$user) > 0) {
+		$result = $this->category->update(DolibarrApiAccess::$user);
+		if ($result > 0) {
 			return $this->get($id);
+		} elseif ($result == -3) {
+			throw new RestException(409, 'A category with this label already exists at the same level for this type');
 		} else {
 			throw new RestException(500, $this->category->errorsToString());
 		}

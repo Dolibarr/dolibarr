@@ -220,7 +220,7 @@ function contact_stats_prepare_head($object)
 	// Tab with the custom reports tool (it does not filter on sales representatives, so it needs the permission to see all third parties)
 	if (empty($user->socid) && $user->hasRight('societe', 'client', 'voir')) {
 		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/contact/stats/geo.php', ['tabfamily' => 'contactstats']);
-		$head[$h][1] = $langs->trans("Custom");
+		$head[$h][1] = $langs->trans("CustomReport");
 		$head[$h][2] = 'customreports';
 		$h++;
 	}

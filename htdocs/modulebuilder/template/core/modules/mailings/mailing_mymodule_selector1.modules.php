@@ -75,8 +75,8 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 		$s .= $langs->trans("Status").': ';
 		$s .= '<select name="filter" class="flat">';
 		$s .= '<option value="none">&nbsp;</option>';
-		foreach ($arraystatus as $status) {
-			$s .= '<option value="'.$status.'">'.$status.'</option>';
+		foreach ($arraystatus as $status => $statuslabel) {
+			$s .= '<option value="'.((int) $status).'">'.dol_escape_htmltag($statuslabel).'</option>';
 		}
 		$s .= '</select>';
 		$s .= '<br>';
@@ -111,10 +111,11 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 		$j = 0;
 
 		$sql = "SELECT rowid as id, firstname, lastname, email";
-		$sql .= " FROM ".$this->db->prefix()."myobject";
+		$sql .= " FROM ".$this->db->prefix()."mymodule_myobject";
 		$sql .= " WHERE email IS NOT NULL AND email <> ''";
+		$sql .= " AND entity IN (".getEntity('myobject').")";
 		if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') {
-			$sql .= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
+			$sql .= " AND status = ".((int) GETPOST('filter', 'int'));
 		}
 		$sql .= " ORDER BY email";
 
@@ -195,8 +196,9 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 	public function getNbOfRecipients($sql = '')
 	{
 		$sql = "SELECT COUNT(DISTINCT(email)) as nb";
-		$sql .= " FROM ".$this->db->prefix()."myobject as p";
+		$sql .= " FROM ".$this->db->prefix()."mymodule_myobject as p";
 		$sql .= " WHERE email IS NOT NULL AND email <> ''";
+		$sql .= " AND entity IN (".getEntity('myobject').")";
 
 		$a = parent::getNbOfRecipients($sql);
 

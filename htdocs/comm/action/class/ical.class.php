@@ -352,7 +352,9 @@ class ICal
 			$text = trim($text); // trim one line
 			if (!empty($text)) {
 				// get Key and Value VCALENDAR:Begin -> Key = VCALENDAR, Value = begin
-				list($key, $value) = $this->retun_key_value($text);
+				$tmparray = $this->retun_key_value($text);
+				$key = $tmparray[0];
+				$value = $tmparray[1];
 				//var_dump($text.' -> '.$key.' - '.$value);
 
 				switch ($text) { // search special string
@@ -648,7 +650,9 @@ class ICal
 				$key = strtoupper($reg[1]).';VALUE=DATE';
 			} else {
 				// Date and time (the parameter VALUE=DATE-TIME, if any, is the default type and is ignored)
-				list($key, $value) = $this->ical_dt_date($key, $value);
+				$tmparray = $this->ical_dt_date($key, $value);
+				$key = $tmparray[0];
+				$value = $tmparray[1];
 			}
 		}
 

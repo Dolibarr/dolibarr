@@ -673,7 +673,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$extImg = '.webp';
 			break;
 		case 19:	// 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
-			$img = imagecreatefromavif($filetoread);
+			if (function_exists('imagecreatefromavif')) {    // If PHP < 8.1 or AVIF support not available into GD
+				$img = imagecreatefromavif($filetoread); // @phan-suppress-current-line PhanUndeclaredFunction
+			}
 			$extImg = '.avif';
 			break;
 	}
@@ -857,7 +859,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			imagewebp($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
 			break;
 		case 19:    // 19 TYPEIMAGE_AVIF constant don't exists with php < 8.1
-			imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
+			if (function_exists('imageavif')) {    // If PHP < 8.1 or AVIF support not available into GD
+				imageavif($imgThumb, $imgThumbName, $newquality); // @phan-suppress-current-line PhanUndeclaredFunction,PhanTypeMismatchArgumentNullableInternal,PhanPossiblyUndeclaredVariable
+			}
 			break;
 	}
 

@@ -49,7 +49,7 @@ class modQuickMemo extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 141916;
+		$this->numero = 55020;
 
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'quickmemo';
@@ -336,7 +336,7 @@ class modQuickMemo extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu' => 'tools',
 			'leftmenu' => 'memo',
-			'url' => '/quickmemo/memo_list.php',
+			'url' => '/quickmemo/memo_list.php?leftmenu=memo',
 			'langs' => 'quickmemo',
 			'position' => 1000 + $r,
 			'enabled' => 'isModEnabled("quickmemo")',

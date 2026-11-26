@@ -94,21 +94,24 @@ class Boms extends DolibarrApi
 	 *
 	 * Get a list of boms
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param int			$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                               Array of order objects
-	 * @phan-return BOM[]
-	 * @phpstan-return BOM[]
+	 * @phan-return BOM[]|array{count:int}
+	 * @phpstan-return BOM[]|array{count:int}
 	 *
 	 * @throws	RestException	400		Bad sqlfilters
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	503		Error retrieving list of boms
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('bom', 'read')) {
 			throw new RestException(403);
@@ -151,6 +154,11 @@ class Boms extends DolibarrApi
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
+		}
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -300,6 +308,10 @@ class Boms extends DolibarrApi
 		$result = $this->bom->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Bom not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->bom->validate(DolibarrApiAccess::$user, $notrigger);

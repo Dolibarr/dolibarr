@@ -1073,6 +1073,15 @@ class Website extends CommonObject
 
 		// Remove non required files (will be re-generated during the import)
 		dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/master.inc.php');
+		if (!getDolGlobalInt('WEBSITE_EXPORT_KEEP_FILES_OF_PAGES')) {
+			// Remove all pageX.tpl.php, including orphan files of pages no longer in database, so they are not exported
+			dol_delete_file($conf->website->dir_temp.'/'.$website->ref.'/containers/page*.tpl.php', 0, 0, 0, null, false, 0);
+		}
+		// Do not export an empty manifest.json (the import works without it)
+		$manifestjsonintemp = $conf->website->dir_temp.'/'.$website->ref.'/containers/manifest.json';
+		if (dol_is_file($manifestjsonintemp) && trim((string) file_get_contents(dol_osencode($manifestjsonintemp))) === '') {
+			dol_delete_file($manifestjsonintemp, 1, 0, 0, null, false, 0);
+		}
 
 		// Copy file README.md and LICENSE from directory containers into directory root
 		if (dol_is_file($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md')) {
@@ -1967,48 +1976,40 @@ class Website extends CommonObject
 			return -1;
 		}
 
-		$destdir = null;  // Otherwise only set when 'WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE' is not falsy.
-		$destdirrel = '';  // Otherwise only set when 'WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE' is not falsy.
+		$destdir = null;  // Filled later with the resolved export path
+		$destdirrel = '';
 		// Replace modified files into the doctemplates directory.
-		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
-			// If the user has not specified a path
-			if (empty($exportPath)) {
-				$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
-				$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
-			} else {
-				$exportPath = rtrim($exportPath, '/');
-				if (strpos($exportPath, '..') !== false) {
-					$this->error = "Invalid path.";
+		// If the user has not specified a path
+		if (empty($exportPath)) {
+			$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
+			$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+		} else {
+			$exportPath = rtrim($exportPath, '/');
+			if (strpos($exportPath, '..') !== false) {
+				$this->error = "Invalid path.";
+				$this->errors[] = $this->error;
+				return -1;
+			}
+			// if path start with / (absolute path)
+			if (strpos($exportPath, '/') === 0 || preg_match('/^[a-zA-Z]:/', $exportPath)) {
+				if (!is_dir($exportPath)) {
+					$this->error = "The specified absolute path does not exist.";
 					$this->errors[] = $this->error;
 					return -1;
 				}
-				// if path start with / (absolute path)
-				if (strpos($exportPath, '/') === 0 || preg_match('/^[a-zA-Z]:/', $exportPath)) {
-					if (!is_dir($exportPath)) {
-						$this->error = "The specified absolute path does not exist.";
-						$this->errors[] = $this->error;
-						return -1;
-					}
 
-					if (!is_writable($exportPath)) {
-						$this->error = "The specified absolute path is not writable.";
-						$this->errors[] = $this->error;
-						return -1;
-					}
-					$destdirrel = $exportPath;
-					$destdir = $exportPath;
-				} else {
-					// relatif path
-					$destdirrel = 'install/doctemplates/websites/'.$exportPath;
-					$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+				if (!is_writable($exportPath)) {
+					$this->error = "The specified absolute path is not writable.";
+					$this->errors[] = $this->error;
+					return -1;
 				}
+				$destdirrel = $exportPath;
+				$destdir = $exportPath;
+			} else {
+				// relatif path
+				$destdirrel = 'install/doctemplates/websites/'.$exportPath;
+				$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
 			}
-		}
-
-		if ($destdir === null) {
-			$this->error = "The destination path is not determined.";
-			$this->errors[] = $this->error;
-			return -1;
 		}
 
 		dol_mkdir($destdir);
@@ -2017,6 +2018,15 @@ class Website extends CommonObject
 			$this->error = "The specified path ".$destdir." is not writable.";
 			$this->errors[] = $this->error;
 			return -1;
+		}
+
+		if (!getDolGlobalInt('WEBSITE_EXPORT_KEEP_FILES_OF_PAGES')) {
+			// Remove old pageX.tpl.php of the target: they are not into the export so they would stay as orphan files
+			dol_delete_file($destdir.'/containers/page*.tpl.php', 0, 0, 0, null, false, 0);
+		}
+		// Remove the obsolete manifest.json.php of the target (replaced by manifest.json). If the export still contains one, the uncompress restores it.
+		if (dol_is_file($destdir.'/containers/manifest.json.php')) {
+			dol_delete_file($destdir.'/containers/manifest.json.php', 1, 0, 0, null, false, 0);
 		}
 
 		// Export on target sources

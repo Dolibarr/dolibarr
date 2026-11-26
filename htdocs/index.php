@@ -155,13 +155,14 @@ if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 // Security warning if install.lock file is missing or if conf file is writable
 if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	$messagetoshow = '';
+	$securitywarnings = array();	// Security warnings to show merged into one div
 
 	// Check if install lock file is present
 	$lockfile = DOL_DATA_ROOT.'/install.lock';
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
 		//if (!empty($message)) $message.='<br>';
-		$messagetoshow .= info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
+		$securitywarnings[] = info_admin($langs->transnoentities("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 1, 'warning');
 	}
 
 	// Conf files must be in read only mode
@@ -175,8 +176,15 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		//  @phpstan-ignore-next-line
 		if (is_writable($conffile)) {
 			$langs->load("errors");
-			$messagetoshow .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, 'warning', 'clearboth');
+			$securitywarnings[] = info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 1, 'warning');
 		}
+	}
+
+	if (!empty($securitywarnings)) {
+		// Each warning has its own picto (info_admin called with nodiv), all wrapped into the same div as the one built by info_admin()
+		$messagetoshow .= '<div class="wordbreak warning info_admin clearboth securitywarnings'.(empty($conf->use_javascript_ajax) ? '' : ' cursorpointer').'"';
+		$messagetoshow .= (empty($conf->use_javascript_ajax) ? '' : ' title="'.dolPrintHTMLForAttribute($langs->transnoentities("ClickToHide")).'"').'>';
+		$messagetoshow .= implode('<br><br>', $securitywarnings).'</div>';
 	}
 
 	$tmpobject = new stdClass();
@@ -187,7 +195,29 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	}
 	if ($messagetoshow) {	// $message is an HTML string.
 		print '<!-- show security warning -->';
-		print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('div', 'span', 'b'));
+		print dol_string_onlythesehtmltags($messagetoshow, 1, 0, 0, 0, array('div', 'span', 'b', 'br'));
+		if (!empty($securitywarnings) && !empty($conf->use_javascript_ajax)) {
+			// Hide the security warnings for the current page view when user clicks on them, but not when user selects text
+			// (by dragging, or with a double/triple click: so hiding is delayed to know if another click follows).
+			print '<script nonce="'.getNonce().'" type="text/javascript">
+			jQuery(document).ready(function() {
+				var securitywarningstimer = null;
+				jQuery(".securitywarnings").click(function(event) {
+					var securitywarningsdiv = jQuery(this);
+					clearTimeout(securitywarningstimer);
+					if (event.detail > 1) {
+						return;
+					}
+					securitywarningstimer = setTimeout(function() {
+						if (window.getSelection().toString() === "") {
+							console.log("Click on .securitywarnings, we hide it");
+							securitywarningsdiv.hide();
+						}
+					}, 300);
+				});
+			});
+			</script>';
+		}
 	}
 }
 
@@ -195,8 +225,6 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
  * Dashboard Dolibarr statistics
  * Hidden for external users
  */
-
-print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
@@ -363,6 +391,14 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
+	// Number of interventions to validate or process
+	if (isModEnabled('intervention') && !getDolGlobalString('MAIN_DISABLE_BLOCK_FICHINTER') && $user->hasRight('ficheinter', 'lire') && !$user->socid) {
+		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+		$board = new Fichinter($db);
+		$dashboardlines[$board->element.'_draft'] = $board->load_board($user, 'draft');
+		$dashboardlines[$board->element.'_validated'] = $board->load_board($user, 'validated');
+	}
+
 	if (isModEnabled('mrp')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_MRP')) {
 		include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 		$board = new Mo($db);
@@ -477,6 +513,12 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				'globalStatsKey' => 'holidays',
 				'stats' =>
 					array('holiday'),
+			),
+		'intervention' =>
+			array(
+				'lang' => 'interventions',
+				'groupName' => 'Interventions',
+				'stats' => array('fichinter_draft', 'fichinter_validated'),
 			),
 		'cubes' =>
 			array(
@@ -604,6 +646,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					'member' => dol_buildpath('/adherents/card.php?action=create', 1),
 					'expensereport' => dol_buildpath('/expensereport/card.php?action=create', 1),
 					'holiday' => dol_buildpath('/holiday/card.php?action=create', 1),
+					'intervention' => dol_buildpath('/fichinter/card.php?action=create', 1),
 					'cubes' => dol_buildpath('/mrp/mo_card.php?action=create', 1),
 
 				);
@@ -842,6 +885,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	$boxwork .= '</div>';
 
 	if (!empty($isIntopOpenedDashBoard)) {
+		print '<br>';
 		print '<div class="fichecenter">';
 		print '<div class="opened-dash-board-wrap"><div class="box-flex-container">'.$openedDashBoard.'</div></div>';
 		print '</div>';
@@ -850,6 +894,9 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 
 
 print '<div class="clearboth"></div>';
+
+// Show the combo list to add a widget (placed between the dashboard thumbs and the widget zone)
+print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
 print '<div class="fichecenter fichecenterbis">';
 

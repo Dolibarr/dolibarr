@@ -131,6 +131,9 @@ class ExpenseReports extends DolibarrApi
 	 * Get a list of Expense Reports
 	 *
 	 * @since	5.0.0	Initial implementation
+	 * @since	19.0.0	Added parameter $properties
+	 * @since	21.0.0	Added parameter $pagination_data
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param	string		$sortfield			Sort field
 	 * @param	string		$sortorder			Sort order
@@ -140,13 +143,14 @@ class ExpenseReports extends DolibarrApi
 	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param	string		$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param	bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param	int			$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return	array							Array of order objects
-	 * @phan-return ExpenseReport[]
-	 * @phpstan-return ExpenseReport[]
+	 * @phan-return ExpenseReport[]|array{count:int}
+	 * @phpstan-return ExpenseReport[]|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
 			throw new RestException(403);
@@ -182,6 +186,11 @@ class ExpenseReports extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -223,7 +232,7 @@ class ExpenseReports extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -659,6 +668,15 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Same source statuses as the confirm_setdraft action of expensereport/card.php (a draft report is left to the 304 below)
+		$allowedstatus = array(ExpenseReport::STATUS_DRAFT, ExpenseReport::STATUS_VALIDATED);
+		if (DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
+			$allowedstatus[] = ExpenseReport::STATUS_APPROVED;
+		}
+		if (!in_array($this->expensereport->status, $allowedstatus)) {
+			throw new RestException(403, 'Expense report must be in validated'.(in_array(ExpenseReport::STATUS_APPROVED, $allowedstatus) ? ' or approved' : '').' status to be set to draft');
+		}
+
 		$result = $this->expensereport->setStatut(ExpenseReport::STATUS_DRAFT);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already draft');
@@ -701,6 +719,11 @@ class ExpenseReports extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same source statuses as the confirm_validate and confirm_save_from_refuse actions of expensereport/card.php (a validated report is left to the 304 below)
+		if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_DRAFT, ExpenseReport::STATUS_REFUSED, ExpenseReport::STATUS_VALIDATED))) {
+			throw new RestException(403, 'Expense report must be in draft or refused status to be validated');
 		}
 
 		$result = $this->expensereport->setValidate(DolibarrApiAccess::$user, $notrigger);
@@ -746,6 +769,11 @@ class ExpenseReports extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same source status as the confirm_approve action of expensereport/card.php (an approved report is left to the 304 below)
+		if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_VALIDATED, ExpenseReport::STATUS_APPROVED))) {
+			throw new RestException(403, 'Expense report must be in validated status to be approved');
 		}
 
 		$result = $this->expensereport->setApproved(DolibarrApiAccess::$user, $notrigger);
@@ -794,6 +822,11 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Same source statuses as the confirm_refuse action of expensereport/card.php (a refused report is left to the 304 below)
+		if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_VALIDATED, ExpenseReport::STATUS_APPROVED, ExpenseReport::STATUS_REFUSED))) {
+			throw new RestException(403, 'Expense report must be in validated or approved status to be denied');
+		}
+
 		$result = $this->expensereport->setDeny(DolibarrApiAccess::$user, $details, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already denied');
@@ -815,7 +848,7 @@ class ExpenseReports extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @since	22.0.0	Initial implementation
+	 * @since	24.0.0	Initial implementation
 	 *
 	 * @param	int		$id				Expense report ID
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
@@ -842,10 +875,10 @@ class ExpenseReports extends DolibarrApi
 
 		$result = $this->expensereport->setPaid($id, DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
-			throw new RestException(304, 'Error nothing done. May be object is already approved');
+			throw new RestException(304, 'Error nothing done. May be object is not approved or is already paid');
 		}
 		if ($result < 0) {
-			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->errorsToString());
+			throw new RestException(500, 'Error when setting expense report to paid: '.$this->expensereport->errorsToString());
 		}
 
 		return $this->_cleanObjectDatas($this->expensereport);
@@ -884,6 +917,14 @@ class ExpenseReports extends DolibarrApi
 
 		if ($this->expensereport->status == ExpenseReport::STATUS_CANCELED) {
 			throw new RestException(403, 'Expense report already canceled');
+		}
+		// Same source statuses as the confirm_cancel action of expensereport/card.php
+		$allowedstatus = array(ExpenseReport::STATUS_VALIDATED, ExpenseReport::STATUS_APPROVED);
+		if (DolibarrApiAccess::$user->hasRight('expensereport', 'approve') || DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
+			$allowedstatus[] = ExpenseReport::STATUS_CLOSED;
+		}
+		if (!in_array($this->expensereport->status, $allowedstatus)) {
+			throw new RestException(403, 'Expense report must be in validated'.(in_array(ExpenseReport::STATUS_CLOSED, $allowedstatus) ? ', approved or paid' : ' or approved').' status to be canceled');
 		}
 		$result = $this->expensereport->set_cancel(DolibarrApiAccess::$user, $detail, $notrigger);
 		if ($result < 0) {
@@ -1088,6 +1129,7 @@ class ExpenseReports extends DolibarrApi
 	 * Update a payment of an expense report
 	 *
 	 * @since	20.0.0	Initial implementation
+	 * @since	24.0.2	Route changed from PUT {id}/payments to PUT {id}/payments/{idp}
 	 *
 	 * @param	int		$id				ID of ExpenseReport
 	 * @param	int		$idp			ID of paymentExpenseReport
