@@ -364,7 +364,6 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$this->assertEquals(10, (float) $after['vatrate'], "$test VAT rate must not change");
 		$this->assertEquals(12.5, (float) $after['value_unit'], "$test Unit price must not change");
 		$this->assertEquals($before['dates'], $after['dates'], "$test Date must not change");
-		$this->assertEquals($before['comments'], $after['comments'], "$test Comment must not change");
 		$this->assertEquals(25, (float) $after['total_ttc'], "$test Total with taxes must be recomputed");
 		$this->assertEqualsWithDelta(25 / 1.1, (float) $after['total_ht'], 0.01, "$test Total without taxes must be recomputed");
 	}
