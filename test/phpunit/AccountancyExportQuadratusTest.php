@@ -20,7 +20,9 @@ if (!defined('DOL_CLASS_PATH')) {
 	define('DOL_CLASS_PATH', '/class/');
 }
 if (!class_exists('DoliDB', false)) {
-	// Minimal stand-in: the export code only stores the handler
+	/**
+	 * Minimal stand-in: the export code only stores the handler
+	 */
 	abstract class DoliDB
 	{
 	}
