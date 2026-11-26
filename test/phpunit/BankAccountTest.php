@@ -102,6 +102,47 @@ class BankAccountTest extends CommonClassTest
 	}
 
 	/**
+	 * testSepaTransferSchemaVersion
+	 *
+	 * The credit transfer file format of an account is stored with it, and the one of the setup is used when it has none.
+	 *
+	 * @return void
+	 */
+	public function testSepaTransferSchemaVersion()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new Account($db);
+		$localobject->initAsSpecimen();
+		$localobject->ref = 'SEPAVERSION';
+		$localobject->label = 'Credit transfer file format';
+		$localobject->date_solde = dol_now();
+		$localobject->sepa_transfer_schema_version = '9';
+		$this->assertGreaterThan(0, $localobject->create($user), $localobject->errorsToString());
+
+		$localobject->fetch($localobject->id);
+		$this->assertSame('9', $localobject->getSepaTransferSchemaVersion());
+
+		$localobject->sepa_transfer_schema_version = '';
+		$this->assertGreaterThan(0, $localobject->update($user), $localobject->errorsToString());
+		$localobject->fetch($localobject->id);
+		$this->assertSame('', $localobject->sepa_transfer_schema_version);
+
+		$savversion = getDolGlobalString('PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION');
+		$conf->global->PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION = '';
+		$this->assertSame('3', $localobject->getSepaTransferSchemaVersion());
+		$conf->global->PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION = '9';
+		$this->assertSame('9', $localobject->getSepaTransferSchemaVersion());
+		$conf->global->PAYMENTBYBANKTRANSFER_SEPA_SCHEMA_VERSION = $savversion;
+
+		$localobject->delete($user);
+	}
+
+	/**
 	 * testBankAccountFetch
 	 *
 	 * @param   int $id     Id of contract
