@@ -27,7 +27,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
-$langs->load("admin");
+$langs->loadLangs(array("admin", "errors"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -58,6 +58,7 @@ if (preg_match('/mysql/i', $conf->db->type)) {
 if (!$base) {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 } else {
+	$row = array();
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -68,7 +69,11 @@ if (!$base) {
 		}
 	}
 
-	if ($base == 1) {	// mysql
+	if ($base == 1 && $table === '') {
+		print '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Table")).'</div>';
+	} elseif ($base == 1 && empty($row)) {
+		print '<div class="error">'.$langs->trans("ErrorTableNotFound", dol_escape_htmltag($table)).'</div>';
+	} elseif ($base == 1) {	// mysql
 		$link = array();
 		$cons = explode(";", $row[14]);
 		if (!empty($cons)) {
