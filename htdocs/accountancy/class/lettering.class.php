@@ -275,7 +275,13 @@ class Lettering extends BookKeeping
 				}
 
 				if (count($ids) > 1) {
-					$result = $this->updateLettering($ids);
+					$fiscalYear = $this->getFiscalYearForBookkeepingIds($ids, true);
+					if ($fiscalYear === -1) {
+						$error++;
+					} elseif (is_object($fiscalYear)) {
+						$result = $this->updateLettering($ids);
+					}
+					// If $fiscalYear === 0 (cross-fiscal-year or missing fiscal year), silently skip
 				}
 			}
 			$this->db->free($resql);
@@ -292,10 +298,77 @@ class Lettering extends BookKeeping
 	}
 
 	/**
+	 * Retrieve and validate the unique fiscal year for a list of bookkeeping IDs.
+	 *
+	 * @param	int[]		$ids		List of bookkeeping rowids
+	 * @param	bool		$silent		If true, do not populate $this->errors on missing/cross fiscal year
+	 * @return	object|int				Fiscal year object if valid, 0 if missing/cross fiscal year, -1 on SQL error
+	 */
+	protected function getFiscalYearForBookkeepingIds(array $ids, $silent = false)
+	{
+		global $conf, $langs;
+
+		$ids = array_unique(array_filter(array_map('intval', $ids)));
+		if (empty($ids)) {
+			return 0;
+		}
+
+		$idlist = implode(',', $ids);
+		$sql = "SELECT DISTINCT fy.rowid, fy.date_start, fy.date_end";
+		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
+		$sql .= " LEFT JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
+		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
+		$sql .= "   AND fy.entity = " . (int) $conf->entity;
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+
+		dol_syslog(__METHOD__ . " - Get fiscal year for bookkeeping ids", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			return -1;
+		}
+
+		$fiscalYearRows = array();
+		$hasMissingFiscalYear = false;
+		while ($obj = $this->db->fetch_object($resql)) {
+			if (empty($obj->rowid)) {
+				$hasMissingFiscalYear = true;
+			} else {
+				$fiscalYearRows[] = $obj;
+			}
+		}
+		$this->db->free($resql);
+
+		if ($hasMissingFiscalYear || empty($fiscalYearRows)) {
+			if (!$silent) {
+				$this->errors[] = $langs->trans('ErrorFiscalYearNotFound');
+			}
+			return 0;
+		}
+
+		if (count($fiscalYearRows) > 1) {
+			if (!$silent) {
+				$periods = array_map(
+					function ($row) {
+						return dol_print_date($this->db->jdate($row->date_start), 'day') . ' – ' . dol_print_date($this->db->jdate($row->date_end), 'day');
+					},
+					$fiscalYearRows
+				);
+				$this->errors[] = $langs->transnoentitiesnoconv('ErrorMatchingCrossFiscalYear', implode(', ', $periods));
+			}
+			return 0;
+		}
+
+		return $fiscalYearRows[0];
+	}
+
+	/**
+	 * Update lettering on subledger (auxiliary) accounts within a single fiscal year
+	 *
 	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
 	 * @param	bool		$partial		Partial lettering
-	 * @return	int
+	 * @return	int							Nb of affected rows or <0 if error
 	 */
 	public function updateLettering($ids = array(), $notrigger = 0, $partial = false)
 	{
@@ -305,17 +378,31 @@ class Lettering extends BookKeeping
 		$error = 0;
 		$affected_rows = 0;
 
-		// Generate a string with n char 'A' (for manual/auto reconcile) or 'a' (for partial reconcile) where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA'/'aa', 'AAA'/'aaa', ...) @phan-suppress-next-line PhanParamSuspiciousOrder
+		$ids = array_unique(array_filter(array_map('intval', (array) $ids)));
+		if (empty($ids)) {
+			return 0;
+		}
+
+		// 1. Validate that all selected rows belong to the same fiscal year
+		$fiscalYear = $this->getFiscalYearForBookkeepingIds($ids);
+		if (!is_object($fiscalYear)) {
+			return -1;
+		}
+		$fiscalYearStart = $this->db->jdate($fiscalYear->date_start);
+		$fiscalYearEnd   = $this->db->jdate($fiscalYear->date_end);
+
+		// Generate initial code ('AAA' or 'aaa')
 		$letter = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), $partial ? 'a' : 'A');
 
 		$this->db->begin();
 
-		// Check partial / normal lettering case
-		$idlist = implode(',', array_map('intval', $ids));
-		$sql = "SELECT ab.lettering_code, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+		// 2. Check partial / normal lettering case
+		$idlist = implode(',', $ids);
+		$sql = "SELECT ab.lettering_code, ab.subledger_account, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
+		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
 		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
-		$sql .= " GROUP BY ab.lettering_code";
+		$sql .= " AND ab.subledger_account != ''";
+		$sql .= " GROUP BY ab.lettering_code, ab.subledger_account";
 		$sql .= " ORDER BY ab.lettering_code DESC";
 
 		dol_syslog(__METHOD__ . " - Check partial / normal lettering case", LOG_DEBUG);
@@ -326,24 +413,27 @@ class Lettering extends BookKeeping
 					continue;
 				}
 
-				// Remove normal lettering code if set partial lettering
+				// Exclude already-matched lines when applying partial lettering
 				if ($partial && preg_match('/^[A-Z]+$/', $obj->lettering_code)) {
 					if (!empty($obj->bookkeeping_ids)) {
-						$ids = array_diff($ids, explode(',', $obj->bookkeeping_ids));
+						$ids = array_diff($ids, array_map('intval', explode(',', $obj->bookkeeping_ids)));
 					}
 				} elseif (!$partial && preg_match('/^[a-z]+$/', $obj->lettering_code)) {
-					// Delete partial lettering code if set normal lettering
-					$sql2 = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
+					// Delete partial lettering code (scoped to same subledger account & fiscal year)
+					$sql2 = "UPDATE " . $this->db->prefix() . "accounting_bookkeeping SET";
 					$sql2 .= " matching_general = 0";
 					$sql2 .= ", lettering_code = NULL";
 					$sql2 .= ", date_lettering = NULL";
 					$sql2 .= " WHERE entity IN (" . getEntity('accountancy') . ")";
+					$sql2 .= " AND matching_general = 0";
+					$sql2 .= " AND subledger_account = '" . $this->db->escape($obj->subledger_account) . "'";
 					$sql2 .= " AND lettering_code = '" . $this->db->escape($obj->lettering_code) . "'";
+					$sql2 .= " AND doc_date BETWEEN '" . $this->db->idate($fiscalYearStart) . "' AND '" . $this->db->idate($fiscalYearEnd) . "'";
 
 					dol_syslog(__METHOD__ . " - Remove partial lettering", LOG_DEBUG);
 					$resql2 = $this->db->query($sql2);
 					if (!$resql2) {
-						$this->errors[] = 'Error' . $this->db->lasterror();
+						$this->errors[] = 'Error ' . $this->db->lasterror();
 						$error++;
 						break;
 					}
@@ -351,19 +441,22 @@ class Lettering extends BookKeeping
 			}
 			$this->db->free($resql);
 		} else {
-			$this->errors[] = 'Error' . $this->db->lasterror();
+			$this->errors[] = 'Error ' . $this->db->lasterror();
 			$error++;
 		}
 
 		if (!$error && !empty($ids)) {
-			// Get next code
-			$idlist = implode(',', array_map('intval', $ids));
+			$idlist = implode(',', $ids);
+
+			// 3. Get next lettering code scoped to the same subledger account & fiscal year
 			$sql = "SELECT DISTINCT ab2.lettering_code";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
+			$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
 			$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+			$sql .= " AND ab2.entity IN (" . getEntity('accountancy') . ")";
 			$sql .= " AND ab2.lettering_code != ''";
 			$sql .= " AND ab2.matching_general = 0";
+			$sql .= " AND ab2.doc_date BETWEEN '" . $this->db->idate($fiscalYearStart) . "' AND '" . $this->db->idate($fiscalYearEnd) . "'";
 			$sql .= " ORDER BY ab2.lettering_code DESC";
 
 			dol_syslog(__METHOD__ . " - Get next code", LOG_DEBUG);
@@ -381,15 +474,14 @@ class Lettering extends BookKeeping
 				}
 				$this->db->free($resql);
 			} else {
-				$this->errors[] = 'Error' . $this->db->lasterror();
+				$this->errors[] = 'Error ' . $this->db->lasterror();
 				$error++;
 			}
 
-			// Test amount integrity
+			// 4. Test amount integrity (debit == credit)
 			if (!$error && !$partial) {
-				$idlist = implode(',', array_map('intval', $ids));
 				$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+				$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping";
 				$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
 				$sql .= " AND lettering_code IS NULL";
 				$sql .= " AND subledger_account != ''";
@@ -398,8 +490,8 @@ class Lettering extends BookKeeping
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					if ($obj = $this->db->fetch_object($resql)) {
-						if (!(round(abs($obj->deb), 2) === round(abs($obj->cred), 2))) {
-							$this->errors[] = $langs->trans('ErrorMatchingUnbalanced', price(price2num(abs($obj->deb), 'MT')), price(price2num(abs($obj->cred), 'MT')));
+						if (!(round(abs((float) $obj->deb), 2) === round(abs((float) $obj->cred), 2))) {
+							$this->errors[] = $langs->trans('ErrorMatchingUnbalanced', price(price2num(abs((float) $obj->deb), 'MT')), price(price2num(abs((float) $obj->cred), 'MT')));
 							$error++;
 						}
 					}
@@ -410,12 +502,11 @@ class Lettering extends BookKeeping
 				}
 			}
 
-			// Update lettering code
+			// 5. Update lettering code
 			if (!$error) {
-				$idlist = implode(',', array_map('intval', $ids));
-				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
-				$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
-				$sql .= ", date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
+				$sql = "UPDATE " . $this->db->prefix() . "accounting_bookkeeping SET";
+				$sql .= " lettering_code = '" . $this->db->escape($letter) . "'";
+				$sql .= ", date_lettering = '" . $this->db->idate($now) . "'";
 				$sql .= ", matching_general = 0";
 				$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
 				$sql .= " AND lettering_code IS NULL";
@@ -436,7 +527,7 @@ class Lettering extends BookKeeping
 		if ($error) {
 			$this->db->rollback();
 			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
+				dol_syslog(get_class($this) . "::updateLettering " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			return -1 * $error;
@@ -447,39 +538,89 @@ class Lettering extends BookKeeping
 	}
 
 	/**
+	 * Delete lettering on subledger (auxiliary) accounts.
+	 * Deletes all lines sharing the same lettering_code + subledger_account in the same fiscal year.
+	 *
 	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
-	 * @return	int							Nb of affectd rows or <0 if error
+	 * @return	int							Nb of affected rows or <0 if error
 	 */
 	public function deleteLettering($ids, $notrigger = 0)
 	{
+		global $conf;
+
 		$error = 0;
+		$ids = array_unique(array_filter(array_map('intval', (array) $ids)));
+		if (empty($ids)) {
+			return 0;
+		}
 
-		$idlist = implode(',', array_map('intval', $ids));
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
-		$sql .= " matching_general = 0";
-		$sql .= ", lettering_code = NULL";
-		$sql .= ", date_lettering = NULL";
-		$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
-		$sql .= " AND subledger_account != ''";
+		// Step 1: collect all (lettering_code, subledger_account, fiscal year) from selected ids
+		$idlist = implode(',', $ids);
+		$sql  = "SELECT DISTINCT ab.lettering_code, ab.subledger_account, fy.date_start, fy.date_end";
+		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
+		$sql .= " INNER JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
+		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
+		$sql .= "   AND fy.entity = " . (int) $conf->entity;
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+		$sql .= " AND ab.subledger_account != ''";
+		$sql .= " AND ab.matching_general = 0";
+		$sql .= " AND ab.lettering_code IS NOT NULL AND ab.lettering_code != ''";
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		dol_syslog(__METHOD__ . " - Collect subledger lettering groups to delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			return -1;
 		}
 
-		// Commit or rollback
+		$groups = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$groups[] = array(
+				'code'              => $obj->lettering_code,
+				'subledger_account' => $obj->subledger_account,
+				'date_start'        => $obj->date_start,
+				'date_end'          => $obj->date_end,
+			);
+		}
+		$this->db->free($resql);
+
+		if (empty($groups)) {
+			return 0;
+		}
+
+		// Step 2: for each group, delete all lines sharing the same code + subledger_account + fiscal year
+		$affected = 0;
+		foreach ($groups as $group) {
+			$sql  = "UPDATE " . $this->db->prefix() . "accounting_bookkeeping SET";
+			$sql .= "  matching_general = 0";
+			$sql .= ", lettering_code = NULL";
+			$sql .= ", date_lettering = NULL";
+			$sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
+			$sql .= " AND subledger_account = '" . $this->db->escape($group['subledger_account']) . "'";
+			$sql .= " AND lettering_code = '" . $this->db->escape($group['code']) . "'";
+			$sql .= " AND matching_general = 0";
+			$sql .= " AND doc_date BETWEEN '" . $this->db->escape($group['date_start']) . "' AND '" . $this->db->escape($group['date_end']) . "'";
+
+			dol_syslog(__METHOD__ . " - Delete subledger lettering group " . $group['code'] . "/" . $group['subledger_account'], LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error ' . $this->db->lasterror();
+				break;
+			}
+			$affected += $this->db->affected_rows($resql);
+		}
+
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				dol_syslog(get_class($this) . "::deleteLettering " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			return -1 * $error;
-		} else {
-			return $this->db->affected_rows($resql);
 		}
+
+		return $affected;
 	}
 
 	/**
@@ -564,51 +705,11 @@ class Lettering extends BookKeeping
 		}
 
 		// Get fiscal year & verify all selected rows belong to the same fiscal year
-		$idlist = implode(',', array_map('intval', $ids));
-		$sql = "SELECT fy.rowid, fy.date_start, fy.date_end, COUNT(DISTINCT fy.rowid) AS nb_fiscalyears";
-		$sql .= " FROM " . $this->db->prefix() . "accounting_bookkeeping AS ab";
-		$sql .= " INNER JOIN " . $this->db->prefix() . "accounting_fiscalyear AS fy";
-		$sql .= "   ON ab.doc_date BETWEEN fy.date_start AND fy.date_end";
-		$sql .= "   AND fy.entity = " . (int) $conf->entity;
-		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
-		$sql .= " GROUP BY fy.rowid, fy.date_start, fy.date_end";
-
-		dol_syslog(__METHOD__ . " - Get fiscal year", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
+		$fiscalYear = $this->getFiscalYearForBookkeepingIds($ids);
+		if (!is_object($fiscalYear)) {
 			return -1;
 		}
 
-		$fiscalYearRows = [];
-		while ($obj = $this->db->fetch_object($resql)) {
-			$fiscalYearRows[] = $obj;
-		}
-		$this->db->free($resql);
-
-		// No fiscal year found for any of the selected rows
-		if (empty($fiscalYearRows)) {
-			$this->errors[] = $langs->trans('ErrorFiscalYearNotFound');
-			return -1;
-		}
-
-		// Cross-fiscal-year matching is forbidden
-		if (count($fiscalYearRows) > 1) {
-			$periods = array_map(
-				/**
-				 * @param object $row
-				 * @return string
-				 */
-				function ($row) {
-					return dol_print_date($this->db->jdate($row->date_start), 'day') . ' – ' . dol_print_date($this->db->jdate($row->date_end), 'day');
-				},
-				$fiscalYearRows
-			);
-			$this->errors[] = $langs->transnoentitiesnoconv('ErrorMatchingCrossFiscalYear', implode(', ', $periods));
-			return -1;
-		}
-
-		$fiscalYear     = $fiscalYearRows[0];
 		$fiscalYearStart = $this->db->jdate($fiscalYear->date_start);
 		$fiscalYearEnd   = $this->db->jdate($fiscalYear->date_end);
 
@@ -885,6 +986,16 @@ class Lettering extends BookKeeping
 			if (!$group_error && !$unlettering && price2num($total) != 0) {
 				$this->errors[] = $langs->trans('AccountancyErrorMismatchBalanceAmount', $total);
 				$group_error++;
+			}
+
+			// Silently skip groups spanning multiple fiscal years (or without fiscal year)
+			if (!$group_error && !$unlettering && $do_it) {
+				$fiscalYear = $this->getFiscalYearForBookkeepingIds($bookkeeping_lines, true);
+				if ($fiscalYear === -1) {
+					$group_error++;
+				} elseif (!is_object($fiscalYear)) {
+					$do_it = false;
+				}
 			}
 
 			// Matching/Unmatching the group of bookkeeping lines
