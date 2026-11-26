@@ -57,7 +57,10 @@ llxHeader("", $title, $help_url);
 
 $object = new Loan($db);
 $object->fetch($id);
-$object->info($id);
+$result = $object->info($id);
+if ($result < 0) {
+	setEventMessages($object->error, $object->errors, 'errors');
+}
 
 $head = loan_prepare_head($object);
 
