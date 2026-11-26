@@ -461,6 +461,42 @@ class RestAPITicketTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Add a message with an attachment with executable content to a ticket: it must be saved with .noexe
+	 *
+	 * @return void
+	 */
+	public function testRestTicketNewMessageAttachmentNoExe()
+	{
+		global $conf;
+
+		$test = "Add a message with a php attachment to a ticket";
+
+		$ticket_id = $this->createTicket($test);
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$ref = (string) $result['content']['ref'];
+		$this->assertNotEmpty($ref, "$test The ticket must have a ref");
+
+		$filename = 'testRestTicket'.mt_rand().'.php';
+		$data = array(
+			"id" => $ticket_id,
+			"message" => "Message with a php attachment added via the REST API",
+			"attachments" => array(
+				array("filename" => $filename, "filecontent" => base64_encode("<?php echo 'test';"), "fileencoding" => "base64"),
+			),
+		);
+		$result = $this->getUrl('tickets/newmessage', $test, 'POST', $data);
+		$this->assertEquals($ticket_id, (int) $result['content'], "$test The id of the ticket must be returned");
+
+		$destdir = $conf->ticket->dir_output.'/'.$ref;
+		if (getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED')) {
+			$this->assertFileExists($destdir.'/'.$filename, "$test The php attachment must be saved");
+		} else {
+			$this->assertFileExists($destdir.'/'.$filename.'.noexe', "$test The php attachment must be saved with .noexe");
+			$this->assertFileNotExistsCompat($destdir.'/'.$filename, "$test The php attachment must not be saved with its executable name");
+		}
+	}
+
+	/**
 	 * Unlink a contact of a ticket that does not exist
 	 *
 	 * @return void
@@ -532,5 +568,104 @@ class RestAPITicketTest extends AbstractRestAPITest
 			return (int) $ticket['id'];
 		}, $result['content']['data']);
 		$this->assertContains($ticket_id, $ids, "$test The created ticket must be in the list");
+	}
+
+	/**
+	 * Delete a ticket, then check it can not be read anymore
+	 *
+	 * @return void
+	 */
+	public function testRestTicketDelete()
+	{
+		$test = "Delete a ticket";
+
+		$ticket_id = $this->createTicket($test);
+
+		$result = $this->getUrl('tickets/'.$ticket_id, $test, 'DELETE');
+		// The ticket is deleted, so it must not be deleted again at end of the test
+		$this->objectstodelete = array_values(array_diff($this->objectstodelete, array('tickets/'.$ticket_id)));
+		$this->assertEquals(200, (int) $result['content']['success']['code'], "$test Code of the success response");
+
+		$this->getUrl('tickets/'.$ticket_id, $test, 'GET', null, 404);
+	}
+
+	/**
+	 * Delete a ticket that does not exist
+	 *
+	 * @return void
+	 */
+	public function testRestTicketDeleteUnknownTicket()
+	{
+		$test = "Delete a ticket that does not exist";
+
+		$this->getUrl('tickets/999999999', $test, 'DELETE', null, 404);
+	}
+
+	/**
+	 * Link an external contact to a ticket, then link it again
+	 *
+	 * @return void
+	 */
+	public function testRestTicketPostContact()
+	{
+		$test = "Link an external contact to a ticket";
+
+		$ticket_id = $this->createTicket($test);
+		$result = $this->getUrl('contacts', $test, 'POST', array("lastname" => "testRestTicket".mt_rand()));
+		$contact_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $contact_id, "$test Id of contact is not > 0");
+		array_push($this->objectstodelete, 'contacts/'.$contact_id);
+
+		$result = $this->getUrl('tickets/'.$ticket_id.'/contact/'.$contact_id.'/SUPPORTCLI', $test, 'POST', array("source" => "external"));
+		$this->assertEquals(200, $result['content']['success']['code'] ?? null, "$test Linking the external contact must succeed");
+		$this->assertContains($contact_id, $this->getTicketContactIds($test, $ticket_id, 'external'), "$test The external contact must be linked");
+
+		// Linking again the same contact with the same type is a conflict
+		$this->getUrl('tickets/'.$ticket_id.'/contact/'.$contact_id.'/SUPPORTCLI', $test, 'POST', array("source" => "external"), 409);
+	}
+
+	/**
+	 * Link a contact to a ticket that does not exist
+	 *
+	 * @return void
+	 */
+	public function testRestTicketPostContactUnknownTicket()
+	{
+		$test = "Link a contact to a ticket that does not exist";
+
+		$this->getUrl('tickets/999999999/contact/1/SUPPORTTEC', $test, 'POST', array("source" => "internal"), 404);
+	}
+
+	/**
+	 * Link a contact that does not exist to a ticket
+	 *
+	 * @return void
+	 */
+	public function testRestTicketPostContactUnknownContact()
+	{
+		$test = "Link a contact that does not exist to a ticket";
+
+		$ticket_id = $this->createTicket($test);
+
+		$this->getUrl('tickets/'.$ticket_id.'/contact/999999999/SUPPORTCLI', $test, 'POST', array("source" => "external"), 404);
+		$this->getUrl('tickets/'.$ticket_id.'/contact/999999999/SUPPORTTEC', $test, 'POST', array("source" => "internal"), 404);
+		$this->assertNotContains(999999999, $this->getTicketContactIds($test, $ticket_id, 'external'), "$test The external contact must not be linked");
+		$this->assertNotContains(999999999, $this->getTicketContactIds($test, $ticket_id, 'internal'), "$test The internal contact must not be linked");
+	}
+
+	/**
+	 * Link a contact to a ticket with a bad source or a contact type that does not exist
+	 *
+	 * @return void
+	 */
+	public function testRestTicketPostContactBadSourceOrType()
+	{
+		$test = "Link a contact to a ticket with a bad source or type";
+
+		$ticket_id = $this->createTicket($test);
+
+		$this->getUrl('tickets/'.$ticket_id.'/contact/1/SUPPORTTEC', $test, 'POST', array("source" => "badsource"), 400);
+		$this->getUrl('tickets/'.$ticket_id.'/contact/1/NOTATYPE', $test, 'POST', array("source" => "internal"), 400);
+		$this->assertNotContains(1, $this->getTicketContactIds($test, $ticket_id, 'internal'), "$test The internal contact must not be linked");
 	}
 }

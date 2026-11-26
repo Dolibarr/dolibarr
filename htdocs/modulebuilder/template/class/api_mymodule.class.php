@@ -104,16 +104,17 @@ class MyModuleApi extends DolibarrApi
 	 * @param 	int			   $page				Page number
 	 * @param 	string         $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param 	string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param 	int			$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                               Array of MyObject objects
-	 * @phan-return array<int,MyObject>
-	 * @phpstan-return array<int,MyObject>
+	 * @phan-return array<int,MyObject>|array{count:int}
+	 * @phpstan-return array<int,MyObject>|array{count:int}
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 503 System error
 	 *
 	 * @url	GET /myobjects/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		global $hookmanager;
 
@@ -126,7 +127,7 @@ class MyModuleApi extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
-		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
+		$restrictonsocid = (isset($tmpobject->fields['fk_soc']) ? 1 : 0); // Set to 1 if there is a field socid in table of object
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -178,6 +179,11 @@ class MyModuleApi extends DolibarrApi
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
+		}
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -283,7 +289,7 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
-			throw new RestException(403, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to instance id='.$id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->myobject->fetch($id);
@@ -342,7 +348,7 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('myobject', $id, 'mymodule_myobject')) {
-			throw new RestException(403, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access to instance id='.$id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->myobject->fetch($id);
@@ -350,9 +356,10 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(404, 'MyObject not found');
 		}
 
-		if ($this->myobject->delete(DolibarrApiAccess::$user) == 0) {
+		$result = $this->myobject->delete(DolibarrApiAccess::$user);
+		if ($result == 0) {
 			throw new RestException(409, 'Error when deleting MyObject : '.$this->myobject->error);
-		} elseif ($this->myobject->delete(DolibarrApiAccess::$user) < 0) {
+		} elseif ($result < 0) {
 			throw new RestException(500, 'Error when deleting MyObject : '.$this->myobject->error);
 		}
 

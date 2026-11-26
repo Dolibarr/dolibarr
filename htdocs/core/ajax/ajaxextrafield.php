@@ -162,7 +162,9 @@ if ($object instanceof CommonObject) {
 		$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2] . ' as rowid');
 
 		if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-			list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+			$tmparray = explode('|', $InfoFieldList[3]);
+			$parentName = $tmparray[0];
+			$parentField = $tmparray[1];
 			$keyList .= ', ' . $parentField;
 		}
 		if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {

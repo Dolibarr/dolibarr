@@ -290,6 +290,37 @@ if (($action == 'downfield' || $action == 'upfield') && $user->hasRight('export'
 	}
 }
 
+// Move a field to change order of fields (from drag and drop on step 4 page)
+if ($action == 'movefield' && $user->hasRight('export', 'creer')) {
+	$fieldsorder = GETPOST('fieldsorder', 'alpha');    // Example: '3,1,2' = list of old positions of fields, into their new order
+
+	$arrayoldpos2code = array_flip($array_selected);
+
+	$newarrayselected = array();
+	$i = 0;
+	foreach (explode(',', $fieldsorder) as $tmppos) {
+		$tmppos = (int) $tmppos;
+		if (empty($tmppos) || empty($arrayoldpos2code[$tmppos])) {
+			continue;
+		}
+		$code = $arrayoldpos2code[$tmppos];
+		if (!isset($newarrayselected[$code])) {    // Protection if position appears twice
+			$i++;
+			$newarrayselected[$code] = $i;
+		}
+	}
+	// Append fields that were not into the received list (they were not visible so not draggable)
+	foreach ($array_selected as $code => $value) {
+		if (!isset($newarrayselected[$code])) {
+			$i++;
+			$newarrayselected[$code] = $i;
+		}
+	}
+
+	$array_selected = $newarrayselected;
+	$_SESSION["export_selected_fields"] = $array_selected;
+}
+
 if ($step == 1 || $action == 'cleanselect') {	// Test on permission here not required
 	$_SESSION["export_selected_fields"] = array();
 	$_SESSION["export_filtered_fields"] = array();
@@ -428,8 +459,11 @@ if ($step == 2 && $action == 'select_model' && $user->hasRight('export', 'lire')
 		$fieldsarrayvalue = explode(',', $objexport->hexafiltervalue);
 		$i = 1;
 		foreach ($fieldsarrayvalue as $val) {
+			if ($val === '') {
+				continue;	// Model saved without any filter
+			}
 			$tmp = explode('=', $val);
-			$array_filtervalue[$tmp[0]] = $tmp[1];
+			$array_filtervalue[$tmp[0]] = $tmp[1] ?? '';
 			$i++;
 		}
 		$_SESSION["export_filtered_fields"] = $array_filtervalue;
@@ -1075,8 +1109,8 @@ if ($step == 4 && $datatoexport) {
 	print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("ChooseFieldsOrdersAndTitle").'</span></div>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
+	print '<table class="noborder centpercent" id="tableforfieldorder">';
+	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.$langs->trans("Entities").'</td>';
 	print '<td>'.$langs->trans("ExportedFields").'</td>';
 	print '<td class="right" colspan="2">'.$langs->trans("Position").'</td>';
@@ -1089,7 +1123,7 @@ if ($step == 4 && $datatoexport) {
 			continue;
 		}
 
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven" id="fieldposition_'.$value.'">';
 
 		$entity = (!empty($objexport->array_export_entities[0][$code]) ? $objexport->array_export_entities[0][$code] : $objexport->array_export_icon[0]);
 		$entityicon = strtolower(!empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity);
@@ -1146,12 +1180,12 @@ if ($step == 4 && $datatoexport) {
 
 		print '<td class="right" width="100">';
 		print $value.' ';
-		print '</td><td class="center nowraponall" width="40">';
+		print '</td><td class="center nowraponall tdlineupdown" width="40">';
 		if ($value < count($array_selected)) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&token='.newToken().'&field='.$code.'" class="paddingleft paddingright">'.img_down().'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&token='.newToken().'&field='.$code.'" class="paddingleft paddingright imgdownforline">'.img_down().'</a>';
 		}
 		if ($value > 1) {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&token='.newToken().'&field='.$code.'" class="paddingleft paddingright">'.img_up().'</a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&token='.newToken().'&field='.$code.'" class="paddingleft paddingright imgupforline">'.img_up().'</a>';
 		}
 		print '</td>';
 
@@ -1163,6 +1197,44 @@ if ($step == 4 && $datatoexport) {
 
 	print '</table>';
 	print '</div>';
+
+	// JS to allow drag and drop of lines to change order of fields
+	// The arrows up/down remain available when javascript is disabled (when using nojs=1)
+	if (!empty($conf->use_javascript_ajax) && count($array_selected) > 1) {
+		$jsConf = array(
+			'tableId' => 'tableforfieldorder',
+			'urlToMove' => $_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=movefield&token='.newToken(),
+			'gripHtml' => img_picto('', 'grip', '', 0, 0, 0, '', 'linegripimg opacitymedium')
+		);
+		?>
+		<script nonce="<?php print getNonce(); ?>">
+		Dolibarr.on('Ready', function() {
+			const jsConf = <?php print json_encode($jsConf); ?>;
+
+			// Hide the up/down arrows and show the drag grip on each draggable line
+			$(".imgupforline").hide();
+			$(".imgdownforline").hide();
+			$(".tdlineupdown").html(jsConf.gripHtml);
+
+			$("#" + jsConf.tableId).tableDnD({
+				onDrop: function(table, row) {
+					var page_y = jQuery(dolGetMainScrollElement()).scrollTop();
+					var fieldsorder = cleanSerialize(decodeURI($("#" + jsConf.tableId).tableDnDSerialize()));
+					location.href = jsConf.urlToMove + '&fieldsorder=' + fieldsorder + '&page_y=' + page_y;
+				},
+				onDragClass: "dragClass",
+				dragHandle: "td.tdlineupdown"
+			});
+
+			$(".tdlineupdown").on("mouseenter", function() {
+				$(this).addClass("showDragHandle");
+			}).on("mouseleave", function() {
+				$(this).removeClass("showDragHandle");
+			});
+		});
+		</script>
+		<?php
+	}
 
 	print '</div>';
 

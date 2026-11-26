@@ -1421,7 +1421,12 @@ class Cronjob extends CommonObject
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob";
-			$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
+			if (getDolGlobalInt('CRON_DISABLE_AUTO_UNLOCK')) {
+				// Keep the job locked (no automatic rerun), only record the error
+				$sql .= " SET lastoutput = '".$dbs->escape($lastoutput)."'";
+			} else {
+				$sql .= " SET processing = 0, pid = NULL, datelastresult = '".$dbs->idate($now)."', lastresult = '-1', lastoutput = '".$dbs->escape($lastoutput)."'";
+			}
 			$sql .= " WHERE rowid = ".((int) $cronjobid)." AND processing = 1 AND datelastresult IS NULL";
 			$dbs->query($sql);
 		});
@@ -1511,11 +1516,14 @@ class Cronjob extends CommonObject
 				if ($result === false || (!is_bool($result) && $result != 0)) {
 					$langs->load("errors");
 
-					if (!is_array($object->errors) || !in_array($object->error, $object->errors)) {
-						$errmsg .= $object->error;
+					// The class of the job may not declare the properties error and errors
+					$objecterror = isset($object->error) ? $object->error : '';
+					$objecterrors = (isset($object->errors) && is_array($object->errors)) ? $object->errors : array();
+					if (!in_array($objecterror, $objecterrors)) {
+						$errmsg .= $objecterror;
 					}
-					if (is_array($object->errors) && count($object->errors)) {
-						$errmsg .= (($errmsg ? ', ' : '').implode(', ', $object->errors));
+					if (count($objecterrors)) {
+						$errmsg .= (($errmsg ? ', ' : '').implode(', ', $objecterrors));
 					}
 					if (empty($errmsg)) {
 						$errmsg = $langs->trans('ErrorUnknown');

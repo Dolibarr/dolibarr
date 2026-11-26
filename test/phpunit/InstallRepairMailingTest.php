@@ -87,7 +87,7 @@ class InstallRepairMailingTest extends PHPUnit\Framework\TestCase
 		$report = repairMailingFiles($mailing, $directory, $this->documentroot);
 		$this->assertSame('', $report['error']);
 		$this->assertCount(2, $report['files']);
-		$this->assertSame('0', $conf->global->MAILING_USE_NEW_PATH_FOR_FILES);
+		$this->assertSame('0', getDolGlobalString('MAILING_USE_NEW_PATH_FOR_FILES'));
 		$this->assertFalse(dol_is_dir($directory.'/101'));
 		$this->assertSame('owner', file_get_contents($directory.'/1/0/attachment.pdf'));
 		$this->assertSame($directory.'/101/thumbs/photo.png', $report['files'][1]['target']);

@@ -454,6 +454,8 @@ if ($dirins && $action == 'initmodule' && $modulename) {		// Test on permission 
 		dol_delete_file($destdir.'/sql/llx_'.dol_strtolower($modulename).'_myobject_extrafields.sql');
 		dol_delete_file($destdir.'/sql/llx_'.dol_strtolower($modulename).'_myobject.key.sql');
 		dol_delete_file($destdir.'/sql/llx_'.dol_strtolower($modulename).'_myobject_extrafields.key.sql');
+		dol_delete_file($destdir.'/sql/llx_'.dol_strtolower($modulename).'_myobjectline.sql');
+		dol_delete_file($destdir.'/sql/llx_'.dol_strtolower($modulename).'_myobjectline.key.sql');
 		dol_delete_file($destdir.'/class/myobject.class.php');
 		dol_delete_file($destdir.'/class/myobjectstats.class.php');
 
@@ -761,8 +763,8 @@ if ($dirins && $action == 'inithook' && !empty($module) /* && $user->hasRight("m
 if ($dirins && $action == 'inittrigger' && !empty($module) /* && $user->hasRight("modulebuilder", "run") // already checked */) {
 	dol_mkdir($dirins.'/'.dol_strtolower($module).'/core/triggers');
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
-	$srcfile = $srcdir.'/core/triggers/interface_99_modMyModule_MyModuleTriggers.class.php';
-	$destfile = $dirins.'/'.dol_strtolower($module).'/core/triggers/interface_99_mod'.$module.'_'.$module.'Triggers.class.php';
+	$srcfile = $srcdir.'/core/triggers/interface_50_modMyModule_MyModuleTriggers.class.php';
+	$destfile = $dirins.'/'.dol_strtolower($module).'/core/triggers/interface_50_mod'.$module.'_'.$module.'Triggers.class.php';
 	$result = dol_copy($srcfile, $destfile, '0', 0);
 
 	if ($result > 0) {
@@ -1596,6 +1598,16 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
 		}
 
+		// Table of lines, only if the object manages lines
+		if (!GETPOST('nogeneratelines', 'aZ09')) {
+			foreach ([
+				'sql/llx_mymodule_myobjectline.sql',
+				'sql/llx_mymodule_myobjectline.key.sql',
+			] as $templateFile) {
+				$filetogenerate[$templateFile] = $ncObj->applyToFilename($templateFile);
+			}
+		}
+
 		// Exclude tab page files for tabs not selected by user
 		foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
 			if (!in_array($tabkey, $enabledtabs, true)) {
@@ -1762,7 +1774,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			'prefix' => img_picto('', \$this->picto, 'class=\"paddingright pictofixedwidth valignmiddle\"'),
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'myobject',
-			'url' => '/mymodule/myobject_list.php',
+			'url' => '/mymodule/myobject_list.php?leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',
 			'position' => 1000 + \$r,
 			'enabled' => 'isModEnabled(\"mymodule\")',
@@ -1777,7 +1789,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			'titre' => 'List MyObject',
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'mymodule_myobject_list',
-			'url' => '/mymodule/myobject_list.php',
+			'url' => '/mymodule/myobject_list.php?leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',
 			'position' => 1000 + \$r,
 			'enabled' => 'isModEnabled(\"mymodule\")',
@@ -1792,7 +1804,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {		// Test on 
 			'titre' => 'New MyObject',
 			'mainmenu' => 'mymodule',
 			'leftmenu' => 'mymodule_myobject_new',
-			'url' => '/mymodule/myobject_card.php?action=create',
+			'url' => '/mymodule/myobject_card.php?action=create&leftmenu=myobject',
 			'langs' => 'mymodule@mymodule',
 			'position' => 1000 + \$r,
 			'enabled' => 'isModEnabled(\"mymodule\")',
@@ -2452,6 +2464,8 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname /* && $user->has
 				'sql/llx_mymodule_myobject_extrafields.sql',
 				'sql/llx_mymodule_myobject.key.sql',
 				'sql/llx_mymodule_myobject_extrafields.key.sql',
+				'sql/llx_mymodule_myobjectline.sql',
+				'sql/llx_mymodule_myobjectline.key.sql',
 				'scripts/myobject.php',
 				'class/myobject.class.php',
 				'class/myobjectstats.class.php',
@@ -3371,6 +3385,11 @@ if ($dirins && $action == 'addmenu' && empty($cancel) /* && $user->hasRight("mod
 				$menuToAdd['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu', 'alpha');
 			} else {
 				$menuToAdd['fk_menu'] = 'fk_mainmenu='.GETPOST('mainmenu', 'alpha').',fk_leftmenu='.GETPOST('fk_menu');
+			}
+			// Add leftmenu of parent block (or of entry itself if it is a block) into url, so the block stays expanded once link is clicked
+			$leftmenuforurl = (GETPOST('fk_menu', 'aZ09') ? GETPOST('fk_menu', 'aZ09') : GETPOST('leftmenu', 'aZ09'));
+			if ($leftmenuforurl && $menuToAdd['url'] && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuToAdd['url']) && !preg_match('/[?&]leftmenu=/', $menuToAdd['url'])) {
+				$menuToAdd['url'] .= (strpos($menuToAdd['url'], '?') === false ? '?' : '&').'leftmenu='.$leftmenuforurl;
 			}
 		}
 		if (GETPOST('enabled') == '1') {
@@ -4564,7 +4583,7 @@ if ($module == 'initmodule') {
 				print '<input type="checkbox" name="includerefgeneration" id="includerefgeneration" value="includerefgeneration"> <label class="margintoponly" for="includerefgeneration">'.$form->textwithpicto($langs->trans("IncludeRefGeneration"), $langs->trans("IncludeRefGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="includedocgeneration" id="includedocgeneration" value="includedocgeneration"> <label for="includedocgeneration">'.$form->textwithpicto($langs->trans("IncludeDocGeneration"), $langs->trans("IncludeDocGenerationHelp")).'</label><br>';
 				print '<input type="checkbox" name="generatepermissions" id="generatepermissions" value="generatepermissions"> <label for="generatepermissions">'.$form->textwithpicto($langs->trans("GeneratePermissions"), $langs->trans("GeneratePermissionsHelp")).'</label><br>';
-				print '<input type="checkbox" name="nogeneratelines" id="nogeneratelines" value="nogeneratelines"> <label for="nogeneratelines">'.$form->textwithpicto($langs->trans("NoGenerateLines"), $langs->trans("NoGenerateLinesHelp")).'</label><br>';
+				print '<input type="checkbox" name="nogeneratelines" id="nogeneratelines" value="nogeneratelines" checked> <label for="nogeneratelines">'.$form->textwithpicto($langs->trans("NoGenerateLines"), $langs->trans("NoGenerateLinesHelp")).'</label><br>';
 				print '<br><span class="opacitymedium">'.$form->textwithpicto($langs->trans("EnabledTabsForObject"), $langs->trans("EnabledTabsForObjectHelp")).'</span><br>';
 				foreach (getModuleBuilderObjectTabs() as $tabkey => $tabinfo) {
 					$checked = in_array($tabkey, $enabledtabsdefault, true) ? ' checked' : '';

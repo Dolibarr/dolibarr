@@ -181,8 +181,9 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
-$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+// The access check by ref keeps only digits of the ref, so we check on the id of the account found with the ref
+$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $object->id : ''));
+$fieldtype = 'rowid';
 if ($fieldvalue) {
 	if ($user->socid) {
 		$socid = $user->socid;
@@ -1012,7 +1013,7 @@ if ($resql) {
 			if ($j >= $nbmaxlinks) {
 				break;
 			}
-			$newentreyinlist = '<a target="_blank" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($num_releve).'">';
+			$newentreyinlist = '<a target="releve'.dol_escape_htmltag(dol_sanitizeFileName($id.'_'.$num_releve)).'" href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.((int) $id).'&num='.urlencode($num_releve).'">';
 			$newentreyinlist .= img_picto($num_releve, 'generic', 'class="paddingright"');
 			$newentreyinlist .= dol_escape_htmltag($num_releve).'</a> &nbsp; ';
 			$listoflastreceipts = $newentreyinlist.$listoflastreceipts;

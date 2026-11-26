@@ -781,6 +781,7 @@ class WebsitePage extends CommonObject
 		}
 
 		if (!$error) {
+			require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 			$websiteobj = new Website($this->db);
 			$result = $websiteobj->fetch($this->fk_website);
 
@@ -844,6 +845,7 @@ class WebsitePage extends CommonObject
 
 		if ($istranslation) {
 			if (is_null($website)) {
+				require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 				$website = new Website($this->db);
 			}
 			$website->fetch($object->fk_website);

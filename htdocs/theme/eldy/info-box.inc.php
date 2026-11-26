@@ -448,6 +448,22 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 2px;
 	border-radius: 5px;
 }
+/* Badge around a phone number, border and text have same color than the phone picto (.fa-phone) */
+.phone-border {
+	border: 1px solid var(--colorphone);
+	color: var(--colorphone);
+	padding: 1px 4px 1px 3px;
+	margin: 2px;
+	border-radius: 5px;
+	white-space: nowrap;
+}
+.phone-border a:link, .phone-border a:visited, .phone-border a:hover, .phone-border a:active {
+	color: var(--colorphone);
+}
+.phone-border .fa-phone, .phone-border .fa-mobile-alt, .phone-border .fa-fax {
+	color: var(--colorphone);
+	opacity: 1;
+}
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
@@ -461,7 +477,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
 	<?php echo $prefix; ?>color: #599caf !important;
 }
-.bg-infobox-contrat, .bg-infobox-ticket{
+.bg-infobox-contrat, .bg-infobox-ticket, .bg-infobox-intervention{
 	<?php echo $prefix; ?>color: #3bbfa8 !important;
 }
 .bg-infobox-bank_account{
@@ -541,6 +557,9 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .fa-dol-contrat:before {
 	content: "\f0f2";
+}
+.fa-dol-intervention:before {
+	content: "\f0f9";
 }
 .fa-dol-ticket:before {
 	content: "\f3ff";

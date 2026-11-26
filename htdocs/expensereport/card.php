@@ -62,7 +62,7 @@ if (isModEnabled('accounting')) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("trips", "bills", "mails"));
+$langs->loadLangs(array("trips", "bills", "mails", "banks"));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');

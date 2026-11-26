@@ -617,6 +617,9 @@ if ($nboftargetok) {
 			@mkdir("$BUILDROOT/$PROJECT", 0777, true);
 			echo "Copy $SOURCE/. into $BUILDROOT/$PROJECT\n";
 			run("cp -pr \"$SOURCE/.\" \"$BUILDROOT/$PROJECT\"");
+			// Keep only real files: symbolic links are local (not tracked by git) and may become broken once their target is cleaned
+			echo "Remove symbolic links from $BUILDROOT/$PROJECT\n";
+			run("find \"$BUILDROOT/$PROJECT\" -type l -delete");
 		}
 
 		echo "Clean $BUILDROOT\n";
@@ -624,6 +627,7 @@ if ($nboftargetok) {
 		run("rm -f  $BUILDROOT/$PROJECT/.agentsignore");
 		run("rm -f  $BUILDROOT/$PROJECT/.buildpath");
 		run("rm -fr $BUILDROOT/$PROJECT/.cache");
+		run("rm -fr $BUILDROOT/$PROJECT/.claude");
 		run("rm -fr $BUILDROOT/$PROJECT/.codeclimate.yml");
 		run("rm -fr $BUILDROOT/$PROJECT/.editorconfig");
 		run("rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders");

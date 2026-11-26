@@ -726,6 +726,93 @@ class SecurityTest extends CommonClassTest
 
 
 	/**
+	 * testCheckUserAccessToDocumentObject
+	 *
+	 * Non regression test: checkUserAccessToDocumentObject() must give to restrictedArea() the table of the object when it differs
+	 * from the modulepart (llx_socpeople for contact, llx_fichinter for ficheinter, llx_bom_bom for bom). If not, the check was done
+	 * on a table that does not exist, so the access to the documents was always refused.
+	 *
+	 * @return void
+	 */
+	public function testCheckUserAccessToDocumentObject()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+
+		$soc = new Societe($db);
+		$soc->name = 'testCheckUserAccessToDocumentObject '.mt_rand(0, 99999);
+		$soc->client = 1;
+		$soc->code_client = -1;
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, 'Third party must be created');
+
+		$contact = new Contact($db);
+		$contact->initAsSpecimen();
+		$contact->socid = $socid;
+		$contactid = $contact->create($user);
+		$this->assertGreaterThan(0, $contactid, 'Contact must be created');
+
+		$fichinter = new Fichinter($db);
+		$fichinter->initAsSpecimen();
+		$fichinter->socid = $socid;
+		$fichinterid = $fichinter->create($user);
+		$this->assertGreaterThan(0, $fichinterid, 'Intervention must be created');
+		$fichinter->fetch($fichinterid);
+
+		$bom = new BOM($db);
+		$bom->initAsSpecimen();
+		$bom->ref = 'BOMTESTACCESS'.mt_rand(0, 99999);
+		$bomid = $bom->create($user);
+		$this->assertGreaterThan(0, $bomid, 'BOM must be created');
+		$bom->fetch($bomid);
+
+		try {
+			// A user with the permissions of the admin user, but who can see only the third parties assigned to him
+			$restricteduser = new User($db);
+			$restricteduser->fetch($user->id);
+			$restricteduser->loadRights();
+			$restricteduser->admin = 0;
+			$restricteduser->socid = 0;
+			$restricteduser->rights->societe->client->voir = 0;
+
+			// The object of a document is found from its subdirectory (ref, or id for contacts), also for previews
+			$documentobject = fetchObjectOfDocument('apercuficheinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf_preview.png');
+			$this->assertEquals('ficheinter', $documentobject['modulepart'], 'The prefix apercu must be removed from the modulepart');
+			$this->assertEquals($fichinterid, (is_object($documentobject['object']) ? $documentobject['object']->id : 0), 'The intervention of the preview must be found');
+			$documentobject = fetchObjectOfDocument('contact', $contactid.'/./photo.jpg');
+			$this->assertEquals($contactid.'/photo.jpg', $documentobject['original_file'], 'The path must be normalized');
+			$this->assertEquals($contactid, (is_object($documentobject['object']) ? $documentobject['object']->id : 0), 'The contact must be found from its id');
+			$documentobject = fetchObjectOfDocument('ficheinter', 'NOTEXISTINGREF/NOTEXISTINGREF.pdf');
+			$this->assertNull($documentobject['object'], 'No object must be found for an unknown ref');
+
+			$this->assertEquals(0, checkUserAccessToDocumentObject($restricteduser, 'contact', $contactid.'/photo.jpg', 'read'), 'The contact of a third party not assigned to the restricted user must be refused');
+			$this->assertEquals(0, checkUserAccessToDocumentObject($restricteduser, 'fichinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf', 'read'), 'The intervention of a third party not assigned to the restricted user must be refused');
+
+			// The restricted user, once he is a sales representative of the third party
+			$this->assertGreaterThanOrEqual(0, $soc->add_commercial($user, $restricteduser->id), 'User must be added as sales representative');
+			$this->assertEquals(1, checkUserAccessToDocumentObject($restricteduser, 'contact', $contactid.'/photo.jpg', 'read'), 'The sales representative can access the documents of the contact (table llx_socpeople)');
+			$this->assertEquals(1, checkUserAccessToDocumentObject($restricteduser, 'fichinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf', 'read'), 'The sales representative can access the documents of the intervention (table llx_fichinter)');
+
+			// A BOM is not linked to a third party, only its entity is checked
+			$this->assertEquals(1, checkUserAccessToDocumentObject($restricteduser, 'bom', $bom->ref.'/'.$bom->ref.'.pdf', 'read'), 'The documents of a BOM must be allowed (table llx_bom_bom)');
+			$this->assertEquals(1, checkUserAccessToDocumentObject($user, 'bom', $bom->ref.'/'.$bom->ref.'.pdf', 'read'), 'The documents of a BOM must be allowed to the admin user (table llx_bom_bom)');
+		} finally {
+			$bom->delete($user);
+			$fichinter->delete($user);
+			$contact->delete($user);
+			$soc->delete($socid, $user);
+		}
+	}
+
+	/**
 	 * testDolSanitizeUrl
 	 *
 	 * @return void
@@ -1714,6 +1801,28 @@ class SecurityTest extends CommonClassTest
 			$result = dolPrintHTMLForAttribute($s);
 			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
 		}
+
+		return 0;
+	}
+
+	/**
+	 * testDolPrintTextForTextArea
+	 *
+	 * @return int
+	 */
+	public function testDolPrintTextForTextArea()
+	{
+		// Line feeds and indentation are kept, double quotes and special chars are escaped once
+		$s = "Line 1: {\"tool\": 'x'} & é < b\n\n  Line 3";
+		$expectedresult = "Line 1: {&quot;tool&quot;: 'x'} &amp; &eacute; &lt; b\n\n  Line 3";
+		$result = dolPrintTextForTextArea($s);
+		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintTextForTextArea with text');
+
+		// HTML tags, including javascript, are removed
+		$s = "<b>Bold</b> <script>alert(1)</script>\" onclick=\"alert(2)";
+		$expectedresult = "Bold alert(1)&quot; onclick=&quot;alert(2)";
+		$result = dolPrintTextForTextArea($s);
+		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintTextForTextArea with html');
 
 		return 0;
 	}

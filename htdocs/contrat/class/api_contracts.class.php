@@ -110,6 +110,7 @@ class Contracts extends DolibarrApi
 	 * @since	19.0.0	Added properties parameter
 	 * @since	21.0.0	Added pagination_data parameter
 	 * @since	23.0.0	Added withLines parameter
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
@@ -120,15 +121,16 @@ class Contracts extends DolibarrApi
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @param bool 			   $withLines 			true or false to display or hide lines
+	 * @param int			$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                               Array of order objects
-	 * @phan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @throws RestException 400 Bad Request
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $withLines = true)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $withLines = true, $count = 0)
 	{
 		global $db, $conf;
 
@@ -141,9 +143,11 @@ class Contracts extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -174,6 +178,11 @@ class Contracts extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -319,7 +328,7 @@ class Contracts extends DolibarrApi
 	 * @param string	$sortorder			Sort order
 	 * @param int		$limit				Limit for list
 	 * @param int		$page				Page number
-	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. d is the alias for contract lines table, c is the alias for contract table. Syntax example "(d.fk_product:=:1) and (d.statut:=:4)"
 	 * @param string 	$properties 		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool 		$pagination_data 	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array						Array of contrat det objects
@@ -413,6 +422,9 @@ class Contracts extends DolibarrApi
 	/**
 	 * Add a line to given contract
 	 *
+	 * Unit price: give 'subprice' (excl. tax) with price_base_type 'HT' (default),
+	 * or 'subprice_inc_tax' (incl. tax) with price_base_type 'TTC'.
+	 *
 	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of contrat to update
@@ -422,7 +434,11 @@ class Contracts extends DolibarrApi
 	 *
 	 * @url	POST {id}/lines
 	 *
-	 * @return int|bool
+	 * @return int  Id of the new contract line
+	 *
+	 * @throws RestException 403 Access denied
+	 * @throws RestException 404 Contract not found
+	 * @throws RestException 500 Error when adding the line
 	 */
 	public function postLine($id, $request_data = null)
 	{
@@ -441,34 +457,38 @@ class Contracts extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
-		$request_data->price_base_type = sanitizeVal($request_data->price_base_type);
+		$request_data->desc = sanitizeVal($request_data->desc ?? '', 'restricthtml');
+		$request_data->price_base_type = sanitizeVal($request_data->price_base_type ?? '');
+
+		// Unit price including tax, used when price_base_type is TTC.
+		$subprice_inc_tax = $request_data->subprice_inc_tax ?? 0;
 
 		$updateRes = $this->contract->addline(
 			$request_data->desc,
-			$request_data->subprice,
-			$request_data->qty,
-			$request_data->tva_tx,
-			$request_data->localtax1_tx,
-			$request_data->localtax2_tx,
-			$request_data->fk_product,
-			$request_data->remise_percent,
-			$request_data->date_start,
-			$request_data->date_end,
+			$request_data->subprice ?? 0,
+			$request_data->qty ?? 1,
+			$request_data->tva_tx ?? 0,
+			$request_data->localtax1_tx ?? 0,
+			$request_data->localtax2_tx ?? 0,
+			$request_data->fk_product ?? 0,
+			$request_data->remise_percent ?? 0,
+			$request_data->date_start ?? 0,
+			$request_data->date_end ?? 0,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
-			$request_data->subprice_excl_tax,
-			$request_data->info_bits,
-			$request_data->fk_fournprice,
-			$request_data->pa_ht,
-			$request_data->array_options,
-			$request_data->fk_unit,
-			$request_data->rang
+			$subprice_inc_tax,
+			$request_data->info_bits ?? 0,
+			$request_data->fk_fournprice ?? null,
+			$request_data->pa_ht ?? 0,
+			$request_data->array_options ?? array(),
+			$request_data->fk_unit ?? null,
+			$request_data->rang ?? 0
 		);
 
 		if ($updateRes > 0) {
 			return $updateRes;
 		}
-		return false;
+
+		throw new RestException(500, 'Error when adding contract line: '.$this->contract->errorsToString());
 	}
 
 	/**
@@ -844,6 +864,10 @@ class Contracts extends DolibarrApi
 			}
 			if ($field == 'entity' && $value != $this->contract->entity) {
 				throw new RestException(400, 'Changing entity of a contract using the APIs is not possible');
+			}
+			// The status has its own routes, which run the checks, the ref numbering and the triggers
+			if (($field == 'statut' || $field == 'status') && (int) $value != (int) $this->contract->status) {
+				throw new RestException(400, 'Changing the status of a contract is not possible with this method, use the dedicated routes');
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller

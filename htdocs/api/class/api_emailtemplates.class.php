@@ -204,6 +204,8 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * Get a list of email templates
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
 	 * @param int		$limit				Limit for list
@@ -212,16 +214,17 @@ class EmailTemplates extends DolibarrApi
 	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(e.active:=:1) and (e.module:=:'adherent')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array						Array of order objects
-	 * @phan-return CEmailTemplate[]|array{data:CEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return CEmailTemplate[]|array{data:CEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return CEmailTemplate[]|array{data:CEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return CEmailTemplate[]|array{data:CEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @url GET
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "e.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_user = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "e.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_user = '', $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		$allowaccess = $this->_checkAccessRights('lire');
 		if (!$allowaccess) {
@@ -251,6 +254,11 @@ class EmailTemplates extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT e.rowid', 'SELECT count(e.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
