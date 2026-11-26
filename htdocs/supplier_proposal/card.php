@@ -109,6 +109,11 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	if ($ret > 0) {
 		$ret = $object->fetch_thirdparty();
+		if ($ret == 0 && empty($object->error) && empty($object->errors)) {
+			// The thirdparty was not found (e.g. it is not visible in the current entity): fetch_thirdparty() returns 0 without an error message
+			$langs->load('errors');
+			$object->error = $langs->trans('ThirdParty').': '.$langs->trans('ErrorRecordNotFoundShort');
+		}
 	}
 	if ($ret <= 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
