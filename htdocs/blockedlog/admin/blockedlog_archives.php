@@ -119,6 +119,9 @@ if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || !isModEnabled('
 }
 
 // We force also permission to write because it does not exists and we need it to upload a file
+if (empty($user->rights->blockedlog)) {
+	$user->rights->blockedlog = new stdClass();
+}
 $user->rights->blockedlog->create = 1;
 
 $result = restrictedArea($user, 'blockedlog', 0, '');
