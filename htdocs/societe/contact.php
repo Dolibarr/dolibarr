@@ -116,7 +116,9 @@ if (!empty($canvas)) {
 }
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
+// Deleting a contact from this tab must not require the permission to modify or delete the third party.
+// Only read access on the third party is checked here; the contact delete permission is checked on the action.
+$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0, 0, in_array($action, array('delete', 'confirm_delete')) ? 'read' : '');
 if (!$user->hasRight('societe', 'contact', 'lire')) {
 	accessforbidden();
 }
@@ -150,6 +152,10 @@ if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete
 	if ($id > 0 && $socid > 0) {
 		$contact = new Contact($db);
 		$ret = $contact->fetch($id);
+		if ($ret > 0 && $contact->socid != $socid) {
+			// The contact must belong to the third party whose access was checked
+			accessforbidden();
+		}
 		if ($ret > 0) {
 			if ($contact->priv == 0  || ($contact->user_modification_id == ((int) $user->id) && $contact->priv == 1)) {
 				$contact->oldcopy = clone $contact; // @phan-suppress-current-line PhanTypeMismatchProperty
