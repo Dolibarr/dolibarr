@@ -107,8 +107,8 @@ if ($page == 1) {
 $i = 0;
 if ($object instanceof CommonObject) {
 	$extrafields = new ExtraFields($db);
-	$extrafields->fetch_name_optionals_label($element);
-	$options = $extrafields->attributes[$element]['param'][$objectkey]['options'];
+	$extrafields->fetch_name_optionals_label($object->table_element);
+	$options = $extrafields->attributes[$object->table_element]['param'][$objectkey]['options'] ?? null;
 	if (is_array($options)) {
 		// WARNING!! @FIXME This code is duplicated into core/class/extrafields.class.php
 
