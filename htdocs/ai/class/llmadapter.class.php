@@ -56,6 +56,9 @@ class UniversalLLMAdapter
 	/** @var int Maximum number of tokens of the answer, 0 = default of each provider */
 	private $maxTokens = 0;
 
+	/** @var string Reasoning effort sent to OpenAI-compatible APIs, '' = default of the model */
+	private $reasoningEffort = '';
+
 	/**
 	 * Constructor
 	 *
@@ -84,6 +87,19 @@ class UniversalLLMAdapter
 	public function setMaxTokens(int $maxTokens): bool
 	{
 		$this->maxTokens = max(0, $maxTokens);
+
+		return true;
+	}
+
+	/**
+	 * Set the reasoning effort sent to OpenAI-compatible APIs ('none' turns off the thinking of local models)
+	 *
+	 * @param string $effort Reasoning effort, '' = default of the model
+	 * @return bool Always true
+	 */
+	public function setReasoningEffort(string $effort): bool
+	{
+		$this->reasoningEffort = $effort;
 
 		return true;
 	}
@@ -169,6 +185,9 @@ class UniversalLLMAdapter
 		);
 		if ($this->maxTokens > 0) {
 			$data["max_tokens"] = $this->maxTokens;
+		}
+		if ($this->reasoningEffort !== '') {
+			$data["reasoning_effort"] = $this->reasoningEffort;
 		}
 
 		// Only force JSON mode if explicitly requested
