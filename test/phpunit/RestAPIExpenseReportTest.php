@@ -287,4 +287,161 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
 		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
 	}
+
+	/**
+	 * Create an approved expense report of 10 with a payment of 4, so it stays approved
+	 *
+	 * @param string	$test	Text to be added to output
+	 * @return array{0:int,1:int,2:array<string,mixed>}	Id of the expense report, id of the payment, payment read by the API
+	 */
+	private function createExpenseReportWithPayment($test)
+	{
+		global $db, $conf;
+
+		// Any active expense type and payment type, without assuming a given code exists in the dictionaries
+		$fk_c_type_fees = 0;
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_type_fees WHERE active = 1 ORDER BY id");
+		if ($resql && ($obj = $db->fetch_object($resql))) {
+			$fk_c_type_fees = (int) $obj->id;
+		}
+		$this->assertGreaterThan(0, $fk_c_type_fees, "$test No active expense type");
+		$fk_typepayment = 0;
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE active = 1 ORDER BY id");
+		if ($resql && ($obj = $db->fetch_object($resql))) {
+			$fk_typepayment = (int) $obj->id;
+		}
+		$this->assertGreaterThan(0, $fk_typepayment, "$test No active payment type");
+
+		$result = $this->getUrl('users/info', $test, 'GET');
+		$userid = (int) ($result['content']['id'] ?? 0);
+
+		$id = $this->createExpenseReport($test);
+		$line = array(
+			"date" => dol_now(),
+			"fk_c_type_fees" => $fk_c_type_fees,
+			"qty" => 1,
+			"value_unit" => 10,
+			"vatrate" => 0,
+			"comments" => "Line created by ".get_class($this),
+		);
+		$this->getUrl('expensereports/'.$id.'/line', $test, 'POST', $line);
+		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
+		$this->getUrl('expensereports/'.$id.'/approve', $test, 'POST', array("notrigger" => 0));
+		$this->assertStatus($id, ExpenseReport::STATUS_APPROVED, $test);
+
+		$payment = array(
+			"fk_typepayment" => $fk_typepayment,
+			"datep" => dol_now(),
+			"amounts" => array($userid => 4),
+			"num_payment" => "UPD-1",
+			"note_public" => "Payment created by ".get_class($this),
+		);
+		if (isModEnabled('bank')) {
+			$ref = "EU".mt_rand(0, 99999999);	// ref is 12 chars max, ref and label must be unique
+			$account = array(
+				"ref" => $ref,
+				"label" => "testRestExpenseReportUpdatePayment ".$ref,
+				"type" => 1,
+				"currency_code" => $conf->currency,
+				"country_id" => 1,
+			);
+			$result = $this->getUrl('bankaccounts', $test, 'POST', $account);
+			$this->assertGreaterThan(0, (int) $result['content'], "$test Id of bank account is not > 0");
+			$payment["accountid"] = (int) $result['content'];
+		}
+		$result = $this->getUrl('expensereports/'.$id.'/payments', $test, 'POST', $payment);
+		$pid = (int) $result['content'];
+		$this->assertGreaterThan(0, $pid, "$test Id of payment is not > 0");
+		$this->assertStatus($id, ExpenseReport::STATUS_APPROVED, $test);
+
+		$result = $this->getUrl('expensereports/payments/'.$pid, $test, 'GET');
+
+		return array($id, $pid, $result['content']);
+	}
+
+	/**
+	 * The date, number and note of a payment can be changed
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportUpdatePayment()
+	{
+		$test = "Update the number, date and note of a payment";
+
+		list($id, $pid, $before) = $this->createExpenseReportWithPayment($test);
+
+		$datep = (int) $before['datep'] - 86400;
+		$data = array(
+			"num_payment" => "UPD-2",
+			"datep" => $datep,
+			"note_public" => "Payment updated by ".get_class($this),
+		);
+		$this->getUrl('expensereports/'.$id.'/payments/'.$pid, $test, 'PUT', $data);
+
+		$result = $this->getUrl('expensereports/payments/'.$pid, $test, 'GET');
+		$this->assertEquals("UPD-2", $result['content']['num_payment'] ?? null, "$test Number of payment");
+		$this->assertEquals($datep, (int) ($result['content']['datep'] ?? 0), "$test Date of payment");
+		$this->assertEquals("Payment updated by ".get_class($this), $result['content']['note_public'] ?? null, "$test Note of payment");
+		$this->assertEquals(4, (float) ($result['content']['amount'] ?? 0), "$test Amount of payment");
+
+		// A field not sent keeps its value
+		$this->getUrl('expensereports/'.$id.'/payments/'.$pid, $test, 'PUT', array("num_payment" => "UPD-3"));
+		$result = $this->getUrl('expensereports/payments/'.$pid, $test, 'GET');
+		$this->assertEquals("UPD-3", $result['content']['num_payment'] ?? null, "$test Number of payment");
+		$this->assertEquals("Payment updated by ".get_class($this), $result['content']['note_public'] ?? null, "$test Note of payment must be kept");
+	}
+
+	/**
+	 * The fields set by the server can not be changed by the request
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportUpdatePaymentServerFields()
+	{
+		$test = "Update a payment with fields set by the server";
+
+		list($id, $pid, $before) = $this->createExpenseReportWithPayment($test);
+
+		$data = $before;	// The whole payment as read, as a client doing GET then PUT does
+		$data["fk_bank"] = (int) ($before['bank_line'] ?? 0) + 1000;	// fk_bank is not in the GET result, bank_line is the same value
+		$data["fk_user_creat"] = (int) ($before['fk_user_creat'] ?? 0) + 1000;
+		$data["fk_expensereport"] = $id + 1000;
+		$data["datec"] = (int) ($before['datec'] ?? 0) - 86400;
+		$data["num_payment"] = "UPD-4";
+		$this->getUrl('expensereports/'.$id.'/payments/'.$pid, $test, 'PUT', $data);
+
+		$result = $this->getUrl('expensereports/payments/'.$pid, $test, 'GET');
+		$this->assertEquals("UPD-4", $result['content']['num_payment'] ?? null, "$test Number of payment");
+		$this->assertEquals((int) ($before['bank_line'] ?? 0), (int) ($result['content']['bank_line'] ?? 0), "$test Bank line of payment must not change");
+		$this->assertEquals((int) ($before['fk_user_creat'] ?? 0), (int) ($result['content']['fk_user_creat'] ?? 0), "$test Creator of payment must not change");
+		$this->assertEquals($id, (int) ($result['content']['fk_expensereport'] ?? 0), "$test Expense report of payment must not change");
+		$this->assertEquals((int) ($before['datec'] ?? 0), (int) ($result['content']['datec'] ?? 0), "$test Creation date of payment must not change");
+	}
+
+	/**
+	 * The amount and type of a payment can not be changed
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportUpdatePaymentAmount()
+	{
+		$test = "Update the amount of a payment";
+
+		list($id, $pid, $before) = $this->createExpenseReportWithPayment($test);
+
+		// Paying the remainder by raising the payment, or lowering it, is refused
+		$this->getUrl('expensereports/'.$id.'/payments/'.$pid, $test, 'PUT', array("amount" => 10), 400);
+		$this->getUrl('expensereports/'.$id.'/payments/'.$pid, $test, 'PUT', array("amount" => 1), 400);
+		$this->getUrl('expensereports/'.$id.'/payments/'.$pid, $test, 'PUT', array("fk_typepayment" => (int) $before['fk_typepayment'] + 1000), 400);
+
+		$result = $this->getUrl('expensereports/payments/'.$pid, $test, 'GET');
+		$this->assertEquals(4, (float) ($result['content']['amount'] ?? 0), "$test Amount of payment must not change");
+		$this->assertEquals((int) $before['fk_typepayment'], (int) ($result['content']['fk_typepayment'] ?? 0), "$test Type of payment must not change");
+		$this->assertStatus($id, ExpenseReport::STATUS_APPROVED, $test);
+
+		// The same amount, as sent back by a client doing GET then PUT, is accepted
+		$this->getUrl('expensereports/'.$id.'/payments/'.$pid, $test, 'PUT', array("amount" => $before['amount'], "num_payment" => "UPD-5"));
+		$result = $this->getUrl('expensereports/payments/'.$pid, $test, 'GET');
+		$this->assertEquals("UPD-5", $result['content']['num_payment'] ?? null, "$test Number of payment");
+	}
 }
