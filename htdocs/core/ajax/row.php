@@ -129,6 +129,10 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 	$row = new GenericObject($db);
 	$row->table_element_line = $table_element_line;
 	$row->fk_element = $fk_element;
+	if ($table_element_line == 'product_association') {
+		// A component is linked to its kit by fk_product_pere: the fk_product posted by the Kits tab is not a column of this table
+		$row->fk_element = 'fk_product_pere';
+	}
 	$row->id = $element_id;
 	$reshook = $hookmanager->executeHooks('checkRowPerms', $parameters, $row, $action);
 	if ($reshook > 0) {
