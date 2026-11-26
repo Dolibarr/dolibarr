@@ -886,6 +886,27 @@ body.ai-fullpage {
     white-space: nowrap;
 }
 
+/* Alignment of the columns of a markdown table */
+.chat-table th.right,
+.chat-table td.right {
+    text-align: right;
+}
+
+.chat-table th.center,
+.chat-table td.center {
+    text-align: center;
+}
+
+/* Table written by the model into a text answer: text may follow it, and its cells are never clamped */
+.chat-table-md {
+    margin-bottom: 8px;
+}
+
+/* Text of a markdown table wraps (the rule above is for the tool results): only its numbers, refs and dates do not */
+.chat-table-md .chat-table tbody td:not(.nowraponall) {
+    white-space: normal;
+}
+
 .chat-table tbody tr:last-child td {
     border-bottom: none;
 }
