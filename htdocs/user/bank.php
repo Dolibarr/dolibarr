@@ -94,10 +94,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 $account = new UserBankAccount($db);
-if (!$bankid) {
-	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$account->fetch(0, '', $id);
-} else {
+if ($bankid) {
 	$account->fetch($bankid);
 	if ($account->id > 0) {
 		if ((int) $account->userid !== (int) $object->id) {
@@ -215,7 +212,18 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 	}
 }
 
-if ($action == 'delete_confirmed' && !$cancel && $permissiontoaddbankaccount) {
+if ($action == 'setasbankdefault' && $account->id > 0 && $permissiontoaddbankaccount) {
+	$result = $account->setAsDefault();
+	if ($result < 0) {
+		setEventMessages($account->error, $account->errors, 'errors');
+	} else {
+		header("Location: ".DOL_URL_ROOT.'/user/bank.php?id='.$object->id);
+		exit;
+	}
+	$action = '';
+}
+
+if ($action == 'confirm_deletebank' && GETPOST('confirm', 'alpha') == 'yes' && $account->id > 0 && $permissiontoaddbankaccount) {
 	$result = $account->delete($user);
 	if ($result < 0) {
 		setEventMessages($account->error, $account->errors, 'errors');
@@ -373,6 +381,10 @@ if ($id && $action == 'create' && !$cancel && $permissiontoaddbankaccount) {
 if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $account may be empty
 	$title = $langs->trans("User");
 	print dol_get_fiche_head($head, 'bank', $title, -1, 'user');
+
+	if ($action == 'deletebank' && $account->id > 0) {
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&bankid=".$account->id, $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $account->getRibLabel()), "confirm_deletebank", '', 0, 1);
+	}
 
 	$linkback = '';
 
@@ -868,17 +880,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 	print dol_get_fiche_end();
 
-	// List of bank accounts (Currently only one bank account possible for each employee)
+	// List of bank accounts, one default per currency
 
-	$morehtmlright = '';
-	if ($account->id == 0) {
-		if ($permissiontoaddbankaccount) {
-			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create');
-		} else {
-			$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('NotEnoughPermissions'), 'fa fa-plus-circle', '', '', -2);
-		}
+	if ($permissiontoaddbankaccount) {
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create');
 	} else {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('AlreadyOneBankAccount'), 'fa fa-plus-circle', '', '', -2);
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), $langs->trans('NotEnoughPermissions'), 'fa fa-plus-circle', '', '', -2);
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
@@ -893,31 +900,38 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print_liste_field_titre("IBAN");
 	print_liste_field_titre("BIC");
 	print_liste_field_titre("Currency");
+	print_liste_field_titre("Default", '', '', '', '', '', '', '', 'center ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 	print "</tr>\n";
 
-	if ($account->id > 0) {
+	$bankaccounts = $account->fetchAllOfUser($object->id);
+	if (!is_array($bankaccounts)) {
+		dol_print_error($db, $account->error);
+		$bankaccounts = array();
+	}
+
+	foreach ($bankaccounts as $bankaccount) {
 		print '<tr class="oddeven">';
 		// Label
-		print '<td>'.dol_escape_htmltag($account->label).'</td>';
+		print '<td>'.dol_escape_htmltag($bankaccount->label).'</td>';
 		// Bank name
-		print '<td>'.dol_escape_htmltag($account->bank).'</td>';
+		print '<td>'.dol_escape_htmltag($bankaccount->bank).'</td>';
 		// Account number
 		print '<td>';
 		$stringescaped = '';
-		foreach ($account->getFieldsToShow() as $val) {
+		foreach ($bankaccount->getFieldsToShow() as $val) {
 			if ($val == 'BankCode') {
-				$stringescaped .= dol_escape_htmltag($account->code_banque).' ';
+				$stringescaped .= dol_escape_htmltag($bankaccount->code_banque).' ';
 			} elseif ($val == 'BankAccountNumber') {
-				$stringescaped .= dol_escape_htmltag($account->number).' ';
+				$stringescaped .= dol_escape_htmltag($bankaccount->number).' ';
 			} elseif ($val == 'DeskCode') {
-				$stringescaped .= dol_escape_htmltag($account->code_guichet).' ';
+				$stringescaped .= dol_escape_htmltag($bankaccount->code_guichet).' ';
 			} elseif ($val == 'BankAccountNumberKey') {
-				$stringescaped .= dol_escape_htmltag($account->cle_rib).' ';
+				$stringescaped .= dol_escape_htmltag($bankaccount->cle_rib).' ';
 			}
 		}
-		if (!empty($account->label) && $account->number) {
-			if (!checkBanForAccount($account)) {
+		if (!empty($bankaccount->label) && $bankaccount->number) {
+			if (!checkBanForAccount($bankaccount)) {
 				$stringescaped .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
 			} else {
 				$stringescaped .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
@@ -927,35 +941,48 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $stringescaped;
 		print '</td>';
 		// IBAN
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag(getIbanHumanReadable($account)).'">';
-		if (!empty($account->iban)) {
-			if (!checkIbanForAccount($account)) {
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag(getIbanHumanReadable($bankaccount)).'">';
+		if (!empty($bankaccount->iban)) {
+			if (!checkIbanForAccount($bankaccount)) {
 				print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
 			}
 		}
-		print getIbanHumanReadable($account);
+		print getIbanHumanReadable($bankaccount);
 		print '</td>';
 		// BIC
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($account->bic).'">';
-		if (!empty($account->bic)) {
-			if (!checkSwiftForAccount($account)) {
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($bankaccount->bic).'">';
+		if (!empty($bankaccount->bic)) {
+			if (!checkSwiftForAccount($bankaccount)) {
 				print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
 			}
 		}
-		print dol_escape_htmltag($account->bic);
+		print dol_escape_htmltag($bankaccount->bic);
 		print '</td>';
 
 		// Currency
-		print '<td>'.$account->currency_code.'</td>';
+		print '<td>'.dol_escape_htmltag(empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code).'</td>';
+
+		// Default
+		print '<td class="center">';
+		if (!$bankaccount->default_rib && $permissiontoaddbankaccount) {
+			print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$bankaccount->id.'&action=setasbankdefault&token='.newToken().'">';
+			print img_picto($langs->trans("Disabled"), 'off');
+			print '</a>';
+		} elseif (!$bankaccount->default_rib) {
+			print img_picto($langs->trans("Disabled"), 'off');
+		} else {
+			print img_picto($langs->trans("Enabled"), 'on');
+		}
+		print '</td>';
 
 		// Edit/Delete
 		print '<td class="right nowraponall">';
 		if ($permissiontoaddbankaccount) {
-			print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit&token='.newToken().'">';
+			print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$bankaccount->id.'&action=edit&token='.newToken().'">';
 			print img_picto($langs->trans("Modify"), 'edit');
 			print '</a>';
 
-			print '<a class="editfielda marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=delete_confirmed&token='.newToken().'">';
+			print '<a class="editfielda marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$bankaccount->id.'&action=deletebank&token='.newToken().'">';
 			print img_picto($langs->trans("Delete"), 'delete');
 			print '</a>';
 		}
@@ -964,13 +991,10 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print '</tr>';
 	}
 
-
-	if ($account->id == 0) {
-		$colspan = 7;
+	if (!count($bankaccounts)) {
+		$colspan = 8;
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 	}
-
-
 
 	print '</table>';
 	print '</div>';
