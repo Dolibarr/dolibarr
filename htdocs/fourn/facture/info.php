@@ -70,6 +70,14 @@ $title = $object->ref." - ".$langs->trans('Info');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl);
 
+if (empty($object->id)) {
+	$langs->load('errors');
+	print '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	$db->close();
+	exit;
+}
+
 $head = facturefourn_prepare_head($object);
 $titre = $langs->trans('SupplierInvoice');
 print dol_get_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
