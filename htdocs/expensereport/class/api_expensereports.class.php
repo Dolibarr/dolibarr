@@ -1168,30 +1168,36 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// Check access to the parent expense report
-		$result = $this->expensereport->fetch($paymentExpenseReport->fk_expensereport);
-		if (!$result) {
-			throw new RestException(404, 'Expense report not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
+		// The payment card (expensereport/payment/card.php) edits nothing once the payment is created.
+		// Only the date, the number and the note can change here. The amount and the payment type are also
+		// on the bank line and decide the paid status of the report, so a change of them is refused.
+		// Other fields (fk_bank, fk_user_creat, datec...) are set by the server and are ignored.
+		$notepublic = $paymentExpenseReport->note_public;
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id' || $field == 'fk_expensereport') {	// A payment can't be moved to another report
+			if ($field == 'amount') {
+				if ((float) price2num($value, 'MT') != (float) price2num($paymentExpenseReport->amount, 'MT')) {
+					throw new RestException(400, 'The amount of a payment can not be changed, delete the payment and create a new one');
+				}
+				continue;
+			}
+			if ($field == 'fk_typepayment') {
+				if ((int) $value != (int) $paymentExpenseReport->fk_typepayment) {
+					throw new RestException(400, 'The type of a payment can not be changed, delete the payment and create a new one');
+				}
+				continue;
+			}
+			if ($field == 'note' || $field == 'note_public') {	// fetch() loads the note into note_public, update() saves note
+				$notepublic = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
+				continue;
+			}
+			if (!in_array($field, array('datep', 'num_payment'))) {
 				continue;
 			}
 			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
 		}
-
-		// The payments of the report can't exceed its total
-		$oldpayment = new PaymentExpenseReport($this->db);
-		$oldpayment->fetch($paymentExpenseReport->id);
-		$remaintopay = (float) price2num($this->expensereport->total_ttc - $this->expensereport->getSumPayments() + (float) $oldpayment->amount, 'MT');
-		if ((float) price2num($paymentExpenseReport->amount, 'MT') > $remaintopay) {
-			throw new RestException(400, 'Payment higher than remainder to pay ('.$remaintopay.')');
-		}
+		$paymentExpenseReport->note_public = $notepublic;
+		$paymentExpenseReport->note = $notepublic;
+		$paymentExpenseReport->fk_user_modif = DolibarrApiAccess::$user->id;
 
 		if ($paymentExpenseReport->update(DolibarrApiAccess::$user) > 0) {
 			return $this->getPayment($idp);
