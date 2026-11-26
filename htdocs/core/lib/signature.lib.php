@@ -73,7 +73,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 	if (empty($obj)) {
 		// For compatibility with 15.0 -> 19.0
 		global $object;
-		if (empty($object)) {
+		if (empty($object) || !is_object($object)) {
 			$obj = new stdClass();
 		} else {
 			dol_syslog(__FUNCTION__." using global object is deprecated, please give obj as argument", LOG_WARNING);
