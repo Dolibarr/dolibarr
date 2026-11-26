@@ -2128,7 +2128,7 @@ class FormMail extends Form
 				$ret->module = (string) $obj->module;
 				$ret->label = (string) $obj->label;
 				$ret->lang = $obj->lang;
-				$ret->topic = $obj->topic;
+				$ret->topic = (string) $obj->topic;
 				$ret->content = (string) $obj->content;
 				$ret->content_lines = (string) $obj->content_lines;
 				$ret->joinfiles = $obj->joinfiles;
@@ -2269,7 +2269,7 @@ class FormMail extends Form
 				$line->fk_user = $obj->fk_user;
 				$line->private = $obj->private;
 				$line->position = $obj->position;
-				$line->topic = $obj->topic;
+				$line->topic = (string) $obj->topic;
 				$line->content = $obj->content;
 				$line->content_lines = $obj->content_lines;
 
