@@ -308,14 +308,33 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Get a line of an expense report through the API.
+	 * The line is read through the API and not with $db, because the test connection is inside
+	 * a transaction that does not see the rows committed by the API.
+	 *
+	 * @param int		$id			Id of the expense report
+	 * @param int		$lineid		Id of the line
+	 * @param string	$test		Text to be added to output
+	 * @return array<string,mixed>	Properties of the line
+	 */
+	private function getLine($id, $lineid, $test)
+	{
+		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
+		foreach ($result['content']['lines'] ?? array() as $line) {
+			if ((int) ($line['id'] ?? 0) == $lineid) {
+				return $line;
+			}
+		}
+		$this->fail("$test Line ".$lineid." must be found in expense report ".$id);
+	}
+
+	/**
 	 * Updating a line with only some fields keeps the other fields of the line
 	 *
 	 * @return void
 	 */
 	public function testRestExpenseReportPutLinePartial()
 	{
-		global $db;
-
 		$test = "Update only the quantity of an expense report line";
 
 		$feetypeid = $this->getFeeTypeId($test);
@@ -334,22 +353,20 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$lineid = (int) $result['content'];
 		$this->assertGreaterThan(0, $lineid, "$test Id of line is not > 0");
 
-		$before = new ExpenseReportLine($db);
-		$this->assertGreaterThan(0, $before->fetch($lineid), "$test Line must be found before update");
+		$before = $this->getLine($id, $lineid, $test);
 
 		$this->getUrl('expensereports/'.$id.'/lines/'.$lineid, $test, 'PUT', array("qty" => 2));
 
-		$after = new ExpenseReportLine($db);
-		$this->assertGreaterThan(0, $after->fetch($lineid), "$test Line must be found after update");
+		$after = $this->getLine($id, $lineid, $test);
 
-		$this->assertEquals(2, (float) $after->qty, "$test Quantity must be updated");
-		$this->assertEquals($feetypeid, (int) $after->fk_c_type_fees, "$test Fee type must not change");
-		$this->assertEquals(10, (float) $after->vatrate, "$test VAT rate must not change");
-		$this->assertEquals(12.5, (float) $after->value_unit, "$test Unit price must not change");
-		$this->assertEquals($before->dates, $after->dates, "$test Date must not change");
-		$this->assertEquals($before->comments, $after->comments, "$test Comment must not change");
-		$this->assertEquals(25, (float) $after->total_ttc, "$test Total with taxes must be recomputed");
-		$this->assertEqualsWithDelta(25 / 1.1, (float) $after->total_ht, 0.01, "$test Total without taxes must be recomputed");
+		$this->assertEquals(2, (float) $after['qty'], "$test Quantity must be updated");
+		$this->assertEquals($feetypeid, (int) $after['fk_c_type_fees'], "$test Fee type must not change");
+		$this->assertEquals(10, (float) $after['vatrate'], "$test VAT rate must not change");
+		$this->assertEquals(12.5, (float) $after['value_unit'], "$test Unit price must not change");
+		$this->assertEquals($before['dates'], $after['dates'], "$test Date must not change");
+		$this->assertEquals($before['comments'], $after['comments'], "$test Comment must not change");
+		$this->assertEquals(25, (float) $after['total_ttc'], "$test Total with taxes must be recomputed");
+		$this->assertEqualsWithDelta(25 / 1.1, (float) $after['total_ht'], 0.01, "$test Total without taxes must be recomputed");
 	}
 
 	/**
@@ -359,8 +376,6 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	 */
 	public function testRestExpenseReportPutLineOfOtherReport()
 	{
-		global $db;
-
 		$test = "Update a line through another expense report";
 
 		$feetypeid = $this->getFeeTypeId($test);
@@ -381,8 +396,7 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 
 		$this->getUrl('expensereports/'.$otherid.'/lines/'.$lineid, $test, 'PUT', array("qty" => 3), 404);
 
-		$line = new ExpenseReportLine($db);
-		$this->assertGreaterThan(0, $line->fetch($lineid), "$test Line must be found");
-		$this->assertEquals(1, (float) $line->qty, "$test Quantity must not change");
+		$line = $this->getLine($id, $lineid, $test);
+		$this->assertEquals(1, (float) $line['qty'], "$test Quantity must not change");
 	}
 }
