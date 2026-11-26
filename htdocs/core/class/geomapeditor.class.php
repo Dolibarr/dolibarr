@@ -42,15 +42,23 @@ class GeoMapEditor
 	 * @param string $geojson  json of geometric objects
 	 * @param string $centroidjson  json of geometric center of object
 	 * @param string $markertype type of marker, point, multipts, linestrg, polygon
+	 * @param bool $editMode If true, edit mode with input. Otherwise, view mode.
 	 *
 	 * @return string
 	 */
-	public function getHtml($htmlname, $geojson, $centroidjson, $markertype)
+	public function getHtml($htmlname, $geojson, $centroidjson, $markertype, $editMode = true)
 	{
 		global $langs;
 
-		$out = '<input id="' . $htmlname . '" name="' . $htmlname . '" size="100" value="' . htmlentities($geojson, ENT_QUOTES) . '"/>';
-		$out .= '<div id="map_' . $htmlname . '" style="width: 600px; height: 350px;"></div>';
+		// If empty htmlname => view mode
+		$out = '';
+		if (!empty($editMode)) {
+			$out .= '<input id="' . $htmlname . '" name="' . $htmlname . '" size="100" value="' . htmlentities($geojson, ENT_QUOTES) . '"/>';
+			$out .= '<div id="map_' . $htmlname . '" style="width: 600px; height: 350px;"></div>';
+		} else {
+			// smaller map in view mode to avoid overloading page
+			$out .= '<div id="map_' . $htmlname . '" style="width: 400px; height: 220px;"></div>';
+		}
 		if ($geojson != '{}') {
 			// OpenLayers it's "longitude, latitude".
 			// inverting coordinates
@@ -111,7 +119,9 @@ class GeoMapEditor
 				drawCircleMarker: false,
 				drawText: false,
 				drawRectangle: false,
-				editMode: true,
+				editMode: ' . ($editMode ? 'true' : 'false') . ',
+				cutPolygon: ' . ($editMode ? 'true' : 'false') . ',
+				removalMode: ' . ($editMode ? 'true' : 'false') . ',
 				removalMode: true,
 				rotateMode: false,
 				customControls: false,
@@ -130,6 +140,8 @@ class GeoMapEditor
 					drawMarker: false,
 					drawPolyline: false,
 					drawPolygon: false,
+					cutPolygon: ' . ($editMode ? 'true' : 'false') . ',
+					removalMode: ' . ($editMode ? 'true' : 'false') . ',
 				});
 			} else if (markerType == "multipts" && Object.keys(geoms).length != 0) {
 				L.multipoint(geoms.coordinates).addTo(map);
@@ -184,7 +196,7 @@ class GeoMapEditor
 				console.log("enable : " + type);
 				if (type == "point") {
 					map.pm.addControls({
-						drawMarker: true
+						drawMarker: ' . ($editMode ? 'true' : 'false') . '
 					});
 				};
 			}
@@ -193,6 +205,8 @@ class GeoMapEditor
 					drawMarker: false,
 					drawPolyline: false,
 					drawPolygon: false,
+					cutPolygon: ' . ($editMode ? 'true' : 'false') . ',
+					removalMode: ' . ($editMode ? 'true' : 'false') . ',
 				});
 			}
 
