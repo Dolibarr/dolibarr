@@ -3444,10 +3444,10 @@ abstract class CommonObject
 			$rows = array();
 
 			// Some line tables have no fk_parent_line field (contratdet, expensereport_det...). The line class tells it
-			// (declared property or entry in $fields), so no DDL request is needed (they are forbidden inside a transaction).
-			if ($fk_parent_line && property_exists($this, 'class_element_line') && !empty($this->class_element_line) && class_exists($this->class_element_line)) {
-				$tmpline = new $this->class_element_line($this->db);
-				if (!property_exists($tmpline, 'fk_parent_line') && empty($tmpline->fields['fk_parent_line'])) {
+			// (declared property or entry in $fields), read without instantiating it. No DDL request (forbidden inside a transaction).
+			if ($fk_parent_line && !empty($this->class_element_line) && class_exists($this->class_element_line)) {
+				$classvars = get_class_vars($this->class_element_line);
+				if (!property_exists($this->class_element_line, 'fk_parent_line') && empty($classvars['fields']['fk_parent_line'])) {
 					$fk_parent_line = false;
 				}
 			}
