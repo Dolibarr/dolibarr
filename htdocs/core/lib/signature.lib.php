@@ -80,6 +80,8 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			$obj = $object;
 		}
 	}
+	// @phan-var-force CommonObject $obj - the deprecated global $object may be inferred as "static" by phan
+	'@phan-var-force \\CommonObject $obj';
 
 	$out = '';
 
