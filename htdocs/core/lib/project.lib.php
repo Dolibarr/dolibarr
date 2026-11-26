@@ -320,6 +320,32 @@ function project_prepare_head(Project $project, $moreparam = '')
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project', 'add', 'core');
 
+	// Tab to link resources
+	if (isModEnabled('resource')) {
+		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+		$objectres = new Dolresource($db);
+		$linked_resources = $objectres->getElementResources('project', $project->id);
+		$nbResource = (is_array($linked_resources) ? count($linked_resources) : 0);
+		// if (is_array($objectres->available_resources))
+		// {
+		// 	foreach ($objectres->available_resources as $modresources => $resources)
+		// 	{
+		// 		$resources=(array) $resources;  // To be sure $resources is an array
+		// 		foreach($resources as $resource_obj)
+		// 		{
+		// 			$linked_resources = $object->getElementResources('fichinter', $object->id, $resource_obj);
+		// 		}
+		// 	}
+		// }
+
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/resource/element_resource.php', ['element' => 'project', 'element_id' => $project->id]);
+		$head[$h][1] = $langs->trans("Resources");
+		if ($nbResource > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbResource.'</span>';
+		}
+		$head[$h][2] = 'resource';
+		$h++;
+	}
 
 	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
