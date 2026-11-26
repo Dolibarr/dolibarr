@@ -244,6 +244,8 @@ $tabuser = array();
 $tabpay = array();
 $tabbq = array();
 $tabtp = array();
+$tabthirdpartyparts = array();	// Part of a bank line for each thirdparty, when a payment settles invoices of several thirdparties
+$tabthirdpartydone = array();	// Thirdparties of a bank line already added to $tabtp
 $tabtype = array();
 $tabmoreinfo = array();
 
@@ -327,6 +329,18 @@ if ($result) {
 			$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $account_customer);
 		}
 
+		// The request returns a bank line once per joined link, so once per thirdparty when a payment settles invoices
+		// of several thirdparties. The bank line is fully processed with its first record: a further record only adds
+		// the part of the payment that belongs to its own thirdparty, otherwise the amounts would be counted again.
+		if (isset($tabpay[$obj->rowid])) {
+			if (isset($tabthirdpartyparts[$obj->rowid][(int) $obj->socid]) && empty($tabthirdpartydone[$obj->rowid][(int) $obj->socid])) {
+				$tabtp[$obj->rowid][$compta_soc] = ($tabtp[$obj->rowid][$compta_soc] ?? 0) + $tabthirdpartyparts[$obj->rowid][(int) $obj->socid];
+				$tabthirdpartydone[$obj->rowid][(int) $obj->socid] = 1;
+			}
+			$i++;
+			continue;
+		}
+
 		$tabcompany[$obj->rowid] = array(
 			'id' => $obj->socid,
 			'name' => $obj->name,
@@ -382,29 +396,55 @@ if ($result) {
 			$amounttouse = $obj->amount_main_currency;
 		}
 
-		// in case option FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is on, payment could be for more than one third-partie
-		// so we have to find which part of the payment is affected to each third-parties
-		// (because in this case $obj-amount = the total of the paiement and not the paiement for each third-parties)
-		if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && ($lineisapurchase == 1 || $lineisasale == 1) ) {
+		// A payment may settle invoices of several thirdparties (options FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS or
+		// FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES). The bank line then has one 'company' link per thirdparty, and the amount
+		// of the bank line is split between them in proportion to what the payment allocated to the invoices of each one.
+		// Proportional to the bank amount, so the sign and the main currency follow the bank line and the parts add up to it.
+		$nbcompanylinks = 0;
+		if (is_array($links)) {
+			foreach ($links as $val) {
+				if ($val['type'] == 'company') {
+					$nbcompanylinks++;
+				}
+			}
+		}
+		if ($nbcompanylinks > 1 && ($lineisapurchase == 1 || $lineisasale == 1)) {
 			if ($lineisapurchase == 1) {
-				$sqlamount = "SELECT SUM(pf.amount) as amount";
+				$sqlamount = "SELECT f.fk_soc, SUM(pf.amount) as amount";
 				$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn AS pf";
 				$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn AS p ON pf.fk_paiementfourn = p.rowid";
-				$sqlamount .= " RIGHT JOIN ".MAIN_DB_PREFIX."facture AS f ON pf.fk_facturefourn = f.rowid";
+				$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn AS f ON pf.fk_facturefourn = f.rowid";
 				$sqlamount .= " WHERE p.fk_bank = ".((int) $obj->rowid);
-				$sqlamount .= " AND f.fk_soc = ".((int) $obj->socid);
+				$sqlamount .= " GROUP BY f.fk_soc";
 			} else {
-				$sqlamount = "SELECT SUM(pf.amount) as amount";
+				$sqlamount = "SELECT f.fk_soc, SUM(pf.amount) as amount";
 				$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiement_facture AS pf";
 				$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."paiement AS p ON pf.fk_paiement = p.rowid";
-				$sqlamount .= " RIGHT JOIN ".MAIN_DB_PREFIX."facture AS f ON pf.fk_facture = f.rowid";
+				$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."facture AS f ON pf.fk_facture = f.rowid";
 				$sqlamount .= " WHERE p.fk_bank = ".((int) $obj->rowid);
-				$sqlamount .= " AND f.fk_soc = ".((int) $obj->socid);
+				$sqlamount .= " GROUP BY f.fk_soc";
 			}
 			$resultamount = $db->query($sqlamount);
 			if ($resultamount) {
-				$objamount = $db->fetch_object($resultamount);
-				if (!empty($objamount->amount)) $amounttouse = $objamount->amount;
+				$amountbysoc = array();
+				while ($objamount = $db->fetch_object($resultamount)) {
+					$amountbysoc[(int) $objamount->fk_soc] = (float) $objamount->amount;
+				}
+				$totalallocated = array_sum($amountbysoc);
+				if (count($amountbysoc) > 1 && $totalallocated != 0) {
+					// The last thirdparty gets what is left, so a rounding difference never unbalances the entry
+					$remaining = (float) $amounttouse;
+					$socids = array_keys($amountbysoc);
+					$lastsocid = end($socids);
+					foreach ($amountbysoc as $socid => $amountsoc) {
+						if ($socid == $lastsocid) {
+							$tabthirdpartyparts[$obj->rowid][$socid] = (float) price2num($remaining, 'MT');
+						} else {
+							$tabthirdpartyparts[$obj->rowid][$socid] = (float) price2num($amounttouse * $amountsoc / $totalallocated, 'MT');
+							$remaining -= $tabthirdpartyparts[$obj->rowid][$socid];
+						}
+					}
+				}
 			}
 		}
 
@@ -473,17 +513,17 @@ if ($result) {
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 					if ($compta_soc) {
-						// because we are in 2 loop (loop on the line from the sql queries and loop on $links)
-						// and in case of option FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is on,
-						// we will pass here n times for each payment line
-						// so we have to add $amoutouse only if the line $links[$key] correspond to the payment line we are in used ( socid correspondinf at the payment line $links)
-						// if FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is off we add $amounttouse
-						if (!getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') || $obj->socid == $links[$key]['url_id']){
+						// With several 'company' links, $compta_soc is the account of the thirdparty of this record only: only its
+						// own link adds an amount, its part of the payment. The other thirdparties are added by their own record
+						// (see the start of the loop). Without parts, the whole amount stays with this thirdparty.
+						if ($nbcompanylinks <= 1 || $obj->socid == $links[$key]['url_id']) {
+							$amountsoc = $tabthirdpartyparts[$obj->rowid][(int) $obj->socid] ?? $amounttouse;
 							if (empty($tabtp[$obj->rowid][$compta_soc])) {
-								$tabtp[$obj->rowid][$compta_soc] = $amounttouse;
+								$tabtp[$obj->rowid][$compta_soc] = $amountsoc;
 							} else {
-								$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
+								$tabtp[$obj->rowid][$compta_soc] += $amountsoc;
 							}
+							$tabthirdpartydone[$obj->rowid][(int) $obj->socid] = 1;
 						}
 					}
 				} elseif ($links[$key]['type'] == 'user') {
