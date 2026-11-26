@@ -38,6 +38,12 @@ if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');					// If thi
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+// Nothing is written into the session: release its lock at once, the JS langs tool calls this page in background
+// while other requests of the same user may be running.
+if (session_status() === PHP_SESSION_ACTIVE) {
+	session_write_close();
+}
+
 
 /**
  * @var Conf $conf
@@ -52,15 +58,9 @@ require '../../main.inc.php';
  * INTERFACE FOR JS CONTEXT LANG
  */
 
-if (empty($dolibarr_nocache)) {
-	$delaycache = '86400';
-	header('Cache-Control: max-age=' . $delaycache . ', public, must-revalidate');
-	header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-	header('Expires: ' . gmdate('D, d M Y H:i:s', time() + (int) $delaycache) . ' GMT');    // This is to avoid to have Expires set by proxy or web server
-} else {
-	// If any cache on files were disable by config file (for test purpose)
-	header('Cache-Control: no-cache');
-}
+// The browser may keep the answer but must check it each time (ETag below): translations of a module change
+// with its files, without any change of the Dolibarr version, and a max-age kept new keys hidden up to 24 h.
+header('Cache-Control: no-cache, public');
 header('Content-Type: application/json; charset=utf-8');
 
 
@@ -86,6 +86,73 @@ if (!preg_match('/^[a-z]{1,2}_[A-Z]{1,2}(?:,[a-z]{1,2}_[A-Z]{1,2})*$/', $local))
 	exit;
 }
 
+$locals = explode(',', $local);
+
+/*
+ * ETag built from what the translations come from, without reading the lang files: same tag as the copy of the
+ * browser, answer 304 without body. A file read for nothing only costs an extra download, so the list of files
+ * may be wider than what Translate::load() really reads, never narrower.
+ */
+$newdomain = $domain;
+$modulename = '';
+if (preg_match('/^([^@]+)@([^@]+)$/', $domain, $regs)) {
+	$newdomain = $regs[1];
+	$modulename = $regs[2];
+}
+$fingerprint = array(DOL_VERSION, $domain, $local, getDolGlobalString('MAIN_FORCELANGDIR'));
+foreach ($locals as $langCode) {
+	// Same fallback chain as Translate::load(): xx_YY, then xx_XX, then en_US
+	$langarray = explode('_', $langCode);
+	$parentlang = strtolower($langarray[0]).'_'.strtoupper($langarray[0]);
+	if ($parentlang == 'el_EL') {
+		$parentlang = 'el_GR';
+	}
+	if ($parentlang == 'ar_AR') {
+		$parentlang = 'ar_SA';
+	}
+	$langdirs = array_unique(array($langCode, $parentlang, 'en_US'));
+
+	$outputlangs = new Translate("", $conf);
+	$outputlangs->setDefaultLang($langCode);
+	foreach ($outputlangs->dir as $searchdir) {
+		foreach ($langdirs as $langdir) {
+			$file_lang = $searchdir.($modulename ? '/'.$modulename : '').'/langs/'.$langdir.'/'.$newdomain.'.lang';
+			$stat = @stat(dol_osencode($file_lang));
+			if ($stat) {
+				$fingerprint[] = $file_lang.':'.$stat['mtime'].':'.$stat['size'];
+			}
+		}
+	}
+	$fingerprint[] = getDolGlobalString('MAIN_OVERWRITE_TRANS_'.$langCode);
+}
+// Translations overwritten in database (Setup > Translation), no date column so the rows are part of the tag
+if (getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
+	$sql = "SELECT lang, transkey, transvalue FROM ".$db->prefix()."overwrite_trans";
+	$sql .= " WHERE entity IN (0, ".getEntity('overwrite_trans').")";
+	$sql .= " ORDER BY rowid";
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$fingerprint[] = $obj->lang.':'.$obj->transkey.':'.$obj->transvalue;
+		}
+		$db->free($resql);
+	} else {
+		$fingerprint[] = uniqid(); // No reliable tag: never answer 304
+	}
+}
+
+$etag = '"'.md5(implode("\n", $fingerprint)).'"';
+header('ETag: '.$etag);
+// Apache mod_deflate may send it back as W/"...-gzip"
+$sentTags = array();
+foreach (explode(',', isset($_SERVER['HTTP_IF_NONE_MATCH']) ? (string) $_SERVER['HTTP_IF_NONE_MATCH'] : '') as $tag) {
+	$sentTags[] = preg_replace('/-(gzip|br|deflate)"$/', '"', trim(str_replace('W/', '', $tag)));
+}
+if (in_array($etag, $sentTags, true)) {
+	http_response_code(304);
+	exit;
+}
+
 /*
 Format for  JS:
 {
@@ -94,7 +161,6 @@ Format for  JS:
 }
 */
 
-$locals = explode(',', $local);
 $json = new stdClass();
 
 foreach ($locals as $langCode) {
