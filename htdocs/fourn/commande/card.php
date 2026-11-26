@@ -2863,14 +2863,15 @@ if ($action == 'create') {
 				$object->fetchObjectLinked(); // Links are used to show or not button, so we load them now.
 
 				// Subtotal
-				if ($object->status == CommandeFournisseur::STATUS_DRAFT && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+				if ($object->status == CommandeFournisseur::STATUS_DRAFT && isModEnabled('subtotals')
+					&& (getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)) || getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)))) {
 					$langs->load('subtotals');
 
 					$url_button = array();
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => $object->status == CommandeFournisseur::STATUS_DRAFT,
+						'enabled' => (bool) getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element)),
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddTitleLine'),
 						'url' => dolBuildUrl('/fourn/commande/card.php', ['id' => $object->id, 'action' => 'add_title_line'], true)
@@ -2878,7 +2879,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => $object->status == CommandeFournisseur::STATUS_DRAFT,
+						'enabled' => (bool) getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element)),
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => dolBuildUrl('/fourn/commande/card.php', ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
