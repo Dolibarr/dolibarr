@@ -18,10 +18,7 @@
 /**
  *      \file       test/phpunit/RestlerValidatorTest.php
  *      \ingroup    test
- *      \brief      PHPUnit tests for the local patch applied to Restler's
- *                  Validator (see dev/dolibarr_changes.txt): a REST API
- *                  parameter documented with a union type must validate
- *                  instead of raising a fatal error.
+ *      \brief      PHPUnit tests for the Restler Validator patch (union types, see dev/dolibarr_changes.txt)
  */
 
 global $conf,$user,$langs,$db;
@@ -38,10 +35,7 @@ use Luracast\Restler\Data\Validator;
 /**
  * Class RestlerValidatorTest
  *
- * Restler is vendored, so a patch applied to it is only as durable as the
- * reason it was applied is visible. These tests are that reason: if the guard
- * is lost on the next update of the library, they fail instead of the fatal
- * error coming back on a REST endpoint.
+ * Fails if the patch is lost on the next update of the vendored library.
  *
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
@@ -54,11 +48,7 @@ class RestlerValidatorTest extends CommonClassTest
 	private $restlerloader = null;
 
 	/**
-	 * Register Restler's autoloader for the duration of a test only.
-	 *
-	 * It resolves any class name it is asked about, so leaving it registered
-	 * while PHPUnit builds the suite makes PHPUnit fail to load its own
-	 * classes. Inside a test it has nothing to collide with.
+	 * Register Restler's autoloader during a test only: it would break PHPUnit's own class loading.
 	 *
 	 * @return void
 	 */
@@ -102,11 +92,7 @@ class RestlerValidatorTest extends CommonClassTest
 	}
 
 	/**
-	 * The case that used to be fatal: a parameter documented "datetime|string".
-	 *
-	 * Restler hands the union to Validator::validate() as an array, and the
-	 * type-specific prefilter lookup used it as an array key, which on PHP 8 is
-	 * a TypeError raised before the endpoint's own code ever runs.
+	 * A union type ("datetime|string", an array for Restler) no longer raises a TypeError.
 	 *
 	 * @return void
 	 */
@@ -118,9 +104,7 @@ class RestlerValidatorTest extends CommonClassTest
 	}
 
 	/**
-	 * Skipping the prefilter on the union pass costs nothing, because the
-	 * union branch re-enters validate() once per type and the prefilter then
-	 * runs with a scalar type: 'int|string' given "42" still yields an int.
+	 * The union branch still runs the per-type prefilter: 'int|string' given "42" yields an int.
 	 *
 	 * @return void
 	 */
