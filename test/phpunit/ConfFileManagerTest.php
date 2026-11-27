@@ -326,6 +326,47 @@ class ConfFileManagerTest extends CommonClassTest
 	}
 
 	/**
+	 * Test that the old key is pinned into dolcrypt_key even when the database password is in clear text.
+	 *
+	 * @return	void
+	 */
+	public function testBuildFromTemplatePinsOldKeyWithClearPassword()
+	{
+		$confmanager = new ConfFileManager();
+
+		$oldid = str_repeat('d', 64);
+		$template = "<?php\n";
+		$template .= "\$dolibarr_main_instance_unique_id='".$oldid."';\n";
+		$template .= "\$dolibarr_main_db_pass='clearpassword';\n";
+
+		$result = $confmanager->buildFromTemplate($template);
+		$vars = $this->evalConfContent($result['content']);
+
+		// Data encrypted in database by dolEncrypt() with the old key must stay decryptable.
+		$this->assertSame($oldid, $vars['dolibarr_main_dolcrypt_key']);
+		$this->assertNotSame($oldid, $vars['dolibarr_main_instance_unique_id']);
+	}
+
+	/**
+	 * Test that an existing dolcrypt_key is kept as is.
+	 *
+	 * @return	void
+	 */
+	public function testBuildFromTemplateKeepsExistingDolcryptKey()
+	{
+		$confmanager = new ConfFileManager();
+
+		$template = "<?php\n";
+		$template .= "\$dolibarr_main_instance_unique_id='".str_repeat('e', 64)."';\n";
+		$template .= "\$dolibarr_main_dolcrypt_key='existingkey';\n";
+
+		$result = $confmanager->buildFromTemplate($template);
+		$vars = $this->evalConfContent($result['content']);
+
+		$this->assertSame('existingkey', $vars['dolibarr_main_dolcrypt_key']);
+	}
+
+	/**
 	 * Test that reusing a partial template fills empty/commented/absent mandatory variables.
 	 *
 	 * A variable commented out, absent or present-but-empty must fall back to the provided fallback value,

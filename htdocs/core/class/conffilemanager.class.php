@@ -409,8 +409,8 @@ class ConfFileManager
 	 *	empty is NOT reused: it falls back to $fallbackValues (the fresh-install values resolved by the installer,
 	 *	e.g. auto-detected paths and standard database defaults) and finally to the canvas default. This guarantees
 	 *	mandatory variables are never left empty when reusing a partial template.
-	 *	A fresh instance_unique_id is always generated; when the database password is dolcrypt-encrypted the
-	 *	old key is pinned into dolcrypt_key so it stays decryptable. Deprecated variables are kept commented for
+	 *	A fresh instance_unique_id is always generated; when dolcrypt_key is empty, the old key is pinned into it
+	 *	so the values already encrypted with dolEncrypt() stay decryptable. Deprecated variables are kept commented for
 	 *	reference, and custom/unknown variables are preserved verbatim, so nothing is silently lost.
 	 *
 	 *	@param	string					$rawTemplate	Raw content of the existing conf.php template.
@@ -448,11 +448,8 @@ class ConfFileManager
 		$keyres = $this->resolveInstanceKey($parsed['values']);
 		$values['dolibarr_main_instance_unique_id'] = $keyres['instanceKey'];
 
-		// If the database password is dolcrypt-encrypted, it was encrypted with the OLD key. Since the
-		// instance_unique_id is regenerated, pin the old key into dolcrypt_key so the password (and any other
-		// dolcrypt-encrypted data) stays decryptable.
-		$rawpass = isset($parsed['values']['dolibarr_main_db_pass']) ? $this->unquoteScalar($parsed['values']['dolibarr_main_db_pass']) : '';
-		if (preg_match('/^dolcrypt:/i', $rawpass) && empty($values['dolibarr_main_dolcrypt_key']) && $keyres['oldKey'] !== '') {
+		// Values already encrypted in the database with dolEncrypt() need the old key, whatever the format of db_pass.
+		if (empty($values['dolibarr_main_dolcrypt_key']) && $keyres['oldKey'] !== '') {
 			$values['dolibarr_main_dolcrypt_key'] = $keyres['oldKey'];
 		}
 
