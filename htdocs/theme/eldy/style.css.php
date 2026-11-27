@@ -258,18 +258,18 @@ if (!getDolGlobalString('THEME_ELDY_ENABLE_PERSONALIZED')) {
 }
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
-$colorbackbody        = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BACKBODY') ? $colorbackbody : $conf->global->THEME_ELDY_BACKBODY) : (empty($user->conf->THEME_ELDY_BACKBODY) ? $colorbackbody : $user->conf->THEME_ELDY_BACKBODY);
-$colorbackhmenu1      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackvmenu1      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_VERMENU_BACK1') ? $colorbackvmenu1 : $conf->global->THEME_ELDY_VERMENU_BACK1) : (empty($user->conf->THEME_ELDY_VERMENU_BACK1) ? $colorbackvmenu1 : $user->conf->THEME_ELDY_VERMENU_BACK1);
-$colortopbordertitle1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TOPBORDER_TITLE1') ? $colortopbordertitle1 : $conf->global->THEME_ELDY_TOPBORDER_TITLE1) : (empty($user->conf->THEME_ELDY_TOPBORDER_TITLE1) ? $colortopbordertitle1 : $user->conf->THEME_ELDY_TOPBORDER_TITLE1);
-$colorbacktitle1      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BACKTITLE1') ? $colorbacktitle1 : $conf->global->THEME_ELDY_BACKTITLE1) : (empty($user->conf->THEME_ELDY_BACKTITLE1) ? $colorbacktitle1 : $user->conf->THEME_ELDY_BACKTITLE1);
-$colorbacktabcard1    = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BACKTABCARD1') ? $colorbacktabcard1 : $conf->global->THEME_ELDY_BACKTABCARD1) : (empty($user->conf->THEME_ELDY_BACKTABCARD1) ? $colorbacktabcard1 : $user->conf->THEME_ELDY_BACKTABCARD1);
-$colorbacktabactive   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BACKTABACTIVE') ? $colorbacktabactive : $conf->global->THEME_ELDY_BACKTABACTIVE) : (empty($user->conf->THEME_ELDY_BACKTABACTIVE) ? $colorbacktabactive : $user->conf->THEME_ELDY_BACKTABACTIVE);
-$colorbacklineimpair1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_LINEIMPAIR1') ? $colorbacklineimpair1 : $conf->global->THEME_ELDY_LINEIMPAIR1) : (empty($user->conf->THEME_ELDY_LINEIMPAIR1) ? $colorbacklineimpair1 : $user->conf->THEME_ELDY_LINEIMPAIR1);
-$colorbacklineimpair2 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_LINEIMPAIR2') ? $colorbacklineimpair2 : $conf->global->THEME_ELDY_LINEIMPAIR2) : (empty($user->conf->THEME_ELDY_LINEIMPAIR2) ? $colorbacklineimpair2 : $user->conf->THEME_ELDY_LINEIMPAIR2);
-$colorbacklinepair1   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_LINEPAIR1') ? $colorbacklinepair1 : $conf->global->THEME_ELDY_LINEPAIR1) : (empty($user->conf->THEME_ELDY_LINEPAIR1) ? $colorbacklinepair1 : $user->conf->THEME_ELDY_LINEPAIR1);
-$colorbacklinepair2   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_LINEPAIR2') ? $colorbacklinepair2 : $conf->global->THEME_ELDY_LINEPAIR2) : (empty($user->conf->THEME_ELDY_LINEPAIR2) ? $colorbacklinepair2 : $user->conf->THEME_ELDY_LINEPAIR2);
-$colorbacklinebreak   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_LINEBREAK') ? $colorbacklinebreak : $conf->global->THEME_ELDY_LINEBREAK) : (empty($user->conf->THEME_ELDY_LINEBREAK) ? $colorbacklinebreak : $user->conf->THEME_ELDY_LINEBREAK);
+$colorbackbody        = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BACKBODY') ? $colorbackbody : getDolGlobalString('THEME_ELDY_BACKBODY')) : (empty($user->conf->THEME_ELDY_BACKBODY) ? $colorbackbody : $user->conf->THEME_ELDY_BACKBODY);
+$colorbackhmenu1      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') ? $colorbackhmenu1 : getDolGlobalString('THEME_ELDY_TOPMENU_BACK1')) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackvmenu1      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_VERMENU_BACK1') ? $colorbackvmenu1 : getDolGlobalString('THEME_ELDY_VERMENU_BACK1')) : (empty($user->conf->THEME_ELDY_VERMENU_BACK1) ? $colorbackvmenu1 : $user->conf->THEME_ELDY_VERMENU_BACK1);
+$colortopbordertitle1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TOPBORDER_TITLE1') ? $colortopbordertitle1 : getDolGlobalString('THEME_ELDY_TOPBORDER_TITLE1')) : (empty($user->conf->THEME_ELDY_TOPBORDER_TITLE1) ? $colortopbordertitle1 : $user->conf->THEME_ELDY_TOPBORDER_TITLE1);
+$colorbacktitle1      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BACKTITLE1') ? $colorbacktitle1 : getDolGlobalString('THEME_ELDY_BACKTITLE1')) : (empty($user->conf->THEME_ELDY_BACKTITLE1) ? $colorbacktitle1 : $user->conf->THEME_ELDY_BACKTITLE1);
+$colorbacktabcard1    = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BACKTABCARD1') ? $colorbacktabcard1 : getDolGlobalString('THEME_ELDY_BACKTABCARD1')) : (empty($user->conf->THEME_ELDY_BACKTABCARD1) ? $colorbacktabcard1 : $user->conf->THEME_ELDY_BACKTABCARD1);
+$colorbacktabactive   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_BACKTABACTIVE') ? $colorbacktabactive : getDolGlobalString('THEME_ELDY_BACKTABACTIVE')) : (empty($user->conf->THEME_ELDY_BACKTABACTIVE) ? $colorbacktabactive : $user->conf->THEME_ELDY_BACKTABACTIVE);
+$colorbacklineimpair1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_LINEIMPAIR1') ? $colorbacklineimpair1 : getDolGlobalString('THEME_ELDY_LINEIMPAIR1')) : (empty($user->conf->THEME_ELDY_LINEIMPAIR1) ? $colorbacklineimpair1 : $user->conf->THEME_ELDY_LINEIMPAIR1);
+$colorbacklineimpair2 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_LINEIMPAIR2') ? $colorbacklineimpair2 : getDolGlobalString('THEME_ELDY_LINEIMPAIR2')) : (empty($user->conf->THEME_ELDY_LINEIMPAIR2) ? $colorbacklineimpair2 : $user->conf->THEME_ELDY_LINEIMPAIR2);
+$colorbacklinepair1   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_LINEPAIR1') ? $colorbacklinepair1 : getDolGlobalString('THEME_ELDY_LINEPAIR1')) : (empty($user->conf->THEME_ELDY_LINEPAIR1) ? $colorbacklinepair1 : $user->conf->THEME_ELDY_LINEPAIR1);
+$colorbacklinepair2   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_LINEPAIR2') ? $colorbacklinepair2 : getDolGlobalString('THEME_ELDY_LINEPAIR2')) : (empty($user->conf->THEME_ELDY_LINEPAIR2) ? $colorbacklinepair2 : $user->conf->THEME_ELDY_LINEPAIR2);
+$colorbacklinebreak   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_LINEBREAK') ? $colorbacklinebreak : getDolGlobalString('THEME_ELDY_LINEBREAK')) : (empty($user->conf->THEME_ELDY_LINEBREAK) ? $colorbacklinebreak : $user->conf->THEME_ELDY_LINEBREAK);
 $colortexttitlenotab  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTTITLENOTAB') ? $colortexttitlenotab : getDolGlobalString('THEME_ELDY_TEXTTITLENOTAB')) : (empty($user->conf->THEME_ELDY_TEXTTITLENOTAB) ? $colortexttitlenotab : $user->conf->THEME_ELDY_TEXTTITLENOTAB);
 $colortexttitle       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTTITLE') ? $colortexttitle : getDolGlobalString('THEME_ELDY_TEXTTITLE')) : (empty($user->conf->THEME_ELDY_TEXTTITLE) ? $colortexttitle : $user->conf->THEME_ELDY_TEXTTITLE);
 $colortexttitlelink   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TEXTTITLELINK') ? $colortexttitlelink : getDolGlobalString('THEME_ELDY_TEXTTITLELINK')) : (empty($user->conf->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $user->conf->THEME_ELDY_TEXTTITLELINK);
@@ -283,8 +283,8 @@ $fontsize             = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!g
 $fontsizesmaller      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_FONT_SIZE2') ? $fontsize : getDolGlobalString('THEME_ELDY_FONT_SIZE2')) : (empty($user->conf->THEME_ELDY_FONT_SIZE2) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE2);
 $heightrow			  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_USECOMOACTROW') ? '155%' : '300%') : (empty($user->conf->THEME_ELDY_USECOMOACTROW) ? '155%' : '300%');
 // Hover color
-$colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || getDolGlobalString('THEME_ELDY_USE_HOVER') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_HOVER') === '1' ? 'e6edf0' : getDolGlobalString('THEME_ELDY_USE_HOVER')));
-$colorbacklinepairchecked = ((!isset($conf->global->THEME_ELDY_USE_CHECKED) || getDolGlobalString('THEME_ELDY_USE_CHECKED') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_CHECKED') === '1' ? 'e6edf0' : getDolGlobalString('THEME_ELDY_USE_CHECKED')));
+$colorbacklinepairhover = ((getDolGlobalString('THEME_ELDY_USE_HOVER', '255,255,255') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_HOVER') === '1' ? 'e6edf0' : getDolGlobalString('THEME_ELDY_USE_HOVER')));
+$colorbacklinepairchecked = ((getDolGlobalString('THEME_ELDY_USE_CHECKED', '255,255,255') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_CHECKED') === '1' ? 'e6edf0' : getDolGlobalString('THEME_ELDY_USE_CHECKED')));
 if (!empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)) {
 	$colorbacklinepairhover = ((!isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0') ? '' : ($user->conf->THEME_ELDY_USE_HOVER === '1' ? 'e6edf0' : $user->conf->THEME_ELDY_USE_HOVER));
 	$colorbacklinepairchecked = ((!isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0') ? '' : ($user->conf->THEME_ELDY_USE_CHECKED === '1' ? 'e6edf0' : $user->conf->THEME_ELDY_USE_CHECKED));
@@ -381,6 +381,7 @@ if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->M
 	$maxwidthloginblock += 50;
 	$minwidthtmenu = 0;
 }
+$heighttopmenu = ($disableimages ? (26 + 8) : ($heightmenu + 2)); /* real height of the top menu bar (height + padding-top of div.tmenucenter) */
 
 if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
 	$maxwidthloginblock += 55;
@@ -465,7 +466,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--colortextbackhmenu: #<?php print $colortextbackhmenu; ?>;
 	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
 	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
-	--listetotal: #888888;
+	--listetotal: #666666;
 	--inputbackgroundcolor: #FFF;
 	--inputbackgroundcolordisabled: #eee;
 	--inputcolordisabled: rgb(80, 80, 80);
@@ -490,6 +491,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 	--colorblack: #000;
 	--colorwhite: #fff;
 	--colorwhitelight: #eee;
+	--colorphone: rgba(68, 68, 0, 0.7);		/* Same color than the phone picto: #440 with opacity 0.7 */
 	--heightrow: <?php print $heightrow; ?>;
 }
 
@@ -547,6 +549,7 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 				--colorblack: #fff;
 				--colorwhite: #000;
 				--colorwhitelight: #333;
+				--colorphone: rgb(195, 195, 125);
 	      }
 
 		body, button {
@@ -1085,8 +1088,8 @@ input.pageplusone {
 	opacity: unset !important;
 }
 .spantitle {
-	opacity: 0.6;
-	font-size: 0.95em;
+	opacity: 0.7;
+	font-size: 0.9em;
 }
 .colorwhite {
 	color: var(--colorwhite);
@@ -1486,7 +1489,7 @@ textarea.centpercent {
 	/* The top menu is itself sticky at top 0 with a z-index of 1005 (see .side-nav-vert below),
 	   so a table header stuck at 0 is painted underneath it and stays invisible. Offset it by the
 	   height of the top menu, the same value .side-nav is offset by when it is made sticky. */
-	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? '50px' : '0'); ?>;
+	top: <?php echo(getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' ? $heighttopmenu.'px' : '0'); ?>;
 	z-index: 2;
 }
 .liste_titre.stickyagenda {
@@ -2494,8 +2497,26 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
 }
+/* A full page list can expand the page, so the horizontal scrollbar is the one of the window, always visible */
+div.fiche>form>div.div-table-responsive, div.fiche>div.div-table-responsive {
+	width: auto;
+	min-width: 0;
+}
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
 	overflow-x: auto;
+}
+/* The column selector popup must not have the dd as containing block, else the overflow of the div truncates it */
+.div-table-responsive dd.dropdowndd, .div-table-responsive-no-min dd.dropdowndd {
+	position: static;
+}
+.div-table-responsive dd.dropdowndd ul, .div-table-responsive-no-min dd.dropdowndd ul {
+	top: auto;
+	<?php echo $right; ?>: auto;
+	margin-top: 2px;
+	transform: translateX(<?php echo($left == 'left' ? 'calc(-100% + 20px)' : 'calc(100% - 20px)'); ?>);	/* pop is align on right of picto */
+}
+.div-table-responsive dd.dropdowndd ul.selectedfieldsleft, .div-table-responsive-no-min dd.dropdowndd ul.selectedfieldsleft {
+	transform: none;
 }
 
 /* Style used for table in public ticket */
@@ -3010,6 +3031,8 @@ td.showDragHandle {
 	width: 100%;
 	<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
 		display: table;					/* DOL_XXX Prevents the correct operation of the horizontal scroll on a table, with datatable or CSS */
+	<?php } elseif (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled') { ?>
+		display: flex;					/* Use flex so the height of the left column is independent from the height of the right column */
 	<?php } ?>
 	/* table-layout: fixed; */
 
@@ -3032,6 +3055,39 @@ td.showDragHandle {
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
 }
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled' && getDolGlobalString('THEME_STICKY_TOPMENU') != 'scrollleftmenu_after_mainpage') { ?>
+#id-left {
+	display: block;
+}
+#id-container > .side-nav {
+	flex-shrink: 0;
+}
+#id-right {
+	display: block;
+	flex: 1 1 0;
+	width: auto;	/* No min-width: 0 and no width: 100%, so a wide list enlarges the page and the horizontal scrollbar is the one of the window (on small screens only, see below) */
+}
+/* When the left menu is visible, #id-right is the scroll area, so its scrollbars are always visible, at the right of the left menu and under the top menu */
+@media only screen and (min-width: <?php echo(getDolGlobalInt('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', (int) round($nbtopmenuentries * 47, 0) + 130) + 1); ?>px)	/* no reduction 3 */
+{
+	#id-right {
+		min-width: 0;
+		box-sizing: border-box;
+		height: calc(100vh - <?php echo $heighttopmenu; ?>px);
+		overflow: auto;
+	}
+	#id-right > div.fiche {
+		min-width: min-content;		/* The fiche grows with a wide list, so its right margin stays visible at the end of the horizontal scroll */
+		display: flow-root;			/* Contain floats (fichehalfleft/right), so the bottom padding of #id-right is kept at the end of the scroll */
+	}
+	div.fiche>form>div.div-table-responsive, div.fiche>div.div-table-responsive {
+		overflow-x: visible;		/* The horizontal scroll of a full page list is done by #id-right */
+	}
+	.liste_titre.sticky {
+		top: 0;						/* The sticky header is relative to #id-right that scrolls, not to the window */
+	}
+}
+<?php } ?>
 .bodyforlist #id-right {
 	padding-bottom: 4px;
 }
@@ -3097,12 +3153,15 @@ if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 ?>
 
 .side-nav {
-<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
-	position: sticky;
-	top: 50px;
-	display: block;
-<?php } else { ?>
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'disabled') { ?>
 	display: table-cell;
+<?php } else { ?>
+	position: sticky;
+	top: <?php echo $heighttopmenu; ?>px;
+	display: block;
+	box-sizing: border-box;			/* So border and padding are inside the height and do not make the page scroll */
+	height: calc(100vh - <?php echo $heighttopmenu; ?>px);		/* So the side nav remains visible to the bottom of the page */
+	overflow-y: auto;				/* A scrollbar appears if the menu content is longer than the page */
 <?php } ?>
 	border-<?php echo $right; ?>: 1px solid #F0F0F0;
 	border-bottom: 1px solid #F0F0F0;
@@ -3221,8 +3280,8 @@ div.vmenu, td.vmenu {
 	.side-nav {
 		border-bottom: 1px solid #BBB;
 		background: #FFF;
-		padding-left: 20px;
-		padding-right: 20px;
+		padding-left: 10px;
+		padding-right: 10px;
 		position: absolute;
 			z-index: 90;
 	}
@@ -3275,7 +3334,8 @@ div.fiche {
 	margin-top: 0px;
 }
 .page-modulehelp div.fiche {
-	width: 100%;
+	width: auto;	/* width:auto + flex-grow so margins fit whether #id-right is block (page in iframe) or flex */
+	flex-grow: 1;
 	margin-left: 15px;
 	margin-right: 20px;
 }
@@ -3571,8 +3631,8 @@ img.photoref, div.photoref {
 	/* border: 1px solid #DDD; */
 	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
 	padding: 4px;
-	height: 80px;
-	width: 80px;
+	height: 100px;
+	width: 100px;
 	object-fit: contain;
 }
 
@@ -3801,7 +3861,7 @@ div.menu_titre {
 	padding-bottom: 4px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: <?php echo $leftmenuwidth - 2; ?>px;				/* required to have overflow working. must be same than menu_contenu */
+	width: <?php echo $leftmenuwidth - 10; ?>px;				/* required to have overflow working. must be same than menu_contenu */
 }
 .mainmenuaspan
 {
@@ -4407,6 +4467,24 @@ input.vmenusearchselectcombo[type=text] {
 	text-overflow: ellipsis;
 	width: <?php echo $leftmenuwidth - 2; ?>px;				/* required to have overflow working. must be same than .menu_titre */
 }
+/* Arrow of left menu titles with MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER. Rotation duration must be same than slide animation in lib_head.js.php */
+.menuexpandarrow {
+	width: 10px;
+	text-align: center;
+	font-size: 0.75em;
+	opacity: 0.6;
+	position: absolute;			/* top is not set so the arrow stays on the line of the title, right is relative to div.vmenu */
+	<?php print $right; ?>: 6px;
+	margin-top: 6px;
+	transform: rotate(<?php print($left == 'left' ? '0' : '180'); ?>deg);
+	transition: transform 0.25s;
+}
+.blockvmenuexpanded .menuexpandarrow {
+	transform: rotate(90deg);
+}
+.menuexpandarrowempty {
+	visibility: hidden;
+}
 #menu_contenu_logo { /* padding-top: 0; */ }
 .companylogo { }
 .searchform { padding-top: 10px; }
@@ -4680,7 +4758,7 @@ div.tabsElem a.tabactive::before, div.tabsElem a.tabunactive::before {
 */
 div.tabBar {
 	color: var(--colortextbacktab);
-	padding-top: 20px;
+	padding-top: 30px;
 	padding-left: 0px; padding-right: 0px;
 	padding-bottom: 2px;
 	margin: 0px 0px 30px 0px;
@@ -5074,21 +5152,59 @@ table.noborder {
 .fichehalfright table.noborder, .fichehalfleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
-table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
-	<?php
-	if ($userborderontable) { ?>
+<?php if ($userborderontable) { ?>
+/* Lateral borders are painted by the cells of the first and last column of each row,
+   so they can not be overpainted by the cell backgrounds when border is not collapsed and corners are rounded. */
+table.liste > tbody > tr > td:first-child, table.liste > tbody > tr > th:first-child,
+table.liste > thead > tr > td:first-child, table.liste > thead > tr > th:first-child,
+table.liste > tfoot > tr > td:first-child, table.liste > tfoot > tr > th:first-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > td:first-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > th:first-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > td:first-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > th:first-child,
+table.formdoc > tbody > tr > td:first-child, table.formdoc > tbody > tr > th:first-child,
+table.formdoc > thead > tr > td:first-child, table.formdoc > thead > tr > th:first-child,
+div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
 	border-left: 1px solid var(--colortopbordertitle1);
-	border-right: 1px solid var(--colortopbordertitle1);
-	<?php } ?>
 }
+table.liste > tbody > tr > td:last-child, table.liste > tbody > tr > th:last-child,
+table.liste > thead > tr > td:last-child, table.liste > thead > tr > th:last-child,
+table.liste > tfoot > tr > td:last-child, table.liste > tfoot > tr > th:last-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > td:last-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > tbody > tr > th:last-child,
+table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > td:last-child, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) > thead > tr > th:last-child,
+table.formdoc > tbody > tr > td:last-child, table.formdoc > tbody > tr > th:last-child,
+table.formdoc > thead > tr > td:last-child, table.formdoc > thead > tr > th:last-child,
+div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
+	border-right: 1px solid var(--colortopbordertitle1);
+}
+<?php } ?>
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 	border-collapse: separate !important;
 	border-spacing: 0px;
+	margin: 0px 0px 20px 0px;
+}
+/* Top border is painted by the cells of the first row (like the bottom border painted by the cells of the last row),
+   so it can not be overpainted by the cell backgrounds when border is not collapsed and corners are rounded. */
+table.liste > *:first-child > tr:first-child > td, table.liste > *:first-child > tr:first-child > th,
+table.noborder > *:first-child > tr:first-child > td, table.noborder > *:first-child > tr:first-child > th,
+table.formdoc > *:first-child > tr:first-child > td, table.formdoc > *:first-child > tr:first-child > th,
+div.noborder:not(.paymenttable):not(.margintable) {
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
-	margin: 0px 0px 20px 0px;
+}
+/* No top border when the table is attached under a filter bar or a title bar
+   (the liste_titre_bydiv is the header of the card, the table continues it) */
+table.liste.listwithfilterbefore > *:first-child > tr:first-child > td, table.liste.listwithfilterbefore > *:first-child > tr:first-child > th,
+table.noborder.listwithfilterbefore > *:first-child > tr:first-child > td, table.noborder.listwithfilterbefore > *:first-child > tr:first-child > th,
+table.formdoc.listwithfilterbefore > *:first-child > tr:first-child > td, table.formdoc.listwithfilterbefore > *:first-child > tr:first-child > th,
+div.liste_titre_bydiv ~ div.div-table-responsive > table > *:first-child > tr:first-child > td,
+div.liste_titre_bydiv ~ div.div-table-responsive > table > *:first-child > tr:first-child > th,
+div.liste_titre_bydiv ~ div.div-table-responsive-no-min > table > *:first-child > tr:first-child > td,
+div.liste_titre_bydiv ~ div.div-table-responsive-no-min > table > *:first-child > tr:first-child > th,
+div.liste_titre_bydiv + table > *:first-child > tr:first-child > td,
+div.liste_titre_bydiv + table > *:first-child > tr:first-child > th {
+	border-top-width: 0px;
+	border-top-style: none;
 }
 #tablelines, #tablelinesservice {
 	border-bottom-width: 1px;
@@ -5122,6 +5238,9 @@ table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type {
 /* CSS to remove the interline border */
 table.nointerlines tr:not(:last-child) td {
 	border-bottom: unset !important;
+}
+/* Keep the top border of the card on the first row */
+table.nointerlines tr:not(:first-child) td {
 	border-top: unset !important;
 }
 
@@ -5138,13 +5257,25 @@ table.noborder.cal_month {
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:first-child,
 table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:first-child,
-table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:first-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > td:first-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > th:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > td:first-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > th:first-child,
+table.formdoc > *:first-child > tr:first-child > td:first-child,
+table.formdoc > *:first-child > tr:first-child > th:first-child {
 	border-top-left-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child td:last-child,
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
 table.tagtable.liste:not(.listwithfilterbefore, .paymenttable, .margintable) tr.liste_titre:first-child th:last-child,
-table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child {
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr.trfirstline td:last-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > td:last-child,
+table.liste:not(.listwithfilterbefore, .paymenttable, .margintable) > *:first-child > tr:first-child > th:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > td:last-child,
+table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable, .cal_month) > *:first-child > tr:first-child > th:last-child,
+table.formdoc > *:first-child > tr:first-child > td:last-child,
+table.formdoc > *:first-child > tr:first-child > th:last-child {
 	border-top-right-radius: <?php echo $borderradius; ?>px;
 }
 table.noborder:not(.listwithfilterbefore, .paymenttable, .margintable) tr:last-child td:first-child,
@@ -5354,7 +5485,7 @@ a.refid {
 	color: var(--colortexttitlenotab) !important;
 }
 div.refidno  {
-	padding-top: 3px;
+	padding-bottom: 3px;
 	font-weight: normal;
 	color: var(--refidnocolor);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
@@ -5362,7 +5493,19 @@ div.refidno  {
 }
 div.refaddress div.address {
 	line-height: 1.2em;
-	font-size: 0.95em;
+	font-size: 0.92em;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+div.refaddress .phone-border {
+	font-size: 0.92em;
+}
+div.refaddress div.emailurl {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.banner-object-name-alias {		/* Label or alias of object shown under the ref into the banner */
+	opacity: 0.6;
 }
 div.refidno form {
 	display: inline-block;
@@ -5717,6 +5860,9 @@ input.liste_titre {
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
 	white-space: nowrap;
 }
+.noborder tr.liste_total td, tr.liste_total td {
+	font-weight: bold;
+}
 .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
 	white-space: normal;
 }
@@ -5743,6 +5889,10 @@ table.tableforservicepart1 tr td {
 .paymenttable, .margintable {
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
+}
+.paymenttable > *:first-child > tr:first-child > td, .paymenttable > *:first-child > tr:first-child > th,
+.margintable > *:first-child > tr:first-child > td, .margintable > *:first-child > tr:first-child > th {
+	border-top: none !important;
 }
 .bordertopimp {
 	border-top: 1px solid var(--colortopbordertitle1) !important;
@@ -6062,7 +6212,7 @@ table.liste tr.oddeven:nth-of-type(even) {
 .boxtable {
 	border-bottom-width: 1px;
 	background: var(--colorbackbody);
-	border-top: <?php echo $borderwidth ?>px solid var(--colortopbordertitle1);
+	border-top: 0;
 	/* border-top: 2px solid var(--colorbackhmenu1) !important; */
 }
 .boxtable tr td.tdboxstats {
@@ -6872,7 +7022,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	margin-bottom: 10px;	/* same than .ui-widget-header */
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1007 !important;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005) */
+	z-index: 1007;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005). No !important, so jquery-ui can raise a modal opened over another one */
 }
 .ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
 	z-index: 1008 !important; /* To always be over the dialog box */
@@ -7365,6 +7515,7 @@ table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
 table.cal_month td { padding-left: 1px !important; padding-right: 1px !important; }
 table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !important; }
+table.cal_month td.cal_current_month, table.cal_month td.cal_other_month { padding-top: 0 !important; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E8E8E8; border-right: 0; border-bottom: solid 1px #E8E8E8; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E8E8E8; }
 .cal_current_month_oneday { border-right: solid 1px #E8E8E8; }
@@ -8111,6 +8262,16 @@ td.gtaskheading.gstartdate, td.gtaskheading.genddate {
 	border-left: none;
 	border-right: none;
 	border-top: none;
+}
+
+/* Field to choose files of the file manager (filemanager.tpl.php): files can be dropped on it */
+input[type="file"].ecmfiledropinput, div.tabBar input[type="file"].ecmfiledropinput {
+	border: 2px dotted var(--colortextlink);
+	border-radius: 4px;
+}
+input[type="file"].ecmfiledropinput.ecmfiledropinputover, div.tabBar input[type="file"].ecmfiledropinput.ecmfiledropinputover {
+	border-style: solid;
+	background-color: var(--colorbacklinepairhover);
 }
 
 /* ============================================================================== */
@@ -9069,6 +9230,13 @@ dd.dropdowndd ul li {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+}
+/* Fixed width for the dd of the multiselect array (list columns selector of list pages),
+ * whatever the length of the fields labels, and no horizontal scrollbar */
+dd.dropdowndd ul {
+	width: 260px;
+	max-width: calc(100vw - 40px);
+	overflow-x: hidden;
 }
 
 /* ============================================================================== */
@@ -10134,7 +10302,8 @@ table.jPicker {
 		padding-top: 75px;
 		/*position: relative;
 		top: 75px;*/
-		width: 245px; 	/* must be same than div.login_block */
+		box-sizing: border-box;		/* Same box model whatever is THEME_STICKY_TOPMENU, so the padding is inside the width */
+		width: 285px; 	/* must be same than div.login_block: width 245px + padding-left 20px + padding-right 20px */
 		box-shadow: none;
 	}
 	#id-left {
@@ -10204,6 +10373,10 @@ table.jPicker {
 		min-width: unset !important;
 	}
 
+	span.select2.select2-container.select2-container--default {
+		width: auto !important;
+	}
+
 	div.login_block_other {
 		margin-right: unset;
 	}
@@ -10218,6 +10391,9 @@ table.jPicker {
 	.login_block_elem {
 		padding: 0 !important;
 		height: 38px;
+	}
+	.login_block_elem:has(span.aversion) {
+		display: none;		/* Hide the version when the top menu is reduced */
 	}
 	li.tmenu, li.tmenusel {
 		min-width: 32px;

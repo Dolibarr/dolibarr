@@ -516,10 +516,12 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					'DB_ERROR_22P02'
 				);
 				// The foreign key of the category link tables can target a table owned by a module that is not
-				// enabled, llx_categorie_mo referencing llx_mrp_mo for instance, so the key can not be created
-				// yet. The module creates it when it is enabled. Elsewhere this error must stay fatal, since it
-				// is what reports orphans or duplicates when a key is added on corrupted data.
-				if (preg_match('/^\s*ALTER\s+TABLE\s+[^\s]+_categorie_mo\s.*REFERENCES\s+[^\s(]+_mrp_mo\s*\(/i', $newsql)) {
+				// enabled, llx_categorie_mo referencing llx_mrp_mo or llx_categorie_skill referencing llx_hrm_skill
+				// for instance, so the key can not be created yet. The module creates it when it is enabled.
+				// Elsewhere this error must stay fatal, since it is what reports orphans or duplicates when a
+				// key is added on corrupted data.
+				if (preg_match('/^\s*ALTER\s+TABLE\s+[^\s]+_categorie_mo\s.*REFERENCES\s+[^\s(]+_mrp_mo\s*\(/i', $newsql)
+					|| preg_match('/^\s*ALTER\s+TABLE\s+[^\s]+_categorie_skill\s.*REFERENCES\s+[^\s(]+_hrm_skill\s*\(/i', $newsql)) {
 					$okerrors[] = 'DB_ERROR_CANNOT_ADD_FOREIGN_KEY_CONSTRAINT';
 				}
 
@@ -960,6 +962,11 @@ function security_prepare_head()
 	$head[$h][2] = 'openid';
 	$h++;
 
+	$head[$h][0] = dolBuildUrl(DOL_URL_ROOT."/admin/security_passkey.php");
+	$head[$h][1] = $langs->trans("Passkeys");
+	$head[$h][2] = 'passkey';
+	$h++;
+
 
 	// Show permissions lines
 	$nbPerms = 0;
@@ -1241,7 +1248,7 @@ function purgeSessions($mysessionid)
  *  @param      int			$withdeps  				Activate/Disable also all dependencies
  * 	@param		int			$noconfverification		Remove verification of $conf->global->MODULE_NAME variable for module
  *  @param		string		$options				Option for init
- *  @return     array{nbmodules?:int,errors:string[],nbperms?:int}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
+ *  @return     array{nbmodules?:int,errors:string[],nbperms?:int,needsetup?:string[]}	array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added, 'needsetup'=>array of labels of activated modules that need a setup);
  */
 function activateModule($value, $withdeps = 1, $noconfverification = 0, $options = '')
 {
@@ -1255,7 +1262,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 		return $ret;
 	}
 
-	$ret = array('nbmodules' => 0, 'errors' => array(), 'nbperms' => 0);
+	$ret = array('nbmodules' => 0, 'errors' => array(), 'nbperms' => 0, 'needsetup' => array());
 	$modName = $value;
 	$modFile = $modName.".class.php";
 
@@ -1348,6 +1355,9 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 						if ($activate) {
 							$ret['nbmodules'] += $resarray['nbmodules'];
 							$ret['nbperms'] += $resarray['nbperms'];
+							if (!empty($resarray['needsetup'])) {
+								$ret['needsetup'] = array_merge($ret['needsetup'], $resarray['needsetup']);
+							}
 						} else {
 							if ($activateerr) {
 								$ret['errors'][] = $activateerr;
@@ -1375,6 +1385,9 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0, $options
 	if (!count($ret['errors'])) {
 		$ret['nbmodules']++;
 		$ret['nbperms'] += (is_array($objMod->rights) ? count($objMod->rights) : 0);
+		if (!empty($objMod->need_setup)) {
+			$ret['needsetup'][] = $objMod->getName();
+		}
 	}
 
 	return $ret;

@@ -723,19 +723,23 @@ while ($i < $imaxinloop) {
 	}
 
 	// Title
-	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+	print '<td class="" title="'.dolPrintHTMLForAttribute($obj->title).'">';
+	print '<div class="twolinesmax-normallineheight minwidth200onall">';
 	$savref = $object->ref;
 	$object->ref = $obj->title;
 	print $object->getNomUrl(0);
 	$object->ref = $savref;
+	print '</div>';
 	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
 
 	// Topic
-	print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->subject).'">';
-	print $obj->subject;
+	print '<td class="opacitymedium" title="'.dolPrintHTMLForAttribute($obj->subject).'">';
+	print '<div class="twolinesmax-normallineheight minwidth200onall">';
+	print dolPrintHTML($obj->subject);
+	print '</div>';
 	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
@@ -770,7 +774,7 @@ while ($i < $imaxinloop) {
 		{
 			print $nbemail;
 		}*/
-		print $nbemail;
+		print '<span class="badge badgeneutral">'.((int) $nbemail).'</span>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

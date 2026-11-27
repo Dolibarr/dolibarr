@@ -737,8 +737,8 @@ class modSupplierInvoice extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'f.ref' => array(
 				'rule' => 'getrefifauto',
-				'class' => (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER),
-				'path' => "/core/modules/supplier_invoice/" . (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) . '.php',
+				'class' => (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER')),
+				'path' => "/core/modules/supplier_invoice/" . (!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER')) . '.php',
 				'classobject' => 'FactureFournisseur',
 				'pathobject' => '/fourn/class/fournisseur.facture.class.php',
 			),

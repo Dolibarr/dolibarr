@@ -14,6 +14,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Library javascript for the passkey (WebAuthn) authentication mode.
+ * - On the login page, an element with id "passkeylogin" enables the login with a passkey
+ *   (autofill of the login field and button "Login with a passkey").
  * - On the page of the passkeys of a user (user/passkeys.php), an element with id "passkeyadd" enables the creation of a passkey.
  * The URL of the ajax component and the messages are provided with data-* attributes of these elements.
  */
@@ -125,6 +127,123 @@
 
 
 	/*
+	 * Login page
+	 */
+
+	var abortController = null;
+
+	/**
+	 * Start a passkey login
+	 *
+	 * @param	{HTMLElement}	element			Element with the data-* attributes
+	 * @param	{boolean}		conditional		true to propose the passkeys into the autofill of the login field, false to open the dialog of the browser
+	 * @return	{void}
+	 */
+	function startLogin(element, conditional) {
+		var url = element.getAttribute('data-url');
+		var form = document.getElementById('login');
+
+		if (abortController) {
+			abortController.abort();
+		}
+		var controller = new AbortController();
+		abortController = controller;
+
+		post(url, {action: 'getoptions'}).then(function (answer) {
+			if (!answer.success) {
+				var servererror = new Error(answer.error);
+				servererror.name = 'PasskeyServerError';
+				throw servererror;
+			}
+			var publicKey = answer.options.publicKey;
+			publicKey.challenge = base64UrlToBuffer(publicKey.challenge);
+			if (publicKey.allowCredentials) {
+				publicKey.allowCredentials.forEach(function (credential) {
+					credential.id = base64UrlToBuffer(credential.id);
+				});
+			}
+			var request = {publicKey: publicKey, signal: controller.signal};
+			if (conditional) {
+				request.mediation = 'conditional';
+			}
+			return navigator.credentials.get(request);
+		}).then(function (credential) {
+			if (!credential) {
+				return null;
+			}
+			var entity = form.querySelector('[name=entity]');
+			return post(url, {
+				action: 'verify',
+				id: credential.id,
+				clientDataJSON: bufferToBase64Url(credential.response.clientDataJSON),
+				authenticatorData: bufferToBase64Url(credential.response.authenticatorData),
+				signature: bufferToBase64Url(credential.response.signature),
+				userHandle: bufferToBase64Url(credential.response.userHandle),
+				entity: entity ? entity.value : ''
+			}).then(function (answer) {
+				// The form is submitted even if the check failed: the login page then shows the reason
+				// and the failed login is recorded like for the other authentication modes.
+				var input = document.createElement('input');
+				input.type = 'hidden';
+				input.name = 'afterpasskeyloginreturn';
+				input.value = '1';
+				form.appendChild(input);
+				form.querySelector('[name=username]').value = (answer.success ? answer.login : '');
+				var password = form.querySelector('[name=password]');
+				if (password) {
+					password.value = '';
+				}
+				form.submit();
+			});
+		}).catch(function (error) {
+			// AbortError: a new request replaced this one. NotAllowedError: the user canceled the dialog of the browser,
+			// or the browser refused the request (for example on a page with a TLS certificate error).
+			if (error && (error.name === 'AbortError' || error.name === 'NotAllowedError')) {
+				console.log('passkey login stopped: ' + error.name + ' ' + error.message);
+				return;
+			}
+			console.log('passkey login error: ' + (error ? error.name + ' ' + error.message : ''));
+			// The autofill of the login field is started without any action of the visitor: nothing is shown.
+			// Otherwise only the message of the server is shown, the errors of the browser (for example
+			// SecurityError on a wrong domain) are details of the setup that a visitor doesn't have to see.
+			if (!conditional) {
+				showError(element.getAttribute('data-msg-error') + (error && error.name === 'PasskeyServerError' && error.message ? ' ' + error.message : ''));
+			}
+		});
+	}
+
+	/**
+	 * Init the passkey login on the login page
+	 *
+	 * @return	{void}
+	 */
+	function initLogin() {
+		var element = document.getElementById('passkeylogin');
+		if (!element) {
+			return;
+		}
+		if (!isSupported()) {
+			element.style.display = 'none';
+			return;
+		}
+
+		element.addEventListener('click', function (event) {
+			event.preventDefault();
+			startLogin(element, false);
+		});
+
+		// Propose the passkeys into the autofill of the login field when the browser supports it
+		if (PublicKeyCredential.isConditionalMediationAvailable) {
+			PublicKeyCredential.isConditionalMediationAvailable().then(function (available) {
+				if (available) {
+					startLogin(element, true);
+				}
+			});
+		}
+	}
+
+
+	/*
 	 * Page of the passkeys of a user
 	 */
 
@@ -211,9 +330,11 @@
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', function () {
+			initLogin();
 			initRegister();
 		});
 	} else {
+		initLogin();
 		initRegister();
 	}
 })();

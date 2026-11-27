@@ -81,19 +81,19 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	public function __construct()
 	{
 		global $conf, $langs;
-		if (!isset($conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER) || trim($conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER) == '') {
+		if (trim(getDolGlobalString('COMPANY_DIGITARIA_MASK_CUSTOMER')) == '') {
 			$conf->global->COMPANY_DIGITARIA_MASK_CUSTOMER = '411';
 		}
-		if (!isset($conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER) || trim($conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER) == '') {
+		if (trim(getDolGlobalString('COMPANY_DIGITARIA_MASK_SUPPLIER')) == '') {
 			$conf->global->COMPANY_DIGITARIA_MASK_SUPPLIER = '401';
 		}
 		$this->prefixcustomeraccountancycode = getDolGlobalString('COMPANY_DIGITARIA_MASK_CUSTOMER');
 		$this->prefixsupplieraccountancycode = getDolGlobalString('COMPANY_DIGITARIA_MASK_SUPPLIER');
 
-		if (!isset($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER) || trim($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER) == '') {
+		if (trim(getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER')) == '') {
 			$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER = '5';
 		}
-		if (!isset($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER) || trim($conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER) == '') {
+		if (trim(getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER')) == '') {
 			$conf->global->COMPANY_DIGITARIA_MASK_NBCHARACTER_SUPPLIER = '5';
 		}
 		$this->customeraccountancycodecharacternumber = getDolGlobalString('COMPANY_DIGITARIA_MASK_NBCHARACTER_CUSTOMER');
@@ -132,7 +132,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte = str_replace(array('{s1}', '{s2}', '{s3}', '{s4}'), array($s1, $s2, $s3, $s4), $texte);
 		$texte .= "<br>\n";
 		// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
-		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_DIGITARIA_REMOVE_SPECIAL')) {
+		if (getDolGlobalString('COMPANY_DIGITARIA_REMOVE_SPECIAL', '1')) {
 			$texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		}
 		// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
@@ -157,16 +157,17 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$texte .= "<br>\n";
 		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value5">';
 		if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS')) {
-			$texte .= $conf->global->COMPANY_DIGITARIA_CLEAN_WORDS;
+			$texte .= getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS');
 		}
 		$texte .= '</textarea>';
 		$texte .= '</tr></table>';
 
 		// Warn if the generated code length (prefix + number of characters) does not match the auxiliary
 		// account length: the general ledger would then pad the code with trailing zeros (length_accounta()).
-		if ($this->codeLengthDiffersFromAuxiliaryLength($this->prefixcustomeraccountancycode, (int) $this->customeraccountancycodecharacternumber)
-			|| $this->codeLengthDiffersFromAuxiliaryLength($this->prefixsupplieraccountancycode, (int) $this->supplieraccountancycodecharacternumber)) {
-			$texte .= '<br><div class="warning">'.img_warning().' '.$langs->trans("WarningDigitariaCodeLengthNotMatchingAccountLength", getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')).'</div>';
+		if (getDolGlobalString('SOCIETE_CODECOMPTA_ADDON') == 'mod_codecompta_digitaria'
+			&& ($this->codeLengthDiffersFromAuxiliaryLength($this->prefixcustomeraccountancycode, (int) $this->customeraccountancycodecharacternumber)
+			|| $this->codeLengthDiffersFromAuxiliaryLength($this->prefixsupplieraccountancycode, (int) $this->supplieraccountancycodecharacternumber))) {
+			$texte .= '<div class="warning">'.img_warning().' '.$langs->trans("WarningDigitariaCodeLengthNotMatchingAccountLength", getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT')).'</div>';
 		}
 
 		$texte .= '</form>';
@@ -254,7 +255,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			$codetouse = str_replace($cleanWords, "", $codetouse);
 		}
 		// Remove special char if COMPANY_DIGITARIA_REMOVE_SPECIAL is set to 1 or not set (default)
-		if (!isset($conf->global->COMPANY_DIGITARIA_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_DIGITARIA_REMOVE_SPECIAL')) {
+		if (getDolGlobalString('COMPANY_DIGITARIA_REMOVE_SPECIAL', '1')) {
 			$codetouse = (string) preg_replace('/([^a-z0-9])/i', '', $codetouse);
 		}
 		// Apply a regex replacement pattern on code if COMPANY_DIGITARIA_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
@@ -411,7 +412,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (!is_array($storage)) {
 			return false; // bad type, $this->error already set
 		}
-		list($table, $column) = $storage;
+		$table = $storage[0];
+		$column = $storage[1];
 
 		$sql = "SELECT ".$db->sanitize($column)." as code";
 		$sql .= " FROM ".$db->prefix().$db->sanitize($table);
@@ -479,7 +481,8 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		if (!is_array($storage)) {
 			return -1; // bad type, $this->error already set
 		}
-		list($table, $typethirdparty) = $storage;
+		$table = $storage[0];
+		$typethirdparty = $storage[1];
 
 		$sql = "SELECT " . $db->sanitize($typethirdparty) . " FROM " . $db->prefix() . $db->sanitize($table);
 		$sql .= " WHERE " . $db->sanitize($typethirdparty) . " = '" . $db->escape($code) . "'";

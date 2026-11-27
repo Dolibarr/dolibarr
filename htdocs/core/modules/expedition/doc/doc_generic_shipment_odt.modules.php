@@ -318,7 +318,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+					if ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1')) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
@@ -426,8 +426,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					}
 				}
 				// Make substitutions into odt of thirdparty
-				if ($socobject->element == 'contact') {
-					/** @var Contact $socobject */
+				if ($socobject instanceof Contact) {
 					$tmparray = $this->get_substitutionarray_contact($socobject, $outputlangs);
 				} else {
 					$tmparray = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);

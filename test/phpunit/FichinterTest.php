@@ -327,4 +327,61 @@ class FichinterTest extends CommonClassTest
 
 		$localobject->delete($user);
 	}
+
+	/**
+	 * testFichinterUpdateExtrafieldError
+	 *
+	 * update() must return an error when the extra fields can not be saved.
+	 *
+	 * @return	void
+	 */
+	public function testFichinterUpdateExtrafieldError()
+	{
+		global $conf,$user,$langs,$db,$extrafields;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+		$soc = new Societe($db);
+		$soc->name = "FichinterTest Unittest update extrafield error";
+		$socid = $soc->create($user);
+		$this->assertGreaterThan(0, $socid, $soc->errorsToString());
+
+		$localobject = new Fichinter($db);
+		$localobject->initAsSpecimen();
+		$localobject->socid = $socid;
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id, $localobject->errorsToString());
+		$localobject->fetch($id);
+
+		// Declare, in memory only, an integer extra field so insertExtraFields() refuses a value that is not a number
+		$savextrafields = $extrafields;
+		$extrafields = new ExtraFields($db);
+		$extrafields->attributes[$localobject->table_element] = array(
+			'loaded' => 1,
+			'label' => array('unittestint' => 'Unit test int'),
+			'type' => array('unittestint' => 'int'),
+			'param' => array('unittestint' => ''),
+			'required' => array('unittestint' => 0),
+			'unique' => array('unittestint' => 0),
+			'computed' => array('unittestint' => ''),
+			'emptyonclone' => array('unittestint' => 0),
+		);
+
+		try {
+			$localobject->array_options = array('options_unittestint' => 'not a number');
+			$result = $localobject->update($user);
+		} finally {
+			$extrafields = $savextrafields;
+		}
+
+		$this->assertLessThan(0, $result, 'Update must fail when an extra field has a wrong value');
+		$this->assertNotEmpty($localobject->errors, 'The extra field error must be returned');
+
+		$localobject->array_options = array();
+		$localobject->delete($user);
+	}
 }

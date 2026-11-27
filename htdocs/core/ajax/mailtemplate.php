@@ -196,18 +196,21 @@ if (GETPOSTISSET('template')) {
 			if ($template == "news") {
 				$post = getNewsDetailsById($Id);
 
-				$newsList .= '<div style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; max-width: 800px; margin-top: 20px;margin-bottom: 50px; padding: 20px;">
-								<div style="flex-grow: 1; margin-right: 30px; max-width: 600px; margin-left: 100px;">
+				// Use a table and no flex, margin or float, so the news is rendered the same way by all email readers, on a small screen too
+				$newsList .= '<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width: 100%; margin-top: 20px; margin-bottom: 30px;">
+								<tr>
+								<td align="left" valign="top" style="padding: 10px 20px 10px 0;">
 									<h2 style="margin: 0; font-size: 1.5em;">' . (empty($post['title']) ? '' : dol_htmlentitiesbr($post['title'])) . '</h2>
 									<p style="margin: 10px 0; color: #555;">' . (empty($post['description']) ? '' : dol_htmlentitiesbr($post['description'])) . '</p>
 									<span style="display: block; margin-bottom: 5px; color: #888;">Created By: <strong>' . dol_htmlentitiesbr(empty($post['user_fullname']) ? '' : $post['user_fullname']) . '</strong></span>
 									<br>
 									<span style="display: block; color: #888;">' . dol_print_date((empty($post['date_creation']) ? dol_now() : $post['date_creation']), 'daytext', 'tzserver', $langs) . '</span>
-								</div>
-								<div style="flex-shrink: 0; margin-left: 100px; float: right;">
-									' . (!empty($post['image']) ? '<img alt="Image" width="130px" height="130px" style="border-radius: 10px;" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=medias&file=' . dol_htmlentitiesbr($post['image']) . '">' : '<img alt="Gray rectangle" width="130px" height="130px" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '
-								</div>
-							</div>';
+								</td>
+								<td align="right" valign="top" width="130" style="width: 130px; padding: 10px 0;">
+									' . (!empty($post['image']) ? '<img alt="Image" width="130" height="130" style="border-radius: 10px;" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=medias&file=' . dol_htmlentitiesbr($post['image']) . '">' : '<img alt="Gray rectangle" width="130" height="130" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '
+								</td>
+								</tr>
+							</table>';
 			} elseif ($template == "product") {
 				// Ignore an empty choice (id '' or -1 when the selection is cleared) and a product not found
 				if ((int) $Id <= 0) {

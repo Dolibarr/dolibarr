@@ -335,12 +335,13 @@ trait CommonSubtotal
 	 * @param int		$id						ID of the line to delete
 	 * @param bool		$correspondingstline	If true, also deletes the corresponding subtotal line
 	 * @param User		$user					performing the deletion (used for permissions in some modules)
+	 * @param bool		$deleteblocklines	If true and $id is a title line, also deletes the product lines under it
 	 * @return int								ID of deleted line if successful, -1 on error
 	 *
 	 * @phan-suppress PhanUndeclaredMethod
 	 * @phan-suppress PhanUndeclaredProperty
 	 */
-	public function deleteSubtotalLine($langs, $id, $correspondingstline = false, $user = null)
+	public function deleteSubtotalLine($langs, $id, $correspondingstline = false, $user = null, $deleteblocklines = false)
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
@@ -350,6 +351,42 @@ trait CommonSubtotal
 		}
 
 		$result = 0;
+
+		if ($deleteblocklines) {
+			$blocklines = $this->getSubtotalBlockLines($id);
+			if (!empty($blocklines)) {
+				$titlelevel = (int) $blocklines[0]->qty;
+				$titledesc = $blocklines[0]->desc;
+				foreach ($blocklines as $blockline) {
+					if ($blockline->id == $id) {
+						continue;
+					}
+					if ($blockline->special_code == SUBTOTALS_SPECIAL_CODE && (int) $blockline->qty == -$titlelevel && $blockline->desc == $titledesc) {
+						continue; // Closing subtotal line: handled by $correspondingstline below
+					}
+					if ($current_module == 'facture') {
+						$tmpresult = $this->deleteLine($blockline->id); // @phpstan-ignore-line
+					} elseif ($current_module == 'propal') {
+						$tmpresult = $this->deleteLine($blockline->id); // @phpstan-ignore-line
+					} elseif ($current_module == 'commande') {
+						$tmpresult = $this->deleteLine($user, $blockline->id); // @phpstan-ignore-line
+					} elseif ($current_module == 'facturerec') {
+						$tmpline = new FactureLigneRec($this->db);
+						$tmpline->id = $blockline->id;
+						$tmpresult = $tmpline->delete($user); // @phpstan-ignore-line
+					} elseif ($current_module == 'shipping') {
+						$tmpline = new ExpeditionLigne($this->db);
+						$tmpline->id = $blockline->id;
+						$tmpresult = $tmpline->delete($user); // @phpstan-ignore-line
+					} else {
+						$tmpresult = -1;
+					}
+					if ($tmpresult < 0) {
+						return -1;
+					}
+				}
+			}
+		}
 
 		if ($correspondingstline) {
 			$oldDesc = "";
@@ -854,6 +891,7 @@ trait CommonSubtotal
 			$blocklines[] = $line;
 		}
 
+		/** @var array<int,CommonObjectLine> $blocklines */
 		return $blocklines;
 	}
 

@@ -68,6 +68,7 @@ class Users extends DolibarrApi
 	 * Get a list of Users
 	 *
 	 * @since	5.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
@@ -77,16 +78,45 @@ class Users extends DolibarrApi
 	 * @param int       $category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param int		$count		Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array               Array of User objects
-	 * @phan-return Object[]
-	 * @phpstan-return Object[]
+	 * @phan-return Object[]|array{count:int}
+	 * @phpstan-return Object[]|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '0', $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '0', $category = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "You are not allowed to read list of users");
+		}
+
+		// List of properties we can't filter or sort on (to avoid guess by search binary attack)
+		$forbiddenfilterfields = array(
+			'pass',
+			'pass_crypted',
+			'pass_temp',
+			'api_key',
+			'openid'
+		);
+		$canreadsalary = ((isModEnabled('salaries') && DolibarrApiAccess::$user->hasRight('salaries', 'read')) || !isModEnabled('salaries'));
+		if (!$canreadsalary) {
+			$forbiddenfilterfields[] = 'salary';
+			$forbiddenfilterfields[] = 'salaryextra';
+			$forbiddenfilterfields[] = 'thm';
+			$forbiddenfilterfields[] = 'tjm';
+		}
+		$canreadhrpersonalinformation = (isModEnabled('hrm') && (DolibarrApiAccess::$user->hasRight('hrm', 'read_personal_information', 'read') || DolibarrApiAccess::$user->hasRight('hrm', 'write_personal_information', 'write')));
+		if (!$canreadhrpersonalinformation) {
+			$forbiddenfilterfields[] = 'national_registration_number';
+		}
+
+		// Test that sort fields are not forbidden fields
+		foreach (explode(',', (string) $sortfield) as $tmpsortfield) {
+			$tmpsortfield = preg_replace('/^.*\./', '', preg_replace('/[^a-z0-9_\.]/i', '', $tmpsortfield));	// Remove prefix like t. or ef.
+			if (in_array(dol_strtolower($tmpsortfield), $forbiddenfilterfields)) {
+				throw new RestException(403, 'Sorting on field '.$tmpsortfield.' is not allowed');
+			}
 		}
 
 		$obj_ret = array();
@@ -133,6 +163,11 @@ class Users extends DolibarrApi
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
+		}
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -406,6 +441,11 @@ class Users extends DolibarrApi
 				}
 			}
 
+			// The national registration number is an HR personal information
+			if ($field == 'national_registration_number' && !empty($value) && !(isModEnabled('hrm') && DolibarrApiAccess::$user->hasRight('hrm', 'write_personal_information', 'write'))) {
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without permission to write HR personal information");
+			}
+
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
@@ -488,6 +528,11 @@ class Users extends DolibarrApi
 					// This properties can't be set/modified with API
 					throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs with permission on salaries");
 				}
+			}
+
+			// The national registration number is an HR personal information. We refuse only a change, so sending back unchanged value is ok.
+			if ($field == 'national_registration_number' && (string) $value !== (string) $this->useraccount->national_registration_number && !(isModEnabled('hrm') && DolibarrApiAccess::$user->hasRight('hrm', 'write_personal_information', 'write'))) {
+				throw new RestException(405, 'The property '.$field." can't be set/modified using the APIs without permission to write HR personal information");
 			}
 
 			if ($field == 'id') {
@@ -855,6 +900,7 @@ class Users extends DolibarrApi
 	 * Return an array with a list of Groups
 	 *
 	 * @since	11.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @url	GET /groups
 	 *
@@ -865,15 +911,16 @@ class Users extends DolibarrApi
 	 * @param string	$group_ids   Groups ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param int		$count		Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array               Array of User objects
-	 * @phan-return Object[]
-	 * @phpstan-return Object[]
+	 * @phan-return Object[]|array{count:int}
+	 * @phpstan-return Object[]|array{count:int}
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
 	 * @throws RestException 503 Error
 	 */
-	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = '0', $sqlfilters = '', $properties = '')
+	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = '0', $sqlfilters = '', $properties = '', $count = 0)
 	{
 		$obj_ret = array();
 
@@ -898,6 +945,11 @@ class Users extends DolibarrApi
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
+		}
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -1398,6 +1450,7 @@ class Users extends DolibarrApi
 		unset($object->search_sid);
 		unset($object->ldap_sid);
 		unset($object->clicktodial_loaded);
+		unset($object->flagdelsessionsbefore);	// Technical date used to invalidate the sessions of the user
 
 		unset($object->lines);
 		unset($object->model_pdf);
@@ -1417,6 +1470,12 @@ class Users extends DolibarrApi
 			unset($object->salaryextra);
 			unset($object->thm);
 			unset($object->tjm);
+		}
+
+		// The national registration number is an HR personal information
+		$canreadhrpersonalinformation = (isModEnabled('hrm') && (DolibarrApiAccess::$user->hasRight('hrm', 'read_personal_information', 'read') || DolibarrApiAccess::$user->hasRight('hrm', 'write_personal_information', 'write')));
+		if (!$canreadhrpersonalinformation) {
+			unset($object->national_registration_number);
 		}
 
 		return $object;

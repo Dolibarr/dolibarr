@@ -196,6 +196,11 @@ class Availabilities extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 	/**
+	 * @var int		1 to show a tooltip with the server timezone and the UTC value on the start and end hours (in showOutputField)
+	 */
+	public $showtimezoneofhours = 0;
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -729,7 +734,9 @@ class Availabilities extends CommonObject
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				list($class, $module) = explode('@', $this->picto);
+				$tmparray = explode('@', $this->picto);
+				$class = $tmparray[0];
+				$module = $tmparray[1];
 				$upload_dir = $conf->$module->multidir_output[$conf->entity]."/$class/".dol_sanitizeFileName($this->ref);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];
@@ -903,6 +910,47 @@ class Availabilities extends CommonObject
 		// $this->property2 = ...
 
 		return $this->initAsSpecimenCommon();
+	}
+
+	/**
+	 * Return HTML string to show a field into a page.
+	 * If showtimezoneofhours is set, the start and end hours get a tooltip with the value in the server timezone and in UTC.
+	 *
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>,noteditable?:int,default?:int|string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,cssview?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int,required?:int,picto?:string}	$val	Array of properties of field to show
+	 * @param  string  			$key            	Key of attribute
+	 * @param  string|int|null  $value          	Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  			$moreparam      	To add more parameters on html tag
+	 * @param  string  			$keysuffix      	Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string  			$keyprefix      	Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  mixed   			$morecss        	Value for CSS to use (Old usage: May also be a numeric to define a size).
+	 * @return string
+	 */
+	public function showOutputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	{
+		global $form;
+
+		$out = parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
+
+		if ($this->showtimezoneofhours && in_array($key, array('startHour', 'endHour')) && (string) $value !== '') {
+			require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal.lib.php';
+
+			// Hours of availabilities are in the server timezone (see bookcalGetSlots)
+			$tzserver = @date_default_timezone_get();
+			$minutesutc = ((((int) $value * 60 - (int) (bookcalGetTimezoneOffset(dol_now(), $tzserver) / 60)) % 1440) + 1440) % 1440;
+			$hourutc = (string) floor($minutesutc / 60).(($minutesutc % 60) ? ':'.sprintf("%02d", $minutesutc % 60) : '');
+
+			$tooltip = dolPrintLabel(((int) $value).' '.$tzserver).'<br>'.dolPrintLabel($hourutc.' UTC');
+
+			if (is_object($form)) {
+				$tmpform = $form;
+			} else {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+				$tmpform = new Form($this->db);
+			}
+			$out = $tmpform->textwithpicto($out, $tooltip);
+		}
+
+		return $out;
 	}
 
 	/**

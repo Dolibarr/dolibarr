@@ -134,6 +134,12 @@ class MenuManager
 			$leftmenu = $forceleftmenu;
 		}
 
+		// When left menu entries are expanded on hover, the menu entries of modules must be loaded for all values of leftmenu
+		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
+		if (empty($forceleftmenu) && isLeftMenuExpandOnHover()) {
+			$leftmenu = 'all';
+		}
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 		$tabMenu = array();
 		$menuArbo = new Menubase($this->db, 'eldy');
@@ -222,7 +228,7 @@ class MenuManager
 							print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 						}
 					}
-					print ucfirst($val['titre']);
+					print dol_ucfirst($val['titre']);
 					print '</a>'."\n";
 
 					// Search submenu for this mainmenu entry
@@ -258,14 +264,14 @@ class MenuManager
 							print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
 						}
 
-						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
+						if ($langs->trans(dol_ucfirst($val['mainmenu'])."Dashboard") == dol_ucfirst($val['mainmenu'])."Dashboard") {  // No translation
 							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
 								print $langs->trans("Access");
 							} else {
 								print $langs->trans("Dashboard");
 							}
 						} else {
-							print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+							print $langs->trans(dol_ucfirst($val['mainmenu'])."Dashboard");
 						}
 						print '</a>';
 						print '</li>'."\n";
@@ -374,7 +380,7 @@ class MenuManager
 							$currentlevel = (empty($submenu->liste[$key2]) ? 1 : $submenu->liste[$key2]['level'] + 1);
 							$nextlevel = (empty($submenu->liste[$key2 + 1]) ? 1 : $submenu->liste[$key2 + 1]['level'] + 1);
 
-							print ucfirst($val2['titre']);
+							print dol_ucfirst($val2['titre']);
 							// If entry of level 2 has a submenu, we add '...' to show that a click will open the submenu
 							if ($val2['level'] == 0 && $nextlevel > $currentlevel) {
 								print ' ...';
@@ -432,7 +438,7 @@ class MenuManager
 						print $val['prefix'];
 					}
 
-					print ucfirst($val['titre']);
+					print dol_ucfirst($val['titre']);
 					print '</span>';
 
 					print '</li>'."\n";		// close entry level 0

@@ -181,6 +181,8 @@ class AllTests
 		$suite->addTestSuite('ApiEndpointDiscoveryTest');
 		require_once dirname(__FILE__).'/ApiEndpointDiscoveryEquivalenceTest.php';
 		$suite->addTestSuite('ApiEndpointDiscoveryEquivalenceTest');
+		require_once dirname(__FILE__).'/AiLibTest.php';
+		$suite->addTestSuite('AiLibTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeDocumentsTest.php';
@@ -193,10 +195,14 @@ class AllTests
 		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderWorkflowTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderDeleteLineTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderDeleteLineTest');
+		require_once dirname(__FILE__).'/AiMcpCacheHintsTest.php';
+		$suite->addTestSuite('AiMcpCacheHintsTest');
 		require_once dirname(__FILE__).'/ApiExplorerAccessControlTest.php';
 		$suite->addTestSuite('ApiExplorerAccessControlTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';
 		$suite->addTestSuite('ApiListStatusFilterTest');
+		require_once dirname(__FILE__).'/ApiListCountTest.php';
+		$suite->addTestSuite('ApiListCountTest');
 		require_once dirname(__FILE__).'/ApiSupplierOrderHeaderUpdateTest.php';
 		$suite->addTestSuite('ApiSupplierOrderHeaderUpdateTest');
 		//require_once dirname(__FILE__).'/AiMcpWireTest.php';
@@ -237,6 +243,8 @@ class AllTests
 		$suite->addTestSuite('GetUrlLibTest');
 		require_once dirname(__FILE__).'/JsonLibTest.php';
 		$suite->addTestSuite('JsonLibTest');
+		require_once dirname(__FILE__).'/PasskeyLibTest.php';
+		$suite->addTestSuite('PasskeyLibTest');
 		require_once dirname(__FILE__).'/LoadBoardTest.php';
 		$suite->addTestSuite('LoadBoardTest');
 		require_once dirname(__FILE__).'/ImagesLibTest.php';
@@ -463,6 +471,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
+		require_once dirname(__FILE__).'/AccountancyCategoryTest.php';
+		$suite->addTestSuite('AccountancyCategoryTest');
 		require_once dirname(__FILE__).'/AssetModelTest.php';
 		$suite->addTestSuite('AssetModelTest');
 

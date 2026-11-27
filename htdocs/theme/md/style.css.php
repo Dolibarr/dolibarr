@@ -281,8 +281,8 @@ $fontsizesmaller     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getD
 $heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (getDolGlobalString('THEME_ELDY_USECOMOACTROW') ? '300%' : '155%') : (getDolUserString('THEME_ELDY_USECOMOACTROW') ? '300%' : '155%');
 
 // Hover color
-$colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || getDolGlobalString('THEME_ELDY_USE_HOVER') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_HOVER') === '1' ? 'edf4fb' : getDolGlobalString('THEME_ELDY_USE_HOVER')));
-$colorbacklinepairchecked = ((!isset($conf->global->THEME_ELDY_USE_CHECKED) || getDolGlobalString('THEME_ELDY_USE_CHECKED') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_CHECKED') === '1' ? 'edf4fb' : getDolGlobalString('THEME_ELDY_USE_CHECKED')));
+$colorbacklinepairhover = ((getDolGlobalString('THEME_ELDY_USE_HOVER', '255,255,255') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_HOVER') === '1' ? 'edf4fb' : getDolGlobalString('THEME_ELDY_USE_HOVER')));
+$colorbacklinepairchecked = ((getDolGlobalString('THEME_ELDY_USE_CHECKED', '255,255,255') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_CHECKED') === '1' ? 'edf4fb' : getDolGlobalString('THEME_ELDY_USE_CHECKED')));
 if (!empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)) {
 	$colorbacklinepairhover = ((!isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : (getDolUserString('THEME_ELDY_USE_HOVER') === '1' ? 'edf4fb' : getDolUserString('THEME_ELDY_USE_HOVER')));
 	$colorbacklinepairchecked = ((!isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255') ? '' : (getDolUserString('THEME_ELDY_USE_CHECKED') === '1' ? 'edf4fb' : getDolUserString('THEME_ELDY_USE_CHECKED')));
@@ -467,6 +467,7 @@ $leftmenuwidth = 254;
 	--colorblack: #000;
 	--colorwhite: #fff;
 	--colorwhitelight: #eee;
+	--colorphone: rgba(68, 68, 0, 0.7);		/* Same color than the phone picto: #440 with opacity 0.7 */
 	--heightrow: <?php print $heightrow; ?>;
 }
 
@@ -524,6 +525,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 				--colorblack: #fff;
 				--colorwhite: #000;
 				--colorwhitelight: #333;
+				--colorphone: rgb(195, 195, 125);
 	      }
 
 		body, button {
@@ -973,8 +975,8 @@ input.pageplusone {
 	opacity: 0;
 }
 .spantitle {
-	opacity: 0.6;
-	font-size: 0.95em;
+	opacity: 0.7;
+	font-size: 0.9em;
 }
 .noopacity {
 	opacity: unset !important;
@@ -2335,6 +2337,19 @@ div.fiche>form>div.div-table-responsive {
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
 	overflow-x: auto;
 }
+/* The column selector popup must not have the dd as containing block, else the overflow of the div truncates it */
+.div-table-responsive dd.dropdowndd, .div-table-responsive-no-min dd.dropdowndd {
+	position: static;
+}
+.div-table-responsive dd.dropdowndd ul, .div-table-responsive-no-min dd.dropdowndd ul {
+	top: auto;
+	<?php echo $right; ?>: auto;
+	margin-top: 2px;
+	transform: translateX(<?php echo($left == 'left' ? 'calc(-100% + 20px)' : 'calc(100% - 20px)'); ?>);	/* pop is align on right of picto */
+}
+.div-table-responsive dd.dropdowndd ul.selectedfieldsleft, .div-table-responsive-no-min dd.dropdowndd ul.selectedfieldsleft {
+	transform: none;
+}
 
 /* Style used for table in public ticket */
 div.ticketpublicarealist>form>div.div-table-responsive {
@@ -3057,7 +3072,8 @@ div.fiche>table:first-child {
 	margin-bottom: 15px !important;
 }
 .page-modulehelp div.fiche {
-	width: 100%;
+	width: auto;	/* width:auto + flex-grow so margins fit whether #id-right is block (page in iframe) or flex */
+	flex-grow: 1;
 	margin-left: 15px;
 	margin-right: 20px;
 }
@@ -3323,8 +3339,8 @@ img.photoref, div.photoref {
 	border: 1px solid #CCC;
 	box-shadow: 3px 3px 4px #DDD;
 	padding: 4px;
-	height: 80px;
-	width: 80px;
+	height: 100px;
+	width: 100px;
 	object-fit: contain;
 }
 img.photokanban, div.photokanban {
@@ -4160,6 +4176,24 @@ div.vmenu, td.vmenu {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+/* Arrow of left menu titles with MAIN_MENU_EXPAND_LEFT_LEVEL_2_ON_HOVER. Rotation duration must be same than slide animation in lib_head.js.php */
+.menuexpandarrow {
+	width: 10px;
+	text-align: center;
+	font-size: 0.75em;
+	opacity: 0.6;
+	position: absolute;			/* top is not set so the arrow stays on the line of the title, right is relative to div.vmenu */
+	<?php print $right; ?>: 6px;
+	margin-top: 6px;
+	transform: rotate(<?php print($left == 'left' ? '0' : '180'); ?>deg);
+	transition: transform 0.25s;
+}
+.blockvmenuexpanded .menuexpandarrow {
+	transform: rotate(90deg);
+}
+.menuexpandarrowempty {
+	visibility: hidden;
+}
 #menu_contenu_logo { padding-right: 4px; }
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
@@ -4444,10 +4478,10 @@ div.tabBar {
 	padding-bottom: 23px;
 	margin: 0px 0px 20px 0px;
 	border-radius: 3px;
-	border-right: 1px solid #CCC;
-	border-left: 1px solid #CCC;
-	border-top: 1px solid #CCC;
-	border-bottom: 1px solid #CCC;
+	border-right: 1px solid #DDD;
+	border-left: 1px solid #DDD;
+	border-top: 1px solid #DDD;
+	border-bottom: 1px solid #DDD;
 	width: auto;
 	background: var(--colorbacktabcard1);
 }
@@ -4881,7 +4915,7 @@ table.noborder:not(#tablelines):not(#tablelinesservice) tr.liste_titre_filter:fi
 	background: var(--colorbacktitle1) !important;
 }
 table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type:not(:hover,.highlight) {
-	background: inherit;
+	/* background: inherit; */
 }
 table.noborder:not(#tablelines):not(#tablelinesservice) tr:last-of-type:not(:hover,.highlight) td {
 	background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 0%, var(--colorbacklinepair2) 100%);
@@ -5112,7 +5146,19 @@ div.refidno form {
 }
 div.refaddress div.address {
 	line-height: 1.2em;
-	font-size: 0.9em;
+	font-size: 0.92em;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+div.refaddress .phone-border {
+	font-size: 0.92em;
+}
+div.refaddress div.emailurl {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.banner-object-name-alias {		/* Label or alias of object shown under the ref into the banner */
+	opacity: 0.6;
 }
 
 div.pagination {
@@ -5395,9 +5441,12 @@ tr.liste_titre th, tr.liste_titre td, th.liste_titre
 	border-bottom: 1px solid #aaa;
 }
 /* TODO Once the title line is moved under title search, make th border bottoms black and force to white when it's the first tr */
+/* Disabled: the title line is now under the search line, and it made a different border on th.liste_titre than on other th of the line */
+/*
 tr:first-child th.liste_titre, tr:first-child th.liste_titre_sel {
 	border-bottom: 1px solid #FFF ! important;
 }
+*/
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
 	font-family: <?php print $fontlist ?>;
@@ -5460,6 +5509,9 @@ input.liste_titre {
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
 	white-space: nowrap;
 	line-height: 1.5em;
+}
+.noborder tr.liste_total td, tr.liste_total td {
+	font-weight: bold;
 }
 .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
 	white-space: normal;
@@ -6480,7 +6532,7 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
-	z-index: 1007 !important;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005) */
+	z-index: 1007;		/* Default 101 with ui-jquery. jquery-ui sets the modal overlay to this value - 1, which must be over the top menu (1005). No !important, so jquery-ui can raise a modal opened over another one */
 }
 .ui-menu.ui-widget.ui-widget-content.ui-autocomplete.ui-front {
 	z-index: 1008 !important; 		/* To always be over the dialog box */
@@ -6926,6 +6978,7 @@ table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
 table.cal_month td { padding-left: 1px !important; padding-right: 1px !important; }
 table.cal_month.cal_peruser td { padding-left: 0 !important; padding-right: 0 !important; }
+table.cal_month td.cal_current_month, table.cal_month td.cal_other_month { padding-top: 0 !important; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
@@ -7643,6 +7696,16 @@ td.gtaskheading.gstartdate, td.gtaskheading.genddate {
 }
 
 
+/* Field to choose files of the file manager (filemanager.tpl.php): files can be dropped on it */
+input[type="file"].ecmfiledropinput, div.tabBar input[type="file"].ecmfiledropinput {
+	border: 2px dotted var(--colortextlink);
+	border-radius: 4px;
+}
+input[type="file"].ecmfiledropinput.ecmfiledropinputover, div.tabBar input[type="file"].ecmfiledropinput.ecmfiledropinputover {
+	border-style: solid;
+	background-color: var(--colorbacklinepairhover);
+}
+
 /* ============================================================================== */
 /*  jFileTree                                                                     */
 /* ============================================================================== */
@@ -7686,7 +7749,7 @@ ul.filedirelem li {
 }
 
 ul.ecmjqft {
-	line-height: 16px;
+	line-height: 32px;
 	padding: 0px;
 	margin: 0px;
 	font-weight: normal;
@@ -7728,6 +7791,7 @@ div.ecmjqft {
 	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
+	height: 16px;
 }
 #ecm-layout-north {
 	min-height: 40px;
@@ -7738,14 +7802,21 @@ div#ecm-layout-west {
 	width: 380px;
 	vertical-align: top;
 }
+/* ECM filemanager: same height of 49px for the 3 first lines of the 2 panels: the td of data lines
+ * are 32px high (rule on td of table.liste), so the title lines of the panels "Répertoires" and
+ * "Documents" use the same height of content of 32px to stay aligned */
+#ecm-layout-west table.liste tr.liste_titre:first-of-type th.liste_titre,
+#ecmfileview #tablelines tr.liste_titre.nodrag > th {
+	height: 32px;
+}
 div#ecm-layout-center {
 	width: calc(100% - 405px);
 	vertical-align: top;
 	float: <?php echo $right; ?>;
 }
 
-.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; }
-.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png', 1); ?>) left top no-repeat; }
+.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
+.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
 .ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/'.$theme.'/img/working.gif', 1); ?>) left top no-repeat; }
 
 
@@ -8562,6 +8633,13 @@ dd.dropdowndd ul li {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+}
+/* Fixed width for the dd of the multiselect array (list columns selector of list pages),
+ * whatever the length of the fields labels, and no horizontal scrollbar */
+dd.dropdowndd ul {
+	width: 260px;
+	max-width: calc(100vw - 40px);
+	overflow-x: hidden;
 }
 
 

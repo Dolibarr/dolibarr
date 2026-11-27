@@ -2094,7 +2094,7 @@ class ExpenseReport extends CommonObject
 	 * Check constraint of rules and update price if needed
 	 *
 	 * @param	int		$type		Type of line
-	 * @param	string	$seller		Seller, but actually he is unknown
+	 * @param	string|Societe	$seller	Seller, but actually he is unknown
 	 * @return 	boolean				true or false
 	 */
 	public function checkRules($type = 0, $seller = '')

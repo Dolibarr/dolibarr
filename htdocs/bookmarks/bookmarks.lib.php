@@ -34,7 +34,7 @@ function printDropdownBookmarksList()
 
 	require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
-	$langs->load("bookmarks");
+	$langs->load("main");
 
 	$authorized_var=array('limit','optioncss','contextpage');
 	$url = $_SERVER["PHP_SELF"];

@@ -475,7 +475,21 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 		$found = 0;
 		// Search if it exists into $filearrayindatabase
 		foreach ($filearrayindatabase as $key2 => $val2) {
-			if (($filearrayindatabase[$key2]['path'] == $filearray[$key]['path']) && ($filearrayindatabase[$key2]['name'] == $tmpfilename)) {
+			$samepath = ($filearrayindatabase[$key2]['path'] == $filearray[$key]['path']);
+			$samename = ($filearrayindatabase[$key2]['name'] == $tmpfilename);
+			// The SQL search may be case insensitive (mysql), so a record differing only by case is the same record (unique key). We fix its case.
+			if ((!$samepath || !$samename) && dol_strtolower($filearrayindatabase[$key2]['path']) == dol_strtolower($filearray[$key]['path']) && dol_strtolower($filearrayindatabase[$key2]['name']) == dol_strtolower($tmpfilename) && !dol_is_file($filearrayindatabase[$key2]['fullname'])) {
+				$rel_dirfixed = trim(preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['path']), "/\\");
+				dol_syslog("list_of_documents The file '".$tmpfilename."' is indexed with a different case, we fix the record ".$filearrayindatabase[$key2]['rowid'], LOG_WARNING);
+				$sqlfix = "UPDATE ".MAIN_DB_PREFIX."ecm_files SET filepath = '".$db->escape($rel_dirfixed)."', filename = '".$db->escape($tmpfilename)."'";
+				$sqlfix .= " WHERE rowid = ".((int) $filearrayindatabase[$key2]['rowid']);
+				$db->query($sqlfix);
+				$filearrayindatabase[$key2]['path'] = $filearray[$key]['path'];
+				$filearrayindatabase[$key2]['name'] = $tmpfilename;
+				$samepath = true;
+				$samename = true;
+			}
+			if ($samepath && $samename) {
 				$filearray[$key]['position_name'] = ($filearrayindatabase[$key2]['position'] ? $filearrayindatabase[$key2]['position'] : '0').'_'.$filearrayindatabase[$key2]['name'];
 				$filearray[$key]['position'] = $filearrayindatabase[$key2]['position'];
 				$filearray[$key]['cover'] = $filearrayindatabase[$key2]['cover'];
@@ -515,7 +529,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
 				$ecmfile->gen_or_uploaded = 'unknown';
 				if (is_object($object)) {
-					$ecmfile->src_object_type = $object->element;
+					$ecmfile->src_object_type = $object->table_element;
 					$ecmfile->src_object_id = $object->id;
 				}
 				$ecmfile->description = ''; // indexed content
@@ -3102,11 +3116,12 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
 
 /**
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
+ * In read mode, a document not found into the session entity is searched into the entity of its object, if shared with the session entity.
  * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
  * @param	string		$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Example: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string		$original_file		Relative path with filename, relative to modulepart.
- * @param	int 		$entity				Restrict objects stored into entity (0=no restriction). Note that permissions tested are the one the user is logged in, so permissions for $conf->entity that may be different than $entity.
+ * @param	int 		$entity				Restrict objects stored into entity (0=no restriction). Note that permissions tested are the one the user is logged in, so permissions for $conf->entity that may be different than $entity. An entity not visible from $conf->entity is replaced with $conf->entity.
  * @param  	User|null	$fuser				User object (forced)
  * @param	string		$refname			Ref of object to check permission for external users (autodetect if not provided by taking the dirname of $original_file) or for hierarchy
  * @param   string  	$mode               Check permission for 'read' or 'write' or 'delete'
@@ -3129,16 +3144,25 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 
 	$originalmodulepart = $modulepart;
 
+	// Parameters received, used to search the document into the entity of its object if it is not found into the session entity
+	$modulepartparam = $modulepart;
+	$originalfileparam = $original_file;
+	$refnameparam = $refname;
+
 	if (empty($entity)) {
 		if (!isModEnabled('multicompany')) {
 			$entity = 1;
 		} else {
 			$entity = 0;
 		}
-	} else {
-		// TODO Test that the user in session of conf->entity can see objects of the target $entity like restrictedArea() does, however
-		// it is better to limit the scope of this function to check "per module" permission only, and to do the test on "per object" permission
-		// by calling restrictedArea()by the caller.
+	} elseif ((int) $entity != (int) $conf->entity) {
+		// Permissions tested are the ones of the user into the session entity $conf->entity, so the target $entity is kept only if
+		// objects of the modulepart into $entity are visible from $conf->entity (shared entities). If not, we use $conf->entity.
+		$elementpropforentity = getElementProperties(preg_replace('/^apercu/', '', $modulepart));
+		if (!in_array((int) $entity, array_map('intval', explode(',', getEntity($elementpropforentity['element']))), true)) {
+			dol_syslog("dol_check_secure_access_document entity ".$entity." is not visible from entity ".$conf->entity." for modulepart=".$modulepart.", so we use entity ".$conf->entity, LOG_WARNING);
+			$entity = (int) $conf->entity;
+		}
 	}
 
 	// Fix modulepart for backward compatibility
@@ -4082,6 +4106,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if ($modulepart == 'memberphoto' && !$fuser->hasRight('adherent', $lire)) {
 			$accessallowed = 0;
+		}
+	}
+
+	// A document not found into the session entity may be the one of an object of another entity shared with the session entity. We then
+	// use the entity of this object (never an entity provided by the user). It is the same object than in checkUserAccessToDocumentObject().
+	if ($mode == 'read' && (int) $entity == (int) $conf->entity && isModEnabled('multicompany') && !empty($fuser->id)
+		&& !empty($original_file) && !file_exists(dol_osencode($original_file))) {
+		$documentobject = fetchObjectOfDocument($modulepartparam, $originalfileparam);
+		if (is_object($documentobject['object']) && $documentobject['object']->id > 0 && (int) $documentobject['object']->entity > 0 && (int) $documentobject['object']->entity != (int) $conf->entity) {
+			dol_syslog("dol_check_secure_access_document file not found into entity ".$conf->entity.", we use entity ".$documentobject['object']->entity." of the object of the document");
+			return dol_check_secure_access_document($modulepartparam, $originalfileparam, (int) $documentobject['object']->entity, $fuser, $refnameparam, $mode);
 		}
 	}
 

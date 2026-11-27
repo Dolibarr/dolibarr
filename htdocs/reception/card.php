@@ -15,7 +15,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		Nick Fragoulis
- * Copyright (C) 2026		Jose MARTINEZ			<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,9 +77,6 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array("receptions", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'sendings', 'productbatch'));
 
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 if (isModEnabled('productbatch')) {
 	$langs->load('productbatch');
 }
@@ -772,7 +769,11 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
-	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoread) {
+	} elseif (($action == 'deleteline' || ($action == 'updateline' && GETPOST('save'))) && $permissiontoadd && $object->status != Reception::STATUS_DRAFT) {
+		// Lines can be modified or deleted only on a draft reception (stock may have been moved after validation)
+		setEventMessages($langs->trans('StatusOfRefMustBe', $object->ref, $langs->transnoentitiesnoconv('StatusReceptionDraftShort')), null, 'errors');
+		$action = '';
+	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoadd) {
 		// delete a line
 		$lines = $object->lines;
 		$line = new CommandeFournisseurDispatch($db);
@@ -1159,6 +1160,11 @@ if (empty($reshook)) {
 							$outputlangs->setDefaultLang($newlang);
 						}
 						$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					}
+					// Empty the add line form, as on supplier orders: otherwise the supplier price id is shown again
+					// as a product id (wrong product in the field) and the batch number stays. The warehouse is kept.
+					foreach (array('prod_entry_mode', 'idprod', 'idprodfournprice', 'search_idprodfournprice', 'qty', 'price_ht', 'cost_price', 'fourn_ref', 'batch', 'dp_desc', 'type', 'units') as $tmpkey) {
+						unset($_POST[$tmpkey]);
 					}
 				} else {
 					header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
