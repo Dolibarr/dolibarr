@@ -90,7 +90,7 @@
 #                                ("id": null, ..., "specimen": 0,
 #                                "billed": 0, "signed_status": 0)
 #     GET /shipments/0/lines  -> 200 with []
-#   These are the RCP1-fodeklasse observations BEFORE any hurl run:
+#   These are the RCP1-birthclass observations BEFORE any hurl run:
 #   shipments joins the 200-SPECIMEN camp on get() (supplierorders,
 #   supplierinvoices, receptions — DIVERGING from supplierproposals'
 #   404-envelope and stockmovements' 400-explicit-guard "No stock
@@ -104,8 +104,8 @@
 #   environment; the Expedition (shipments) module enabled with
 #   'expedition lire' rights for the key (verify permission gate(s)
 #   against the source when pasted — DOUBLE-GATE CHECK owed: do NOT
-#   assume the single-gate shape; stockmovements taught stock/lire AND
-#   stock/mouvement/lire in one method).
+#   assume the single-gate shape; stockmovements teaches TWO stock
+#   permissions in one method (see the stockmovements suite header).
 # FIXTURE REQUIREMENT (receptions/stockmovements lesson): the LIST
 #   section captures "$[0]" and therefore REQUIRES at least one shipment
 #   on the instance. Gauge BEFORE the first run:
@@ -158,8 +158,9 @@
 #   DolibarrApi::_checkAccessToResource() — so a low-privilege key
 #   sees 403 BEFORE the falsy-id/404 path and BEFORE any SQL build.
 #   DOUBLE-GATE CHECK CLOSED: NO second right is consulted on any
-#   GET route (unlike stockmovements' stock/lire + stock/mouvement/
-#   lire pair). C6 expectation: 403 clean envelope on every probe.
+#   GET route (unlike the stockmovements double gate of two stock
+#   read-rights in one method — see that suite's header). C6
+#   expectation: 403 clean envelope on every probe.
 #   LOW-PRIVILEGE NEGATIVE CONTROL (C6): NOT AUTOMATED — the zero-rights
 #   (LOWKEY) key is not available to hurl tests via run.sh. C6 is
 #   MANUAL curl ONLY. Never embed {{lowkey}} in this file. See the C6
@@ -177,37 +178,32 @@
 #     200-specimen (four-of-six majority); (2) no source read yet —
 #     the source could argue 404 (receptions lesson); (3) the INSTANCE
 #     spoke first here via the live explorer: 200-specimen + 200 [].
-#   Pin history: (1) BY-ANALOGY would have said
-#     200-specimen (four-of-six majority); (2) no source read yet —
-#     the source could argue 404 (receptions lesson); (3) the INSTANCE
-#     spoke first via the live explorer: 200-specimen + 200 [].
 #     CONFIRMED OBSERVED three times (green run 50/50 on commits
-#     08183c47, 817f40c3 and e0e62e83, all 2026-11-27):
-#     api/shipments/10_shipments.hurl, commit 08183c47): both pins held.
+#     08183c47, 817f40c3 and e0e62e83, all 2026-11-27): both pins held
+#     on every run.
 #   SHF2 (BY-ANALOGY, five-for-five): strict 400 on BOUND typed params
 #     (limit, page, pagination_data) vs SILENT passthrough on UNBOUND
 #     (sqlfilterlines, unknown params). C4b streak expected to hold
 #     outside the supplier family.
-#   SHF3 (SOURCE-SEALED 2026-11-27 — the C4 DIVERGENCE): falsy-param
-#     drop on thirdparty_ids=0. index() builds '$socids = user->socid
+#   SHF3 (SOURCE-SEALED + OBSERVED 2026-11-27 — falsy-param drop, C4
+#     holds, now six-for-six): index() builds '$socids = user->socid
 #         ?: $thirdparty_ids' then guards 'if ($socids) { AND t.fk_soc
-#     IN (sanitize($socids)) }'. The string "0" IS truthy in PHP, so
-#     the IN(0) clause IS built — the outcome is decided by the SQL:
-#     fk_soc IN (0) matches no real thirdparty -> EMPTY list =
-#     CORRECT enforcement, DIVERGING from the supplier-family drop
-#     (SOF5/SIF4/SPP4 — those guard at if($param)-level and DROP).
-#     Receptions (RCP4) was flagged as the possible first divergence;
-#     shipments' source shows the SAME truthy-IN-build shape as
-#     receptions — the manual diff probe below decides both. Diff
-#     .pagination.total against the unfiltered baseline. Either
-#     result is a C4 tally data point; source predicts ENFORCED
-#     (empty), not dropped.
+#     IN (sanitize($socids)) }'. The string "0" is FALSY in PHP (the
+#     famous falsy-string case), so the guard rejects it and the
+#     IN-clause is never built -> the filter is DROPPED for falsy 0.
+#     My initial source annotation claimed "0" is truthy and predicted
+#     enforcement (EMPTY) — CORRECTED after the manual diff probe
+#     observed the drop (empty diff of .pagination.total). Pin
+#     history: (1) BY-ANALOGY drop; (2) source MIS-READ said
+#     enforcement; (3) OBSERVED drop + corrected source reading.
+#     Tally evidence for C4; receptions (RCP4) shows the same source
+#     shape and presumably drops too.
 #   SHF4 (SOURCE-SEALED 2026-11-27): limit=0 + pagination_data=true
 #     -> 200 data envelope (guard '($limit > 0 ? ceil(...) : 1)' IS
 #     VISIBLE in index(); #42952 pattern, seventh confirmation, incl.
 #     the green run). LIMIT IDIOM: this class uses the
 #     'if ($limit) { plimit($limit + 1, $offset) }' variant — the
-#     stockmovements if($limit)-SLÆGT, NOT the family plimit-always
+#     stockmovements if($limit)-KIN, NOT the family plimit-always
 #     shape: limit<=0 (incl. limit=-1) SKIPS plimit entirely -> the
 #     UNBOUNDED list is served (min($num,$num)=num rows). The
 #     limit=-1 pin (200 isCollection) below is correct EITHER WAY and
@@ -303,7 +299,7 @@ HTTP 200
 [Asserts]
 jsonpath "$" count == 0
 
-# Fuzz: negative page — source coerule ($page < 0 -> $page = 0), no 500
+# Fuzz: negative page — source coerces ($page < 0 -> $page = 0), no 500
 GET http://{{hostnport}}/api/index.php/shipments?page=-1&limit=2
 HTTP 200
 [Asserts]
@@ -311,7 +307,7 @@ jsonpath "$" count <= 2
 
 # OBSERVED (family): negative limit -> 200. SHF4 SOURCE-SEALED: this
 #   class uses the if ($limit) { plimit($limit + 1, $offset) } idiom
-#   — the stockmovements SLÆGT, NOT the family plimit-always shape:
+#   — the stockmovements KIN, NOT the family plimit-always shape:
 #   limit<=0 (incl. limit=-1) SKIPS plimit entirely -> the UNBOUNDED
 #   list is served (min($num,$num)=num rows). The 200 pin below holds
 #   EITHER WAY (fixture is small); the empty-vs-full distinction is
@@ -353,13 +349,14 @@ jsonpath "$.data" exists
 # thirdparty_ids — explorer-documented ("example '1' or '1,2,3'");
 #   "0" is syntactically consistent (never hardcoded to real ids).
 #   SHF3 candidate (falsy-param family, SOF5/SIF4/SPP4/RCP4) —
-#   SOURCE-SEALED 2026-11-27: '$socids = user->socid ?: $thirdparty_
-#   ids' + 'if ($socids) { AND t.fk_soc IN (sanitize($socids)) }'.
-#   The string "0" IS truthy in PHP, so the IN(0) clause IS built —
-#   outcome decided by the SQL: fk_soc IN (0) matches nothing ->
-#   source predicts EMPTY (correct enforcement), DIVERGING from the
-#   supplier-family drop. The manual diff probe below decides. Count
-#   NOT pinned (data-dependent); status pinned (and green).
+#   RESOLVED 2026-11-27: '$socids = user->socid ?: $thirdparty_ids' +
+#   'if ($socids) { ... }'. The string "0" is FALSY in PHP (the
+#   famous falsy-string case), so the guard rejects it and the
+#   IN-clause is never built -> the filter is DROPPED for falsy 0;
+#   manual diff probe OBSERVED the drop (empty diff vs baseline).
+#   Pin history in the SHF catalogue above; tally evidence for C4
+#   (now six-for-six). Count NOT pinned (data-dependent); status
+#   pinned (and green).
 # Change this assert deliberately, never accidentally.
 GET http://{{hostnport}}/api/index.php/shipments?thirdparty_ids=0
 HTTP 200
@@ -727,12 +724,15 @@ jsonpath "$" count == 0
 #   suite that compares ids against this endpoint must expect a
 #   number, not a string.
 
-# ---------------------------------------------------------------- SHF4 — limit idiom note (MANUAL, source-dependent)
-# Before trusting the limit=-1 pin on later commits, read the class'
-#   limit idiom: '($limit > 0 ? ceil(...) : 1)' + plimit($limit+1) (the
-#   family shape -> LIMIT 0 -> empty list) vs the stockmovements
-#   if($limit) shape (unbounded list). Record which variant this class
-#   uses here: PENDING source read.
+# ---------------------------------------------------------------- SHF4 — limit idiom note (RESOLVED by source read)
+# The class' limit idiom, source-read 2026-11-27: 'if ($limit) {
+# plimit($limit + 1, $offset) }' — the stockmovements variant (skips
+# plimit() entirely when limit <= 0 -> the UNBOUNDED list is served,
+# observed live: limit=-1 returned 7 rows vs 5 at limit=5), NOT the
+# supplier-family plimit-always shape (LIMIT 0 -> empty list). The
+# pagination_data guard is the family '($limit > 0 ? ceil(...) : 1)'
+# form. Both variants now documented across classes (see SHF4 in the
+# findings catalogue).
 
 # ---------------------------------------------------------------- LOW-PRIVILEGE NEGATIVE CONTROL (C6)
 # NOT AUTOMATED: the zero-rights (LOWKEY) key is not available to hurl
@@ -759,7 +759,6 @@ jsonpath "$" count == 0
 #   NO 404-on-/0 leak, no raw SQL text, gate fires first exactly as
 #   source-sealed (single gate expedition/lire). Seventh consecutive
 #   clean 403 matrix (C6 streak continues).
-#   run, both if single-gated and if double-gated — record WHICH).
 
 # ---------------------------------------------------------------- OWNERSHIP / CROSS-OBJECT NOTE
 # Shipments have PROFESSIONAL ownership: a shipment belongs to ONE
@@ -815,11 +814,11 @@ jsonpath "$" count == 0
 # Shipments is the FIRST member OUTSIDE the supplier family to confirm
 #   the family patterns via live explorer evidence (the stockmovements
 #   episode already confirmed them once outside; shipments is the
-#   expedition-family carrier and the RCP1 fodeklasse: the instance's
+#   expedition-family carrier and the RCP1 birthclass: the instance's
 #   live responses arrived before any analogue argument). All
 #   family-wide confirmations become COMMENTS on existing issues
 #   (#43307, #43385, #43386, #43388, #43423, #43430, #43439, #42952;
 #   #43515/#43514 if dead-code artefacts surface) — never duplicates.
 #   Only genuinely new failure modes (SHF6 candidates) get BUG/WISH
-#   Markdown files — and those are written FIRST in fase 2, when
+#   Markdown files — and those are written FIRST in phase 2, when
 #   explicitly requested.
