@@ -1095,6 +1095,9 @@ if ($idproduct > 0) {
 if ($search_fk_project != '' && $search_fk_project != '-1') {
 	$param .= '&search_fk_project='.urlencode((string) ($search_fk_project));
 }
+if (!empty($search_ref)) {
+	$param .= '&search_ref='.urlencode((string) $search_ref);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
