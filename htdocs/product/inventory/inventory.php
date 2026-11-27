@@ -315,8 +315,8 @@ if (empty($reshook)) {
 		$sql .= ' LEFT JOIN ' . $db->prefix() . 'product as p ON id.fk_product = p.rowid';
 		$sql .= ' LEFT JOIN ' . $db->prefix() . 'entrepot as e ON id.fk_warehouse = e.rowid';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+		// No limit: the posted lines may come from a page sliced with another limit (the limit combo submits this form)
 		$sql .= $db->order($sortfieldforsql, $sortorderforsql);
-		$sql .= $db->plimit($limit, $offset);
 
 		$db->begin();
 
@@ -631,8 +631,6 @@ print '<input type="hidden" name="action" value="updateinventorylines">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
 print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
-// Keep the same limit as the displayed page, otherwise the save reads a different page slice
-// (plimit($limit, $offset)) than the one shown and quantities of the extra rows are lost (#35207).
 print '<input type="hidden" name="limit" value="' . ((int) $limit) . '">';
 if ($backtopage) {
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
