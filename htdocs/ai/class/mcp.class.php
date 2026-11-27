@@ -512,6 +512,38 @@ class McpHandler
 	}
 
 	/**
+	 * Check that the arguments a model sent have the scalar types of the tool schema.
+	 * A one-value list (["ACME"]) is unwrapped and an empty one removed. A 'string' may stand for a PHP array
+	 * (ToolApiBridge::docTypeToJson()), so only an integer, number or boolean refuses a longer list, and objects are kept.
+	 *
+	 * @param array<string,mixed> $args   Arguments sent by the model
+	 * @param array<string,mixed> $schema Input schema of the tool
+	 * @return array{args:array<string,mixed>,error:string} Arguments to run with, or the error to return
+	 */
+	public static function checkArgumentTypes(array $args, array $schema): array
+	{
+		foreach ((array) ($schema['properties'] ?? array()) as $name => $property) {
+			$type = is_array($property) ? ($property['type'] ?? '') : '';
+			if (!in_array($type, array('string', 'integer', 'number', 'boolean'), true) || !isset($args[$name]) || !is_array($args[$name])) {
+				continue;
+			}
+			$values = array_values($args[$name]);
+			if ($values !== $args[$name]) {
+				continue;	// An object ({"product_ref": ...}) is left to the tool
+			}
+			if (count($values) === 0) {
+				unset($args[$name]);
+			} elseif (count($values) === 1 && is_scalar($values[0])) {
+				$args[$name] = $values[0];
+			} elseif ($type !== 'string') {
+				return array('args' => $args, 'error' => "Argument '".$name."' must be a ".$type.", not a list or an object.");
+			}
+		}
+
+		return array('args' => $args, 'error' => '');
+	}
+
+	/**
 	 * Check the rights a tool declared for the acting user.
 	 *
 	 * @param McpTool $tool     Tool instance.
@@ -670,6 +702,17 @@ class McpHandler
 				return array('error' => ($missingRight === 'undeclared')
 					? "Tool '".$toolName."' cannot run: it declares no required rights."
 					: "Permission denied: '".$toolName."' requires the right ".$missingRight.".");
+			}
+
+			foreach ($toolInstance->getDefinitions() as $def) {
+				if (($def['name'] ?? '') === $toolName) {
+					$checked = self::checkArgumentTypes($args, (array) ($def['inputSchema'] ?? $def['parameters'] ?? array()));
+					if ($checked['error'] !== '') {
+						return array('error' => $checked['error']);
+					}
+					$args = $checked['args'];
+					break;
+				}
 			}
 
 			// Writes do not execute on the first call: the caller gets a preview and
