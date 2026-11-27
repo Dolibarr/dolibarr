@@ -668,6 +668,7 @@ class Tickets extends DolibarrApi
 	 * @throws	RestException	400 socid and fk_soc are different, or status or assigned user changed
 	 * @throws	RestException	403 Not allowed
 	 * @throws	RestException	404 Ticket or thirdparty not found
+	 * @throws	RestException	409 Ticket is closed or canceled
 	 * @throws	RestException	500 Error when updating
 	 */
 	public function put($id, $request_data = null)
@@ -682,6 +683,11 @@ class Tickets extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Like the ticket card, a closed or canceled ticket can not be edited
+		if (in_array((int) $this->ticket->status, array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED), true)) {
+			throw new RestException(409, 'Ticket is closed or canceled');
 		}
 
 		if (!is_array($request_data)) {
