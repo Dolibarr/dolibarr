@@ -145,6 +145,10 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ordernamonly/', getDol
 	$title = $object->ref . ' - ' . $langs->trans("Info"); // Simplified title
 }
 $help_url = "EN:Module_Orders|FR:Module_Commandes|ES:M&oacute;dulo_Pedidos";
+if (empty($object->id)) {
+	recordNotFound();
+}
+
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_agenda');
 
 $head = commande_prepare_head($object);
