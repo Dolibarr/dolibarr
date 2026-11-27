@@ -848,7 +848,7 @@ if ($resql) {
 	}
 	if (!empty($search_product_category_array)) {
 		foreach ($search_product_category_array as $tmpval) {
-			$param .= '&search_categegory_product_list[]='.urlencode($tmpval);
+			$param .= '&search_category_product_list[]='.urlencode($tmpval);
 		}
 	}
 	if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
