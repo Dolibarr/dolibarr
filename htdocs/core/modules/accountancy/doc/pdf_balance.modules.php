@@ -286,17 +286,19 @@ class pdf_balance extends ModelePdfAccountancy
 		$pageposbeforeprintlines = $pdf->getPage();
 		$pagenb = $pageposbeforeprintlines;
 
-		// Knowing how many month our period covers
-		$fromYear = date('Y', $this->fromDate);
-		$fromMonth = date('m', $this->fromDate);
-		$toYear = date('Y', $this->toDate);
-		$toMonth = date('m', $this->toDate);
-		$nbMonths = (((int) $toYear - (int) $fromYear) * 12) + ((int) $toMonth - (int) $fromMonth) + 1;
-		$datePlusOneMonth = strtotime("-1 month", $this->fromDate);
+		// Knowing how many month our period covers (the period is empty when the balance is exported without date filter)
 		$dates = [];
-		for ($i = 0; $i  < $nbMonths; $i++) {
-			$datePlusOneMonth = strtotime("+1 month", $datePlusOneMonth);
-			$dates[$datePlusOneMonth] = dol_print_date($datePlusOneMonth, "%B %Y");
+		if (!empty($this->fromDate) && !empty($this->toDate)) {
+			$fromYear = date('Y', $this->fromDate);
+			$fromMonth = date('m', $this->fromDate);
+			$toYear = date('Y', $this->toDate);
+			$toMonth = date('m', $this->toDate);
+			$nbMonths = (((int) $toYear - (int) $fromYear) * 12) + ((int) $toMonth - (int) $fromMonth) + 1;
+			$datePlusOneMonth = strtotime("-1 month", $this->fromDate);
+			for ($i = 0; $i < $nbMonths; $i++) {
+				$datePlusOneMonth = strtotime("+1 month", $datePlusOneMonth);
+				$dates[$datePlusOneMonth] = dol_print_date($datePlusOneMonth, "%B %Y");
+			}
 		}
 
 		$accountGroup = '';
