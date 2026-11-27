@@ -766,3 +766,6 @@ ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN doc_date_hour datetime NUL
 --noqa:disable=PRS
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'AI_INTENT_PROMPT';
 --noqa:enable=PRS
+
+-- Add per entity default warehouse of products
+ALTER TABLE llx_product_perentity ADD COLUMN fk_default_warehouse integer DEFAULT NULL;
