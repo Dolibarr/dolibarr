@@ -708,7 +708,8 @@ $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Ina
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
-$blocks = $block_static->getLog('all', (int) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature);
+// The sortfield/sortorder of this page apply to the list of archive files (name, date, size), not to the log table.
+$blocks = $block_static->getLog('all', (int) $search_id, $MAXLINES, 'rowid', 'DESC', (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature);
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
