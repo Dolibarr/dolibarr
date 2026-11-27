@@ -192,9 +192,7 @@ if ($action == 'update_external') {
 $probeauthorization = '';
 $probeauthorizationdetail = '';
 if ($action == 'probe_authorization') {
-	// Ask the MCP endpoint itself whether an Authorization header reaches it
-	// (see the probe branch in ai/server/mcp_server.php). Local addresses are
-	// allowed on purpose: the server calls its own public URL.
+	// Ask the MCP endpoint itself (local addresses allowed: it is our own URL)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 	$probeurl = dol_buildpath('/ai/server/mcp_server.php', 3);
 	$probe = getURLContent($probeurl, 'POST', '{}', 1, array('Content-Type: application/json', 'Accept: application/json, text/event-stream', 'Authorization: Bearer dolibarr-probe', 'X-Dolibarr-Probe: 1'), array('http', 'https'), 2, -1);
@@ -496,10 +494,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<td></td>';
 	print '</tr>';
 
-	// Does the Authorization header reach PHP? Apache running PHP as CGI/FastCGI
-	// drops it unless CGIPassAuth is on, and the OAuth flow then ends on a 401
-	// after a successful consent. Detected by asking the endpoint itself; the
-	// fix belongs to the web server configuration (a .htaccess is not supported).
+	// Does the Authorization header reach PHP? Apache with CGI/FastCGI drops it without CGIPassAuth.
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans('AiMcpProbeAuth'), $langs->trans('AiMcpProbeAuthHelp')).'</td>';
 	print '<td>';
@@ -518,11 +513,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '</td>';
 	print '</tr>';
 
-	// A connector signs the user in with OAuth instead of being handed a key.
-	// Self-registration is what lets it do that without an administrator
-	// creating anything first, which is how claude.ai and the ChatGPT
-	// connector expect to arrive. It is off until someone decides otherwise:
-	// the endpoint accepts registrations from anyone who can reach it.
+	// Self-registration of OAuth connectors, off by default
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans('AiMcpOauthDynamicRegistration'), $langs->trans('AiMcpOauthDynamicRegistrationHelp')).'</td>';
 	print '<td>';

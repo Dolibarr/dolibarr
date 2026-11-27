@@ -27,27 +27,13 @@
 /**
  * McpOauth Class
  *
- * OAuth 2.1 authorization server for MCP clients: authorization code with
- * PKCE S256, refresh rotation, and the two metadata documents clients use to
- * discover all of it. Access tokens are opaque; McpAuth exchanges them for the
- * Dolibarr user who granted the consent, so an MCP request authenticated by
- * token runs with exactly the permissions of that user.
- *
- * Nothing here writes to the HTTP response. The endpoint (htdocs/ai/oauth.php)
- * decides what to answer, this class decides what is true.
- *
- * Registered clients, codes and tokens are rows of llx_oauth_token, told
- * apart by their service (see serviceFor()). Token values are never stored:
- * a row holds the sha256 of the value, so a database dump grants nothing. Authorization codes are one-shot and revoked
- * the moment they are presented, before the request can even fail.
+ * OAuth 2.1 authorization server for MCP clients: authorization code with PKCE S256, refresh rotation, metadata.
+ * Clients, codes and tokens are rows of llx_oauth_token told apart by service; only hashes of tokens are stored.
  */
 class McpOauth
 {
 	/**
-	 * Prefix of every value this server mints. The letter that follows says
-	 * what it is, which lets an operator recognise a leaked value on sight
-	 * and lets McpAuth tell an access token from a user API key without a
-	 * database round trip.
+	 * Prefix of every value this server mints, followed by a letter telling what it is.
 	 */
 	const TOKEN_PREFIX = 'dolmcp_';
 
@@ -67,8 +53,7 @@ class McpOauth
 	const UNUSED_CLIENT_TTL = 86400;
 
 	/**
-	 * How long a fetched metadata document is trusted before being read again,
-	 * in seconds.
+	 * How long a fetched metadata document is trusted, in seconds.
 	 */
 	const METADATA_DOCUMENT_TTL = 86400;
 
@@ -78,8 +63,7 @@ class McpOauth
 	const REGISTRATIONS_PER_HOUR = 20;
 
 	/**
-	 * Lifetime of an authorization code, in seconds. Short on purpose: it is
-	 * exchanged immediately by a client that already holds the verifier.
+	 * Lifetime of an authorization code, in seconds (exchanged at once by the client).
 	 */
 	const CODE_TTL = 120;
 
@@ -99,9 +83,7 @@ class McpOauth
 	private $resource;
 
 	/**
-	 * @var string Error code from the last failed call, in OAuth vocabulary
-	 *             (invalid_grant, invalid_client...) so the endpoint can
-	 *             return it verbatim
+	 * @var string Error code of the last failed call, in OAuth vocabulary (invalid_grant...)
 	 */
 	public $error = '';
 
@@ -120,15 +102,7 @@ class McpOauth
 	}
 
 	/**
-	 * Authorization server metadata (RFC 8414).
-	 *
-	 * Deliberately without jwks_uri, subject_types_supported and
-	 * id_token_signing_alg_values_supported. Those are OpenID Connect fields,
-	 * and advertising them says this is an OpenID provider. It is not: it
-	 * issues opaque access tokens, never an id_token, signs nothing and does
-	 * not offer the openid scope. A client that believes the claim validates
-	 * the document as OpenID Connect and refuses it — claude.ai and the
-	 * ChatGPT connector both did, while mcp-remote works either way.
+	 * Authorization server metadata (RFC 8414), without OpenID fields: this server is not an OpenID provider.
 	 *
 	 * @return array<string, mixed> The document to serve
 	 */
@@ -140,22 +114,15 @@ class McpOauth
 			'token_endpoint' => $this->issuer.'/token',
 			'response_types_supported' => array('code'),
 			'grant_types_supported' => array('authorization_code', 'refresh_token'),
-			// S256 only. RFC 7636 still allows 'plain'; it protects nothing on
-			// a public client, which is the only kind that needs PKCE most.
+			// S256 only: 'plain' protects nothing on a public client
 			'code_challenge_methods_supported' => array('S256'),
 			'token_endpoint_auth_methods_supported' => array('none', 'client_secret_basic', 'client_secret_post'),
 			'scopes_supported' => array('dolibarr'),
-			// RFC 9207: the authorization response names its issuer, so a client
-			// talking to several servers cannot be made to mix up two responses.
+			// RFC 9207: the authorization response names its issuer
 			'authorization_response_iss_parameter_supported' => true,
 		);
 
-		// Both ways a client has of onboarding itself, without an
-		// administrator declaring it first: the RFC 7591 endpoint, and a
-		// client_id that is the HTTPS URL of a metadata document this server
-		// fetches (spec 2026-07-28). They are advertised only when the
-		// setting that serves them is on, otherwise every client is sent
-		// down a path that answers 403.
+		// Self-registration and metadata documents are advertised only when the administrator allows them
 		if (getDolGlobalString('AI_MCP_OAUTH_DYNAMIC_REGISTRATION')) {
 			$metadata['registration_endpoint'] = $this->issuer.'/register';
 			$metadata['client_id_metadata_document_supported'] = true;
@@ -165,10 +132,7 @@ class McpOauth
 	}
 
 	/**
-	 * Protected resource metadata (RFC 9728).
-	 *
-	 * This is the document the WWW-Authenticate challenge points at, and the
-	 * first thing a client reads when it meets a 401.
+	 * Protected resource metadata (RFC 9728), pointed at by the WWW-Authenticate challenge.
 	 *
 	 * @return array<string, mixed> The document to serve
 	 */
@@ -184,13 +148,7 @@ class McpOauth
 	}
 
 	/**
-	 * Register a client (RFC 7591).
-	 *
-	 * Kept behind AI_MCP_OAUTH_DYNAMIC_REGISTRATION because self-registration
-	 * means anyone who can reach the endpoint can create a client row. That is
-	 * how MCP connectors are expected to arrive, and it grants nothing on its
-	 * own — a client is only ever useful once a user has signed in and
-	 * consented — but it is an administrator's call, not ours.
+	 * Register a client (RFC 7591), when AI_MCP_OAUTH_DYNAMIC_REGISTRATION allows it.
 	 *
 	 * @param  array<string, mixed>      $metadata Client metadata sent by the caller
 	 * @return array<string, mixed>|null           Registration response, or null on error
@@ -260,12 +218,8 @@ class McpOauth
 			return null;
 		}
 
-		// A client_id that is an HTTPS URL is a metadata document. Fetching it
-		// is an outbound request this server makes on a caller's word, so it
-		// only happens where $mayfetch says so — on /authorize, behind a signed
-		// in user. The token endpoint takes no credential, and letting it fetch
-		// meant any anonymous caller could make Dolibarr hold a worker open on
-		// a URL of their choosing, and create a client row along the way.
+		// A client_id that is an HTTPS URL is a metadata document, fetched only where
+		// $mayfetch allows it (/authorize, behind a signed-in user), never anonymously.
 		if (self::isMetadataDocumentUrl($clientid)) {
 			if (!$mayfetch) {
 				return $this->fetchClientRow($clientid);
@@ -285,23 +239,13 @@ class McpOauth
 	 */
 	public static function isMetadataDocumentUrl($clientid)
 	{
-		// Bounded by the column it has to fit in: a longer value would either
-		// be refused by a strict database or silently truncated by a lax one,
-		// and the row would then never be found again by the URL that wrote it.
+		// Bounded by the column the URL is stored in
 		return stripos($clientid, 'https://') === 0 && dol_strlen($clientid) <= 255;
 	}
 
 	/**
-	 * Resolve a client_id that is the URL of a metadata document.
-	 *
-	 * The document is fetched through getURLContent(), which is what keeps this
-	 * from being a way to make Dolibarr probe its own network: that function
-	 * refuses private, loopback and link-local addresses, and keeps refusing
-	 * them after a redirect.
-	 *
-	 * The result is stored, keyed on the URL, so the fetch happens once a day
-	 * per client rather than once per sign-in, and so a client that has been
-	 * used keeps working if its document briefly goes missing.
+	 * Resolve a client_id that is the URL of a metadata document, stored and read again once a day.
+	 * getURLContent() refuses private, loopback and link-local addresses, even after a redirect.
 	 *
 	 * @param  string      $url Absolute HTTPS URL of the document
 	 * @return object|null      Client row, or null when the document is unusable
@@ -310,10 +254,7 @@ class McpOauth
 	{
 		$known = $this->fetchClientRow($url);
 
-		// A metadata document is self-registration by another name: it creates
-		// a client row on a stranger's word. The administrator switch has to
-		// govern it too, or "let connectors register themselves: off" would
-		// stop one way in and leave the other open.
+		// A metadata document is self-registration too: same administrator switch
 		if (!getDolGlobalString('AI_MCP_OAUTH_DYNAMIC_REGISTRATION')) {
 			if ($known === null) {
 				$this->error = 'access_denied';
@@ -325,9 +266,7 @@ class McpOauth
 			return $known;
 		}
 
-		// Counted before the request goes out, not before the row is written:
-		// a document that never answers costs a worker just the same, and
-		// checking only on the way to the INSERT left that free.
+		// Rate limited before the outbound request, which costs a worker even when it fails
 		if ($this->countRecentRegistrations(getUserRemoteIP(1)) >= self::REGISTRATIONS_PER_HOUR) {
 			dol_syslog('[MCP OAuth] Metadata document refused, rate limit reached for '.getUserRemoteIP(1), LOG_WARNING);
 			$this->error = 'temporarily_unavailable';
@@ -336,8 +275,7 @@ class McpOauth
 
 		$document = $this->readMetadataDocument($url);
 		if ($document === null) {
-			// Keep serving a client that already worked: a document that is
-			// momentarily unreachable should not sign everybody out.
+			// Keep a known client working while its document is unreachable
 			return $known;
 		}
 
@@ -388,10 +326,7 @@ class McpOauth
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		// $ssl_verifypeer is passed explicitly: its default (-1) means "verify
-		// only when $dolibarr_main_prod is set", and this document decides
-		// where an authorization code is allowed to go. It is a trust anchor
-		// on every install, production flag or not.
+		// Certificate always verified: this document decides where a code may go
 		$response = getURLContent($url, 'GET', '', 1, array('Accept: application/json'), array('https'), 0, 1);
 
 		if (empty($response['content']) || !empty($response['curl_error_no'])) {
@@ -409,8 +344,7 @@ class McpOauth
 			return null;
 		}
 
-		// The document has to claim the URL it was found at. Without this check
-		// a document copied to another address would authorise its original.
+		// The document must claim the URL it was found at
 		if (empty($document['client_id']) || !hash_equals((string) $document['client_id'], $url)) {
 			dol_syslog('[MCP OAuth] Metadata document does not identify itself as '.$url, LOG_WARNING);
 			return null;
@@ -441,8 +375,7 @@ class McpOauth
 		}
 		$row = $this->db->fetch_object($resql);
 		$details = json_decode((string) $row->tokenstring, true);
-		// The hash found the row; the identifier stored beside it must agree,
-		// or this is not the client that was asked for.
+		// The identifier stored beside the hash must agree
 		if (!is_array($details) || !isset($details['client_id']) || !hash_equals((string) $details['client_id'], (string) $clientid)) {
 			return null;
 		}
@@ -461,12 +394,7 @@ class McpOauth
 	}
 
 	/**
-	 * Key a client row is found by: the hash of its identifier, in its entity.
-	 *
-	 * A client_id can be a metadata document URL, longer than token_hash and
-	 * the same in every entity, so the row carries this hash rather than the
-	 * identifier itself. The identifier is kept in tokenstring, and checked
-	 * against the request once the row is found.
+	 * Key a client row is found by: the hash of its entity and identifier (a URL may not fit token_hash).
 	 *
 	 * @param  string $clientid Client identifier
 	 * @return string           SHA-256, hexadecimal
@@ -479,10 +407,7 @@ class McpOauth
 	}
 
 	/**
-	 * What a client row keeps in tokenstring, encoded.
-	 *
-	 * None of it is secret: a confidential client's secret is stored as a
-	 * hash, like every credential this server issues.
+	 * What a client row keeps in tokenstring, as JSON. Nothing in it is secret.
 	 *
 	 * @param  string      $clientid   Client identifier
 	 * @param  string|null $secrethash SHA-256 of the client secret, null for a public client
@@ -507,11 +432,7 @@ class McpOauth
 	}
 
 	/**
-	 * Store a new client.
-	 *
-	 * It is a row of llx_oauth_token like the credentials issued to it, with
-	 * service 'mcp_client': the redirect URIs in redirect_uri, one per line,
-	 * the rest in tokenstring.
+	 * Store a new client: a llx_oauth_token row with service 'mcp_client', redirect URIs one per line.
 	 *
 	 * @param  string      $clientid   Client identifier
 	 * @param  string|null $secrethash SHA-256 of the client secret, null for a public client
@@ -544,10 +465,7 @@ class McpOauth
 	}
 
 	/**
-	 * Check the credentials a client presented at the token endpoint.
-	 *
-	 * A public client (auth method 'none') has no secret to check: PKCE is what
-	 * protects it, and that is verified on the code itself.
+	 * Check the credentials of a client at the token endpoint (a public client relies on PKCE).
 	 *
 	 * @param  object $client Client row from getClient()
 	 * @param  string $secret Secret presented, empty for a public client
@@ -566,11 +484,7 @@ class McpOauth
 	}
 
 	/**
-	 * Check a redirect URI against the ones the client registered.
-	 *
-	 * Compared in full and byte for byte, as OAuth 2.1 requires: prefix or
-	 * wildcard matching is how authorization codes end up on someone else's
-	 * server.
+	 * Check a redirect URI against the registered ones, compared in full as OAuth 2.1 requires.
 	 *
 	 * @param  object $client      Client row
 	 * @param  string $redirecturi URI presented in the request
@@ -598,17 +512,7 @@ class McpOauth
 	}
 
 	/**
-	 * Compare two loopback redirect URIs, ignoring the port.
-	 *
-	 * RFC 8252 section 7.3 requires the port to be free at request time: a
-	 * native client asks the operating system for a spare port when it starts
-	 * listening, so it cannot know it when it publishes its metadata. Codex
-	 * registers http://127.0.0.1/callback and then asks for
-	 * http://127.0.0.1:1455/callback.
-	 *
-	 * Only the port is allowed to differ. Scheme, host and path must still
-	 * match exactly, and this applies to loopback only — relaxing a port on a
-	 * public host would let a code be delivered to another service there.
+	 * Compare two loopback redirect URIs ignoring the port, picked at run time by a native client (RFC 8252 7.3).
 	 *
 	 * @param  string $known       Registered redirect URI
 	 * @param  string $redirecturi URI presented in the request
@@ -616,9 +520,7 @@ class McpOauth
 	 */
 	private function isSameLoopbackUri($known, $redirecturi)
 	{
-		// parse_url() is called a component at a time rather than for the whole
-		// array: the SqlInjection plugin reads an array key named 'query' as a
-		// database query and flags it, and there is no database anywhere here.
+		// One component at a time: phan flags an array key named 'query' as SQL
 		$hosta = dol_strtolower((string) parse_url($known, PHP_URL_HOST));
 		$hostb = dol_strtolower((string) parse_url($redirecturi, PHP_URL_HOST));
 
@@ -654,18 +556,14 @@ class McpOauth
 	 */
 	public function createAuthorizationCode($client, $userid, $redirecturi, $codechallenge, $scope, $resource)
 	{
-		// RFC 8707 and the MCP token audience binding: a token must be issued
-		// for this resource and no other, so a resource naming something else
-		// is refused rather than quietly honoured. Clients that send none are
-		// accepted; the token is then bound to this server by construction.
+		// RFC 8707: a resource naming another server is refused, none means this one
 		if ($resource !== '' && !$this->isOwnResource($resource)) {
 			$this->error = 'invalid_target';
 			return null;
 		}
 
 		if (empty($codechallenge)) {
-			// PKCE is not optional here. A code that can be exchanged without a
-			// verifier is a code an interceptor can exchange.
+			// PKCE is mandatory
 			$this->error = 'invalid_request';
 			return null;
 		}
@@ -681,9 +579,7 @@ class McpOauth
 	}
 
 	/**
-	 * Tell whether an audience names this MCP server.
-	 *
-	 * Compared without a trailing slash, which clients add or drop freely.
+	 * Tell whether an audience names this MCP server (trailing slash ignored).
 	 *
 	 * @param  string $resource Audience presented by the caller
 	 * @return bool             True when it is this server
@@ -715,10 +611,7 @@ class McpOauth
 			return null;
 		}
 
-		// One-shot, and the revocation is what claims it: whoever loses the
-		// race gets invalid_grant rather than a second set of tokens. Burned
-		// before anything else can go wrong, since a code that survives a
-		// failed exchange is a code that can be replayed.
+		// One-shot: revoked first, so neither a failed nor a concurrent exchange can reuse it
 		if (!$this->revokeToken((int) $row->rowid)) {
 			$this->error = 'invalid_grant';
 			return null;
@@ -743,10 +636,7 @@ class McpOauth
 	}
 
 	/**
-	 * Exchange a refresh token for a new pair.
-	 *
-	 * The presented refresh token is revoked whatever happens next: rotation is
-	 * what makes a stolen refresh token detectable and short-lived.
+	 * Exchange a refresh token for a new pair; the presented one is revoked (rotation).
 	 *
 	 * @param  object                   $client  Client row, already authenticated
 	 * @param  string                   $refresh Refresh token
@@ -756,11 +646,7 @@ class McpOauth
 	{
 		$row = $this->getValidToken('refresh', $refresh);
 		if (!$row || (int) $row->fk_client !== (int) $client->rowid) {
-			// A refresh token that exists but is already spent is not a
-			// mistake, it is the signature of a stolen one being used behind
-			// the real client. OAuth 2.1 section 4.3.1 has the whole chain
-			// revoked at that point: whoever ends up holding the fresh pair,
-			// both of them have to start again from a consent.
+			// A spent token presented again means a stolen copy: revoke the grant (OAuth 2.1 4.3.1)
 			$this->revokeReplayedFamily('refresh', $refresh, (int) $client->rowid);
 
 			$this->error = 'invalid_grant';
@@ -776,14 +662,7 @@ class McpOauth
 	}
 
 	/**
-	 * Revoke everything issued to a client for a user whose code or refresh
-	 * token was replayed.
-	 *
-	 * Called when one of them did not validate. If the value is known and
-	 * already spent, someone else holds a copy, so the grant it belonged to is
-	 * compromised and nothing issued under it may survive (OAuth 2.1 section
-	 * 4.3.1 for refresh tokens, RFC 6749 section 4.1.2 for codes). A value that
-	 * merely expired unused is not a replay and revokes nothing.
+	 * Revoke what was issued to a client for a user, when a spent code or refresh token is presented again.
 	 *
 	 * @param  string $type        code or refresh
 	 * @param  string $value       Value presented
@@ -841,11 +720,7 @@ class McpOauth
 	}
 
 	/**
-	 * Count one use of a token, in the columns the shared table has for it.
-	 *
-	 * The month rollover is decided on the value lastaccess had before this
-	 * update, so the assignments are ordered to read the old values on both
-	 * MySQL, which applies them left to right, and PostgreSQL, which does not.
+	 * Count one use of a token. Assignments are ordered to read the old lastaccess on MySQL and PostgreSQL.
 	 *
 	 * @param  int  $rowid Token row
 	 * @return void
@@ -855,9 +730,7 @@ class McpOauth
 		$tmpnow = dol_getdate(dol_now('gmt'), true, 'gmt');
 		$monthstart = dol_mktime(0, 0, 0, $tmpnow['mon'], 1, $tmpnow['year'], 'gmt', 0);
 
-		// The condition is written inline in each ifsql(), as api_access.class.php
-		// does: the SQL injection check of the CI refuses a condition passed in a
-		// variable, even one built from idate() alone.
+		// Condition inline in ifsql(), as in api_access.class.php, for the CI SQL injection check
 		$sql = "UPDATE ".$this->db->prefix()."oauth_token SET";
 		$sql .= " apicount_total = apicount_total + 1,";
 		$sql .= " apicount_previous_month = ".$this->db->ifsql("lastaccess < '".$this->db->idate($monthstart, 'gmt')."'", 'apicount_month', 'apicount_previous_month').",";
@@ -869,11 +742,7 @@ class McpOauth
 	}
 
 	/**
-	 * The llx_oauth_token service name for one kind of row.
-	 *
-	 * The table is shared with every other OAuth and API credential of the
-	 * instance; the service column is what keeps ours apart, and every query
-	 * here filters on it.
+	 * The llx_oauth_token service of one kind of row (the table is shared: every query filters on it).
 	 *
 	 * @param  string $type client, code, access or refresh
 	 * @return string       Service name
@@ -899,9 +768,7 @@ class McpOauth
 	}
 
 	/**
-	 * Tell an access token minted here from any other credential.
-	 *
-	 * Lets the caller skip the database when a value cannot possibly be one.
+	 * Tell an access token minted here from any other credential, without a database query.
 	 *
 	 * @param  string $credential Value presented by the caller
 	 * @return bool               True when it looks like one of our access tokens
@@ -912,10 +779,7 @@ class McpOauth
 	}
 
 	/**
-	 * Delete the rows that can no longer authorise anything.
-	 *
-	 * Called from the token endpoint rather than from cron: the table only
-	 * grows when tokens are issued, so the work lands where it is created.
+	 * Delete the rows that can no longer authorise anything (called from the token endpoint).
 	 *
 	 * @return void
 	 */
@@ -923,10 +787,7 @@ class McpOauth
 	{
 		global $conf;
 
-		// The table is shared with every other OAuth and API credential of the
-		// instance, and those carry an expire_at too. Without the service
-		// filter this would delete an expired Google or Stripe token the
-		// owning module still means to refresh.
+		// Our services only: other modules keep expired tokens they still refresh
 		$sql = "DELETE FROM ".$this->db->prefix()."oauth_token";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		$sql .= " AND service IN (".$this->db->sanitize($this->ownServicesSql(), 1).")";
@@ -934,13 +795,8 @@ class McpOauth
 
 		$this->db->query($sql);
 
-		// A registration that never led to a token is a row nobody asked for:
-		// /register takes no credential, so without this the table only grows,
-		// one row per connection attempt. Anything that did obtain a token is
-		// left alone whatever its age.
-		// Selected first and deleted by rowid: MySQL refuses a DELETE whose
-		// subquery reads the table being deleted from, and clients and tokens
-		// now share one.
+		// Clients that never obtained a token. Selected first, then deleted by rowid:
+		// MySQL refuses a DELETE whose subquery reads the same table.
 		$sql = "SELECT c.rowid";
 		$sql .= " FROM ".$this->db->prefix()."oauth_token as c";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."oauth_token as t ON t.fk_oauth_client = c.rowid";
@@ -982,9 +838,7 @@ class McpOauth
 			return 0;
 		}
 
-		// The address sits in the client's tokenstring, written by
-		// clientDetails() through json_encode(), so this is the exact text it
-		// produced for that address.
+		// The exact text clientDetails() wrote for this address
 		$needle = dol_substr((string) json_encode(array('registered_from' => $ip)), 1, -1);
 
 		$sql = "SELECT COUNT(rowid) as nb";
@@ -1004,12 +858,7 @@ class McpOauth
 	}
 
 	/**
-	 * Accept a redirect URI only in a shape that cannot be turned against us.
-	 *
-	 * https is required, except on loopback, which is how a desktop or CLI
-	 * client receives its code and never leaves the machine (RFC 8252). A
-	 * fragment is refused outright: it would silently drop the query the
-	 * response is carried in.
+	 * Accept a redirect URI: https, http on loopback only (RFC 8252), or a private scheme; never a fragment.
 	 *
 	 * @param  string $uri Candidate redirect URI
 	 * @return bool        True when it may be registered
@@ -1035,9 +884,7 @@ class McpOauth
 			return in_array($host, array('127.0.0.1', '[::1]', 'localhost'), true);
 		}
 
-		// A private-use scheme (com.example.app:/oauth) is how a native client
-		// is called back. It has no host to check, so the scheme itself has to
-		// look like a reversed domain rather than a word anyone could claim.
+		// A private-use scheme (com.example.app:/oauth) must look like a reversed domain
 		return (bool) preg_match('/^[a-z0-9]+(\.[a-z0-9-]+){2,}$/', $scheme);
 	}
 
@@ -1092,8 +939,7 @@ class McpOauth
 	{
 		global $conf;
 
-		// Only the SHA-256 goes in: token_hash, not tokenstring, which other
-		// services use for secrets they must be able to read back.
+		// Only the SHA-256 is stored, in token_hash
 		$sql = "INSERT INTO ".$this->db->prefix()."oauth_token";
 		$sql .= " (entity, service, token_hash, fk_oauth_client, fk_user, state, resource, code_challenge, redirect_uri, expire_at, datec)";
 		$sql .= " VALUES (".((int) $conf->entity);
@@ -1117,10 +963,7 @@ class McpOauth
 	}
 
 	/**
-	 * Load a value that is still good for something.
-	 *
-	 * Expiry and revocation are part of the lookup rather than checked after
-	 * it, so there is no window in which a caller reads a row it may not use.
+	 * Load a code or token that is neither expired nor revoked (both checked in the lookup).
 	 *
 	 * @param  string      $type  code, access or refresh
 	 * @param  string      $token The value presented
@@ -1158,13 +1001,8 @@ class McpOauth
 	 */
 	private function revokeToken($rowid)
 	{
-		// The WHERE carries "revoked = 0" and the caller checks how many rows
-		// it touched, so the database decides which of two concurrent requests
-		// spends the grant. Reading then writing let both through: twelve
-		// parallel exchanges of one authorization code produced five token
-		// pairs, and a stolen refresh token could be used alongside the real
-		// client for as long as it lived, which is exactly what rotation is
-		// supposed to make impossible.
+		// "revoked = 0" and the affected row count let the database decide
+		// which of two concurrent requests spends the grant.
 		$sql = "UPDATE ".$this->db->prefix()."oauth_token";
 		$sql .= " SET revoked = 1";
 		$sql .= " WHERE rowid = ".((int) $rowid);

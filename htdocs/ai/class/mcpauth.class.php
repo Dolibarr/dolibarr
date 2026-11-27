@@ -181,10 +181,7 @@ class McpAuth
 	}
 
 	/**
-	 * Tell whether an Authorization header reached PHP, through any of the
-	 * sources getCredential() reads. Used by the probe of the admin page: on
-	 * Apache in CGI/FastCGI mode the header is dropped unless CGIPassAuth is
-	 * on, and the only symptom otherwise is a 401 after a successful consent.
+	 * Tell whether an Authorization header reached PHP (probe of the admin page).
 	 *
 	 * @param 	array<string,mixed>|null 	$server 	Server variables, defaults to $_SERVER
 	 * @return 	bool 									True when a non-empty Authorization header is visible
@@ -327,8 +324,7 @@ class McpAuth
 	 */
 	public function getWwwAuthenticateHeader($resourcemetadataurl = '')
 	{
-		// The parameters follow the scheme separated by a space, then commas:
-		// "Bearer, scope=..." would be malformed (RFC 7235 section 4.1).
+		// Scheme, a space, then parameters separated by commas (RFC 7235 section 4.1)
 		$parameters = array();
 		if ($resourcemetadataurl !== '') {
 			$parameters[] = 'resource_metadata="'.$resourcemetadataurl.'"';

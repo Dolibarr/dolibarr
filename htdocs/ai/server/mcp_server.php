@@ -42,9 +42,7 @@ if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', 1);
 }
 define('NOLOGIN', 1);
-// No session: a client authenticates with a Bearer token or an API key and
-// never sends a cookie, so every anonymous call — including the discovery
-// routes below — was leaving a session file behind for nothing.
+// No session: clients send a token or an API key, never a cookie
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
@@ -81,18 +79,7 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
 header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 
-// Discovery asked for under this endpoint's own path.
-//
-// A client that has just met a 401 here looks for the authorization server by
-// deriving well-known locations from the URL it was talking to, rather than
-// from the authorization_servers value the protected resource metadata gives
-// it. Codex asks this endpoint for /.well-known/openid-configuration; without
-// an answer it never finds the server and falls back to posting a registration
-// at the site root.
-//
-// Answering here costs nothing, needs no rewrite rule, and works wherever
-// Dolibarr is installed — which the canonical locations, being at the domain
-// root, do not.
+// Discovery asked under this endpoint's own path, as some clients (Codex) derive it from the URL
 $mcp_wellknown = empty($_SERVER['PATH_INFO']) ? '' : (string) $_SERVER['PATH_INFO'];
 if (in_array($mcp_wellknown, array('/.well-known/oauth-protected-resource', '/.well-known/oauth-authorization-server', '/.well-known/openid-configuration'), true)) {
 	require_once DOL_DOCUMENT_ROOT . '/ai/class/mcpoauth.class.php';
@@ -104,19 +91,13 @@ if (in_array($mcp_wellknown, array('/.well-known/oauth-protected-resource', '/.w
 	);
 
 	if ($mcp_wellknown === '/.well-known/oauth-protected-resource') {
-		// Served here: this document describes the resource, and the resource
-		// is the URL it was asked at, so it is consistent.
+		// This document describes the resource, so it is served here
 		header('Cache-Control: no-store');
 		echo json_encode($mcpOauth->metadataProtectedResource());
 		exit;
 	}
 
-	// The authorization server documents are redirected rather than copied.
-	// They carry an issuer, and RFC 8414 section 3.3 has the client reject a
-	// document whose issuer does not match the URL it came from — which it
-	// could not, since the server lives at another address. A redirect answers
-	// the client that derived the location from this endpoint, and answers it
-	// with a document that is correct where it is served.
+	// Redirected, not copied: the issuer must match the URL of the document (RFC 8414 section 3.3)
 	header('Location: ' . DOL_MAIN_URL_ROOT . '/ai/oauth.php' . $mcp_wellknown, true, 302);
 	exit;
 }
@@ -135,11 +116,7 @@ $logrequest .= "\n".file_get_contents('php://input');
 dol_syslog('[MCP Server] Request received:'."\n".$logrequest, LOG_DEBUG, 0, '_ai');
 */
 
-// Self-diagnosis, before any authentication: the admin page sends a request
-// carrying both "Authorization: Bearer <dummy>" and "X-Dolibarr-Probe: 1" and
-// asks one thing - did the Authorization header reach PHP? Apache in CGI/FPM
-// mode drops it unless CGIPassAuth is on, and the only symptom otherwise is a
-// 401 after a successful OAuth consent. The answer carries nothing else.
+// Probe of the admin page: did the Authorization header reach PHP? Answers nothing else.
 if (!empty($headers['x-dolibarr-probe'])) {
 	header('Cache-Control: no-store');
 	echo json_encode(['probe' => 'authorization', 'authorization_seen' => McpAuth::seesAuthorizationHeader()]);
@@ -151,9 +128,7 @@ $mcpAuth = new McpAuth($db);
 if ($mcpAuth->authenticate() < 0) {
 	if ($mcpAuth->httpcode == 401) {
 		// RFC 6750 section 3: a rejected Bearer request must say what it wanted.
-		// RFC 9728 section 5.1: pointing at the Protected Resource Metadata is
-		// what lets an OAuth-capable client discover the authorization server
-		// and sign the user in, instead of just failing.
+		// RFC 9728 section 5.1: point at the protected resource metadata
 		header('WWW-Authenticate: ' . $mcpAuth->getWwwAuthenticateHeader(
 			DOL_MAIN_URL_ROOT . '/ai/oauth.php/.well-known/oauth-protected-resource'
 		));
