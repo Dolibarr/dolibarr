@@ -89,6 +89,7 @@ $rawResponseLog = "";
 $providerUsed = "offline";
 $errorDetails = "";
 $adapter = null;	// LLM adapter, set only when an AI API is called
+$requestKey = '';
 
 $assistantEnabled = getDolGlobalInt('AI_ASSISTANT_ENABLED', 0);
 $serviceKey = getDolGlobalString('AI_API_SERVICE');
@@ -104,8 +105,7 @@ if (!$assistantEnabled) {
 			"message" => "AI assistant service is currently disabled. Please contact your administrator to enable it."
 		]
 	];
-	ob_end_clean();
-	echo json_encode($response);
+	aiOutputIntent($response, $requestKey, (int) $user->id);
 	exit;
 }
 
@@ -114,12 +114,15 @@ if (getDolGlobalString("AI_DEBUG")) {
 }
 
 set_time_limit($timeout + 5);
+// The answer is kept for the next page when the browser leaves this one before it arrives.
+ignore_user_abort(true);
 
 try {
 	// Input
 	$raw_input = file_get_contents('php://input');
 	$data = json_decode($raw_input, true);
 	$query = isset($data['query']) ? trim($data['query']) : '';
+	$requestKey = (isset($data['request_key']) && is_string($data['request_key'])) ? $data['request_key'] : '';
 	// Set by the chat when it calls back after running the read tool this
 	// endpoint flagged with needs_followup: the result is the last history turn.
 	// Value is the number of the followup round (1 or 2), 2 being the last one.
@@ -326,8 +329,7 @@ try {
 	}
 
 	if (empty($query)) {
-		ob_end_clean();
-		echo json_encode(["status" => "ok"]);
+		aiOutputIntent(["status" => "ok"], $requestKey, (int) $user->id);
 		exit;
 	}
 
@@ -350,11 +352,10 @@ try {
 			$officeerror = '';
 			$officetext = ai_convert_office_attachment_to_text($officetype['mime'], $officematch[2], $officeerror);
 			if ($officetext === false) {
-				ob_end_clean();
-				echo json_encode(array(
+				aiOutputIntent(array(
 					"tool" => "respond_to_user",
 					"arguments" => array("message" => $officeerror)
-				));
+				), $requestKey, (int) $user->id);
 				exit;
 			}
 			$officeinfo = ai_attachment_store($officetype['mime'], $officetype['name'], $officematch[2]);
@@ -401,11 +402,10 @@ try {
 	// attachments must be converted into text they must not go to a provider at all).
 	$attachmenterror = '';
 	if (!ai_validate_attachments($attachments, $attachmenterror)) {
-		ob_end_clean();
-		echo json_encode(array(
+		aiOutputIntent(array(
 			"tool" => "respond_to_user",
 			"arguments" => array("message" => $attachmenterror)
-		));
+		), $requestKey, (int) $user->id);
 		exit;
 	}
 
@@ -572,8 +572,7 @@ try {
 			dol_syslog("parse_intent.php ".count($options)." third parties fit '".$tpAsk['phrase']."': the user chooses before anything is sent", LOG_DEBUG, 0, '_ai');
 		}
 		ai_log_request($db, $user, aiRestoreDocumentBlocks($query, $aiDocuments['blocks']), $finalResponse, 'local', microtime(true) - $startTime, 1.0, 'Confirm');
-		ob_end_clean();
-		echo json_encode($finalResponse);
+		aiOutputIntent($finalResponse, $requestKey, (int) $user->id);
 		exit;
 	}
 
@@ -744,8 +743,7 @@ try {
 			// Log the low confidence response
 			//ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
-			ob_end_clean();
-			echo json_encode($finalResponse);
+			aiOutputIntent($finalResponse, $requestKey, (int) $user->id);
 			exit;
 		}
 
@@ -1399,8 +1397,7 @@ try {
 		// Log the failure
 		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 0.0, $langs->transnoentitiesnoconv('Error'), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
-		ob_end_clean();
-		echo json_encode($finalResponse);
+		aiOutputIntent($finalResponse, $requestKey, (int) $user->id);
 		exit;
 	}
 
@@ -1489,8 +1486,7 @@ try {
 		if ($refusal !== '') {
 			$finalResponse = array('tool' => 'respond_to_user', 'arguments' => array('message' => $refusal));
 			ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'Error', $refusal, $rawRequestLog, $rawResponseLog, $usageContext);
-			ob_end_clean();
-			echo json_encode($finalResponse);
+			aiOutputIntent($finalResponse, $requestKey, (int) $user->id);
 			exit;
 		}
 	}
@@ -1537,8 +1533,7 @@ try {
 		// Log the confirmation request
 		ai_log_request($db, $user, $query, $confirmationResponse, $providerUsed, microtime(true) - $startTime, $confidence, $langs->transnoentitiesnoconv("Confirm"), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
-		ob_end_clean();
-		echo json_encode($confirmationResponse);
+		aiOutputIntent($confirmationResponse, $requestKey, (int) $user->id);
 		exit;
 	}
 
@@ -1554,8 +1549,7 @@ try {
 		// Log the low confidence response
 		ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, $confidence, 'low_confidence', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
-		ob_end_clean();
-		echo json_encode($finalResponse);
+		aiOutputIntent($finalResponse, $requestKey, (int) $user->id);
 		exit;
 	}
 
@@ -1598,8 +1592,7 @@ try {
 	$execTime = microtime(true) - $startTime;
 	ai_log_request($db, $user, $query, $finalResponse, $providerUsed, $execTime, $confidence, $langs->transnoentitiesnoconv("Success"), $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 
-	ob_end_clean();
-	echo json_encode($finalResponse);
+	aiOutputIntent($finalResponse, $requestKey, (int) $user->id);
 } catch (Throwable $e) {
 	$friendlyResponse = [
 		"tool" => "respond_to_user",
@@ -1632,8 +1625,25 @@ try {
 		);
 	}
 
+	aiOutputIntent($friendlyResponse, $requestKey, (int) $user->id);
+}
+
+
+/**
+ * Send the final JSON answer to the browser, and keep it for the next page when a request key is given.
+ *
+ * @param array<string, mixed> $response   Answer
+ * @param string               $requestKey Request key sent by the browser, '' when none
+ * @param int                  $userId     Id of the current user
+ * @return void
+ */
+function aiOutputIntent(array $response, string $requestKey, int $userId): void
+{
+	if ($requestKey !== '') {
+		aiPendingIntentSave($userId, $requestKey, $response);
+	}
 	ob_end_clean();
-	echo json_encode($friendlyResponse);
+	echo json_encode($response);
 }
 
 
