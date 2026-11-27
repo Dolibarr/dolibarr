@@ -261,7 +261,7 @@ if (getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON')) {
 	// Check that command is inside safe_mode
 	if (ini_get('safe_mode') && getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 		$langs->load("errors");
-		$basedir = preg_replace('/"/', '', dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
+		$basedir = preg_replace('/"/', '', dirname(getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')));
 		$listdir = explode(';', ini_get('safe_mode_exec_dir'));
 		if (!in_array($basedir, $listdir)) {
 			print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));

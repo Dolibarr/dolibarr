@@ -324,7 +324,7 @@ if (empty($doactionsthenredirect)) {
 
 	$key = 'ONLINE_PAYMENT_MESSAGE_KO';
 	if (getDolGlobalString($key)) {
-		print $conf->global->$key;
+		print getDolGlobalString($key);
 	}
 
 	$type = GETPOST('s', 'alpha');

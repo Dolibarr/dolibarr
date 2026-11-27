@@ -197,6 +197,7 @@ class Invoices extends DolibarrApi
 	 * Get a list of invoices
 	 *
 	 * @since	5.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param string	$sortfield		  	Sort field
 	 * @param string	$sortorder		  	Sort order
@@ -209,14 +210,15 @@ class Invoices extends DolibarrApi
 	 * @param bool      $pagination_data  	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param int		$loadlinkedobjects	Load also linked object
 	 * @param bool 		$withLines 			true or false to display or hide lines
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array                      	Array of invoice objects
-	 * @phan-return Facture[]|array{data:Facture[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return Facture[]|array{data:Facture[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return Facture[]|array{data:Facture[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return Facture[]|array{data:Facture[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0, $withLines = true)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0, $withLines = true, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(403);
@@ -227,9 +229,11 @@ class Invoices extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -277,6 +281,11 @@ class Invoices extends DolibarrApi
 
 		//this query will return total invoices with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -2221,6 +2230,7 @@ class Invoices extends DolibarrApi
 	 * Get a list of template invoices
 	 *
 	 * @since	23.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
@@ -2233,16 +2243,17 @@ class Invoices extends DolibarrApi
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param int		$loadlinkedobjects	Load also linked object
 	 * @param bool		$withLines			true or false to display or hide lines
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array						Array of recurring invoice objects
-	 * @phan-return FactureRec[]|array{data:FactureRec[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return FactureRec[]|array{data:FactureRec[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return FactureRec[]|array{data:FactureRec[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return FactureRec[]|array{data:FactureRec[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @url GET templates
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function indexTemplateInvoices($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0, $withLines = true)
+	public function indexTemplateInvoices($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0, $withLines = true, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(403);
@@ -2254,9 +2265,11 @@ class Invoices extends DolibarrApi
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -2303,6 +2316,11 @@ class Invoices extends DolibarrApi
 
 		//this query will return total template invoices with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {

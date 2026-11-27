@@ -125,7 +125,7 @@ class ModulesTest extends CommonClassTest // TestCase //CommonClassTest
 		//$modlabel = 'DebugBar';
 
 		foreach ($this->moduleInitListProvider() as $case) {
-			list($modlabel) = $case;
+			$modlabel = $case[0];
 			$conf = $this->savconf;
 			$user = $this->savuser;
 			$langs = $this->savlangs;

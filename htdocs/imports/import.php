@@ -729,7 +729,7 @@ if ($step == 3 && $datatoimport) {
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	if (empty($separator)) {
-		$separator = (!getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE') ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE);
+		$separator = (!getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE') ? ',' : getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE'));
 	}
 
 	// The separator has been defined, if it is a unique char, we check it is valid by reading the source file
@@ -2351,8 +2351,8 @@ if ($step == 5 && $datatoimport) {
 	// Launch import
 	$arrayoferrors = array();
 	$arrayofwarnings = array();
-	$maxnboferrors = !getDolGlobalString('IMPORT_MAX_NB_OF_ERRORS') ? 50 : $conf->global->IMPORT_MAX_NB_OF_ERRORS;
-	$maxnbofwarnings = !getDolGlobalString('IMPORT_MAX_NB_OF_WARNINGS') ? 50 : $conf->global->IMPORT_MAX_NB_OF_WARNINGS;
+	$maxnboferrors = !getDolGlobalString('IMPORT_MAX_NB_OF_ERRORS') ? 50 : getDolGlobalString('IMPORT_MAX_NB_OF_ERRORS');
+	$maxnbofwarnings = !getDolGlobalString('IMPORT_MAX_NB_OF_WARNINGS') ? 50 : getDolGlobalString('IMPORT_MAX_NB_OF_WARNINGS');
 	$nboferrors = 0;
 	$nbofwarnings = 0;
 

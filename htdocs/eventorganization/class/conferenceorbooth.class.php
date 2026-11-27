@@ -637,7 +637,9 @@ class ConferenceOrBooth extends ActionComm
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-				//list($class, $module) = explode('@', $this->picto);
+				//$tmparray = explode('@', $this->picto);
+				//$class = $tmparray[0];
+				//$module = $tmparray[1];
 				$upload_dir = $conf->eventorganisation->multidir_output[$conf->entity]."/".dol_sanitizeFileName($this->ref);
 				$filearray = dol_dir_list($upload_dir, "files");
 				$filename = $filearray[0]['name'];
@@ -819,7 +821,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$result = 0;
 
-		$langs->load("eventorganization@eventorganization");
+		$langs->load("eventorganization");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_conferenceorbooth';

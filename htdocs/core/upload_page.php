@@ -725,7 +725,7 @@ if (empty($action)) {
 
 	// Form to upload an expense report
 	if (isModEnabled('expensereport')) {
-		$langs->load("expensereport");
+		$langs->load("trips");
 		$uploadform .= '
 		<div id="userexpensereport" class="flex-item flex-item-uploadfile">'.img_picto('', 'expensereport', 'class="fa-2x"').'<br>
 		<div>'.$langs->trans("ExpenseReport").'<br><br>';
@@ -769,7 +769,7 @@ if (empty($action)) {
 
 	// Form to upload a salary document
 	if (isModEnabled('tax')) {
-		$langs->loadLangs(array("taxes", "compta"));
+		$langs->loadLangs(array("compta"));
 		$uploadform .= '
 		<div id="socialcontribution" class="flex-item flex-item-uploadfile">'.img_picto('', 'invoice', 'class="fa-2x"').'<br>
 		<div>'.$langs->trans("SocialContribution").'<br><br>';
@@ -1072,9 +1072,14 @@ if ($action == 'showsummary') {
 	// On wide screens (>= 1280), the summary and the preview of the file are shown side by side,
 	// both stretched to the height of the tallest one
 	print '<style>
-@media (min-width: 1280px) {
+@media (min-width: 1600px) {
 	#summary-result { display: flex; flex-wrap: wrap; align-items: stretch; }
 	#divsummary { flex: 1 1 58%; display: flex; }
+	#divpreview { flex: 1 1 40%; }
+}
+@media (min-width: 1280px) {
+	#summary-result { display: flex; flex-wrap: wrap; align-items: stretch; }
+	#divsummary { flex: 1 1 35%; display: flex; }
 	#divpreview { flex: 1 1 40%; }
 }
 </style>';

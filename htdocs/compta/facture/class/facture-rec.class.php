@@ -126,6 +126,11 @@ class FactureRec extends CommonInvoice
 	public $tva;
 
 	/**
+	 * @var FactureLigneRec[]
+	 */
+	public $lines = array();
+
+	/**
 	 * @var int|string
 	 */
 	public $date_last_gen;

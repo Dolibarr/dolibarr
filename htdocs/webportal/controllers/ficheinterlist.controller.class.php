@@ -56,7 +56,7 @@ class FicheinterListController extends AbstractListController
 			return -1;
 		}
 
-		$langs->loadLangs(array('fichinter', 'companies', 'products'));
+		$langs->loadLangs(array('interventions', 'companies', 'products'));
 
 		$context->title = $langs->trans('WebPortalFicheinterListTitle');
 		$context->desc = $langs->trans('WebPortalFicheinterListDesc');

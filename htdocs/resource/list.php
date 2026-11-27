@@ -72,6 +72,7 @@ if (!is_array($search_array_options)) {
 	$search_array_options = array();
 }
 $search_all          = trim(GETPOST('search_all', 'alphanohtml'));
+$search_id			= GETPOST("search_id", 'alpha');	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref			= GETPOST("search_ref", 'alpha');
 $search_type		= GETPOST("search_type", 'alpha');
 $search_address		= GETPOST("search_address", 'alpha');
@@ -115,6 +116,11 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
+	't.rowid' => array(
+		'label' => $langs->trans("TechnicalID"),
+		'checked' => '-1',
+		'position' => 0
+	),
 	't.ref' => array(
 		'label' => $langs->trans("Ref"),
 		'checked' => '1',
@@ -172,10 +178,14 @@ $arrayfields = array(
 	),
 );
 // Extra fields
+$extrafieldspositionoffset = 1000;	// To keep extrafields after the hardcoded fields by default
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -184,6 +194,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
+	$search_id = "";
 	$search_ref = "";
 	$search_type = "";
 	$search_address = "";
@@ -296,6 +307,9 @@ $sql .= " WHERE t.entity IN (".getEntity('resource').")";
 if (!empty($search_all)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+if ($search_id) {
+	$sql .= natural_search('t.rowid', $search_id, 1);
+}
 if ($search_ref) {
 	$sql .= natural_search('t.ref', $search_ref);
 }
@@ -393,6 +407,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -477,13 +494,16 @@ if ($search_all) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column)); // This also change content of $arrayfields
+$selectedfields = ($form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1)); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="tagtable liste">'."\n";
 
 // Fields title search
+
+// Core fields rendered by this page (extra fields are rendered by the extrafields tpls)
+$corelistfields = array('t.rowid', 't.ref', 'ty.label', 't.address', 't.zip', 't.town', 'st.nom', 'co.label', 't.phone', 't.email', 't.max_users', 't.url');
 
 print '<tr class="liste_titre_filter">';
 // Action column
@@ -493,63 +513,82 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
-if (!empty($arrayfields['t.ref']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
-	print '</td>';
+// Fields and extrafields ordered by position
+foreach ($arrayfields as $key => $val) {
+	// Extra fields
+	$regkey = array();
+	if (!empty($val['checked']) && preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	if (empty($val['checked']) || !in_array($key, $corelistfields)) {
+		continue;
+	}
+	switch ($key) {
+		case 't.rowid':
+			print '<td class="liste_titre center">';
+			print '<input type="text" class="flat width50" name="search_id" value="'.dolPrintHTMLForAttribute($search_id).'">';
+			print '</td>';
+			break;
+		case 't.ref':
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth100" name="search_ref" value="'.$search_ref.'">';
+			print '</td>';
+			break;
+		case 'ty.label':
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth100" name="search_type" value="'.$search_type.'">';
+			print '</td>';
+			break;
+		case 't.address':
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth100" name="search_address" value="'.$search_address.'">';
+			print '</td>';
+			break;
+		case 't.zip':
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth100" name="search_zip" value="'.$search_zip.'">';
+			print '</td>';
+			break;
+		case 't.town':
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth100" name="search_town" value="'.$search_town.'">';
+			print '</td>';
+			break;
+		case 'st.nom':
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth100" name="search_state" value="'.$search_state.'">';
+			print '</td>';
+			break;
+		case 'co.label':
+			print '<td class="liste_titre">';
+			print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+			print '</td>';
+			break;
+		case 't.phone':
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth100" name="search_phone" value="'.$search_phone.'">';
+			print '</td>';
+			break;
+		case 't.email':
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth100" name="search_email" value="'.$search_email.'">';
+			print '</td>';
+			break;
+		case 't.max_users':
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth100" name="search_max_users" value="'.$search_max_users.'">';
+			print '</td>';
+			break;
+		case 't.url':
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth100" name="search_url" value="'.$search_url.'">';
+			print '</td>';
+			break;
+	}
 }
-if (!empty($arrayfields['ty.label']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_type" value="'.$search_type.'" size="8">';
-	print '</td>';
-}
-if (!empty($arrayfields['t.address']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_address" value="'.$search_address.'" size="8">';
-	print '</td>';
-}
-if (!empty($arrayfields['t.zip']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_zip" value="'.$search_zip.'" size="8">';
-	print '</td>';
-}
-if (!empty($arrayfields['t.town']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_town" value="'.$search_town.'" size="8">';
-	print '</td>';
-}
-if (!empty($arrayfields['st.nom']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_state" value="'.$search_state.'" size="8">';
-	print '</td>';
-}
-if (!empty($arrayfields['co.label']['checked'])) {
-	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
-	print '</td>';
-}
-if (!empty($arrayfields['t.phone']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_phone" value="'.$search_phone.'" size="8">';
-	print '</td>';
-}
-if (!empty($arrayfields['t.email']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_email" value="'.$search_email.'" size="8">';
-	print '</td>';
-}
-if (!empty($arrayfields['t.max_users']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_max_users" value="'.$search_max_users.'" size="8">';
-	print '</td>';
-}
-if (!empty($arrayfields['t.url']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_url" value="'.$search_url.'" size="8">';
-	print '</td>';
-}
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Action column
 if (!$conf->main_checkbox_left_column) {
@@ -570,42 +609,21 @@ print '<tr class="liste_titre">';
 if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
-if (!empty($arrayfields['t.ref']['checked'])) {
-	// @phan-suppress-next-line PhanTypeInvalidDimOffset
-	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
+// Fields and extrafields ordered by position
+foreach ($arrayfields as $key => $val) {
+	// Extra fields
+	$regkey = array();
+	if (!empty($val['checked']) && preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	if (!empty($val['checked']) && in_array($key, $corelistfields)) {
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
+		print_liste_field_titre($val['label'], $_SERVER["PHP_SELF"], $key, "", $param, "", $sortfield, $sortorder, ($key == 't.rowid' ? 'center ' : ''));
+	}
 }
-if (!empty($arrayfields['ty.label']['checked'])) {
-	print_liste_field_titre($arrayfields['ty.label']['label'], $_SERVER["PHP_SELF"], "ty.label", "", $param, "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['t.address']['checked'])) {
-	print_liste_field_titre($arrayfields['t.address']['label'], $_SERVER["PHP_SELF"], "t.address", "", $param, "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['t.zip']['checked'])) {
-	print_liste_field_titre($arrayfields['t.zip']['label'], $_SERVER["PHP_SELF"], "t.zip", "", $param, "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['t.town']['checked'])) {
-	print_liste_field_titre($arrayfields['t.town']['label'], $_SERVER["PHP_SELF"], "t.town", "", $param, "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['st.nom']['checked'])) {
-	print_liste_field_titre($arrayfields['st.nom']['label'], $_SERVER["PHP_SELF"], "st.nom", "", $param, "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['co.label']['checked'])) {
-	print_liste_field_titre($arrayfields['co.label']['label'], $_SERVER["PHP_SELF"], "co.label", "", $param, "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['t.phone']['checked'])) {
-	print_liste_field_titre($arrayfields['t.phone']['label'], $_SERVER["PHP_SELF"], "t.phone", "", $param, "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['t.email']['checked'])) {
-	print_liste_field_titre($arrayfields['t.email']['label'], $_SERVER["PHP_SELF"], "t.email", "", $param, "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['t.max_users']['checked'])) {
-	print_liste_field_titre($arrayfields['t.max_users']['label'], $_SERVER["PHP_SELF"], "t.max_users", "", $param, "", $sortfield, $sortorder);
-}
-if (!empty($arrayfields['t.url']['checked'])) {
-	print_liste_field_titre($arrayfields['t.url']['label'], $_SERVER["PHP_SELF"], "t.url", "", $param, "", $sortfield, $sortorder);
-}
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -652,85 +670,62 @@ while ($i < $imaxinloop) {
 		}
 	}
 
-	if (!empty($arrayfields['t.ref']['checked'])) {
-		print '<td class="tdoverflowmax150">'.$objectstatic->getNomUrl(5).'</td>';
+	// Fields and extrafields ordered by position
+	foreach ($arrayfields as $key => $val) {
+		// Extra fields
+		$regkey = array();
+		if (!empty($val['checked']) && preg_match('/^ef\.(.+)$/', $key, $regkey)) {
+			$extrafieldsonlykey = $regkey[1];
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+			$extrafieldsonlykey = '';
+			continue;
+		}
+		if (empty($val['checked']) || !in_array($key, $corelistfields)) {
+			continue;
+		}
+		switch ($key) {
+			case 't.rowid':
+				print '<td class="center tdoverflowmax50">'.((int) $obj->rowid).'</td>';
+				break;
+			case 't.ref':
+				print '<td class="tdoverflowmax150">'.$objectstatic->getNomUrl(5).'</td>';
+				break;
+			case 'ty.label':
+				print '<td class="tdoverflowmax200">'.$objectstatic->type_label.'</td>';
+				break;
+			case 't.address':
+				print '<td>'.$objectstatic->address.'</td>';
+				break;
+			case 't.zip':
+				print '<td>'.$objectstatic->zip.'</td>';
+				break;
+			case 't.town':
+				print '<td>'.$objectstatic->town.'</td>';
+				break;
+			case 'st.nom':
+				print '<td>'.$objectstatic->state.'</td>';
+				break;
+			case 'co.label':
+				print '<td>'.$objectstatic->country.'</td>';
+				break;
+			case 't.phone':
+				print '<td>'.dol_print_phone($objectstatic->phone, '', 0, 0, 'AC_TEL', " ", 'phone').'</td>';
+				break;
+			case 't.email':
+				$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
+				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $objectstatic->email, 0, 0, 1, 0, $showinvalidemail, 1).'</td>';
+				break;
+			case 't.max_users':
+				print '<td>'.$objectstatic->max_users.'</td>';
+				break;
+			case 't.url':
+				print '<td>'.dol_print_url($objectstatic->url, '_blank', 32, 1).'</td>';
+				break;
+		}
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
-
-	if (!empty($arrayfields['ty.label']['checked'])) {
-		print '<td class="tdoverflowmax200">'.$objectstatic->type_label.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['t.address']['checked'])) {
-		print '<td>'.$objectstatic->address.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['t.zip']['checked'])) {
-		print '<td>'.$objectstatic->zip.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['t.town']['checked'])) {
-		print '<td>'.$objectstatic->town.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['st.nom']['checked'])) {
-		print '<td>'.$objectstatic->state.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['co.label']['checked'])) {
-		print '<td>'.$objectstatic->country.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['t.phone']['checked'])) {
-		print '<td>'.dol_print_phone($objectstatic->phone, '', 0, 0, 'AC_TEL', " ", 'phone').'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['t.email']['checked'])) {
-		$showinvalidemail = (int) !getDolGlobalInt('MAIN_SHOW_INVALID_EMAIL_IN_LIST'); // to avoid slow display
-		print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute((string) $obj->email).'">'.dol_print_email((string) $objectstatic->email, 0, 0, 1, 0, $showinvalidemail, 1).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['t.max_users']['checked'])) {
-		print '<td>'.$objectstatic->max_users.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['t.url']['checked'])) {
-		print '<td>'.dol_print_url($objectstatic->url, '_blank', 32, 1).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 	// Action column
 	if (!$conf->main_checkbox_left_column) {

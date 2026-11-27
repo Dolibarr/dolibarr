@@ -245,7 +245,7 @@ if (empty($reshook)) {
 					// Loop on each email and send it
 					$iforemailloop = 0;
 
-					while ($iforemailloop < $num && $iforemailloop < $conf->global->MAILING_LIMIT_SENDBYWEB) {
+					while ($iforemailloop < $num && $iforemailloop < getDolGlobalInt('MAILING_LIMIT_SENDBYWEB')) {
 						// Here code is common with same loop ino mailing-send.php
 						$res = 1;
 						$now = dol_now();
@@ -432,8 +432,8 @@ if (empty($reshook)) {
 							}
 
 							if (getDolGlobalString('MAILING_DELAY')) {
-								dol_syslog("Wait a delay of MAILING_DELAY=".((float) $conf->global->MAILING_DELAY));
-								usleep((int) ((float) $conf->global->MAILING_DELAY * 1000000));
+								dol_syslog("Wait a delay of MAILING_DELAY=".(getDolGlobalFloat('MAILING_DELAY')));
+								usleep((int) (getDolGlobalFloat('MAILING_DELAY') * 1000000));
 							}
 
 							//test if CHECK READ change statut prospect contact
@@ -1032,10 +1032,10 @@ if ($action == 'create') {	// aaa
 					$action = '';
 				} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < 0) {
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL') && $sendingmode == 'mail') {
-						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+						setEventMessages($langs->transnoentitiesnoconv(getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL')), null, 'warnings');
 					}
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_NOPHPMAIL') && $sendingmode != 'mail') {
-						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
+						setEventMessages($langs->transnoentitiesnoconv(getDolGlobalString('MAILING_LIMIT_WARNING_NOPHPMAIL')), null, 'warnings');
 					}
 
 					// The feature is forbidden from GUI, we show just message to use from command line.
@@ -1047,10 +1047,10 @@ if ($action == 'create') {	// aaa
 					$action = '';
 				} else {
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL') && $sendingmode == 'mail') {
-						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+						setEventMessages($langs->transnoentitiesnoconv(getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL')), null, 'warnings');
 					}
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_NOPHPMAIL') && $sendingmode != 'mail') {
-						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
+						setEventMessages($langs->transnoentitiesnoconv(getDolGlobalString('MAILING_LIMIT_WARNING_NOPHPMAIL')), null, 'warnings');
 					}
 
 					$text = '';
@@ -1062,7 +1062,7 @@ if ($action == 'create') {	// aaa
 					$text .= $langs->trans('ConfirmSendingEmailing').'<br>';
 					$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 
-					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') >= 0) {
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') >= 0) {
 						$text .= '<br><br>';
 						$text .= '<u>'.$langs->trans("AdvancedAlternative").':</u> '.$langs->trans("MailingNeedCommand");
 						$text .= '<br><textarea class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft" disabled>php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';

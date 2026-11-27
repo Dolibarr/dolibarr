@@ -63,7 +63,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		global $langs, $mysoc;
 
 		// Load translation files required by the page
-		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
+		$langs->loadLangs(array("main", "banks", "withdrawals", "companies"));
 
 		$this->db = $db;
 		$this->name = "ban";
@@ -401,7 +401,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		// phpcs:enable
 		global $conf;
 
-		$showdetails = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 0 : getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS');
 		return 1;
 	}
 }
