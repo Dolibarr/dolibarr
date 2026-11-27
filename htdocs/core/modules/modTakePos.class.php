@@ -331,7 +331,8 @@ class modTakePos extends DolibarrModules
 			$searchaccountid = $cashaccount->fetch(0, "CASH-POS");
 			if ($searchaccountid == 0) {
 				$cashaccount->ref = "CASH-POS";
-				$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
+				$cashaccount->label = $langs->transnoentitiesnoconv("DefaultCashPOSLabel");
+				$cashaccount->currency_code = $conf->currency;
 				$cashaccount->courant = 2;
 				$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
 				$cashaccount->date_solde = dol_now();
