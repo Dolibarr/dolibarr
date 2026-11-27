@@ -205,4 +205,21 @@ class AiMcpSchemaTest extends CommonClassTest
 		$this->assertStringNotContainsString('{@const', $cleanDesc);
 		$this->assertEquals('Filter by mode only', $cleanDesc);
 	}
+
+	/**
+	 * testCheckArgumentTypes
+	 *
+	 * @return void
+	 */
+	public function testCheckArgumentTypes()
+	{
+		$schema = array('properties' => array('name' => array('type' => 'string'), 'qty' => array('type' => 'integer'), 'request_data' => array('type' => 'string')));
+
+		$this->assertSame(array('args' => array('name' => 'ACME'), 'error' => ''), McpHandler::checkArgumentTypes(array('name' => array('ACME')), $schema));
+		$this->assertSame(array('args' => array(), 'error' => ''), McpHandler::checkArgumentTypes(array('name' => array()), $schema));
+		$this->assertNotSame('', McpHandler::checkArgumentTypes(array('qty' => array(1, 2)), $schema)['error']);
+		$line = array('product_ref' => 'PINKDRESS', 'qty' => 2);
+		$this->assertSame(array('args' => array('request_data' => $line), 'error' => ''), McpHandler::checkArgumentTypes(array('request_data' => $line), $schema), 'A string of the schema may stand for a PHP array');
+		$this->assertSame(array('args' => array('request_data' => array('product_ref' => 'PINKDRESS')), 'error' => ''), McpHandler::checkArgumentTypes(array('request_data' => array('product_ref' => 'PINKDRESS')), $schema), 'A one-field object is not a one-value list');
+	}
 }

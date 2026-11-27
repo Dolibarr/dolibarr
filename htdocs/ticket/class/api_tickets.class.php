@@ -360,6 +360,11 @@ class Tickets extends DolibarrApi
 	 *   { "id": int (or "contactid"), "type": string (contact type code), "source": "external"|"internal" (default external) }
 	 * The whole creation is atomic: if any contact is invalid, the ticket is not created (rollback + error).
 	 *
+	 * The fields set by core are ignored: id, entity, author (fk_user_create), status
+	 * (status, fk_statut, statut), dates (datec, date_creation, date_read, date_close),
+	 * ip, email_msgid and email_date. A new ticket always gets the default status;
+	 * use the close and assign requests to change it.
+	 *
 	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param array $request_data   Request data
@@ -409,10 +414,23 @@ class Tickets extends DolibarrApi
 		}
 		unset($request_data['contacts']);
 
+		// Fields that are set by core and must not be given, like on the ticket card.
+		// The status is changed with the close and assign requests, which run the triggers.
+		foreach (array('id', 'entity', 'fk_user_create', 'status', 'fk_statut', 'statut', 'datec', 'date_creation', 'date_read', 'date_close', 'ip', 'email_msgid', 'email_date') as $field) {
+			unset($request_data[$field]);
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->ticket->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->ticket->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->ticket);
+				}
 				continue;
 			}
 
@@ -668,6 +686,7 @@ class Tickets extends DolibarrApi
 	 * @throws	RestException	400 socid and fk_soc are different, or status or assigned user changed
 	 * @throws	RestException	403 Not allowed
 	 * @throws	RestException	404 Ticket or thirdparty not found
+	 * @throws	RestException	409 Ticket is closed or canceled
 	 * @throws	RestException	500 Error when updating
 	 */
 	public function put($id, $request_data = null)
@@ -682,6 +701,11 @@ class Tickets extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Like the ticket card, a closed or canceled ticket can not be edited
+		if (in_array((int) $this->ticket->status, array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED), true)) {
+			throw new RestException(409, 'Ticket is closed or canceled');
 		}
 
 		if (!is_array($request_data)) {
@@ -818,6 +842,7 @@ class Tickets extends DolibarrApi
 	 * @throws	RestException	400 Unknown or inactive user
 	 * @throws	RestException	403 Not allowed
 	 * @throws	RestException	404 Ticket not found
+	 * @throws	RestException	409 Ticket closed or canceled
 	 * @throws	RestException	500 Error when assigning
 	 */
 	public function assign($id, $fk_user_assign = 0)
@@ -830,6 +855,10 @@ class Tickets extends DolibarrApi
 		}
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// As on the card, a closed or canceled ticket can not be assigned (assignUser() would reopen it).
+		if (in_array((int) $this->ticket->status, array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED), true)) {
+			throw new RestException(409, 'Ticket is closed or canceled');
 		}
 		$fk_user_assign = (int) $fk_user_assign;
 		if ($fk_user_assign > 0) {
