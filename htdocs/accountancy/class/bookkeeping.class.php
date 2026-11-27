@@ -1684,7 +1684,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param int $piecenum Accounting document to get
 	 * @param string $mode Mode
-	 * @return int <0 if KO, >0 if OK
+	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchPerMvt($piecenum, $mode = '')
 	{
@@ -1704,6 +1704,10 @@ class BookKeeping extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
+			$this->db->free($result);
+			if (!$obj) {
+				return 0;
+			}
 
 			$this->piece_num = $obj->piece_num;
 			$this->code_journal = $obj->code_journal;
