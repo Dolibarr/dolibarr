@@ -2938,12 +2938,12 @@ function getAiQueryKeywords(array $keys, array $synonyms, Translate $langs, Tran
 	}
 	$keywords = array_merge($keywords, $synonyms);
 	if ($isLatin) {
-		$keywords = array_map(static function ($word) {
+		$keywords = array_map(static function (string $word): string {
 			return strtolower(dol_string_unaccent($word));
 		}, $keywords);
 	}
 
-	return array_values(array_unique(array_filter($keywords, static function ($word) {
+	return array_values(array_unique(array_filter($keywords, static function (string $word): bool {
 		return $word !== '';
 	})));
 }
@@ -2966,7 +2966,7 @@ function classifyQueryObjects(string $query, Translate $langs): array
 	foreach (getAiObjectVocabulary() as $object => $vocabulary) {
 		foreach (getAiQueryKeywords($vocabulary['keys'], $vocabulary['synonyms'], $langs, $langsEnUs, true) as $word) {
 			// Each word may be plural ("parties" for "party"); "don" must not match "don't".
-			$pattern = implode('\s+', array_map(static function ($part) {
+			$pattern = implode('\s+', array_map(static function (string $part): string {
 				return preg_replace('/y$/', '(?:y|ies)', preg_quote($part, '/')).'s?';
 			}, preg_split('/\s+/', $word)));
 			if (preg_match('/\b'.$pattern.'\b(?![\'’]t\b)/u', $searchQuery)) {
