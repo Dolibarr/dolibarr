@@ -312,10 +312,10 @@ class Lettering extends BookKeeping
 
 		// Check partial / normal lettering case
 		$idlist = implode(',', array_map('intval', $ids));
-		$sql = "SELECT ab.lettering_code, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
+		$sql = "SELECT ab.lettering_code, ab.subledger_account, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
 		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
-		$sql .= " GROUP BY ab.lettering_code";
+		$sql .= " GROUP BY ab.lettering_code, ab.subledger_account";
 		$sql .= " ORDER BY ab.lettering_code DESC";
 
 		dol_syslog(__METHOD__ . " - Check partial / normal lettering case", LOG_DEBUG);
@@ -339,6 +339,8 @@ class Lettering extends BookKeeping
 					$sql2 .= ", date_lettering = NULL";
 					$sql2 .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 					$sql2 .= " AND lettering_code = '" . $this->db->escape($obj->lettering_code) . "'";
+					$sql2 .= " AND subledger_account = '" . $this->db->escape($obj->subledger_account) . "'";
+					$sql2 .= " AND matching_general = 0";
 
 					dol_syslog(__METHOD__ . " - Remove partial lettering", LOG_DEBUG);
 					$resql2 = $this->db->query($sql2);
