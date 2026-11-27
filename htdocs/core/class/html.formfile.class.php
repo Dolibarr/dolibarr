@@ -1935,7 +1935,9 @@ class FormFile
 				var lines = jQuery(input).closest("table").find("tr.oddeven[data-filename]");
 				lines.each(function() {
 					var filename = String(jQuery(this).attr("data-filename") || "").toLowerCase();
-					jQuery(this).toggle(search == "" || filename.indexOf(search) >= 0);
+					/* A line found server side by the content of the file stays visible for the text that found it */
+					var foundincontent = String(jQuery(this).attr("data-foundincontent") || "").toLowerCase();
+					jQuery(this).toggle(search == "" || filename.indexOf(search) >= 0 || (foundincontent != "" && foundincontent.indexOf(search) >= 0));
 				});
 				/* Keep the bottom border and rounded corners on the last visible line */
 				lines.removeClass("lastvisible");
@@ -1973,7 +1975,7 @@ class FormFile
 	 *	Show list of documents in a directory of ECM module.
 	 *
 	 *  @param	string	$upload_dir         Directory that was scanned. This directory will contains files into subdirs REF/files
-	 *	@param array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}>	$filearray Array of files loaded by dol_dir_list('files') function before calling this.
+	 *	@param array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,foundincontent?:int}>	$filearray Array of files loaded by dol_dir_list('files') function before calling this (foundincontent=1 when found by the content of the file).
 	 *  @param  string	$modulepart         Value for modulepart used by download wrapper. Value can be $object->table_name (that is 'myobject' or 'mymodule_myobject') or $object->element.'-'.$module (for compatibility purpose)
 	 *  @param  string	$param              Parameters on sort links
 	 *  @param  int		$forcedownload      Force to open dialog box "Save As" when clicking on file
@@ -2033,7 +2035,13 @@ class FormFile
 			// Ref
 			print '<td class="liste_titre"></td>';
 			// Name
-			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone search_doc_ref" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'" autocomplete="off"></td>';
+			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone search_doc_ref" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"';
+			if (getDolGlobalString('MAIN_SAVE_FILE_CONTENT_AS_TEXT')) {
+				// The files are indexed: the search also finds them by their content (see ajaxdirpreview.php)
+				$langs->load('ecm');
+				print ' placeholder="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("ECMSearchFileNameOrContent")).'" title="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("ECMSearchFileNameOrContent")).'"';
+			}
+			print ' autocomplete="off"></td>';
 			// Size
 			print '<td class="liste_titre"></td>';
 			// Date
@@ -2298,7 +2306,12 @@ class FormFile
 				}
 
 				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
-				print '<tr class="oddeven" data-filename="'.dolPrintHTMLForAttribute($file['name']).'">';
+				print '<tr class="oddeven" data-filename="'.dolPrintHTMLForAttribute($file['name']).'"';
+				if (!empty($file['foundincontent'])) {
+					// Found by its content, keywords or description: the filter on file name, client side, must keep the line for this text
+					print ' data-foundincontent="'.dolPrintHTMLForAttribute((string) $search_doc_ref).'"';
+				}
+				print '>';
 				if ($enablebulkdownload) {
 					print '<td class="center">';
 					print '<input type="checkbox" class="flat checkforselect" name="selectedfiles[]" value="'.dol_escape_htmltag($relativefile).'">';
