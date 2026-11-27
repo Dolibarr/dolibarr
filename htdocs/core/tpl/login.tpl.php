@@ -176,7 +176,10 @@ if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid_connect/', $conf->file->main_authentication)) {
 	// Set a cookie to transfer rollback page information
 	$prefix = dol_getprefix('');
-	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
+	// A background (ajax) call, like the tooltip of a link, is not a page to come back to: the login form would be
+	// posted to it after login (for example to core/ajax/ajaxtooltip.php) and the user would land on an error page.
+	$isajaxcall = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
+	if (empty($_COOKIE["DOL_rollback_url_$prefix"]) && !$isajaxcall) {
 		dolSetCookie('DOL_rollback_url_'.$prefix, $_SERVER['REQUEST_URI'], time() + 3600);	// $_SERVER["REQUEST_URI"] is for example /mydolibarr/mypage.php
 	}
 
