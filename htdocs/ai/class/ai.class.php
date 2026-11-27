@@ -274,7 +274,7 @@ class Ai
 					$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
 				}
 				$arrayforpayload['messages'][] = array('role' => 'user', 'content' => $fullInstructions);
-				$arrayforpayload = $this->addReasoningEffort($arrayforpayload);
+				$arrayforpayload = $this->addServiceOptions($arrayforpayload);
 			}
 		}
 
@@ -723,20 +723,24 @@ class Ai
 			),
 			'model' => $model
 		);
-		return array('payload' => $this->addReasoningEffort($payload), 'function' => 'docparsing');
+		return array('payload' => $this->addServiceOptions($payload), 'function' => 'docparsing');
 	}
 
 	/**
-	 * Add the reasoning effort of the service to an OpenAI-compatible payload, when one is set
+	 * Add the reasoning effort and the temperature of the service to an OpenAI-compatible payload, when they are set
 	 *
 	 * @param	array<string,mixed>	$payload	Payload
 	 * @return	array<string,mixed>				Payload
 	 */
-	private function addReasoningEffort(array $payload): array
+	private function addServiceOptions(array $payload): array
 	{
 		$reasoningEffort = getAiReasoningEffort($this->apiService);
 		if ($reasoningEffort !== '') {
 			$payload['reasoning_effort'] = $reasoningEffort;
+		}
+		$temperature = getAiTemperature($this->apiService);
+		if ($temperature !== null) {
+			$payload['temperature'] = $temperature;
 		}
 
 		return $payload;

@@ -103,6 +103,36 @@ function getAiReasoningEffort(string $service): string
 }
 
 /**
+ * Return the values accepted for the temperature of OpenAI-compatible APIs
+ *
+ * @return string[]
+ */
+function getListOfAiTemperatures(): array
+{
+	return array('0.1', '0.2', '0.3', '0.5', '0.7', '1', '1.5', '2');
+}
+
+/**
+ * Return the temperature to send to an OpenAI-compatible API of a service, from the constant AI_API_<SERVICE>_TEMPERATURE
+ *
+ * @param	string		$service	Code of the AI service ('custom', 'chatgpt', ...)
+ * @return	float|null				One value of getListOfAiTemperatures(), or null to keep the default of the model
+ */
+function getAiTemperature(string $service): ?float
+{
+	$temperature = getDolGlobalString('AI_API_'.strtoupper($service).'_TEMPERATURE');
+	if ($temperature === '') {
+		return null;
+	}
+	if (!in_array($temperature, getListOfAiTemperatures(), true)) {
+		dol_syslog("getAiTemperature: invalid value '".$temperature."' for service ".$service.", ignored", LOG_WARNING);
+		return null;
+	}
+
+	return (float) $temperature;
+}
+
+/**
  * Get list of available ai services
  *
  * @return array<int|string,mixed>
