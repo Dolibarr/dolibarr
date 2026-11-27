@@ -639,6 +639,12 @@ if ($search_status != '') {
 if ($search_categ > 0) {
 	$param .= '&search_categ='.urlencode((string) ($search_categ));
 }
+if ($search_thirdparty != '') {
+	$param .= '&search_thirdparty='.urlencode((string) $search_thirdparty);
+}
+if ($search_job != '') {
+	$param .= '&search_job='.urlencode((string) $search_job);
+}
 if ($search_warehouse > 0) {
 	$param .= '&search_warehouse='.urlencode($search_warehouse);
 }
