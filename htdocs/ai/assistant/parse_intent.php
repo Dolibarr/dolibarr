@@ -691,7 +691,7 @@ try {
 			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
 
 			// Only the tools of the objects named in the query, else the category filter
-			$toolsSchema = filterToolsByObjects($llmToolsBase, classifyQueryObjects($queryForIntent, $langs, $llmToolsBase), $detectedCategories);
+			$toolsSchema = getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT') ? array() : filterToolsByObjects($llmToolsBase, classifyQueryObjects($queryForIntent, $langs, $llmToolsBase), $detectedCategories);
 			if (empty($toolsSchema)) {
 				$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
 			}
