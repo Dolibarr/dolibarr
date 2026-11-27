@@ -668,4 +668,29 @@ class RestAPITicketTest extends AbstractRestAPITest
 		$this->getUrl('tickets/'.$ticket_id.'/contact/1/NOTATYPE', $test, 'POST', array("source" => "internal"), 400);
 		$this->assertNotContains(1, $this->getTicketContactIds($test, $ticket_id, 'internal'), "$test The internal contact must not be linked");
 	}
+
+	/**
+	 * Assign or unassign a closed or canceled ticket, it must not be reopened
+	 *
+	 * @return void
+	 */
+	public function testRestTicketAssignClosedOrCanceled()
+	{
+		// Status closed (8) or canceled (9)
+		foreach (array(0 => 8, 1 => 9) as $cancel => $closedstatus) {
+			$test = "Assign a ".($cancel ? "canceled" : "closed")." ticket";
+
+			$ticket_id = $this->createTicket($test);
+			$result = $this->getUrl('tickets/'.$ticket_id.'/close', $test, 'POST', array("cancel" => $cancel));
+			$this->assertEquals($closedstatus, (int) $result['content']['status'], "$test The ticket must be closed or canceled");
+			$fk_user_assign = (int) ($result['content']['fk_user_assign'] ?? 0);
+
+			$this->getUrl('tickets/'.$ticket_id.'/assign', $test, 'POST', array("fk_user_assign" => 1), 409);
+			$this->getUrl('tickets/'.$ticket_id.'/assign', "$test (unassign)", 'POST', array("fk_user_assign" => 0), 409);
+
+			$result = $this->getUrl('tickets/'.$ticket_id, $test);
+			$this->assertEquals($closedstatus, (int) $result['content']['status'], "$test The status must not be changed");
+			$this->assertEquals($fk_user_assign, (int) ($result['content']['fk_user_assign'] ?? 0), "$test The assigned user must not be changed");
+		}
+	}
 }
