@@ -762,6 +762,9 @@ ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN doc_date_hour datetime NUL
 -- VPGSQL8.2 UPDATE llx_accounting_bookkeeping SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
 -- VPGSQL8.2 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
 
+ALTER TABLE llx_workstation_workstation ADD COLUMN model_pdf varchar(255) AFTER import_key;
+ALTER TABLE llx_workstation_workstation ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
+
 -- Remove the system prompt of the AI assistant saved by previous versions, so the new default prompt of v25 is used
 --noqa:disable=PRS
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'AI_INTENT_PROMPT';
