@@ -912,7 +912,7 @@ function write_conf_file($conffile)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/conffilemanager.class.php';
 	$confmanager = new ConfFileManager();
 
-	$values = array(
+	$values = [
 		'dolibarr_main_url_root' => trim($main_url),
 		'dolibarr_main_document_root' => dol_sanitizePathName(trim($main_dir)),
 		'dolibarr_main_url_root_alt' => trim("/".$main_alt_dir_name),
@@ -930,9 +930,9 @@ function write_conf_file($conffile)
 		'dolibarr_main_force_https' => $main_force_https,
 		'dolibarr_main_instance_unique_id' => bin2hex(random_bytes(32)),
 		'dolibarr_main_distrib' => trim($dolibarr_main_distrib),
-	);
+	];
 
-	$forcedpaths = array(
+	$forcedpaths = [
 		'dolibarr_lib_FPDF_PATH' => $force_dolibarr_lib_FPDF_PATH,
 		'dolibarr_lib_TCPDF_PATH' => $force_dolibarr_lib_TCPDF_PATH,
 		'dolibarr_lib_FPDI_PATH' => $force_dolibarr_lib_FPDI_PATH,
@@ -941,19 +941,19 @@ function write_conf_file($conffile)
 		'dolibarr_lib_NUSOAP_PATH' => $force_dolibarr_lib_NUSOAP_PATH,
 		'dolibarr_lib_ODTPHP_PATH' => $force_dolibarr_lib_ODTPHP_PATH,
 		'dolibarr_lib_ODTPHP_PATHTOPCLZIP' => $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP,
-	);
+	];
 	foreach ($forcedpaths as $pathkey => $pathvalue) {
 		if (!empty($pathvalue)) {
 			$values[$pathkey] = dol_sanitizePathName($pathvalue);
 		}
 	}
-	$forcedvalues = array(
+	$forcedvalues = [
 		'dolibarr_js_CKEDITOR' => $force_dolibarr_js_CKEDITOR,
 		'dolibarr_js_JQUERY' => $force_dolibarr_js_JQUERY,
 		'dolibarr_js_JQUERY_UI' => $force_dolibarr_js_JQUERY_UI,
 		'dolibarr_font_DOL_DEFAULT_TTF' => $force_dolibarr_font_DOL_DEFAULT_TTF,
 		'dolibarr_font_DOL_DEFAULT_TTF_BOLD' => $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD,
-	);
+	];
 	foreach ($forcedvalues as $forcedkey => $forcedvalue) {
 		if (!empty($forcedvalue)) {
 			$values[$forcedkey] = $forcedvalue;

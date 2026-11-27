@@ -118,14 +118,14 @@ class ConfFileManagerTest extends CommonClassTest
 	{
 		$confmanager = new ConfFileManager();
 
-		$values = array(
+		$values = [
 			'dolibarr_main_url_root' => 'http://localhost/dolibarr',
 			'dolibarr_main_document_root' => '/var/www/dolibarr/htdocs',
 			'dolibarr_main_db_host' => 'localhost',
 			'dolibarr_main_db_name' => 'mydb',
 			'dolibarr_main_db_user' => 'myuser',
 			'dolibarr_main_instance_unique_id' => str_repeat('a', 64),
-		);
+		];
 
 		$content = $confmanager->build($values);
 
@@ -160,7 +160,7 @@ class ConfFileManagerTest extends CommonClassTest
 	public function testBuildSecurityRawDefault()
 	{
 		$confmanager = new ConfFileManager();
-		$content = $confmanager->build(array());
+		$content = $confmanager->build([]);
 
 		$this->assertTrue($confmanager->validateSyntax($content));
 
@@ -177,7 +177,7 @@ class ConfFileManagerTest extends CommonClassTest
 	public function testStreamToDisableKeepsZip()
 	{
 		$confmanager = new ConfFileManager();
-		$vars = $this->evalConfContent($confmanager->build(array()));
+		$vars = $this->evalConfContent($confmanager->build([]));
 
 		$this->assertNotContains('zip', $vars['dolibarr_main_stream_to_disable'], 'The zip stream is required by the Excel import');
 	}
@@ -190,7 +190,7 @@ class ConfFileManagerTest extends CommonClassTest
 	public function testBuildKeepsWindowsPath()
 	{
 		$confmanager = new ConfFileManager();
-		$vars = $this->evalConfContent($confmanager->build(array('dolibarr_main_document_root' => 'C:\\dolibarr\\htdocs')));
+		$vars = $this->evalConfContent($confmanager->build(['dolibarr_main_document_root' => 'C:\\dolibarr\\htdocs']));
 
 		$this->assertSame('C:\\dolibarr\\htdocs', $vars['dolibarr_main_document_root']);
 	}
@@ -204,7 +204,7 @@ class ConfFileManagerTest extends CommonClassTest
 	{
 		$confmanager = new ConfFileManager();
 
-		$vars = $this->evalConfContent($confmanager->build(array()));
+		$vars = $this->evalConfContent($confmanager->build([]));
 
 		$this->assertSame('mysqli', $vars['dolibarr_main_db_type'], 'Missing db_type must default to mysqli, not empty');
 		$this->assertSame('localhost', $vars['dolibarr_main_db_host'], 'Missing db_host must default to localhost');
