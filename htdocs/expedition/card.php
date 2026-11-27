@@ -3092,11 +3092,15 @@ if ($action == 'create') {
 			}
 
 			// Set Billed and Closed
-			if ($object->status == Expedition::STATUS_VALIDATED) {
+			if ($object->status == Expedition::STATUS_VALIDATED || $object->status == Expedition::STATUS_CLOSED) {
 				if ($user->hasRight('expedition', 'creer') && $object->status > 0) {
 					if (!$object->billed && getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT') !== '0') {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&token='.newToken().'&id='.$object->id, '');
 					}
+				}
+			}
+			if ($object->status == Expedition::STATUS_VALIDATED) {
+				if ($user->hasRight('expedition', 'creer') && $object->status > 0) {
 					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"] . '?action=classifyclosed&token=' . newToken() . '&id=' . $object->id, '');
 				}
 			}
