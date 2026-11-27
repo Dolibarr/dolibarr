@@ -100,16 +100,13 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 */
 	public function getExample()
 	{
-		global $db, $langs, $user;
+		global $db, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/holiday/class/holiday.class.php';
 
 		$holiday = new Holiday($db);
 		$holiday->initAsSpecimen();
 
-		$old_login = $user->login;
-		$user->login = 'UUUUUUU';
-		$numExample = $this->getNextValue($user, $holiday);
-		$user->login = $old_login;
+		$numExample = $this->getNextValue(null, $holiday);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -138,7 +135,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 			return 0;
 		}
 
-		$numFinal = get_next_value($db, $mask, 'holiday', 'ref', '', $objsoc, $holiday->date_create);
+		$numFinal = get_next_value($db, $mask, 'holiday', 'ref', '', $objsoc, $holiday->date_creation);
 
 		return  $numFinal;
 	}

@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Hyväksytty
 StatusReceptionProcessedShort=Käsitelty
 ReceptionSheet=Vastaanottolomake
 ValidateReception=Vahvista vastaanotto
+DeleteReception=Delete reception
 ConfirmDeleteReception=Haluatko varmasti poistaa tämän vastaanoton?
 ConfirmValidateReception=Haluatko varmasti vahvistaa tämän vastaanoton viitteellä <b>%s</b>?
 ConfirmCancelReception=Haluatko varmasti peruuttaa tämän vastaanoton?

@@ -182,8 +182,8 @@ class pdf_octopus extends ModelePDFFactures
 			$conf->global->USE_RETAINED_WARRANTY_ONLY_FOR_SITUATION_FINAL = 1;
 		}
 
-		// If hidden option INVOICE_USE_SITUATION is set to 2, we can show the invoice situation template
-		if (getDolGlobalString('INVOICE_USE_SITUATION') == 2) {
+		// If hidden option INVOICE_USE_SITUATION is not 1 (bugged version), we can show this invoice situation document template
+		if (getDolGlobalString('INVOICE_USE_SITUATION') && getDolGlobalString('INVOICE_USE_SITUATION') != 1) {
 			$this->version = 'dolibarr';
 		}
 
@@ -937,7 +937,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 					// Collect total by value of vat rate into $this->tva_array
 					if ($object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE && $object->lines[$i]->product_type != 9) {
-						$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') == 2 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
+						$prev_progress = getDolGlobalInt('INVOICE_USE_SITUATION') != 1 ? 0 : $object->lines[$i]->get_prev_progress($object->id);
 						if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 								$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
@@ -1100,7 +1100,7 @@ class pdf_octopus extends ModelePDFFactures
 				}
 				// Add terms to sale
 				$termsofsalefilename = getDolGlobalString('MAIN_INFO_INVOICE_TERMSOFSALE');
-				if (getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE') && $termsofsalefilename) {
+				if ($this->mustAddTermsOfSale($object, 'INVOICE') && $termsofsalefilename) {
 					$termsofsale = $conf->invoice->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->invoice->multidir_output[$object->entity ?? $conf->entity])) {
 						$termsofsale = $conf->invoice->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
@@ -1573,10 +1573,10 @@ class pdf_octopus extends ModelePDFFactures
 				$posy = $pdf->GetY();
 			}
 
-			// Show if Option VAT debit option is on also if transmitter is french
-			// Decret n°2099-1299 2022-10-07
+			// Show if Option VAT debit option is on also if transmitter is french and subject to VAT
+			// Decret n°2022-1299 2022-10-07
 			// French legal mention: "Option pour le paiement de la taxe d'apres les debits"
-			if ($this->emetteur->country_code == 'FR') {
+			if ($this->emetteur->country_code == 'FR' && !empty($this->emetteur->tva_assuj)) {
 				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, null, null, $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
@@ -1601,7 +1601,7 @@ class pdf_octopus extends ModelePDFFactures
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					global $langs;
 
-					$langs->loadLangs(array('payment', 'stripe'));
+					$langs->loadLangs(array('stripe'));
 					$servicename = $langs->transnoentities('Online');
 					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0, '', 0);
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
@@ -2303,7 +2303,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

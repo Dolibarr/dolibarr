@@ -62,7 +62,7 @@ class Ai
 
 
 	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return only the content of the message. Do not add explanation.';	// Note: This instruction will also be completed by generateContent() to manage text versus HTML content.
-	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
+	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag with an attribute id="<randomhash>" and contenteditable="true" and class="websitepagesection". Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, answer with one and only one translation with no comment and explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER = 'You are a proofreader, write your response in the same language as the original text in order to correct spelling and grammar errors. If there is carriage return or line feed in original message, keep them. Keep also any HTML or markdown formatting without changing it or adding one, just fix spelling and grammar errors in text content. Answer with the corrected text and the original HTML formatting if there was, with no additional comment and explanation even to highlight the fixed errors.';
@@ -93,6 +93,218 @@ class Ai
 	public function getApiService()
 	{
 		return $this->apiService;
+	}
+
+	/**
+	 * Return the model to use for a feature. When model is empty or 'auto', it is the model set into the setup of
+	 * the AI module for the type of feature, or the default model of the AI service.
+	 *
+	 * @param	string	$model		Model name, or '' or 'auto'
+	 * @param	string	$function	Code of the feature ('textgeneration', 'textgenerationwebpage', 'imagegeneration', ...)
+	 * @return	string				Model name
+	 */
+	public function getModel($model = 'auto', $function = 'textgeneration')
+	{
+		$arrayofai = getListOfAIServices();
+
+		if (empty($model) || $model == 'auto') {
+			// Return the model from $this->apiService.
+			if (in_array($function, array('file', 'assistant', 'thread'))) {
+				$model = '';
+			} elseif ($function == 'imagegeneration') {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_IMAGE', $arrayofai[$this->apiService][$function]['default']);
+			} elseif ($function == 'audiogeneration') {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_AUDIO', $arrayofai[$this->apiService][$function]['default']);
+			} elseif ($function == 'transcription') {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSCRIPT', $arrayofai[$this->apiService][$function]['default']);
+			} elseif ($function == 'translation') {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSLATE', $arrayofai[$this->apiService][$function]['default']);
+			} elseif (in_array($function, array('docparsing', 'ocr'))) {
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService]['docparsing']['default']);
+			} else {
+				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize', 'textrephraser', 'textspellchecker', ...
+				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']['default']);
+			}
+		}
+
+		return $model;
+	}
+
+	/**
+	 * Return the label of the AI service and of the model used for a feature (e.g. "ChatGPT (OpenAI) - gpt-5.6").
+	 *
+	 * @param	string	$function	Code of the feature ('textgeneration', 'textgenerationwebpage', 'imagegeneration', ...)
+	 * @param	string	$model		Model name, or '' or 'auto'
+	 * @return	string				Label of service and model, or '' if no valid AI service is set
+	 */
+	public function getServiceAndModelLabel($function = 'textgeneration', $model = 'auto')
+	{
+		$arrayofai = getListOfAIServices();
+		if (empty($this->apiService) || $this->apiService == '-1' || empty($arrayofai[$this->apiService]['label'])) {
+			return '';
+		}
+
+		$label = $arrayofai[$this->apiService]['label'];
+		$model = $this->getModel($model, $function);
+		if (!empty($model)) {
+			$label .= ' - '.$model;
+		}
+
+		return $label;
+	}
+
+	/**
+	 * Build the payload sent to the AI service, with the system prompt (prePrompt) and the user prompt (instructions + postPrompt)
+	 * defined into the setup of the AI module for the feature. Nothing is sent, so it can also be used to show the payload.
+	 *
+	 * @param   string|array<mixed,mixed>	$instructions   String instruction, or array of payload (used as is), or ID of thread with function 'thread'
+	 * @param   string  					$model          Model name (already resolved, see getModel())
+	 * @param   string  					$function     	Code of the feature ('textgeneration', 'textgenerationwebpage', ...)
+	 * @param	string						$format			Format for output ('', 'html', ...)
+	 * @return  array{payload:string|array<mixed,mixed>|false,arrayforpayload:array<mixed,mixed>,fullInstructions:string,prePrompt:string}	Payload (JSON string), payload as array, user prompt and system prompt
+	 */
+	public function buildPayload($instructions, $model, $function = 'textgeneration', $format = '')
+	{
+		$arrayforpayload = array();
+
+		$configurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
+		$configurations = json_decode($configurationsJson, true);
+
+		$prePrompt = '';
+		$postPrompt = '';
+
+		if (isset($configurations[$function])) {
+			if (isset($configurations[$function]['prePrompt'])) {
+				$prePrompt = $configurations[$function]['prePrompt'];
+			}
+
+			if (isset($configurations[$function]['postPrompt'])) {
+				$postPrompt = $configurations[$function]['postPrompt'];
+			}
+		}
+		//var_dump($prePrompt);
+
+		// Get the default value of prePrompt if not defined
+		if (empty($prePrompt) && $function == 'textgenerationemail') {
+			$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EMAIL;
+			if ($format === 'html') {
+				$prePrompt .= ' Return all HTML content inside a section tag';
+			} else {
+				$prePrompt .= ' Return content in UTF8 text. Use Linux carriage return if you need to split a line. Do not include any HTML tag neither HTML entities.';
+			}
+		}
+		if (empty($prePrompt) && $function == 'textgenerationwebpage') {
+			$prePrompt = self::AI_DEFAULT_PROMPT_FOR_WEBPAGE;
+		}
+		if (empty($prePrompt) && $function == 'textgenerationextrafield') {
+			$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER;
+		}
+		if (empty($prePrompt) && $function == 'texttranslation') {
+			$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION;
+		}
+		if (empty($prePrompt) && $function == 'textsummarize') {
+			$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE;
+		}
+		if (empty($prePrompt) && $function == 'textrephraser') {
+			$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER;
+		}
+		if (empty($prePrompt) && $function == 'textspellchecker') {
+			$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER;
+		}
+		if (empty($prePrompt) && $function == 'docparsing') {
+			$prePrompt = self::AI_DEFAULT_PROMPT_FOR_DOC_PARSING;
+		}
+
+		if (is_array($instructions)) {
+			$arrayforpayload = $instructions;
+			$fullInstructions = '';
+		} else {
+			$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
+
+			// Set payload string
+			/*{
+				"messages": [
+				{
+					"content": "You are a helpful assistant.",
+					"role": "system"
+				},
+				{
+					"content": "Hello!",
+					"role": "user"
+				}
+				],
+				"model": "tinyllama-1.1b",
+				"stream": true,
+				"max_tokens": 2048,
+				"stop": [
+					"hello"
+				],
+				"frequency_penalty": 0,
+				"presence_penalty": 0,
+				"temperature": 0.7,
+				"top_p": 0.95
+			}*/
+
+			// Add a system message
+			$addDateTimeContext = false;
+			if ($addDateTimeContext) {		// @phpstan-ignore-line
+				$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
+			}
+
+			if ($this->apiService == 'google') {
+				// Google Gemini native payload format (different from OpenAI's "messages").
+				$arrayforpayload = array(
+					'contents' => array(
+						array('role' => 'user', 'parts' => array(array('text' => $fullInstructions)))
+					)
+				);
+				if ($prePrompt) {
+					$arrayforpayload['system_instruction'] = array(
+						'parts' => array(array('text' => $prePrompt))
+					);
+				}
+			} else {
+				// OpenAI-compatible payload format (chatgpt, mistral, groq, anthropic-compat, custom, ...)
+				// The system message must come before the user message (expected order of OpenAI-compatible APIs)
+				$arrayforpayload = array(
+					'messages' => array(),
+					'model' => $model,
+				);
+				if ($prePrompt) {
+					$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
+				}
+				$arrayforpayload['messages'][] = array('role' => 'user', 'content' => $fullInstructions);
+				$arrayforpayload = $this->addReasoningEffort($arrayforpayload);
+			}
+		}
+
+		// For document parsing, ask the services that support it to return only a valid JSON
+		if ($function == 'docparsing' && !is_array($instructions)) {
+			if ($this->apiService == 'google') {
+				$arrayforpayload['generationConfig'] = array('responseMimeType' => 'application/json');
+			} elseif (in_array($this->apiService, array('chatgpt', 'groq', 'mistral', 'deepseek'))) {
+				$arrayforpayload['response_format'] = array('type' => 'json_object');
+			}
+		}
+
+		/*
+		$arrayforpayload['temperature'] = 0.7;
+		$arrayforpayload['max_tokens'] = -1;
+		$arrayforpayload['stream'] = false;
+		*/
+
+		if ($function == 'thread') {
+			$payload = $instructions;
+		} else {
+			$payload = json_encode($arrayforpayload);
+		}
+
+		return array(
+			'payload' => $payload,
+			'arrayforpayload' => $arrayforpayload,
+			'fullInstructions' => $fullInstructions,
+			'prePrompt' => $prePrompt,
+		);
 	}
 
 	/**
@@ -144,6 +356,9 @@ class Ai
 			} elseif ($function == 'thread') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'threads';
+			} elseif ($function == 'ocr') {
+				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
+				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'ocr';
 			} else {	// if $function == 'docparsing', 'text...', ...
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				if ($this->apiService == 'google') {
@@ -161,35 +376,17 @@ class Ai
 		}
 
 
-		// $model may be undefined or 'auto'.
-		// If this is the case, we must get it from $function and $this->apiService
-		if (empty($model) || $model == 'auto') {
-			// Return the model from $this->apiService.
-			if (in_array($function, array('file', 'assistant', 'thread'))) {
-				$model = '';
-			} elseif ($function == 'imagegeneration') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_IMAGE', $arrayofai[$this->apiService][$function]['default']);
-			} elseif ($function == 'audiogeneration') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_AUDIO', $arrayofai[$this->apiService][$function]['default']);
-			} elseif ($function == 'transcription') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSCRIPT', $arrayofai[$this->apiService][$function]['default']);
-			} elseif ($function == 'translation') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TRANSLATE', $arrayofai[$this->apiService][$function]['default']);
-			} elseif ($function == 'docparsing') {
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', $arrayofai[$this->apiService][$function]['default']);
-			} else {
-				// else 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize', 'textrephraser', 'textspellchecker', ...
-				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_TEXT', $arrayofai[$this->apiService]['textgeneration']['default']);
-			}
-		}
+		// $model may be undefined or 'auto'. If this is the case, we must get it from $function and $this->apiService
+		$model = $this->getModel($model, $function);
 
 		// Google Gemini: append /models/<model>:generateContent now that $model is resolved.
-		if ($this->apiService == 'google' && !in_array($function, array('file', 'assistant', 'thread'))
+		if ($this->apiService == 'google' && !in_array($function, array('file', 'assistant', 'thread', 'ocr'))
 			&& strpos($this->apiEndpoint, ':generateContent') === false) {
 			$this->apiEndpoint .= '/models/'.rawurlencode($model).':generateContent';
 		}
 
 		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model.", format=".$format);
+
 		if (getDolGlobalString("AI_DEBUG")) {
 			if (@is_writable($dolibarr_main_data_root)) {	// Avoid fatal error on fopen with open_basedir
 				$outputfile = $dolibarr_main_data_root."/dolibarr_ai.log";
@@ -210,134 +407,10 @@ class Ai
 				throw new Exception('The AI service '.$this->apiService.' is not yet supported for the type of request '.$function);
 			}
 
-			$configurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
-			$configurations = json_decode($configurationsJson, true);
-
-			$prePrompt = '';
-			$postPrompt = '';
-
-			if (isset($configurations[$function])) {
-				if (isset($configurations[$function]['prePrompt'])) {
-					$prePrompt = $configurations[$function]['prePrompt'];
-				}
-
-				if (isset($configurations[$function]['postPrompt'])) {
-					$postPrompt = $configurations[$function]['postPrompt'];
-				}
-			}
-			//var_dump($prePrompt);
-
-			// Get the default value of prePrompt if not defined
-			if (empty($prePrompt) && $function == 'textgenerationemail') {
-				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EMAIL;
-				if ($format === 'html') {
-					$prePrompt .= ' Return all HTML content inside a section tag';
-				} else {
-					$prePrompt .= ' Return content in UTF8 text. Use Linux carriage return if you need to split a line. Do not include any HTML tag neither HTML entities.';
-				}
-			}
-			if (empty($prePrompt) && $function == 'textgenerationwebpage') {
-				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_WEBPAGE;
-			}
-			if (empty($prePrompt) && $function == 'textgenerationextrafield') {
-				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER;
-			}
-			if (empty($prePrompt) && $function == 'texttranslation') {
-				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION;
-			}
-			if (empty($prePrompt) && $function == 'textsummarize') {
-				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE;
-			}
-			if (empty($prePrompt) && $function == 'textrephraser') {
-				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER;
-			}
-			if (empty($prePrompt) && $function == 'textspellchecker') {
-				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_SPELLCHECKER;
-			}
-			if (empty($prePrompt) && $function == 'docparsing') {
-				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_DOC_PARSING;
-			}
-
-			if (is_array($instructions)) {
-				$arrayforpayload = $instructions;
-				$fullInstructions = '';
-			} else {
-				$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
-
-				// Set payload string
-				/*{
-					"messages": [
-					{
-						"content": "You are a helpful assistant.",
-						"role": "system"
-					},
-					{
-						"content": "Hello!",
-						"role": "user"
-					}
-					],
-					"model": "tinyllama-1.1b",
-					"stream": true,
-					"max_tokens": 2048,
-					"stop": [
-						"hello"
-					],
-					"frequency_penalty": 0,
-					"presence_penalty": 0,
-					"temperature": 0.7,
-					"top_p": 0.95
-				}*/
-
-				// Add a system message
-				$addDateTimeContext = false;
-				if ($addDateTimeContext) {		// @phpstan-ignore-line
-					$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
-				}
-
-				if ($this->apiService == 'google') {
-					// Google Gemini native payload format (different from OpenAI's "messages").
-					$arrayforpayload = array(
-						'contents' => array(
-							array('role' => 'user', 'parts' => array(array('text' => $fullInstructions)))
-						)
-					);
-					if ($prePrompt) {
-						$arrayforpayload['system_instruction'] = array(
-							'parts' => array(array('text' => $prePrompt))
-						);
-					}
-				} else {
-					// OpenAI-compatible payload format (chatgpt, mistral, groq, anthropic-compat, custom, ...)
-					$arrayforpayload = array(
-						'messages' => array(array('role' => 'user', 'content' => $fullInstructions)),
-						'model' => $model,
-					);
-					if ($prePrompt) {
-						$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
-					}
-				}
-			}
-
-			// For document parsing, ask the services that support it to return only a valid JSON
-			if ($function == 'docparsing' && !is_array($instructions)) {
-				if ($this->apiService == 'google') {
-					$arrayforpayload['generationConfig'] = array('responseMimeType' => 'application/json');
-				} elseif (in_array($this->apiService, array('chatgpt', 'groq', 'mistral', 'deepseek'))) {
-					$arrayforpayload['response_format'] = array('type' => 'json_object');
-				}
-			}
-
-			/*
-			$arrayforpayload['temperature'] = 0.7;
-			$arrayforpayload['max_tokens'] = -1;
-			$arrayforpayload['stream'] = false;
-			*/
-
-			if ($function == 'thread') {
-				$payload = $instructions;
-			} else {
-				$payload = json_encode($arrayforpayload);
-			}
+			$builtpayload = $this->buildPayload($instructions, $model, $function, $format);
+			$payload = $builtpayload['payload'];
+			$fullInstructions = $builtpayload['fullInstructions'];
+			$prePrompt = $builtpayload['prePrompt'];
 
 			if ($this->apiService == 'google') {
 				// Google Gemini uses the x-goog-api-key header (Bearer is not accepted by the native API).
@@ -364,9 +437,9 @@ class Ai
 					$fp = fopen($outputfile, "a");
 
 					if ($fp) {
-						if ($function == 'docparsing') {
+						if ($function == 'docparsing' || $function == 'ocr') {
 							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following file to upload:\n");
-							fwrite($fp, $instructions."\n");
+							fwrite($fp, (is_string($instructions) ? $instructions : var_export($instructions, true))."\n");
 						} else {
 							fwrite($fp, "Call endpoint ".$this->apiEndpoint." with POST and the following message:\n");
 							fwrite($fp, $fullInstructions."\n");
@@ -374,7 +447,12 @@ class Ai
 							fwrite($fp, $prePrompt."\n");
 						}
 						fwrite($fp, "HTTP Header\n");
-						fwrite($fp, var_export($headers, true)."\n");
+						// The API key is masked (only the 5 first chars are kept) so it is not written in clear into the log file
+						$headersforlog = $headers;
+						if ((string) $this->apiKey !== '') {
+							$headersforlog = str_replace((string) $this->apiKey, dol_substr((string) $this->apiKey, 0, 5).'***********', $headers);
+						}
+						fwrite($fp, var_export($headersforlog, true)."\n");
 						fwrite($fp, "Payload\n");
 						fwrite($fp, var_export($payload, true)."\n");
 
@@ -387,12 +465,32 @@ class Ai
 			// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
 			// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 			global $dolibarr_ai_allow_local_endpoints;
-			$localurl = $dolibarr_ai_allow_local_endpoints ?? 0;
+			// An empty value ('', '0', null) must mean external endpoints only (with PHP 8, '' == 0 is false)
+			$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : (int) $dolibarr_ai_allow_local_endpoints;
 
-			// Parsing a document is long, so we use a response timeout of at least 60 seconds for this case
-			$timeoutresponse = 0;
-			if ($function == 'docparsing') {
-				$timeoutresponse = max(60, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+			// Response timeout dedicated to AI calls. If not set (0), getURLContent() will use MAIN_USE_RESPONSE_TIMEOUT.
+			$timeoutresponse = getDolGlobalInt('AI_USE_RESPONSE_TIMEOUT');
+			// Parsing a document is long, so we use a response timeout of at least 90 seconds for this case
+			// For both step "ocr" and step "analyze/docparsing"
+			if (in_array($function, array('docparsing', 'ocr'))) {
+				$timeoutresponse = max(90, getDolGlobalInt('AI_USE_RESPONSE_TIMEOUT'), getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT'));
+			}
+
+			// Hooks of the calling page context (for example 'main'): a module can refuse the request (quota...) then read the answer (token usage...)
+			global $hookmanager;
+			$hookparameters = array('service' => $this->apiService, 'model' => $model, 'function' => $function);
+			if (is_object($hookmanager)) {
+				if ($hookmanager->executeHooks('beforeAIRequest', $hookparameters) < 0) {
+					return array(
+						'error' => true,
+						'message' => $hookmanager->error,
+						'code' => 403,
+						'format' => $format,
+						'service' => $this->apiService,
+						'model' => $model,
+						'function' => $function
+					);
+				}
 			}
 
 			$response = getURLContent($this->apiEndpoint, 'POST', $payload, 1, $headers, array('http', 'https'), $localurl, -1, 0, $timeoutresponse);
@@ -438,6 +536,10 @@ class Ai
 			// Decode JSON response
 			$decodedResponse = json_decode($response['content'], true);
 
+			if (is_object($hookmanager) && is_array($decodedResponse) && empty($decodedResponse['error'])) {
+				$hookmanager->executeHooks('afterAIRequest', $hookparameters + array('response' => $decodedResponse));
+			}
+
 			// Extraction content
 			if (!empty($decodedResponse['error'])) {
 				if (is_scalar($decodedResponse['error'])) {
@@ -447,6 +549,14 @@ class Ai
 					$generatedContent = (string) $decodedResponse['error'];
 				} else {
 					$generatedContent = (string) var_export($decodedResponse['error'], true);
+				}
+			} elseif ($function == 'ocr' && !empty($decodedResponse['pages']) && is_array($decodedResponse['pages'])) {
+				// Response of the OCR endpoint (Mistral /v1/ocr): the text extracted from each page is into pages[].markdown
+				$generatedContent = '';
+				foreach ($decodedResponse['pages'] as $page) {
+					if (isset($page['markdown']) && is_scalar($page['markdown'])) {
+						$generatedContent .= ($generatedContent ? "\n" : '').(string) $page['markdown'];
+					}
 				}
 			} elseif ($this->apiService == 'google') {
 				// Google Gemini response shape: candidates[0].content.parts[*].text
@@ -553,6 +663,83 @@ class Ai
 				'function' => $function
 			);
 		}
+	}
+
+	/**
+	 * Build the payload of the first call of the raw file mode: the call that converts the raw binary file into text,
+	 * so the OCR is done by the AI service instead of by a local tool. For Mistral, the call targets the dedicated OCR
+	 * endpoint of the service, for the other OpenAI-compatible services, it is a multimodal chat completion with the
+	 * file encoded into base64. The model used is AI_API_<SERVICE>_MODEL_DOCPARSING or its default value.
+	 * As generateContent() does not complete the payload when it is an array, the model is set here.
+	 *
+	 * @param	string		$filepath	Full path of the file to send
+	 * @return	array<string,mixed>		Array with keys 'payload' and 'function' for generateContent(), or array with key 'error' set if the service or the file type is not supported
+	 */
+	public function getPayloadToConvertRawFileIntoText($filepath)
+	{
+		// Only the OpenAI-compatible services support the raw file mode
+		if (!in_array($this->apiService, array('chatgpt', 'mistral', 'groq', 'deepseek', 'perplexity', 'zai', 'custom'))) {
+			return array('error' => true, 'message' => 'The AI service '.$this->apiService.' does not support sending a raw file');
+		}
+
+		$isimage = preg_match('/\.(png|jpe?g|gif|bmp|tiff?|webp)$/i', $filepath);
+		$ispdf = preg_match('/\.pdf$/i', $filepath);
+		if (!$isimage && !$ispdf) {
+			return array('error' => true, 'message' => 'The AI service '.$this->apiService.' does not support sending a raw file with this file type (only PDF and image files are supported)');
+		}
+
+		$arrayofai = getListOfAIServices();
+		$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_DOCPARSING', (empty($arrayofai[$this->apiService]['docparsing']['default']) ? '' : $arrayofai[$this->apiService]['docparsing']['default']));
+		if (empty($model) || $model == 'na') {
+			return array('error' => true, 'message' => 'No AI model defined to parse documents for the service '.$this->apiService);
+		}
+
+		$mimetype = dol_mimetype($filepath);
+		$filecontentb64 = base64_encode((string) file_get_contents(dol_osencode($filepath)));
+
+		if ($this->apiService == 'mistral') {
+			// Mistral OCR endpoint: it accepts images and PDF files as a base64 into a data URI
+			// (into a image_url part for images, a document_url part for PDF) and returns the text of each page as markdown
+			$typedoc = ($isimage ? 'image_url' : 'document_url');
+			$payload = array(
+				'model' => $model,
+				'document' => array('type' => $typedoc, $typedoc => 'data:'.$mimetype.';base64,'.$filecontentb64)
+			);
+			return array('payload' => $payload, 'function' => 'ocr');
+		}
+
+		// Other OpenAI-compatible services: multimodal chat completion with the file into base64
+		if ($isimage) {
+			$filepart = array('type' => 'image_url', 'image_url' => array('url' => 'data:'.$mimetype.';base64,'.$filecontentb64));
+		} else {
+			$filepart = array('type' => 'file', 'file' => array('filename' => dol_basename($filepath), 'file_data' => 'data:'.$mimetype.';base64,'.$filecontentb64));
+		}
+		$payload = array(
+			'messages' => array(
+				array('role' => 'user', 'content' => array(
+					array('type' => 'text', 'text' => 'Convert the content of this document into text. Return only the text of the document, no comment.'),
+					$filepart
+				))
+			),
+			'model' => $model
+		);
+		return array('payload' => $this->addReasoningEffort($payload), 'function' => 'docparsing');
+	}
+
+	/**
+	 * Add the reasoning effort of the service to an OpenAI-compatible payload, when one is set
+	 *
+	 * @param	array<string,mixed>	$payload	Payload
+	 * @return	array<string,mixed>				Payload
+	 */
+	private function addReasoningEffort(array $payload): array
+	{
+		$reasoningEffort = getAiReasoningEffort($this->apiService);
+		if ($reasoningEffort !== '') {
+			$payload['reasoning_effort'] = $reasoningEffort;
+		}
+
+		return $payload;
 	}
 
 	/**
@@ -669,8 +856,42 @@ class Ai
 				}
 				if (!empty($arrayforthirdparty['vat_number'])) {
 					$tmparray['vendor_vat_number'] = $arrayforthirdparty['vat_number'];
+				} elseif (!empty($arrayforthirdparty['vatnumber'])) {
+					$tmparray['vendor_vat_number'] = $arrayforthirdparty['vatnumber'];
 				} elseif (!empty($arrayforthirdparty['tva_num'])) {
 					$tmparray['vendor_vat_number'] = $arrayforthirdparty['tva_num'];
+				}
+				if (!empty($arrayforthirdparty['address'])) {
+					if (is_array($arrayforthirdparty['address'])) {
+						// The address may be returned as an array with its parts separated
+						$vendoraddress = $arrayforthirdparty['address'];
+						if (!empty($vendoraddress['street'])) {
+							$tmparray['vendor_address'] = $vendoraddress['street'];
+						}
+						if (!empty($vendoraddress['postal_code'])) {
+							$tmparray['vendor_zip'] = $vendoraddress['postal_code'];
+						}
+						if (!empty($vendoraddress['city'])) {
+							$tmparray['vendor_town'] = $vendoraddress['city'];
+						}
+						if (!empty($vendoraddress['country_code'])) {
+							$tmparray['vendor_country'] = $vendoraddress['country_code'];
+						} elseif (!empty($vendoraddress['country'])) {
+							$tmparray['vendor_country'] = $vendoraddress['country'];
+						}
+					} else {
+						$tmparray['vendor_address'] = $arrayforthirdparty['address'];
+					}
+				}
+				// If no country found, guess it from the prefix of an intra-community VAT number (EL is the VAT prefix of Greece)
+				if (empty($tmparray['vendor_country']) && !empty($tmparray['vendor_vat_number']) && is_string($tmparray['vendor_vat_number'])
+					&& preg_match('/^([A-Z]{2})[0-9A-Z]/', dol_strtoupper(str_replace(array(' ', '.', '-'), '', $tmparray['vendor_vat_number'])), $reg)) {
+					$tmparray['vendor_country'] = ($reg[1] == 'EL' ? 'GR' : $reg[1]);
+				}
+				if (!empty($arrayforthirdparty['phone'])) {
+					$tmparray['vendor_phone'] = $arrayforthirdparty['phone'];
+				} elseif (!empty($arrayforthirdparty['phone_number'])) {
+					$tmparray['vendor_phone'] = $arrayforthirdparty['phone_number'];
 				}
 			}
 

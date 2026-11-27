@@ -123,6 +123,11 @@ class WebsitePage extends CommonObject
 	public $allowed_in_frames;
 
 	/**
+	 * @var ?int		Number of versions to keep in history (0 = keep all versions, n = keep only the n last versions)
+	 */
+	public $keep_history;
+
+	/**
 	 * @var int 		Use meta robot tag "index" (else "noindex")
 	 */
 	public $index = 1;
@@ -223,7 +228,7 @@ class WebsitePage extends CommonObject
 	public $fields = array(
 		'rowid'          => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
 		'pageurl'        => array('type' => 'varchar(16)', 'label' => 'WEBSITE_PAGENAME', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Ref/alias of page'),
-		'aliasalt'       => array('type' => 'varchar(255)', 'label' => 'AliasAlt', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'index' => 0, 'position' => 11, 'searchall' => 0, 'comment' => 'Alias alternative of page'),
+		'aliasalt'       => array('type' => 'text', 'label' => 'AliasAlt', 'enabled' => 1, 'visible' => 1, 'notnull' => 0, 'index' => 0, 'position' => 11, 'searchall' => 0, 'comment' => 'Alias alternative of page'),
 		'type_container' => array('type' => 'varchar(16)', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'index' => 0, 'position' => 12, 'comment' => 'Type of container'),
 		'title'          => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'searchall' => 1, 'help' => 'UseTextBetween5And70Chars'),
 		'description'    => array('type' => 'varchar(255)', 'label' => 'Description', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'searchall' => 1),
@@ -234,6 +239,7 @@ class WebsitePage extends CommonObject
 		'fk_website'     => array('type' => 'integer', 'label' => 'WebsiteId', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 40, 'searchall' => 0, 'foreignkey' => 'websitepage.rowid'),
 		'fk_page'        => array('type' => 'integer', 'label' => 'ParentPageId', 'enabled' => 1, 'visible' => 1, 'notnull' => -1, 'position' => 45, 'searchall' => 0, 'foreignkey' => 'website.rowid'),
 		'allowed_in_frames'   => array('type' => 'integer', 'label' => 'AllowedInFrames', 'enabled' => 1, 'visible' => -1, 'position' => 48, 'searchall' => 0, 'default' => '0'),
+		'keep_history'   => array('type' => 'integer', 'label' => 'NumberOfVersionsToKeepInHistory', 'enabled' => 1, 'visible' => -1, 'position' => 49, 'default' => '5', 'help' => 'NumberOfVersionsToKeepInHistoryHelp'),
 		'htmlheader'     => array('type' => 'html', 'label' => 'HtmlHeader', 'enabled' => 1, 'visible' => 0, 'position' => 50, 'searchall' => 0),
 		'content'        => array('type' => 'html', 'label' => 'Content', 'enabled' => 1, 'visible' => 0, 'position' => 51, 'searchall' => 0),
 		'grabbed_from'   => array('type' => 'varchar(255)', 'label' => 'GrabbedFrom', 'enabled' => 1, 'visible' => 1, 'index' => 1, 'position' => 400, 'comment' => 'URL page content was grabbed from'),
@@ -354,6 +360,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.lang,";
 		$sql .= " t.fk_page,";				// Translation parent page (in mani language)
 		$sql .= " t.allowed_in_frames,";
+		$sql .= " t.keep_history,";
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
 		$sql .= " t.date_creation,";
@@ -414,7 +421,7 @@ class WebsitePage extends CommonObject
 
 				$this->pageurl = preg_replace('/[^\w_-]+/', '', $obj->pageurl);		// Sanitize page url
 				$this->ref = $obj->pageurl;
-				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
+				$this->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', (string) $obj->aliasalt));
 
 				$this->title = $obj->title;
 				$this->description = $obj->description;
@@ -425,6 +432,7 @@ class WebsitePage extends CommonObject
 				$this->lang = $obj->lang;
 				$this->fk_page = $obj->fk_page;
 				$this->allowed_in_frames = $obj->allowed_in_frames;
+				$this->keep_history = $obj->keep_history;
 				$this->status = (int) $obj->status;
 				$this->grabbed_from = $obj->grabbed_from;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
@@ -567,7 +575,7 @@ class WebsitePage extends CommonObject
 				$record->fk_website = $obj->fk_website;
 				$record->type_container = $obj->type_container;
 				$record->pageurl = $obj->pageurl;
-				$record->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', $obj->aliasalt));
+				$record->aliasalt = preg_replace('/,+$/', '', preg_replace('/^,+/', '', (string) $obj->aliasalt));
 				$record->title = $obj->title;
 				$record->description = $obj->description;
 				$record->image = $obj->image;
@@ -773,6 +781,7 @@ class WebsitePage extends CommonObject
 		}
 
 		if (!$error) {
+			require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 			$websiteobj = new Website($this->db);
 			$result = $websiteobj->fetch($this->fk_website);
 
@@ -836,6 +845,7 @@ class WebsitePage extends CommonObject
 
 		if ($istranslation) {
 			if (is_null($website)) {
+				require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 				$website = new Website($this->db);
 			}
 			$website->fetch($object->fk_website);

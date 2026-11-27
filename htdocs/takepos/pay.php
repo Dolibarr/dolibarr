@@ -93,6 +93,21 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <body>
 <?php
 
+// Allow external modules to replace the payment screen (for example to refund a credit note)
+$invoicetopay = new Facture($db);
+if ($invoiceid > 0) {
+	$invoicetopay->fetch($invoiceid);
+}
+$parameters = array('invoiceid' => $invoiceid, 'place' => $place);
+$reshook = $hookmanager->executeHooks('takeposPayActions', $parameters, $invoicetopay, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+} elseif ($reshook > 0) {
+	print $hookmanager->resPrint;
+	$db->close();
+	exit;
+}
+
 $usestripeterminals = 0;
 $keyforstripeterminalbank = '';
 $stripe = null;
@@ -664,15 +679,15 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 	$paycode = $arrayOfValidPaymentModes[0]->code;
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'coins';
 		}
 	} elseif ($paycode == 'CB') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'credit-card';
 		}
 	} elseif ($paycode == 'CHQ') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'money-check';
 		}
 	}
@@ -690,15 +705,15 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 	$paycode = $arrayOfValidPaymentModes[1]->code;
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'coins';
 		}
 	} elseif ($paycode == 'CB') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'credit-card';
 		}
 	} elseif ($paycode == 'CHQ') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'money-check';
 		}
 	}
@@ -717,15 +732,15 @@ print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad 
 	$paycode = $arrayOfValidPaymentModes[2]->code;
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'coins';
 		}
 	} elseif ($paycode == 'CB') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'credit-card';
 		}
 	} elseif ($paycode == 'CHQ') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'money-check';
 		}
 	}
@@ -745,15 +760,15 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	$paycode = $arrayOfValidPaymentModes[$i]->code;
 	$payIcon = '';
 	if ($paycode == 'LIQ') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'coins';
 		}
 	} elseif ($paycode == 'CB') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'credit-card';
 		}
 	} elseif ($paycode == 'CHQ') {
-		if (!isset($conf->global->TAKEPOS_NUMPAD_USE_PAYMENT_ICON) || getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON')) {
+		if (getDolGlobalString('TAKEPOS_NUMPAD_USE_PAYMENT_ICON', '1')) {
 			$payIcon = 'money-check';
 		}
 	}

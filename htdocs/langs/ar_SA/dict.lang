@@ -255,8 +255,8 @@ CivilityMMEShort=السيدة
 CivilityMR=السيد
 CivilityMRShort=السيد
 CivilityMLE=الآنسة
-CivilityMTRE=الأستاذ/الأستاذة
-CivilityDR=الدكتور/الدكتورة
+CivilityMTRE=الأستاذ
+CivilityDR=الدكتور
 ##### Currencies #####
 Currencyeuros=اليورو
 CurrencyAUD=الدولار الأسترالي

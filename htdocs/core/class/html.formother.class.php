@@ -74,6 +74,9 @@ class FormOther
 	{
 		global $langs;
 
+		// $jstoexecuteonadd is the name of a js function: it is used as an id and called, so it can't contain anything else
+		$jstoexecuteonadd = sanitizeVal($jstoexecuteonadd, 'aZ09');
+
 		$out = '';
 
 		$out .= '<!-- Popup for mass barcode scanning -->'."\n";
@@ -112,7 +115,7 @@ class FormOther
 		*/
 		$out .= '<br>';
 		$out .= '<center>';
-		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id="exec'.dol_escape_js($jstoexecuteonadd).'" name="addscan" value="'.dolPrintHTMLForAttribute($langs->trans("Add")).'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" id="exec'.$jstoexecuteonadd.'" name="addscan" value="'.dolPrintHTMLForAttribute($langs->trans("Add")).'">';
 		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.dol_escape_htmltag($langs->trans("CloseWindow")).'">';
 		$out .= '</center>';
 		$out .= '<br>';
@@ -123,11 +126,9 @@ class FormOther
 		$out .= 'console.log("select choice");';
 		$out .= 'jQuery("#scantoolmessage").text("");';
 		$out .= '});'."\n";
-		// $jstoexecuteonadd is a name of a js function
-		// TODO: dol_escape_js($jstoexecuteonadd) seems wrong for execution, verify, fix
-		$out .= '$(\'#exec'.dol_escape_js($jstoexecuteonadd).'\').click(function(){
-			console.log(\'We call js to execute '.dol_escape_js($jstoexecuteonadd).'\');
-			'.dol_escape_js($jstoexecuteonadd).'();
+		$out .= '$(\'#exec'.$jstoexecuteonadd.'\').click(function(){
+			console.log(\'We call js to execute '.$jstoexecuteonadd.'\');
+			'.$jstoexecuteonadd.'();
 			return false;	/* We want to stay on the scan tool */
 		})';
 		$out .= '</script>';
@@ -506,6 +507,15 @@ class FormOther
 		$out = '';
 
 		$reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectSalesRep', array(), $this, $action);
+
+		// If the ajax "search to select" mode is enabled for users (USER_USE_SEARCH_TO_SELECT), we use the ajax combo of select_dolusers()
+		// instead of loading all users. Not possible with a hook filter, with the entry "no sales representative" or for a restricted user.
+		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('USER_USE_SEARCH_TO_SELECT') && empty($reshook) && empty($norepresentative)
+			&& $user->hasRight('user', 'user', 'lire') && empty($user->socid)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			$form = new Form($this->db);
+			return $form->select_dolusers(((int) $selected > 0 ? (int) $selected : ''), $htmlname, $showempty, null, 0, '', '', '', 0, $showstatus, '', 0, '', $morecss);
+		}
 
 		// Select each sales and print them in a select input
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
@@ -1312,7 +1322,7 @@ class FormOther
 
 		// Define selectboxlist
 		$arrayboxtoactivatelabel = array();
-		if (getDolUserString($confuserzone)) {
+		if (getDolUserString($confuserzone) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {	// No combo list to add a widget in text browser mode
 			$boxorder = '';
 			$langs->load("boxes"); // Load label of boxes
 			foreach ($boxactivated as $box) {
@@ -1394,7 +1404,9 @@ class FormOther
 	    				jQuery.ajax({
 	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\'
 	    		        }).done(function() {
-	        				window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'\';
+							/* Keep the scroll position after reload */
+							var page_y = Math.round(jQuery(dolGetMainScrollElement()).scrollTop());
+	        				window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'\' + (page_y > 0 ? \'&page_y=\' + page_y : \'\');
 						});
 	                }
 	        	});';

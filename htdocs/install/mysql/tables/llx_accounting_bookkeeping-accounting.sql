@@ -25,6 +25,7 @@ CREATE TABLE llx_accounting_bookkeeping
   ref             		VARCHAR(30),				-- FEC:EcritureNum  | accounting transaction id. In future, will be not null and will replace piece_num that is an ID, not a ref.
   piece_num             integer NOT NULL,			-- FEC:EcritureNum  | accounting transaction id
   doc_date              date NOT NULL,				-- FEC:PieceDate    | date of source document
+  doc_date_hour         datetime NULL,				-- 					| date and hour of source document (12:00:00 if hour is unknown)
   doc_type              varchar(30) NOT NULL,		-- 					| facture_client/reglement_client/facture_fournisseur/reglement_fournisseur/import
   doc_ref               varchar(300) NOT NULL,		-- FEC:PieceRef		| facture_client/reglement_client/... reference number
   fk_doc                integer NOT NULL,			-- 					| facture_client/reglement_client/... rowid

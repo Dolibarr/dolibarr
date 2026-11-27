@@ -14,7 +14,7 @@
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
- * Copyright (C) 2023       Nick Fragoulis
+ * Copyright (C) 2023-2026  Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
@@ -96,9 +96,6 @@ if (isModEnabled('member')) {
 if (isModEnabled('category')) {
 	$langs->load("categories");
 }
-if (isModEnabled('incoterm')) {
-	$langs->load("incoterm");
-}
 if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
@@ -171,7 +168,7 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
-$upload_dir 		= $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
+$upload_dir 		= getMultidirOutput($object, 'societe');
 
 // Security check
 $result = restrictedArea($user, 'societe', $object->id, '&societe', '', 'fk_soc', 'rowid', 0);
@@ -261,6 +258,46 @@ if (empty($reshook)) {
 		$value = GETPOST('lt2');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
+	}
+
+	// Write the payment reference of this third party by hand. A value that is
+	// already a valid reference is kept as it is, anything else is treated as the
+	// base to build one from, so the user never has to work out check digits.
+	// An empty value clears it, and a new one is generated on the next invoice.
+	if ($action == 'setpaymentref' && $permissiontoadd) {
+		$object->fetch($socid);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
+
+		$postedref = trim(GETPOST('tp_payment_reference', 'alphanohtml'));
+		$newref = '';
+		if ($postedref != '') {
+			$newref = dolPayRefBuild($postedref, 1, $mysoc->country_code);
+		}
+
+		if ($postedref != '' && $newref == '') {
+			setEventMessages($langs->trans("WarningPaymentRefNotGenerated"), null, 'warnings');
+		} elseif (dol_strlen($newref) > 25) {
+			setEventMessages($langs->trans("WarningPaymentRefTooLong"), null, 'warnings');
+		} else {
+			$res = $object->setValueFrom('tp_payment_reference', $newref, '', null, 'text', '', $user, 'COMPANY_MODIFY');
+			if ($res < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+		$action = '';
+	}
+
+	// Clear the structured payment reference so a new one is generated on the next
+	// invoice. Invoices already validated keep the reference they were issued with.
+	if ($action == 'unsetpaymentref' && $permissiontoadd) {
+		$object->fetch($socid);
+		$res = $object->setValueFrom('tp_payment_reference', '', '', null, 'text', '', $user, 'COMPANY_MODIFY');
+		if ($res > 0) {
+			setEventMessages($langs->trans("PaymentReferenceReset"), null, 'mesgs');
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		$action = '';
 	}
 
 	if ($action == 'update_extras' && $permissiontoeditextra) {
@@ -1524,17 +1561,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
 
 			if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
-				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="spanlabel">'.$langs->trans("Prospect").'</label><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></span>';
+				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly nowraponall"><label for="prospectinput" class="spanlabel">'.$langs->trans("Prospect").'</label><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></span>';
 			}
 
 			if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
-				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="spanlabel">'.$langs->trans("Customer").'</label><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></span>';
+				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly nowraponall"><label for="customerinput" class="spanlabel">'.$langs->trans("Customer").'</label><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></span>';
 			}
 
 			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 				// Supplier
-				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="spanlabel">'.$langs->trans("Vendor").'</label><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></span>';
+				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly nowraponall"><label for="supplierinput" class="spanlabel">'.$langs->trans("Vendor").'</label><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></span>';
 			}
 			// Add js to manage the background of nature
 			if ($conf->use_javascript_ajax) {
@@ -1816,7 +1853,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 			print '<td class="nowrap">'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
 			print '<td class="nowrap">';
-			$s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
+			$s = '<input type="text" class="flat maxwidth200" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
 			if (!getDolGlobalString('MAIN_DISABLEVATCHECK') && isInEEC($object)) {
 				$s .= ' ';
@@ -1826,7 +1863,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (!empty($conf->dol_use_jmobile)) {
 						$widthpopup = 350;
 					}
-					$heightpopup = 400;
+					$heightpopup = 420;
 					print "\n";
 					print '<script type="text/javascript">';
 					print "function CheckVAT(a) {\n";
@@ -1857,7 +1894,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			print '<td class="nowrap">'.$form->editfieldkey('EUIDShort', 'euid', '', $object, 0).'</td>';
 			print '<td class="nowrap">';
-			print '<input type="text" class="flat maxwidthonsmartphone" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
+			print '<input type="text" class="flat maxwidth200" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
 			print '</td>';
 			print '</tr>';
 
@@ -2745,7 +2782,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// VAT Code
 				print '<tr><td>'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
 				print '<td colspan="3">';
-				$s = '<input type="text" class="flat maxwidthonsmartphone" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
+				$s = '<input type="text" class="flat maxwidth200" name="tva_intra" id="intra_vat" maxlength="20" value="'.$object->tva_intra.'">';
 
 				if (!getDolGlobalString('MAIN_DISABLEVATCHECK') && isInEEC($object)) {
 					$s .= ' &nbsp; ';
@@ -2755,7 +2792,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						if (!empty($conf->dol_use_jmobile)) {
 							$widthpopup = 350;
 						}
-						$heightpopup = 400;
+						$heightpopup = 420;
 						print "\n";
 						print '<script type="text/javascript">';
 						print "function CheckVAT(a) {\n";
@@ -2779,7 +2816,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print '<tr><td>'.$form->editfieldkey('EUIDShort', 'euid', '', $object, 0).'</td>';
 				print '<td colspan="3">';
-				print '<input type="text" class="flat maxwidthonsmartphone" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
+				print '<input type="text" class="flat maxwidth200" name="euid" id="euid" maxlength="20" value="'.$object->euid.'">';
 				print '</td>';
 				print '</tr>';
 
@@ -3106,6 +3143,37 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</tr>';
 			}
 
+			// Structured payment reference of this third party, see core/lib/paymentref.lib.php.
+			// Written the first time an invoice of this third party is validated, then reused.
+			if ($object->client && getDolGlobalString('INVOICE_PAYMENT_REF_MODE') == 'thirdparty') {
+				print '<tr><td>';
+				print $form->textwithpicto($langs->trans('PaymentReference'), $langs->trans('ThirdPartyPaymentReferenceHelp'));
+				print '</td><td>';
+				if ($action == 'editpaymentref' && $permissiontoadd) {
+					print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
+					print '<input type="hidden" name="action" value="setpaymentref">';
+					print '<input type="text" name="tp_payment_reference" class="minwidth200" maxlength="25" value="'.dolPrintHTMLForAttribute((string) $object->tp_payment_reference).'">';
+					print ' <input type="submit" class="button button-edit smallpaddingimp" value="'.dolPrintHTMLForAttribute($langs->trans("Modify")).'">';
+					print '</form>';
+				} elseif (!empty($object->tp_payment_reference)) {
+					print showValueWithClipboardCPButton(dol_escape_htmltag($object->tp_payment_reference));
+					if ($permissiontoadd) {
+						print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editpaymentref&token='.newToken().'">'.img_edit().'</a>';
+						print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=unsetpaymentref&token='.newToken().'"';
+						print ' title="'.dolPrintHTMLForAttribute($langs->trans('ResetPaymentReferenceHelp')).'">';
+						print img_picto($langs->trans('ResetPaymentReference'), 'refresh');
+						print '</a>';
+					}
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans('PaymentReferenceOnFirstInvoice').'</span>';
+					if ($permissiontoadd) {
+						print ' <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editpaymentref&token='.newToken().'">'.img_edit().'</a>';
+					}
+				}
+				print '</td></tr>';
+			}
+
 			// Supplier code
 			if (((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) && $object->fournisseur) {
 				print '<tr><td>';
@@ -3276,7 +3344,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						if (!empty($conf->dol_use_jmobile)) {
 							$widthpopup = 350;
 						}
-						$heightpopup = 400;
+						$heightpopup = 420;
 						print "\n";
 						print '<script type="text/javascript">';
 						print "function CheckVAT(a) {\n";

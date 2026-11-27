@@ -28,6 +28,17 @@
 
 include_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
+/**
+ * Max number of messages of past turns sent back to the AI as context with one question.
+ * Hard cap applied server-side, whatever the client sends (pins, "All" mode).
+ *
+ * @return int
+ */
+function aiChatContextMaxMessages()
+{
+	return 20;
+}
+
 
 /**
  * Prepare admin pages header
@@ -59,6 +70,36 @@ function getListOfAIFeatures()
 	);
 
 	return $arrayofaifeatures;
+}
+
+/**
+ * Return the values accepted for the reasoning effort of OpenAI-compatible APIs
+ *
+ * @return string[]
+ */
+function getListOfAiReasoningEfforts(): array
+{
+	return array('none', 'minimal', 'low', 'medium', 'high', 'xhigh');
+}
+
+/**
+ * Return the reasoning effort to send to an OpenAI-compatible API of a service, from the constant AI_API_<SERVICE>_REASONING_EFFORT
+ *
+ * @param	string	$service	Code of the AI service ('custom', 'chatgpt', ...)
+ * @return	string				One value of getListOfAiReasoningEfforts(), or '' to let the model decide
+ */
+function getAiReasoningEffort(string $service): string
+{
+	$effort = strtolower(getDolGlobalString('AI_API_'.strtoupper($service).'_REASONING_EFFORT'));
+	if ($effort === '') {
+		return '';
+	}
+	if (!in_array($effort, getListOfAiReasoningEfforts(), true)) {
+		dol_syslog("getAiReasoningEffort: unknown value '".$effort."' for service ".$service.", ignored", LOG_WARNING);
+		return '';
+	}
+
+	return $effort;
 }
 
 /**
@@ -102,13 +143,13 @@ function getListOfAIServices()
 			'label' => 'Mistral AI',
 			'url' => 'https://api.mistral.ai/v1/',
 			'setup' => 'https://console.mistral.ai/api-keys/',
-			'textgeneration' => array('default' => 'mistral-medium-latest', 'examples' => 'mistral-tiny-latest, mistral-small-latest, mistral-medium-latest, mistral-large-latest'),    // Points to Mistral Small 3 (updated Feb 2026)
+			'textgeneration' => array('default' => 'mistral-large-latest', 'examples' => 'mistral-tiny-latest, mistral-small-latest, mistral-medium-latest, mistral-large-latest'),    // Points to the latest Mistral Large
 			'imagegeneration' => array('default' => 'na'),
 			'audiogeneration' => array('default' => 'na'),
 			'videogeneration' => array('default' => 'na'),
 			'transcription' => array('default' => 'na'),
 			'translation' => array('default' => 'na'),
-			'docparsing' => array('default' => 'ministral-14b-latest'),         // Mistral's native vision/doc model
+			'docparsing' => array('default' => 'mistral-ocr-latest'),         // Model of the Mistral OCR endpoint, used to parse documents (PDF, images, ...)
 			'adapter_type' => 'openai'
 		),
 		'deepseek' => array(
@@ -277,7 +318,8 @@ function testAIConnection(string $service, string $key, string $url): array
 	// By default, we accept only external endpoints ($dolibarr_ai_allow_local_endpoints is not set).
 	// To allow local endpoints, we must set $dolibarr_ai_allow_local_endpoints to 1 or 2 in conf.php.
 	global $dolibarr_ai_allow_local_endpoints;
-	$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : 2;
+	// 0 or empty = external only, 1 = local only, 2 = both (same rule as Ai::generateContent())
+	$localurl = empty($dolibarr_ai_allow_local_endpoints) ? 0 : (int) $dolibarr_ai_allow_local_endpoints;
 
 	$result = getURLContent($url, 'POST', json_encode($data), 1, $headers, array('http', 'https'), $localurl, -1, 0, 10);
 	$httpCode = (int) ($result['http_code'] ?? 0);
@@ -299,6 +341,33 @@ function testAIConnection(string $service, string $key, string $url): array
 
 
 /**
+ * Return whether chat attachments must be converted into text in the browser, so the
+ * obfuscation applies on their content (binary attachments are then refused).
+ * Default follows AI_PRIVACY_REDACTION, which blocked binary attachments before this option.
+ * Always 0 unless AI_SUPPORT_PRIVACY_ON_ALL_TYPE_OF_UPLOADED_FILES is set (conversion uses external JS libraries).
+ *
+ * @return int 0=sent as is, 1=converted into text except binaries > ai_attachment_convert_to_text_max_bytes(), 2=always converted into text
+ */
+function ai_attachment_convert_to_text()
+{
+	if (!getDolGlobalInt('AI_SUPPORT_PRIVACY_ON_ALL_TYPE_OF_UPLOADED_FILES')) {
+		return 0;
+	}
+
+	return min(2, max(0, getDolGlobalInt('AI_ATTACHMENT_CONVERT_TO_TEXT', getDolGlobalInt('AI_PRIVACY_REDACTION', 0) ? 2 : 0)));
+}
+
+/**
+ * Return the size above which a binary attachment is sent as is when AI_ATTACHMENT_CONVERT_TO_TEXT is 1.
+ *
+ * @return int Size in bytes
+ */
+function ai_attachment_convert_to_text_max_bytes()
+{
+	return 1500000;
+}
+
+/**
  * Validate chat attachments before they reach any LLM provider.
  *
  * The MIME type comes from the browser's File.type (client-controlled), so it
@@ -306,9 +375,9 @@ function testAIConnection(string $service, string $key, string $url): array
  * provider can natively consume (images and PDF). Size is bounded per
  * attachment and in total: base64 travels inside the JSON POST body and is
  * re-sent to the provider, so an unbounded payload is both a memory and a
- * billing hazard. When the privacy redaction policy is enforced, attachments
- * are refused entirely: text is masked by PrivacyGuard before a cloud call,
- * but a document's content cannot be, so sending it would bypass the policy.
+ * billing hazard. When attachments must be converted into text (see
+ * ai_attachment_convert_to_text()), binary attachments are refused (except above the size
+ * threshold in mode 1): text is masked by PrivacyGuard, but a binary content cannot be.
  *
  * @param array<int,array{mime:string,data:string}> $attachments Parsed attachments
  * @param string $error Set to a client-safe message when validation fails
@@ -324,8 +393,9 @@ function ai_validate_attachments(array $attachments, &$error)
 	}
 	$langs->load("other");	// owns the AIAttachment* keys; callers load it later or not at all
 
-	if (getDolGlobalInt('AI_PRIVACY_REDACTION', 0)) {
-		$error = $langs->trans("AIAttachmentBlockedByPrivacy");
+	$converttotext = ai_attachment_convert_to_text();
+	if ($converttotext == 2) {
+		$error = $langs->trans("AIAttachmentMustBeConvertedToText");
 
 		return false;
 	}
@@ -363,9 +433,370 @@ function ai_validate_attachments(array $attachments, &$error)
 
 			return false;
 		}
+		// Text conversion with exception: only a binary above the threshold may be sent as is (padding excluded from the size)
+		if ($converttotext == 1 && ($bytes - substr_count(substr($att['data'], -2), '=')) <= ai_attachment_convert_to_text_max_bytes()) {
+			$error = $langs->trans("AIAttachmentMustBeConvertedToText");
+
+			return false;
+		}
 	}
 
 	return true;
+}
+
+/**
+ * Convert an office document attached to a chat message (docx, odt, xlsx, xls, ods) into text,
+ * on server side with the bundled libraries, so it can be sent to the LLM and obfuscated like the prompt.
+ *
+ * @param string $mime		MIME type sent by the browser
+ * @param string $base64	Base64 content of the file
+ * @param string $error		Set to a client-safe message when conversion fails
+ * @return string|false		Text of the document, or false on error
+ */
+function ai_convert_office_attachment_to_text($mime, $base64, &$error)
+{
+	global $conf, $langs;
+
+	$error = '';
+	$langs->loadLangs(array("other", "errors"));
+
+	$types = array(
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+		'application/vnd.oasis.opendocument.text' => 'odt',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Xlsx',
+		'application/vnd.ms-excel' => 'Xls',
+		'application/vnd.oasis.opendocument.spreadsheet' => 'Ods',
+	);
+	if (empty($types[$mime])) {
+		$error = $langs->trans("AIAttachmentTypeNotAllowed", $mime);
+		return false;
+	}
+	$type = $types[$mime];
+
+	$base64 = preg_replace('/\s+/', '', $base64);
+	if ((int) (dol_strlen($base64) * 3 / 4) > getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10) * 1024 * 1024) {
+		$error = $langs->trans("AIAttachmentTooLarge", (string) getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10));
+		return false;
+	}
+	$content = base64_decode($base64, true);
+	if ($content === false || $content === '') {
+		$error = $langs->trans("AIAttachmentConversionFailed", $mime);
+		return false;
+	}
+	if (!class_exists('ZipArchive')) {	// All these formats, except xls, are zip files
+		$error = $langs->trans("ErrorPHPNeedModule", 'zip');
+		return false;
+	}
+
+	// The readers need a file on disk
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+	$tmpdir = ai_temp_dir();
+	dol_mkdir($tmpdir);
+	$tmpfile = $tmpdir.'/attachment_'.dol_now().'_'.getRandomPassword(true).'.'.dol_strtolower($type);
+	if (file_put_contents($tmpfile, $content) === false) {
+		$error = $langs->trans("AIAttachmentConversionFailed", $mime);
+		return false;
+	}
+
+	$text = '';
+	$maxsize = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);
+	try {
+		if ($type == 'docx' || $type == 'odt') {
+			// Text is in one XML entry of the zip: paragraph ends and tabs are kept, other tags are removed
+			$entry = ($type == 'docx' ? 'word/document.xml' : 'content.xml');
+			$zip = new ZipArchive();
+			if ($zip->open($tmpfile) !== true) {
+				throw new Exception('Not a valid zip file');
+			}
+			$stat = $zip->statName($entry);
+			if (!is_array($stat) || $stat['size'] > 50 * 1024 * 1024) {	// Missing entry or zip bomb
+				$zip->close();
+				throw new Exception('Entry '.$entry.' not found or too large');
+			}
+			$xml = (string) $zip->getFromName($entry);
+			$zip->close();
+			$xml = str_replace(array('</w:p>', '</text:p>', '</text:h>', '<w:br/>', '<text:line-break/>'), "\n", $xml);
+			$xml = str_replace(array('<w:tab/>', '<text:tab/>'), "\t", $xml);
+			$xml = preg_replace('/<text:s(\s[^>]*)?\/>/', ' ', $xml);
+			$text = dol_html_entity_decode(strip_tags($xml), ENT_QUOTES | ENT_XML1);
+		} else {
+			// Spreadsheets: one line per row, cells separated by tabs, for each sheet
+			require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
+			$reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($type);
+			$reader->setReadDataOnly(true);
+			$spreadsheet = $reader->load($tmpfile);
+			foreach ($spreadsheet->getWorksheetIterator() as $sheet) {
+				$text .= '# '.$sheet->getTitle()."\n";
+				foreach ($sheet->toArray(null, true, false, false) as $row) {
+					$line = rtrim(implode("\t", array_map('strval', $row)));
+					if ($line !== '') {
+						$text .= $line."\n";
+					}
+				}
+				$text .= "\n";
+				if ($maxsize > 0 && dol_strlen($text) > $maxsize) {
+					break;
+				}
+			}
+		}
+	} catch (Throwable $e) {
+		dol_syslog("ai_convert_office_attachment_to_text Failed to convert ".$mime.": ".$e->getMessage(), LOG_WARNING);
+		$text = false;
+	}
+	dol_delete_file($tmpfile);
+
+	if ($text === false || trim($text) === '') {
+		$error = $langs->trans("AIAttachmentConversionFailed", $mime);
+		return false;
+	}
+	$text = trim(preg_replace("/\n{3,}/", "\n\n", $text));
+	if ($maxsize > 0 && dol_strlen($text) > $maxsize) {
+		$text = dol_substr($text, 0, $maxsize);
+	}
+
+	return $text;
+}
+
+/**
+ * Return the temporary directory of the AI module for the current entity.
+ *
+ * @return string	Directory path
+ */
+function ai_temp_dir()
+{
+	global $conf;
+
+	if (!empty($conf->ai->multidir_temp[$conf->entity])) {
+		return $conf->ai->multidir_temp[$conf->entity];
+	}
+	if (!empty($conf->ai->dir_temp)) {
+		return $conf->ai->dir_temp;
+	}
+
+	return DOL_DATA_ROOT.'/ai/temp';
+}
+
+/**
+ * Split the type part of a chat attachment marker "__FILE_ATTACHMENT__[mime;name=urlencodedname]::base64".
+ *
+ * @param string $type	Content between the brackets of the marker
+ * @return array{mime:string,name:string}	MIME type and original file name (may be empty)
+ */
+function ai_attachment_parse_marker_type($type)
+{
+	$parts = explode(';name=', (string) $type, 2);
+	$mime = trim($parts[0]);
+
+	return array(
+		'mime' => ($mime !== '' ? $mime : 'application/octet-stream'),
+		'name' => (isset($parts[1]) ? rawurldecode($parts[1]) : '')
+	);
+}
+
+/**
+ * Number of minutes a file attached to a chat message is kept on server side, so a tool can use it later.
+ *
+ * @return int Minutes
+ */
+function ai_attachment_keep_minutes()
+{
+	return max(1, getDolGlobalInt('AI_ATTACHMENT_KEEP_MINUTES', 60));
+}
+
+/**
+ * Delete the kept attachments that expired: entries of the session, and files of any session older than one day.
+ *
+ * @return void
+ */
+function ai_attachment_prune()
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	$limit = dol_now() - ai_attachment_keep_minutes() * 60;
+	if (!empty($_SESSION['ai_attachments']) && is_array($_SESSION['ai_attachments'])) {
+		foreach ($_SESSION['ai_attachments'] as $ref => $info) {
+			if (!is_array($info) || (int) $info['date'] < $limit || !dol_is_file($info['file'])) {
+				if (is_array($info) && dol_is_file($info['file'])) {
+					dol_delete_file($info['file']);
+				}
+				unset($_SESSION['ai_attachments'][$ref]);
+			}
+		}
+	}
+	// Files of sessions that ended without cleaning
+	$files = dol_dir_list(ai_temp_dir().'/attachments', 'files', 0, '', '', 'date', SORT_ASC);
+	foreach ($files as $file) {
+		if ($file['date'] < (dol_now() - 86400 - ai_attachment_keep_minutes() * 60)) {
+			dol_delete_file($file['fullname']);
+		}
+	}
+}
+
+/**
+ * Keep aside, on server side, a file attached to a chat message, so a tool (an upload) can use it
+ * later by its reference (@attachmentN), even in a next request, without the model copying its content.
+ *
+ * @param string $mime		MIME type
+ * @param string $name		Original file name (may be empty)
+ * @param string $base64	Base64 content of the file
+ * @return array{ref:string,name:string,mime:string,size:int}|null	Kept file, or null on error
+ */
+function ai_attachment_store($mime, $name, $base64)
+{
+	global $user;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+	ai_attachment_prune();
+
+	$base64 = preg_replace('/\s+/', '', (string) $base64);
+	$hash = dol_hash($base64, 'sha256');
+	if (!isset($_SESSION['ai_attachments']) || !is_array($_SESSION['ai_attachments'])) {
+		$_SESSION['ai_attachments'] = array();
+	}
+	// Same file sent again (in the same or a next message): same reference
+	foreach ($_SESSION['ai_attachments'] as $ref => $info) {
+		if ($info['hash'] === $hash) {
+			$_SESSION['ai_attachments'][$ref]['date'] = dol_now();
+			return array('ref' => '@'.$ref, 'name' => $info['name'], 'mime' => $info['mime'], 'size' => $info['size']);
+		}
+	}
+
+	$content = base64_decode($base64, true);
+	if ($content === false || $content === '') {
+		return null;
+	}
+	$dir = ai_temp_dir().'/attachments';
+	dol_mkdir($dir);
+	$file = $dir.'/'.((int) $user->id).'_'.getRandomPassword(true);
+	if (file_put_contents($file, $content) === false) {
+		dol_syslog("ai_attachment_store Failed to write ".$file, LOG_WARNING);
+		return null;
+	}
+	dolChmod($file);
+
+	$name = dol_sanitizeFileName(dol_basename((string) $name));
+	if ($name === '') {
+		$name = 'file'.(preg_match('/^image\/(png|jpeg|gif|webp)$/', $mime, $reg) ? '.'.str_replace('jpeg', 'jpg', $reg[1]) : ($mime === 'application/pdf' ? '.pdf' : ''));
+	}
+	$_SESSION['ai_attachment_seq'] = (empty($_SESSION['ai_attachment_seq']) ? 0 : (int) $_SESSION['ai_attachment_seq']) + 1;
+	$ref = 'attachment'.$_SESSION['ai_attachment_seq'];
+	$_SESSION['ai_attachments'][$ref] = array('file' => $file, 'name' => $name, 'mime' => (string) $mime, 'size' => dol_strlen($content, 'UTF-8', 1), 'hash' => $hash, 'date' => dol_now());
+
+	return array('ref' => '@'.$ref, 'name' => $name, 'mime' => (string) $mime, 'size' => $_SESSION['ai_attachments'][$ref]['size']);
+}
+
+/**
+ * Text given to the model in place of an attachment, with the reference to pass to a tool.
+ *
+ * @param array{ref:string,name:string,mime:string,size:int}|null $info	Kept file (ai_attachment_store())
+ * @return string	Description
+ */
+function ai_attachment_describe($info)
+{
+	if (empty($info)) {
+		return '[attached document]';
+	}
+
+	return '[attached document '.$info['ref'].': '.$info['name'].', '.$info['mime'].', '.max(1, (int) round($info['size'] / 1024)).' KB]';
+}
+
+/**
+ * Note listing the files kept from earlier messages, still usable by their reference.
+ *
+ * @param string[] $excludedrefs	References already described in the message (e.g. '@attachment3')
+ * @return string	Note for the model, or '' when there is none
+ */
+function ai_attachment_list_note(array $excludedrefs)
+{
+	ai_attachment_prune();
+
+	$lines = array();
+	foreach ((empty($_SESSION['ai_attachments']) ? array() : $_SESSION['ai_attachments']) as $ref => $info) {
+		if (!in_array('@'.$ref, $excludedrefs, true)) {
+			$lines[] = '- '.ai_attachment_describe(array('ref' => '@'.$ref, 'name' => $info['name'], 'mime' => $info['mime'], 'size' => $info['size']));
+		}
+	}
+	if (empty($lines)) {
+		return '';
+	}
+
+	return "(Files attached to earlier messages, still available: to store one of them with an upload tool, give its reference (e.g. @attachment1) as filecontent.)\n".implode("\n", $lines);
+}
+
+/**
+ * Replace the reference of a kept attachment (e.g. '@attachment1') given as filecontent of a tool
+ * by the content of the file, base64-encoded. The file name is used when the tool has no filename.
+ *
+ * @param array<string,mixed>	$args	Tool arguments
+ * @param string				$error	Set to a client-safe message when the reference is unknown or expired
+ * @return array<string,mixed>|false	Arguments with the file content, or false on error
+ */
+function ai_attachment_resolve_args(array $args, &$error)
+{
+	global $langs;
+
+	$error = '';
+	$reg = array();
+	if (!isset($args['filecontent']) || !is_string($args['filecontent']) || !preg_match('/^\s*@?(attachment\d+)\s*$/', $args['filecontent'], $reg)) {
+		return $args;
+	}
+
+	ai_attachment_prune();
+	$info = (empty($_SESSION['ai_attachments'][$reg[1]]) ? null : $_SESSION['ai_attachments'][$reg[1]]);
+	$content = ($info ? file_get_contents($info['file']) : false);
+	if ($content === false) {
+		$langs->load("other");
+		$error = $langs->trans("AIAttachmentExpired", '@'.$reg[1], (string) ai_attachment_keep_minutes());
+		return false;
+	}
+	$args['filecontent'] = base64_encode($content);
+	$args['fileencoding'] = 'base64';
+	if (empty($args['filename'])) {
+		$args['filename'] = $info['name'];
+	}
+
+	return $args;
+}
+
+/**
+ * Remove the attachments the model is known to reject (images or PDF), as the provider answered
+ * before in this session: they are not sent again, the model gets only their description.
+ *
+ * @param array<int,array{mime:string,data:string}>	$attachments	Attachments of the request
+ * @param string									$service		AI service key
+ * @param string									$model			Model name
+ * @return array<int,array{mime:string,data:string}>	Attachments the model may read
+ */
+function ai_attachment_filter_for_model(array $attachments, $service, $model)
+{
+	$rejected = (empty($_SESSION['ai_model_rejected_attachments'][$service.'|'.$model]) ? array() : $_SESSION['ai_model_rejected_attachments'][$service.'|'.$model]);
+	$kept = array();
+	foreach ($attachments as $att) {
+		if (empty($rejected[($att['mime'] === 'application/pdf' ? 'pdf' : 'image')])) {
+			$kept[] = $att;
+		}
+	}
+
+	return $kept;
+}
+
+/**
+ * Remember, for the session, that the model rejected the kinds of attachments (image, pdf) of a request.
+ *
+ * @param array<int,array{mime:string,data:string}>	$attachments	Attachments the provider rejected
+ * @param string									$service		AI service key
+ * @param string									$model			Model name
+ * @return void
+ */
+function ai_attachment_mark_rejected_by_model(array $attachments, $service, $model)
+{
+	foreach ($attachments as $att) {
+		$_SESSION['ai_model_rejected_attachments'][$service.'|'.$model][($att['mime'] === 'application/pdf' ? 'pdf' : 'image')] = 1;
+	}
 }
 
 /**
@@ -483,6 +914,28 @@ function ai_log_request($db, $user, $query, array $response, $provider, float $t
 	}
 
 	return 0;
+}
+
+/**
+ * Price (in/out, per 1M tokens, in the admin's own currency and contract) for a
+ * model, from the JSON map AI_MODEL_PRICES_JSON, e.g.
+ *   {"gemini-2.5-flash":{"in":0.30,"out":2.50},"default":{"in":1,"out":3}}
+ * Cost is computed at DISPLAY time, so a price update re-prices the history.
+ *
+ * @param string $model Model id as logged
+ * @return array{in:float,out:float}|null Price entry, or null when not configured
+ */
+function aiModelPrice($model)
+{
+	static $prices = null;
+	if ($prices === null) {
+		$prices = json_decode(getDolGlobalString('AI_MODEL_PRICES_JSON', '{}'), true);
+		if (!is_array($prices)) {
+			$prices = array();
+		}
+	}
+	$entry = $prices[$model] ?? ($prices['default'] ?? null);
+	return (is_array($entry) && isset($entry['in'], $entry['out'])) ? array('in' => (float) $entry['in'], 'out' => (float) $entry['out']) : null;
 }
 
 /**
@@ -650,6 +1103,25 @@ function getAiAssistantDefaultModel()
 }
 
 /**
+ * Return the default system prompt of the AI Assistant, used when the constant AI_INTENT_PROMPT is empty.
+ *
+ * @return string	The default system prompt
+ */
+function getAiAssistantDefaultPrompt()
+{
+	return "ROLE: Dolibarr ERP AI.
+GOAL: Map user intent to specific JSON commands, or answer directly when no Dolibarr data or action is needed.
+
+CONSTRAINTS:
+1. OUTPUT: Single valid JSON object ONLY. No text outside the JSON.
+   Format: {\"tool\": \"tool_name\", \"arguments\": {\"argument_name\": \"argument_value\", ...}} or {\"type\": \"message\", \"content\": \"...\"}
+2. TOOLS: For Dolibarr data or actions, use ONLY provided tools. If no tool or thirdparty fits, you must first use 'respond_to_user' to inform user. For a request that needs no Dolibarr data (writing a text, translating, summarizing, general question), answer it yourself with {\"type\": \"message\", \"content\": \"...\"}.
+3. ARGS: strict adherence to schema. Do not invent parameters.
+4. MISSING INFO: If a required argument (like an ID) is missing, use 'ask_for_clarification'.
+5. SAFETY: For DELETE/UPDATE actions, you MUST use 'ask_for_confirmation'.";
+}
+
+/**
  * Resolve the API URL used by the AI Assistant for the configured provider
  * (same resolution order as assistant/parse_intent.php).
  *
@@ -794,16 +1266,16 @@ function aiSuggestClosestModel($missing, array $models)
  */
 function getAiChatAssistantConfig()
 {
-	global $conf, $langs, $user;
+	global $conf, $langs, $mysoc, $user;
 
 	$langs->loadLangs(array('main', 'admin', 'bills', 'companies', 'products', 'other'));
 
 	$keys = array(
 		// Table header labels for common API fields (see FIELD_LABELS in ai_assistant.js)
-		'AIAttachmentBlockedByPrivacy', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
+		'AIAttachmentBlockedByPrivacy', 'AIAttachmentMustBeConvertedToText', 'AIAttachmentTypeNotAllowed', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
-		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
+		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC', 'UserGroups', 'Group',
 		// General UI
 		'NoDataAvailable',
 		'Error',
@@ -843,12 +1315,10 @@ function getAiChatAssistantConfig()
 		'OcrProgress',
 		'SwitchingAIModel',
 		'OcrFailed',
-		'ReadingWord',
-		'ReadingExcel',
-		'ReadingOdf',
 
 		// Errors
 		'MicError',
+		'MicNotAllowedHelp',
 		'MicTooQuiet',
 		'ConnectionBlocked',
 		'ConnectionBlockedHelp',
@@ -864,6 +1334,7 @@ function getAiChatAssistantConfig()
 		'AIContextPinOff',
 		'AIContextCounter',
 		'AIContextLabel',
+		'AIContextLabelHelp',
 		'AIContextTokens',
 		'AIContextAuto',
 		'AIContextAutoTitle',
@@ -918,6 +1389,9 @@ function getAiChatAssistantConfig()
 		'AIHelpClear',
 		'AIHelpStatus',
 		'AIHelpTools',
+		'AIHelpReload',
+		'AIReloadDone',
+		'AIReloadNothing',
 		'AIHelpMentions',
 		'AIHelpMentionThirdparty',
 		'AIHelpMentionProduct',
@@ -941,7 +1415,8 @@ function getAiChatAssistantConfig()
 		'AIModelFast',
 		'AIModelBalanced',
 		'AIModelDeep',
-		'AIModelSavedGone'
+		'AIModelSavedGone',
+		'Default'
 	);
 
 	$ai_translations = array();
@@ -959,6 +1434,7 @@ function getAiChatAssistantConfig()
 	$ai_translations['AIAttachmentTooMany'] = $langs->transnoentitiesnoconv('AIAttachmentTooMany', '%s');
 	$ai_translations['ErrorFieldRequired'] = $langs->transnoentitiesnoconv('ErrorFieldRequired', '%s');
 	$ai_translations['AIPaletteBadJson'] = $langs->transnoentitiesnoconv('AIPaletteBadJson', '%s');
+	$ai_translations['AIReloadDone'] = $langs->transnoentitiesnoconv('AIReloadDone', '%s');
 	$ai_translations['AIPaletteTypeToSearch'] = $langs->transnoentitiesnoconv('AIPaletteTypeToSearch', '%s');
 	$ai_translations['DownloadPdf'] = $langs->transnoentitiesnoconv("Download").' PDF';
 	$ai_translations['CloudVoiceRequiresSecureContext'] = $langs->trans(
@@ -984,6 +1460,12 @@ function getAiChatAssistantConfig()
 	if ($defaultmode === 'whisper' && getDolGlobalString("MAIN_FEATURES_LEVEL") < 1) {
 		$defaultmode = '';
 	}
+	// The Google cloud voice option is not rendered in the webview of a smartphone
+	// webapp (dol_use_jmobile): same fallback so the JS never selects a value
+	// missing from the combo.
+	if ($defaultmode === 'cloud' && !empty($conf->dol_use_jmobile)) {
+		$defaultmode = '';
+	}
 
 	return array(
 		'mode' => $defaultmode,
@@ -991,14 +1473,20 @@ function getAiChatAssistantConfig()
 		// Presentation context for tool results: money, date and label
 		// formatting happen client-side on raw API data.
 		'privacyRedaction' => getDolGlobalInt('AI_PRIVACY_REDACTION', 0),
+		// Attachments converted into text in the browser (OCR for images) instead of sent as binary files
+		'attachmentToText' => ai_attachment_convert_to_text(),
+		'attachmentToTextMaxBytes' => ai_attachment_convert_to_text_max_bytes(),
+		// Conversion of attachments with external JS libraries (pdf.js, Tesseract...) allowed
+		'attachmentConvertSupport' => (getDolGlobalInt('AI_SUPPORT_PRIVACY_ON_ALL_TYPE_OF_UPLOADED_FILES') ? 1 : 0),
 		// Attachment count cap, so the client mirrors the server-side guard
 		// of ai_validate_attachments() instead of hardcoding its own.
 		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
-		// Recent exchanges that follow the model by default (sliding window).
-		// Off (0) until an administrator decides otherwise: past answers carry
-		// business content the privacy masking does not cover, so sending them
-		// back on every request is not a default the module takes by itself.
-		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
+		// Recent messages that follow the model by default (sliding window).
+		// 4 by default, 0 to disable: past answers carry business content the
+		// privacy masking does not cover, so the administrator can turn it off.
+		'autoContext' => min(aiChatContextMaxMessages(), getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_MESSAGES', 4)),
+		// Max size (in characters) of the context sent back to the model, also the cap of one tool result.
+		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000),
 		// The "/" palette of the chat input, always on.
 		'palette' => 1,
 		// The raw API tools in the "/" palette (testing, advanced use); the commands are always there.
@@ -1009,6 +1497,9 @@ function getAiChatAssistantConfig()
 		// Gemini is the only wired provider taking HEIC natively; the chat JS
 		// falls back to it when the browser cannot transcode HEIC to JPEG.
 		'providerAcceptsHeic' => ((getListOfAIServices()[getDolGlobalString('AI_API_SERVICE')]['adapter_type'] ?? '') === 'google' ? 1 : 0),
+		// Local taxes used by the country of the company: their fields are hidden in the chat otherwise.
+		'useLocalTax1' => ($mysoc->useLocalTax(1, 1, $mysoc) ? 1 : 0),
+		'useLocalTax2' => ($mysoc->useLocalTax(2, 1, $mysoc) ? 1 : 0),
 		'currency' => $conf->currency,
 		'locale' => str_replace('_', '-', $langs->getDefaultLang()),
 		'urlRoot' => DOL_URL_ROOT,
@@ -1021,6 +1512,11 @@ function getAiChatAssistantConfig()
 		// Key of the conversation kept in the browser sessionStorage, so the chat
 		// survives a page change (popover <-> full page) for this user and entity only.
 		'historyKey' => 'aiChatHistory_'.((int) $conf->entity).'_'.((int) $user->id),
+		// Key of the model picked in the chat, kept in the browser localStorage. It includes the
+		// login date, so a new login starts again on the default model (AI_API_<SERVICE>_MODEL_TEXT).
+		'modelChoiceKey' => 'aiModelChoice_'.((int) $conf->entity).'_'.((int) $user->id).'_'.((int) ($_SESSION['dol_logindate'] ?? 0)),
+		// Model used by default (AI_API_<SERVICE>_MODEL_TEXT), flagged with "(Default)" in the model picker
+		'defaultModel' => getAiAssistantDefaultModel(),
 	);
 }
 
@@ -1095,7 +1591,7 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 	if ($defaultModel !== '') {
 		$autoLabel .= ' ('.$defaultModel.')';
 	}
-	$out .= '<option value="" data-picto="ai-picto-sparkle">'.dol_escape_htmltag($autoLabel).'</option>';
+	$out .= '<option value="" data-picto="fa fa-magic">'.dol_escape_htmltag($autoLabel).'</option>';
 	$out .= '</select>';
 	//$out .= ajax_combobox("model-select");
 
@@ -1103,7 +1599,12 @@ function getAiChatAssistantHtml($mode = 'page', $openconversation = 0)
 	$out .= '<select id="engine-select" class="engine-select">';
 	// data-picto is the css class of the picto shown before the label when the select is rendered with select2
 	$out .= '<option value="text" data-picto="fa fa-keyboard">'.$langs->transnoentitiesnoconv("OptionTextOnly").'</option>';
-	$out .= '<option value="cloud" data-picto="fa fa-cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
+	// The Google cloud voice mode uses the browser SpeechRecognition API, which
+	// the webview of a smartphone webapp (dol_use_jmobile) does not provide:
+	// the option is not offered in that mode.
+	if (empty($conf->dol_use_jmobile)) {
+		$out .= '<option value="cloud" data-picto="fa fa-cloud">'.$langs->transnoentitiesnoconv("OptionCloudFast").'</option>';
+	}
 	// The local whisper mode is experimental: only offered with the experimental features enabled
 	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 1) {
 		$out .= '<option value="whisper" data-picto="fa fa-microphone" data-experimental="1">'.$langs->transnoentitiesnoconv("OptionWhisperLocal").'</option>';
@@ -1581,7 +2082,8 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$exactIds = array();
 			$firstIds = array();
 			foreach ($wordlists as $wl) {
-				list($id, $ws) = $wl;
+				$id = $wl[0];
+				$ws = $wl[1];
 				if (count($ws) < $len) {
 					continue;
 				}
@@ -1632,7 +2134,11 @@ function aiFindThirdpartiesInText($db, $user, $text, $nature = '', $stopwords = 
 			$i++;
 			continue;
 		}
-		list($len, $ids, $key, $exact, $first) = $hit;
+		$len = $hit[0];
+		$ids = $hit[1];
+		$key = $hit[2];
+		$exact = $hit[3];
+		$first = $hit[4];
 		$start = $words[$i][1];
 		$end = $words[$i + $len - 1][2];
 		$cands = array();
@@ -2117,7 +2623,7 @@ function aiPaletteToolTitle($langs, $name, $route)
 		'thirdparties' => array('companies', 'ThirdParty', 'ThirdParties'),
 		'products' => array('products', 'Product', 'Products'),
 		'projects' => array('main', 'Project', 'Projects'),
-		'tasks' => array('projects', 'Task', 'Tasks'),
+		'project_tasks' => array('projects', 'Task', 'Tasks'),
 		'tickets' => array('ticket', 'Ticket', 'Tickets'),
 		'warehouses' => array('stocks', 'Warehouse', 'Warehouses'),
 		'stockmovements' => array('stocks', 'StockMovement', 'StockMovements'),
@@ -2174,7 +2680,7 @@ function aiPaletteToolTitle($langs, $name, $route)
 		'update' => array('AIToolTitleUpdate', $one),
 		'delete' => array('AIToolTitleDelete', $one),
 		'validate' => array('AIToolTitleValidate', $one),
-		'add_payment' => array('AIToolTitleAddPayment', $one),
+		'payment_create' => array('AIToolTitleAddPayment', $one),
 		'add_line' => array('AIToolTitleAddLine', $one)
 	);
 	$langs->load('other');
@@ -2221,4 +2727,103 @@ function aiPaletteToolDescription($description)
 	$text = (string) preg_replace('/\s*through the Dolibarr REST API \(auto-generated tool\)\.?/i', '', (string) $description);
 
 	return trim((string) preg_replace('/\s{2,}/', ' ', $text));
+}
+
+/**
+ * Compresses tool schema by removing optional parameters with defaults
+ * and stripping descriptions, relying on LLM inference of variable names.
+ *
+ * @param array<int, array<string, mixed>> $tools Array of tool definitions.
+ * @param bool $isLargeSchema True if compression is needed.
+ * @return array<int, array<string, mixed>>
+ */
+function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
+{
+	$cleaned = [];
+
+	foreach ($tools as $tool) {
+		// Tool descriptions are how the LLM selects the right tool -- never truncate
+		// them, even when the schema is large. Truncating to 3 words ("Create documents
+		// other", "Add a single") breaks tool selection. If the schema really is too
+		// big for the chosen model, the right answer is to filter the toolset before
+		// it reaches the LLM (which is what filterToolsProfessional() already does
+		// upstream of this function), not to mutilate each tool's description.
+		// Parameter-level compression (stripping defaults, descriptions of optional
+		// fields, etc.) remains gated on $isLargeSchema below.
+		$desc = $tool['description'];
+
+		// Get parameters
+		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];
+		// requestState is set by the chat after the user confirmed a write, never by the model.
+		// The properties of a tool without parameter may be an empty object (encoded as {} in JSON) instead of an array.
+		if (isset($toolParams['properties']) && is_array($toolParams['properties'])) {
+			unset($toolParams['properties']['requestState']);
+		}
+
+		if ($isLargeSchema && isset($toolParams['properties']) && is_array($toolParams['properties'])) {
+			$requiredList = $toolParams['required'] ?? [];
+			$newProperties = [];
+
+			foreach ($toolParams['properties'] as $propKey => $propData) {
+				$isRequired = in_array($propKey, $requiredList);
+
+				// -----------------------------------------------------------
+				// Remove Optional Parameters with Defaults
+				// -----------------------------------------------------------
+				// If a parameter is optional and has a default value defined in
+				// the schema, we assume the backend will handle it. We remove it
+				// from the prompt entirely. This saves massive amounts of tokens
+				// on list/search functions (limit, sortorder, sqlfilters, etc).
+				// -----------------------------------------------------------
+				// Paging, sort and filter params of list tools are kept (without description): without them,
+				// the model can't answer "the last 5 ..." or filter a list, and gets the 25 first records.
+				// count is kept so a "how many ..." question is answered without loading the records.
+				// subdir, search and recursive are kept so the file tools can list another directory than the root.
+				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters', 'count', 'subdir', 'search', 'recursive'))) {
+					continue;
+				}
+
+				// Remove 'type' for string (LLM default), Keep others (int/bool/arr)
+				if (isset($propData['type']) && $propData['type'] === 'string') {
+					unset($propData['type']);
+				}
+
+				// Handle Descriptions
+				// Remove descriptions entirely. Rely on the key name (e.g. 'email', 'qty').
+				// Exception: Keep 1 word if it's a required parameter with a confusing name.
+				if (isset($propData['description'])) {
+					unset($propData['description']);
+					// If we want to keep a tiny hint for required params, uncomment below:
+					// if ($isRequired) {
+					//     $propData['description'] = explode(' ', trim($propData['description']))[0];
+					// }
+				}
+
+				// Collapse Complex Objects
+				// If a parameter is a deep object (like a complex filter), replace the
+				// recursive properties definition with a generic string to save tokens.
+				if (isset($propData['type']) && $propData['type'] === 'object' && isset($propData['properties'])) {
+					unset($propData['properties']);
+					unset($propData['required']);
+					$propData['description'] = "JSON object"; // Minimal hint
+				}
+
+				$newProperties[$propKey] = $propData;
+			}
+
+			$toolParams['properties'] = $newProperties;
+
+			// Clean up root metadata
+			unset($toolParams['type']);
+			unset($toolParams['additionalProperties']);
+		}
+
+		$cleaned[] = [
+			'name' => $tool['name'],
+			'description' => $desc,
+			'parameters' => $toolParams
+		];
+	}
+
+	return $cleaned;
 }

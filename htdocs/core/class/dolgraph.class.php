@@ -146,6 +146,10 @@ class DolGraph
 	 */
 	public $showpercent = 0;
 	/**
+	 * @var int<0,1>		Show the "Not enough data yet" message instead of the graph
+	 */
+	public $shownographyet = 0;
+	/**
 	 * @var float
 	 */
 	public $combine = 0; // 0.05 if you want to combine records < 5% into "other"
@@ -240,7 +244,7 @@ class DolGraph
 
 		$this->_library = $library;
 		if ($this->_library == 'auto') {
-			$this->_library = (!getDolGlobalString('MAIN_JS_GRAPH') ? 'chart' : $conf->global->MAIN_JS_GRAPH);
+			$this->_library = (!getDolGlobalString('MAIN_JS_GRAPH') ? 'chart' : getDolGlobalString('MAIN_JS_GRAPH'));
 		}
 	}
 

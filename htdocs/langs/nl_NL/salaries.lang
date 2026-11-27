@@ -27,6 +27,7 @@ Earnings=Inkomsten
 TotalEarnings=Totale verdiensten
 TotalDeductions=Totale aftrekposten
 NetPaid=Netto betaald
+GrossSalary=Gross salary
 
 # Accounting
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Rekening (uit het rekeningschema) die standaard wordt gebruikt voor 'gebruikers' op het gebied van salarissen
@@ -55,8 +56,6 @@ FillFieldFirst=Vul eerst het werknemersveld in
 UpdateAmountWithLastSalary=Stel het bedrag van het laatste salaris in
 MakeTransferRequest=Overdrachtsverzoek indienen
 VirementOrder=Verzoek om overboeking
-WithdrawalReceipt=Betalingsopdracht
-OrderWaiting=In behandeling Bestelling
 FillEndOfMonth=Einde van de maand
 
 # Shortcuts

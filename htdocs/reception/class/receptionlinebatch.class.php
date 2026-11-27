@@ -410,6 +410,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= ", fk_unit";
 		$sql .= ", description";
 		$sql .= ", rang";
+		$sql .= ", cost_price";
+		$sql .= ", ref_fourn";
 		$sql .= ") VALUES (";
 		$sql .= ((int) $this->fk_reception);
 		$sql .= ", ".(empty($this->fk_entrepot) ? 'NULL' : ((int) $this->fk_entrepot));
@@ -420,6 +422,12 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= ", ".((int) $this->fk_unit);
 		$sql .= ", '".(empty($this->description) ? '' : $this->db->escape($this->description))."'";
 		$sql .= ", ".((int) $ranktouse);
+		// Buying price and supplier line reference: set by Reception::addlinefree()
+		// on this object before calling insert(). This INSERT is the path used by
+		// standalone receptions; keep these columns in sync with create(), which
+		// carries them too (they were lost once already in a rewrite of this method).
+		$sql .= ", ".(!isset($this->cost_price) ? 'null' : (float) $this->cost_price);
+		$sql .= ", ".(empty($this->ref_fourn) ? 'NULL' : "'".$this->db->escape($this->ref_fourn)."'");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
@@ -490,7 +498,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " t.fk_unit,";
 		$sql .= " t.description,";
 		$sql .= " t.rang,";
-		$sql .= " t.fk_reception";
+		$sql .= " t.fk_reception,";
+		$sql .= " t.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if ($ref) {
 			$sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
@@ -529,6 +538,7 @@ class ReceptionLineBatch extends CommonObjectLine
 				$this->fk_unit = $obj->fk_unit;
 				$this->rang = $obj->rang;
 				$this->fk_reception = $obj->fk_reception;
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$this->fetch_optionals();
 			}

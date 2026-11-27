@@ -22,10 +22,43 @@ jobs:
   check-files:
     runs-on: ubuntu-latest
     steps:
-      - name: Check that no translation files outside htdocs/langs/en_US are modified
+      - name: Check if the author of the last commit of the PR is a maintainer
+        id: maintainer
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
+          # As for the quota check, if the author of the last commit of the PR is a maintainer (a github login found
+          # on a line "M: Name <email> / login" of the MAINTAINERS file of the target branch, never read from the PR),
+          # some checks are bypassed, so a maintainer can force the CI to green.
+          MAINTAINERS=$(gh api -H "Accept: application/vnd.github.raw" "repos/${GH_REPO}/contents/MAINTAINERS?ref=${PR_TARGET_BRANCH}" \
+            | grep -E '^[[:space:]]*M:.*<[^>]*@[^>]*>[[:space:]]*/[[:space:]]*[A-Za-z0-9-]+[[:space:]]*$' \
+            | sed -E 's|.*/[[:space:]]*([A-Za-z0-9-]+)[[:space:]]*$|\1|' | sort -u || true)
+          LAST_COMMIT_AUTHOR=$(gh api "repos/${GH_REPO}/pulls/${PR_NUMBER}/commits" --paginate \
+            -q '.[] | (.author.login // "")' | tail -n 1)
+          echo "Author of the last commit of the PR: ${LAST_COMMIT_AUTHOR:-unknown}"
+          if [ -n "${LAST_COMMIT_AUTHOR}" ] && printf '%s\n' "${MAINTAINERS}" | grep -qixF -- "${LAST_COMMIT_AUTHOR}"; then
+            echo "The author of the last commit, ${LAST_COMMIT_AUTHOR}, is a maintainer found into the MAINTAINERS file. Some checks will be skipped."
+            echo "bypass=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "bypass=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check that no translation files outside htdocs/langs/en_US are modified
+        # The checks are bypassed if the author of the last commit of the PR is a Dolibarr maintainer.
+        if: ${{ steps.maintainer.outputs.bypass != '1' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          # A PR to synchronize translations from Transifex is allowed to modify translation files of all languages.
+          if printf '%s' "$PR_TITLE" | grep -Fiq 'transifex sync'; then
+            echo "The PR title contains 'transifex sync', so modification of translation files outside htdocs/langs/en_US is allowed."
+            exit 0
+          fi
+
           # Get the list of files changed (added or modified) by the pull request,
           # using the GitHub API so no git history is needed (no checkout).
           CHANGED_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
@@ -61,7 +94,36 @@ jobs:
           #    || echo "::warning::Failed to remove the label \"PR not qualified\" on the PR."
           #fi
 
+      - name: Check that no files into htdocs/includes are modified, except for PR on develop
+        if: ${{ steps.maintainer.outputs.bypass != '1' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          # External libraries into htdocs/includes can be modified (upgraded) only into the develop branch.
+          if [ "${BASE_REF}" = "develop" ]; then
+            echo "The PR targets the develop branch, so files into htdocs/includes can be modified."
+            exit 0
+          fi
+
+          # Get the list of files changed (whatever is the status) by the pull request,
+          # using the GitHub API so no git history is needed (no checkout).
+          CHANGED_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
+            --jq '.[] | .filename, (.previous_filename // empty)' \
+            | grep -E '^htdocs/includes/' | sort -u || true)
+
+          if [ -n "$CHANGED_FILES" ]; then
+            echo "::error::Files into htdocs/includes (external libraries) must not be modified into a PR on a stable branch (here '${BASE_REF}'). Such changes must be done into a PR on the develop branch only. The following files were modified:"
+            while IFS= read -r CHANGED_FILE; do
+              echo " - ${CHANGED_FILE}"
+            done <<< "$CHANGED_FILES"
+            exit 1
+          fi
+
+          echo "No files into htdocs/includes were modified. OK."
+
       - name: Check the number of modified files is not higher than 10, except for QUAL PR
+        if: ${{ steps.maintainer.outputs.bypass != '1' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_TITLE: ${{ github.event.pull_request.title }}
@@ -113,3 +175,55 @@ jobs:
           fi
 
           echo "The ChangeLog file was not modified. OK."
+
+      - name: Check that database structure and code are not modified in the same PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the list of files changed (whatever is the status) by the pull request,
+          # using the GitHub API so no git history is needed (no checkout).
+          ALL_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
+            --jq '.[] | .filename, (.previous_filename // empty)' | sort -u)
+
+          # Files of the database structure (tables, keys, migrations, ...)
+          SQL_FILES=$(echo "$ALL_FILES" | grep -E '^htdocs/install/mysql/.*\.sql$' || true)
+          # Files of code: PHP files outside htdocs/install
+          PHP_FILES=$(echo "$ALL_FILES" | grep -E '\.php$' | grep -v '^htdocs/install/' || true)
+
+          if [ -n "$SQL_FILES" ] && [ -n "$PHP_FILES" ]; then
+            echo "::error::A PR must not modify the database structure (htdocs/install/mysql/**/*.sql) and the code (PHP files outside htdocs/install) at the same time. Please submit the database structure change into a dedicated PR first (see the CONTRIBUTING.md file)."
+            echo "Database structure files modified:"
+            echo "$SQL_FILES" | sed 's/^/ - /'
+            echo "Code files modified:"
+            echo "$PHP_FILES" | sed 's/^/ - /'
+            exit 1
+          fi
+
+          echo "The PR does not mix database structure and code changes. OK."
+
+      - name: Check that User Interface and server components are not modified in the same PR
+        # The check is bypassed if the author of the last commit of the PR is a Dolibarr maintainer.
+        if: ${{ steps.maintainer.outputs.bypass != '1' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the list of files changed (whatever is the status) by the pull request,
+          # using the GitHub API so no git history is needed (no checkout).
+          ALL_FILES=$(gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files?per_page=100" \
+            --jq '.[] | .filename, (.previous_filename // empty)' | sort -u)
+
+          # Files of the User Interface (same detection than the screenshot check of ci-on-pull-checkdesc.yml)
+          UI_FILES=$(echo "$ALL_FILES" | grep -Ei '(^htdocs/theme/|\.(tpl|css|scss|html|js|vue)$)' | grep -Ev '^(htdocs/includes/|dev/|.*node_modules/)' || true)
+          # Files of server components: SOAP web services and REST API classes (api_*.php)
+          SERVER_FILES=$(echo "$ALL_FILES" | grep -E '(^htdocs/webservices/.*\.php$|(^|/)api_[^/]*\.php$)' | grep -v '^htdocs/includes/' || true)
+
+          if [ -n "$UI_FILES" ] && [ -n "$SERVER_FILES" ]; then
+            echo "::error::A PR must not modify the User Interface (.tpl, .css, .scss, .html, .js, .vue or htdocs/theme/ files) and the server components (SOAP web services into htdocs/webservices or REST API files api_*.php) at the same time. Please split the changes into dedicated PRs (see the CONTRIBUTING.md file)."
+            echo "User Interface files modified:"
+            echo "$UI_FILES" | sed 's/^/ - /'
+            echo "Server component files modified:"
+            echo "$SERVER_FILES" | sed 's/^/ - /'
+            exit 1
+          fi
+
+          echo "The PR does not mix User Interface and server component changes. OK."

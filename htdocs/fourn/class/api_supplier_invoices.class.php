@@ -4,6 +4,7 @@
  * Copyright (C) 2023-2026	Joachim Kueter		<git-jk@bloxera.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2026		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +25,12 @@ use Luracast\Restler\RestException;
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 /**
  * API class for supplier invoices
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @property DoliDB $db
  * @access protected
@@ -61,6 +65,8 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Return an array with supplier invoice information
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param	int		$id				ID of supplier invoice
 	 * @return  Object					Object with cleaned properties
 	 *
@@ -94,6 +100,11 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Get a list of supplier invoices
 	 *
+	 * @since	5.0.0	Initial implementation
+	 * @since	19.0.0	Added properties parameter
+	 * @since	21.0.0	Added pagination_data parameter
+	 * @since	25.0.0	Parameter count
+	 *
 	 * @param string	$sortfield		  Sort field
 	 * @param string	$sortorder		  Sort order
 	 * @param int		$limit			  Limit for list
@@ -103,13 +114,14 @@ class SupplierInvoices extends DolibarrApi
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @param string    $properties		  Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data  If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count			Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array                      Array of invoice objects
-	 * @phan-return FactureFournisseur[]|array{data:FactureFournisseur[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return FactureFournisseur[]|array{data:FactureFournisseur[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return FactureFournisseur[]|array{data:FactureFournisseur[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return FactureFournisseur[]|array{data:FactureFournisseur[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "lire")) {
 			throw new RestException(403);
@@ -120,9 +132,11 @@ class SupplierInvoices extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -170,6 +184,11 @@ class SupplierInvoices extends DolibarrApi
 		//this query will return total supplier invoices with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -209,7 +228,7 @@ class SupplierInvoices extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => ($limit > 0 ? (int) ceil((int) $total / $limit) : 1),
 				'limit' => $limit
 			];
 		}
@@ -223,6 +242,8 @@ class SupplierInvoices extends DolibarrApi
 	 * Note: soc_id = dolibarr_order_id
 	 *
 	 * Example: {'ref': 'auto', 'ref_supplier': '7985630', 'socid': 1, 'note': 'Inserted with Python', 'order_supplier': 1, 'date': '2021-07-28'}
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param array $request_data Request data
 	 * @phan-param ?array<string,string> $request_data
@@ -268,6 +289,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Update supplier invoice
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param 	int   	$id             	Id of supplier invoice to update
 	 * @param 	array 	$request_data  		Data
 	 * @phan-param ?array<string,string> $request_data
@@ -308,6 +331,18 @@ class SupplierInvoices extends DolibarrApi
 				$this->invoice->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field == 'socid' && (int) $value != $this->invoice->socid) {
+				// Check access to the new thirdparty to avoid a cross-customer supplier invoice reassignment
+				$new_socid = (int) $value;
+				$thirdparty = new Societe($this->db);
+				$result = $thirdparty->fetch($new_socid);
+				if ($result < 1) {
+					throw new RestException(404, 'Thirdparty with id='.$new_socid.' not found or not allowed');
+				}
+				if (!DolibarrApi::_checkAccessToResource('societe', $new_socid)) {
+					throw new RestException(403, 'Access to new thirdparty='.$new_socid.' is not allowed for login '.DolibarrApiAccess::$user->login);
+				}
+			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
 					$this->invoice->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->invoice);
@@ -327,6 +362,8 @@ class SupplierInvoices extends DolibarrApi
 
 	/**
 	 * Delete supplier invoice
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param int   $id Supplier invoice ID
 	 *
@@ -369,6 +406,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Validate an invoice
 	 *
+	 * @since	6.0.0	Initial implementation
+	 *
 	 * @param   int $id             Invoice ID
 	 * @param   int $idwarehouse    Warehouse ID
 	 * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
@@ -380,6 +419,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException 304
+	 * @throws RestException 400
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 * @throws RestException 405
@@ -387,6 +427,8 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
+		global $langs;
+
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(403);
 		}
@@ -398,6 +440,15 @@ class SupplierInvoices extends DolibarrApi
 		$result = $this->invoice->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
+		}
+
+		if ($this->invoice->status <= FactureFournisseur::STATUS_DRAFT
+			&& !preg_match('/^'.preg_quote($langs->trans("CopyOf").' ', '/').'/', $this->invoice->ref_supplier)
+			&& count($this->invoice->lines) <= 0) {
+			$langs->load("errors");
+			$errorMessage = $langs->trans("ErrorObjectMustHaveLinesToBeValidated", $this->invoice->ref);
+			dol_syslog(__METHOD__.' '.$errorMessage, LOG_WARNING);
+			throw new RestException(400, $errorMessage);
 		}
 
 		$result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
@@ -418,6 +469,8 @@ class SupplierInvoices extends DolibarrApi
 
 	/**
 	 * Sets an invoice as draft
+	 *
+	 * @since	22.0.0	Initial implementation
 	 *
 	 * @param   int     $id             Id of supplier invoice
 	 * @param   int     $idwarehouse    Warehouse ID
@@ -464,6 +517,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Get list of payments of a given supplier invoice
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @param int   $id             Id of SupplierInvoice
 	 *
 	 * @url     GET {id}/payments
@@ -505,6 +560,9 @@ class SupplierInvoices extends DolibarrApi
 
 	/**
 	 * Add payment line to a specific supplier invoice with the remain to pay as amount.
+	 *
+	 * @since	11.0.0	Initial implementation
+	 * @since	19.0.0	Added amount parameter
 	 *
 	 * @param int     $id                               Id of invoice
 	 * @param int     $datepaye           {@from body}  Payment date        {@type timestamp}
@@ -616,6 +674,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Sets a supplier invoice as paid
 	 *
+	 * @since	23.0.0	Initial implementation
+	 *
 	 * @param   int     $id             Supplier invoice ID
 	 * @param   string  $close_code     Optional close code (e.g. discount/escompte case)
 	 * @param   string  $close_note     Optional close note/comment
@@ -662,6 +722,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Sets a supplier invoice as unpaid
 	 *
+	 * @since	23.0.0	Initial implementation
+	 *
 	 * @param   int     $id             Supplier invoice ID
 	 * @return  Object                  Object with cleaned properties
 	 *
@@ -705,6 +767,8 @@ class SupplierInvoices extends DolibarrApi
 
 	/**
 	 * Create a discount (credit available) from a supplier credit note, a supplier deposit or the excess paid on a supplier invoice
+	 *
+	 * @since	25.0.0	Initial implementation
 	 *
 	 * @param   int		$id				Supplier invoice ID
 	 * @return	Object					Object with cleaned properties
@@ -869,6 +933,8 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * Note that this consumes the credit. The invoice is set to paid when nothing remains to pay.
 	 *
+	 * @since	25.0.0	Initial implementation
+	 *
 	 * @param int   $id            Id of supplier invoice
 	 * @param int   $discountid    Id of the available supplier credit
 	 * @return	int
@@ -939,6 +1005,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Get lines of a supplier invoice
 	 *
+	 * @since	12.0.0	Initial implementation
+	 *
 	 * @param int   $id             Id of supplier invoice
 	 *
 	 * @url	GET {id}/lines
@@ -952,7 +1020,7 @@ class SupplierInvoices extends DolibarrApi
 	 */
 	public function getLines($id)
 	{
-		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
+		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "lire")) {
 			throw new RestException(403);
 		}
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $id, 'facture_fourn', 'facture')) {
@@ -978,6 +1046,8 @@ class SupplierInvoices extends DolibarrApi
 	 * Note: socid = dolibarr_order_id, pu_ht = net price, remise = discount
 	 *
 	 * Example: {'socid': 1, 'qty': 1, 'pu_ht': 21.0, 'tva_tx': 25.0, 'fk_product': '1189', 'product_type': 0, 'remise_percent': 1.0, 'vat_src_code': None}
+	 *
+	 * @since	12.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of supplier invoice to update
 	 * @param array $request_data   supplier invoice line data
@@ -1026,7 +1096,9 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->info_bits,
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->product_type,
-			$request_data->rang,
+			// -1 is the "append at the end" value of addline(). An absent rang is null, which empty() turns into 0,
+			// so without this every line added through the API is stored with rang 0 instead of being appended.
+			isset($request_data->rang) ? $request_data->rang : -1,
 			0,
 			$request_data->array_options,
 			$request_data->fk_unit,
@@ -1046,6 +1118,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Update a line to a given supplier invoice
 	 *
+	 * @since	12.0.0	Initial implementation
+	 *
 	 * @param int   $id             Id of supplier invoice to update
 	 * @param int   $lineid         Id of line to update
 	 * @param array $request_data   InvoiceLine data
@@ -1058,6 +1132,7 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Supplier invoice is not in draft status
 	 * @throws RestException 304 Error
 	 */
 	public function putLine($id, $lineid, $request_data = null)
@@ -1081,6 +1156,9 @@ class SupplierInvoices extends DolibarrApi
 		}
 		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
 			throw new RestException(403, 'Line does not belong to this supplier invoice');
+		}
+		if ((int) $this->invoice->status !== FactureFournisseur::STATUS_DRAFT) {
+			throw new RestException(405, 'Supplier invoice must be in draft status to update lines');
 		}
 
 		$request_data = (object) $request_data;
@@ -1123,6 +1201,8 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Deletes a line of a given supplier invoice
 	 *
+	 * @since	12.0.0	Initial implementation
+	 *
 	 * @param int   $id             Id of supplier invoice
 	 * @param int   $lineid			Id of the line to delete
 	 *
@@ -1135,6 +1215,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @throws RestException 400 Bad parameters
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
+	 * @throws RestException 405 Supplier invoice is not in draft status
 	 * @throws RestException 405 Error
 	 */
 	public function deleteLine($id, $lineid)
@@ -1162,6 +1243,9 @@ class SupplierInvoices extends DolibarrApi
 		if ($invoiceline->fk_facture_fourn != $this->invoice->id) {
 			throw new RestException(403, 'Line does not belong to this supplier invoice');
 		}
+		if ((int) $this->invoice->status !== FactureFournisseur::STATUS_DRAFT) {
+			throw new RestException(405, 'Supplier invoice must be in draft status to delete lines');
+		}
 
 		$updateRes = $this->invoice->deleteLine($lineid);
 		if ($updateRes > 0) {
@@ -1180,6 +1264,8 @@ class SupplierInvoices extends DolibarrApi
 	 * Add a discount line into a draft supplier invoice using an available supplier discount
 	 *
 	 * Note that this consumes the discount. A discount larger than the invoice must be split before, see POST thirdparties/{id}/splitdiscount/{discountid}.
+	 *
+	 * @since	25.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of supplier invoice
 	 * @param int   $discountid     Id of the available supplier discount

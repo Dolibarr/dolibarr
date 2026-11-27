@@ -170,6 +170,15 @@ if ($result) {
 			continue;
 		}
 
+		// Special cases
+		if (!getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+			// Permissions on delivery receipts are hidden when the delivery receipt feature is disabled
+			if ($obj->module == 'expedition' && in_array($obj->perms, array('delivery', 'delivery_advance'))) {
+				$i++;
+				continue;
+			}
+		}
+
 		$objMod = $modules[$obj->module];
 
 		// Save field module_position in database if value is wrong

@@ -4,6 +4,7 @@
  * Copyright (C) 2018-2020  Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Michael Wallis			<mh.wallis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyreport.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy'));
+$langs->loadLangs(array('compta', 'bills', 'donations', 'salaries', 'accountancy'));
 
 $id_report = GETPOSTINT('id_report');
 if ($id_report <= 0) {
@@ -181,6 +182,10 @@ if (isModEnabled('comptabilite')) {
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
+// When no accountancy module is enabled, no permission covers this page, so we refuse the access.
+if (!isModEnabled('comptabilite') && !isModEnabled('accounting')) {
+	accessforbidden();
+}
 
 /*
  * View
@@ -211,8 +216,8 @@ $description = '';
 
 $form = new Form($db);
 
-$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year - 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_previous().'</a>';
-$textnextyear = ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year + 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_next().'</a>';
+$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year - 1).'&id_report='.((int) $id_report).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_previous().'</a>';
+$textnextyear = ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year + 1).'&id_report='.((int) $id_report).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_next().'</a>';
 
 
 // Affiche en-tete de rapport
@@ -268,7 +273,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 }
 
-report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta' => $modecompta, 'action' => ''), $calcmode);
+report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta' => $modecompta, 'action' => '', 'id_report' => $id_report), $calcmode);
 
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
@@ -299,6 +304,8 @@ if ($date_startmonth > $date_endmonth) {
 	}
 }
 print	'</tr>';
+
+$groupsperaccount = array();	// Groups of each account, to warn about accounts in several groups
 
 if ($modecompta == 'CREANCES-DETTES') {
 	//if (!empty($date_start) && !empty($date_end))
@@ -519,6 +526,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				foreach ($cpts as $i => $cpt) {    // Loop on each account.
 					if (isset($cpt['account_number'])) {
 						$arrayofaccountforfilter[] = $cpt['account_number'];
+						$groupsperaccount[$cpt['account_number']][] = $code;
 					}
 				}
 
@@ -558,13 +566,20 @@ if ($modecompta == 'CREANCES-DETTES') {
 					foreach ($months as $k => $v) {
 						$monthtoprocess = $k + 1; // ($k+1) is month 1, 2, ..., 12
 						$yeartoprocess = $start_year;
-						if (($k + 1) < $start_month) {
+						if ($monthtoprocess < $start_month) {
 							$yeartoprocess++;
 						}
 
-						if (($yeartoprocess == $start_year && ($k + 1) >= $date_startmonth && $k < $date_endmonth) ||
-							($yeartoprocess == $start_year + 1 && ($k + 1) < $date_startmonth)
-						) {
+						// $k is the month index (0 = January). Compare the month number with the period bounds.
+						// A period inside one calendar year keeps months from the start month through the end month.
+						// A period that crosses New Year keeps the start year from the start month, then the next year through the end month.
+						if ($date_startmonth <= $date_endmonth) {
+							$keepmonth = ($yeartoprocess == $start_year && $monthtoprocess >= $date_startmonth && $monthtoprocess <= $date_endmonth);
+						} else {
+							$keepmonth = ($yeartoprocess == $start_year && $monthtoprocess >= $date_startmonth);
+							$keepmonth = $keepmonth || ($yeartoprocess == ($start_year + 1) && $monthtoprocess <= $date_endmonth);
+						}
+						if ($keepmonth) {
 							//var_dump($monthtoprocess.'_'.$yeartoprocess);
 							if (isset($cpt['account_number'])) {
 								$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
@@ -745,6 +760,21 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 print "</table>";
 print '</div>';
+
+// Warn about accounts counted in more than one group
+if (!empty($groupsperaccount)) {
+	$duplicates = array();
+	foreach ($groupsperaccount as $accountnumber => $groupcodes) {
+		if (count($groupcodes) > 1) {
+			$duplicates[] = $accountnumber.' ('.implode(', ', $groupcodes).')';
+		}
+	}
+	if (count($duplicates)) {
+		print '<div class="warning margintoponly">'.img_warning().' '.$langs->trans("AccountsInSeveralGroups", count($duplicates)).':<br>';
+		print dol_escape_htmltag(implode(', ', array_slice($duplicates, 0, 10)).(count($duplicates) > 10 ? ', ...' : ''));
+		print '</div>';
+	}
+}
 
 // End of page
 llxFooter();

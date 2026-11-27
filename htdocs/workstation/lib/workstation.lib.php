@@ -34,7 +34,7 @@ function workstationAdminPrepareHead()
 
 	$extrafields->fetch_name_optionals_label('workstation_workstation');
 
-	$langs->load("workstation");
+	$langs->load("mrp");
 
 	$h = 0;
 	$head = array();

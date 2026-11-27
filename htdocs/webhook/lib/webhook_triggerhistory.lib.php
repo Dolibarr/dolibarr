@@ -32,7 +32,6 @@ function triggerhistoryPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("webhook@webhook");
 
 	$h = 0;
 	$head = array();
@@ -50,7 +49,7 @@ function triggerhistoryPrepareHead($object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/webhook/triggerhistory_note.php', ['id' => $object->id]);
+		$head[$h][0] = dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'triggerhistory', 'id' => $object->id]);
 		$head[$h][1] = $langs->trans('Notes');
 		if ($nbNote > 0) {
 			$head[$h][1] .= (!getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbNote.'</span>' : '');

@@ -43,6 +43,7 @@ FirstUseDate=Date de première mise en service
 QCFrequency=Fréquence du contrôle qualité (en jours)
 ShowAllLots=Afficher tous les lots
 HideLots=Masquer les lots
+NbOfLots=%s lot(s)
 #Traceability - qc status
 OutOfOrder=Hors d'usage
 InWorkingOrder=En état de marche

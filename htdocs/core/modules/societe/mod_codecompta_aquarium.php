@@ -72,10 +72,10 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	public function __construct()
 	{
 		global $conf;
-		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) || trim($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) == '') {
+		if (trim(getDolGlobalString('COMPANY_AQUARIUM_MASK_CUSTOMER')) == '') {
 			$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER = '411';
 		}
-		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) || trim($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) == '') {
+		if (trim(getDolGlobalString('COMPANY_AQUARIUM_MASK_SUPPLIER')) == '') {
 			$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER = '401';
 		}
 
@@ -187,7 +187,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		//$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
 
 		// Remove special char if COMPANY_AQUARIUM_REMOVE_SPECIAL is set to 1 or not set (default)
-		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_AQUARIUM_REMOVE_SPECIAL')) {
+		if (getDolGlobalString('COMPANY_AQUARIUM_REMOVE_SPECIAL', '1')) {
 			$codetouse = preg_replace('/([^a-z0-9])/i', '', (string) $codetouse);
 		}
 		// Remove special alpha if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1

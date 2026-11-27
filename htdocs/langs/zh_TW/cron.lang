@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = 讀取排程作業
-Permission23102 = 建立/更新排程作業
-Permission23103 = 刪除排程作業
-Permission23104 = 執行排程作業
 # Admin
 CronSetup=排程作業管理設定
 URLToLaunchCronJobs=從瀏覽器檢查並執行符合條件的排程作業的 URL
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=在 Unix 環境下，可於 crontab 中每 5 分鐘執�
 CronExplainHowToRunWin=在 Microsoft Windows 環境下，可使用排程工作工具每 5 分鐘執行一次以下命令
 CronMethodDoesNotExists=類別 %s 中不存在方法 %s
 CronMethodNotAllowed=類別 %s 的方法 %s 在禁止清單中
-CronJobDefDesc=Cron 作業設定檔定義於模組描述檔中，當模組啟用後，將載入並可於管理工具選單 %s 進行管理。
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=預設排程作業設定檔清單
 # Menu
 EnabledAndDisabled=已啟用與已停用
@@ -27,7 +22,7 @@ CronDelete=刪除排程作業
 CronConfirmDelete=確定要刪除這些排程作業？
 CronExecute=立即執行
 CronConfirmExecute=確定要立即執行這些排程作業？
-CronInfo=排程作業模組可自動排程執行作業，也可手動啟動
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=作業
 CronNone=排程作業下次執行
 CronNotYetRan=尚未執行
@@ -79,7 +74,7 @@ CronType_command=Shell 命令
 CronCannotLoadClass=無法載入類別檔案 %s(欲使用類別 %s)
 CronModuleNotEnabledInThisEntity=此實體未啟用排程作業模組(欲使用 %s 方法於 %s 物件)
 CronCannotLoadObject=已載入類別檔案 %s，但其中未找到物件 %s
-UseMenuModuleToolsToAddCronJobs=請至「<a href="%s">首頁 - 管理工具 - 排程作業</a>」查看與編輯排程作業
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=作業已停用
 MakeLocalDatabaseDumpShort=本地資料庫備份
 MakeLocalDatabaseDump=建立本地資料庫備份。參數為：壓縮('gz'、'bz'、'none')、備份類型('mysql'、'pgsql'、'auto')、1、'auto' 或建立的檔名、保留備份檔數量

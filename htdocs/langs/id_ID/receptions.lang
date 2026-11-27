@@ -30,6 +30,7 @@ StatusReceptionValidatedShort=Divalidasi
 StatusReceptionProcessedShort=Diproses
 ReceptionSheet=Lembar penerimaan
 ValidateReception=Validasi penerimaan
+DeleteReception=Delete reception
 ConfirmDeleteReception=Anda yakin ingin menghapus penerimaan ini?
 ConfirmValidateReception=Apakah Anda yakin ingin memvalidasi penerimaan ini dengan referensi <b>%s</b>?
 ConfirmCancelReception=Anda yakin ingin membatalkan penerimaan ini?

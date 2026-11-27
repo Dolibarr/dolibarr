@@ -178,7 +178,8 @@ class PropalTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($localobject, $lineid) = $params;
+		$localobject = $params[0];
+		$lineid = $params[1];
 		$beforelinecount = count($localobject->lines);
 		$beforetotalht = (float) $localobject->total_ht;
 
@@ -212,7 +213,8 @@ class PropalTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($localobject, $lineid) = $params;
+		$localobject = $params[0];
+		$lineid = $params[1];
 		$beforelinecount = count($localobject->lines);
 		$beforetotalht = (float) $localobject->total_ht;
 
@@ -325,5 +327,113 @@ class PropalTest extends CommonClassTest
 		print __METHOD__." id=".$id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 		return $result;
+	}
+
+	/**
+	 * testPropalAddlinePackaging
+	 *
+	 * With PRODUCT_USE_CUSTOMER_PACKAGING, a quantity already multiple of the packaging must not be rounded
+	 * to the next multiple.
+	 *
+	 * @return  void
+	 */
+	public function testPropalAddlinePackaging()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savconst = getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING');
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = 1;
+
+		$product = new Product($db);
+		$product->ref = 'PHPUNIT-PACKAGING-'.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand(100, 999);
+		$product->label = 'Product sold by packaging of 6';
+		$product->type = Product::TYPE_PRODUCT;
+		$product->price = 10;
+		$product->tva_tx = 20;
+		$product->packaging = 6;
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, (string) $product->error);
+
+		$localobject = new Propal($db);
+		$localobject->socid = 1;
+		$localobject->date = dol_now();
+		$localobject->duree_validite = 15;
+		$this->assertGreaterThan(0, $localobject->create($user), (string) $localobject->error);
+		$localobject->fetch_thirdparty();
+
+		$result = array();
+		foreach (array(1, 7, 12, 13) as $qty) {
+			$lineid = $localobject->addline('Line', 10, $qty, 20, 0, 0, $productid);
+			$this->assertGreaterThan(0, $lineid, (string) $localobject->error);
+			$line = new PropaleLigne($db);
+			$line->fetch($lineid);
+			$result[$qty] = (float) $line->qty;
+		}
+		$conf->global->PRODUCT_USE_CUSTOMER_PACKAGING = $savconst;
+
+		print __METHOD__." result=".json_encode($result)."\n";
+		$this->assertEquals(array(1 => 6, 7 => 12, 12 => 12, 13 => 18), $result, 'Quantities rounded to the packaging of 6');
+	}
+
+	/**
+	 * testPropalCloneUpdatePricesUsesDiscountedSupplierPrice
+	 *
+	 * @return	void
+	 */
+	public function testPropalCloneUpdatePricesUsesDiscountedSupplierPrice()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+
+		$savedMarginType = getDolGlobalString('MARGIN_TYPE');
+		$conf->global->MARGIN_TYPE = '1';
+
+		$thirdparty = new Societe($db);
+		$thirdparty->name = 'TEST CLONE BUYPRICE '.dol_print_date(dol_now(), 'dayhourlog');
+		$thirdparty->client = 1;
+		$thirdparty->fournisseur = 1;
+		$thirdparty->status = 1;
+		$thirdparty->code_client = -1;
+		$thirdparty->code_fournisseur = -1;
+		$this->assertGreaterThan(0, $thirdparty->create($user), $thirdparty->errorsToString());
+
+		$product = new ProductFournisseur($db);
+		$product->ref = 'TESTCLONEBUYPRICE'.dol_print_date(dol_now(), 'dayhourlog');
+		$product->label = 'Test clone buy price';
+		$product->price = 100;
+		$product->status = 1;
+		$product->status_buy = 1;
+		$this->assertGreaterThan(0, $product->create($user), $product->errorsToString());
+
+		$supplier = new Fournisseur($db);
+		$supplier->fetch($thirdparty->id);
+		$product->fetch($product->id);
+		$this->assertGreaterThanOrEqual(0, $product->update_buyprice(1, 50, $user, 'HT', $supplier, 0, 'SUPREF', 0, 0, 20, 0, 0, 0, '', array(), '', 50, 'HT', 1, $conf->currency), $product->errorsToString());
+
+		$propal = new Propal($db);
+		$propal->socid = $thirdparty->id;
+		$propal->date = dol_now();
+		$propal->duree_validite = 15;
+		$this->assertGreaterThan(0, $propal->create($user), $propal->errorsToString());
+		$this->assertGreaterThan(0, $propal->addline('Line', 100, 1, 0, 0, 0, $product->id, 0, 'HT', 0, 0, 0, -1, 0, 0, 0, 30));
+
+		$cloneId = $propal->createFromClone($user, $thirdparty->id, null, true);
+		$conf->global->MARGIN_TYPE = $savedMarginType;
+		$this->assertGreaterThan(0, $cloneId, $propal->errorsToString());
+
+		$clone = new Propal($db);
+		$clone->fetch($cloneId);
+		// Best supplier price net of the supplier discount: 50 * (1 - 20%)
+		$this->assertEquals(40, (float) $clone->lines[0]->pa_ht);
 	}
 }

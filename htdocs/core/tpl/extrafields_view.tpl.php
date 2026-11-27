@@ -318,7 +318,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				// here (its parent list is not on this form), so it must be filtered on the saved value of its parent.
 				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element, 0, 1);
 
-				print '<input type="submit" class="button reposition" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
+				print '<input type="submit" class="button smallpaddingimp reposition" value="'.dolPrintHTMLForAttribute($langs->trans('Modify')).'">';
 
 				print '</form>';
 
@@ -334,7 +334,11 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element, null, $object);
 
-				print '<input type="hidden" value="' . dolPrintHTMLForAttribute($value) . '" name="options_' . dol_escape_htmltag($tmpkeyextra) . '" id="options_' . dol_escape_htmltag($tmpkeyextra) . '"/>'; // it's needed when to get parent value when extra-field list depend on parent extra-field list
+				// Only for list types: they are the only ones that can be the parent of a dependent list. For other types, the hidden
+				// input duplicates the id of a line extrafield with the same code (e.g. propal/propaldet) and breaks its date picker (#43230).
+				if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('select', 'sellist', 'radio', 'checkbox', 'chkbxlst'))) {
+					print '<input type="hidden" value="' . dolPrintHTMLForAttribute($value) . '" name="options_' . dol_escape_htmltag($tmpkeyextra) . '" id="options_' . dol_escape_htmltag($tmpkeyextra) . '"/>'; // it's needed when to get parent value when extra-field list depend on parent extra-field list
+				}
 			}
 
 			print '</td>';

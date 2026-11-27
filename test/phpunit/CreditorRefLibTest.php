@@ -18,8 +18,8 @@
 /**
  *	\file		test/phpunit/CreditorRefLibTest.php
  *	\ingroup	test
- *	\brief		PHPUnit test for functions_creditorref.lib.php, functions_gr.lib.php
- *				and paymentref.lib.php
+ *	\brief		PHPUnit test for functions_creditorref.lib.php, functions_gr.lib.php,
+ *				paymentref.lib.php and functions_ch.lib.php
  */
 
 global $conf, $user, $langs, $db;
@@ -31,6 +31,7 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_creditorref.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_gr.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/paymentref.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/functions_ch.lib.php';
 
 if (empty($user->id) && is_object($db)) {
 	print "Load permissions for admin user nb 1\n";
@@ -119,7 +120,26 @@ class CreditorRefLibTest extends CommonClassTest
 		$this->assertSame('SCOR', dolPayRefDetectScheme('RF18 5390 0754 7034'));
 		$this->assertSame('BBA', dolPayRefDetectScheme('+++000/0000/00101+++'));
 		$this->assertSame('FI', dolPayRefDetectScheme('20240015'));
+		$this->assertSame('QRR', dolPayRefDetectScheme('21 00000 00003 13947 14300 09017'));
 		$this->assertSame('', dolPayRefDetectScheme(''));
+	}
+
+	/**
+	 * A Swiss QR-IBAN has an institution id from 30000 to 31999 and needs a QR reference
+	 *
+	 * @return void
+	 */
+	public function testSwissQRIBANAndQRReference()
+	{
+		$this->assertTrue(dolCHIsQRIBAN('CH44 3199 9123 0008 8901 2'));
+		$this->assertFalse(dolCHIsQRIBAN('CH9300762011623852957'));
+		$this->assertFalse(dolCHIsQRIBAN('FR7630001007941234567890185'));
+
+		$this->assertTrue(dolCHQRReferenceIsValid('210000000003139471430009017'));
+		$this->assertTrue(dolCHQRReferenceIsValid('21 00000 00003 13947 14300 09017'));
+		$this->assertFalse(dolCHQRReferenceIsValid('210000000003139471430009018'));
+		$this->assertFalse(dolCHQRReferenceIsValid('RF18539007547034'));
+		$this->assertFalse(dolCHQRReferenceIsValid(''));
 	}
 
 	/**
@@ -332,5 +352,54 @@ class CreditorRefLibTest extends CommonClassTest
 			$this->assertNotSame('', $ref, 'No reference for '.$country);
 			$this->assertLessThanOrEqual(25, dol_strlen($ref), 'Reference too long for column, country '.$country);
 		}
+	}
+
+	/**
+	 * A finnish company can choose the national reference instead of the RF form
+	 *
+	 * @return void
+	 */
+	public function testFinnishReferenceFormat()
+	{
+		global $conf;
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions_fi.lib.php';
+
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = '';
+		$ref = dolPayRefBuild('2024001', 1, 'FI');
+		$this->assertSame('SCOR', dolPayRefDetectScheme($ref), 'RF is the default');
+		$this->assertTrue(dolCreditorRefIsValid($ref));
+
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = 'national';
+		$ref = dolPayRefBuild('2024001', 1, 'FI');
+		$this->assertSame('20240015', $ref, 'Base followed by the 7-3-1 check digit');
+		$this->assertTrue(dolFIIsValidReference($ref));
+
+		// The national form travels inside the RF one
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = 'rf';
+		$this->assertSame($ref, dol_substr(dolPayRefBuild('2024001', 1, 'FI'), 4));
+
+		// A base without any digit must not give the same 0000 to everybody
+		$this->assertSame('', dolPayRefBuild('ABCDEF', 1, 'FI'));
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = 'rf';
+		$this->assertSame('', dolPayRefBuild('ABCDEF', 1, 'FI'));
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = 'national';
+
+		// The setting only concerns finnish companies
+		$conf->global->INVOICE_PAYMENT_REF_FI_FORMAT = 'national';
+		$this->assertSame('SCOR', dolPayRefDetectScheme(dolPayRefBuild('2024001', 1, 'DE')));
+
+		unset($conf->global->INVOICE_PAYMENT_REF_FI_FORMAT);
+	}
+
+	/**
+	 * A finnish national reference is printed in groups of five from the right
+	 *
+	 * @return void
+	 */
+	public function testFinnishReferenceDisplay()
+	{
+		$this->assertSame('1 23456', dolPayRefFormatForDisplay('123456', 'FI'));
+		$this->assertSame('12345 67890 12345 67890', dolPayRefFormatForDisplay('12345678901234567890', 'FI'));
+		$this->assertSame('RF18 5390 0754 7034', dolPayRefFormatForDisplay('RF18539007547034', 'FI'), 'RF stays in groups of four');
 	}
 }

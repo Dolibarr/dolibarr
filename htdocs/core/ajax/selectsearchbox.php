@@ -224,7 +224,7 @@ if (getDolGlobalString('DEFAULT_SEARCH_INTO_MODULE')) {
 $arrayresult = dol_sort_array($arrayresult, 'position');
 
 // Print output if called by ajax or do nothing (var $arrayresult will be used) if called by an include
-if (!isset($usedbyinclude) || empty($usedbyinclude)) {
+if (empty($usedbyinclude)) {
 	print json_encode($arrayresult);
 	if (is_object($db)) {
 		$db->close();

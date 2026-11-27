@@ -172,9 +172,9 @@ class Propal extends CommonObject
 	public $date_signature;
 
 	/**
-	 * @var User
+	 * @var int|null
 	 */
-	public $user_signature;
+	public $user_signature_id;
 
 	/**
 	 * @var integer|'' date of the quote;
@@ -879,9 +879,12 @@ class Propal extends CommonObject
 						$this->line_order(true, 'DESC');
 					} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
 						// Update all rank of all other lines starting from the same $ranktouse
-						$linecount = count($this->lines);
-						for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-							$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+						foreach ($this->lines as $tmpline) {
+							if ($tmpline->rang >= $ranktouse) {
+								if (!empty($tmpline->id)) {
+									$this->updateRangOfLine($tmpline->id, $tmpline->rang + 1);
+								}
+							}
 						}
 					}
 
@@ -1210,7 +1213,9 @@ class Propal extends CommonObject
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
-			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
+			$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
+			$this->fk_multicurrency = $tmparray[0];
+			$this->multicurrency_tx = $tmparray[1];
 		} else {
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
@@ -1369,19 +1374,22 @@ class Propal extends CommonObject
 					$fk_parent_line = 0;
 					$num = count($this->lines);
 
+					// Convert all lines into PropaleLigne objects before inserting the first one: when coming from REST API, they are still arrays, and addline() reads the whole of this->lines
 					for ($i = 0; $i < $num; $i++) {
-						if (!is_object($this->lines[$i])) {	// If this->lines is not array of objects, coming from REST API
+						if (!is_object($this->lines[$i])) {		// If this->lines is not array of objects, coming from REST API
 							// Build a real line object: the loop below calls methods on it
 							// (getPriceBaseType), which a cast to stdClass cannot answer.
 							$lineobj = new PropaleLigne($this->db);
 							foreach ($this->lines[$i] as $key => $val) {
 								$lineobj->$key = $val;
 							}
-							$line = $lineobj;
-							$this->lines[$i] = $line;
-						} else {
-							$line = $this->lines[$i];
+							$this->lines[$i] = $lineobj;
 						}
+					}
+
+					for ($i = 0; $i < $num; $i++) {
+						$line = $this->lines[$i];
+
 						// Reset fk_parent_line for line that are not child lines or special product
 						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 							$fk_parent_line = 0;
@@ -1509,9 +1517,10 @@ class Propal extends CommonObject
 	 *		@param		int		$forceentity	Entity id to force
 	 *		@param		bool	$update_prices	[=false] Update prices if true
 	 *		@param		bool	$update_desc	[=false] Update description if true
+	 *		@param		?bool	$keep_ref_customer	Keep the customer reference. If null, MAIN_KEEP_REF_CUSTOMER_ON_CLONING decides.
 	 * 	 	@return		int						New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false, $update_desc = false)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false, $update_desc = false, $keep_ref_customer = null)
 	{
 		global $conf, $hookmanager, $mysoc;
 
@@ -1554,7 +1563,7 @@ class Propal extends CommonObject
 			}
 
 			// reset ref_client
-			if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+			if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
 				$object->ref_client = '';
 				$object->ref_customer = '';
 			}
@@ -1646,7 +1655,7 @@ class Propal extends CommonObject
 		$object->date = $now;
 		$object->datep = $now; // deprecated
 		$object->fin_validite = $object->date + (int) ($object->duree_validite * 24 * 3600);
-		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+		if (!($keep_ref_customer ?? getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING'))) {
 			$object->ref_client = '';
 			$object->ref_customer = '';
 		}
@@ -2729,22 +2738,22 @@ class Propal extends CommonObject
 
 		if (!getDolGlobalString('PROPALE_KEEP_OLD_SIGNATURE_INFO')) {
 			$date_signature = $now;
-			$fk_user_signature = $user->id;
+			$user_signature_id = $user->id;
 		} else {
 			$this->info($this->id);
 			if (!isset($this->date_signature) || $this->date_signature == '') {
 				$date_signature = $now;
-				$fk_user_signature = $user->id;
+				$user_signature_id = $user->id;
 			} else {
 				$date_signature = $this->date_signature;
-				$fk_user_signature = $this->user_signature->id;
+				$user_signature_id = $this->user_signature_id;
 			}
 		}
 
 		$sql  = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', note_public = '".$this->db->escape($newpublicnote)."'";
 		if ($status == self::STATUS_SIGNED) {
-			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature = ".((int) $fk_user_signature);
+			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature = ".((int) $user_signature_id);
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2775,6 +2784,9 @@ class Propal extends CommonObject
 				$outputlangs = $langs;
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$outputlangs = new Translate("", $conf);
+					if (empty($this->thirdparty)) {
+						$this->fetch_thirdparty();
+					}
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
 				}
@@ -2873,6 +2885,9 @@ class Propal extends CommonObject
 				$outputlangs = $langs;
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$outputlangs = new Translate("", $conf);
+					if (empty($this->thirdparty)) {
+						$this->fetch_thirdparty();
+					}
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
 				}
@@ -3481,13 +3496,7 @@ class Propal extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;
-
-				if ($obj->fk_user_signature) {
-					$user_signature = new User($this->db);
-					$user_signature->fetch($obj->fk_user_signature);
-					$this->user_signature = $user_signature;
-				}
-
+				$this->user_signature_id = $obj->fk_user_signature;
 				$this->user_closing_id = $obj->fk_user_cloture;
 			}
 			$this->db->free($result);
@@ -3917,7 +3926,7 @@ class Propal extends CommonObject
 				$datas['refcustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_customer;
 			}
 			if (!$nofetch) {
-				$langs->load('project');
+				$langs->load('projects');
 				if (is_null($this->project) || (is_object($this->project) && empty($this->project->id))) {
 					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {
@@ -4070,7 +4079,7 @@ class Propal extends CommonObject
 
 			if ($txttoshow) {
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/comm/propal/note.php', ['id' => $this->id]).'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
+				$result .= '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'comm_propal', 'id' => $this->id]).'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				$result .= '</span>';
@@ -4087,6 +4096,19 @@ class Propal extends CommonObject
 			$result .= $hookmanager->resPrint;
 		}
 		return $result;
+	}
+
+	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		$context = parent::getObjectLinesDisplayContext();
+		$context['inputalsopricewithtax'] = 1;
+
+		return $context;
 	}
 
 	/**
@@ -4113,7 +4135,7 @@ class Propal extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		$outputlangs->loadLangs(array("propale", "products"));
+		$outputlangs->loadLangs(array("propal", "products"));
 
 		if (!dol_strlen($modele)) {
 			$modele = getDolGlobalString('PROPALE_ADDON_PDF', 'cyan');

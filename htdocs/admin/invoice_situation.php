@@ -69,7 +69,7 @@ $form = new Form($db);
 $formSetup = new FormSetup($db);
 
 
-// INVOICE_USE_SITUATION is a 3-state flag (0=off, 1=cumulative/legacy, 2=progressive), see admin/invoice.php.
+// INVOICE_USE_SITUATION is a 3-state flag (0=off, 1=cumulative/legacy, 2=progressive like common invoices), see admin/invoice.php.
 // A yes/no toggle can only write 0 or 1 and deletes the const when turned off (ajax_constantonoff calls
 // dolibarr_del_const): mode 2 could not be selected and was silently dropped. Use a 3-value select, which
 // writes the literal value via dolibarr_set_const and never deletes the const.

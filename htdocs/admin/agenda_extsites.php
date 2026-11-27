@@ -3,7 +3,7 @@
  * Copyright (C) 2011-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -261,11 +261,12 @@ while ($i <= $MAXAGENDA) {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('AGENDA_EXT_ENABLED' . $key, array(), null, 0, 0, 1);
 	} else {
-		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-		if (getDolGlobalString($default)) {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ENABLED' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+		// The state shown is the one of this column, AGENDA_EXT_ENABLED, and the picto says what it
+		// is, the way ajax_constantonoff() does it when javascript is off: a set constant shows "on".
+		if (getDolGlobalString($enabled)) {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ENABLED' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 		} else {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ENABLED' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ENABLED' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
 		}
 	}
 	print '</td>';
@@ -273,18 +274,17 @@ while ($i <= $MAXAGENDA) {
 	// Calendar active by default
 	print '<td class="nowrap center">';
 	if (!empty($conf->use_javascript_ajax)) {
+		// A calendar that is not enabled cannot be made active by default, so the switch is greyed
+		// out. It still carries its own constant name: a placeholder name shared by every disabled
+		// row would repeat the same set_, del_ and confirm_ html ids down the page.
 		$disabled = getDolGlobalString('AGENDA_EXT_ENABLED'.$key) ? 0 : 1;
-		if ($disabled) {
-			print ajax_constantonoff('EMPTYPARAM', array(), null, 0, 0, 1, 2, 0, 0, '', '', 'inline-block', 0, '', $disabled);
-		} else {
-			print ajax_constantonoff('AGENDA_EXT_ACTIVEBYDEFAULT' . $key, array(), null, 0, 0, 1, 2, 0, 0, '', '', 'inline-block', 0, '');
-		}
+		print ajax_constantonoff('AGENDA_EXT_ACTIVEBYDEFAULT' . $key, array(), null, 0, 0, 1, 2, 0, 0, '', '', 'inline-block', 0, '', $disabled);
 	} else {
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		if (getDolGlobalString($default)) {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 		} else {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
 		}
 	}
 	print '</td>';

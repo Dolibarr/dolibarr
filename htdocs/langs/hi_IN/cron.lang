@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - cron
-# Permissions
-Permission23101 = निर्धारित कार्य पढ़ें
-Permission23102 = शेड्यूल्ड जॉब बनाएं/अपडेट करें
-Permission23103 = शेड्यूल किया गया कार्य हटाएं
-Permission23104 = निर्धारित कार्य निष्पादित करें
 # Admin
 CronSetup=अनुसूचित कार्य प्रबंधन सेटअप
 URLToLaunchCronJobs=ब्राउज़र से योग्य क्रॉन जॉब्स की जांच और लॉन्च करने के लिए URL
@@ -14,7 +9,7 @@ CronExplainHowToRunUnix=यूनिक्स वातावरण पर आ�
 CronExplainHowToRunWin=Microsoft(tm) Windows परिवेश पर आप प्रत्येक 5 मिनट में कमांड लाइन चलाने के लिए शेड्यूल्ड टास्क टूल का उपयोग कर सकते हैं
 CronMethodDoesNotExists=क्लास %s में कोई भी विधि %s नहीं है
 CronMethodNotAllowed=%s वर्ग की विधि %s निषिद्ध विधियों की ब्लॉक सूची में है
-CronJobDefDesc=क्रॉन जॉब प्रोफाइल को मॉड्यूल डिस्क्रिप्टर फ़ाइल में परिभाषित किया जाता है। जब मॉड्यूल सक्रिय होता है, तो वे लोड हो जाते हैं और उपलब्ध होते हैं ताकि आप एडमिन टूल मेनू %s से जॉब्स को प्रबंधित कर सकें।
+CronJobDefDesc=Cron job profiles are defined in the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=पूर्वनिर्धारित क्रॉन जॉब प्रोफाइल की सूची
 # Menu
 EnabledAndDisabled=सक्षम और अक्षम
@@ -27,7 +22,7 @@ CronDelete=शेड्यूल किए गए कार्य हटाए�
 CronConfirmDelete=क्या आप वाकई इन शेड्यूल किए गए कार्यों को हटाना चाहते हैं?
 CronExecute=अब लोकार्पण हुआ
 CronConfirmExecute=क्या आप वाकई इन शेड्यूल किए गए कार्यों को अभी निष्पादित करना चाहते हैं?
-CronInfo=शेड्यूल्ड जॉब मॉड्यूल जॉब को स्वचालित रूप से निष्पादित करने के लिए शेड्यूल करने की अनुमति देता है। जॉब को मैन्युअल रूप से भी शुरू किया जा सकता है।
+CronInfo=Scheduled job module allows you to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=काम
 CronNone=निर्धारित कार्य का अगला रन
 CronNotYetRan=कभी निष्पादित नहीं किया गया
@@ -79,7 +74,7 @@ CronType_command=शेल कमांड
 CronCannotLoadClass=क्लास फ़ाइल %s लोड नहीं की जा सकती (क्लास %s का उपयोग करने के लिए)
 CronModuleNotEnabledInThisEntity=इस इकाई में क्रॉन मॉड्यूल सक्षम नहीं है (%s ऑब्जेक्ट की %s विधि का उपयोग करने के लिए)
 CronCannotLoadObject=क्लास फ़ाइल %s लोड की गई, लेकिन इसमें ऑब्जेक्ट %s नहीं मिला
-UseMenuModuleToolsToAddCronJobs=शेड्यूल किए गए कार्यों को देखने और संपादित करने के लिए मेनू "<a href="%s">होम - एडमिन टूल्स - शेड्यूल किए गए कार्य</a>" पर जाएं।
+UseMenuModuleToolsToAddCronJobs=Go to menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=नौकरी अक्षम
 MakeLocalDatabaseDumpShort=स्थानीय डेटाबेस बैकअप
 MakeLocalDatabaseDump=स्थानीय डेटाबेस डंप बनाएँ। पैरामीटर हैं: संपीड़न ('gz' या 'bz' या 'कोई नहीं'), बैकअप प्रकार ('mysql', 'pgsql', 'auto'), 1, 'auto' या बनाने के लिए फ़ाइल नाम, रखने के लिए बैकअप फ़ाइलों की संख्या

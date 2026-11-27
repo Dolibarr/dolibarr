@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2018-2026  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
@@ -1069,6 +1069,29 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
+	 *	Return the display context of the lines, as defined by the card before printObjectLines() and formAddObjectLine()
+	 *	On supplier documents, the supplier is the seller.
+	 *
+	 *	@return	array{seller:Societe,buyer:?Societe,dateSelector:int,forceall:int,senderissupplier:int,inputalsopricewithtax:int}	See CommonObject::getObjectLinesDisplayContext()
+	 */
+	public function getObjectLinesDisplayContext()
+	{
+		global $mysoc;
+
+		$context = parent::getObjectLinesDisplayContext();
+		// The supplier is the seller, an empty third party is used if it is not loaded (same as a failed fetch in the card)
+		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+		$context['seller'] = (is_object($this->thirdparty) ? $this->thirdparty : new Societe($this->db));
+		$context['buyer'] = $mysoc;
+		$context['forceall'] = 1;
+		$context['inputalsopricewithtax'] = 1;
+		// 2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum
+		$context['senderissupplier'] = (getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') ? getDolGlobalInt('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY') : 2);
+
+		return $context;
+	}
+
+	/**
 	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
@@ -1140,7 +1163,7 @@ class CommandeFournisseur extends CommonOrder
 			if ($txttoshow) {
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/fourn/commande/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/core/note.php?element=fourn_commande&id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
 				//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
@@ -1601,6 +1624,94 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
+	 * 	Save the price of the predefined product lines as supplier price (with its history, created if the supplier has none for the product) and as cost price of the products
+	 *
+	 * 	@param		User	$user		User making change
+	 * 	@return		int					Return integer <0 if KO, number of prices updated if OK
+	 */
+	public function updateProductBuyPrices($user)
+	{
+		if (empty($this->thirdparty)) {
+			$this->fetch_thirdparty();
+		}
+
+		// Same rights as the buying prices tab of the product card
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+			$canproduct = $canservice = $user->hasRight('product', 'product_advance', 'write_supplier_prices');
+		} else {
+			$canproduct = $user->hasRight('produit', 'creer');
+			$canservice = $user->hasRight('service', 'creer');
+		}
+
+		// Products for which the supplier already has a price, whatever its ref
+		$withprice = array();
+		$productids = array(0);
+		foreach ($this->lines as $line) {
+			$productids[] = (int) $line->fk_product;
+		}
+		$sql = "SELECT DISTINCT fk_product FROM ".$this->db->prefix()."product_fournisseur_price";
+		$sql .= " WHERE fk_soc = ".((int) $this->socid)." AND entity IN (".getEntity('productsupplierprice').") AND fk_product IN (".$this->db->sanitize(implode(',', $productids)).")";
+		$resql = $this->db->query($sql);
+		while ($resql && $obj = $this->db->fetch_object($resql)) {
+			$withprice[(int) $obj->fk_product] = 1;
+		}
+
+		$nbupdated = 0;
+		foreach ($this->lines as $line) {
+			if ($line->fk_product <= 0 || $line->qty <= 0 || $line->subprice <= 0 || ($line->product_type == Product::TYPE_SERVICE ? !$canservice : !$canproduct)) {
+				continue;
+			}
+
+			// Supplier price. History and triggers are managed by update_buyprice(). Nothing to update if no price line exists for this supplier ref.
+			$productsupplier = new ProductFournisseur($this->db);
+			if ($productsupplier->get_buyprice(0, $line->qty, $line->fk_product, $line->ref_supplier, (int) $this->socid) > 0
+				&& $productsupplier->fetch_product_fournisseur_price($productsupplier->product_fourn_price_id) > 0
+				&& (price2num($productsupplier->fourn_unitprice, 'MU') != price2num($line->subprice, 'MU') || (float) $productsupplier->fourn_remise_percent != (float) $line->remise_percent)) {
+				$qty = $productsupplier->fourn_qty;
+				$productsupplier->product_fourn_packaging = $productsupplier->packaging;	// Keep the packaging of the price line
+				$mcsubprice = (empty($line->multicurrency_subprice) ? $line->subprice : $line->multicurrency_subprice);
+				$result = $productsupplier->update_buyprice($qty, $line->subprice * $qty, $user, 'HT', $this->thirdparty, $productsupplier->fk_availability, $productsupplier->ref_supplier, (float) $productsupplier->fourn_tva_tx, (float) $productsupplier->fourn_charges, $line->remise_percent, $productsupplier->fourn_remise, $productsupplier->fourn_tva_npr, $productsupplier->delivery_time_days, $productsupplier->supplier_reputation, array(), $productsupplier->default_vat_code, $mcsubprice * $qty, 'HT', (float) $this->multicurrency_tx, $this->multicurrency_code, $productsupplier->desc_supplier, $productsupplier->supplier_barcode, (int) $productsupplier->supplier_fk_barcode_type);
+				if ($result < 0) {
+					$this->setErrorsFromObject($productsupplier);
+					return -1;
+				}
+				$nbupdated++;
+			}
+
+			// The supplier has no price for this product: create it for the quantity 1, like the buying prices tab of the product does.
+			// The supplier ref is the one of the line or else the ref of the product, as it must be unique for a supplier and a quantity.
+			$newprice = new ProductFournisseur($this->db);
+			if (empty($productsupplier->product_fourn_price_id) && empty($withprice[$line->fk_product]) && $newprice->fetch($line->fk_product) > 0) {
+				$ref = ($line->ref_supplier ? (string) $line->ref_supplier : $newprice->ref);
+				$result = $newprice->add_fournisseur($user, (int) $this->socid, $ref, 1);	// -3 if this supplier ref is used by another product
+				if ($result > 0) {
+					$withprice[$line->fk_product] = 1;
+					$result = $newprice->update_buyprice(1, (float) $line->subprice, $user, 'HT', $this->thirdparty, 0, $ref, (float) $line->tva_tx, 0, $line->remise_percent, 0, 0, 0, '', array(), (string) $line->vat_src_code, (float) ($line->multicurrency_subprice ?: $line->subprice), 'HT', (float) $this->multicurrency_tx, $this->multicurrency_code);
+					$nbupdated++;
+				}
+				if ($result < 0 && $result != -3) {
+					$this->setErrorsFromObject($newprice);
+					return -1;
+				}
+			}
+
+			// Cost price (net unit price of the line)
+			$costprice = price2num($line->subprice * (1 - $line->remise_percent / 100), 'MU');
+			$product = new Product($this->db);
+			if ($product->fetch($line->fk_product) > 0 && price2num($product->cost_price, 'MU') != $costprice) {
+				$result = $product->setValueFrom('cost_price', $costprice, '', null, 'text', '', $user, 'PRODUCT_MODIFY');
+				if ($result < 0) {
+					$this->setErrorsFromObject($product);
+					return -1;
+				}
+				$nbupdated++;
+			}
+		}
+
+		return $nbupdated;
+	}
+
+	/**
 	 *  Create order with draft status
 	 *
 	 *  @param      User	$user       User making creation
@@ -1630,7 +1741,9 @@ class CommandeFournisseur extends CommonOrder
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
-			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
+			$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
+			$this->fk_multicurrency = $tmparray[0];
+			$this->multicurrency_tx = $tmparray[1];
 		} else {
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
@@ -2144,6 +2257,7 @@ class CommandeFournisseur extends CommonOrder
 
 						// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
 						// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
+						// fk_soc is not declared but an API call or a module may set it: @phan-suppress-next-line PhanUndeclaredProperty
 						$result = $prod->get_buyprice($fk_prod_fourn_price, (float) $qty, $fk_product, 'none', (isset($this->fk_soc) ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
 
 						// If supplier order created from sales order, we take best supplier price
@@ -2188,6 +2302,7 @@ class CommandeFournisseur extends CommonOrder
 				// Predefine quantity according to packaging
 				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$prod = new Product($this->db);
+					// fk_soc is not declared but an API call or a module may set it: @phan-suppress-next-line PhanUndeclaredProperty
 					$prod->get_buyprice($fk_prod_fourn_price, (float) $qty, $fk_product, 'none', (empty($this->fk_soc) ? $this->socid : $this->fk_soc));
 
 					// Align messaging, type and float-safety with the customer-order path at commande.class.php:1720

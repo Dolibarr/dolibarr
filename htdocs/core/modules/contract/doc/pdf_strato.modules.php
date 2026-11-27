@@ -497,7 +497,7 @@ class pdf_strato extends ModelePDFContract
 				}
 
 				// Add terms of sale
-				if (getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_CONTRACT')) {
+				if (getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE') && $this->mustAddTermsOfSale($object, 'CONTRACT')) {
 					$termsofsalefilename = getDolGlobalString('MAIN_INFO_CONTRACT_TERMSOFSALE');
 					$termsofsale = $conf->contract->dir_output.'/'.$termsofsalefilename;
 					if (!empty($conf->contract->multidir_output[$object->entity ?? $conf->entity])) {
@@ -663,7 +663,7 @@ class pdf_strato extends ModelePDFContract
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "dict", "contract", "companies"));
+		$outputlangs->loadLangs(array("main", "dict", "contracts", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -791,7 +791,7 @@ class pdf_strato extends ModelePDFContract
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id) && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id) && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1')) {
 				$this->recipient = $object->contact;
 			} else {
 				$this->recipient = $object->thirdparty;

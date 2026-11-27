@@ -7,7 +7,7 @@ GET http://{{hostnport}}/api/index.php/invoices?sortfield=t.rowid&sortorder=ASC
 HTTP 200
 
 # GET sorted invoices
-GET http://{{hostnport}}/api/index.php/invoices?sortfield=t.rowid&sortorder=DSC
+GET http://{{hostnport}}/api/index.php/invoices?sortfield=t.rowid&sortorder=DESC
 HTTP 200
 
 # GET with limit and page

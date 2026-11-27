@@ -13,7 +13,6 @@ DonationsModels=Modelos de documentos para recibos de donaciones
 LastModifiedDonations=Las últimas %s donaciones modificadas
 DonationRecipient=Recipiente de donación
 IConfirmDonationReception=El destinatario declara la recepción, como una donación, de la siguiente cantidad
-MinimumAmount=La cantidad mínima es %s
 FreeTextOnDonations=Texto gratis para mostrar en el pie de página
 DONATION_ART200=Muestra el artículo 200 de CGI si te preocupa
 DONATION_ART238=Muestre el artículo 238 de CGI si le preocupa

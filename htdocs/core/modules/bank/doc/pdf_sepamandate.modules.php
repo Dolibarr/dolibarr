@@ -75,7 +75,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		global $langs, $mysoc;
 
 		// Translations
-		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
+		$langs->loadLangs(array("main", "banks", "withdrawals", "companies"));
 
 		$this->db = $db;
 		$this->name = "sepamandate";
@@ -527,7 +527,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$diffsizetitle = (!getDolGlobalString('PDF_DIFFSIZE_TITLE') ? 1 : $conf->global->PDF_DIFFSIZE_TITLE);
+		$diffsizetitle = (!getDolGlobalString('PDF_DIFFSIZE_TITLE') ? 1 : getDolGlobalString('PDF_DIFFSIZE_TITLE'));
 
 		$posy += $this->_signature_area($pdf, $object, $posy, $outputlangs);
 

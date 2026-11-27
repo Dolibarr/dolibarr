@@ -70,7 +70,7 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @var array<array{id_users:int,nom:string,responses:string}>
 	 */
-	public $lines;
+	public $lines; // @phpstan-ignore-line
 
 	/**
 	 *  'type' field format:
@@ -486,6 +486,14 @@ class Opensurveysondage extends CommonObject
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
+			// Answers and questions of a survey of format 'F' (form), the answers must be deleted before the respondents they refer to
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_formanswers WHERE fk_user_survey IN";
+			$sql .= " (SELECT id_users FROM ".MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$this->db->escape($numsondage)."')";
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_formquestions WHERE id_sondage = '".$this->db->escape($numsondage)."'";
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -513,6 +521,43 @@ class Opensurveysondage extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+	/**
+	 * Delete a respondent of the survey, with the answers of a survey of format 'F' (form) that he gave
+	 *
+	 * @param	int		$idusers	Id of the respondent (id_users of the table opensurvey_user_studs)
+	 * @return	int					Return integer <0 if KO, 0 if the respondent is not a respondent of this survey, >0 if OK
+	 */
+	public function deleteVoter($idusers)
+	{
+		// The respondent must be one of this survey
+		$sql = "SELECT id_users FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql .= " WHERE id_users = ".((int) $idusers)." AND id_sondage = '".$this->db->escape($this->id_sondage)."'";
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		if ($this->db->num_rows($resql) == 0) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$resql = $this->db->query("DELETE FROM ".MAIN_DB_PREFIX."opensurvey_user_formanswers WHERE fk_user_survey = ".((int) $idusers));
+		if ($resql) {
+			$resql = $this->db->query("DELETE FROM ".MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_users = ".((int) $idusers)." AND id_sondage = '".$this->db->escape($this->id_sondage)."'");
+		}
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+
+		$this->db->commit();
+
+		return 1;
 	}
 
 	/**

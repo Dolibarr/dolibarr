@@ -90,7 +90,7 @@ $backtopage = GETPOST('backtopage');
 $backtopageforcancel = GETPOST('backtopageforcancel');
 $forcepasswordchange = GETPOSTINT('forcepasswordchange');
 
-if (empty($id) && $action != 'add' && $action != 'create') {
+if (empty($id) && $action != 'add' && $action != 'create' && $action!='adduserldap') {
 	$id = $user->id;
 }
 
@@ -167,6 +167,11 @@ if ($id > 0) {
 	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")))&& (empty($user->socid) || $user->socid == $object->socid);
 }
 
+$permissiontoeditextra = $permissiontoedit;
+if (GETPOST('attribute', 'aZ09') && !empty($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval((string) $extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 // Permission to read salary and hourly rate
 $permissiontoseesalary = (empty($user->socid) && (
 	(isModEnabled('salaries') && $user->hasRight("salaries", "read") && ($id == 0 || in_array($id, $childids)))		// If user is a manager of employee
@@ -193,7 +198,7 @@ if (empty($reshook)) {
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+			if (empty($id) && (($action != 'add' && $action != 'create' && $action!='adduserldap') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
 				$backtopage = DOL_URL_ROOT.'/user/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
@@ -416,6 +421,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$id = $object->create($user);
+
 			if ($id > 0) {
 				$resPass = 0;
 				if (GETPOST('password', 'password')) {
@@ -768,7 +774,45 @@ if (empty($reshook)) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
+
+				// The API key field is shown in edit form to a user allowed to change only their password, so they can also renew (revoke) it
+				if (isModEnabled('api') && !getDolGlobalString('API_IN_TOKEN_TABLE') && GETPOSTISSET("api_key")) {
+					$newapikey = trim(GETPOST("api_key", 'alphanohtml'));
+					if ($newapikey != $object->api_key) {
+						$ret = $object->setValueFrom('api_key', ($newapikey ? dolEncrypt($newapikey, '', '', 'dolibarr') : ''), '', null, 'text', '', $user);
+						if ($ret < 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						} else {
+							$object->api_key = $newapikey;
+						}
+					}
+				}
 			}
+		}
+	}
+
+	// Update extrafields
+	if ($action == 'update_extras' && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);   // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+		if ($ret < 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			$result = $object->updateExtraField($attribute_name, 'USER_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$action = 'edit_extras';
 		}
 	}
 
@@ -1289,7 +1333,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print "</tr>\n";
 
 	// Password
-	print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Password").'</td>';	// Not required: a user (an employee for example) can be created without password
 	print '<td>';
 	$valuetoshow = '';
 	if (preg_match('/ldap/', $dolibarr_main_authentication)) {
@@ -1304,7 +1348,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$valuetoshow .= preg_replace('/./i', '*', $ldap_pass);
 		} else {
 			// We do not use a field password but a field text to show new password to use.
-			$valuetoshow .= ($valuetoshow ? ' + '.$langs->trans("DolibarrPassword") : '').'<input class="minwidth300 maxwidth400 widthcentpercentminusx" maxlength="128" type="text" id="password" name="password" value="'.dol_escape_htmltag($password).'" autocomplete="new-password" spellcheck="false">';
+			$valuetoshow .= ($valuetoshow ? ' + '.$langs->trans("DolibarrPassword") : '').'<input class="minwidth200 maxwidth300 widthcentpercentminusx" maxlength="128" type="text" id="password" name="password" value="'.dol_escape_htmltag($password).'" autocomplete="new-password" spellcheck="false">';
 			if (!empty($conf->use_javascript_ajax)) {
 				$valuetoshow .= img_picto($langs->transnoentities('Generate'), 'refresh', 'id="generate_password" class="linkobject paddingleft"');
 			}
@@ -2168,13 +2212,41 @@ if ($action == 'create' || $action == 'adduserldap') {
 					if (!is_array($totpenrollment)) {
 						print ' '.img_warning($langs->trans("TOTPUnreadableEnrollment"));
 					}
+					if (dolTotpIsDisabledByConf()) {
+						print ' '.img_warning($langs->trans("TOTPDisabledByConf"));
+					}
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("Disabled").'</span>';
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+					if (dolTotpIsRequired($db, $object) && !passkeyUserHasPasskey($db, $object->id)) {	// A passkey fulfills the requirement too
+						print ' '.img_warning($langs->trans("TOTPRequiredNotSetUp"));
+					}
 				}
 				print '<div class="left inline-block">';
-				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
-				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?id='.$object->id.'&token='.newToken());
+				$s = '<!-- MAIN_SECURITY_ALLOW_TOTP -->'.img_edit('');
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->transnoentitiesnoconv("Edit"), $s, '/user/credentials.php?id='.$object->id.'&token='.newToken(), '', 'editfielda marginleftonly');
 				print '</div></div>';
+				print '</td></tr>';
+			}
+
+			// Passkeys
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/passkey.lib.php';
+			if (passkeyIsEnabled() && $permissiontoeditpasswordandsee) {
+				require_once DOL_DOCUMENT_ROOT.'/user/class/userpasskey.class.php';
+				$passkeystatic = new UserPasskey($db);
+				$listofpasskeys = $passkeystatic->fetchAllForUser($object->id);
+
+				print '<tr class="nooddeven"><td>'.$langs->trans("Passkeys").'</td>';
+				print '<td>';
+				print '<div class="centpercent display-flex">';
+				print '<span class="badge badge-info marginleftonly marginrightonly">'.(is_array($listofpasskeys) ? count($listofpasskeys) : 0).'</span>';
+				print '<div class="left inline-block">';
+				// Not opened into a dialog popup: some password manager extensions (e.g. Bitwarden) fail to create a passkey from an iframe
+				print '<a class="classlink button bordertransp" href="'.DOL_URL_ROOT.'/user/passkeys.php?id='.$object->id.'" title="'.dolPrintHTMLForAttribute($langs->trans("Passkeys")).'">';
+				print '<span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
+				print '</a>';
+				print '</div>';
+				print '</div>';
 				print '</td></tr>';
 			}
 
@@ -2221,8 +2293,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print $langs->trans("APIKeys");
 					print '</a>';*/
 					print '<div class="left inline-block">';
-					$s = '<!-- API_IN_TOKEN_TABLE --><span class="fa fa-pen valignmiddle btnTitle-icon"></span>';
-					print dolButtonToOpenUrlInDialogPopup('openpopuptoaddapitoken', $langs->transnoentitiesnoconv("APIKeys"), $s, '/user/api_token/list.php?id='.$object->id.'&token='.newToken());
+					$s = '<!-- API_IN_TOKEN_TABLE -->'.img_edit('');
+					print dolButtonToOpenUrlInDialogPopup('openpopuptoaddapitoken', $langs->transnoentitiesnoconv("APIKeys"), $s, '/user/api_token/list.php?id='.$object->id.'&token='.newToken(), '', 'editfielda marginleftonly');
 					print '</div>';
 					print '</div>';
 				} else {
@@ -2832,7 +2904,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
 				if ($permissiontoeditpasswordandsee) {
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="minwidth300 maxwidth400 widthcentpercentminusx" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password" spellcheck="false">';
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="minwidth200 maxwidth300 widthcentpercentminusx" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password" spellcheck="false">';
 					if (!empty($conf->use_javascript_ajax)) {
 						$valuetoshow .= img_picto((getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? $langs->transnoentities('NoPasswordGenerationRuleConfigured') : $langs->transnoentities('Generate')), 'refresh', 'id="generate_password" class="paddingleft'.(getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? ' ' : ' linkobject').'"');
 					}
@@ -3358,7 +3430,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 // Add button to autosuggest a key
 include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-$usegenericrule = getDolGlobalString('USER_PASSWORD_GENERATED') == 'none' ? 1 : 0;
+$usegenericrule = getDolGlobalString('USER_PASSWORD_GENERATED') == 'none' ? 2 : 0;	// 2=Generic password of 16 chars
 print dolJSToSetRandomPassword('password', 'generate_password', $usegenericrule);
 if (isModEnabled('api')) {
 	print dolJSToSetRandomPassword('api_key', 'generate_api_key', 1);

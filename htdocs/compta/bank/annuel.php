@@ -52,8 +52,9 @@ $ref = GETPOST('ref');
 $hookmanager->initHooks(array('bankannualreport', 'globalcard'));
 
 // Security check
-$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+// The access check by ref keeps only digits of the ref, so we check on the id of the account found with the ref
+$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? dol_getIdFromCode($db, $ref, 'bank_account', 'ref', 'rowid', 1) : ''));
+$fieldtype = 'rowid';
 if ($user->socid) {
 	$socid = $user->socid;
 }

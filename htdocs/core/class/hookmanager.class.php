@@ -208,7 +208,7 @@ class HookManager
 	 *  @param		array<string,mixed>	$parameters		Array of parameters
 	 *  @phpstan-param T $object
 	 *  @param		null|Object|array<int|string,mixed>|string	$object			Object to use hooks on  @phan-ignore-reference
-	 *  @param		string				$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete'...)
+	 *  @param		string				$action			Action code on calling page ('create', 'edit', 'view', 'add', 'update', 'delete', 'validate', 'builddoc', ...)
 	 *  @return		int<-1,1>							For 'addreplace' hooks (doActions, formConfirm, formObjectOptions, pdf_xxx,...): 	Return 0 if we want to keep standard actions, >0 if we want to stop/replace standard actions, <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                  			    For 'output' hooks (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...):	Return 0 if we want to keep standard actions, >0 uf we want to stop/replace standard actions (at least one > 0 and replacement will be done), <0 if KO. Things to print are returned into ->resprints and set into ->resPrint. Things to return are returned into ->results by hook and set into ->resArray for caller.
 	 *                                  			    All types can also return some values into an array ->results that will be merged into this->resArray for caller.
@@ -291,6 +291,7 @@ class HookManager
 		// Init return properties
 		$localResPrint = '';
 		$localResArray = array();
+		$this->resPrint = '';	// Hooks must not see the output of a previous call
 
 		$this->resNbOfHooks = 0;
 
@@ -404,6 +405,9 @@ class HookManager
 							}
 						}
 					}
+
+					// Give the result so far to the next hooks, so they can complete it (example: setContentSecurityPolicy)
+					$this->resPrint = $localResPrint;
 
 					//print "After hook context=".$context." ".get_class($actionclassinstance)." method=".$method." hooktype=".$hooktype." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." resaction=".$resaction."<br>\n";
 

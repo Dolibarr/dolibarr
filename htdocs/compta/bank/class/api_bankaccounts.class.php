@@ -57,6 +57,8 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Get the list of accounts.
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string    $sortfield  Sort field
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
@@ -64,13 +66,14 @@ class BankAccounts extends DolibarrApi
 	 * @param int		$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param int		$count		Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array                List of account objects
-	 * @phan-return Account[]
-	 * @phpstan-return Account[]
+	 * @phan-return Account[]|array{count:int}
+	 * @phpstan-return Account[]|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '', $count = 0)
 	{
 		$list = array();
 
@@ -94,6 +97,11 @@ class BankAccounts extends DolibarrApi
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
+		}
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -131,11 +139,12 @@ class BankAccounts extends DolibarrApi
 	 * Get account by ID.
 	 *
 	 * @param	int			$id				ID of account
+	 * @param	int			$includebalance	1 to also return the current balance of the account into the property 'balance' {@choice 0,1}
 	 * @return  Object						Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
-	public function get($id)
+	public function get($id, $includebalance = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
@@ -147,7 +156,16 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account not found');
 		}
 
-		return $this->_cleanObjectDatas($account);
+		if ($includebalance) {
+			$account->balance = $account->solde(1);  // 1=Exclude future operation date (same as list and GET {id}/balance)
+		}
+
+		$account = $this->_cleanObjectDatas($account);
+		if (!$includebalance) {
+			unset($account->balance);	// Not computed: do not return the 0 set by the constructor as if it was the balance
+		}
+
+		return $account;
 	}
 
 	/**
@@ -474,8 +492,8 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(404, 'account not found');
 		}
 
-		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "bank ";
-		$sql .= " WHERE fk_account = " . ((int) $id);
+		$sql = "SELECT t.rowid FROM " . MAIN_DB_PREFIX . "bank AS t";
+		$sql .= " WHERE t.fk_account = " . ((int) $id);
 
 		// Add sql filters
 		if ($sqlfilters) {
@@ -486,7 +504,7 @@ class BankAccounts extends DolibarrApi
 			}
 		}
 
-		$sql .= " ORDER BY rowid";
+		$sql .= " ORDER BY t.rowid";
 
 		$result = $this->db->query($sql);
 
@@ -852,7 +870,9 @@ class BankAccounts extends DolibarrApi
 		}
 
 		$this->db->begin();
-		foreach ($toupdate as list($accountLine, $linecat)) {
+		foreach ($toupdate as $tmparray) {
+			$accountLine = $tmparray[0];
+			$linecat = $tmparray[1];
 			$accountLine->num_releve = $num_releve;
 			if ($accountLine->update_conciliation(DolibarrApiAccess::$user, $linecat, $conciliated) < 0) {
 				$errors = array_merge(array($accountLine->error, $this->db->lasterror()), $accountLine->errors);

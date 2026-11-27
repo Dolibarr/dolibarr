@@ -443,7 +443,7 @@ if (isModEnabled('reception')) {
 		print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("SUPPLIER_ORDER_USE_DISPATCH_STATUS", $arrval, $conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS);
+		print $form->selectarray("SUPPLIER_ORDER_USE_DISPATCH_STATUS", $arrval, getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS'));
 	}
 }
 print "</td>\n";
@@ -462,6 +462,12 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
 print '<td class="left" colspan="2">';
 print ajax_constantonoff('SUPPLIER_ORDER_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
+
+// Propose to update the supplier price and the cost price of the products when placing the order
+print '<tr class="oddeven"><td>'.$langs->trans("SupplierOrderUpdateBuyingPriceWhenOrdering").'</td>';
+print '<td colspan="2">';
+print ajax_constantonoff('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_ON_ORDER');
 print '</td></tr>';
 
 // Notifications

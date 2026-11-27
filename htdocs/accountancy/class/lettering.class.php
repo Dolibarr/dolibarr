@@ -312,10 +312,10 @@ class Lettering extends BookKeeping
 
 		// Check partial / normal lettering case
 		$idlist = implode(',', array_map('intval', $ids));
-		$sql = "SELECT ab.lettering_code, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
+		$sql = "SELECT ab.lettering_code, ab.subledger_account, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
 		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
-		$sql .= " GROUP BY ab.lettering_code";
+		$sql .= " GROUP BY ab.lettering_code, ab.subledger_account";
 		$sql .= " ORDER BY ab.lettering_code DESC";
 
 		dol_syslog(__METHOD__ . " - Check partial / normal lettering case", LOG_DEBUG);
@@ -339,6 +339,8 @@ class Lettering extends BookKeeping
 					$sql2 .= ", date_lettering = NULL";
 					$sql2 .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 					$sql2 .= " AND lettering_code = '" . $this->db->escape($obj->lettering_code) . "'";
+					$sql2 .= " AND subledger_account = '" . $this->db->escape($obj->subledger_account) . "'";
+					$sql2 .= " AND matching_general = 0";
 
 					dol_syslog(__METHOD__ . " - Remove partial lettering", LOG_DEBUG);
 					$resql2 = $this->db->query($sql2);
@@ -447,39 +449,82 @@ class Lettering extends BookKeeping
 	}
 
 	/**
+	 * Delete lettering code on subledger account.
+	 * Deletes all lines sharing the same lettering_code and subledger_account to keep lettering balanced.
+	 *
 	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
-	 * @return	int							Nb of affectd rows or <0 if error
+	 * @return	int							Nb of affected rows or <0 if error
 	 */
 	public function deleteLettering($ids, $notrigger = 0)
 	{
 		$error = 0;
 
-		$idlist = implode(',', array_map('intval', $ids));
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
-		$sql .= " matching_general = 0";
-		$sql .= ", lettering_code = NULL";
-		$sql .= ", date_lettering = NULL";
-		$sql .= " WHERE rowid IN (" . $this->db->sanitize($idlist) . ")";
-		$sql .= " AND subledger_account != ''";
+		if (empty($ids)) {
+			return 0;
+		}
 
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		// Step 1: collect all (lettering_code, subledger_account) groups from selected ids
+		$idlist = implode(',', array_map('intval', $ids));
+		$sql = "SELECT DISTINCT ab.lettering_code, ab.subledger_account";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize($idlist) . ")";
+		$sql .= " AND ab.entity IN (" . getEntity('accountancy') . ")";
+		$sql .= " AND ab.subledger_account != ''";
+		$sql .= " AND ab.matching_general = 0";
+		$sql .= " AND ab.lettering_code IS NOT NULL AND ab.lettering_code != ''";
+
+		dol_syslog(__METHOD__ . " - Collect lettering groups to delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
+			$this->errors[] = "Error " . $this->db->lasterror();
+			return -1;
 		}
 
-		// Commit or rollback
+		$groups = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$groups[] = array(
+				'code' => $obj->lettering_code,
+				'subledger_account' => $obj->subledger_account,
+			);
+		}
+		$this->db->free($resql);
+
+		if (empty($groups)) {
+			return 0;
+		}
+
+		// Step 2: for each group, delete lettering on all lines sharing the same code and subledger account
+		$affected = 0;
+		foreach ($groups as $group) {
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
+			$sql .= " matching_general = 0";
+			$sql .= ", lettering_code = NULL";
+			$sql .= ", date_lettering = NULL";
+			$sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
+			$sql .= " AND subledger_account = '" . $this->db->escape($group['subledger_account']) . "'";
+			$sql .= " AND lettering_code = '" . $this->db->escape($group['code']) . "'";
+			$sql .= " AND matching_general = 0";
+
+			dol_syslog(__METHOD__ . " - Delete lettering group " . $group['code'] . "/" . $group['subledger_account'], LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error " . $this->db->lasterror();
+				break;
+			}
+			$affected += $this->db->affected_rows($resql);
+		}
+
 		if ($error) {
 			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				dol_syslog(get_class($this) . "::deleteLettering " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			return -1 * $error;
-		} else {
-			return $this->db->affected_rows($resql);
 		}
+
+		return $affected;
 	}
 
 	/**

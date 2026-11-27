@@ -21,6 +21,7 @@ $sanitizeRegex
 			'alpha',
 			'alphawithlgt',
 			'alphanohtml',
+			'alphanohtmlquote',
 			'MS',
 			'aZ',
 			'aZ09',
@@ -370,7 +371,6 @@ return [
 		'dev/tools/',
 		'htdocs/includes/',
 		'htdocs/install/doctemplates/',
-		'htdocs/core/class/lessc.class.php', // External library
 		'htdocs/admin/tools/ui/',
 		PHAN_DIR . '/stubs/',
 	],

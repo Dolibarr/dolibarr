@@ -620,9 +620,9 @@ foreach ($profid as $key => $val) {
 		$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
 		$idprof_invoice_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
 
-		$verif = !empty($conf->global->$idprof_unique);
-		$mandatory = !empty($conf->global->$idprof_mandatory);
-		$invoice_mandatory = !empty($conf->global->$idprof_invoice_mandatory);
+		$verif = getDolGlobalBool($idprof_unique);
+		$mandatory = getDolGlobalBool($idprof_mandatory);
+		$invoice_mandatory = getDolGlobalBool($idprof_invoice_mandatory);
 
 		if ($verif) {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';

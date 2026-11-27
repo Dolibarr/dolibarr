@@ -317,6 +317,69 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
+	 * The request headers are rebuilt from $_SERVER when the SAPI does not provide getallheaders().
+	 *
+	 * @return	void
+	 */
+	public function testDolGetRequestHeaders()
+	{
+		$savserver = $_SERVER;
+
+		$_SERVER['HTTP_AUTHORIZATION'] = 'Bearer abc123';
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$_SERVER['CONTENT_TYPE'] = 'application/json';
+		$_SERVER['REQUEST_METHOD'] = 'POST';		// not a header, must not come out
+
+		$headers = dolGetRequestHeaders();
+
+		$_SERVER = $savserver;
+
+		$this->assertIsArray($headers, 'The request headers must always be an array');
+
+		// Under the CLI of the test runner getallheaders() does not exist, so the rebuilt array is
+		// what is checked. Under a SAPI that provides it, only the type above can be asserted.
+		if (!function_exists('getallheaders')) {
+			$this->assertSame('Bearer abc123', $headers['Authorization'], 'HTTP_AUTHORIZATION must come out as Authorization');
+			$this->assertSame('XMLHttpRequest', $headers['X-Requested-With'], 'The name must be capitalised word by word and keep its dashes');
+			$this->assertSame('application/json', $headers['Content-Type'], 'Content-Type is not prefixed with HTTP_ in $_SERVER and must be picked up anyway');
+			$this->assertArrayNotHasKey('Request-Method', $headers, 'What is not a header must not be returned as one');
+		}
+	}
+
+	/**
+	 * The url of the server is the configured one with DOL_URL_ROOT removed from its end.
+	 *
+	 * @return	void
+	 */
+	public function testDolGetUrlWithoutUrlRoot()
+	{
+		global $dolibarr_main_url_root;
+
+		$savurlroot = $dolibarr_main_url_root;
+
+		// What the 73 copies of the expression this replaces used to compute
+		$dolibarr_main_url_root = 'https://example.org'.DOL_URL_ROOT;
+		$this->assertSame(
+			preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root)),
+			dolGetUrlWithoutUrlRoot(),
+			'The helper must return exactly what the expression it replaces returned'
+		);
+		$this->assertSame('https://example.org', dolGetUrlWithoutUrlRoot(), 'DOL_URL_ROOT must be removed from the end');
+
+		// Surrounding spaces are trimmed, as the expression did
+		$dolibarr_main_url_root = '  https://example.org'.DOL_URL_ROOT.'  ';
+		$this->assertSame('https://example.org', dolGetUrlWithoutUrlRoot(), 'The configured url must be trimmed');
+
+		// Only the end is removed, never an occurrence in the middle of the host
+		if (DOL_URL_ROOT !== '') {
+			$dolibarr_main_url_root = 'https://example.org'.DOL_URL_ROOT.'/other';
+			$this->assertSame('https://example.org'.DOL_URL_ROOT.'/other', dolGetUrlWithoutUrlRoot(), 'Only a trailing DOL_URL_ROOT is removed');
+		}
+
+		$dolibarr_main_url_root = $savurlroot;
+	}
+
+	/**
 	 * testDolCheckFilters
 	 *
 	 * @return boolean
@@ -528,6 +591,41 @@ class FunctionsLibTest extends CommonClassTest
 		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
 		$this->assertEquals(" AND ((t.ref LIKE 'SO-%'))", $sql);
 
+		// Test that a forbidden field used as the right operand (unquoted, so a field name) is also forbidden
+		$filter = "(t.description:<:pass_crypted)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.description:>=:PASS_CRYPTED)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.description:in:'a',api_key)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.label:<:salary)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr, 0, 0, 0, array('salary'));
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that SQL keywords returning server information are forbidden on both sides
+		$filter = "(t.description:=:CURRENT_USER)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(session_user:like:'dol%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		// Test that a quoted string or a non forbidden field is still allowed as the right operand
+		$filter = "(t.description:<:'pass_crypted')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND ((t.description < 'pass_crypted'))", $sql);
+
+		$filter = "(t.date_end:>:date_start)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter, $errorstr);
+		$this->assertEquals(" AND ((t.date_end > date_start))", $sql);
+
 
 		global $dolibarr_allow_unsecured_select_in_extrafields_filter;
 
@@ -537,6 +635,15 @@ class FunctionsLibTest extends CommonClassTest
 		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
+
+		// Forbidden fields or SQL keywords are also forbidden into a subrequest
+		$filter = "(t.label:IN:1,user)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND (1=1)", $sql);
+
+		$filter = "(t.fk_user:IN:SELECT rowid FROM llx_user WHERE pass_crypted < 'a')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND (1=1)", $sql);
 
 		// If $dolibarr_allow_unsecured_select_in_extrafields_filter is unset (default)
 		$dolibarr_allow_unsecured_select_in_extrafields_filter = 0;
@@ -896,6 +1003,20 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('tablet', $tmp['layout']);
 		$this->assertEquals('iphone', $tmp['phone']);
 
+		// Android phone : its user agent contains "Linux", the OS stays android
+		$user_agent = 'Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36';
+		$tmp = getBrowserInfo($user_agent);
+		$this->assertEquals('chrome', $tmp['browsername']);
+		$this->assertEquals('android', $tmp['browseros']);
+		$this->assertEquals('phone', $tmp['layout']);
+		$this->assertEquals('android', $tmp['phone']);
+
+		// Linux desktop : still linux
+		$user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+		$tmp = getBrowserInfo($user_agent);
+		$this->assertEquals('linux', $tmp['browseros']);
+		$this->assertEquals('classic', $tmp['layout']);
+
 		// Lynx
 		$user_agent = 'Lynx/2.8.8dev.3 libwww‑FM/2.14 SSL‑MM/1.4.1';
 		$tmp = getBrowserInfo($user_agent);
@@ -1059,6 +1180,18 @@ class FunctionsLibTest extends CommonClassTest
 		$input = '<i class="abc">xxx</i>';
 		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with i tag and class;');
+		$input = '<blockquote style="color: #8e44ad;">xxx</blockquote>';
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with blockquote tag and style');
+		$input = '<pre>a < b</pre>';
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with pre tag');
+		$input = '<dl><dt>a</dt><dd>b</dd></dl>';
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with dl tag');
+		$input = "<section style=\"padding: 30px;\">\n<h2 style=\"color: #2c3e50;\">Title</h2>\n</section>";
+		$after = dol_textishtml($input);
+		$this->assertTrue($after, 'Test with section tag and style');
 
 		// False
 		$input = 'xxx < br>';
@@ -1235,11 +1368,11 @@ class FunctionsLibTest extends CommonClassTest
 	 */
 	public function testDolHtmlEntitiesBr()
 	{
-		// Text not already HTML
+		// Text NOT already HTML
 
-		$input = "A string\nwith a é, &, < and >.";
-		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n
-		$this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.", $after);
+		$input = "A string\nwith a é, &, < and > and \".";
+		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n, so must also encode in html entities special char because result move from text to HTML.
+		$this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt; and &quot;.", $after);
 
 		$input = "A string\nwith a é, &, < and >.";
 		$after = dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
@@ -1255,9 +1388,9 @@ class FunctionsLibTest extends CommonClassTest
 
 		// Text already HTML, so &,<,> should not be converted
 
-		$input = "A string<br>\nwith a é, &, < and >.";
+		$input = "A string<br>\nwith a é, &, < and > and \".";
 		$after = dol_htmlentitiesbr($input);
-		$this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.", $after);
+		$this->assertEquals("A string<br>\nwith a &eacute;, &, < and > and \".", $after);
 
 		$input = "<li>\nA string with a é, &, < and >.</li>\nAnother string";
 		$after = dol_htmlentitiesbr($input);
@@ -1734,7 +1867,8 @@ class FunctionsLibTest extends CommonClassTest
 	public function testVerifCond()
 	{
 		foreach ($this->verifCondDataProvider() as $case) {
-			list($cond, $expected) = $case;
+			$cond = $case[0];
+			$expected = $case[1];
 			if ($expected) {
 				$this->assertTrue(verifCond($cond));
 			} else {
@@ -2591,6 +2725,26 @@ class FunctionsLibTest extends CommonClassTest
 
 		$s = natural_search("t.field", "KØB", 3);						// mode 3 is to provide a list of string separated with coma
 		$this->assertEquals(" AND (t.field IN ('KØB'))", $s);
+
+		// A criteria with only '!' is searched as a string, a leading '!' followed by a text is an exclusion
+		$s = natural_search("t.field", "Bonjour !");
+		$this->assertEquals(" AND (t.field LIKE '%Bonjour%' AND t.field LIKE '%!%')", $s);
+
+		$s = natural_search("t.field", "!!!");
+		$this->assertEquals(" AND (t.field LIKE '%!!!%')", $s);
+
+		$s = natural_search("t.field", "!abc");
+		$this->assertEquals(" AND ((t.field NOT LIKE '%abc%' OR t.field IS NULL))", $s);
+
+		// mode 1 is a numeric test, '!' or '!=' means "different of"
+		$s = natural_search("t.field", "!34", 1);
+		$this->assertEquals(" AND (t.field <> 34)", $s);
+
+		$s = natural_search("t.field", "!= 34", 1);
+		$this->assertEquals(" AND (t.field <> 34)", $s);
+
+		$s = natural_search("t.field", ">=10 <20", 1);
+		$this->assertEquals(" AND (t.field >= 10 AND t.field < 20)", $s);
 	}
 
 	/**
@@ -3125,5 +3279,72 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(-1, fetchObjectByElement(0, 'product_error'), 'a PHP internal class is never instantiated');
 
 		$conf->modules = $savmodules;
+	}
+
+	/**
+	 * testFetchObjectByElementOfTheOldCategorieName
+	 *
+	 * @return void
+	 */
+	public function testFetchObjectByElementOfTheOldCategorieName()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$savmodules = $conf->modules;
+		$conf->modules['categorie'] = 'categorie';
+
+		// selectForForms() asks for strtolower() of the class name of a link extrafield, 'Categorie'
+		$this->assertSame(getElementProperties('category'), getElementProperties('categorie'));
+		$this->assertInstanceOf('Categorie', fetchObjectByElement(0, 'categorie'));
+
+		$conf->modules = $savmodules;
+	}
+
+	/**
+	 * testDolGetFicheHeadMoreTabsIsAccessible
+	 *
+	 * @return void
+	 */
+	public function testDolGetFicheHeadMoreTabsIsAccessible()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
+
+		$savedconsts = array();
+		foreach (array('MAIN_MAXTABS_IN_CARD', 'MAIN_OPTIMIZEFORTEXTBROWSER') as $constname) {
+			$savedconsts[$constname] = (property_exists($conf->global, $constname) ? getDolGlobalString($constname) : null);
+		}
+		$conf->global->MAIN_MAXTABS_IN_CARD = 2;
+		$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 0;
+
+		$links = array();
+		for ($i = 0; $i < 5; $i++) {
+			$links[$i] = array('/test.php?tab='.$i, 'Tab'.$i, 'tab'.$i);
+		}
+		$out = dol_get_fiche_head($links, 'tab0', '', 0, '', 0, '', '', 0, 'unittest');
+
+		foreach ($savedconsts as $constname => $constvalue) {
+			if ($constvalue === null) {
+				unset($conf->global->$constname);
+			} else {
+				$conf->global->$constname = $constvalue;
+			}
+		}
+
+		// The "+" must be operable without a mouse and announce the list it opens
+		$this->assertSame(1, preg_match('/<a href="#" class="[^"]*moretab[^"]*" role="button" aria-haspopup="true" aria-expanded="false" aria-controls="moretabsListunittest">/', $out));
+		$this->assertStringContainsString('id="moretabsListunittest"', $out);
+		$this->assertStringContainsString('e.preventDefault()', $out);
+		$this->assertStringContainsString("'Escape'", $out);
+		$this->assertStringNotContainsString('console.log', $out);
 	}
 }

@@ -735,7 +735,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					if ($this->getColumnStatus('unit_order') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
-						$this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString((int) $object->lines[$i]->fk_unit));
+						$this->printStdColumnContent($pdf, $curY, 'unit_order', pdf_getlineunit($object, $i, $outputlangs, $hidedetails));
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -1162,8 +1162,6 @@ class pdf_espadon extends ModelePdfExpedition
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
 		$object->fetch_origin();
-		// A shipment without source object (SHIPMENT_STANDALONE) holds its own contacts
-		$contactobject = (is_object($object->origin_object) && $object->origin_object->id > 0) ? $object->origin_object : $object;
 
 		// TODO move to external function
 		if (isModEnabled($origin)) {     // commonly $origin='commande'
@@ -1204,8 +1202,8 @@ class pdf_espadon extends ModelePdfExpedition
 			// Sender properties
 			$carac_emetteur = '';
 			// Add internal contact of origin element if defined
-			$arrayidcontact = $contactobject->getIdContact('internal', 'SALESREPFOLL');
-			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
+			$arrayidcontact = $this->getIdContactOfShipment($object, 'internal', 'SALESREPFOLL');
+			if (count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
 				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
 				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
@@ -1258,14 +1256,14 @@ class pdf_espadon extends ModelePdfExpedition
 
 			// If SHIPPING contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $contactobject->getIdContact('external', 'SHIPPING');
+			$arrayidcontact = $this->getIdContactOfShipment($object, 'external', 'SHIPPING');
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

@@ -10,6 +10,7 @@
  * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2026		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Michael Wallis			<mh.wallis@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,6 +101,21 @@ if (!getDolGlobalInt('ACCOUNTING_MANAGE_ZERO')) {
 	$item = $formSetup->newItem('ACCOUNTING_LENGTH_AACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
 	$item->fieldAttr['class'] = 'maxwidth50';
+	$item->fieldParams['tdOutputFieldClass'] = 'right';
+}
+
+if (isModEnabled('stock')) {
+	$inventory_journal_modes = array(
+		'none' => $langs->trans("OptionModeNone").' - <span class="opacitymedium small">'.$langs->trans("PeriodicInventory").'</span>',
+		'all' => $langs->trans("AllStockMovements").' - <span class="opacitymedium small">'.$langs->trans("PerpetualInventory").'</span>',
+		'decrease' => $langs->trans("StockDecreasesOnly").' - <span class="opacitymedium small">'.$langs->trans("ShipmentsSalesCOGS").'</span>',
+		'increase' => $langs->trans("StockIncreasesOnly").' - <span class="opacitymedium small">'.$langs->trans("ReceptionsPurchases").'</span>',
+	);
+	$item = $formSetup->newItem('ACCOUNTING_INVENTORY_MODE');
+	$item->setAsSelect($inventory_journal_modes);
+	$item->defaultFieldValue = 'none';
+	$item->helpText = $langs->trans('ACCOUNTING_INVENTORY_MODE_Desc');
+	$item->cssClass = 'minwidth300 maxwidth400';
 	$item->fieldParams['tdOutputFieldClass'] = 'right';
 }
 
@@ -450,6 +466,20 @@ if ($action == 'setenabledissociatecashsales') {
 	}
 }
 
+if ($action == 'setgrouprangeasrule') {
+	$setgrouprangeasrule = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, "ACCOUNTING_GROUP_RANGE_AS_RULE", $setgrouprangeasrule, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
 if ($action == 'setexportenablelettering') {
 	$setexportenablelettering = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING", $setexportenablelettering, 'yesno', 0, '', $conf->entity);
@@ -559,10 +589,10 @@ if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
 	print '<div class="info">' . $langs->trans("ConstantIsOn", "ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY") . '</div>';
 }
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-	print '<div class="info">' . $langs->trans("ConstantIsOn", "MAIN_COMPANY_PERENTITY_SHARED") . '</div>';
+	print '<div class="warning">' . $langs->trans("ConstantExperimentalUnofficialIsOn", "MAIN_COMPANY_PERENTITY_SHARED") . '</div>';
 }
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
-	print '<div class="info">' . $langs->trans("ConstantIsOn", "MAIN_PRODUCT_PERENTITY_SHARED") . '</div>';
+	print '<div class="warning">' . $langs->trans("ConstantExperimentalUnofficialIsOn", "MAIN_PRODUCT_PERENTITY_SHARED") . '</div>';
 }
 
 print '<br>';
@@ -953,6 +983,20 @@ if (getDolGlobalString('ACCOUNTING_DISSOCIATE_CASH_SALES')) {
 	print '</a></td>';
 } else {
 	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenabledissociatecashsales&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans("ACCOUNTING_GROUP_RANGE_AS_RULE"), $langs->trans("ACCOUNTING_GROUP_RANGE_AS_RULE_DESC")).'</td>';
+if (getDolGlobalInt('ACCOUNTING_GROUP_RANGE_AS_RULE', 1)) {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setgrouprangeasrule&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setgrouprangeasrule&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
