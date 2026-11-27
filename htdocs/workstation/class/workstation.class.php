@@ -954,7 +954,6 @@ class Workstation extends CommonObject
 		$langs->load("mrp");
 
 		if (!dol_strlen($modele)) {
-
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('WORKSTATION_ADDON_PDF')) {
