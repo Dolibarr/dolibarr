@@ -757,7 +757,7 @@ class Documents extends DolibarrApi
 	 * @param   string  $subdir       			Subdirectory (Only if $ref is not provided)
 	 * @param   string  $filecontent        	File content (string with file content. An empty file will be created if this parameter is not provided)
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
-	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
+	 * @param   int 	$overwriteifexists  	Overwrite file if exists (0 by default)
 	 * @param   int 	$createdirifnotexists  	Create subdirectories if they doesn't exists (1 by default)
 	 * @param   int     $position               Position
 	 * @param   string  $cover                  Cover info
@@ -788,12 +788,12 @@ class Documents extends DolibarrApi
 			throw new RestException(400, 'Modulepart not provided.');
 		}
 
-		$newfilecontent = '';
 		if (empty($fileencoding)) {
 			$newfilecontent = $filecontent;
-		}
-		if ($fileencoding == 'base64') {
+		} elseif ($fileencoding == 'base64') {
 			$newfilecontent = base64_decode($filecontent);
+		} else {
+			throw new RestException(400, 'Bad value for parameter fileencoding. Use \'\' or \'base64\'.');
 		}
 
 		$original_file = dol_sanitizeFileName($filename);
@@ -801,10 +801,7 @@ class Documents extends DolibarrApi
 
 		// Define $uploadir
 		$object = null;
-		$entity = DolibarrApiAccess::$user->entity;
-		if (empty($entity)) {
-			$entity = 1;
-		}
+		$entity = $conf->entity;
 
 		if ($ref) {
 			$tmpreldir = '';
@@ -848,6 +845,8 @@ class Documents extends DolibarrApi
 					if ($project_result >= 0) {
 						$tmpreldir = dol_sanitizeFileName((string) $object->project->ref).'/';
 					}
+				} elseif ($task_result == 0) {
+					throw new RestException(404, "Task with ref '".$ref."' was not found.");
 				} else {
 					throw new RestException(500, 'Error while fetching Task '.$ref);
 				}
@@ -860,7 +859,8 @@ class Documents extends DolibarrApi
 			} elseif ($modulepart == 'holiday') {
 				require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 				$object = new Holiday($this->db);
-			} elseif ($modulepart == 'ficheinter' || $modulepart == 'intervention') {
+			} elseif ($modulepart == 'ficheinter' || $modulepart == 'fichinter' || $modulepart == 'intervention') {
+				$modulepart = 'ficheinter';
 				require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 				$object = new Fichinter($this->db);
 			} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
@@ -874,7 +874,7 @@ class Documents extends DolibarrApi
 				$modulepart = 'propale';
 				require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 				$object = new Propal($this->db);
-			} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
+			} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event' || $modulepart == 'actioncomm') {
 				// 'agenda' uses the generic case of dol_check_secure_access_document() that only allows admins. Other users need the agenda permissions of 'actions'.
 				$modulepart = (empty(DolibarrApiAccess::$user->admin) ? 'actions' : 'agenda');
 				require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
@@ -884,7 +884,7 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$object = new Contact($this->db);
 				$fetchbyid = true;
-			} elseif ($modulepart == 'societe' || $modulepart == 'company') {
+			} elseif ($modulepart == 'societe' || $modulepart == 'company' || $modulepart == 'thirdparty') {
 				$modulepart = 'societe';
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$object = new Societe($this->db);
@@ -894,6 +894,9 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 				$object = new KnowledgeRecord($this->db);
 				$fetchbyid = true;
+				// Files of knowledge records are stored into knowledgemanagement/knowledgerecord/REF, as in knowledgerecord_document.php.
+				// This subdir is also the one checked against the permission knowledgemanagement->knowledgerecord->write.
+				$tmpreldir = 'knowledgerecord/';
 			} elseif ($modulepart == 'ticket') {
 				$modulepart = 'ticket';
 				require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
@@ -907,7 +910,7 @@ class Documents extends DolibarrApi
 				$modulepart = 'mrp';
 				require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
 				$object = new Mo($this->db);
-			} elseif ($modulepart == 'stock') {
+			} elseif ($modulepart == 'stock' || $modulepart == 'entrepot') {
 				$modulepart = 'stock';
 				require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
 				$object = new Entrepot($this->db);
@@ -1138,7 +1141,8 @@ class Documents extends DolibarrApi
 			}
 		}
 
-		return dol_basename($destfile);
+		// Return the name of the file really stored, that may have been renamed with .noexe
+		return dol_basename($dest_file);
 	}
 
 	/**

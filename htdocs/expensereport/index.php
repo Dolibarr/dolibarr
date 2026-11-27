@@ -174,7 +174,7 @@ if ($conf->use_javascript_ajax) {
 	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
 	$dolgraph->setHeight(350);
-	$dolgraph->combine = !getDolGlobalString('MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT') ? 0.05 : $conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
+	$dolgraph->combine = !getDolGlobalString('MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT') ? 0.05 : getDolGlobalString('MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT');
 	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));

@@ -144,7 +144,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			$dolgraph->setShowPercent(1);
 			$dolgraph->SetType(array('pie'));
 			//$dolgraph->setWidth('100%');
-			$dolgraph->SetHeight('200');
+			$dolgraph->SetHeight('180');
 			$dolgraph->draw('idgraphstatus');
 			print $dolgraph->show($totaloppnb ? 0 : 1);
 

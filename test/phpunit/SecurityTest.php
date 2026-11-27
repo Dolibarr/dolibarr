@@ -783,6 +783,16 @@ class SecurityTest extends CommonClassTest
 			$restricteduser->socid = 0;
 			$restricteduser->rights->societe->client->voir = 0;
 
+			// The object of a document is found from its subdirectory (ref, or id for contacts), also for previews
+			$documentobject = fetchObjectOfDocument('apercuficheinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf_preview.png');
+			$this->assertEquals('ficheinter', $documentobject['modulepart'], 'The prefix apercu must be removed from the modulepart');
+			$this->assertEquals($fichinterid, (is_object($documentobject['object']) ? $documentobject['object']->id : 0), 'The intervention of the preview must be found');
+			$documentobject = fetchObjectOfDocument('contact', $contactid.'/./photo.jpg');
+			$this->assertEquals($contactid.'/photo.jpg', $documentobject['original_file'], 'The path must be normalized');
+			$this->assertEquals($contactid, (is_object($documentobject['object']) ? $documentobject['object']->id : 0), 'The contact must be found from its id');
+			$documentobject = fetchObjectOfDocument('ficheinter', 'NOTEXISTINGREF/NOTEXISTINGREF.pdf');
+			$this->assertNull($documentobject['object'], 'No object must be found for an unknown ref');
+
 			$this->assertEquals(0, checkUserAccessToDocumentObject($restricteduser, 'contact', $contactid.'/photo.jpg', 'read'), 'The contact of a third party not assigned to the restricted user must be refused');
 			$this->assertEquals(0, checkUserAccessToDocumentObject($restricteduser, 'fichinter', $fichinter->ref.'/'.$fichinter->ref.'.pdf', 'read'), 'The intervention of a third party not assigned to the restricted user must be refused');
 
@@ -1791,6 +1801,28 @@ class SecurityTest extends CommonClassTest
 			$result = dolPrintHTMLForAttribute($s);
 			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
 		}
+
+		return 0;
+	}
+
+	/**
+	 * testDolPrintTextForTextArea
+	 *
+	 * @return int
+	 */
+	public function testDolPrintTextForTextArea()
+	{
+		// Line feeds and indentation are kept, double quotes and special chars are escaped once
+		$s = "Line 1: {\"tool\": 'x'} & é < b\n\n  Line 3";
+		$expectedresult = "Line 1: {&quot;tool&quot;: 'x'} &amp; &eacute; &lt; b\n\n  Line 3";
+		$result = dolPrintTextForTextArea($s);
+		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintTextForTextArea with text');
+
+		// HTML tags, including javascript, are removed
+		$s = "<b>Bold</b> <script>alert(1)</script>\" onclick=\"alert(2)";
+		$expectedresult = "Bold alert(1)&quot; onclick=&quot;alert(2)";
+		$result = dolPrintTextForTextArea($s);
+		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintTextForTextArea with html');
 
 		return 0;
 	}

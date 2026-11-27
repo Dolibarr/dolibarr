@@ -735,7 +735,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					if ($this->getColumnStatus('unit_order') && $object->lines[$i]->special_code != SUBTOTALS_SPECIAL_CODE) {
-						$this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString((int) $object->lines[$i]->fk_unit));
+						$this->printStdColumnContent($pdf, $curY, 'unit_order', pdf_getlineunit($object, $i, $outputlangs, $hidedetails));
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -1263,7 +1263,7 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

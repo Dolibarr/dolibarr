@@ -223,7 +223,7 @@ class MenuManager
 						}
 					}
 
-					print ucfirst($val['titre']);
+					print dol_ucfirst($val['titre']);
 					print '</a>'."\n";
 
 					// Search submenu for this mainmenu entry
@@ -256,14 +256,14 @@ class MenuManager
 							print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
 						}
 
-						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
+						if ($langs->trans(dol_ucfirst($val['mainmenu'])."Dashboard") == dol_ucfirst($val['mainmenu'])."Dashboard") {  // No translation
 							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
 								print $langs->trans("Access");
 							} else {
 								print $langs->trans("Dashboard");
 							}
 						} else {
-							print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+							print $langs->trans(dol_ucfirst($val['mainmenu'])."Dashboard");
 						}
 						print '</a>';
 						print '</li>'."\n";

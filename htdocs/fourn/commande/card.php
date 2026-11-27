@@ -87,9 +87,6 @@ if (isModEnabled('stock')) {
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'products', 'stocks', 'productbatch'));
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 
 
 // Get Parameters
@@ -662,7 +659,7 @@ if (empty($reshook)) {
 		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
 		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
 		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
-		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
 
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
 		if (empty($remise_percent)) {
@@ -1174,7 +1171,7 @@ if (empty($reshook)) {
 			$lineid,
 			GETPOST('product_desc', 'restricthtml'),
 			(float) $ht,
-			(float) price2num(GETPOST('qty'), 'MS'),
+			(float) price2num(GETPOST('qty'), 'MS', 2),
 			(float) price2num(GETPOST('remise_percent'), '', 2),
 			$vat_rate,
 			$localtax1_rate,
@@ -2231,7 +2228,7 @@ if ($action == 'create') {
 
 		// Bank Account
 		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER') && isModEnabled("bank")) {
-			$langs->load("bank");
+			$langs->load("banks");
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 			$form->select_comptes($fk_account ?? '', 'fk_account', 0, '', 1);
@@ -3094,7 +3091,7 @@ if ($action == 'create') {
 						'enabled' => $object->status == CommandeFournisseur::STATUS_DRAFT,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddTitleLine'),
-						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_title_line'], true)
+						'url' => dolBuildUrl('/fourn/commande/card.php', ['id' => $object->id, 'action' => 'add_title_line'], true)
 					);
 
 					$url_button[] = array(
@@ -3102,7 +3099,7 @@ if ($action == 'create') {
 						'enabled' => $object->status == CommandeFournisseur::STATUS_DRAFT,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddSubtotalLine'),
-						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
+						'url' => dolBuildUrl('/fourn/commande/card.php', ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
 					);
 
 					$url_button[] = array(
@@ -3149,7 +3146,7 @@ if ($action == 'create') {
 				// Approve
 				if ($object->status == CommandeFournisseur::STATUS_VALIDATED) {
 					if ($usercanapprove) {
-						if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED') && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED && !empty($object->user_approve_id)) {
+						if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED') && $object->total_ht >= getDolGlobalFloat('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED') && !empty($object->user_approve_id)) {
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("FirstApprovalAlreadyDone")).'">'.$langs->trans("ApproveOrder").'</a>';
 						} else {
 							print '<a class="butAction"	href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=approve&amp;token='.newToken().'">'.$langs->trans("ApproveOrder").'</a>';
@@ -3160,7 +3157,7 @@ if ($action == 'create') {
 				}
 
 				// Second approval (if option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
-				if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED') && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
+				if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED') && $object->total_ht >= getDolGlobalFloat('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED')) {
 					if ($object->status == CommandeFournisseur::STATUS_VALIDATED) {
 						if ($usercanapprovesecond) {
 							if (!empty($object->user_approve_id2)) {
@@ -3337,7 +3334,7 @@ if ($action == 'create') {
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $usercanread;
 			$delallowed = $usercancreate;
-			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_PDF') ? '' : $conf->global->COMMANDE_SUPPLIER_ADDON_PDF));
+			$modelpdf = (!empty($object->model_pdf) ? $object->model_pdf : (!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_PDF') ? '' : getDolGlobalString('COMMANDE_SUPPLIER_ADDON_PDF')));
 
 			print $formfile->showdocuments('commande_fournisseur', $objref, $filedir, $urlsource, (int) $genallowed, (int) $delallowed, $modelpdf, 1, 0, 0, 0, 0, '', '', '', $object->thirdparty->default_lang, '', $object);
 			$somethingshown = $formfile->numoffiles;

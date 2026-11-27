@@ -129,6 +129,7 @@ class Interventions extends DolibarrApi
 	 * Get a list of interventions
 	 *
 	 * @since	7.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param	string	$sortfield				Sort field
 	 * @param	string	$sortorder				Sort order
@@ -140,13 +141,14 @@ class Interventions extends DolibarrApi
 	 * @param	string	$contact_type			Type of contacts: thirdparty, internal or external
 	 * @param	bool	$pagination_data		If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @param	int		$loadlinkedobjects		Load also linked objects
+	 * @param	int		$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return	array							Array of order objects
-	 * @phan-return array<object>
-	 * @phpstan-return array<object>
+	 * @phan-return array<object>|array{count:int}
+	 * @phpstan-return array<object>|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '', $pagination_data = false, $loadlinkedobjects = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '', $pagination_data = false, $loadlinkedobjects = 0, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
@@ -159,9 +161,11 @@ class Interventions extends DolibarrApi
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
 		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
-		// If the internal user must only see his customers, force searching by him
+		// If the internal user must only see his customers, force searching by him.
+		// The filter also applies when the caller provides thirdparty_ids, so the requested
+		// thirdparties are intersected with the customers of the sale representative.
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socids) {
+		if (!DolibarrApiAccess::$user->socid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
@@ -169,7 +173,7 @@ class Interventions extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter AS t";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
-		$sql .= ' WHERE t.entity IN ('.getEntity('intervention').')';
+		$sql .= ' WHERE t.entity IN ('.getEntity('fichinter').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
@@ -201,6 +205,11 @@ class Interventions extends DolibarrApi
 
 		//this query will return total interventions with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -311,7 +320,10 @@ class Interventions extends DolibarrApi
 	 * @phpstan-param	?array<string,string>	$request_data
 	 * @return			Object					Updated object
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Empty request body
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		Intervention not found
+	 * @throws	RestException	500		Error when retrieving or updating the intervention
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -328,6 +340,9 @@ class Interventions extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		if (!is_array($request_data) || empty($request_data)) {
+			throw new RestException(400, 'A non-empty object of intervention changes is required');
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {

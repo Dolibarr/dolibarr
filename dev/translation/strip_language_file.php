@@ -140,13 +140,14 @@ foreach ($filesToProcess as $fileToProcess) {
 				continue;
 			}
 
-			$a = mb_split('=', trim($line), 2);
+			$a = explode('=', trim($line), 2);
 			if (count($a) != 2) {
 				print "File $lSecondaryFile:ERROR: ".trim($line)." in line $cnt.\n";
 				continue;
 			}
 
-			list($key, $value) = $a;
+			$key = $a[0];
+			$value = $a[1];
 
 			// key is redundant
 			if (array_key_exists($key, $aSecondary)) {
@@ -194,13 +195,14 @@ foreach ($filesToProcess as $fileToProcess) {
 				continue;
 			}
 
-			$a = mb_split('=', trim($line), 2);
+			$a = explode('=', trim($line), 2);
 			if (count($a) != 2) {
 				print "File $lEnglishFile:ERROR: ".trim($line)." in line $cnt.\n";
 				continue;
 			}
 
-			list($key, $value) = $a;
+			$key = $a[0];
+			$value = $a[1];
 
 			// key is redundant
 			if (array_key_exists($key, $aEnglish)) {
@@ -263,13 +265,14 @@ foreach ($filesToProcess as $fileToProcess) {
 				continue;
 			}
 
-			$a = mb_split('=', trim($line), 2);
+			$a = explode('=', trim($line), 2);
 			if (count($a) != 2) {
 				print "File $lPrimaryFile:ERROR: ".trim($line)." in line $cnt.\n";
 				continue;
 			}
 
-			list($key, $value) = $a;
+			$key = $a[0];
+			$value = $a[1];
 
 			// key is redundant
 			if (array_key_exists($key, $aPrimary)) {

@@ -1130,7 +1130,7 @@ class EmailCollector extends CommonObject
 
 		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id." - ".$this->ref, LOG_INFO);
 
-		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda", "commercial"));
+		$langs->loadLangs(array("projects", "companies", "mails", "errors", "ticket", "agenda", "commercial"));
 
 		$error = 0;
 		$this->output = '';

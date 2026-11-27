@@ -338,7 +338,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				$contactobject = null;
 				// Recipient name
 				if (!empty($usecontact)) {
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
+					if ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1')) {
 						$socobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;

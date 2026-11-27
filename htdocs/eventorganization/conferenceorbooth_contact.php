@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'eventorganization', 'mails', 'others', 'projects'));
+$langs->loadLangs(array('companies', 'eventorganization', 'mails', 'other', 'projects'));
 
 // Variables GET
 $id = GETPOSTINT('id');

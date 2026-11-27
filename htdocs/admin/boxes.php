@@ -222,7 +222,7 @@ llxHeader('', $langs->trans("Boxes"), '', '', 0, 0, '', '', '', 'mod-admin page-
 
 print load_fiche_titre($langs->trans("Boxes"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."</span><br>\n";
+print '<div class="info">'.$langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php')."</div>\n";
 print '<br>';
 
 /*

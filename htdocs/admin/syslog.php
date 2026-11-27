@@ -51,7 +51,7 @@ $syslogModules = array();
 $activeModules = array();
 
 if (getDolGlobalString('SYSLOG_HANDLERS')) {
-	$activeModules = json_decode($conf->global->SYSLOG_HANDLERS);
+	$activeModules = json_decode(getDolGlobalString('SYSLOG_HANDLERS'));
 	if (!is_array($activeModules)) {
 		$activeModules = array();
 	}

@@ -56,6 +56,9 @@ class UniversalLLMAdapter
 	/** @var int Maximum number of tokens of the answer, 0 = default of each provider */
 	private $maxTokens = 0;
 
+	/** @var string Reasoning effort sent to OpenAI-compatible APIs, '' = default of the model */
+	private $reasoningEffort = '';
+
 	/**
 	 * Constructor
 	 *
@@ -84,6 +87,19 @@ class UniversalLLMAdapter
 	public function setMaxTokens(int $maxTokens): bool
 	{
 		$this->maxTokens = max(0, $maxTokens);
+
+		return true;
+	}
+
+	/**
+	 * Set the reasoning effort sent to OpenAI-compatible APIs ('none' turns off the thinking of local models)
+	 *
+	 * @param string $effort Reasoning effort, '' = default of the model
+	 * @return bool Always true
+	 */
+	public function setReasoningEffort(string $effort): bool
+	{
+		$this->reasoningEffort = $effort;
 
 		return true;
 	}
@@ -169,8 +185,9 @@ class UniversalLLMAdapter
 		);
 		if ($this->maxTokens > 0) {
 			$data["max_tokens"] = $this->maxTokens;
-		} elseif (!empty($attachments)) {
-			$data["max_tokens"] = 8192;	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
+		}
+		if ($this->reasoningEffort !== '') {
+			$data["reasoning_effort"] = $this->reasoningEffort;
 		}
 
 		// Only force JSON mode if explicitly requested
@@ -212,9 +229,9 @@ class UniversalLLMAdapter
 		// With attachments, content becomes an array of typed blocks: PDFs go as
 		// 'document' blocks, images as 'image' blocks (Anthropic native formats).
 		$userContent = $msg;
-		$maxTokens = getDolGlobalInt('AI_API_ANTHROPIC_MAX_TOKENS', 1024);
+		$maxTokens = getDolGlobalInt('AI_API_ANTHROPIC_MAX_TOKENS', 100000);
 		if ($maxTokens <= 0) {
-			$maxTokens = 1024;	// max_tokens is mandatory for Anthropic, an empty setup must not send 0
+			$maxTokens = 100000;	// max_tokens is mandatory for Anthropic, an empty setup must not send 0
 		}
 		if (!empty($attachments)) {
 			$userContent = array();
@@ -227,7 +244,6 @@ class UniversalLLMAdapter
 				);
 			}
 			$userContent[] = array("type" => "text", "text" => $msg);
-			$maxTokens = max($maxTokens, 8192);	// a multi-line document (e.g. a delivery note) serializes to an intent JSON far beyond 4096 tokens
 		}
 
 		$messages = array();
@@ -300,7 +316,7 @@ class UniversalLLMAdapter
 
 		$data = array(
 			"contents" => $contents,
-			"generationConfig" => (empty($attachments) ? array("temperature" => 0.1) : array("temperature" => 0.1, "maxOutputTokens" => 16384))	// thinking models count their reasoning tokens INSIDE maxOutputTokens: at 4096 a multi-line reception intent came back finishReason=MAX_TOKENS, cut mid-JSON
+			"generationConfig" => array("temperature" => 0.1)
 		);
 		if ($this->maxTokens > 0) {
 			$data["generationConfig"]["maxOutputTokens"] = $this->maxTokens;
