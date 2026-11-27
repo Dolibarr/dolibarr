@@ -146,10 +146,10 @@ print '<tr><td>'.loanChargeLabel($loan->charge_type, $langs).'</td><td>'.price($
 print '<tr><td>'.$langs->trans('Interest').'</td><td>'.price($payment->amount_interest, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note Private
-print '<tr><td>'.$langs->trans('NotePrivate').'</td><td>'.nl2br($payment->note_private).'</td></tr>';
+print '<tr><td>'.$langs->trans('NotePrivate').'</td><td>'.nl2br((string) $payment->note_private).'</td></tr>';
 
 // Note Public
-print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br($payment->note_public).'</td></tr>';
+print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br((string) $payment->note_public).'</td></tr>';
 
 // Bank account
 if (isModEnabled("bank")) {
