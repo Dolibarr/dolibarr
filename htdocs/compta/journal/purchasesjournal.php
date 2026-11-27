@@ -190,9 +190,9 @@ if ($result) {
 		$compta_localtax1 = (!empty($obj->account_localtax1) ? $obj->account_localtax1 : $langs->trans("CodeNotDef"));
 		$compta_localtax2 = (!empty($obj->account_localtax2) ? $obj->account_localtax2 : $langs->trans("CodeNotDef"));
 
-		$account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc, $obj->thirdparty);
+		$account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc, null);
 		$compta_localtax1 = (!empty($account_localtax1[2]) ? $account_localtax1[2] : $langs->trans("CodeNotDef"));
-		$account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc, $obj->thirdparty);
+		$account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc, null);
 		$compta_localtax2 = (!empty($account_localtax2[2]) ? $account_localtax2[2] : $langs->trans("CodeNotDef"));
 
 		// Avoid warnings
