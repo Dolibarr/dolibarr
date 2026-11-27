@@ -73,6 +73,36 @@ function getListOfAIFeatures()
 }
 
 /**
+ * Return the values accepted for the reasoning effort of OpenAI-compatible APIs
+ *
+ * @return string[]
+ */
+function getListOfAiReasoningEfforts(): array
+{
+	return array('none', 'minimal', 'low', 'medium', 'high', 'xhigh');
+}
+
+/**
+ * Return the reasoning effort to send to an OpenAI-compatible API of a service, from the constant AI_API_<SERVICE>_REASONING_EFFORT
+ *
+ * @param	string	$service	Code of the AI service ('custom', 'chatgpt', ...)
+ * @return	string				One value of getListOfAiReasoningEfforts(), or '' to let the model decide
+ */
+function getAiReasoningEffort(string $service): string
+{
+	$effort = strtolower(getDolGlobalString('AI_API_'.strtoupper($service).'_REASONING_EFFORT'));
+	if ($effort === '') {
+		return '';
+	}
+	if (!in_array($effort, getListOfAiReasoningEfforts(), true)) {
+		dol_syslog("getAiReasoningEffort: unknown value '".$effort."' for service ".$service.", ignored", LOG_WARNING);
+		return '';
+	}
+
+	return $effort;
+}
+
+/**
  * Get list of available ai services
  *
  * @return array<int|string,mixed>
@@ -2725,7 +2755,10 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 		// Get parameters
 		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];
 		// requestState is set by the chat after the user confirmed a write, never by the model.
-		unset($toolParams['properties']['requestState']);
+		// The properties of a tool without parameter may be an empty object (encoded as {} in JSON) instead of an array.
+		if (isset($toolParams['properties']) && is_array($toolParams['properties'])) {
+			unset($toolParams['properties']['requestState']);
+		}
 
 		if ($isLargeSchema && isset($toolParams['properties']) && is_array($toolParams['properties'])) {
 			$requiredList = $toolParams['required'] ?? [];

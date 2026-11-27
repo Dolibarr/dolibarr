@@ -608,6 +608,8 @@ ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_
 
 ALTER TABLE llx_facture_fourn MODIFY COLUMN payment_reference varchar(35);
 
+ALTER TABLE llx_chargesociales MODIFY COLUMN libelle varchar(128) NOT NULL;
+
 ALTER TABLE llx_bank_account ADD COLUMN sepa_transfer_schema_version varchar(2) AFTER sepa_local_instrument;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_charge_bearer varchar(4) DEFAULT 'SHAR' AFTER sepa_transfer_schema_version;
 

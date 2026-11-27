@@ -17,6 +17,7 @@
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Nick Fragoulis
  * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2316,7 +2317,7 @@ if ($action == 'create' && $usercancreate) {
 									}
 									$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
-									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '>';
+									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr' . ((($subj + 1) == $nbofsuggested) ? ' class="oddeven"' : '') . '>';
 									print '<td colspan="3" ></td><td class="center">';
 									$qtylValue = $deliverableQty;
 									if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
@@ -2406,7 +2407,7 @@ if ($action == 'create' && $usercancreate) {
 									$deliverableQty = min($quantityToBeDelivered, $stock);
 									$deliverableQty = max(0, $deliverableQty);
 									// Quantity to send
-									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '>';
+									print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr' . ((($subj + 1) == $nbofsuggested) ? ' class="oddeven"' : '') . '>';
 									print '<td colspan="3" ></td><td class="center"><!-- qty to ship (no lot management for product line indiceAsked=' . $indiceAsked . ') -->';
 									if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 										// For a virtual product (kit), $deliverableQty is already min($quantityToBeDelivered, $stock) computed above
@@ -2498,7 +2499,7 @@ if ($action == 'create' && $usercancreate) {
 										if ($value['stock'] < $value['stock_alert']) {
 											$img = img_warning($langs->trans("StockTooLow"));
 										}
-										print '<tr class"oddeven"><td>';
+										print '<tr class="oddeven"><td>';
 										print "&nbsp; &nbsp; &nbsp; ->
 											<a href=\"" . DOL_URL_ROOT . "/product/card.php?id=" . $value['id'] . "\">" . $value['fullpath'] . "
 											</a> (" . $value['nb'] . ")</td><td class=\"center\"> " . $value['nb_total'] . "</td><td>&nbsp;</td><td>&nbsp;</td>
@@ -2575,7 +2576,7 @@ if ($action == 'create' && $usercancreate) {
 										}
 										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
 
-										print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr ' . ((($subj + 1) == $nbofsuggested) ? 'oddeven' : '') . '><td colspan="3"></td><td class="center">';
+										print '<!-- subj=' . $subj . '/' . $nbofsuggested . ' --><tr' . ((($subj + 1) == $nbofsuggested) ? ' class="oddeven"' : '') . '><td colspan="3"></td><td class="center">';
 										$qtylValue = $deliverableQty;
 										if (getDolGlobalBool('SHIPMENT_DONT_PREFILL_QTY', false)) {
 											$qtylValue = '';

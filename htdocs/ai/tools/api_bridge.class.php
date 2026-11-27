@@ -1371,8 +1371,8 @@ class ToolApiBridge extends McpTool
 						'product_create' => true,
 						// As the creation form proposes: on sale, on purchase, a weight in kilograms.
 						'defaults' => ['status' => 1, 'status_buy' => 1, 'weight_units' => 0],
-						// Said by name, stored by rowid.
-						'rename' => ['unit' => 'fk_unit', 'default_warehouse' => 'fk_default_warehouse'],
+						// Said by name, stored by rowid. The type of the barcode is read by the product class as barcode_type.
+						'rename' => ['unit' => 'fk_unit', 'default_warehouse' => 'fk_default_warehouse', 'fk_barcode_type' => 'barcode_type'],
 						'right' => ['produit', 'creer']
 					],
 					'params' => [
@@ -6875,7 +6875,64 @@ class ToolApiBridge extends McpTool
 			$args['code_fournisseur'] = 'auto';
 		}
 
+		// The codes, checked as the creation will check them. A numbering rule that leaves the code free
+		// does not number it: when the code is mandatory, core refuses the creation once the user has
+		// approved, with nothing that says why. Asked for now instead.
+		if ($this->db && (!empty($args['client']) || !empty($args['fournisseur']))) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$probe = new Societe($this->db);
+			$probe->name = $name;
+			$probe->client = (int) ($args['client'] ?? 0);
+			$probe->fournisseur = empty($args['fournisseur']) ? 0 : 1;
+			$probe->country_id = (int) ($args['country'] ?? 0);
+			if ($probe->client) {
+				$probe->code_client = is_scalar($args['code_client']) ? trim((string) $args['code_client']) : '';
+				$numbered = in_array($probe->code_client, array('auto', '-1'), true);
+				if ($numbered) {
+					$probe->get_codeclient($probe, 0);
+				}
+				$this->thirdpartyCodeProblem($probe->check_codeclient(), $numbered, (string) $probe->code_client, 'code_client', 'CustomerCode', array(-1 => 'ErrorBadCustomerCodeSyntax', -3 => 'ErrorCustomerCodeAlreadyUsed', -4 => 'ErrorPrefixRequired'));
+			}
+			if ($probe->fournisseur) {
+				$probe->code_fournisseur = is_scalar($args['code_fournisseur']) ? trim((string) $args['code_fournisseur']) : '';
+				$numbered = in_array($probe->code_fournisseur, array('auto', '-1'), true);
+				if ($numbered) {
+					$probe->get_codefournisseur($probe, 1);
+				}
+				$this->thirdpartyCodeProblem($probe->check_codefournisseur(), $numbered, (string) $probe->code_fournisseur, 'code_fournisseur', 'SupplierCode', array(-1 => 'ErrorBadSupplierCodeSyntax', -3 => 'ErrorSupplierCodeAlreadyUsed', -4 => 'ErrorPrefixRequired'));
+			}
+		}
+
 		return $args;
+	}
+
+	/**
+	 * Say why the code of a third party to create would be refused, from the answer of the numbering rule.
+	 *
+	 * @param  int               $rescode  Answer of Societe::check_codeclient() or check_codefournisseur() (0 or -5 = accepted).
+	 * @param  bool              $numbered True when the code was left to Dolibarr.
+	 * @param  string            $code     Code checked.
+	 * @param  string            $field    Argument that carries the code.
+	 * @param  string            $labelkey Translation key of the name of the code.
+	 * @param  array<int,string> $errors   Translation key of the reason, by answer.
+	 * @return void
+	 */
+	private function thirdpartyCodeProblem($rescode, $numbered, $code, $field, $labelkey, array $errors)
+	{
+		global $langs;
+
+		if ($rescode == 0 || $rescode == -5) {
+			return;
+		}
+		$langs->loadLangs(array('other', 'errors', 'companies'));
+		$label = dol_strtolower($langs->transnoentitiesnoconv($labelkey));
+		if ($rescode == -2 || ($numbered && $code === '')) {
+			// A mandatory code that the numbering rule does not give.
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteThirdpartyCodeRequired', $label, $field);
+		} else {
+			$reason = isset($errors[$rescode]) ? $langs->transnoentitiesnoconv($errors[$rescode]) : $langs->transnoentitiesnoconv('Error').' '.$rescode;
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteThirdpartyCodeRefused', $label, $code, $reason);
+		}
 	}
 
 	/**

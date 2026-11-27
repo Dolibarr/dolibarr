@@ -890,6 +890,7 @@ try {
 
 		if (!empty($apiKey)) {
 			$adapter = new UniversalLLMAdapter($adapterType, $apiKey, $url, $model, $timeout);
+			$adapter->setReasoningEffort(getAiReasoningEffort($serviceKey));
 
 			dol_syslog("parse_intent.php Prepare call AI API for model=".$model, LOG_DEBUG);
 			if (getDolGlobalString("AI_DEBUG")) {
@@ -1133,9 +1134,6 @@ try {
 					$clean = $guard->unmaskAiResponse($clean);
 				}
 
-				// Removed carriage returns and newlines
-				$clean = preg_replace('/[\r\n]/', ' ', $clean);
-
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog('parse_intent.php response var clean='.$clean, LOG_DEBUG, 0, '_ai');
 				}
@@ -1148,6 +1146,22 @@ try {
 					// [ "type": "function", "function": "name": "api_...", "arguments": { ... } ]
 
 					$intentJSON = json_decode($clean, true);
+					if ($intentJSON === null) {
+						// Some models write real control characters (newlines, tabs...) inside the json strings, which is not valid: escape them
+						// (and not remove them, the markdown of the answer needs its lines) and try again.
+						$cleanescaped = preg_replace_callback(
+							'/"(?:[^"\\\\]++|\\\\.)*+"/s',
+							/**
+							 * @param string[] $reg Matches
+							 * @return string
+							 */
+							static function ($reg) {
+								return (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', strtr($reg[0], array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', "\t" => '\t')));
+							},
+							$clean
+						);
+						$intentJSON = json_decode((string) $cleanescaped, true);
+					}
 					if (getDolGlobalString("AI_DEBUG")) {
 						dol_syslog('parse_intent.php intentJSON = '.var_export($intentJSON, true), LOG_DEBUG, 0, '_ai');
 					}
