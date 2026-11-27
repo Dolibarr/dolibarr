@@ -828,14 +828,20 @@ if ($object->id > 0) {
 
 		// Box outstanding bill
 		$warn = '';
-		if ($object->outstanding_limit != '' && $object->outstanding_limit < $outstandingOpened) {
-			$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
+		$outstandingclass = '';
+		if ($object->outstanding_limit != '') {
+			if ($object->outstanding_limit < $outstandingOpened) {
+				$warn = ' '.img_warning($langs->trans("OutstandingBillReached"));
+				$outstandingclass = ' boxstatsoutstandingko';
+			} else {
+				$outstandingclass = ' boxstatsoutstandingok';
+			}
 		}
 		$text = $langs->transnoentitiesnoconv("CurrentOutstandingBill");
 
 		$link = DOL_URL_ROOT.'/compta/recap-compta.php?socid='.$object->id;
 		$icon = 'bill';
-		$boxstattmp = '<div class="boxstats" title="'.dol_escape_htmltag($text).'">';
+		$boxstattmp = '<div class="boxstats'.$outstandingclass.'" title="'.dol_escape_htmltag($text).'">';
 		$boxstattmp .= '<span class="boxstatstext">'.img_object("", $icon).' <span>'.$text.'</span></span><br>';
 		$boxstattmp .= '<span class="boxstatsindicator'.($outstandingOpened > 0 ? ' amountremaintopay' : '').'">'.price($outstandingOpened, 1, $langs, 1, -1, -1, $conf->currency).$warn.'</span>';
 		$boxstattmp .= '</div>';

@@ -6022,6 +6022,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	padding-right: 3px;
 	width: 118px;
 }
+.boxstats.boxstatsoutstandingok {
+	border-left-color: <?php echo $badgeStatus4; ?>;
+}
+.boxstats.boxstatsoutstandingko {
+	border-left-color: <?php echo $badgeDanger; ?>;
+}
 <?php if (getDolGlobalString('MAIN_CSS_USE_SHADOWS') && getDolGlobalInt('THEME_DARKMODEENABLED') != 2) { ?>
 .boxtable, .firstcolumn table.noborder, .secondcolumn table.noborder {
 	box-shadow: -2px 1px 12px rgba(192, 192, 192, 0.5);
