@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('errors', 'admin', 'companies', 'website'));
+$langs->loadlangs(array('errors', 'admin', 'companies', 'other', 'website'));
 
 $action = GETPOST('action', 'alpha') ?GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');

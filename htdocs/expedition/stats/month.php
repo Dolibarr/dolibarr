@@ -28,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+$langs->loadLangs(array('sendings'));
+
 $year = GETPOST('year', 'int');
 
 // Security check

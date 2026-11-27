@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'bills', 'categories', 'companies', 'salaries'));
+$langs->loadLangs(array('banks', 'bills', 'categories', 'companies', 'compta', 'salaries'));
 
 // Security check
 if (GETPOSTISSET("account") || GETPOSTISSET("ref")) {
