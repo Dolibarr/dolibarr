@@ -3019,3 +3019,42 @@ function filterToolsByObjects(array $tools, array $objects, array $categories): 
 
 	return $kept;
 }
+
+/**
+ * Order AI assistant tools by block of object: hub objects first, then the other objects by key, then the tools of several objects, then the tools of no object.
+ * A local model reuses only the longest common prefix of the prompt: the same set gives the same bytes, and adding an object keeps the hub blocks in front.
+ *
+ * @param	array<int,array<string,mixed>>	$tools	Tools, with their 'objects'
+ * @return	array<int,array<string,mixed>>			Tools ordered by block, then by name
+ */
+function sortAiToolsByObjectBlock(array $tools): array
+{
+	$hubObjects = array('thirdparties', 'contacts', 'products', 'users');
+	$sortKeys = array();
+	foreach ($tools as $index => $tool) {
+		$toolObjects = array_values((array) ($tool['objects'] ?? array()));
+		$object = '';
+		if (count($toolObjects) === 1) {
+			$hubRank = array_search($toolObjects[0], $hubObjects, true);
+			if ($hubRank !== false) {
+				$rank = (int) $hubRank;
+			} else {
+				$rank = count($hubObjects);
+				$object = (string) $toolObjects[0];
+			}
+		} else {
+			$rank = count($hubObjects) + (count($toolObjects) > 1 ? 1 : 2);
+		}
+		$sortKeys[$index] = array('rank' => $rank, 'object' => $object, 'name' => (string) ($tool['name'] ?? ''));
+	}
+	uksort($tools, static function ($a, $b) use ($sortKeys): int {
+		$keyA = $sortKeys[$a];
+		$keyB = $sortKeys[$b];
+		if ($keyA['rank'] !== $keyB['rank']) {
+			return $keyA['rank'] <=> $keyB['rank'];
+		}
+		return strcmp($keyA['object'], $keyB['object']) ?: strcmp($keyA['name'], $keyB['name']);
+	});
+
+	return array_values($tools);
+}

@@ -138,4 +138,43 @@ class AiLibTest extends CommonClassTest
 
 		$this->assertSame(array(), filterToolsByObjects($tools, array('tickets'), array('thirdparty')), 'No tool for the objects named: the caller falls back to the categories');
 	}
+
+	/**
+	 * testSortAiToolsByObjectBlock
+	 *
+	 * @return void
+	 */
+	public function testSortAiToolsByObjectBlock()
+	{
+		global $conf, $db, $user;
+
+		$tools = array(
+			array('name' => 'navigate_to_page'),
+			array('name' => 'api_objects_categories_list', 'objects' => array('contacts', 'thirdparties')),
+			array('name' => 'api_invoices_list', 'objects' => array('invoices')),
+			array('name' => 'api_agendaevents_list', 'objects' => array('agendaevents')),
+			array('name' => 'api_users_list', 'objects' => array('users')),
+			array('name' => 'api_contacts_list', 'objects' => array('contacts')),
+			array('name' => 'api_thirdparties_list', 'objects' => array('thirdparties')),
+		);
+		$this->assertSame(array_reverse(array_column($tools, 'name')), array_column(sortAiToolsByObjectBlock($tools), 'name'), 'Hub objects, other objects by key, several objects, no object');
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+
+		$thirdparties = cleanToolSchemaForLLM(sortAiToolsByObjectBlock(filterToolsByObjects($tools, array('thirdparties'), array())));
+		$this->assertSame(json_encode($thirdparties), json_encode(cleanToolSchemaForLLM(sortAiToolsByObjectBlock(filterToolsByObjects(array_reverse($tools), array('thirdparties'), array())))), 'The same set gives the same bytes');
+
+		$nbThirdpartiesBlock = 0;
+		foreach (sortAiToolsByObjectBlock(filterToolsByObjects($tools, array('thirdparties'), array())) as $tool) {
+			if ((array) ($tool['objects'] ?? array()) !== array('thirdparties')) {
+				break;
+			}
+			$nbThirdpartiesBlock++;
+		}
+		$this->assertGreaterThan(0, $nbThirdpartiesBlock);
+		$thirdpartiesBlockJson = rtrim((string) json_encode(array_slice($thirdparties, 0, $nbThirdpartiesBlock)), ']');
+		$withContacts = cleanToolSchemaForLLM(sortAiToolsByObjectBlock(filterToolsByObjects($tools, array('contacts', 'thirdparties'), array())));
+		$this->assertStringStartsWith($thirdpartiesBlockJson.',', (string) json_encode($withContacts), 'Adding an object keeps the thirdparties block first, so the prompt cache still holds it');
+	}
 }

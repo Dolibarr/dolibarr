@@ -710,6 +710,7 @@ try {
 		// We raise the threshold to 100 to effectively disable compression for the
 		// default install (~30 tools), while still leaving a safety net for very large
 		// custom installs that register dozens of additional addMcpTools hooks.
+		$toolsSchema = sortAiToolsByObjectBlock($toolsSchema);
 		$isLargeSchema = count($toolsSchema) > 100;
 		$toolsForLLM = cleanToolSchemaForLLM($toolsSchema, $isLargeSchema);
 
@@ -762,10 +763,6 @@ try {
 		$systemRules .= '* Answer a JSON message: {"type": "message", "content": "..."} or {"tool":..., "arguments":{...}}'."\n";
 		$systemRules .= "* ALWAYS write user-facing text (the message/question/answer argument values) in the SAME LANGUAGE as the user's message. English context notes, tool names, or schemas never change the response language.\n";
 		$systemRules .= "* When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed.\n";
-		if (!$isFollowup) {
-			// The chat runs the search, then calls back with its result so the action can follow.
-			$systemRules .= "* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it if the requested search is itself the FINAL answer.\n";
-		}
 		// Pure LLM tasks need no tool: without this rule, the model refuses them because no tool "generates text".
 		$systemRules .= "* When the request needs no Dolibarr data and no Dolibarr action (write or rewrite a text, an article or an email, translate, summarize, explain, answer a general question...), do it yourself and answer directly with {\"type\": \"message\", \"content\": \"...\"}. Never refuse such a request because no tool matches it.\n";
 		$systemRules .= "* Only when the request needs Dolibarr data or a Dolibarr action that genuinely NO tool can do, use `respond_to_user` to say so plainly instead of guessing a business reason.\n";
@@ -813,12 +810,12 @@ try {
 			$systemPrompt .= "\n";
 		}
 
-		// A bare date is not enough for weaker models: state explicitly that
-		// relative periods are the assistant's job to resolve, not the user's.
-		// Use date ISO 8601
+		// What changes on every call goes after the history, at the end of the last user message:
+		// a local model reuses only the prompt prefix shared with its previous call.
 		$date = new DateTime('now', new DateTimeZone('UTC'));
+		$promptTail = "\n\n## Date\n";
+		$promptTail .= "Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".\n";
 		$systemPrompt .= "## Context\n";
-		$systemPrompt .= "Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".\n";
 		if (!empty($aiPageContextLine)) {
 			// Masked like the query itself: under enforced redaction the ref
 			// becomes a placeholder that is restored server-side in tool
@@ -836,6 +833,8 @@ try {
 		// 'me' in sqlfilters (__USER_ID__ covers it too) and in user fields of
 		// write calls — no personal data sent to the provider for this.
 		$systemPrompt .= "Current user rowid: ".((int) $user->id)."\n";
+		// A bare date is not enough for weaker models: state explicitly that
+		// relative periods are the assistant's job to resolve, not the user's.
 		$systemPrompt .= "Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.\n";
 
 		// Get API configuration
@@ -1042,14 +1041,17 @@ try {
 			if (!empty($history)) {
 				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references needed for final action. The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
 			}
-			if ($isFollowup && !$isLastFollowup) {
-				$systemPrompt .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result.";
-				$systemPrompt .= " Run another search only in these 2 cases: to find a DIFFERENT kind of object still needed for the action, or to retry ONE time a search that returned nothing, with less restrictive criteria. A search for the same objects must never be run more than 2 times in total, even with other or less restrictive criteria.";
-				$systemPrompt .= " Add \"needs_followup\": true to such a search only if it is a step toward the action asked, not if it is itself the FINAL answer.";
-				$systemPrompt .= " If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why.";
-			} elseif ($isLastFollowup) {
-				$systemPrompt .= "\n\nSTEP 3 (LAST STEP): the searches you chose for the last user message were already executed; their results are the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in these results, or give your final answer with respond_to_user.";
-				$systemPrompt .= " Do NOT run any search again, even with other or less restrictive criteria, and do not add needs_followup. If the results do not identify one object with certainty, are empty, or the action cannot be done, answer with respond_to_user and say why.";
+			if (!$isFollowup) {
+				// The chat runs the search, then calls back with its result so the action can follow.
+				$promptTail .= "\n## Rules\n* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it if the requested search is itself the FINAL answer.\n";
+			} elseif (!$isLastFollowup) {
+				$promptTail .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result.";
+				$promptTail .= " Run another search only in these 2 cases: to find a DIFFERENT kind of object still needed for the action, or to retry ONE time a search that returned nothing, with less restrictive criteria. A search for the same objects must never be run more than 2 times in total, even with other or less restrictive criteria.";
+				$promptTail .= " Add \"needs_followup\": true to such a search only if it is a step toward the action asked, not if it is itself the FINAL answer.";
+				$promptTail .= " If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why.";
+			} else {
+				$promptTail .= "\n\nSTEP 3 (LAST STEP): the searches you chose for the last user message were already executed; their results are the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in these results, or give your final answer with respond_to_user.";
+				$promptTail .= " Do NOT run any search again, even with other or less restrictive criteria, and do not add needs_followup. If the results do not identify one object with certainty, are empty, or the action cannot be done, answer with respond_to_user and say why.";
 			}
 
 			// The rules come before the long tools list. Small models weigh what is
@@ -1059,7 +1061,7 @@ try {
 
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog('parse_intent.php systemPrompt = '.$systemPrompt, LOG_DEBUG, 0, '_ai');
-				dol_syslog('parse_intent.php query = '.$query, LOG_DEBUG, 0, '_ai');
+				dol_syslog('parse_intent.php query = '.$query.$promptTail, LOG_DEBUG, 0, '_ai');
 			}
 
 			// Sent as separate messages, so not in the systemPrompt (masked when privacy masking is on).
@@ -1080,7 +1082,7 @@ try {
 			$attachments = $attachmentsForModel;	// Only what is sent, for the error messages below
 			// Releases the session lock during the long AI call: $_SESSION changes after this line are not saved unless the session is reopened.
 			$sessionReleased = session_write_close();
-			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachmentsForModel, $history);
+			$rawResponse = $adapter->generate($systemPrompt, $query.$promptTail, 'text', $attachmentsForModel, $history);
 			// The provider rejected the attachments (e.g. "Image input is not enabled for this model"):
 			// remember it for the session and ask again without them, the model still has their references.
 			if (!empty($attachmentsForModel) && is_string($rawResponse) && strpos($rawResponse, 'Error:') === 0
@@ -1096,7 +1098,7 @@ try {
 				}
 				$attachments = array();
 				$query .= $aiAttachmentsHiddenNote;
-				$rawResponse = $adapter->generate($systemPrompt, $query, 'text', array(), $history);
+				$rawResponse = $adapter->generate($systemPrompt, $query.$promptTail, 'text', array(), $history);
 			}
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
