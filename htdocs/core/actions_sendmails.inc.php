@@ -233,6 +233,10 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$thirdparty->fetch($contact->socid);
 						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 						$sendtoid[] = ((int) $val);
+					} elseif ($ret > 0) {
+						// A contact of a project without thirdparty may have no thirdparty either: it is still a recipient
+						$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
+						$sendtoid[] = ((int) $val);
 					}
 				} elseif ($val) {	// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
@@ -277,7 +281,8 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 					//$sendtoid[] = $contact->id;  TODO Add also id of contact in CC ?
 				} elseif ($val) {				// $val is the Id of a contact
-					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
+					// A project without thirdparty has no $thirdparty: contact_get_property() only reads the contact
+					$tmparray[] = (is_object($thirdparty) ? $thirdparty : new Societe($db))->contact_get_property((int) $val, 'email');
 					//$sendtoid[] = ((int) $val);  TODO Add also id of contact in CC ?
 				}
 			}
