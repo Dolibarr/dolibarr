@@ -299,6 +299,7 @@ DateToday=Today's date
 DateReference=Reference date
 DateStart=Start date
 DateEnd=End date
+Creation=Creation
 DateCreation=Creation date
 DateCreationShort=Creat. date
 DateReading=Reading date
