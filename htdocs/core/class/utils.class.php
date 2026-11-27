@@ -430,23 +430,23 @@ class Utils
 				}
 			} else {
 				if ($compression == 'none') {
-					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandclear .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" > "'.dol_sanitizePathName($outputfile).'"';
 					$handle = 1;
 				} elseif ($compression == 'gz') {
-					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "'.dol_sanitizePathName($outputfile).'"';
-					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip';
+					$fullcommandclear .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" | gzip';
 					$handle = 1;
 				} elseif ($compression == 'bz') {
-					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
-					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2';
+					$fullcommandclear .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" | bzip2';
 					$handle = 1;
 				} elseif ($compression == 'zstd') {
-					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "'.dol_sanitizePathName($outputfile).'"';
-					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd';
+					$fullcommandclear .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v -e "Warning: Using a password on the command line interface can be insecure." -e "^[^\']*: Deprecated program name" | zstd';
 					$handle = 1;
 				}
 			}
@@ -494,6 +494,10 @@ class Utils
 								if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
 									continue;
 								}
+								// MariaDB 11.x writes "mysqldump: Deprecated program name..." on stderr when the dump command is called with its old name
+								if ($i <= 2 && preg_match('/: Deprecated program name/i', $read)) {
+									continue;
+								}
 								// Now check into the result file, that the file end with "-- Dump completed"
 								// This is possible only if $output_arr is the clear dump file, so not possible with $lowmemorydump set because file is already compressed.
 								if (!$lowmemorydump) {
@@ -522,6 +526,10 @@ class Utils
 							$read = fgets($handlein);
 							// Exclude warning line we don't want
 							if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
+								continue;
+							}
+							// MariaDB 11.x writes "mysqldump: Deprecated program name..." on stderr when the dump command is called with its old name
+							if ($i <= 2 && preg_match('/: Deprecated program name/i', $read)) {
 								continue;
 							}
 							fwrite($handle, $read);
