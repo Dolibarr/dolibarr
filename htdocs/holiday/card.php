@@ -235,6 +235,13 @@ if (empty($reshook)) {
 			$action = 'create';
 		}
 
+		// If description is longer than its column (varchar 255), instead of a SQL error on save
+		if (dol_strlen($description) > 255) {
+			setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("Description")), null, 'errors');
+			$error++;
+			$action = 'create';
+		}
+
 		// If no start date
 		if (empty($date_debut)) {
 			setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
@@ -382,6 +389,13 @@ if (empty($reshook)) {
 				// TODO Check this approver user id has the permission for approval
 
 				$description = trim(GETPOST('description', 'restricthtml'));
+
+				// If description is longer than its column (varchar 255), instead of a SQL error on save
+				if (dol_strlen($description) > 255) {
+					setEventMessages($langs->trans("ErrorFieldTooLong", $langs->transnoentitiesnoconv("Description")), null, 'warnings');
+					$error++;
+					$action = 'edit';
+				}
 
 				// If no end date
 				if (!GETPOST('date_fin_')) {
