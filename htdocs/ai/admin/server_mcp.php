@@ -233,16 +233,7 @@ $form = new Form($db);
 $apiKey = getDolGlobalString('AI_MCP_API_KEY');
 
 // Default Prompt Logic
-$defaultPromptText = " ROLE: Dolibarr ERP AI.
-GOAL: Map user intent to specific JSON commands.
-
-CONSTRAINTS:
-1. OUTPUT: Single valid JSON object ONLY. No Markdown. No text.
-   Format: {\"tool\": \"tool_name\", \"arguments\": {\"argument_name\": \"argument_value\", ...}}
-2. TOOLS: Use ONLY provided tools. If no tool or thirdparty fits, you must first use 'respond_to_user' to inform user.
-3. ARGS: strict adherence to schema. Do not invent parameters.
-4. MISSING INFO: If a required argument (like an ID) is missing, use 'ask_for_clarification'.
-5. SAFETY: For DELETE/UPDATE actions, you MUST use 'ask_for_confirmation'.";
+$defaultPromptText = getAiAssistantDefaultPrompt();
 
 $currentPrompt = getDolGlobalString('AI_INTENT_PROMPT', $defaultPromptText);
 
@@ -459,7 +450,9 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		if (!empty($_SERVER['PHP_AUTH_USER'])) {
 			$credentials = rawurlencode($_SERVER['PHP_AUTH_USER']).':'.rawurlencode(empty($_SERVER['PHP_AUTH_PW']) ? '' : $_SERVER['PHP_AUTH_PW']);
 		} elseif ($decoded !== false && strpos($decoded, ':') !== false) {
-			list($basiclogin, $basicpass) = explode(':', $decoded, 2);
+			$tmparray = explode(':', $decoded, 2);
+			$basiclogin = $tmparray[0];
+			$basicpass = $tmparray[1];
 			$credentials = rawurlencode($basiclogin).':'.rawurlencode($basicpass);
 		}
 		$vibeweburl = preg_replace('/^(https?:\/\/)/i', '${1}'.$credentials.'@', $endpoint);

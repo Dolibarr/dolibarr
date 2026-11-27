@@ -151,7 +151,7 @@ class FormResource
 
 			if (!empty($conf->use_javascript_ajax) && getDolGlobalString('RESOURCE_USE_SEARCH_TO_SELECT') && !$forcecombo) {
 				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
-				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+				$out .= ajax_combobox($htmlname, $event, getDolGlobalInt('RESOURCE_USE_SEARCH_TO_SELECT'));
 			} else {
 				$out .= ajax_combobox($htmlname);
 			}

@@ -1652,10 +1652,10 @@ class pdf_sponge extends ModelePDFFactures
 				$posy = $pdf->GetY();
 			}
 
-			// Show if Option VAT debit option is on also if transmitter is french
-			// Decret n°2099-1299 2022-10-07
+			// Show if Option VAT debit option is on also if transmitter is french and subject to VAT
+			// Decret n°2022-1299 2022-10-07
 			// French legal mention: "Option pour le paiement de la taxe d'apres les debits"
-			if ($this->emetteur->country_code == 'FR') {
+			if ($this->emetteur->country_code == 'FR' && !empty($this->emetteur->tva_assuj)) {
 				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, null, null, $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
@@ -2393,7 +2393,8 @@ class pdf_sponge extends ModelePDFFactures
 		}
 		$pdf->MultiCell($w, 4, $textref, '', 'R');*/
 
-		$posy += 3;
+		//$posy += 3;
+		// $posy is already at the bottom of the title line (see $pdf->GetY() above), so we do not add extra space here
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if ($object->ref_customer) {
@@ -2410,7 +2411,6 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".pdf_truncate_text($pdf, $object->project->title, 50), '', 'R');
-				$posy = $pdf->getY();
 			}
 		}
 
@@ -2439,7 +2439,7 @@ class pdf_sponge extends ModelePDFFactures
 			$objectreplaced = new Facture($this->db);
 			$objectreplaced->fetch($object->fk_facture_source);
 
-			$posy += 4;
+			$posy += 3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
@@ -2582,7 +2582,7 @@ class pdf_sponge extends ModelePDFFactures
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

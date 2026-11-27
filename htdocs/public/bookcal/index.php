@@ -317,7 +317,7 @@ if ($object->status == $object::STATUS_DRAFT) {
 }
 
 // Show the timezone used to show dates and hours
-print '<div class="center opacitymedium" id="bookcaltimezone">'.img_picto('', 'fa-globe', 'class="pictofixedwidth"').$langs->trans("BookCalTimezoneOfDates", dolPrintLabel(bookcalGetTimezoneLabel($tzvisitor))).'</div>';
+print '<div class="center opacitymedium marginbottomonly" id="bookcaltimezone">'.img_picto('', 'fa-globe', 'class="pictofixedwidth"').$langs->trans("BookCalTimezoneOfDates", dolPrintLabel(bookcalGetTimezoneLabel($tzvisitor))).'</div>';
 
 // Detect the timezone of the visitor and reload the page with it if it differs from the server timezone
 if ($tzparam === '' && empty($action)) {

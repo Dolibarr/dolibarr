@@ -254,6 +254,10 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
+// If internal user has no permission to see all thirdparties, restrict on thirdparties he is sale representative for
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND (t.fk_soc IS NULL OR t.fk_soc = 0 OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $user->id)."))";
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -698,7 +702,7 @@ while ($i < $imaxinloop) {
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, (string) $object->id, '');
+					print (int) $object->id;	// Not showOutputField() that returns nothing when the Technical ID is hidden by the object (MAIN_SHOW_TECHNICAL_ID off)
 				} elseif ($key == 'ref' && empty($arrayfields['t.label']['checked'])) {
 					// Show label under the ref when label column is not enabled
 					print '<div class="tdoverflowmax150 inline-block lineheightsmall">';

@@ -340,7 +340,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 		// Page content
 		$tplcontent .= '<!-- File content defined in Dolibarr website module editor -->'."\n";
-		$tplcontent .= '<body id="bodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.'">'."\n";
+		$tplcontent .= '<body id="bodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.' bodywebpagetype-'.dol_sanitizeKeyCode((string) $objectpage->type_container).'">'."\n";
 
 		// Import necessary environment for the config page
 		if ($objectpage->type_container == 'setup') {

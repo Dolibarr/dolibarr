@@ -80,6 +80,8 @@ class VariousPayments extends DolibarrApi
 	 *
 	 * Get a list of various payments.
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
@@ -87,15 +89,16 @@ class VariousPayments extends DolibarrApi
 	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.datep:>=:'20240101') and (t.amount:<:100)"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array						Array of various payment objects
-	 * @phan-return PaymentVarious[]|array{data:PaymentVarious[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return PaymentVarious[]|array{data:PaymentVarious[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return PaymentVarious[]|array{data:PaymentVarious[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return PaymentVarious[]|array{data:PaymentVarious[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @throws RestException 400 Bad value for sqlfilters
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 503 Error when retrieving list
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
@@ -118,6 +121,11 @@ class VariousPayments extends DolibarrApi
 
 		// This query will count total records matching the filters (before pagination)
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {

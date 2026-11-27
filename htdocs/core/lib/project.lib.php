@@ -863,7 +863,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
 					$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 				}
-				if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
+				if (getDolGlobalString('PROJECT_TIME_SPENT_FORMAT')) {
 					$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 				}
 
@@ -1142,7 +1142,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 			$totalCalculatedProgress = round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2);
 
 			// this conf is actually hidden, by default we use 10% for "be careful or warning"
-			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
+			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + getDolGlobalFloat('PROJECT_TIME_SPEND_WARNING_PERCENT') / 100) : 1.10;
 
 			// define progress color according to time spend vs workload
 			$progressBarClass = 'progress-bar-info';
@@ -1725,46 +1725,54 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				$extrafieldsobjectprefix = 'efpt.';
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
-				// Planned Workload
-				if (!empty($arrayfields['t.planned_workload']['checked'])) {
-					print '<td class="leftborder plannedworkload right">';
-					if ($lines[$i]->planned_workload) {
-						print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
-					} else {
-						print '--:--';
+				// Fields with position ordered by user setup
+				foreach ($arrayfields as $key => $val) {
+					if (empty($val['checked'])) {
+						continue;
 					}
-					print '</td>';
-				}
+					switch ($key) {
+						// Planned Workload
+						case 't.planned_workload':
+							print '<td class="leftborder plannedworkload right">';
+							if ($lines[$i]->planned_workload) {
+								print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
+							} else {
+								print '--:--';
+							}
+							print '</td>';
+							break;
 
-				// Progress declared %
-				if (!empty($arrayfields['t.progress']['checked'])) {
-					print '<td class="right">';
-					print $formother->select_percent($lines[$i]->progress, $lines[$i]->id.'progress');
-					print '</td>';
-				}
+						// Progress declared %
+						case 't.progress':
+							print '<td class="right">';
+							print $formother->select_percent($lines[$i]->progress, $lines[$i]->id.'progress');
+							print '</td>';
+							break;
 
-				if (!empty($arrayfields['timeconsumed']['checked'])) {
-					// Time spent by everybody
-					print '<td class="right">';
-					// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
-					if ($lines[$i]->duration_effective) {
-						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-						print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
-						print '</a>';
-					} else {
-						print '--:--';
+						case 'timeconsumed':
+							// Time spent by everybody
+							print '<td class="right">';
+							// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
+							if ($lines[$i]->duration_effective) {
+								print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+								print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
+								print '</a>';
+							} else {
+								print '--:--';
+							}
+							print "</td>\n";
+
+							// Time spent by user
+							print '<td class="right">';
+							$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
+							if ($tmptimespent['total_duration']) {
+								print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+							} else {
+								print '--:--';
+							}
+							print "</td>\n";
+							break;
 					}
-					print "</td>\n";
-
-					// Time spent by user
-					print '<td class="right">';
-					$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
-					if ($tmptimespent['total_duration']) {
-						print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
-					} else {
-						print '--:--';
-					}
-					print "</td>\n";
 				}
 
 				$disabledproject = 1;
@@ -2130,48 +2138,56 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				$extrafieldsobjectprefix = 'efpt.';
 				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
-				// Planned Workload
-				if (!empty($arrayfields['t.planned_workload']['checked'])) {
-					print '<td class="leftborder plannedworkload right">';
-					if ($lines[$i]->planned_workload) {
-						print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
-					} else {
-						print '--:--';
+				// Fields with position ordered by user setup
+				foreach ($arrayfields as $key => $val) {
+					if (empty($val['checked'])) {
+						continue;
 					}
-					print '</td>';
-				}
+					switch ($key) {
+						// Planned Workload
+						case 't.planned_workload':
+							print '<td class="leftborder plannedworkload right">';
+							if ($lines[$i]->planned_workload) {
+								print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
+							} else {
+								print '--:--';
+							}
+							print '</td>';
+							break;
 
-				if (!empty($arrayfields['t.progress']['checked'])) {
-					// Progress declared %
-					print '<td class="right">';
-					print $formother->select_percent($lines[$i]->progress, $lines[$i]->id.'progress');
-					print '</td>';
-				}
+						case 't.progress':
+							// Progress declared %
+							print '<td class="right">';
+							print $formother->select_percent($lines[$i]->progress, $lines[$i]->id.'progress');
+							print '</td>';
+							break;
 
-				if (!empty($arrayfields['timeconsumed']['checked'])) {
-					// Time spent by everybody
-					print '<td class="right">';
-					// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
-					if ($lines[$i]->duration_effective) {
-						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.((int) $lines[$i]->id).'">';
-						print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
-						print '</a>';
-					} else {
-						print '--:--';
+						case 'timeconsumed':
+							// Time spent by everybody
+							print '<td class="right">';
+							// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
+							if ($lines[$i]->duration_effective) {
+								print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.((int) $lines[$i]->id).'">';
+								print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
+								print '</a>';
+							} else {
+								print '--:--';
+							}
+							print "</td>\n";
+
+							// Time spent by user
+							print '<td class="right">';
+							$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
+							if ($tmptimespent['total_duration']) {
+								print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.((int) $lines[$i]->id).'&search_user='.((int) $fuser->id).'">';
+								print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+								print '</a>';
+							} else {
+								print '--:--';
+							}
+							print "</td>\n";
+							break;
 					}
-					print "</td>\n";
-
-					// Time spent by user
-					print '<td class="right">';
-					$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
-					if ($tmptimespent['total_duration']) {
-						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.((int) $lines[$i]->id).'&search_user='.((int) $fuser->id).'">';
-						print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
-						print '</a>';
-					} else {
-						print '--:--';
-					}
-					print "</td>\n";
 				}
 
 				$disabledproject = 1;
@@ -2355,6 +2371,8 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 		}
 
 		if ($lines[$i]->fk_task_parent == $parent) {
+			$obj = &$lines[$i]; // To display extrafields
+
 			// If we want all or we have a role on task, we show it
 			if (empty($mine) || !empty($tasksrole[$lines[$i]->id])) {
 				//dol_syslog("projectLinesPerWeek Found line ".$i.", a qualified task (i have role or want to show all tasks) with id=".$lines[$i]->id." project id=".$lines[$i]->fk_project);
@@ -2396,8 +2414,21 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				$thirdpartystatic->email = $lines[$i]->thirdparty_email;
 
 				if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id)) {
+					$addcolspan = 0;
+					if (!empty($arrayfields['t.planned_workload']['checked'])) {
+						$addcolspan++;
+					}
+					if (!empty($arrayfields['t.progress']['checked'])) {
+						$addcolspan++;
+					}
+					foreach ($arrayfields as $key => $val) {
+						if ($val['checked'] && substr($key, 0, 5) == 'efpt.') {
+							$addcolspan++;
+						}
+					}
+
 					print '<tr class="oddeven trforbreak nobold">'."\n";
-					print '<td colspan="'.(6 + count($TWeek)).'">';
+					print '<td colspan="'.(4 + count($TWeek) + $addcolspan).'">';
 					print $projectstatic->getNomUrl(1, '', 0, '<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
 					if ($thirdpartystatic->id > 0) {
 						print ' - '.$thirdpartystatic->getNomUrl(1);
@@ -2426,11 +2457,25 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				/*print '<td class="nowrap">';
 				if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
 				print "</td>";*/
+				if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
+					print '<td class="nowrap">';
+					if ($oldprojectforbreak == -1) {
+						print $projectstatic->getNomUrl(1, '', 0, $langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+					}
+					print "</td>";
+				}
 
 				// Thirdparty
 				/*print '<td class="tdoverflowmax100">';
 				if ($thirdpartystatic->id > 0) print $thirdpartystatic->getNomUrl(1, 'project');
 				print '</td>';*/
+				if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
+					print '<td class="tdoverflowmax100">';
+					if ($thirdpartystatic->id > 0) {
+						print $thirdpartystatic->getNomUrl(1, 'project');
+					}
+					print '</td>';
+				}
 
 				// Ref
 				print '<td class="nowrap">';
@@ -2447,46 +2492,59 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				}
 				print "</td>\n";
 
-				// Planned Workload
-				if (!empty($arrayfields['t.planned_workload']['checked'])) {
-					print '<td class="leftborder plannedworkload right">';
-					if ($lines[$i]->planned_workload) {
-						print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
-					} else {
-						print '--:--';
-					}
-					print '</td>';
-				}
+				// TASK extrafields
+				$extrafieldsobjectkey = 'projet_task';
+				$extrafieldsobjectprefix = 'efpt.';
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
-				// Progress declared %
-				if (!empty($arrayfields['t.progress']['checked'])) {
-					print '<td class="right">';
-					print $formother->select_percent($lines[$i]->progress, $lines[$i]->id.'progress');
-					print '</td>';
-				}
-
-				// Time spent by everybody
-				if (!empty($arrayfields['timeconsumed']['checked'])) {
-					print '<td class="right">';
-					// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
-					if ($lines[$i]->duration_effective) {
-						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
-						print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
-						print '</a>';
-					} else {
-						print '--:--';
+				// Fields with position ordered by user setup
+				foreach ($arrayfields as $key => $val) {
+					if (empty($val['checked'])) {
+						continue;
 					}
-					print "</td>\n";
+					switch ($key) {
+						// Planned Workload
+						case 't.planned_workload':
+							print '<td class="leftborder plannedworkload right">';
+							if ($lines[$i]->planned_workload) {
+								print convertSecondToTime($lines[$i]->planned_workload, 'allhourmin');
+							} else {
+								print '--:--';
+							}
+							print '</td>';
+							break;
 
-					// Time spent by user
-					print '<td class="right">';
-					$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
-					if ($tmptimespent['total_duration']) {
-						print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
-					} else {
-						print '--:--';
+						// Progress declared %
+						case 't.progress':
+							print '<td class="right">';
+							print $formother->select_percent($lines[$i]->progress, $lines[$i]->id.'progress');
+							print '</td>';
+							break;
+
+						// Time spent by everybody
+						case 'timeconsumed':
+							print '<td class="right">';
+							// $lines[$i]->duration_effective is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
+							if ($lines[$i]->duration_effective) {
+								print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+								print convertSecondToTime($lines[$i]->duration_effective, 'allhourmin');
+								print '</a>';
+							} else {
+								print '--:--';
+							}
+							print "</td>\n";
+
+							// Time spent by user
+							print '<td class="right">';
+							$tmptimespent = $taskstatic->getSummaryOfTimeSpent($fuser->id);
+							if ($tmptimespent['total_duration']) {
+								print convertSecondToTime($tmptimespent['total_duration'], 'allhourmin');
+							} else {
+								print '--:--';
+							}
+							print "</td>\n";
+							break;
 					}
-					print "</td>\n";
 				}
 
 				$disabledproject = 1;
@@ -2782,10 +2840,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$nbcol = 2;
 		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			if (!in_array('prospectionstatus', $hiddenfields)) {
-				print_liste_field_titre("OpportunityStatus", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'center ');
+				print_liste_field_titre("OpportunityStatusShort", "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'center ');
 				$nbcol++;
 			}
-			print_liste_field_titre($form->textwithpicto($langs->trans("Amount"), $langs->trans("OpportunityAmount").' ('.$langs->trans("Tooltip").' = '.$langs->trans("OpportunityWeightedAmount").')'), "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'right ');
+			print_liste_field_titre($form->textwithpicto($langs->trans("Amount"), $langs->trans("OpportunityAmount").' ('.$langs->trans("Tooltip").' = '.$langs->trans("OpportunityWeightedAmount").')'), "", "", "", "", 'style="max-width: 100px"', $sortfield, $sortorder, 'nowraponall right ');
 			$nbcol++;
 			//print_liste_field_titre('OpportunityWeightedAmount', '', '', '', '', 'align="right"', $sortfield, $sortorder);
 		}
@@ -2797,7 +2855,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				$nbcol++;
 			}
 			if (!in_array('declaredprogress', $hiddenfields)) {
-				print_liste_field_titre("%", "", "", "", "", '', $sortfield, $sortorder, 'right ', $langs->trans("ProgressDeclared"));
+				print_liste_field_titre("%", "", "", "", "", '', $sortfield, $sortorder, 'nowraponall right ', $langs->trans("ProgressDeclared"));
 				$nbcol++;
 			}
 		}
@@ -2840,10 +2898,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 				print '<tr class="oddeven">';
 
-				print '<td class="tdoverflowmax150">';
+				print '<td class="tdlineheightsmall tdoverflowmax150">';
 				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0, -1, 'nowraponall');
-				if (!in_array('projectlabel', $hiddenfields)) {
-					print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->title).'</span>';
+				if (!in_array('projectlabel', $hiddenfields) && (string) $objp->title !== '') {
+					print '<br><span class="spantitle">'.dol_escape_htmltag($objp->title).'</span>';
 				}
 				print '</td>';
 
@@ -3039,7 +3097,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 	if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
 		$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 	}
-	if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
+	if (getDolGlobalString('PROJECT_TIME_SPENT_FORMAT')) {
 		$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 	}
 
@@ -3177,22 +3235,22 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
 			$progressCalculated = round(100 * (float) $task->duration_effective / (float) $task->planned_workload, 2);
 
 			// this conf is actually hidden, by default we use 10% for "be careful or warning"
-			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
+			$warningRatio = getDolGlobalString('PROJECT_TIME_SPEND_WARNING_PERCENT') ? (1 + getDolGlobalFloat('PROJECT_TIME_SPEND_WARNING_PERCENT') / 100) : 1.10;
 
 			if ((float) $progressCalculated > (float) ($task->progress * $warningRatio)) {
 				$badgeClass .= 'badge-danger';
 				if (empty($tooltip)) {
-					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+					$tooltip = $langs->transnoentitiesnoconv("ProgressDeclared").' '.$task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
 			} elseif ((float) $progressCalculated > (float) $task->progress) { // warning if close at 10%
 				$badgeClass .= 'badge-warning';
 				if (empty($tooltip)) {
-					$tooltip = $task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+					$tooltip = $langs->transnoentitiesnoconv("ProgressDeclared").' '.$task->progress.'% < '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
 			} else {
 				$badgeClass .= 'badge-success';
 				if (empty($tooltip)) {
-					$tooltip = $task->progress.'% >= '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
+					$tooltip = $langs->transnoentitiesnoconv("ProgressDeclared").' '.$task->progress.'% >= '.$langs->trans("TimeConsumed").' '.$progressCalculated.'%';
 				}
 			}
 		}

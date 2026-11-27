@@ -601,11 +601,14 @@ ALTER TABLE llx_oauth_token ADD COLUMN passkey_aaguid varchar(36) NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_eligible smallint NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
 ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
+ALTER TABLE llx_oauth_token ADD INDEX idx_oauth_token_fk_user (fk_user);
 
 -- RF or national reference the supplier provides to accept payments
 ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
 
 ALTER TABLE llx_facture_fourn MODIFY COLUMN payment_reference varchar(35);
+
+ALTER TABLE llx_chargesociales MODIFY COLUMN libelle varchar(128) NOT NULL;
 
 ALTER TABLE llx_bank_account ADD COLUMN sepa_transfer_schema_version varchar(2) AFTER sepa_local_instrument;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_charge_bearer varchar(4) DEFAULT 'SHAR' AFTER sepa_transfer_schema_version;
@@ -735,3 +738,31 @@ ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
 
 -- Remove index of llx_quickmemo_memo_user on fk_memo (duplicate of uk_memo_user). Mysql only: with pgsql, this name is the one of an index of llx_quickmemo_memo
 -- VMYSQL4.1 DROP INDEX idx_quickmemo_memo_rowid ON llx_quickmemo_memo_user;
+
+create table llx_categorie_skill
+(
+  fk_categorie integer NOT NULL,
+  fk_skill     integer NOT NULL,
+  import_key   varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_skill ADD PRIMARY KEY pk_categorie_skill (fk_categorie, fk_skill);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_skill ADD INDEX idx_categorie_skill_fk_skill (fk_skill);
+
+ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_skill ADD CONSTRAINT fk_categorie_skill_fk_skill_rowid FOREIGN KEY (fk_skill) REFERENCES llx_hrm_skill (rowid);
+
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN doc_date_hour datetime NULL AFTER doc_date;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN doc_date_hour datetime NULL AFTER doc_date;
+-- Hour of source document is unknown for existing records, so we use doc_date at 12:00:00
+-- VMYSQL4.1 UPDATE llx_accounting_bookkeeping SET doc_date_hour = TIMESTAMP(doc_date, '12:00:00') WHERE doc_date_hour IS NULL;
+-- VMYSQL4.1 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = TIMESTAMP(doc_date, '12:00:00') WHERE doc_date_hour IS NULL;
+-- VPGSQL8.2 UPDATE llx_accounting_bookkeeping SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
+-- VPGSQL8.2 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
+
+-- Remove the system prompt of the AI assistant saved by previous versions, so the new default prompt of v25 is used
+--noqa:disable=PRS
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'AI_INTENT_PROMPT';
+--noqa:enable=PRS

@@ -51,10 +51,10 @@ $theme_bgcoloronglet = array(hexdec('DE'), hexdec('E7'), hexdec('EC'));
 // Colors
 $colorbackbody = '255,255,255';
 $colorbackhmenu1 = '38,60,92'; // topmenu
-//$colorbackvmenu1 = '250,250,250'; // vmenu
-$colorbackvmenu1 = '248,248,248'; // vmenu
+$colorbackvmenu1 = '252,252,252'; // vmenu
+//$colorbackvmenu1 = $colorbackbody;
 $colortopbordertitle1 = '215,215,215'; // top border of title
-$colorbacktitle1 = '241,241,243'; // title of tables,list
+$colorbacktitle1 = '242,242,244'; // title of tables,list
 $colorbacktabcard1 = '255,255,255'; // card
 $colorbacktabactive = '234,234,234';
 $colorbacklineimpair1 = '255,255,255'; // line impair
