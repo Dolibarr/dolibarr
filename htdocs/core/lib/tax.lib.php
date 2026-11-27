@@ -567,7 +567,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 		$sql .= " d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql .= " e.date_debut as date_start, e.date_fin as date_end, e.fk_user_author,";
 		$sql .= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
-		$sql .= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
+		$sql .= " p.rowid as payment_id, p.rowid as payment_ref, p.amount as payment_amount, p.datep, e.date_debut as datef, 0 as pid, e.ref as pref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid ";
@@ -608,6 +608,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 				$company_id = -1;
 				$oldrowid = '';
 				while ($assoc = $db->fetch_array($resql)) {
+					$assoc['company_id'] = 'userid_'.((int) $assoc['fk_user_author']);
 					if (!isset($list[$assoc['company_id']]['totalht'])) {
 						$list[$assoc['company_id']]['totalht'] = 0;
 					}
@@ -631,7 +632,8 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
 					$list[$assoc['company_id']]['dtotal_ttc'][] = $assoc['total_ttc'];
 					$list[$assoc['company_id']]['dtype'][] = 'ExpenseReportPayment';
-					$list[$assoc['company_id']]['datef'][] = $assoc['datef'];
+					$list[$assoc['company_id']]['datef'][] = $db->jdate($assoc['datef']);
+					$list[$assoc['company_id']]['datep'][] = $db->jdate($assoc['datep']);
 
 					$list[$assoc['company_id']]['company_name'][] = '';
 					$list[$assoc['company_id']]['company_id'][] = '';
