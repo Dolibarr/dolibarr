@@ -924,6 +924,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		print "</form>\n";
 	} else {
+		$langs->load("errors");
 		print '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
 	}
 }

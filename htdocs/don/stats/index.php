@@ -37,7 +37,7 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 // Load translation files required by the page
-$langs->loadLangs("donations");
+$langs->loadLangs(array("donations", "other"));
 
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
