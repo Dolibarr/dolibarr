@@ -128,10 +128,9 @@ foreach ($arrayofai as $ia => $iarecord) {
 		$item->helpText = $langs->trans("AI_API_REASONING_EFFORTHelp");
 
 		$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_TEMPERATURE');
-		$item->setAsSelect(array('' => '') + array_combine(getListOfAiTemperatures(), getListOfAiTemperatures()));
 		$item->nameText = $langs->trans("AI_API_TEMPERATURE").' ('.$ialabel.')';
 		$item->fieldParams['trClass'] = 'iaservice '.$ia;
-		$item->cssClass = 'minwidth100 input'.$ia;
+		$item->cssClass = 'width100 input'.$ia;
 		$item->helpText = $langs->trans("AI_API_TEMPERATUREHelp");
 	}
 }

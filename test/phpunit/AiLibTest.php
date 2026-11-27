@@ -84,7 +84,14 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame(0.2, getAiTemperature('custom'));
 		$this->assertNull(getAiTemperature('chatgpt'), 'The value of a service must not apply to another one');
 
-		foreach (array('0', '1.0', '3', '-0.5', 'low') as $invalid) {
+		$conf->global->AI_API_CUSTOM_TEMPERATURE = '0,6';
+		$this->assertSame(0.6, getAiTemperature('custom'), 'A decimal comma is accepted');
+		$conf->global->AI_API_CUSTOM_TEMPERATURE = '0';
+		$this->assertSame(0.0, getAiTemperature('custom'));
+		$conf->global->AI_API_CUSTOM_TEMPERATURE = '2';
+		$this->assertSame(2.0, getAiTemperature('custom'));
+
+		foreach (array('2.0000001', '-0.5', 'low') as $invalid) {
 			$conf->global->AI_API_CUSTOM_TEMPERATURE = $invalid;
 			$this->assertNull(getAiTemperature('custom'), 'Invalid value '.$invalid);
 		}
