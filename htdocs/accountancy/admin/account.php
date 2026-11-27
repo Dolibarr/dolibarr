@@ -420,6 +420,15 @@ if ($resql) {
 	if ($search_pcgtype) {
 		$param .= '&search_pcgtype='.urlencode($search_pcgtype);
 	}
+	if ($search_active != '' && $search_active != '-1') {
+		$param .= '&search_active='.urlencode((string) $search_active);
+	}
+	if ($search_reconcilable != '' && $search_reconcilable != '-1') {
+		$param .= '&search_reconcilable='.urlencode((string) $search_reconcilable);
+	}
+	if ($search_centralized != '' && $search_centralized != '-1') {
+		$param .= '&search_centralized='.urlencode((string) $search_centralized);
+	}
 	if ($search_import_key) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
