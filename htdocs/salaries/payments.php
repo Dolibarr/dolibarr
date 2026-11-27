@@ -378,6 +378,9 @@ if ($search_chq_number) {
 if ($search_account) {
 	$param .= '&search_account='.urlencode((string) ($search_account));
 }
+if ($search_amount) {
+	$param .= '&search_amount='.urlencode($search_amount);
+}
 if ($search_date_start) {
 	$param .= '&search_date_startday='.GETPOSTINT('search_date_startday').'&search_date_startmonth='.GETPOSTINT('search_date_startmonth').'&search_date_startyear='.GETPOSTINT('search_date_startyear');
 }
