@@ -3443,6 +3443,15 @@ abstract class CommonObject
 			// The goal of this part is to reorder all lines, with all children lines sharing the same counter that parents.
 			$rows = array();
 
+			// Some line tables have no fk_parent_line field (contratdet, expensereport_det...). The line class tells it
+			// (declared property or entry in $fields), read without instantiating it. No DDL request (forbidden inside a transaction).
+			if ($fk_parent_line && !empty($this->class_element_line) && class_exists($this->class_element_line)) {
+				$classvars = get_class_vars($this->class_element_line);
+				if (!property_exists($this->class_element_line, 'fk_parent_line') && empty($classvars['fields']['fk_parent_line'])) {
+					$fk_parent_line = false;
+				}
+			}
+
 			// We first search all lines that are parent lines (for multilevel details lines)
 			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
 			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
@@ -6654,10 +6663,16 @@ abstract class CommonObject
 					/**
 					 * We are in a situation where the current object has no values in its extra fields.
 					 * We want to initialize all the values to null so that the array_option is accessible in other contexts (especially in document generation).
+					 * An empty date gets the same value as when the line exists with an empty date (jdate() of NULL returns ''),
+					 * so insertExtraFields() does not call strtotime(null) (deprecated since PHP 8.1) on the next update.
 					 **/
 					if (is_array($extrafields->attributes[$this->table_element]['label'])) {
 						foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
-							$this->array_options['options_' . $key] = null;
+							if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date', 'datetime'))) {
+								$this->array_options['options_' . $key] = '';
+							} else {
+								$this->array_options['options_' . $key] = null;
+							}
 						}
 					}
 				}
