@@ -3309,8 +3309,10 @@ class Product extends CommonObject
 			}
 		}
 		if ($separatedEntityPMP) {
-			// AWP of the entity if the product has a row for this entity, global AWP otherwise
-			$sql .= " CASE WHEN ppe.rowid IS NOT NULL THEN ppe.pmp ELSE p.pmp END as pmp,";
+			// AWP of the entity if the product has a row for this entity, global AWP otherwise.
+			// Inside MAX() so that no AWP column has to be added to the GROUP BY (there is at most one row per product and entity,
+			// and $separatedEntityPMP implies $separatedStock, so this query always has a GROUP BY).
+			$sql .= " MAX(".$this->db->ifsql("ppe.rowid IS NOT NULL", "ppe.pmp", "p.pmp").") as pmp,";
 		} else {
 			$sql .= " p.pmp,";
 		}
@@ -3354,9 +3356,7 @@ class Product extends CommonObject
 			} else {
 				$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
 			}
-			if ($separatedEntityPMP) {
-				$sql .= " ppe.rowid, ppe.pmp, p.pmp,";
-			} else {
+			if (!$separatedEntityPMP) {
 				$sql .= " p.pmp,";
 			}
 			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
