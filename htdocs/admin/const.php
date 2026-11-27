@@ -400,11 +400,9 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
-		// A constant forced from conf.php (environment variable DOLIBARR_<NAME>, or a dedicated conf.php variable
-		// bridged into the constant) always wins over the database value at runtime, so it is shown read-only here
-		// with its effective value and cannot be edited.
+		// A forced value is set by the system administrator and may be a secret: never display it to a Dolibarr admin.
 		$isforced = isConstForcedByConfFile($obj->name);
-		$value = $isforced ? getDolGlobalString($obj->name) : dolDecrypt($obj->value);
+		$value = $isforced ? '**' : dolDecrypt($obj->value);
 
 		// Content of the action column (checkbox to select record for mass actions)
 		$selected = 0;
