@@ -472,6 +472,9 @@ if (empty($reshook)) {
 					}
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+				} elseif ($keycode == 'email_from') {
+					// Read with the filter that keeps the "Name <email@domain.com>" form, then validate and rebuild
+					$sql .= "'".$db->escape(sanitizeEmailFromForTemplate(GETPOST($keycode, 'alphawithlgt')))."'";
 				} elseif (in_array($keycode, array('joinfiles', 'defaultfortype', 'private', 'position', 'entity'))) {
 					$sql .= GETPOSTINT($keycode);
 				} else {
@@ -546,7 +549,8 @@ if (empty($reshook)) {
 						$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
 					}
 					if ($field == 'email_from') {
-						$_POST['email_from'] = GETPOST('email_from-'.$rowid, 'restricthtml');
+						// Keep the "Name <email@domain.com>" form here, the value is validated and rebuilt below
+						$_POST['email_from'] = GETPOST('email_from-'.$rowid, 'alphawithlgt');
 					}
 
 					if ($i) {
@@ -566,6 +570,9 @@ if (empty($reshook)) {
 						}
 					} elseif ($keycode == 'content') {
 						$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+					} elseif ($keycode == 'email_from') {
+						// Same handling as when the template is created
+						$sql .= "'".$db->escape(sanitizeEmailFromForTemplate(GETPOST($keycode, 'alphawithlgt')))."'";
 					} elseif ($keycode == 'position') {
 						$sql .= (GETPOSTINT($keycode) > 0 ? GETPOSTINT($keycode) : 1);
 					} elseif (in_array($keycode, array('joinfiles', 'defaultfortype', 'private'))) {
@@ -986,7 +993,7 @@ if ($action == 'create') {
 		if ($tmpfieldlist == 'topic') {
 			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'">';
 		} elseif ($tmpfieldlist == 'email_from') {
-			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'" spellcheck="false">';
+			print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="'.dol_escape_htmltag(!empty($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '').'" spellcheck="false">';
 		} elseif ($tmpfieldlist == 'joinfiles') {
 			print $form->selectyesno($tmpfieldlist, (isset($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '0'), 1, false, 0, 1);
 		} else {
@@ -1261,7 +1268,7 @@ if ($action != 'create') {
 							}
 							if ($tmpfieldlist == 'email_from') {
 								print '<div class="minwidth150 inline-block">'.$form->textwithpicto($langs->trans("MailFrom"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
-								print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
+								print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.dol_escape_htmltag(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').' spellcheck="false">';
 								print '<br>'."\n";
 							}
 							if ($tmpfieldlist == 'joinfiles') {
@@ -1510,6 +1517,55 @@ if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu
 llxFooter();
 $db->close();
 
+
+/**
+ *	Sanitize the value entered as the sender of an email template.
+ *
+ *  Accepts a bare address ("a@b.com") or a named address ("Name <a@b.com>") and returns a string rebuilt
+ *  from the parsed parts, so nothing of the original value is stored as is. The characters that could start
+ *  a new header line, and the comma, which is read as a separator between two addresses, are removed before
+ *  the value is parsed, and the address itself must be valid.
+ *
+ * 	@param		string	$value		Value as entered by the user
+ *	@return		string             	"a@b.com" or "Name <a@b.com>" when an address was found, otherwise the value
+ *									cleaned of any markup, and '' when the value was empty
+ */
+function sanitizeEmailFromForTemplate($value)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
+	// Remove the characters that could be used to inject an extra email header, and the comma, which the
+	// mail libraries and the SMTP protocol read as a separator between two addresses. A comma cannot be
+	// protected by quoting it either, as dol_sanitizeEmail() removes the quotes before the mail is sent.
+	// This is done on every path below, so none of them can reach the database.
+	$value = trim(str_replace(array("\r", "\n", "\0", ','), '', (string) $value));
+	if ($value === '') {
+		return '';
+	}
+
+	// Split "Name <a@b.com>" with the parsing of CMailFile: format 2 returns the address, format 4 the name
+	$email = CMailFile::getValidAddress($value, 2, 0, 1);
+	$name = CMailFile::getValidAddress($value, 4, 0, 1);
+	if ($name === $email) {
+		$name = '';	// getValidAddress() returns the address as the name when the value carries no name
+	}
+
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		// Not an address. Keep the text without any markup so an existing free text value is not lost.
+		return dol_trunc(trim(dol_string_nohtmltag($value, 1)), 255, 'right', 'UTF-8', 1);
+	}
+
+	// Rebuild the value from the validated address and a name cleaned of any markup
+	$name = trim(dol_string_nohtmltag($name, 1));
+	$result = ($name !== '' ? $name.' <'.$email.'>' : $email);
+
+	// The email_from column is a varchar(255). Drop the name rather than truncate into an unusable value.
+	if (dol_strlen($result) > 255) {
+		$result = $email;
+	}
+
+	return $result;
+}
 
 /**
  *	Show fields in insert/edit mode
