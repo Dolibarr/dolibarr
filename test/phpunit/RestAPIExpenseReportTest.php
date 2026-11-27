@@ -289,6 +289,117 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Get the id of a fee type that exists in old dictionary data
+	 *
+	 * @param string	$test	Text to be added to output
+	 * @return int				Id of the fee type TF_LUNCH
+	 */
+	private function getFeeTypeId($test)
+	{
+		global $db;
+
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_type_fees WHERE code = 'TF_LUNCH'");
+		$this->assertNotFalse($resql, "$test Query of fee type must succeed");
+		$obj = $db->fetch_object($resql);
+		$feetypeid = (int) ($obj->id ?? 0);
+		$this->assertGreaterThan(0, $feetypeid, "$test Fee type TF_LUNCH must exist");
+
+		return $feetypeid;
+	}
+
+	/**
+	 * Get a line of an expense report through the API.
+	 * The line is read through the API and not with $db, because the test connection is inside
+	 * a transaction that does not see the rows committed by the API.
+	 *
+	 * @param int		$id			Id of the expense report
+	 * @param int		$lineid		Id of the line
+	 * @param string	$test		Text to be added to output
+	 * @return array<string,mixed>	Properties of the line
+	 */
+	private function getLine($id, $lineid, $test)
+	{
+		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
+		foreach ($result['content']['lines'] ?? array() as $line) {
+			if ((int) ($line['id'] ?? 0) == $lineid) {
+				return $line;
+			}
+		}
+		$this->fail("$test Line ".$lineid." must be found in expense report ".$id);
+	}
+
+	/**
+	 * Updating a line with only some fields keeps the other fields of the line
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportPutLinePartial()
+	{
+		$test = "Update only the quantity of an expense report line";
+
+		$feetypeid = $this->getFeeTypeId($test);
+
+		$id = $this->createExpenseReport($test);
+
+		$data = array(
+			"date" => dol_now(),
+			"fk_c_type_fees" => $feetypeid,
+			"qty" => 1,
+			"value_unit" => 12.5,
+			"vatrate" => 10,
+			"comments" => "Line created by ".get_class($this),
+		);
+		$result = $this->getUrl('expensereports/'.$id.'/line', $test, 'POST', $data);
+		$lineid = (int) $result['content'];
+		$this->assertGreaterThan(0, $lineid, "$test Id of line is not > 0");
+
+		$before = $this->getLine($id, $lineid, $test);
+
+		$this->getUrl('expensereports/'.$id.'/lines/'.$lineid, $test, 'PUT', array("qty" => 2));
+
+		$after = $this->getLine($id, $lineid, $test);
+
+		$this->assertEquals(2, (float) $after['qty'], "$test Quantity must be updated");
+		$this->assertEquals($feetypeid, (int) $after['fk_c_type_fees'], "$test Fee type must not change");
+		$this->assertEquals(10, (float) $after['vatrate'], "$test VAT rate must not change");
+		$this->assertEquals(12.5, (float) $after['value_unit'], "$test Unit price must not change");
+		$this->assertEquals($before['dates'], $after['dates'], "$test Date must not change");
+		$this->assertEquals(25, (float) $after['total_ttc'], "$test Total with taxes must be recomputed");
+		$this->assertEqualsWithDelta(25 / 1.1, (float) $after['total_ht'], 0.01, "$test Total without taxes must be recomputed");
+	}
+
+	/**
+	 * A line can not be updated through another expense report
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportPutLineOfOtherReport()
+	{
+		$test = "Update a line through another expense report";
+
+		$feetypeid = $this->getFeeTypeId($test);
+
+		$id = $this->createExpenseReport($test);
+		$otherid = $this->createExpenseReport($test);
+
+		$data = array(
+			"date" => dol_now(),
+			"fk_c_type_fees" => $feetypeid,
+			"qty" => 1,
+			"value_unit" => 12.5,
+			"vatrate" => 10,
+		);
+		$result = $this->getUrl('expensereports/'.$id.'/line', $test, 'POST', $data);
+		$lineid = (int) $result['content'];
+		$this->assertGreaterThan(0, $lineid, "$test Id of line is not > 0");
+
+		$this->getUrl('expensereports/'.$otherid.'/lines/'.$lineid, $test, 'PUT', array("qty" => 3), 404);
+
+		$line = $this->getLine($id, $lineid, $test);
+		$this->assertEquals(1, (float) $line['qty'], "$test Quantity must not change");
+	}
+
+	/**
 	 * Create an approved expense report of 10 with a payment of 4, so it stays approved
 	 *
 	 * @param string	$test	Text to be added to output
@@ -473,6 +584,93 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 
 		$result = $this->getUrl('expensereports/999999999/payments/999999999', $test, 'PUT', array("amount" => 1), 404);
 		$this->assertStringContainsString('Payment of expense report not found', (string) ($result['content']['error']['message'] ?? ''), "$test The error must be about the payment");
+	}
+
+	/**
+	 * Add a line without VAT to a draft expense report
+	 *
+	 * @param int		$id			Id of the expense report
+	 * @param float		$amount		Amount of the line
+	 * @param string	$test		Text to be added to output
+	 * @return int					Id of the line
+	 */
+	private function addLineWithoutVat($id, $amount, $test)
+	{
+		global $db;
+
+		// Any active expense type, without assuming a given code exists in the dictionary
+		$fk_c_type_fees = 0;
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_type_fees WHERE active = 1 ORDER BY id");
+		if ($resql && ($obj = $db->fetch_object($resql))) {
+			$fk_c_type_fees = (int) $obj->id;
+		}
+		$this->assertGreaterThan(0, $fk_c_type_fees, "$test No active expense type");
+
+		$data = array(
+			"date" => dol_now(),
+			"fk_c_type_fees" => $fk_c_type_fees,
+			"qty" => 1,
+			"value_unit" => $amount,
+			"vatrate" => 0,
+			"comments" => "Line created by ".get_class($this),
+		);
+		$result = $this->getUrl('expensereports/'.$id.'/line', $test, 'POST', $data);
+		$this->assertGreaterThan(0, (int) $result['content'], "$test Id of line is not > 0");
+
+		return (int) $result['content'];
+	}
+
+	/**
+	 * Delete a line of a draft expense report and check that the totals are updated
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportDeleteLine()
+	{
+		$test = "Delete a line of a draft expense report";
+
+		$id = $this->createExpenseReport($test);
+		$lineid1 = $this->addLineWithoutVat($id, 10, $test);
+		$lineid2 = $this->addLineWithoutVat($id, 25, $test);
+
+		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
+		$this->assertEquals(35, (float) $result['content']['total_ttc'], "$test Total before delete");
+
+		$result = $this->getUrl('expensereports/'.$id.'/lines/'.$lineid1, $test, 'DELETE');
+		$this->assertEquals(25, (float) $result['content']['total_ttc'], "$test Total returned by the delete");
+
+		$result = $this->getUrl('expensereports/'.$id.'/lines', $test, 'GET');
+		$lineids = array_map('intval', array_column($result['content'], 'id'));
+		$this->assertEquals(array($lineid2), $lineids, "$test Only the other line must remain");
+
+		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
+		$this->assertEquals(25, (float) $result['content']['total_ttc'], "$test Total after delete");
+		$this->assertEquals(25, (float) $result['content']['total_ht'], "$test Total without tax after delete");
+	}
+
+	/**
+	 * Deleting a line of another expense report returns a 404 and keeps the line
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportDeleteLineOfOtherReport()
+	{
+		$test = "Delete a line of another expense report";
+
+		$id = $this->createExpenseReport($test);
+		$this->addLineWithoutVat($id, 10, $test);
+
+		$otherid = $this->createExpenseReport($test);
+		$otherlineid = $this->addLineWithoutVat($otherid, 20, $test);
+
+		$this->getUrl('expensereports/'.$id.'/lines/'.$otherlineid, $test, 'DELETE', null, 404);
+
+		$result = $this->getUrl('expensereports/'.$otherid.'/lines', $test, 'GET');
+		$lineids = array_map('intval', array_column($result['content'], 'id'));
+		$this->assertEquals(array($otherlineid), $lineids, "$test The line of the other report must remain");
+
+		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
+		$this->assertEquals(10, (float) $result['content']['total_ttc'], "$test Total of the report must not change");
 	}
 
 	/**
