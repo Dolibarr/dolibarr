@@ -2841,7 +2841,7 @@ function aiHistoryTurnForModel(string $text): string
 }
 
 /**
- * Words naming the objects of the AI assistant tools, from the 'vocabulary' each tool carries (see ToolApiBridge::ENDPOINT_CATEGORIES)
+ * Words naming the objects of the AI assistant tools, from the 'vocabulary' each tool carries (the 'langs', 'keys' and 'synonyms' of its ToolApiBridge::$enrichments entry)
  *
  * @param	array<int,array<string,mixed>>	$tools	Tools
  * @return	array<string,array{langs?:string[],keys?:string[],synonyms?:string[]}>	Words by object
@@ -2920,9 +2920,11 @@ function getAiQueryKeywords(array $keys, array $synonyms, Translate $langs, Tran
 function classifyQueryObjects(string $query, Translate $langs, array $tools): array
 {
 	$vocabularies = getAiToolsVocabulary($tools);
-	$langfiles = array_values(array_unique(array_merge(array('main'), ...array_values(array_map(static function (array $words): array {
-		return (array) ($words['langs'] ?? array());
-	}, $vocabularies)))));
+	$langfiles = array('main');
+	foreach ($vocabularies as $vocabulary) {
+		$langfiles = array_merge($langfiles, (array) ($vocabulary['langs'] ?? array()));
+	}
+	$langfiles = array_values(array_unique($langfiles));
 	$langsEnUs = getAiTranslatorEnUs($langfiles);
 	$langs->loadLangs($langfiles);
 
@@ -2930,9 +2932,9 @@ function classifyQueryObjects(string $query, Translate $langs, array $tools): ar
 	$objects = array();
 	foreach ($vocabularies as $object => $vocabulary) {
 		foreach (getAiQueryKeywords((array) ($vocabulary['keys'] ?? array()), (array) ($vocabulary['synonyms'] ?? array()), $langs, $langsEnUs, true) as $word) {
-			// Each word may be plural ("parties" for "party"); "don" must not match "don't".
+			// Each word may be singular or plural ("leave" for "Leaves", "parties" for "party"); "don" must not match "don't".
 			$pattern = implode('\s+', array_map(static function (string $part): string {
-				return preg_replace('/y$/', '(?:y|ies)', preg_quote($part, '/')).'s?';
+				return preg_replace('/y$/', '(?:y|ies)', preg_quote(preg_replace('/(?<=\w\w)s$/', '', $part), '/')).'s?';
 			}, preg_split('/\s+/', $word)));
 			if (preg_match('/\b'.$pattern.'\b(?![\'’]t\b)/u', $searchQuery)) {
 				$objects[] = $object;

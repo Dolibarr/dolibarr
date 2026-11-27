@@ -99,6 +99,9 @@ class AiLibTest extends CommonClassTest
 
 		$moduleTool = array('name' => 'api_trainings_list', 'objects' => array('trainings'), 'vocabulary' => array('trainings' => array('keys' => array('Training'))));
 		$this->assertSame(array('trainings'), classifyQueryObjects('list the trainings', $langs, array($moduleTool)), 'A module names its objects with the words of its tools');
+
+		$leaveTool = array('name' => 'api_holidays_list', 'objects' => array('holidays'), 'vocabulary' => array('holidays' => array('langs' => array('holiday'), 'keys' => array('Holidays'))));
+		$this->assertSame(array('holidays'), classifyQueryObjects('qui est en congé demain', $langs, array($leaveTool)), 'A word translated in the plural matches its singular');
 	}
 
 	/**

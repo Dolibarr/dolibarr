@@ -75,7 +75,7 @@ class ToolApiBridge extends McpTool
 	 * carry this vocabulary — anything else gets every bridge tool filtered
 	 * out of the prompt. Endpoints absent from this map (external modules)
 	 * fall back to all categories so they stay selectable.
-	 * A query naming objects is narrowed first to their tools: give the endpoint its 'langs', 'keys' and 'synonyms' (classifyQueryObjects()).
+	 * A query naming objects is narrowed first to their tools: give its $enrichments entry 'langs', 'keys' and 'synonyms' (classifyQueryObjects()).
 	 */
 	const ENDPOINT_CATEGORIES = array(
 		'thirdparties' => array('thirdparty', 'billing', 'commercial'),
