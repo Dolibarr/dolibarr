@@ -111,6 +111,126 @@ class AiLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testClassifyQueryObjectsSocid
+	 *
+	 * @return void
+	 */
+	public function testClassifyQueryObjectsSocid()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang('fr_FR');
+
+		$this->assertSame(array('thirdparties'), classifyQueryObjects('combien me doit socid:12 ?', $langs, $tools), 'A third party replaced by the privacy guard is still a third party');
+		$this->assertSame(array(), classifyQueryObjects('combien me doit socid:12 ?', $langs, array()), 'No thirdparty tool given, no object');
+	}
+
+	/**
+	 * testAiHistoryObjects
+	 *
+	 * @return void
+	 */
+	public function testAiHistoryObjects()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang('fr_FR');
+
+		$this->assertSame(array('contacts'), aiHistoryObjects(array(array('role' => 'assistant', 'text' => '[api_contacts_create result] {"id":5}')), $langs, $tools));
+		$this->assertSame(array(), aiHistoryObjects(array(array('role' => 'assistant', 'text' => '[api_unknown_tool result] {}')), $langs, $tools), 'An unknown tool name gives nothing');
+		$this->assertSame(array(), aiHistoryObjects(array(array('role' => 'assistant', 'text' => '[api_objects_contacts_list result] []')), $langs, $tools), 'A tool of several objects gives nothing');
+		$this->assertSame(array(), aiHistoryObjects(array(array('role' => 'assistant', 'text' => 'Voici les contacts du tiers.')), $langs, $tools), 'Only the tool name of an answer counts');
+		$this->assertSame(array(), aiHistoryObjects(array(array('role' => 'assistant', 'text' => '[api_contacts_create result] {}')), $langs, array()), 'A tool the user may not use gives nothing');
+		$this->assertSame(array('thirdparties', 'contacts'), aiHistoryObjects(array(array('role' => 'assistant', 'text' => "[api_thirdparties_list result] []\n[api_contacts_create result] {\"id\":5}")), $langs, $tools), 'Each result of a followup answer counts');
+
+		$turns = array(
+			array('role' => 'user', 'text' => 'ajoute le contacts Jean Exemple au tier devcamp'),
+			array('role' => 'assistant', 'text' => '[api_contacts_create result] {"id":5}'),
+		);
+		$objects = aiHistoryObjects($turns, $langs, $tools);
+		sort($objects);
+		$this->assertSame(array('contacts', 'thirdparties'), $objects, 'The question of the previous turn is classified too');
+	}
+
+	/**
+	 * testAiPageContextObjects
+	 *
+	 * @return void
+	 */
+	public function testAiPageContextObjects()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+
+		$this->assertSame(array('thirdparties'), aiPageContextObjects('societe', $tools));
+		$this->assertSame(array('contacts'), aiPageContextObjects('contact', $tools));
+		$this->assertSame(array('invoices'), aiPageContextObjects('facture', $tools));
+		$this->assertSame(array('supplier_orders'), aiPageContextObjects('order_supplier', $tools));
+		$this->assertSame(array(), aiPageContextObjects('user', $tools), 'An element of no object gives nothing');
+		$this->assertSame(array(), aiPageContextObjects('', $tools));
+
+		$moduleTool = array('name' => 'api_trainings_list', 'objects' => array('trainings'), 'vocabulary' => array('trainings' => array('keys' => array('Training'), 'element' => 'training')));
+		$this->assertSame(array('trainings'), aiPageContextObjects('training', array($moduleTool)), 'A module maps its card to its object with the element of its tools');
+	}
+
+	/**
+	 * testAiChatHistoryTurns
+	 *
+	 * @return void
+	 */
+	public function testAiChatHistoryTurns()
+	{
+		global $db, $user;
+
+		$idOwn = $this->createAiChatMessage((int) $user->id, 'assistant', '[api_contacts_create result] {"id":5}');
+		$idOther = $this->createAiChatMessage((int) $user->id + 1000, 'user', 'question of another user');
+		$idSystem = $this->createAiChatMessage((int) $user->id, 'system', 'stored with another role');
+
+		$turns = aiChatHistoryTurns($db, $user, array(
+			array('id' => $idOwn, 'role' => 'user', 'text' => 'sent by the client'),
+			array('id' => $idOther),
+			array('role' => 'user', 'text' => 'not yet saved'),
+			'garbage',
+		));
+		$this->assertSame(array(
+			array('role' => 'assistant', 'text' => '[api_contacts_create result] {"id":5}'),
+			array('role' => 'user', 'text' => 'not yet saved'),
+		), $turns, 'A saved turn is read from the database, only from a conversation of the user');
+
+		$this->assertSame(array(array('role' => 'user', 'text' => 'stored with another role')), aiChatHistoryTurns($db, $user, array(array('id' => $idSystem))), 'A role other than assistant comes back as user');
+	}
+
+	/**
+	 * Create a message of a chat conversation
+	 *
+	 * @param	int		$fkUser		Owner of the conversation
+	 * @param	string	$role		user or assistant
+	 * @param	string	$text		Content
+	 * @return	int					Id of the message
+	 */
+	private function createAiChatMessage(int $fkUser, string $role, string $text): int
+	{
+		global $db;
+
+		$now = $db->idate(dol_now());
+		$db->query("INSERT INTO ".$db->prefix()."ai_chat_conversation (entity, fk_user, title, date_creation) VALUES (".((int) getEntity('ai')).", ".$fkUser.", 'test', '".$now."')");
+		$fkConversation = $db->last_insert_id($db->prefix().'ai_chat_conversation');
+		$db->query("INSERT INTO ".$db->prefix()."ai_chat_message (fk_conversation, role, content_raw, datec) VALUES (".((int) $fkConversation).", '".$db->escape($role)."', '".$db->escape($text)."', '".$now."')");
+		$id = $db->last_insert_id($db->prefix().'ai_chat_message');
+		$this->assertGreaterThan(0, $id);
+
+		return (int) $id;
+	}
+
+	/**
 	 * testFilterToolsByObjects
 	 *
 	 * @return void

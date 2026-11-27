@@ -77,6 +77,7 @@ class ToolApiBridge extends McpTool
 	 * fall back to all categories so they stay selectable.
 	 * A query naming objects is narrowed first to their tools: give its $enrichments entry 'langs', 'keys' and 'synonyms' (classifyQueryObjects()),
 	 * and 'combines' (object found => keys) when another object plus one of these words names it ("pedidos de proveedores").
+	 * With these words, 'element' (the element of its card, as sent in the page context) keeps its tools while that card is open.
 	 */
 	const ENDPOINT_CATEGORIES = array(
 		'thirdparties' => array('thirdparty', 'billing', 'commercial'),
@@ -406,6 +407,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['thirdparties'] = [
 			'label' => 'third parties (customers, prospects, suppliers)',
+			'element' => 'societe',
 			'langs' => array('companies', 'commercial', 'suppliers'),
 			'keys' => array('ThirdParty', 'ThirdParties', 'Customer', 'Prospect', 'Supplier', 'Company', 'Customers', 'Prospects', 'Suppliers', 'Companies'),
 			'synonyms' => array('client', 'customer', 'prospect', 'supplier', 'vendor', 'company'),
@@ -480,6 +482,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['categories'] = [
 			'label' => 'categories / tags',
+			'element' => 'category',
 			'langs' => array('main'),
 			'keys' => array('Category', 'Categories'),
 			'synonyms' => array('category', 'categorie', 'tag'),
@@ -520,6 +523,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['supplier_invoices'] = [
 			'label' => 'supplier invoices (vendor bills)',
+			'element' => 'invoice_supplier',
 			'langs' => array('bills', 'companies', 'suppliers'),
 			'keys' => array('SupplierInvoice', 'BillsSuppliers'),
 			'synonyms' => array('supplier invoice'),
@@ -561,6 +565,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['supplier_orders'] = [
 			'label' => 'supplier order (purchase order)',
+			'element' => 'order_supplier',
 			'langs' => array('orders', 'companies', 'suppliers'),
 			'keys' => array('SupplierOrder', 'SuppliersOrders'),
 			'synonyms' => array('purchase order', 'supplier order'),
@@ -619,6 +624,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['supplier_proposals'] = [
 			'label' => 'supplier proposal (price request)',
+			'element' => 'supplier_proposal',
 			'langs' => array('supplier_proposal', 'companies', 'suppliers'),
 			'keys' => array('SupplierProposalShort', 'SupplierProposalsShort', 'SupplierProposal'),
 			'synonyms' => array('price request', 'supplier proposal'),
@@ -653,6 +659,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['invoices'] = [
 			'label' => 'customer invoices',
+			'element' => 'facture',
 			'langs' => array('bills'),
 			'keys' => array('Invoice', 'Invoices', 'Bill'),
 			'synonyms' => array('invoice', 'bill'),
@@ -723,6 +730,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['orders'] = [
 			'label' => 'sale orders',
+			'element' => 'commande',
 			'langs' => array('orders'),
 			'keys' => array('Order', 'Orders'),
 			'synonyms' => array('order'),
@@ -770,6 +778,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['proposals'] = [
 			'label' => 'commercial proposals (quotes / devis)',
+			'element' => 'propal',
 			'langs' => array('propal'),
 			'keys' => array('Proposal', 'Proposals'),
 			'synonyms' => array('proposal', 'quote', 'propal', 'propale', 'devis'),
@@ -815,6 +824,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['tickets'] = [
 			'label' => 'support tickets',
+			'element' => 'ticket',
 			'langs' => array('ticket'),
 			'keys' => array('Ticket', 'Tickets'),
 			'synonyms' => array('ticket', 'incident', 'support'),
@@ -1022,6 +1032,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['projects'] = [
 			'label' => 'projects (including opportunities/leads)',
+			'element' => 'project',
 			'langs' => array('main'),
 			'keys' => array('Project', 'Projects'),
 			'synonyms' => array('project'),
@@ -1051,6 +1062,7 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['project_tasks'] = [
 			'endpoint' => 'tasks',
 			'label' => 'project tasks',
+			'element' => 'project_task',
 			'langs' => array('projects'),
 			'keys' => array('Task', 'Tasks'),
 			'synonyms' => array('task'),
@@ -1136,6 +1148,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['agendaevents'] = [
 			'label' => 'agenda / calendar events (meetings, calls)',
+			'element' => 'action',
 			'langs' => array('main', 'agenda', 'commercial'),
 			'keys' => array('Event', 'Events', 'Agenda', 'ActionAC_RDV'),
 			'synonyms' => array('event', 'meeting', 'appointment', 'rdv'),
@@ -1156,6 +1169,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['interventions'] = [
 			'label' => 'field service interventions',
+			'element' => 'fichinter',
 			'langs' => array('interventions'),
 			'keys' => array('Intervention', 'Interventions'),
 			'synonyms' => array('intervention'),
@@ -1176,6 +1190,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['contracts'] = [
 			'label' => 'contracts (recurring services)',
+			'element' => 'contrat',
 			'langs' => array('contracts'),
 			'keys' => array('Contract', 'Contracts'),
 			'synonyms' => array('contract'),
@@ -1203,6 +1218,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['members'] = [
 			'label' => 'foundation/association members',
+			'element' => 'member',
 			'langs' => array('members'),
 			'keys' => array('Member', 'Members'),
 			'synonyms' => array('member', 'adherent', 'membership'),
@@ -1269,6 +1285,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['warehouses'] = [
 			'label' => 'warehouses',
+			'element' => 'stock',
 			'langs' => array('stocks'),
 			'keys' => array('Warehouse', 'Warehouses'),
 			'synonyms' => array('warehouse'),
@@ -1288,6 +1305,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['shipments'] = [
 			'label' => 'customer shipments (expéditions, goods sent)',
+			'element' => 'shipping',
 			'langs' => array('sendings'),
 			'keys' => array('Shipment', 'Shipments', 'Sending'),
 			'synonyms' => array('shipment', 'shipping', 'delivery'),
@@ -1338,6 +1356,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['receptions'] = [
 			'label' => 'supplier receptions (réceptions, goods received)',
+			'element' => 'reception',
 			'langs' => array('receptions'),
 			'keys' => array('Reception', 'Receptions'),
 			'synonyms' => array('reception', 'receive'),
@@ -1392,6 +1411,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['expensereports'] = [
 			'label' => 'employee expense reports (notes de frais)',
+			'element' => 'expensereport',
 			'langs' => array('main'),
 			'keys' => array('ExpenseReport', 'ExpenseReports'),
 			'synonyms' => array('expense report', 'expense'),
@@ -1430,6 +1450,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['products'] = [
 			'label' => 'products and services catalog',
+			'element' => 'product',
 			'langs' => array('products'),
 			'keys' => array('Product', 'Products', 'Service'),
 			'synonyms' => array('product', 'item', 'sku', 'stock'),
@@ -1704,7 +1725,7 @@ class ToolApiBridge extends McpTool
 	 *   array('mymodule' => array('endpointkey' => array('label' => ..., 'methods' => array(...))))
 	 * where 'endpointkey' is the X of the module's api_X.class.php file.
 	 * Optional 'langs' (lang files, e.g. 'mymodule@mymodule'), 'keys', 'synonyms' and 'combines' (see ENDPOINT_CATEGORIES) name the object in a query:
-	 * the assistant then sends its tools only when the query names it, as for the core endpoints.
+	 * the assistant then sends its tools only when the query names it, as for the core endpoints; 'element' also when its card is open.
 	 *
 	 * @return void
 	 */
@@ -1771,6 +1792,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['bankaccounts'] = array(
 			'label' => 'bank and cash accounts',
+			'element' => 'bank_account',
 			'langs' => array('banks'),
 			'keys' => array('BankAccount', 'BankAccounts', 'Bank'),
 			'synonyms' => array('bank'),
@@ -1884,6 +1906,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['donations'] = array(
 			'label' => 'donations',
+			'element' => 'don',
 			'langs' => array('donations'),
 			'keys' => array('Donation', 'Donations'),
 			'synonyms' => array('donation'),
@@ -1901,6 +1924,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['holidays'] = array(
 			'label' => 'leave requests (holidays, days off)',
+			'element' => 'holiday',
 			'langs' => array('holiday'),
 			'keys' => array('Holiday', 'Holidays', 'Leave'),
 			'synonyms' => array('leave', 'holiday'),
@@ -1923,6 +1947,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['boms'] = array(
 			'label' => 'bills of materials (BOM)',
+			'element' => 'bom',
 			'langs' => array('mrp'),
 			'keys' => array('BillOfMaterials', 'Bom', 'BOM'),
 			'synonyms' => array('bom'),
@@ -1941,6 +1966,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['mos'] = array(
 			'label' => 'manufacturing orders (MO)',
+			'element' => 'mo',
 			'langs' => array('mrp'),
 			'keys' => array('ManufacturingOrder', 'MOs'),
 			'synonyms' => array('manufacturing order'),
@@ -1983,6 +2009,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['knowledgemanagement'] = array(
 			'label' => 'knowledge base articles',
+			'element' => 'knowledgerecord',
 			'synonyms' => array('knowledge'),
 			'methods' => array(
 				'index' => array(
@@ -2049,6 +2076,7 @@ class ToolApiBridge extends McpTool
 		$websitephpcontent = ($websitephpallowed ? "PHP code (<?php ... ?>) is allowed only if the user has the permission to edit PHP content." : "Never add or change PHP code: keep the existing PHP blocks (<?php ... ?>) exactly as they are.");
 		$this->enrichments['websites'] = array(
 			'label' => 'websites (website module)',
+			'element' => 'websitepage',
 			'langs' => array('main'),
 			'keys' => array('WebSite'),
 			'synonyms' => array('website', 'webpage', 'blog'),
@@ -2138,6 +2166,7 @@ class ToolApiBridge extends McpTool
 		// Contacts (people of third parties), read side.
 		$this->enrichments['contacts'] = array(
 			'label' => 'contacts (people of third parties)',
+			'element' => 'contact',
 			'langs' => array('companies'),
 			'keys' => array('Contact', 'Contacts'),
 			'synonyms' => array('contact'),
@@ -3718,7 +3747,7 @@ class ToolApiBridge extends McpTool
 					$def['objects'] = array($key);
 					$words = array_intersect_key($this->enrichments[$key], array_flip(array('langs', 'keys', 'synonyms', 'combines')));
 					if (!empty($words)) {
-						$def['vocabulary'] = array($key => $words);
+						$def['vocabulary'] = array($key => $words + array_intersect_key($this->enrichments[$key], array('element' => 1)));
 					}
 					$this->defs[] = $def;
 					$this->routes[$toolname] = [$key, $method];

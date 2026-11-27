@@ -139,6 +139,7 @@ try {
 	// one-line description is added to the system prompt so the model can
 	// resolve "this invoice" into real tool arguments.
 	$aiPageContextLine = '';
+	$aiPageContextElement = '';
 	$ctxNamesToMask = array();
 	if (!empty($data['context']) && is_array($data['context'])) {
 		$ctxElement = isset($data['context']['element']) ? (string) $data['context']['element'] : '';
@@ -253,6 +254,9 @@ try {
 						$aiPageContextLine = "The user is currently viewing the page with alias \"".$ctxObj->pageurl."\" (page id ".(int) $ctxObj->id.") of the website with ref \"".$ctxWebsite->ref."\" (website id ".(int) $ctxWebsite->id.").";
 						$aiPageContextLine .= " When the user says \"this page\"/\"it\", use this page id as the pageid argument and this website id as the id argument of the website tools. NEVER ask the user for ids already given here.";
 					}
+				}
+				if ($aiPageContextLine !== '') {
+					$aiPageContextElement = $ctxElement;
 				}
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog("AI Pro: page context accepted: ".$ctxElement." #".$ctxId, LOG_INFO, 0, '_ai');
@@ -662,6 +666,8 @@ try {
 			$s .= '</ul>';
 		}
 
+		$histTurns = (!empty($data['history']) && is_array($data['history'])) ? aiChatHistoryTurns($db, $user, array_slice($data['history'], -aiChatContextMaxMessages())) : array();
+
 		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
 		$isComplex = isComplexScript($queryForIntent);
 
@@ -690,13 +696,23 @@ try {
 			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
 			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
 
-			$toolsSchema = getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT') ? array() : filterToolsByObjects($llmToolsBase, classifyQueryObjects($queryForIntent, $langs, $llmToolsBase), $detectedCategories);
+			$queryObjects = array();
+			$toolsSchema = array();
+			if (!getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT')) {
+				// A question naming no object ("add his phone") keeps the objects of the open card and of the previous turns.
+				$queryObjects = array_values(array_unique(array_merge(
+					classifyQueryObjects($queryForIntent, $langs, $llmToolsBase),
+					aiPageContextObjects($aiPageContextElement, $llmToolsBase),
+					aiHistoryObjects($histTurns, $langs, $llmToolsBase)
+				)));
+				$toolsSchema = filterToolsByObjects($llmToolsBase, $queryObjects, $detectedCategories);
+			}
 			if (empty($toolsSchema)) {
 				$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
 			}
 
 			if (getDolGlobalString("AI_DEBUG")) {
-				dol_syslog("AI Pro: Latin script. Detected: " . json_encode($detectedCategories) . ". Filtered to " . count($toolsSchema) . " tools.", LOG_DEBUG, 0, '_ai');
+				dol_syslog("AI Pro: Latin script. Detected: " . json_encode($detectedCategories) . ", objects: " . json_encode($queryObjects) . ". Filtered to " . count($toolsSchema) . " tools.", LOG_DEBUG, 0, '_ai');
 			}
 		}
 
@@ -917,47 +933,11 @@ try {
 			// roles constrained, embedded attachment payloads stripped (attachments
 			// stay one-shot), per-turn and global caps, privacy redaction applied.
 			$history = array();
-			if (!empty($data['history']) && is_array($data['history'])) {
-				// Keep the LAST turns: the most recent exchanges, and the search result
-				// appended at the end on a followup round, are the ones that matter.
-				$histTurns = array_slice($data['history'], -aiChatContextMaxMessages());
-
-				// Persisted turns arrive as ids only: the text is rebuilt here from
-				// the stored conversation (llx_ai_chat_message.content_raw), so the
-				// client is not trusted for what the conversation was. Only rows of
-				// conversations owned by the current user resolve; anything else
-				// silently drops. Turns of a not-yet-persisted message (history
-				// disabled, save still in flight) keep the inline text fallback.
-				$histIds = array();
-				foreach ($histTurns as $turn) {
-					if (is_array($turn) && !empty($turn['id']) && (int) $turn['id'] > 0) {
-						$histIds[] = (int) $turn['id'];
-					}
-				}
-				$histRows = array();
-				if (!empty($histIds)) {
-					$sqlh = "SELECT m.rowid, m.role, m.content_raw FROM ".$db->prefix()."ai_chat_message as m";
-					$sqlh .= " INNER JOIN ".$db->prefix()."ai_chat_conversation as c ON c.rowid = m.fk_conversation";
-					$sqlh .= " AND c.fk_user = ".((int) $user->id)." AND c.entity = ".((int) getEntity('ai'));
-					$sqlh .= " WHERE m.rowid IN (".$db->sanitize(implode(',', $histIds)).")";
-					$resqlh = $db->query($sqlh);
-					if ($resqlh) {
-						while ($objh = $db->fetch_object($resqlh)) {
-							$histRows[(int) $objh->rowid] = array('role' => (string) $objh->role, 'text' => (string) $objh->content_raw);
-						}
-					}
-				}
-
+			if (!empty($histTurns)) {
 				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);	// in characters
 				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
 				// Newest first, so the budget drops the oldest turns; put back in chronological order after.
 				foreach (array_reverse($histTurns) as $turn) {
-					if (is_array($turn) && !empty($turn['id'])) {
-						$turn = $histRows[(int) $turn['id']] ?? null;
-					}
-					if (!is_array($turn) || empty($turn['text']) || !is_string($turn['text'])) {
-						continue;
-					}
 					$htext = preg_replace('/__FILE_ATTACHMENT__\[[^\]]*\]::[^\s]+/', '[attachment removed]', $turn['text']);
 					$htext = trim((string) $htext);
 					if ($htext === '') {
@@ -978,7 +958,7 @@ try {
 					if ($histBudget < 0) {
 						break;
 					}
-					$history[] = (($turn['role'] ?? '') === 'assistant') ? array('role' => 'assistant', 'text' => aiHistoryTurnForModel($htext)) : array('role' => 'user', 'text' => $htext);
+					$history[] = array('role' => $turn['role'], 'text' => ($turn['role'] === 'assistant' ? aiHistoryTurnForModel($htext) : $htext));
 				}
 				$history = array_reverse($history);
 
