@@ -735,7 +735,10 @@ if (empty($reshook)) {
 			unset($_POST['date_endyear']);
 		} else {
 			$db->rollback();
-			setEventMessages($object->error, $object->errors, 'errors');
+			// A failed form check has already shown its own message and left $object->error empty
+			if (!empty($object->error) || !empty($object->errors)) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 
 		$action = '';
