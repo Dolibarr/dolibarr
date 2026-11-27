@@ -99,7 +99,6 @@ AccountancyErrorMismatchLetteringCode
 AccountingJournalType
 ActionAC_
 ActionAC_ALL_
-AddSupplier
 Adherent
 AdherentNotLinkedToThirdParty
 AdvTgtUse
@@ -111,8 +110,6 @@ AmountOfShipments
 AmountOfShipmentsByMonthHT
 AmountOfTickets
 AmountOfTicketsByMonthHT
-AmountOfinterventions
-AmountOfinterventionsByMonthHT
 AnObjectWithThisClassNameAlreadyExists
 AnnualByAccountDueDebtMode
 AnnualByAccountInputOutputMode
@@ -136,7 +133,6 @@ Bad value for returned userinfo[iss]
 BadNumberOfLinesMustHaveAtLeastOneLinePlusTitle
 BadParameterWhenCallingCreateOfBlockedLog
 BadPaymentMethod
-BadStatusOfObject
 BadValueForParameterClientOrSupplier
 BankColorizeMovementName
 Banque
@@ -157,7 +153,6 @@ CSS
 Cache
 CalcModeLT
 CalculatedFromProductsToConsume
-CancelReception
 Candidatures
 CardFichinter
 CardProduct
@@ -233,11 +228,9 @@ DeleteAvailabilities
 DeleteCalendar
 DeleteConferenceOrBooth
 DeleteEvaluation
-DeleteInventory
 DeleteJob
 DeleteKnowledgeRecord
 DeleteLoan
-DeleteMyObject
 DeleteOldFiles
 DeletePosition
 DeleteReception
@@ -286,14 +279,12 @@ Error sql
 ErrorADiscountThatHasBeenRemovedIsIncluded
 ErrorAccountancyCodeOnBankAccountNotDefined
 ErrorAccountancyCodeOnThirdPartyNotDefined
-ErrorBackToDraft
 ErrorBadEmail
 ErrorBadInvoice
 ErrorBadParameterCat
 ErrorBadParameterQty
 ErrorBadPhone
 ErrorBadSocialNetworkValue
-ErrorBadStatus
 ErrorBadValue
 ErrorBadValueForBatch
 ErrorCanNotDeleteDir
@@ -311,7 +302,6 @@ ErrorEmptyNameDic
 ErrorFailToCreateZip
 ErrorFailToOpenFile
 ErrorFaildToOpenFile
-ErrorFailedToAddUserAsContact
 ErrorFailedToConnect
 ErrorFailedToCopyProposal
 ErrorFailedToDeleteFile

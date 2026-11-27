@@ -172,3 +172,6 @@ LeaveType = Type of leave balance
 HolidayHrInformationsPreviousMonth=Summary of leaves for the past month
 HolidayHrInformationsPreviousMonthTopic=Summary of leaves for the month of __PREVIOUS_MONTH_TEXT__
 HolidayHrInformationsPreviousMonthContent=Please find the summary of leaves for the month of __PREVIOUS_MONTH_TEXT__ for __MYCOMPANY_NAME__
+BadStatusOfObject=Bad status of the leave request for this action
+ErrorBadStatus=Error, the leave request does not have the expected status
+ErrorBackToDraft=Error when setting the leave request back to draft

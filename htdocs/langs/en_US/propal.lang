@@ -128,3 +128,4 @@ ExpeditionSigned=Shipment signed
 SignExpedition=Sign shipment
 PROPOSAL_SHOW_SHIPPING_ADDRESS=Show shipping address
 PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)
+ErrorFailedToAddUserAsContact=Failed to add the user as contact
