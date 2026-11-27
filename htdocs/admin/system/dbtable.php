@@ -27,7 +27,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
-$langs->loadLangs(array("admin", "errors"));
+$langs->load("admin");
 
 if (!$user->admin) {
 	accessforbidden();
@@ -70,8 +70,10 @@ if (!$base) {
 	}
 
 	if ($base == 1 && $table === '') {
+		$langs->load("errors");
 		print '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Table")).'</div>';
 	} elseif ($base == 1 && empty($row)) {
+		$langs->load("errors");
 		print '<div class="error">'.$langs->trans("ErrorTableNotFound", dol_escape_htmltag($table)).'</div>';
 	} elseif ($base == 1) {	// mysql
 		$link = array();
