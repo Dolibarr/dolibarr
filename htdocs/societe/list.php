@@ -2518,6 +2518,9 @@ $formcompany->selectProspectStatus('status_prospect', $prospectstatic, 0, 0, "js
 
 print '</form>'."\n";
 
+// Easter egg: search "dolibear"
+include DOL_DOCUMENT_ROOT.'/core/tpl/easteregg_dolibear.tpl.php';
+
 // End of page
 llxFooter();
 $db->close();

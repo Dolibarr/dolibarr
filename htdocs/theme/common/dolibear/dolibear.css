@@ -1,0 +1,200 @@
+/* Copyright (C) 2026		iProspective			<contact@iprospective.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/* DoliBear easter egg — see htdocs/core/js/dolibear.js */
+
+#dolibear-stage {
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 100000;
+	overflow: hidden;
+}
+
+.dolibear {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 140px;
+	height: 168px;
+	pointer-events: auto;
+	cursor: pointer;
+	will-change: transform;
+}
+.dolibear-flip {
+	width: 100%;
+	height: 100%;
+	transition: transform .25s ease;
+}
+.dolibear.db-left .dolibear-flip {
+	transform: scaleX(-1);
+}
+.dolibear svg {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+	filter: drop-shadow(0 3px 2px rgba(0, 0, 0, .15));
+}
+
+/* Parts pivots (SVG user units, viewBox 0 0 200 240) */
+.dolibear .db-body { transform-origin: 100px 200px; }
+.dolibear .db-head { transform-origin: 100px 130px; }
+.dolibear .db-leg-l { transform-origin: 80px 182px; }
+.dolibear .db-leg-r { transform-origin: 120px 182px; }
+.dolibear .db-arm-l { transform-origin: 62px 138px; }
+.dolibear .db-arm-r { transform-origin: 138px 138px; }
+.dolibear .db-eyes { transform-origin: 100px 80px; }
+.dolibear .db-star { transform-origin: 181px 101px; }
+.dolibear .db-text { transform-origin: 100px 0; transition: transform .25s ease; }
+
+/* Keep the T-shirt readable when the bear walks to the left */
+.dolibear.db-left .db-text { transform: scaleX(-1); }
+
+/* Always alive: blink and head tilt */
+.dolibear .db-eyes { animation: db-blink 4.2s infinite; }
+.dolibear .db-head { animation: db-tilt 3.4s ease-in-out infinite; }
+.dolibear .db-star { animation: db-twinkle 1.6s ease-in-out infinite; }
+
+/* Walking */
+.dolibear.db-walking .db-body { animation: db-bob .36s ease-in-out infinite alternate; }
+.dolibear.db-walking .db-leg-l { animation: db-step .36s ease-in-out infinite alternate; }
+.dolibear.db-walking .db-leg-r { animation: db-step .36s ease-in-out infinite alternate-reverse; }
+.dolibear.db-walking .db-arm-l { animation: db-swing .36s ease-in-out infinite alternate-reverse; }
+.dolibear.db-walking .db-arm-r { animation: db-swing .36s ease-in-out infinite alternate; }
+
+/* Casting a spell */
+.dolibear.db-casting .db-arm-r { animation: db-cast .9s cubic-bezier(.5, -0.5, .3, 1.4) forwards; }
+.dolibear.db-casting .db-star { animation: db-glow .3s ease-in-out infinite alternate; }
+.dolibear.db-casting .db-head { animation: none; transform: rotate(-6deg); }
+
+/* Happy hop */
+.dolibear.db-hop .db-body { animation: db-hop .5s ease-out; }
+
+/* Waving goodbye */
+.dolibear.db-waving .db-arm-l { animation: db-wave .3s ease-in-out infinite alternate; }
+
+@keyframes db-blink {
+	0%, 93%, 100% { transform: scaleY(1); }
+	95% { transform: scaleY(.1); }
+}
+@keyframes db-tilt {
+	0%, 100% { transform: rotate(-2deg); }
+	50% { transform: rotate(3deg); }
+}
+@keyframes db-twinkle {
+	0%, 100% { transform: scale(1) rotate(0); }
+	50% { transform: scale(1.15) rotate(18deg); }
+}
+@keyframes db-bob {
+	from { transform: translateY(0) rotate(-2deg); }
+	to { transform: translateY(-5px) rotate(2deg); }
+}
+@keyframes db-step {
+	from { transform: rotate(-18deg); }
+	to { transform: rotate(18deg); }
+}
+@keyframes db-swing {
+	from { transform: rotate(-14deg); }
+	to { transform: rotate(14deg); }
+}
+@keyframes db-cast {
+	0% { transform: rotate(0); }
+	45% { transform: rotate(-75deg); }
+	70% { transform: rotate(-40deg); }
+	100% { transform: rotate(-55deg); }
+}
+@keyframes db-glow {
+	from { transform: scale(1.1); filter: drop-shadow(0 0 2px #ffd34d); }
+	to { transform: scale(1.5) rotate(30deg); filter: drop-shadow(0 0 8px #ffd34d); }
+}
+@keyframes db-hop {
+	0%, 100% { transform: translateY(0); }
+	40% { transform: translateY(-22px) rotate(-4deg); }
+}
+@keyframes db-wave {
+	from { transform: rotate(10deg); }
+	to { transform: rotate(80deg); }
+}
+
+/* Speech bubble */
+.dolibear-bubble {
+	position: absolute;
+	left: 50%;
+	bottom: 100%;
+	transform: translate(-50%, 6px) scale(.6);
+	opacity: 0;
+	white-space: nowrap;
+	padding: 6px 12px;
+	border-radius: 14px;
+	background: #fff;
+	color: #263c5c;
+	font: bold 14px/1.2 "Comic Sans MS", "Chalkboard SE", "Segoe Print", sans-serif;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+	transition: opacity .2s ease, transform .25s cubic-bezier(.3, 1.6, .5, 1);
+	pointer-events: none;
+}
+.dolibear-bubble::after {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 100%;
+	margin-left: -7px;
+	border: 7px solid transparent;
+	border-top-color: #fff;
+}
+.dolibear-bubble.db-show {
+	opacity: 1;
+	transform: translate(-50%, -4px) scale(1);
+}
+
+/* Magic */
+.dolibear-spark {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 14px;
+	height: 14px;
+	margin: -7px 0 0 -7px;
+	pointer-events: none;
+	background: radial-gradient(circle, #fff 0 18%, #ffe27a 30%, rgba(255, 196, 61, 0) 70%);
+	border-radius: 50%;
+}
+.dolibear-spark.db-star-spark {
+	background: none;
+	color: #ffc83d;
+	font-size: 16px;
+	line-height: 14px;
+	text-align: center;
+	text-shadow: 0 0 6px #fff3b0;
+}
+.dolibear-spark.db-pink { color: #ff8fd0; text-shadow: 0 0 6px #ffd6ef; }
+.dolibear-spark.db-blue { color: #7cc7ff; text-shadow: 0 0 6px #d6eeff; }
+.dolibear-puff {
+	position: absolute;
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	border-radius: 50%;
+	background: radial-gradient(circle, rgba(255, 255, 255, .95) 0 35%, rgba(235, 225, 255, .6) 60%, rgba(255, 255, 255, 0) 72%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.dolibear *,
+	.dolibear-bubble {
+		animation: none !important;
+		transition: none !important;
+	}
+}
