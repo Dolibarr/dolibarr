@@ -156,7 +156,11 @@ function isRegistrationDataSaved()
 	$companyidprof2 = getDolGlobalString('MAIN_INFO_SIRET', $mysoc->idprof2);
 	//$companytel = getDolGlobalString('BLOCKEDLOG_REGISTRATION_TEL', $mysoc->phone);
 
-	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyidprof2) || empty($companyemail)) {
+	if (empty($companyname) || empty($companycountrycode) || empty($companyidprof1) || empty($companyemail)) {
+		return false;
+	}
+	// ProfId2 is the SIRET, it is mandatory for France only
+	if ($companycountrycode == 'FR' && empty($companyidprof2)) {
 		return false;
 	}
 	/*
