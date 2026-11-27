@@ -2827,3 +2827,15 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 
 	return $cleaned;
 }
+
+/**
+ * Return a turn of the AI assistant history as sent to the model
+ *
+ * @param	string	$text	Text of the turn as stored, "[api_x_create result] {...}" for the result of a tool
+ * @return	string
+ */
+function aiHistoryTurnForModel(string $text): string
+{
+	// A small model copies "[api_x result] {...}" as its own answer instead of calling the tool.
+	return (string) preg_replace('/^\[([^\]\s]+) result\] */m', 'Done: $1 returned ', $text);
+}

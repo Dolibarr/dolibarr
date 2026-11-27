@@ -977,7 +977,7 @@ try {
 					if ($histBudget < 0) {
 						break;
 					}
-					$history[] = array('role' => ((($turn['role'] ?? '') === 'assistant') ? 'assistant' : 'user'), 'text' => $htext);
+					$history[] = (($turn['role'] ?? '') === 'assistant') ? array('role' => 'assistant', 'text' => aiHistoryTurnForModel($htext)) : array('role' => 'user', 'text' => $htext);
 				}
 				$history = array_reverse($history);
 
@@ -1024,7 +1024,7 @@ try {
 						if ($memBudget < 0) {
 							break;
 						}
-						$memHistory[] = array('role' => ((string) $mobj->role === 'assistant' ? 'assistant' : 'user'), 'text' => '[earlier conversation] '.$mtext);
+						$memHistory[] = ((string) $mobj->role === 'assistant') ? array('role' => 'assistant', 'text' => '[earlier conversation] '.aiHistoryTurnForModel($mtext)) : array('role' => 'user', 'text' => '[earlier conversation] '.$mtext);
 					}
 					// Older context goes first: cross-conversation turns before pinned.
 					$history = array_merge($memHistory, $history);
