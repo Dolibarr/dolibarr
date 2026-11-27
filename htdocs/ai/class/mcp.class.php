@@ -2,6 +2,7 @@
 /* Copyright (C) 2026   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -660,6 +661,11 @@ class McpHandler
 				);
 				return array('error' => "Tool '" . $toolName . "' is not available in this tool context.");
 			}
+		} elseif ($this->toolcontext === self::CTX_MCP_SERVER) {
+			// The system tools are the answer channels of the chat of Dolibarr. They are not
+			// listed to an MCP client, so they are not run for it either.
+			dol_syslog("[McpHandler] Blocked execution of system tool '$toolName' in tool context '{$this->toolcontext}'.", LOG_WARNING);
+			return array('error' => "Tool '" . $toolName . "' is not available in this tool context.");
 		}
 
 		// execute
