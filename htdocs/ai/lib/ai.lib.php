@@ -2965,10 +2965,11 @@ function classifyQueryObjects(string $query, Translate $langs): array
 	$objects = array();
 	foreach (getAiObjectVocabulary() as $object => $vocabulary) {
 		foreach (getAiQueryKeywords($vocabulary['keys'], $vocabulary['synonyms'], $langs, $langsEnUs, true) as $word) {
-			$pattern = implode('s?\s+', array_map(static function ($part) {
-				return preg_quote($part, '/');
+			// Each word may be plural ("parties" for "party"); "don" must not match "don't".
+			$pattern = implode('\s+', array_map(static function ($part) {
+				return preg_replace('/y$/', '(?:y|ies)', preg_quote($part, '/')).'s?';
 			}, preg_split('/\s+/', $word)));
-			if (preg_match('/\b'.$pattern.'s?\b/u', $searchQuery)) {
+			if (preg_match('/\b'.$pattern.'\b(?![\'’]t\b)/u', $searchQuery)) {
 				$objects[] = $object;
 				break;
 			}

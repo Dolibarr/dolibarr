@@ -84,6 +84,9 @@ class AiLibTest extends CommonClassTest
 		$this->assertContains('supplier_orders', classifyQueryObjects('liste les commandes fournisseurs en attente', $langs), 'Each word of a name may be plural');
 		$this->assertContains('supplier_invoices', classifyQueryObjects('show the vendor invoices', $langs), 'English translations work on a French install');
 		$this->assertSame(array('agendaevents'), classifyQueryObjects('mes rendez-vous de demain', $langs));
+		$this->assertSame(array('thirdparties'), classifyQueryObjects('list the third parties created this week', $langs), 'A word in y may be plural in ies');
+		$this->assertSame(array(), classifyQueryObjects("I don't know, I don’t see", $langs), 'A contraction is another word');
+		$this->assertContains('thirdparties', classifyQueryObjects("show the customer's invoices", $langs), 'A possessive still names the object');
 		$this->assertSame(array(), classifyQueryObjects('bonjour', $langs));
 	}
 
