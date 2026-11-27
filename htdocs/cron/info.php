@@ -46,9 +46,15 @@ $object = new Cronjob($db);
 
 $form = new Form($db);	// $form is required as global value into dol_banner_tab
 
+if ($id > 0) {
+	$object->fetch($id);
+}
+if (empty($object->id)) {
+	recordNotFound();
+}
+
 llxHeader('', $langs->trans("CronInfo"));
 
-$object->fetch($id);
 $object->info($id);
 
 $head = cron_prepare_head($object);

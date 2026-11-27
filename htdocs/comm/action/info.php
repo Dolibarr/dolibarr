@@ -66,6 +66,10 @@ $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object-
 $form = new Form($db);
 
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda|DE:Modul_Terminplanung';
+if (empty($object->id)) {
+	recordNotFound();
+}
+
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
 $object->info($object->id);
