@@ -863,7 +863,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
 					$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 				}
-				if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
+				if (getDolGlobalString('PROJECT_TIME_SPENT_FORMAT')) {
 					$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 				}
 
@@ -3097,7 +3097,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 	if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
 		$plannedworkloadoutputformat = getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT');
 	}
-	if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
+	if (getDolGlobalString('PROJECT_TIME_SPENT_FORMAT')) {
 		$timespentoutputformat = getDolGlobalString('PROJECT_TIME_SPENT_FORMAT');
 	}
 

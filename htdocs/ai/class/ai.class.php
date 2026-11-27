@@ -274,6 +274,7 @@ class Ai
 					$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);
 				}
 				$arrayforpayload['messages'][] = array('role' => 'user', 'content' => $fullInstructions);
+				$arrayforpayload = $this->addReasoningEffort($arrayforpayload);
 			}
 		}
 
@@ -722,7 +723,23 @@ class Ai
 			),
 			'model' => $model
 		);
-		return array('payload' => $payload, 'function' => 'docparsing');
+		return array('payload' => $this->addReasoningEffort($payload), 'function' => 'docparsing');
+	}
+
+	/**
+	 * Add the reasoning effort of the service to an OpenAI-compatible payload, when one is set
+	 *
+	 * @param	array<string,mixed>	$payload	Payload
+	 * @return	array<string,mixed>				Payload
+	 */
+	private function addReasoningEffort(array $payload): array
+	{
+		$reasoningEffort = getAiReasoningEffort($this->apiService);
+		if ($reasoningEffort !== '') {
+			$payload['reasoning_effort'] = $reasoningEffort;
+		}
+
+		return $payload;
 	}
 
 	/**
@@ -857,12 +874,19 @@ class Ai
 						if (!empty($vendoraddress['city'])) {
 							$tmparray['vendor_town'] = $vendoraddress['city'];
 						}
-						if (!empty($vendoraddress['country'])) {
+						if (!empty($vendoraddress['country_code'])) {
+							$tmparray['vendor_country'] = $vendoraddress['country_code'];
+						} elseif (!empty($vendoraddress['country'])) {
 							$tmparray['vendor_country'] = $vendoraddress['country'];
 						}
 					} else {
 						$tmparray['vendor_address'] = $arrayforthirdparty['address'];
 					}
+				}
+				// If no country found, guess it from the prefix of an intra-community VAT number (EL is the VAT prefix of Greece)
+				if (empty($tmparray['vendor_country']) && !empty($tmparray['vendor_vat_number']) && is_string($tmparray['vendor_vat_number'])
+					&& preg_match('/^([A-Z]{2})[0-9A-Z]/', dol_strtoupper(str_replace(array(' ', '.', '-'), '', $tmparray['vendor_vat_number'])), $reg)) {
+					$tmparray['vendor_country'] = ($reg[1] == 'EL' ? 'GR' : $reg[1]);
 				}
 				if (!empty($arrayforthirdparty['phone'])) {
 					$tmparray['vendor_phone'] = $arrayforthirdparty['phone'];

@@ -83,6 +83,8 @@ class Cronjobs extends DolibarrApi
 	 *
 	 * Get a list of cron jobs
 	 *
+	 * @since	25.0.0	Parameter count
+	 *
 	 * @param	string	$sortfield		Sort field
 	 * @param	string	$sortorder		Sort order
 	 * @param	int		$limit			Limit for list
@@ -91,19 +93,29 @@ class Cronjobs extends DolibarrApi
 	 * @param	string	$sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%foo%')"
 	 * @param	string	$properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
+	 * @param	int		$count			Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return	array					Array of cron job objects
-	 * @phan-return Cronjob[]|array{data:Cronjob[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return Cronjob[]|array{data:Cronjob[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return Cronjob[]|array{data:Cronjob[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return Cronjob[]|array{data:Cronjob[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $status = -1, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $status = -1, $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('cron', 'read')) {
 			throw new RestException(403);
 		}
 
 		$obj_ret = array();
+
+		// Return only the number of records matching the filters (the list of cron jobs is short, so they are all loaded)
+		if ($count) {
+			$result = $this->cronjob->fetchAll($sortorder, $sortfield, 0, 0, $status, $sqlfilters);
+			if ($result < 0) {
+				throw new RestException(503, 'Error when retrieving cron job list: '.$this->cronjob->errorsToString());
+			}
+			return array('count' => count($this->cronjob->lines));
+		}
 
 		if ($page < 0) {
 			$page = 0;
