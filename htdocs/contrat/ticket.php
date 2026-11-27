@@ -67,6 +67,13 @@ $userstatic=new User($db);
 
 $object= new Contrat($db);
 $result=$object->fetch($id, $ref);
+if (empty($object->id)) {
+	$langs->load('errors');
+	print '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	$db->close();
+	exit;
+}
 $ret=$object->fetch_thirdparty();
 $head = contract_prepare_head($object);
 
