@@ -699,12 +699,7 @@ try {
 			$queryObjects = array();
 			$toolsSchema = array();
 			if (!getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT')) {
-				// A question naming no object ("add his phone") keeps the objects of the open card and of the previous turns.
-				$queryObjects = array_values(array_unique(array_merge(
-					classifyQueryObjects($queryForIntent, $langs, $llmToolsBase),
-					aiPageContextObjects($aiPageContextElement, $llmToolsBase),
-					aiHistoryObjects($histTurns, $langs, $llmToolsBase)
-				)));
+				$queryObjects = aiQueryObjects($queryForIntent, $aiPageContextElement, $histTurns, $langs, $llmToolsBase);
 				$toolsSchema = filterToolsByObjects($llmToolsBase, $queryObjects, $detectedCategories);
 			}
 			if (empty($toolsSchema)) {

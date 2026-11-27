@@ -77,7 +77,8 @@ class ToolApiBridge extends McpTool
 	 * fall back to all categories so they stay selectable.
 	 * A query naming objects is narrowed first to their tools: give its $enrichments entry 'langs', 'keys' and 'synonyms' (classifyQueryObjects()),
 	 * and 'combines' (object found => keys) when another object plus one of these words names it ("pedidos de proveedores").
-	 * With these words, 'element' (the element of its card, as sent in the page context) keeps its tools while that card is open.
+	 * With these words, 'element' (the element of its card, as sent in the page context) keeps its tools while that card is open,
+	 * and 'fields' (CONTACT_FIELDS) gives its tools to a query that names only these fields (aiQueryFieldObjects()).
 	 */
 	const ENDPOINT_CATEGORIES = array(
 		'thirdparties' => array('thirdparty', 'billing', 'commercial'),
@@ -143,6 +144,14 @@ class ToolApiBridge extends McpTool
 		'knowledgemanagement' => array('index'),
 		'partnerships' => array('index'),
 		'websites' => array('index', 'indexAllPages')
+	);
+
+	/**
+	 * Fields of a person or a company, as named by the user: translation keys and words matched as they are
+	 */
+	const CONTACT_FIELDS = array(
+		'keys' => array('Phone', 'PhoneMobile', 'EMail', 'Address', 'Zip', 'Town'),
+		'synonyms' => array('mail', 'e-mail'),
 	);
 
 	/**
@@ -408,6 +417,7 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['thirdparties'] = [
 			'label' => 'third parties (customers, prospects, suppliers)',
 			'element' => 'societe',
+			'fields' => self::CONTACT_FIELDS,
 			'langs' => array('companies', 'commercial', 'suppliers'),
 			'keys' => array('ThirdParty', 'ThirdParties', 'Customer', 'Prospect', 'Supplier', 'Company', 'Customers', 'Prospects', 'Suppliers', 'Companies'),
 			'synonyms' => array('client', 'customer', 'prospect', 'supplier', 'vendor', 'company'),
@@ -2167,6 +2177,7 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['contacts'] = array(
 			'label' => 'contacts (people of third parties)',
 			'element' => 'contact',
+			'fields' => self::CONTACT_FIELDS,
 			'langs' => array('companies'),
 			'keys' => array('Contact', 'Contacts'),
 			'synonyms' => array('contact'),
@@ -3747,7 +3758,7 @@ class ToolApiBridge extends McpTool
 					$def['objects'] = array($key);
 					$words = array_intersect_key($this->enrichments[$key], array_flip(array('langs', 'keys', 'synonyms', 'combines')));
 					if (!empty($words)) {
-						$def['vocabulary'] = array($key => $words + array_intersect_key($this->enrichments[$key], array('element' => 1)));
+						$def['vocabulary'] = array($key => $words + array_intersect_key($this->enrichments[$key], array('element' => 1, 'fields' => 1)));
 					}
 					$this->defs[] = $def;
 					$this->routes[$toolname] = [$key, $method];

@@ -27,6 +27,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+include_once DOL_DOCUMENT_ROOT.'/ai/class/privacy_guard.class.php';
 
 /**
  * Max number of messages of past turns sent back to the AI as context with one question.
@@ -2886,10 +2887,10 @@ function aiHistoryTurnForModel(string $text): string
 }
 
 /**
- * Words naming the objects of the AI assistant tools, from the 'vocabulary' each tool carries (the 'langs', 'keys', 'synonyms', 'combines' and 'element' of its ToolApiBridge::$enrichments entry)
+ * Words naming the objects of the AI assistant tools, from the 'vocabulary' each tool carries (the 'langs', 'keys', 'synonyms', 'combines', 'element' and 'fields' of its ToolApiBridge::$enrichments entry)
  *
  * @param	array<int,array<string,mixed>>	$tools	Tools
- * @return	array<string,array{langs?:string[],keys?:string[],synonyms?:string[],combines?:array<string,string[]>,element?:string}>	Words by object
+ * @return	array<string,array{langs?:string[],keys?:string[],synonyms?:string[],combines?:array<string,string[]>,element?:string,fields?:array{keys?:string[],synonyms?:string[]}}>	Words by object
  */
 function getAiToolsVocabulary(array $tools): array
 {
@@ -2977,6 +2978,25 @@ function aiQueryNamesOneOf(string $searchQuery, array $words): bool
 }
 
 /**
+ * Load the language files of the words naming the objects of the AI assistant tools, for the user and in en_US
+ *
+ * @param	array<string,array<string,mixed>>	$vocabularies	Words by object (getAiToolsVocabulary())
+ * @param	Translate							$langs			Language of the user
+ * @return	Translate											Translator en_US
+ */
+function aiLoadVocabularyLangs(array $vocabularies, Translate $langs): Translate
+{
+	$langfiles = array('main');
+	foreach ($vocabularies as $vocabulary) {
+		$langfiles = array_merge($langfiles, (array) ($vocabulary['langs'] ?? array()));
+	}
+	$langfiles = array_values(array_unique($langfiles));
+	$langs->loadLangs($langfiles);
+
+	return getAiTranslatorEnUs($langfiles);
+}
+
+/**
  * Return the objects of the AI assistant tools named in a query written in a Latin script
  *
  * @param	string							$query	Query of the user
@@ -2987,13 +3007,7 @@ function aiQueryNamesOneOf(string $searchQuery, array $words): bool
 function classifyQueryObjects(string $query, Translate $langs, array $tools): array
 {
 	$vocabularies = getAiToolsVocabulary($tools);
-	$langfiles = array('main');
-	foreach ($vocabularies as $vocabulary) {
-		$langfiles = array_merge($langfiles, (array) ($vocabulary['langs'] ?? array()));
-	}
-	$langfiles = array_values(array_unique($langfiles));
-	$langsEnUs = getAiTranslatorEnUs($langfiles);
-	$langs->loadLangs($langfiles);
+	$langsEnUs = aiLoadVocabularyLangs($vocabularies, $langs);
 
 	$searchQuery = strtolower(dol_string_unaccent($query));
 	$objects = array();
@@ -3053,6 +3067,65 @@ function aiHistoryObjects(array $turns, Translate $langs, array $tools): array
 	}
 
 	return array_values(array_unique($objects));
+}
+
+/**
+ * Return the objects of the AI assistant tools whose fields a query names (phone, email, address) or gives a value of
+ * (an email address, a phone number, or the token the privacy guard put in its place)
+ *
+ * @param	string							$query	Query of the user, in a Latin script
+ * @param	Translate						$langs	Language of the user
+ * @param	array<int,array<string,mixed>>	$tools	Tools the user may use, with the words naming their objects
+ * @return	string[]								Objects with these fields
+ */
+function aiQueryFieldObjects(string $query, Translate $langs, array $tools): array
+{
+	$vocabularies = array_filter(getAiToolsVocabulary($tools), static function (array $vocabulary): bool {
+		return !empty($vocabulary['fields']);
+	});
+	if (empty($vocabularies)) {
+		return array();
+	}
+
+	$shapePattern = '/\[\[(?:EMAIL|PHONE|ADDR)_/';
+	if (preg_match($shapePattern, $query) || preg_match($shapePattern, (new PrivacyGuard())->mask($query))) {
+		return array_keys($vocabularies);
+	}
+
+	$langsEnUs = aiLoadVocabularyLangs($vocabularies + array('' => array('langs' => array('companies'))), $langs);
+	$searchQuery = strtolower(dol_string_unaccent($query));
+	$objects = array();
+	foreach ($vocabularies as $object => $vocabulary) {
+		$fields = (array) $vocabulary['fields'];
+		if (aiQueryNamesOneOf($searchQuery, getAiQueryKeywords((array) ($fields['keys'] ?? array()), (array) ($fields['synonyms'] ?? array()), $langs, $langsEnUs, true))) {
+			$objects[] = $object;
+		}
+	}
+
+	return $objects;
+}
+
+/**
+ * Return the objects of the AI assistant tools a query is about: those it names, the one of the open card, those of the past turns,
+ * or, when none of them gives one, those whose fields it names
+ *
+ * @param	string							$query		Query of the user, in a Latin script
+ * @param	string							$element	Element of the card open in the page, validated (empty when none)
+ * @param	array<int,array{role:string,text:string}>	$turns	Past turns (aiChatHistoryTurns())
+ * @param	Translate						$langs		Language of the user
+ * @param	array<int,array<string,mixed>>	$tools		Tools the user may use, with the words naming their objects
+ * @return	string[]									Objects of the query
+ */
+function aiQueryObjects(string $query, string $element, array $turns, Translate $langs, array $tools): array
+{
+	$objects = array_values(array_unique(array_merge(
+		classifyQueryObjects($query, $langs, $tools),
+		aiPageContextObjects($element, $tools),
+		aiHistoryObjects($turns, $langs, $tools)
+	)));
+
+	// Field words are weak: a phone or an address also belongs to an object named elsewhere.
+	return empty($objects) ? aiQueryFieldObjects($query, $langs, $tools) : $objects;
 }
 
 /**

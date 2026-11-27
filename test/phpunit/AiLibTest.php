@@ -182,6 +182,56 @@ class AiLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testAiQueryFieldObjects
+	 *
+	 * @return void
+	 */
+	public function testAiQueryFieldObjects()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+		$both = array('contacts', 'thirdparties');
+		$byLang = array();
+		foreach (array('fr_FR', 'es_ES', 'de_DE', 'it_IT', 'nl_NL') as $lang) {
+			$byLang[$lang] = new Translate('', $conf);
+			$byLang[$lang]->setDefaultLang($lang);
+		}
+		$sorted = static function (array $objects): array {
+			sort($objects);
+			return $objects;
+		};
+
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('ajoute le numero de telephone 06 12 34 56 78 et le mail jean@example.com a Jean Exemple de devcamp', $byLang['fr_FR'], $tools)));
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('ajoute son numéro de téléphone', $byLang['fr_FR'], $tools)), 'A field word alone is enough');
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('ajoute son mail', $byLang['fr_FR'], $tools)));
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('set the phone of Jean Exemple', $byLang['fr_FR'], $tools)), 'English words work on any install');
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('cambia el teléfono de Jean', $byLang['es_ES'], $tools)));
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('ändere die Adresse von Jean', $byLang['de_DE'], $tools)));
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('aggiorna il telefono di Jean', $byLang['it_IT'], $tools)));
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('wijzig het telefoonnummer van Jean', $byLang['nl_NL'], $tools)));
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('jean@example.com', $byLang['fr_FR'], $tools)), 'An email address names the fields without a word');
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('ajoute +33 6 12 34 56 78 a Jean', $byLang['fr_FR'], $tools)));
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('ajoute [[PHONE_11c8e]] a Jean', $byLang['fr_FR'], $tools)), 'A value masked by the privacy guard keeps its shape');
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('ajoute [[EMAIL_2a1b3]] a Jean', $byLang['fr_FR'], $tools)));
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('remplace par [[ADDR_37f0d]] pour Jean', $byLang['fr_FR'], $tools)));
+		$this->assertSame($both, $sorted(aiQueryFieldObjects('combien pour 2101234567 ?', $byLang['fr_FR'], $tools)), 'Accepted false positive: 10 digits starting with 2x are a Greek phone for the guard');
+		$this->assertSame(array(), aiQueryFieldObjects('bonjour', $byLang['fr_FR'], $tools));
+		$this->assertSame(array(), aiQueryFieldObjects('quel est le total du 2026-11-27 pour FA2611-0042 ?', $byLang['fr_FR'], $tools), 'A date or a reference is not a phone');
+		$this->assertSame(array(), aiQueryFieldObjects('jean@example.com', $byLang['fr_FR'], array()), 'No tool with fields, no object');
+
+		$moduleTool = array('name' => 'api_members_list', 'objects' => array('members'), 'vocabulary' => array('members' => array('keys' => array('Member'), 'fields' => array('keys' => array('Phone')))));
+		$langsFresh = new Translate('', $conf);
+		$langsFresh->setDefaultLang('fr_FR');
+		$this->assertSame(array('members'), aiQueryFieldObjects('change le téléphone de Jean', $langsFresh, array($moduleTool)), 'Field keys resolve without companies in the langs of the object');
+
+		$this->assertSame(array('contacts'), aiQueryObjects('ajoute le téléphone du contact Jean Exemple', '', array(), $byLang['fr_FR'], $tools), 'A named object wins over the field words');
+		$this->assertSame(array('thirdparties'), aiQueryObjects('ajoute son téléphone', 'societe', array(), $byLang['fr_FR'], $tools), 'The open card wins over the field words');
+		$this->assertSame($both, $sorted(aiQueryObjects('ajoute son téléphone', '', array(), $byLang['fr_FR'], $tools)));
+	}
+
+	/**
 	 * testAiChatHistoryTurns
 	 *
 	 * @return void
