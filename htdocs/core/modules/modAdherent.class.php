@@ -192,7 +192,6 @@ class modAdherent extends DolibarrModules
 		// Boxes
 		//-------
 		$this->boxes = array(
-			0 => array('file'=>'box_members.php', 'enabledbydefaulton'=>'Home'),
 			2 => array('file'=>'box_birthdays_members.php', 'enabledbydefaulton'=>'Home'),
 			3 => array('file'=>'box_members_last_modified.php', 'enabledbydefaulton'=>'membersindex'),
 			4 => array('file'=>'box_members_last_subscriptions.php', 'enabledbydefaulton'=>'membersindex'),
