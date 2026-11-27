@@ -131,13 +131,18 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 }
 
+// AWP of the entity (column pmp of llx_product_perentity) is maintained only when MultiCompany per-entity AWP is enabled
+$pmpperentity = (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED'));
+
 $sql = "SELECT m.rowid as mid, m.datem, m.value as qty, m.price, m.type_mouvement, m.label as movement_label,";
 $sql .= " m.inventorycode, m.fk_origin, m.origintype,";
 $sql .= " p.rowid as pid, p.ref as product_ref, p.label as product_label, p.pmp, p.cost_price,";
+if ($pmpperentity) {
+	$sql .= " ppe.pmp as ppe_pmp,";
+}
 if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.accountancy_code_sell,";
 } else {
-	$sql .= " ppe.pmp as ppe_pmp, ppe.cost_price as ppe_cost_price,";
 	$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell,";
 }
 $sql .= " e.rowid as warehouse_id, e.ref as warehouse_ref, e.lieu as warehouse_lieu";
@@ -147,7 +152,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".$db->prefix()."stock_mouvement as m";
 $sql .= " JOIN ".$db->prefix()."product as p ON p.rowid = m.fk_product";
 $sql .= " JOIN ".$db->prefix()."entrepot as e ON e.rowid = m.fk_entrepot";
-if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
+if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') || $pmpperentity) {
 	$sql .= " LEFT JOIN ".$db->prefix()."product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = ".((int) $conf->entity);
 }
 $parameters = array();
@@ -227,7 +232,7 @@ if ($result) {
 		// On stock exit (sales, shipments, adjustments out): valuation MUST be at COST (PMP / WAC or cost price), NEVER at selling price!
 		// On stock increase (reception, purchase): movement price is the purchase cost.
 		$product_pmp = (float) (!empty($obj->ppe_pmp) ? $obj->ppe_pmp : $obj->pmp);
-		$product_cost_price = (float) (!empty($obj->ppe_cost_price) ? $obj->ppe_cost_price : $obj->cost_price);
+		$product_cost_price = (float) $obj->cost_price;	// There is no cost price per entity (no such column in llx_product_perentity)
 
 		$unit_cost = 0.0;
 		if ($qty < 0) {
