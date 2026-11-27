@@ -139,6 +139,35 @@ var Dolibarr = {
 			 * @param {Object} api
 			 */
 			definePart(name, api) {},
+
+			/**
+			 * Part fields: edition of the fields of a card in ajax (experimental), see Form::isAjaxFieldEdit()
+			 */
+			fields: {
+				/**
+				 * Open the edition of the field of an edit link printed by Form::editfieldkey()
+				 * @param {HTMLElement} link
+				 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+				 */
+				open: function(link) {},
+			},
+
+			/**
+			 * Part lines: edition of the document lines of a card in ajax (experimental), see CommonObject::isAjaxLineEdit()
+			 */
+			lines: {
+				/**
+				 * Open the edition of the line of an edit link printed by objectline_view.tpl.php
+				 * @param {HTMLElement} link
+				 * @returns {Promise<boolean>} False if the edition can not be opened here (the url of the link must then be used)
+				 */
+				open: function(link) {},
+
+				/**
+				 * Cancel the edition of the line in progress
+				 */
+				close: function() {},
+			},
 		}),
 
 		/**

@@ -12,7 +12,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 * - postCard() posts data to the card like a form of the card (ex: action=updateline)
 	 *
 	 * There is one controller by card (element and id), shared by all the scripts of the page: same date of modification, same state.
-	 * Features using it are added as parts of this tool, see definePart().
+	 * The edition of the card in place is done by parts of this tool: Dolibarr.tools.card.fields and Dolibarr.tools.card.lines (experimental).
 	 *
 	 * Containers of fields are [data-dol-field][data-dol-element][data-dol-id] (see Form::editfieldval()), or [data-dol-field]
 	 * without element for the object of the card (ex: totals of the cards).
@@ -471,8 +471,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
-	 * Define a part of the card tool (a feature using the controllers of the cards, ex: 'fields' for the edition of the fields),
-	 * available as Dolibarr.tools.card.<name>. A part can not be replaced.
+	 * Define a part of the card tool (ex: 'fields', 'lines'), available as Dolibarr.tools.card.<name>. A part can not be replaced.
 	 * @param {string} name
 	 * @param {Object} api
 	 */
