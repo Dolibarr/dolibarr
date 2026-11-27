@@ -280,9 +280,16 @@ class pdf_standard_stock extends ModelePDFStock
 				$sortfield = 'p.ref';
 				$sortorder = 'ASC';
 
-				$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
+				// With MultiCompany per-entity AWP, use the AWP of the current entity (llx_product_perentity), falling back on the
+				// global p.pmp when the product has no row yet for this entity (same convention as the warehouse card, see #39738).
+				$pmpperentity = (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED'));
+
+				$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, ".($pmpperentity ? "COALESCE(ppe.pmp, p.pmp)" : "p.pmp")." as ppmp, p.price, p.price_ttc, p.entity,";
 				$sql .= " ps.reel as value";
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
+				if ($pmpperentity) {	// joined on p only, so it can follow the list of tables of the FROM
+					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = ".((int) $conf->entity);
+				}
 				$sql .= " WHERE ps.fk_product = p.rowid";
 				$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
 				$sql .= " AND ps.fk_entrepot = ".((int) $object->id);
