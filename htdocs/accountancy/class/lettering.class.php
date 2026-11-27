@@ -349,6 +349,10 @@ class Lettering extends BookKeeping
 		if (count($fiscalYearRows) > 1) {
 			if (!$silent) {
 				$periods = array_map(
+					/**
+					 * @param object $row
+					 * @return string
+					 */
 					function ($row) {
 						return dol_print_date($this->db->jdate($row->date_start), 'day') . ' – ' . dol_print_date($this->db->jdate($row->date_end), 'day');
 					},
@@ -392,6 +396,7 @@ class Lettering extends BookKeeping
 		$fiscalYearEnd   = $this->db->jdate($fiscalYear->date_end);
 
 		// Generate initial code ('AAA' or 'aaa')
+		// @phan-suppress-next-line PhanParamSuspiciousOrder
 		$letter = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), $partial ? 'a' : 'A');
 
 		$this->db->begin();
