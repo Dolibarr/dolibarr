@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  */
 function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0, $mode = '')
 {
-	global $user, $conf, $langs, $mysoc;
+	global $user, $conf, $langs, $mysoc, $hookmanager;
 	global $dolibarr_main_db_name;
 
 	$mainmenu = (empty($_SESSION["mainmenu"]) ? '' : $_SESSION["mainmenu"]);
@@ -144,6 +144,21 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		}
 
 		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target'] ? $newTabMenu[$i]['target'] : $atarget), ($newTabMenu[$i]['mainmenu'] ? $newTabMenu[$i]['mainmenu'] : $newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu'] ? $newTabMenu[$i]['leftmenu'] : ''), $newTabMenu[$i]['position'], $id, $idsel, $classname, $newTabMenu[$i]['prefix']);
+	}
+
+	// Allow the entries of the top menu to be manipulated by modules.
+	// Hook results must be a list of entries with the keys of Menu::add(). 0=entries are added, 1=they replace the whole top menu.
+	$parameters = array(
+		'mainmenu' => $mainmenu,
+		'type_user' => $type_user,
+		'mode' => $mode,
+	);
+	$hook_items = $menu->liste;
+	$reshook = $hookmanager->executeHooks('menuTopMenuItems', $parameters, $hook_items); // @phan-suppress-current-line PhanTypeMismatchArgument
+	if ($reshook == 0 && !empty($hookmanager->resArray)) {
+		$menu->liste = array_merge($menu->liste, array_values($hookmanager->resArray));
+	} elseif ($reshook > 0) {
+		$menu->liste = array_values($hookmanager->resArray);
 	}
 
 	// Sort on position
