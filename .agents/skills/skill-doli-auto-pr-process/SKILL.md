@@ -67,8 +67,9 @@ and uses `skill-doli-code-review` for the code review.
    - **a) Code review**. When the current branch is not `develop` and the PR is mergeable with the
      CI OK, this choice becomes **a) Code review and check if it is already fixed in develop (must
      be a backport in this case)**.
-   - **m) Merge** → only proposed when the PR is mergeable and the CI is OK. Run the action
-     **Merge**, then go back to step 3 with the next PR.
+   - **m) Merge** → proposed as soon as the PR is mergeable and no check is in error: checks still
+     running (QUEUED, IN_PROGRESS, PENDING) do not block the choice, the merge does not wait for
+     them. Run the action **Merge**, then go back to step 3 with the next PR.
    - **n) Next one** → go back to step 3 with the next PR.
    - **r) 🟢 Re-run the CI** → only proposed when it is useful, and always displayed with the 🟢
      emoji in front of it (Markdown has no color). Run the action **Re-run the CI**, then display
@@ -88,7 +89,7 @@ and uses `skill-doli-code-review` for the code review.
    initial branch if needed and give a short summary of the session (PRs processed and actions done).
 4. If **a)**, run the "Process a PR" procedure below. At its end, after the verdict, do not move
    to the next PR on your own: propose again the choices for the same PR, **m) Merge** (only if it
-   is still mergeable with the CI OK) and **n) Next one**, and wait for the user's answer.
+   is still mergeable, without any check in error) and **n) Next one**, and wait for the user's answer.
 5. When the list is empty, say so and stop.
 
 
@@ -170,14 +171,18 @@ run the action **Update branch** (no confirmation).
 
 ### Merge (the choice m) is the confirmation)
 
-1. Check again that the PR is still mergeable and the CI OK, with the same `headRefOid` as the one
-   displayed (a new commit may have been pushed meanwhile). Otherwise, tell the user and do not merge.
+1. Check again that the PR is still mergeable, with the same `headRefOid` as the one
+   displayed (a new commit may have been pushed meanwhile) and that no check is in error.
+   Otherwise, tell the user and do not merge.
+   Do **not** wait for the checks still running (QUEUED, IN_PROGRESS, PENDING, typically the
+   Travis queue): merge right away, the CI of the merge commit will report a failure if any.
 2. Merge with a merge commit, as done for the other PRs of the project:
 
    ```bash
    gh pr merge N -R Dolibarr/dolibarr --merge --match-head-commit HEADREFOID
    ```
-3. Report the result to the user (merged, or the error returned by GitHub).
+3. Report the result to the user (merged, or the error returned by GitHub), then go back to
+   step 3 with the next PR.
 
 ### Close as not qualified for maintenance branch (the choice d) is the confirmation)
 
