@@ -1402,7 +1402,7 @@ if ($action == 'create' && $permissiontoadd) {
 				print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/fourn/commande/card.php?id='.$objectsrc->id.'">'.img_object($langs->trans("ShowOrder"), 'order').' '.$objectsrc->ref;
 			}
 			if ($origin == 'propal' && isModEnabled("propal")) {
-				print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/card.php?id='.$objectsrc->id.'">'.img_object($langs->trans("ShowProposal"), 'propal').' '.$objectsrc->ref;
+				print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/card.php?id='.$objectsrc->id.'">'.img_object($langs->trans("ShowPropal"), 'propal').' '.$objectsrc->ref;
 			}
 			print '</a></td>';
 			print "</tr>\n";

@@ -296,7 +296,7 @@ if ($id) {
 	if ($object->rappro == 0) {
 		print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
 	} else {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";
 }

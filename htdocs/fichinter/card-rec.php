@@ -518,7 +518,7 @@ if ($action == 'create') {
 
 			$head = fichinter_rec_prepare_head($object);
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("PredefinedInterventional"), 0, $object->picto);
+			print dol_get_fiche_head($head, 'card', $langs->trans("RepeatableIntervention"), 0, $object->picto);
 
 			// Intervention card
 			$linkback = '<a href="card-rec.php">'.$langs->trans("BackToList").'</a>';

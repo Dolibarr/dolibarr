@@ -486,7 +486,7 @@ if ($result > 0) {
 				$contactstatic->lastname = $obj->lastname;
 				$contactstatic->firstname = $obj->firstname;
 				print $contactstatic->getNomUrl(1);
-				print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");
+				print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoEMail");
 			} else {
 				print $obj->email;
 			}
