@@ -890,6 +890,7 @@ try {
 
 		if (!empty($apiKey)) {
 			$adapter = new UniversalLLMAdapter($adapterType, $apiKey, $url, $model, $timeout);
+			$adapter->setReasoningEffort(getAiReasoningEffort($serviceKey));
 
 			dol_syslog("parse_intent.php Prepare call AI API for model=".$model, LOG_DEBUG);
 			if (getDolGlobalString("AI_DEBUG")) {

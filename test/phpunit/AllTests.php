@@ -181,6 +181,8 @@ class AllTests
 		$suite->addTestSuite('ApiEndpointDiscoveryTest');
 		require_once dirname(__FILE__).'/ApiEndpointDiscoveryEquivalenceTest.php';
 		$suite->addTestSuite('ApiEndpointDiscoveryEquivalenceTest');
+		require_once dirname(__FILE__).'/AiLibTest.php';
+		$suite->addTestSuite('AiLibTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeDocumentsTest.php';

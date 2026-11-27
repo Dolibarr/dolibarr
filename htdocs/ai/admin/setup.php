@@ -118,6 +118,15 @@ foreach ($arrayofai as $ia => $iarecord) {
 		$item->cssClass = 'width100 input'.$ia;
 		$item->helpText = $langs->trans("AI_API_MAX_TOKENSHelp", $item->defaultFieldValue);
 	}
+
+	if (($iarecord['adapter_type'] ?? '') === 'openai') {
+		$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_REASONING_EFFORT');
+		$item->setAsSelect(array_merge(array('' => ''), array_combine(getListOfAiReasoningEfforts(), getListOfAiReasoningEfforts())));
+		$item->nameText = $langs->trans("AI_API_REASONING_EFFORT").' ('.$ialabel.')';
+		$item->fieldParams['trClass'] = 'iaservice '.$ia;
+		$item->cssClass = 'minwidth100 input'.$ia;
+		$item->helpText = $langs->trans("AI_API_REASONING_EFFORTHelp");
+	}
 }
 
 // Response timeout of the AI calls (row shown by javascript only when an AI service is selected)
