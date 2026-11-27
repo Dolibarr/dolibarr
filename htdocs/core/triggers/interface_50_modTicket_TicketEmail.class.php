@@ -82,7 +82,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$res = $userstat->fetch($object->fk_user_assign);
 						if ($res > 0) {
 							// Send email to notification email
-							if (!getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
+							if (!getDolGlobalString('TICKET_DISABLE_ALL_MAILS') && !getDolGlobalString('TICKET_DISABLE_MAIL_ASSIGNED')) {
 								// Send email to assigned user
 								$sendto = $userstat->email;
 								$subject_assignee = 'TicketAssignedToYou';
