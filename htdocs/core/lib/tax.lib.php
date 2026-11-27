@@ -911,6 +911,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 				$list[$rate_key]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
 				$list[$rate_key]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
 				$list[$rate_key]['company_status'][] = $assoc['company_status'];
+				$list[$rate_key]['user_id'][] = 0;
 
 				$list[$rate_key]['ddate_start'][] = $db->jdate($assoc['date_start']);
 				$list[$rate_key]['ddate_end'][] = $db->jdate($assoc['date_end']);
@@ -1115,6 +1116,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 				$list[$rate_key]['company_customer_accounting_code'][] = $assoc['company_customer_accounting_code'];
 				$list[$rate_key]['company_supplier_accounting_code'][] = $assoc['company_supplier_accounting_code'];
 				$list[$rate_key]['company_status'][] = $assoc['company_status'];
+				$list[$rate_key]['user_id'][] = 0;
 
 				$list[$rate_key]['facid'][] = $assoc['facid'];
 				$list[$rate_key]['facnum'][] = $assoc['facnum'];
@@ -1155,7 +1157,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql .= " d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql .= " e.date_debut as date_start, e.date_fin as date_end, e.fk_user_author,";
 		$sql .= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
-		$sql .= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
+		$sql .= " p.rowid as payment_id, p.rowid as payment_ref, p.amount as payment_amount, p.datep, e.date_debut as datef, 0 as pid, e.ref as pref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid";
@@ -1225,7 +1227,8 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 					$list[$rate_key]['dtotal_ttc'][] = $assoc['total_ttc'];
 					$list[$rate_key]['dtype'][] = 'ExpenseReportPayment';
-					$list[$rate_key]['datef'][] = $assoc['datef'];
+					$list[$rate_key]['datef'][] = $db->jdate($assoc['datef']);
+					$list[$rate_key]['datep'][] = $db->jdate($assoc['datep']);
 					$list[$rate_key]['company_name'][] = '';
 					$list[$rate_key]['company_id'][] = '';
 					$list[$rate_key]['user_id'][] = $assoc['fk_user_author'];

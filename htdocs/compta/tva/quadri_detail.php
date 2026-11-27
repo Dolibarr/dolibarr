@@ -90,6 +90,8 @@ $product_static = new Product($db);
 $payment_static = new Paiement($db);
 $paymentfourn_static = new PaiementFourn($db);
 $paymentexpensereport_static = new PaymentExpenseReport($db);
+$user_static = new User($db);
+$userlinks = array();
 
 $morequerystring = '';
 $listofparams = array('date_startmonth', 'date_startyear', 'date_startday', 'date_endmonth', 'date_endyear', 'date_endday');
@@ -302,6 +304,11 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$expensereport->id = $x_paye[$my_paye_rate]['facid'][$id];
 				$expensereport->ref = $x_paye[$my_paye_rate]['facnum'][$id];
 				$expensereport->type = $x_paye[$my_paye_rate]['type'][$id];
+				$tmpuserid = (int) $x_paye[$my_paye_rate]['user_id'][$id];
+				if (!isset($userlinks[$tmpuserid])) {
+					$user_static->fetch($tmpuserid);
+					$userlinks[$tmpuserid] = $user_static->getNomUrl(1);
+				}
 
 				$x_both[$my_paye_rate]['paye']['detail'][] = array(
 					'id' => $x_paye[$my_paye_rate]['facid'][$id],
@@ -315,6 +322,9 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					'ftotal_ttc' => price2num($x_paye[$my_paye_rate]['ftotal_ttc'][$id]),
 					'dtotal_ttc' => price2num($x_paye[$my_paye_rate]['dtotal_ttc'][$id]),
 					'dtype' => $x_paye[$my_paye_rate]['dtype'][$id],
+					'datef' => $x_paye[$my_paye_rate]['datef'][$id],
+					'datep' => $x_paye[$my_paye_rate]['datep'][$id],
+					'company_link' => $userlinks[$tmpuserid],
 					'ddate_start' => $x_paye[$my_paye_rate]['ddate_start'][$id],
 					'ddate_end' => $x_paye[$my_paye_rate]['ddate_end'][$id],
 					'totalht' => price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
@@ -791,7 +801,11 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$ratiopaymentinvoice = 1;
 					if ($modetax != 1) {
 						print '<td class="nowrap right">';
-						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
+						if ($fields['payment_amount'] && $fields['ftotal_ttc'] && $fields['ptype'] == 'ExpenseReportPayment') {
+							$paymentexpensereport_static->id = $fields['payment_id'];
+							$paymentexpensereport_static->ref = $fields['payment_ref'];
+							print $paymentexpensereport_static->getNomUrl(2) . ' ';
+						} elseif ($fields['payment_amount'] && $fields['ftotal_ttc']) {
 							$paymentfourn_static->id = $fields['payment_id'];
 							$paymentfourn_static->ref = $fields['payment_ref'];
 							print $paymentfourn_static->getNomUrl(2, '', '', 0) . ' ';
