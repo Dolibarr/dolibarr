@@ -90,6 +90,9 @@ $pagenext = $page + 1;
 // Initialize a technical objects
 $object = new IntracommReport($db);
 
+if (!isModEnabled("intracommreport")) {
+	accessforbidden('Module intracommreport not enabled');
+}
 $diroutputmassaction = $conf->intracommreport->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
@@ -185,9 +188,6 @@ if ($search_type == '0') {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
 
-if (!isModEnabled("intracommreport")) {
-	accessforbidden('Module intracommreport not enabled');
-}
 
 
 
