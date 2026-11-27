@@ -412,7 +412,7 @@ class Projects extends DolibarrApi
 		}
 
 		$result = $this->project->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'project not found');
 		}
 
@@ -450,7 +450,7 @@ class Projects extends DolibarrApi
 
 		$result = $this->project->fetch($id);
 
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Project not found');
 		}
 
@@ -1042,7 +1042,7 @@ class Projects extends DolibarrApi
 		}
 
 		$result = $this->project->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Project not found');
 		}
 
@@ -1084,7 +1084,7 @@ class Projects extends DolibarrApi
 		}
 
 		$result = $this->project->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Project not found');
 		}
 
@@ -1112,7 +1112,7 @@ class Projects extends DolibarrApi
 		}
 
 		$result = $this->project->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Project not found');
 		}
 
@@ -1139,7 +1139,7 @@ class Projects extends DolibarrApi
 		}
 
 		$result = $this->project->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Project not found');
 		}
 
@@ -1181,7 +1181,7 @@ class Projects extends DolibarrApi
 		}
 
 		$result = $this->project->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Project not found');
 		}
 
