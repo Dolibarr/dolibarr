@@ -511,6 +511,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		print ' <span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthUnreachable", dolPrintLabel($probeauthorizationdetail)).'</span>';
 	}
 	print '</td>';
+	print '<td></td>';
 	print '</tr>';
 
 	// Self-registration of OAuth connectors, off by default
@@ -519,6 +520,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<td>';
 	print ajax_constantonoff('AI_MCP_OAUTH_DYNAMIC_REGISTRATION', array(), null, 0, 0, 1);
 	print '</td>';
+	print '<td></td>';
 	print '</tr>';
 
 	print '</table>';
