@@ -182,10 +182,15 @@ if ($action == 'updateMask') {
 	// validated with an empty one and nobody would notice until the bank did.
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/paymentref.lib.php';
 	$payrefblocker = dolPayRefGetSetupWarning($mysoc->country_code, $payrefmode);
-	if ($payrefmode != '' && $payrefblocker != '') {
+	if ($payrefmode != '' && $payrefblocker != '' && $payrefblocker != 'WarningPaymentRefDIASCodeMissingThirdparty') {
 		setEventMessages($langs->trans($payrefblocker), null, 'errors');
 	} else {
 		dolibarr_set_const($db, "INVOICE_PAYMENT_REF_MODE", $payrefmode, 'chaine', 0, '', $conf->entity);
+		// In the per third party mode a reference can be written on each third party,
+		// so a missing DIAS code does not stop the mode, it is only reported.
+		if ($payrefblocker == 'WarningPaymentRefDIASCodeMissingThirdparty') {
+			setEventMessages($langs->trans($payrefblocker), null, 'warnings');
+		}
 	}
 
 	// Parts combined to build a per invoice reference
@@ -206,6 +211,15 @@ if ($action == 'updateMask') {
 		$payrefbase = 'code_client';
 	}
 	dolibarr_set_const($db, "INVOICE_PAYMENT_REF_TP_BASE", $payrefbase, 'chaine', 0, '', $conf->entity);
+
+	// Format of a finnish reference, only offered to finnish companies
+	if ($mysoc->country_code == 'FI' && GETPOSTISSET('INVOICE_PAYMENT_REF_FI_FORMAT')) {
+		$payreffiformat = GETPOST('INVOICE_PAYMENT_REF_FI_FORMAT', 'aZ09');
+		if (!in_array($payreffiformat, array('rf', 'national'))) {
+			$payreffiformat = 'rf';
+		}
+		dolibarr_set_const($db, "INVOICE_PAYMENT_REF_FI_FORMAT", $payreffiformat, 'chaine', 0, '', $conf->entity);
+	}
 
 	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER", $rib, 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER", $chq, 'chaine', 0, '', $conf->entity);
@@ -741,6 +755,20 @@ if (getDolGlobalString('INVOICE_PAYMENT_REF_MODE') == 'thirdparty') {
 	print '</td></tr>';
 }
 
+// Format of the finnish reference
+// Specific to Finland - See core/lib/functions_fi.lib.php
+if ($mysoc->country_code == 'FI' && getDolGlobalString('INVOICE_PAYMENT_REF_MODE')) {
+	print '<tr class="oddeven"><td>' . $langs->trans("PaymentRefFIFormat") . '&nbsp;';
+	print $form->textwithpicto('', $langs->trans("PaymentRefFIFormatHelp"), 1, 'help') . '</td>';
+	print '<td class="left" colspan="2">';
+	$arraypayreffiformat = array(
+		'rf' => $langs->trans("PaymentRefFIFormatRF"),
+		'national' => $langs->trans("PaymentRefFIFormatNational"),
+	);
+	print $form->selectarray("INVOICE_PAYMENT_REF_FI_FORMAT", $arraypayreffiformat, getDolGlobalString('INVOICE_PAYMENT_REF_FI_FORMAT', 'rf'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth200');
+	print '</td></tr>';
+}
+
 // Structured communication
 // Specific to Belgium - See core/lib/functions_be.lib.php
 if ($mysoc->country_code == 'BE') {
@@ -854,6 +882,16 @@ print '<td class="left" colspan="2">';
 print ajax_constantonoff('INVOICE_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 
+
+// Reminder by email of unpaid invoices
+if (isModEnabled('cron')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("SendEmailsRemindersOnInvoiceDueDate").'</td>';
+	print '<td colspan="2">';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.DOL_URL_ROOT.'/cron/list.php?search_label=SendEmailsRemindersOnInvoiceDueDate">'.$langs->trans("ConfigureContractReminderCronjobToSetFrequency").'</a>';
+	print '</td>';
+	print '</tr>';
+}
 
 // Notifications
 print '<tr class="oddeven">';

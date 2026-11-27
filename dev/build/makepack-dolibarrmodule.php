@@ -162,12 +162,15 @@ include_once $pathtodescriptor;
 $moduleobj = null;
 if (class_exists($class)) {
 	try {
-		$moduleobj = new $class(null);
+		$moduleobj = new $class($db);
 		'@phan-var-force DolibarrModules $moduleobj';
 		/** @var DolibarrModules $moduleobj */
 	} catch (Exception $e) {
 		$error++;
-		print $e->getMessage();
+		print $e->getMessage()."\n";
+		echo "$PROG.$Extension aborted.\n";
+		echo "\n";
+		exit(1);
 	}
 } else {
 	$error++;
@@ -184,8 +187,8 @@ if (count($arrayversion)) {
 	$dirofmodule = $pathtofile;
 	$outputfilezip = $DESTI.'/'.$FILENAMEZIP;
 
-	if (!dol_is_dir($dirofmodule)) {
-		dol_mkdir($dirofmodule);
+	if (!dol_is_dir($DESTI)) {
+		dol_mkdir($DESTI);
 	}
 	// Note: We exclude /bin/ to not include the already generated zip
 	echo "Source dir: $dirofmodule\n";
@@ -195,7 +198,7 @@ if (count($arrayversion)) {
 	if ($result > 0) {
 		print "Zip file generated into ".$outputfilezip."\n";
 		print "\n";
-		exit(1);
+		exit(0);
 	} else {
 		$error++;
 		print "Error: Failed to build the zip file ".$outputfilezip."\n";

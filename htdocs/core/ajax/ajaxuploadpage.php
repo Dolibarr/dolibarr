@@ -102,6 +102,8 @@ $ai = new Ai($db);
 
 top_httphead('application/json');
 
+dol_syslog("core/ajax/ajaxuploadpage.php was called with param step=".$step, LOG_INFO);
+
 $originalfilename = $file;
 $uid = $thiid = $pid = $erid = $salid = 0;
 if (preg_match('/-uid([\d+])/', $file, $reg)) {
@@ -173,7 +175,12 @@ if ($modulepart == 'invoice_supplier') {
 	 },
 	 "vendor": {
 	  "name": "<name>",
-	  "address": "<address>",
+	  "address": {
+	   "street": "<street>",
+	   "postal_code": "<postal code>",
+	   "city": "<city>",
+	   "country_code": "<ISO 3166-1 alpha-2 country code>"
+	  },
 	  "phone": "<phone number>",
 	  "email": "<email>",
 	  "vatnumber": "<vat number>",
@@ -181,7 +188,12 @@ if ($modulepart == 'invoice_supplier') {
 	 },
 	 "recipient": {
 	  "name": "<name>",
-	  "address": "<address>",
+	  "address": {
+	   "street": "<street>",
+	   "postal_code": "<postal code>",
+	   "city": "<city>",
+	   "country_code": "<ISO 3166-1 alpha-2 country code>"
+	  },
 	  "phone": "<phone number>",
 	  "email": "<email>",
 	  "vatnumber": "<vat number>",
@@ -326,7 +338,6 @@ if ($modulepart == 'invoice_supplier') {
 }
 
 
-// TODO Move the convert code into an AJAX service and just output the JS code to call the ajax service to start
 
 if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 	$result = array('error' => 0, 'message' => '', 'keywords' => '', 'content' => '', 'cmd' => '');
@@ -349,7 +360,10 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog("ajaxuploadpage.php Call AI service for step 'convert raw file into text' (file=".$file.")", LOG_DEBUG, 0, '_ai');
 				}
+
+				// Timeout will be set to a higher value than MAIN_USE_RESPONSE_TIMEOUT into generateContent().
 				$result = $ai->generateContent($rawfile['payload'], 'auto', $rawfile['function'], '');
+
 				if (is_array($result)) {	// If array, there is an error
 					if (getDolGlobalString("AI_DEBUG")) {
 						dol_syslog("ajaxuploadpage.php AI service returned an error for step 'convert raw file into text': ".(empty($result['error']) ? '' : $result['error']).(empty($result['curl_error_no']) ? '' : ' curl_error_no='.$result['curl_error_no']), LOG_WARNING, 0, '_ai');
@@ -434,7 +448,9 @@ if ($METHOD == 'converttotext') { // @phpstan-ignore-line
 			$error++;
 			$errors[] = 'No AI model defined to analyze documents for the service '.$apiservice.' (check the setup of the module AI)';
 		} else {
+			// Timeout will be set to a higher value than MAIN_USE_RESPONSE_TIMEOUT into generateContent().
 			$result = $ai->generateContent($prompt, $modelforanalysis, 'docparsing', '');
+
 			// $result is an array of error messages or a string with answer
 			if (is_array($result)) {	// If array, there is an error
 				if (getDolGlobalString("AI_DEBUG")) {

@@ -515,6 +515,11 @@ if ($sql_select && $sql !== '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
 	print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', 'nogreyscale', $limit);
 
 	print '<div class="div-table-responsive-no-min">';
@@ -714,7 +719,7 @@ if ($sql_select && $sql !== '') {
 				echo $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, '');
 
 				// Show range
-				echo get_date_range($objp->date_start, $objp->date_end);
+				echo get_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 
 				// Add description in form
 				if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
@@ -737,7 +742,7 @@ if ($sql_select && $sql !== '') {
 				}
 
 				// Show range
-				echo get_date_range($objp->date_start, $objp->date_end);
+				echo get_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 			}
 		}
 

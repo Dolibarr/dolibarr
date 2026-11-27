@@ -8,6 +8,7 @@
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2026	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -885,6 +886,7 @@ class ActionComm extends CommonObject
 		$this->fetchResources();
 
 		$this->id = 0;
+		$this->uid = '';	// The clone is a new event, create() gives it its own uid (the uid column is unique)
 		$this->recurid = '';
 		$this->recurrule = '';
 		$this->recurdateend = '';
@@ -974,7 +976,7 @@ class ActionComm extends CommonObject
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
 		$sql .= " u.firstname, u.lastname as lastname,";
-		$sql .= " num_vote, event_paid, a.status";
+		$sql .= " num_vote, event_paid, a.status, a.extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action=c.id ";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
@@ -1072,6 +1074,10 @@ class ActionComm extends CommonObject
 				$this->num_vote = $obj->num_vote;
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
+				$this->extraparams = !empty($obj->extraparams) ? json_decode($obj->extraparams, true) : array();
+				if (is_null($this->extraparams)) {
+					$this->extraparams = array();	// Invalid json (for example truncated)
+				}
 
 				//email information
 				$this->email_msgid = $obj->email_msgid;

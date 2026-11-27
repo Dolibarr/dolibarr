@@ -170,6 +170,43 @@ class AccountingAccountTest extends CommonClassTest
 	}
 
 	/**
+	 * testAccountingAccountCheckUsageExpenseReport
+	 * An account bound to an expense report line must not be deleted.
+	 *
+	 * @return  void
+	 */
+	public function testAccountingAccountCheckUsageExpenseReport()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject = new AccountingAccount($db);
+		$localobject->fk_pcg_version = 'PCG99-ABREGE';
+		$localobject->pcg_type = 'XXXXX';
+		$localobject->account_number = '625123456';
+		$localobject->account_parent = 0;
+		$localobject->label = 'Account bound to an expense report line';
+		$id = $localobject->create($user);
+		$this->assertGreaterThan(0, $id);
+
+		$sql = "INSERT INTO ".$db->prefix()."expensereport_det (fk_expensereport, fk_c_type_fees, comments, qty, value_unit, date, fk_code_ventilation)";
+		$sql .= " VALUES (0, 0, 'checkUsage test', 1, 10, '".$db->idate(dol_now())."', ".((int) $id).")";
+		$resql = $db->query($sql);
+		$this->assertNotFalse($resql, (string) $db->lasterror());
+
+		$result = $localobject->checkUsage();
+		print __METHOD__." id=".$id." checkUsage=".$result."\n";
+		$this->assertEquals(0, $result);
+
+		$result = $localobject->delete($user);
+		$this->assertLessThanOrEqual(0, $result);
+		$this->assertGreaterThan(0, (new AccountingAccount($db))->fetch($id));
+	}
+
+	/**
 	 * testGetCurrentPeriodOfFiscalYear
 	 *
 	 * @return  int				Result of delete

@@ -326,6 +326,7 @@ ValidateHistory=Lier automatiquement
 AutomaticBindingDone=Liaisons automatiques effectuées (%s) - Liaison automatique impossible pour certains enregistrements (%s)
 DoManualBindingForFailedRecord=Vous devez réaliser la liaison avec le compte comptable manuellement pour la ou les %s lignes non liées automatiquement.
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas supprimer ou désactiver ce compte comptable car il est utilisé
+ConfirmChangeChartOfAccountsWithData=Le plan comptable actuel est déjà utilisé : les lignes sont liées à ses comptes ; le grand livre contient des entrées. La modification du plan ne modifie rien : les liaisons conservent les comptes du plan actuel. Les comptes bancaires ou les comptes par défaut associés à un numéro de compte absent du nouveau plan comptable ne pourront plus le retrouver. Cette transition doit être préparée avec votre comptable. Faut-il tout de même modifier le plan comptable ?
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s & Crédit = %s
 Balancing=Équilibrage
 FicheVentilation=Fiche lien

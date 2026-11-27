@@ -329,8 +329,6 @@ class AssetDepreciationOptions extends CommonObject
 					$value = price2num(GETPOST($html_name, 'alphanohtml')); // To fix decimal separator according to lang setup
 				} elseif ($field_info['type'] == 'boolean') {
 					$value = ((GETPOST($html_name) == '1' || GETPOST($html_name) == 'on') ? 1 : 0);
-				} elseif ($field_info['type'] == 'reference') {
-					$value = GETPOST($html_name) . ',' . GETPOST($html_name . '2');
 				} else {
 					if ($field_key == 'lang') {
 						$value = GETPOST($html_name, 'aZ09') ? GETPOST($html_name, 'aZ09') : "";
@@ -563,7 +561,10 @@ class AssetDepreciationOptions extends CommonObject
 
 			if (!$error && !empty($this->deprecation_options[$mode_key])) {
 				if (!empty($mode_info['enabled_field'])) {
-					list($ref_mode, $ref_field, $required) = explode(':', $mode_info['enabled_field']);
+					$tmparray = explode(':', $mode_info['enabled_field']);
+					$ref_mode = $tmparray[0];
+					$ref_field = $tmparray[1];
+					$required = $tmparray[2];
 					$flag = $this->deprecation_options[$ref_mode][$ref_field] ?? null;
 					if ((string) $flag !== (string) $required) {
 						continue;

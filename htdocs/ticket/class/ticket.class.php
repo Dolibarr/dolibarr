@@ -1237,6 +1237,8 @@ class Ticket extends CommonObject
 				$this->deleteEcmFiles(1);
 
 				$dir = DOL_DATA_ROOT.'/'.$this->element.'/'.$this->ref;
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 				// For remove dir
 				if (dol_is_dir($dir)) {
 					if (!dol_delete_dir_recursive($dir)) {
@@ -2682,6 +2684,19 @@ class Ticket extends CommonObject
 			}
 		}
 
+		if ($classname === '' && $modele !== 'mod_ticket_simple') {
+			// The configured numbering module is not available (for example an external module was removed), we fall back on the standard module
+			dol_syslog(get_class($this)."::getDefaultRef numbering module '".$modele."' not found, we fall back on 'mod_ticket_simple'", LOG_WARNING);
+			$modele = 'mod_ticket_simple';
+			foreach ($dirmodels as $reldir) {
+				$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
+				if (file_exists($file)) {
+					$classname = $modele;
+					break;
+				}
+			}
+		}
+
 		if ($classname !== '') {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 			$modTicket = new $classname();
@@ -3054,6 +3069,12 @@ class Ticket extends CommonObject
 					 * Send emails to internal users (linked contacts) then, if private is not set, to external users (linked contacts or thirdparty email if no contact set)
 					 */
 					if ((int) $send_email > 0) {
+						$sent_to = array();
+						$sent_tocc = array();
+						$sent_subject = '';
+						$sent_from = '';
+						$sent_replyto = '';
+
 						// Retrieve internal contact datas
 						$internal_contacts = $object->getInfosTicketInternalContact(1);
 
@@ -3134,7 +3155,14 @@ class Ticket extends CommonObject
 
 							// don't try to send email if no recipient
 							if (!empty($sendto)) {
-								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $email_from, $replyto);
+								$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $email_from, $replyto);
+								if ($result) {
+									$sent_to = $this->mergeEmailRecipients($sent_to, $sendto);
+									$sent_tocc = $this->mergeEmailRecipients($sent_tocc, $sendtocc);
+									$sent_subject = $subject;
+									$sent_from = $email_from;
+									$sent_replyto = $replyto;
+								}
 							}
 						}
 
@@ -3344,20 +3372,29 @@ class Ticket extends CommonObject
 										$this->date_last_msg_sent = dol_now();
 										$this->update($user, 1);	// disable trigger when updating date_last_msg_sent. sendTicketMessageByEmail already create an event in actioncomm table.
 
-										// update event actioncomm $id
-										//print 'update actioncomm id='.$id.' with sendto='.json_encode($sendto)." sendtocc=".json_encode($sendtocc)." email_msgid=".json_encode($this->email_msgid);
-										$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
-										$sql .= " SET email_msgid = '".$this->db->escape($this->email_msgid)."',";
-										$sql .= " email_subject = '".$this->db->escape($subject)."',";
-										$sql .= " email_from = '".$this->db->escape($email_from)."',";
-										$sql .= " email_to = '".$this->db->escape(implode(',', $sendto))."',";
-										$sql .= " email_tocc = '".$this->db->escape(implode(',', $sendtocc))."',";
-										$sql .= " reply_to = '".$this->db->escape($replyto)."'";
-										$sql .= " WHERE id = ".((int) $id);
-
-										$resql = $this->db->query($sql);
+										$sent_to = $this->mergeEmailRecipients($sent_to, $sendto);
+										$sent_tocc = $this->mergeEmailRecipients($sent_tocc, $sendtocc);
+										$sent_subject = $subject;
+										$sent_from = $email_from;
+										$sent_replyto = $replyto;
 									}
 								}
+							}
+						}
+
+						if (!empty($sent_to)) {
+							$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
+							$sql .= " SET email_msgid = '".$this->db->escape($this->email_msgid)."',";
+							$sql .= " email_subject = '".$this->db->escape($sent_subject)."',";
+							$sql .= " email_from = '".$this->db->escape($sent_from)."',";
+							$sql .= " email_to = '".$this->db->escape(implode(',', $sent_to))."',";
+							$sql .= " email_tocc = '".$this->db->escape(implode(',', $sent_tocc))."',";
+							$sql .= " reply_to = '".$this->db->escape($sent_replyto)."'";
+							$sql .= " WHERE id = ".((int) $id);
+
+							$resql = $this->db->query($sql);
+							if (!$resql) {
+								dol_syslog(get_class($this)."::newMessage failed to record the recipients on event id=".((int) $id).": ".$this->db->lasterror(), LOG_ERR);
 							}
 						}
 					}
@@ -3387,6 +3424,30 @@ class Ticket extends CommonObject
 		}
 	}
 
+
+	/**
+	 * Merge two lists of email recipients, keeping each email address once (case-insensitive)
+	 *
+	 * @param	string[]	$list	Recipients already kept, as "email" or "Name <email>"
+	 * @param	string[]	$add	Recipients to add, same format
+	 * @return	string[]			Merged list
+	 */
+	private function mergeEmailRecipients(array $list, array $add): array
+	{
+		$merged = array();
+		$seen = array();
+		foreach (array_merge(array_values($list), array_values($add)) as $recipient) {
+			$recipient = (string) $recipient;
+			$email = strtolower(trim(preg_match('/<\s*([^>]+)\s*>/', $recipient, $reg) ? $reg[1] : $recipient));
+			if ($email === '' || isset($seen[$email])) {
+				continue;
+			}
+			$seen[$email] = 1;
+			$merged[] = $recipient;
+		}
+
+		return $merged;
+	}
 
 	/**
 	 * Send ticket by email to linked contacts

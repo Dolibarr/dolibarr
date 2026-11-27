@@ -463,7 +463,7 @@ if (empty($reshook)) {
 									$desc .= '<br>';
 									$unit_label = '';
 									if ($lines[$i]->fk_unit) {
-										$langs->load('measuring_units');
+										$langs->load('other');
 										$unit_label = $langs->trans($lines[$i]->getLabelOfUnit('short'));
 									}
 									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.($unit_label ? ' '.$unit_label : '').')';
@@ -1135,7 +1135,7 @@ if ($action == 'create') {
 		$note_public = GETPOST("note_public", "alpha");
 	}
 
-	if (!$conf->global->FICHEINTER_ADDON) {
+	if (!getDolGlobalString('FICHEINTER_ADDON')) {
 		dol_print_error($db, $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
 		exit;
 	}
@@ -1198,7 +1198,7 @@ if ($action == 'create') {
 	if (isModEnabled('project')) {
 		$formproject = new FormProjets($db);
 
-		$langs->load("project");
+		$langs->load("projects");
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
@@ -1403,6 +1403,7 @@ if ($action == 'create') {
 			'name' 		=> 'signed_status',
 			'select_show_empty' => 0,
 			'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
+			'morecss'	=> 'minwidth200',
 			'values'	=> $object->getSignedStatusLocalisedArray()
 		];
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $text, 'confirm_sign', $formquestion, 0, 1);
@@ -1679,7 +1680,7 @@ if ($action == 'create') {
 	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 		// Duration in time
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
-		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("HourShort").')</td>';
+		print '<td>'.convertSecondToTime($object->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("HourShort").')</td>';
 		print '</tr>';
 	}
 
@@ -1950,7 +1951,7 @@ if ($action == 'create') {
 				// Date intervention
 				print '<td class="center nowrap">';
 				$now = dol_now();
-				$timearray = dol_getdate($now);
+				$timearray = dol_getdate($now + getDolGlobalInt('FICHINTER_DEFAULT_START', 0));
 				if (!GETPOSTINT('diday')) {
 					if (getDolGlobalInt('FICHINTER_DATE_WITHOUT_HOUR')) {
 						$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
@@ -1974,7 +1975,8 @@ if ($action == 'create') {
 					if (getDolGlobalString('INTERVENTION_ADDLINE_FREEDUREATION')) {
 						$selectmode = 'text';
 					}
-					$form->select_duration('duration', (!GETPOSTINT('durationhour') && !GETPOSTINT('durationmin')) ? 3600 : (60 * 60 * GETPOSTINT('durationhour') + 60 * GETPOSTINT('durationmin')), 0, $selectmode);
+					$defaultDuration = getDolGlobalInt('FICHINTER_DEFAULT_DURATION', 3600);
+					$form->select_duration('duration', (!GETPOSTINT('durationhour') && !GETPOSTINT('durationmin')) ? $defaultDuration : (60 * 60 * GETPOSTINT('durationhour') + 60 * GETPOSTINT('durationmin')), 0, $selectmode);
 				}
 				print '</td>';
 
@@ -2022,7 +2024,7 @@ if ($action == 'create') {
 					$url_button = array();
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TITLE_'.strtoupper($object->element))),
 						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddTitleLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_title_line&token='.newToken()
@@ -2030,7 +2032,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_'.strtoupper($object->element))),
 						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddSubtotalLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
@@ -2038,7 +2040,7 @@ if ($action == 'create') {
 
 					$url_button[] = array(
 						'lang' => 'subtotals',
-						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT),
+						'enabled' => (isModEnabled('intervention') && $object->status == Fichinter::STATUS_DRAFT && getDolGlobalInt('SUBTOTAL_TEXT_'.strtoupper($object->element))),
 						'perm' => (bool) $permissiontoadd,
 						'label' => $langs->trans('AddTextLine'),
 						'url' => '/fichinter/card.php?id='.$object->id.'&action=add_text_line&token='.newToken()

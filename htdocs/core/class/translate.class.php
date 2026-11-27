@@ -364,7 +364,8 @@ class Translate
 						 */
 						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n\r]")) {
 							if (isset($line[1])) {
-								list($key, $value) = $line;
+								$key = $line[0];
+								$value = $line[1];
 								//if ($domain == 'orders') print "Domain=$domain, found a string for $tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 								if (empty($this->tab_translate[$key])) { // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)

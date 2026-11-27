@@ -76,11 +76,13 @@ $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_label = GETPOST("search_label", "alpha");
 $search_amount_no_tax = GETPOST("search_amount_no_tax", "alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax", "alpha");
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refsupplier = GETPOST('search_refsupplier', 'alpha');
 $search_type = GETPOST('search_type', 'intcomma');
 $search_subtype = GETPOST('search_subtype', 'intcomma');
 $search_project = GETPOST('search_project', 'alpha');
+$search_project_label = GETPOST('search_project_label', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
 $search_supplier_code = GETPOST('search_supplier_code', 'alphanohtml');
@@ -202,6 +204,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = '0';
 $arrayfields = array(
+	'f.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1', 'position' => 1),
 	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
 	'f.ref_supplier' => array('label' => "RefSupplier", 'checked' => '1', 'position' => 7),
 	'f.type' => array('label' => "Type", 'checked' => '0', 'position' => 15),
@@ -210,6 +213,7 @@ $arrayfields = array(
 	'f.datef' => array('label' => "DateInvoice", 'checked' => '1', 'position' => 25),
 	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => '1', 'position' => 27),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => '1', 'position' => 30, 'enabled' => (isModEnabled('project') ? '1' : '0')),
+	'p.title' => array('label' => "ProjectLabel", 'checked' => '0', 'position' => 31, 'enabled' => (isModEnabled('project') ? '1' : '0')),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0', 'position' => 42),
 	's.code_fournisseur' => array('label' => "SupplierCodeShort", 'checked' => '-1', 'position' => 43),
@@ -306,12 +310,14 @@ if (empty($reshook)) {
 		$search_sale = '';
 		$search_product_category = '';
 		$searchCategorySupplierInvoiceList = array();
+		$search_id = '';
 		$search_ref = "";
 		$search_refsupplier = "";
 		$search_type = "";
 		$search_subtype = '';
 		$search_label = "";
 		$search_project = '';
+		$search_project_label = '';
 		$search_company = "";
 		$search_company_alias = "";
 		$search_supplier_code = "";
@@ -620,6 +626,9 @@ $sql .= ' AND f.entity IN ('.getEntity('facture_fourn').')';
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
+if ($search_id != '') {
+	$sql .= natural_search('f.rowid', $search_id, 1);
+}
 if ($search_ref) {
 	if (is_numeric($search_ref)) {
 		$sql .= natural_search(array('f.ref'), $search_ref);
@@ -653,7 +662,15 @@ if ($search_subtype != '' && $search_subtype != '-1') {
 	$sql .= " AND f.subtype IN (".$db->sanitize($db->escape($search_subtype)).")";
 }
 if ($search_project) {
-	$sql .= natural_search('p.ref', $search_project);
+	if (empty($arrayfields['p.title']['checked'])) {
+		// The project label is shown into the ref column, so search on both
+		$sql .= natural_search(array('p.ref', 'p.title'), $search_project);
+	} else {
+		$sql .= natural_search('p.ref', $search_project);
+	}
+}
+if ($search_project_label) {
+	$sql .= natural_search('p.title', $search_project_label);
 }
 if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
@@ -1028,6 +1045,9 @@ if ($search_datelimit_endmonth) {
 if ($search_datelimit_endyear) {
 	$param .= '&search_datelimit_endyear='.urlencode((string) ($search_datelimit_endyear));
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -1042,6 +1062,12 @@ if ($search_subtype != '') {
 }
 if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
+}
+if ($search_project) {
+	$param .= '&search_project='.urlencode($search_project);
+}
+if ($search_project_label) {
+	$param .= '&search_project_label='.urlencode($search_project_label);
 }
 if ($search_company) {
 	$param .= '&search_company='.urlencode($search_company);
@@ -1280,6 +1306,12 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+// Technical ID
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
+	print '</td>';
+}
 // Ref
 if (!empty($arrayfields['f.ref']['checked'])) {
 	print '<td class="liste_titre left">';
@@ -1345,6 +1377,10 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 // Project
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre"><input class="flat maxwidth50" type="text" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
+}
+// Project label
+if (!empty($arrayfields['p.title']['checked'])) {
+	print '<td class="liste_titre"><input class="flat maxwidth100" type="text" name="search_project_label" value="'.dol_escape_htmltag($search_project_label).'"></td>';
 }
 // Thirpdarty
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1556,6 +1592,10 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['f.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['f.rowid']['label'], $_SERVER['PHP_SELF'], 'f.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['f.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER['PHP_SELF'], 'f.ref,f.rowid', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1585,6 +1625,10 @@ if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER['PHP_SELF'], "p.ref", '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.title']['checked'])) {
+	print_liste_field_titre($arrayfields['p.title']['label'], $_SERVER['PHP_SELF'], "p.title", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -1764,6 +1808,7 @@ $totalarray['val']['rtp'] = 0;
 $supplierDiscountCache = array();
 
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1901,6 +1946,12 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		if (!empty($arrayfields['f.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $obj->facid).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		if (!empty($arrayfields['f.ref']['checked'])) {
 			print '<td class="nowraponall">';
 
@@ -1991,12 +2042,29 @@ while ($i < $imaxinloop) {
 
 		// Project
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowrap">';
+			// When the project label column is not displayed, we show the project label under the project ref
+			$showprojectlabelunderref = (empty($arrayfields['p.title']['checked']) && (string) $obj->project_label !== '');
+			print '<td class="tdoverflowmax150'.($showprojectlabelunderref ? ' tdlineheightsmall' : '').'">';
 			if ($obj->project_id > 0) {
 				$projectstatic->id = $obj->project_id;
 				$projectstatic->ref = $obj->project_ref;
 				$projectstatic->title = $obj->project_label;
 				print $projectstatic->getNomUrl(1);
+				if ($showprojectlabelunderref) {
+					print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->project_label).'"><span class="spantitle">'.dolPrintLabel($obj->project_label).'</span></div>';
+				}
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Project label
+		if (!empty($arrayfields['p.title']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->project_label).'">';
+			if ($obj->project_id > 0) {
+				print '<span class="spantitle">'.dol_escape_htmltag($obj->project_label).'</span>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2062,7 +2130,11 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
-			print $tmparray['label'];
+			if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
+				print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);
+			} else {
+				print dolPrintHTML($tmparray['label']);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

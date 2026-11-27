@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2026  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -69,7 +69,7 @@ function loan_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
-		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
+		$head[$tab][0] = DOL_URL_ROOT."/core/note.php?element=loan&id=".$object->id;
 		$head[$tab][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
 			$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -319,6 +319,19 @@ function loanChargeTypes()
 }
 
 /**
+ * Interest bases of a loan.
+ *
+ * @return array<int,string>	interest_basis => translation key
+ */
+function loanInterestBases()
+{
+	return array(
+		0 => 'LoanInterestBasisPeriod',
+		1 => 'LoanInterestBasisDaily',
+	);
+}
+
+/**
  * Label of the charge of a loan (Insurance, Account-keeping fee, Other fee).
  *
  * @param	int			$charge_type	charge_type of the loan
@@ -462,7 +475,9 @@ function loanRecalculateSchedule($db, $user, $loan, $lines, $from, $capital, $ra
 	}
 
 	// Write the lines: update existing ones, add the missing ones, delete the ones no longer needed
-	list($charge, $chargeregul) = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $loan->nbterm);
+	$tmparray = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $loan->nbterm);
+	$charge = $tmparray[0];
+	$chargeregul = $tmparray[1];
 	$enddate = $lastdate;
 	foreach ($new as $i => $amounts) {
 		if ($i < $total) {
@@ -647,7 +662,9 @@ function loanNextPayment($db, $loan)
 		$amort = (float) price2num($mens - $interest, 'MT');
 	}
 
-	list($charge, $chargeregul) = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $nbterm);
+	$tmparray = loanChargePerPayment($loan->insurance_amount, $loan->charge_per_payment, $nbterm);
+	$charge = $tmparray[0];
+	$chargeregul = $tmparray[1];
 	if ($index == 0) {
 		$charge = (float) price2num($charge + $chargeregul, 'MT');
 	}

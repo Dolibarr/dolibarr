@@ -40,6 +40,7 @@ require '../main.inc.php';
  */
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -61,6 +62,7 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
 
+$search_id = GETPOST('search_id', 'alpha');
 $search_ref_rcp = GETPOST("search_ref_rcp");
 $search_ref_liv = GETPOST('search_ref_liv');
 $search_ref_supplier = GETPOST('search_ref_supplier');
@@ -135,6 +137,7 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = '0';
 $arrayfields = array(
+	'e.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '-1'), 'enabled' => '1'),
 	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
 	'e.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1'),
 	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1'),
@@ -196,6 +199,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref_supplier = '';
+	$search_id = '';
 	$search_ref_rcp = '';
 	$search_ref_liv = '';
 	$search_company = '';
@@ -457,6 +461,7 @@ if (empty($reshook)) {
 						if ($lines[$i]->subprice < 0) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
+							$discount->discount_type = 1;
 							$discount->fk_soc = $objecttmp->socid;
 							$discount->socid = $objecttmp->socid;
 							$discount->amount_ht = abs($lines[$i]->total_ht);
@@ -726,6 +731,9 @@ if ($search_note_private) {
 if ($search_date_create_end) {
 	$sql .= " AND e.date_creation <= '".$db->idate($search_date_create_end)."'";
 }
+if ($search_id != '') {
+	$sql .= natural_search('e.rowid', $search_id, 1);
+}
 if ($search_ref_rcp) {
 	$sql .= natural_search('e.ref', $search_ref_rcp);
 }
@@ -818,6 +826,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 if ($search_all) {
 	$param .= "&search_all=".urlencode($search_all);
+}
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_ref_rcp) {
 	$param .= "&search_ref_rcp=".urlencode($search_ref_rcp);
@@ -1046,6 +1057,12 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
+// Technical ID
+if (!empty($arrayfields['e.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="searchstring width50" type="text" name="search_id" value="'.dolPrintLabelForAttribute($search_id).'">';
+	print '</td>';
+}
 // Ref
 if (!empty($arrayfields['e.ref']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1184,6 +1201,10 @@ if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['e.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['e.rowid']['label'], $_SERVER["PHP_SELF"], 'e.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['e.ref']['checked'])) {
 	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
@@ -1278,6 +1299,7 @@ $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$showcountrylabelinlist = getDolGlobalInt('MAIN_DISPLAY_COUNTRY_LABEL_IN_LIST');	// Hidden option to show country label instead of flag
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -1337,6 +1359,13 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+		}
+		// Technical ID
+		if (!empty($arrayfields['e.rowid']['checked'])) {
+			print '<td class="center" data-key="id">'.((int) $obj->rowid).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Ref
 		if (!empty($arrayfields['e.ref']['checked'])) {
@@ -1401,7 +1430,11 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			print '<td class="center">';
 			$tmparray = getCountry($obj->fk_pays, 'all');
-			print dol_escape_htmltag($tmparray['label']);
+			if (!empty($tmparray['code']) && !$showcountrylabelinlist) {
+				print picto_from_langcode($tmparray['code'], 'title="'.dolPrintHTMLForAttribute($tmparray['label']).'"', 1);
+			} else {
+				print dolPrintHTML($tmparray['label']);
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

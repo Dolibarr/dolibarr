@@ -51,9 +51,10 @@ $hookmanager->initHooks(array('bankstats', 'globalcard'));
 // Security check
 $id = 0;
 if (GETPOST('account') || GETPOST('ref')) {
-	$id = GETPOST('account') ? GETPOST('account') : GETPOST('ref');
+	// The access check by ref keeps only digits of the ref, so we check on the id of the account found with the ref
+	$id = GETPOST('account') ? GETPOST('account') : dol_getIdFromCode($db, GETPOST('ref'), 'bank_account', 'ref', 'rowid', 1);
 }
-$fieldid = GETPOST('ref') ? 'ref' : 'rowid';
+$fieldid = 'rowid';
 if ($user->socid) {
 	$socid = $user->socid;
 }

@@ -60,7 +60,9 @@ class CommonSelectField extends CommonField
 					// Manage dependency list
 					$fieldValueParent = '';
 					if (strpos($optionLabel, "|") !== false) {
-						list($optionLabel, $valueParent) = explode('|', $optionLabel);
+						$tmparray = explode('|', $optionLabel);
+						$optionLabel = $tmparray[0];
+						$valueParent = $tmparray[1];
 						$fieldValueParent = trim($fieldValueParent);
 					}
 

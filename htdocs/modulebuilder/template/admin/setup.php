@@ -160,8 +160,8 @@ $item->helpText = $langs->transnoentities('MYMODULE_MYPARAM10');
 // Setup conf for a category selection
 $formSetup->newItem('MYMODULE_CATEGORY_ID_XXX')->setAsCategory('product');
 
-// Setup conf MYMODULE_MYPARAM10
-$item = $formSetup->newItem('MYMODULE_MYPARAM10');
+// Setup conf MYMODULE_MYPARAM14
+$item = $formSetup->newItem('MYMODULE_MYPARAM14');
 $item->setAsColor();
 $item->defaultFieldValue = '#FF0000';
 //$item->fieldValue = '';
@@ -445,7 +445,7 @@ if (!empty($refGenerationObjects)) {
 
 				print '<td class="center">';
 				$constforvar = 'MYMODULE_'.dol_strtoupper($myTmpObjectKey).'_ADDON';
-				$defaultifnotset = 'thevaluetousebydefault';
+				$defaultifnotset = 'mod_'.dol_strtolower($myTmpObjectKey).'_standard';
 				$activenumberingmodel = getDolGlobalString($constforvar, $defaultifnotset);
 
 				if ($activenumberingmodel == $file) {

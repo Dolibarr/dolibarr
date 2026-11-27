@@ -479,7 +479,9 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
 	$cap_rest = (float) $capital;
-	list($insurance, $regulInsurance) = loanChargePerPayment($object->insurance_amount, $object->charge_per_payment, $object->nbterm);
+	$tmparray = loanChargePerPayment($object->insurance_amount, $object->charge_per_payment, $object->nbterm);
+	$insurance = $tmparray[0];
+	$regulInsurance = $tmparray[1];
 
 	while ($i < $object->nbterm + 1) {
 		$mens = price2num($echeances->calcMonthlyPayments($capital, $object->rate / 100, $object->nbterm - $i + 1, $object->frequency, $object->interest_basis, $object->balloon_amount), 'MT');
@@ -519,7 +521,9 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 	$i = 1;
 	$capital = $object->capital;
 	$cap_rest = (float) $capital;
-	list($insurance, $regulInsurance) = loanChargePerPayment($object->insurance_amount, $object->charge_per_payment, $object->nbterm);
+	$tmparray = loanChargePerPayment($object->insurance_amount, $object->charge_per_payment, $object->nbterm);
+	$insurance = $tmparray[0];
+	$regulInsurance = $tmparray[1];
 	$printed = false;
 
 	foreach ($echeances->lines as $line) {

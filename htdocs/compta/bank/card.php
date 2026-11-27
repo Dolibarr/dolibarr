@@ -90,6 +90,11 @@ if (GETPOSTINT("id") || GETPOST("ref")) {
 		$object->fetch(0, GETPOST("ref"));
 	}
 }
+if ($fieldid == 'ref' && !empty($id)) {
+	// The access check by ref keeps only digits of the ref, so we check on the id of the account found with the ref
+	$id = (int) $object->id;
+	$fieldid = 'rowid';
+}
 
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
@@ -669,7 +674,7 @@ if ($action == 'create') {
 		print $formaccounting->select_account(GETPOSTISSET('account_number') ? GETPOST('account_number', 'alphanohtml') : $object->account_number, 'account_number', 1, array(), 1, 1);
 		if ($user->hasRight('accounting', 'chartofaccount')) {
 			// On popup close, submit the form with action=create to reload the list of accounting accounts
-			$jsonclose = 'document.formsoc.action.value=\'create\'; document.formsoc.page_y.value=jQuery(document).scrollTop(); document.formsoc.submit()';
+			$jsonclose = 'document.formsoc.action.value=\'create\'; document.formsoc.page_y.value=jQuery(dolGetMainScrollElement()).scrollTop(); document.formsoc.submit()';
 			print dolButtonToOpenUrlInDialogPopup('addaccountingaccount', $langs->transnoentitiesnoconv('Chartofaccounts'), '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.dolPrintHTMLForAttribute($langs->trans("Chartofaccounts")).'"></span>', '/accountancy/admin/account.php', '', '', '', $jsonclose);
 		}
 		if ($formaccounting->nbaccounts == 0) {
@@ -1143,7 +1148,7 @@ if ($action == 'create') {
 			print $formaccounting->select_account(GETPOSTISSET('account_number') ? GETPOST('account_number', 'alphanohtml') : $object->account_number, 'account_number', 1, array(), 1, 1);
 			if ($user->hasRight('accounting', 'chartofaccount')) {
 				// On popup close, submit the form with action=edit to reload the list of accounting accounts
-				$jsonclose = 'document.formsoc.action.value=\'edit\'; document.formsoc.page_y.value=jQuery(document).scrollTop(); document.formsoc.submit()';
+				$jsonclose = 'document.formsoc.action.value=\'edit\'; document.formsoc.page_y.value=jQuery(dolGetMainScrollElement()).scrollTop(); document.formsoc.submit()';
 				print dolButtonToOpenUrlInDialogPopup('addaccountingaccount', $langs->transnoentitiesnoconv('Chartofaccounts'), '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.dolPrintHTMLForAttribute($langs->trans("Chartofaccounts")).'"></span>', '/accountancy/admin/account.php', '', '', '', $jsonclose);
 			}
 			if ($formaccounting->nbaccounts == 0) {

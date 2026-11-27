@@ -93,6 +93,7 @@ if (!$sortfield) {
 }
 
 $search_all          = trim(GETPOST('search_all', 'alphanohtml'));
+$search_id           = trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref          = GETPOST('search_ref', 'alphanohtml');
 $search_day_create   = GETPOST('search_day_create', 'int');
 $search_month_create = GETPOST('search_month_create', 'int');
@@ -130,6 +131,7 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
+	'cp.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => '-1', 'enabled' => '1', 'position' => 1),
 	'cp.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
 	'cp.fk_user' => array('label' => $langs->trans("Employee"), 'checked' => '1', 'position' => 20),
 	'cp.fk_validator' => array('label' => $langs->trans("ValidatorCP"), 'checked' => '1', 'position' => 30),
@@ -209,6 +211,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_id = '';
 		$search_ref = "";
 		$search_month_create = "";
 		$search_year_create = "";
@@ -333,12 +336,20 @@ $sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cp.rowid = ef.fk_object)";
 }
-$sql .= ", ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as uu ON uu.rowid = cp.fk_user";			// Needed for search on the list
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as ua ON ua.rowid = cp.fk_validator";		// Needed for search on the list
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
-$sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack needed for search on the list
 // Search all
 if (!empty($search_all)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
+// Technical ID
+if ($search_id != '') {
+	$sql .= natural_search("cp.rowid", $search_id, 1);
 }
 // Ref
 if (!empty($search_ref)) {
@@ -434,6 +445,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
@@ -484,6 +498,11 @@ if ($search_status > 0) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -619,6 +638,11 @@ if ($conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
+	print '</td>';
+}
+if (!empty($arrayfields['cp.rowid']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input class="flat width50" type="text" name="search_id" value="'.dolPrintHTMLForAttribute($search_id).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['cp.ref']['checked'])) {
@@ -766,6 +790,10 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['cp.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['cp.rowid']['label'], $_SERVER["PHP_SELF"], "cp.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['cp.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.ref']['label'], $_SERVER["PHP_SELF"], "cp.ref", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -885,8 +913,8 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 		$approbatorstatic->status = $obj->validator_status;
 		$approbatorstatic->photo = $obj->validator_photo;
 
-		$date = $obj->date_creation;
-		$date_modif = $obj->date_modification;
+		$date = $db->jdate($obj->date_creation);
+		$date_modif = $db->jdate($obj->date_modification);
 
 		$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 		$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
@@ -939,6 +967,13 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 				}
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Technical ID
+			if (!empty($arrayfields['cp.rowid']['checked'])) {
+				print '<td class="center">'.((int) $obj->rowid).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

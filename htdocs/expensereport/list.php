@@ -106,6 +106,7 @@ if (!$sortfield) {
 
 $search_all			= trim(GETPOST('search_all', 'alphanohtml'));
 
+$search_id			= trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref			= GETPOST('search_ref', 'alpha');
 $search_user		= GETPOST('search_user', 'intcomma');
 $search_amount_ht	= GETPOST('search_amount_ht', 'alpha');
@@ -171,25 +172,34 @@ if (empty($user->socid)) {
 }
 
 $arrayfields = array(
-	'd.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
-	'summary' => array('label' => $langs->trans("Summary"), 'checked' => '1'),
-	'user' => array('label' => $langs->trans("User"), 'checked' => '1'),
-	'd.date_debut' => array('label' => $langs->trans("DateStart"), 'checked' => '1'),
-	'd.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => '1'),
-	'd.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => '1'),
-	'd.date_approve' => array('label' => $langs->trans("DateApprove"), 'checked' => '1'),
-	'd.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => '1'),
-	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => '-1'),
-	'd.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => '1'),
-	'd.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
-	'd.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
-	'd.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'd.rowid' => array('label' => $langs->trans("TechnicalID"), 'checked' => '-1', 'enabled' => '1', 'position' => 1),
+	'd.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 10),
+	'summary' => array('label' => $langs->trans("Summary"), 'checked' => '1', 'position' => 20),
+	'user' => array('label' => $langs->trans("User"), 'checked' => '1', 'position' => 30),
+	'd.date_debut' => array('label' => $langs->trans("DateStart"), 'checked' => '1', 'position' => 40),
+	'd.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => '1', 'position' => 50),
+	'd.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => '1', 'position' => 60),
+	'd.date_approve' => array('label' => $langs->trans("DateApprove"), 'checked' => '1', 'position' => 70),
+	'd.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => '1', 'position' => 80),
+	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => '-1', 'position' => 90),
+	'd.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => '1', 'position' => 100),
+	'd.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 2000),
+	'd.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 2001),
+	'd.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 2002),
 );
 // Extra fields
+$extrafieldspositionoffset = 1000;	// To keep extrafields after the amounts and before the dates of creation/modification by default
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// By default, the status is the last column, after the extrafields
+$arrayfields['d.fk_statut']['position'] = (int) max(array_column($arrayfields, 'position')) + 1;
 // Add hook to complete $arrayfield
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 $canedituser = (!empty($user->admin) || $user->hasRight('user', 'user', 'creer'));
 
@@ -223,6 +233,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_id = '';
 		$search_ref = "";
 		$search_user = "";
 		$search_amount_ht = "";
@@ -315,13 +326,20 @@ $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
-$sql .= ", ".MAIN_DB_PREFIX."user as u";
-$sql .= " WHERE d.fk_user_author = u.rowid AND d.entity IN (".getEntity('expensereport').")";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = d.fk_user_author";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " WHERE d.entity IN (".getEntity('expensereport').")";
 // Search all
 if (!empty($search_all)) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 // Ref
+if ($search_id != '') {
+	$sql .= natural_search('d.rowid', $search_id, 1);
+}
 if (!empty($search_ref)) {
 	$sql .= natural_search('d.ref', $search_ref);
 }
@@ -437,6 +455,9 @@ if ($optioncss != '') {
 if ($search_all) {
 	$param .= "&search_all=".urlencode($search_all);
 }
+if ($search_id != '') {
+	$param .= '&search_id='.urlencode($search_id);
+}
 if ($search_ref) {
 	$param .= "&search_ref=".urlencode($search_ref);
 }
@@ -492,6 +513,11 @@ if ($search_status >= 0) {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action);	// Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
@@ -606,7 +632,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column); // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1); // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -623,94 +649,137 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
-if (!empty($arrayfields['d.ref']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input class="flat width100" type="text" name="search_ref" value="'.dolPrintHTMLForAttribute($search_ref).'">';
-	print '</td>';
-}
-if (!empty($arrayfields['summary']['checked'])) {
-	print '<td class="liste_titre">&nbsp;</td>';
-}
-// User
-if (!empty($arrayfields['user']['checked'])) {
-	if ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous')) {
-		print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-		print $form->select_dolusers($search_user, 'search_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth125');
-		print '</td>';
-	} else {
-		print '<td class="liste_titre">&nbsp;</td>';
+// Fields and extrafields with position ordered by user setup (fields of hooks are output after)
+foreach ($arrayfields as $arraykey => $arrayval) {
+	// Extra fields
+	$regkey = array();
+	if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	switch ($arraykey) {
+		case 'd.rowid':
+			if (!empty($arrayfields['d.rowid']['checked'])) {
+				print '<td class="liste_titre center">';
+				print '<input class="flat width50" type="text" name="search_id" value="'.dolPrintHTMLForAttribute($search_id).'">';
+				print '</td>';
+			}
+			break;
+		case 'd.ref':
+			if (!empty($arrayfields['d.ref']['checked'])) {
+				print '<td class="liste_titre">';
+				print '<input class="flat width100" type="text" name="search_ref" value="'.dolPrintHTMLForAttribute($search_ref).'">';
+				print '</td>';
+			}
+			break;
+		case 'summary':
+			if (!empty($arrayfields['summary']['checked'])) {
+				print '<td class="liste_titre">&nbsp;</td>';
+			}
+			break;
+		case 'user':
+			// User
+			if (!empty($arrayfields['user']['checked'])) {
+				if ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous')) {
+					print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+					print $form->select_dolusers($search_user, 'search_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth125');
+					print '</td>';
+				} else {
+					print '<td class="liste_titre">&nbsp;</td>';
+				}
+			}
+			break;
+		case 'd.date_debut':
+			// Date start
+			if (!empty($arrayfields['d.date_debut']['checked'])) {
+				print '<td class="liste_titre" align="center">';
+				print '<div class="nowrapfordate">';
+				print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+				print '</div>';
+				print '<div class="nowrapfordate">';
+				print $form->selectDate($search_date_startend ? $search_date_startend : -1, 'search_date_startend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+				print '</div>';
+				print '</td>';
+			}
+			break;
+		case 'd.date_fin':
+			// Date end
+			if (!empty($arrayfields['d.date_fin']['checked'])) {
+				print '<td class="liste_titre" align="center">';
+				print '<div class="nowrapfordate">';
+				print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+				print '</div>';
+				print '<div class="nowrapfordate">';
+				print $form->selectDate($search_date_endend ? $search_date_endend : -1, 'search_date_endend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+				print '</div>';
+				print '</td>';
+			}
+			break;
+		case 'd.date_valid':
+			// Date valid
+			if (!empty($arrayfields['d.date_valid']['checked'])) {
+				print '<td class="liste_titre" align="center">';
+				//print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+				//print $formother->selectyear($year_end,'year_end',1, $min_year, $max_year);
+				print '</td>';
+			}
+			break;
+		case 'd.date_approve':
+			// Date approve
+			if (!empty($arrayfields['d.date_approve']['checked'])) {
+				print '<td class="liste_titre" align="center">';
+				//print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+				//print $formother->selectyear($year_end,'year_end',1, $min_year, $max_year);
+				print '</td>';
+			}
+			break;
+		case 'd.total_ht':
+			// Amount with no tax
+			if (!empty($arrayfields['d.total_ht']['checked'])) {
+				print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_ht" value="'.$search_amount_ht.'"></td>';
+			}
+			break;
+		case 'd.total_vat':
+			if (!empty($arrayfields['d.total_vat']['checked'])) {
+				print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_vat" value="'.$search_amount_vat.'"></td>';
+			}
+			break;
+		case 'd.total_ttc':
+			// Amount with all taxes
+			if (!empty($arrayfields['d.total_ttc']['checked'])) {
+				print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_ttc" value="'.$search_amount_ttc.'"></td>';
+			}
+			break;
+		case 'd.date_creation':
+			// Date creation
+			if (!empty($arrayfields['d.date_creation']['checked'])) {
+				print '<td class="liste_titre">';
+				print '</td>';
+			}
+			break;
+		case 'd.tms':
+			// Date modification
+			if (!empty($arrayfields['d.tms']['checked'])) {
+				print '<td class="liste_titre">';
+				print '</td>';
+			}
+			break;
+		case 'd.fk_statut':
+			// Status
+			if (!empty($arrayfields['d.fk_statut']['checked'])) {
+				print '<td class="liste_titre center parentonrightofpage">';
+				print $formexpensereport->selectExpensereportStatus($search_status, 'search_status', 1, 1, 'search_status width100 onrightofpage');
+				print '</td>';
+			}
+			break;
 	}
 }
-// Date start
-if (!empty($arrayfields['d.date_debut']['checked'])) {
-	print '<td class="liste_titre" align="center">';
-	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-	print '</div>';
-	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_date_startend ? $search_date_startend : -1, 'search_date_startend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-	print '</div>';
-	print '</td>';
-}
-// Date end
-if (!empty($arrayfields['d.date_fin']['checked'])) {
-	print '<td class="liste_titre" align="center">';
-	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-	print '</div>';
-	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_date_endend ? $search_date_endend : -1, 'search_date_endend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-	print '</div>';
-	print '</td>';
-}
-// Date valid
-if (!empty($arrayfields['d.date_valid']['checked'])) {
-	print '<td class="liste_titre" align="center">';
-	//print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
-	//print $formother->selectyear($year_end,'year_end',1, $min_year, $max_year);
-	print '</td>';
-}
-// Date approve
-if (!empty($arrayfields['d.date_approve']['checked'])) {
-	print '<td class="liste_titre" align="center">';
-	//print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
-	//print $formother->selectyear($year_end,'year_end',1, $min_year, $max_year);
-	print '</td>';
-}
-// Amount with no tax
-if (!empty($arrayfields['d.total_ht']['checked'])) {
-	print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_ht" value="'.$search_amount_ht.'"></td>';
-}
-if (!empty($arrayfields['d.total_vat']['checked'])) {
-	print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_vat" value="'.$search_amount_vat.'"></td>';
-}
-// Amount with all taxes
-if (!empty($arrayfields['d.total_ttc']['checked'])) {
-	print '<td class="liste_titre right"><input class="flat" type="text" size="5" name="search_amount_ttc" value="'.$search_amount_ttc.'"></td>';
-}
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-// Date creation
-if (!empty($arrayfields['d.date_creation']['checked'])) {
-	print '<td class="liste_titre">';
-	print '</td>';
-}
-// Date modification
-if (!empty($arrayfields['d.tms']['checked'])) {
-	print '<td class="liste_titre">';
-	print '</td>';
-}
-// Status
-if (!empty($arrayfields['d.fk_statut']['checked'])) {
-	print '<td class="liste_titre center parentonrightofpage">';
-	print $formexpensereport->selectExpensereportStatus($search_status, 'search_status', 1, 1, 'search_status width100 onrightofpage');
-	print '</td>';
-}
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
@@ -731,64 +800,107 @@ if ($conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['d.ref']['checked'])) {
-	print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], "d.ref", "", $param, '', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
+// Fields and extrafields with position ordered by user setup (fields of hooks are output after)
+foreach ($arrayfields as $arraykey => $arrayval) {
+	// Extra fields
+	$regkey = array();
+	if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	switch ($arraykey) {
+		case 'd.rowid':
+			if (!empty($arrayfields['d.rowid']['checked'])) {
+				print_liste_field_titre($arrayfields['d.rowid']['label'], $_SERVER["PHP_SELF"], "d.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.ref':
+			if (!empty($arrayfields['d.ref']['checked'])) {
+				print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], "d.ref", "", $param, '', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'summary':
+			if (!empty($arrayfields['summary']['checked'])) {
+				print_liste_field_titre($arrayfields['summary']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'user':
+			if (!empty($arrayfields['user']['checked'])) {
+				print_liste_field_titre($arrayfields['user']['label'], $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.date_debut':
+			if (!empty($arrayfields['d.date_debut']['checked'])) {
+				print_liste_field_titre($arrayfields['d.date_debut']['label'], $_SERVER["PHP_SELF"], "d.date_debut", "", $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.date_fin':
+			if (!empty($arrayfields['d.date_fin']['checked'])) {
+				print_liste_field_titre($arrayfields['d.date_fin']['label'], $_SERVER["PHP_SELF"], "d.date_fin", "", $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.date_valid':
+			if (!empty($arrayfields['d.date_valid']['checked'])) {
+				print_liste_field_titre($arrayfields['d.date_valid']['label'], $_SERVER["PHP_SELF"], "d.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.date_approve':
+			if (!empty($arrayfields['d.date_approve']['checked'])) {
+				print_liste_field_titre($arrayfields['d.date_approve']['label'], $_SERVER["PHP_SELF"], "d.date_approve", "", $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.total_ht':
+			if (!empty($arrayfields['d.total_ht']['checked'])) {
+				print_liste_field_titre($arrayfields['d.total_ht']['label'], $_SERVER["PHP_SELF"], "d.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.total_vat':
+			if (!empty($arrayfields['d.total_vat']['checked'])) {
+				print_liste_field_titre($arrayfields['d.total_vat']['label'], $_SERVER["PHP_SELF"], "d.total_tva", "", $param, '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.total_ttc':
+			if (!empty($arrayfields['d.total_ttc']['checked'])) {
+				print_liste_field_titre($arrayfields['d.total_ttc']['label'], $_SERVER["PHP_SELF"], "d.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.date_creation':
+			if (!empty($arrayfields['d.date_creation']['checked'])) {
+				print_liste_field_titre($arrayfields['d.date_creation']['label'], $_SERVER["PHP_SELF"], "d.date_creation", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.tms':
+			if (!empty($arrayfields['d.tms']['checked'])) {
+				print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 'd.fk_statut':
+			if (!empty($arrayfields['d.fk_statut']['checked'])) {
+				print_liste_field_titre($arrayfields['d.fk_statut']['label'], $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+	}
 }
-if (!empty($arrayfields['summary']['checked'])) {
-	print_liste_field_titre($arrayfields['summary']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['user']['checked'])) {
-	print_liste_field_titre($arrayfields['user']['label'], $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.date_debut']['checked'])) {
-	print_liste_field_titre($arrayfields['d.date_debut']['label'], $_SERVER["PHP_SELF"], "d.date_debut", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.date_fin']['checked'])) {
-	print_liste_field_titre($arrayfields['d.date_fin']['label'], $_SERVER["PHP_SELF"], "d.date_fin", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.date_valid']['checked'])) {
-	print_liste_field_titre($arrayfields['d.date_valid']['label'], $_SERVER["PHP_SELF"], "d.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.date_approve']['checked'])) {
-	print_liste_field_titre($arrayfields['d.date_approve']['label'], $_SERVER["PHP_SELF"], "d.date_approve", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.total_ht']['checked'])) {
-	print_liste_field_titre($arrayfields['d.total_ht']['label'], $_SERVER["PHP_SELF"], "d.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.total_vat']['checked'])) {
-	print_liste_field_titre($arrayfields['d.total_vat']['label'], $_SERVER["PHP_SELF"], "d.total_tva", "", $param, '', $sortfield, $sortorder, 'right ');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.total_ttc']['checked'])) {
-	print_liste_field_titre($arrayfields['d.total_ttc']['label'], $_SERVER["PHP_SELF"], "d.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
-	$totalarray['nbfield']++;
-}
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
-if (!empty($arrayfields['d.date_creation']['checked'])) {
-	print_liste_field_titre($arrayfields['d.date_creation']['label'], $_SERVER["PHP_SELF"], "d.date_creation", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.tms']['checked'])) {
-	print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
-	$totalarray['nbfield']++;
-}
-if (!empty($arrayfields['d.fk_statut']['checked'])) {
-	print_liste_field_titre($arrayfields['d.fk_statut']['label'], $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;
-}
 if (!$conf->main_checkbox_left_column) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	$totalarray['nbfield']++;
@@ -884,148 +996,193 @@ if ($num > 0) {
 					$totalarray['nbfield']++;
 				}
 			}
-			// Ref
-			if (!empty($arrayfields['d.ref']['checked'])) {
-				print '<td class="tdoverflowmax150">';
-				print $expensereportstatic->getNomUrl(1);
-				// Warning late icon and note
-				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toapprove')) {
-					print img_warning($langs->trans("Late"));
+			// Fields and extrafields with position ordered by user setup (fields of hooks are output after)
+			foreach ($arrayfields as $arraykey => $arrayval) {
+				// Extra fields
+				$regkey = array();
+				if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+					$extrafieldsonlykey = $regkey[1];
+					include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+					$extrafieldsonlykey = '';
+					continue;
 				}
-				if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) {
-					print img_warning($langs->trans("Late"));
-				}
-				if (!empty($obj->note_private) || !empty($obj->note_public)) {
-					print ' <span class="note">';
-					print '<a href="'.DOL_URL_ROOT.'/expensereport/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
-					print '</span>';
-				}
-				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($obj->ref);
-				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
+				switch ($arraykey) {
+					case 'd.rowid':
+						// Technical ID
+						if (!empty($arrayfields['d.rowid']['checked'])) {
+							print '<td class="center">'.((int) $obj->rowid).'</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
+					case 'd.ref':
+						// Ref
+						if (!empty($arrayfields['d.ref']['checked'])) {
+							print '<td class="tdoverflowmax150">';
+							print $expensereportstatic->getNomUrl(1);
+							// Warning late icon and note
+							if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toapprove')) {
+								print img_warning($langs->trans("Late"));
+							}
+							if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) {
+								print img_warning($langs->trans("Late"));
+							}
+							if (!empty($obj->note_private) || !empty($obj->note_public)) {
+								print ' <span class="note">';
+								print '<a href="'.dolBuildUrl(DOL_URL_ROOT.'/core/note.php', ['element' => 'expensereport', 'id' => $obj->rowid]).'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
+								print '</span>';
+							}
+							$filename = dol_sanitizeFileName($obj->ref);
+							$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+							$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+							print $formfile->getDocumentsLink($expensereportstatic->element, $filename, $filedir);
+							print '</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
+					case 'summary':
+						// Summary
+						if (!empty($arrayfields['summary']['checked'])) {
+							$summary = $expensereportstatic->getSummary();
+							print '<td title="'.dolPrintHTMLForAttribute($summary).'">';
+							print '<div class="twolinesmax-normallineheight minwidth200onall">';
+							print '<span class="spantitle">';
+							print dol_escape_htmltag($summary);
+							print '</span>';
+							print '</div>';
+							print '</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
+					case 'user':
+						// User
+						if (!empty($arrayfields['user']['checked'])) {
+							print '<td class="left tdoverflowmax125">';
+							print $usertmp->getNomUrl(-1);
+							print '</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
+					case 'd.date_debut':
+						// Start date
+						if (!empty($arrayfields['d.date_debut']['checked'])) {
+							print '<td class="center">'.($obj->date_debut > 0 ? dol_print_date($db->jdate($obj->date_debut), 'day') : '').'</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
+					case 'd.date_fin':
+						// End date
+						if (!empty($arrayfields['d.date_fin']['checked'])) {
+							print '<td class="center">'.($obj->date_fin > 0 ? dol_print_date($db->jdate($obj->date_fin), 'day') : '').'</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
+					case 'd.date_valid':
+						// Date validation
+						if (!empty($arrayfields['d.date_valid']['checked'])) {
+							print '<td class="center">'.($obj->date_valid > 0 ? dol_print_date($db->jdate($obj->date_valid), 'day') : '').'</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
+					case 'd.date_approve':
+						// Date approval
+						if (!empty($arrayfields['d.date_approve']['checked'])) {
+							print '<td class="center">'.($obj->date_approve > 0 ? dol_print_date($db->jdate($obj->date_approve), 'day') : '').'</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
+					case 'd.total_ht':
+						// Amount HT
+						if (!empty($arrayfields['d.total_ht']['checked'])) {
+							print '<td class="right">'.price($obj->total_ht)."</td>\n";
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+							if (!$i) {
+								$totalarray['pos'][$totalarray['nbfield']] = 'd.total_ht';
+							}
+							$totalarray['val']['d.total_ht'] += $obj->total_ht;
+						}
+						break;
+					case 'd.total_vat':
+						// Amount VAT
+						if (!empty($arrayfields['d.total_vat']['checked'])) {
+							print '<td class="right">'.price($obj->total_tva)."</td>\n";
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+							if (!$i) {
+								$totalarray['pos'][$totalarray['nbfield']] = 'd.total_tva';
+							}
+							$totalarray['val']['d.total_tva'] += $obj->total_tva;
+						}
+						break;
+					case 'd.total_ttc':
+						// Amount TTC
+						if (!empty($arrayfields['d.total_ttc']['checked'])) {
+							print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+							if (!$i) {
+								$totalarray['pos'][$totalarray['nbfield']] = 'd.total_ttc';
+							}
+							$totalarray['val']['d.total_ttc'] += $obj->total_ttc;
+						}
+						break;
+					case 'd.date_creation':
+						// Date creation
+						if (!empty($arrayfields['d.date_creation']['checked'])) {
+							print '<td class="nowrap center">';
+							print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+							print '</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
+					case 'd.tms':
+						// Date modification
+						if (!empty($arrayfields['d.tms']['checked'])) {
+							print '<td class="nowrap center">';
+							print dol_print_date($db->jdate($obj->date_modif), 'dayhour');
+							print '</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
+					case 'd.fk_statut':
+						// Status
+						if (!empty($arrayfields['d.fk_statut']['checked'])) {
+							print '<td class="nowrap center">'.$expensereportstatic->getLibStatut(5).'</td>';
+							if (!$i) {
+								$totalarray['nbfield']++;
+							}
+						}
+						break;
 				}
 			}
-			// Summary
-			if (!empty($arrayfields['summary']['checked'])) {
-				$summary = $expensereportstatic->getSummary();
-				print '<td title="'.dolPrintHTMLForAttribute($summary).'">';
-				print '<div class="twolinesmax-normallineheight minwidth200onall">';
-				print '<span class="spantitle">';
-				print dol_escape_htmltag($summary);
-				print '</span>';
-				print '</div>';
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// User
-			if (!empty($arrayfields['user']['checked'])) {
-				print '<td class="left tdoverflowmax125">';
-				print $usertmp->getNomUrl(-1);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Start date
-			if (!empty($arrayfields['d.date_debut']['checked'])) {
-				print '<td class="center">'.($obj->date_debut > 0 ? dol_print_date($db->jdate($obj->date_debut), 'day') : '').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// End date
-			if (!empty($arrayfields['d.date_fin']['checked'])) {
-				print '<td class="center">'.($obj->date_fin > 0 ? dol_print_date($db->jdate($obj->date_fin), 'day') : '').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Date validation
-			if (!empty($arrayfields['d.date_valid']['checked'])) {
-				print '<td class="center">'.($obj->date_valid > 0 ? dol_print_date($db->jdate($obj->date_valid), 'day') : '').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Date approval
-			if (!empty($arrayfields['d.date_approve']['checked'])) {
-				print '<td class="center">'.($obj->date_approve > 0 ? dol_print_date($db->jdate($obj->date_approve), 'day') : '').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Amount HT
-			if (!empty($arrayfields['d.total_ht']['checked'])) {
-				print '<td class="right">'.price($obj->total_ht)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'd.total_ht';
-				}
-				$totalarray['val']['d.total_ht'] += $obj->total_ht;
-			}
-			// Amount VAT
-			if (!empty($arrayfields['d.total_vat']['checked'])) {
-				print '<td class="right">'.price($obj->total_tva)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'd.total_tva';
-				}
-				$totalarray['val']['d.total_tva'] += $obj->total_tva;
-			}
-			// Amount TTC
-			if (!empty($arrayfields['d.total_ttc']['checked'])) {
-				print '<td class="right">'.price($obj->total_ttc)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'd.total_ttc';
-				}
-				$totalarray['val']['d.total_ttc'] += $obj->total_ttc;
-			}
-
-			// Extra fields
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			// Date creation
-			if (!empty($arrayfields['d.date_creation']['checked'])) {
-				print '<td class="nowrap center">';
-				print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Date modification
-			if (!empty($arrayfields['d.tms']['checked'])) {
-				print '<td class="nowrap center">';
-				print dol_print_date($db->jdate($obj->date_modif), 'dayhour');
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Status
-			if (!empty($arrayfields['d.fk_statut']['checked'])) {
-				print '<td class="nowrap center">'.$expensereportstatic->getLibStatut(5).'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
 			// Action column
 			if (!$conf->main_checkbox_left_column) {
 				print '<td class="nowrap center">';
