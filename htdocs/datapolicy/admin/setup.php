@@ -213,7 +213,7 @@ foreach ($arrayofparameters as $title => $tab) {
 			}
 			$otherfields = '';
 			foreach ($arrayofelem[$logicalKey]['anonymize_fields'] as $tmpkey => $tmpval) {
-				if ($tmpval !== 'MAKEANONYMOUS' && strpos((string) $tmpval, '__ID__') === false) {
+				if (is_array($tmpval) || ($tmpval !== 'MAKEANONYMOUS' && strpos((string) $tmpval, '__ID__') === false)) {
 					$otherfields .= ($otherfields ? ', ' : '').$tmpkey.' -> '.json_encode($tmpval);
 				}
 			}

@@ -752,7 +752,7 @@ try {
 
 
 		// Build System Prompt
-		$systemPrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: "You are an Assistant for Dolibarr ERP CRM ".DOL_VERSION." with access to a set of tools.";
+		$systemPrompt = getDolGlobalString('AI_INTENT_PROMPT') ?: getAiAssistantDefaultPrompt();
 		$systemPrompt .= "\n\n";
 
 		$systemRules = "## Rules:\n";
@@ -764,7 +764,9 @@ try {
 			// The chat runs the search, then calls back with its result so the action can follow.
 			$systemRules .= "* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it if the requested search is itself the FINAL answer.\n";
 		}
-		$systemRules .= "* Only when genuinely NO tool can fulfill the request, use `respond_to_user` to say so plainly instead of guessing a business reason.\n";
+		// Pure LLM tasks need no tool: without this rule, the model refuses them because no tool "generates text".
+		$systemRules .= "* When the request needs no Dolibarr data and no Dolibarr action (write or rewrite a text, an article or an email, translate, summarize, explain, answer a general question...), do it yourself and answer directly with {\"type\": \"message\", \"content\": \"...\"}. Never refuse such a request because no tool matches it.\n";
+		$systemRules .= "* Only when the request needs Dolibarr data or a Dolibarr action that genuinely NO tool can do, use `respond_to_user` to say so plainly instead of guessing a business reason.\n";
 		$systemRules .= "\n";
 
 		$systemPrompt .= $systemRules;
@@ -888,6 +890,7 @@ try {
 
 		if (!empty($apiKey)) {
 			$adapter = new UniversalLLMAdapter($adapterType, $apiKey, $url, $model, $timeout);
+			$adapter->setReasoningEffort(getAiReasoningEffort($serviceKey));
 
 			dol_syslog("parse_intent.php Prepare call AI API for model=".$model, LOG_DEBUG);
 			if (getDolGlobalString("AI_DEBUG")) {
@@ -914,7 +917,9 @@ try {
 			// stay one-shot), per-turn and global caps, privacy redaction applied.
 			$history = array();
 			if (!empty($data['history']) && is_array($data['history'])) {
-				$histTurns = array_slice($data['history'], 0, 12);
+				// Keep the LAST turns: the most recent exchanges, and the search result
+				// appended at the end on a followup round, are the ones that matter.
+				$histTurns = array_slice($data['history'], -aiChatContextMaxMessages());
 
 				// Persisted turns arrive as ids only: the text is rebuilt here from
 				// the stored conversation (llx_ai_chat_message.content_raw), so the
@@ -942,9 +947,10 @@ try {
 					}
 				}
 
-				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000);	// in characters
+				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);	// in characters
 				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
-				foreach ($histTurns as $turn) {
+				// Newest first, so the budget drops the oldest turns; put back in chronological order after.
+				foreach (array_reverse($histTurns) as $turn) {
 					if (is_array($turn) && !empty($turn['id'])) {
 						$turn = $histRows[(int) $turn['id']] ?? null;
 					}
@@ -972,6 +978,13 @@ try {
 						break;
 					}
 					$history[] = array('role' => ((($turn['role'] ?? '') === 'assistant') ? 'assistant' : 'user'), 'text' => $htext);
+				}
+				$history = array_reverse($history);
+
+				// The cut may start the history on an answer whose question was dropped: remove such
+				// orphan answers (some providers want a user turn first), but never the search result of a followup.
+				while (count($history) > ($isFollowup ? 1 : 0) && $history[0]['role'] === 'assistant') {
+					array_shift($history);
 				}
 			}
 
@@ -1121,9 +1134,6 @@ try {
 					$clean = $guard->unmaskAiResponse($clean);
 				}
 
-				// Removed carriage returns and newlines
-				$clean = preg_replace('/[\r\n]/', ' ', $clean);
-
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog('parse_intent.php response var clean='.$clean, LOG_DEBUG, 0, '_ai');
 				}
@@ -1136,6 +1146,22 @@ try {
 					// [ "type": "function", "function": "name": "api_...", "arguments": { ... } ]
 
 					$intentJSON = json_decode($clean, true);
+					if ($intentJSON === null) {
+						// Some models write real control characters (newlines, tabs...) inside the json strings, which is not valid: escape them
+						// (and not remove them, the markdown of the answer needs its lines) and try again.
+						$cleanescaped = preg_replace_callback(
+							'/"(?:[^"\\\\]++|\\\\.)*+"/s',
+							/**
+							 * @param string[] $reg Matches
+							 * @return string
+							 */
+							static function ($reg) {
+								return (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', strtr($reg[0], array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', "\t" => '\t')));
+							},
+							$clean
+						);
+						$intentJSON = json_decode((string) $cleanescaped, true);
+					}
 					if (getDolGlobalString("AI_DEBUG")) {
 						dol_syslog('parse_intent.php intentJSON = '.var_export($intentJSON, true), LOG_DEBUG, 0, '_ai');
 					}
@@ -1228,12 +1254,23 @@ try {
 							dol_syslog('parse_intent.php clean response is array', LOG_DEBUG, 0, '_ai');
 						}
 
+						// Only one tool runs per answer. When the model sent several calls, run the
+						// first and ask a followup round, so the model can do the next one with its result.
+						$nbFunctionCalls = 0;
+						foreach ($intentJSON as $f) {
+							if (is_array($f) && ($f['type'] ?? '') === 'function' && !empty($f['function']['name'])) {
+								$nbFunctionCalls++;
+							}
+						}
 						foreach ($intentJSON as $f) {
 							if (($f['type'] ?? '') === 'function' && isset($f['function']) && !empty($f['function']['name']) && !empty($f['function']['arguments'])) {
 								$intentJSON = [
 									"tool" => $f['function']['name'] ?? '',
 									'arguments' => json_decode($f['function']['arguments'], true) ?? []
 								];
+								if ($nbFunctionCalls > 1) {
+									$intentJSON['needs_followup'] = true;
+								}
 								break;
 							}
 						}
@@ -1611,9 +1648,10 @@ function aiQueryAsksForWrite($query, $langs)
 		}
 	}
 	$verbs = array_merge($verbs, array(
-		'create', 'add', 'modify', 'update', 'delete', 'remove', 'validate', 'send', 'change', 'set', 'edit', 'rename', 'close', 'cancel',
+		'create', 'add', 'modify', 'update', 'delete', 'remove', 'validate', 'send', 'change', 'set', 'edit', 'rename', 'close', 'cancel', 'push', 'publish',
 		'crée', 'cree', 'créer', 'creer', 'ajoute', 'ajouter', 'modifie', 'modifier', 'mets', 'met', 'mettre', 'change', 'changer', 'passe', 'passer',
-		'supprime', 'supprimer', 'efface', 'effacer', 'retire', 'retirer', 'valide', 'valider', 'envoie', 'envoyer', 'enregistre', 'enregistrer', 'renomme', 'renommer', 'clôture', 'cloture', 'annule', 'annuler'
+		'supprime', 'supprimer', 'efface', 'effacer', 'retire', 'retirer', 'valide', 'valider', 'envoie', 'envoyer', 'enregistre', 'enregistrer', 'renomme', 'renommer', 'clôture', 'cloture', 'annule', 'annuler',
+		'pousse', 'pousser', 'publie', 'publier'
 	));
 	$escaped = array();
 	foreach (array_unique(array_filter($verbs)) as $verb) {
@@ -1874,7 +1912,8 @@ function classifyIntentUniversal(string $query, Translate $langs)
 			// Member/Subscription: members and subscriptions tools are
 			// categorized ['thirdparty', 'billing'].
 			'keys'     => ['Bill', 'Invoice', 'Payment', 'Cheque', 'VAT', 'BillStatusUnpaid', 'BillStatusPaid', 'BillStatusDraft', 'Member', 'Subscription'],
-			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue', 'member', 'membership', 'subscription', 'cotisation', 'adhesion']
+			// 'bill' and 'vat': their keys translate to 'Invoice' and 'Sales tax' in en_US.
+			'synonyms' => ['paid', 'unpaid', 'pay', 'money', 'cost', 'amount', 'overdue', 'member', 'membership', 'subscription', 'cotisation', 'adhesion', 'bill', 'vat']
 		],
 		'commercial' => [
 			// 'Reception' and 'Shipment' matter: create_other_document (the tool
@@ -1885,7 +1924,8 @@ function classifyIntentUniversal(string $query, Translate $langs)
 			// Intervention: interventions tools are ['project', 'commercial'].
 			// WebSite/WebsitePage/BlogPost: websites tools (pages, blog posts) are ['commercial'].
 			'keys'     => ['Order', 'Proposal', 'Quote', 'SupplierOrder', 'OrderStatusDraft', 'Reception', 'Shipment', 'Delivery', 'Intervention', 'WebSite', 'WebsitePage', 'BlogPost'],
-			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive', 'intervention', 'website', 'webpage', 'blog']
+			// 'Proposal' translates to a 2-word label ("commercial proposal"), so the short words users type are listed too.
+			'synonyms' => ['sale', 'buy', 'purchase', 'contract', 'shipping', 'quote', 'reception', 'shipment', 'delivery', 'receive', 'intervention', 'website', 'webpage', 'blog', 'proposal', 'propal', 'propale', 'proposition', 'devis']
 		],
 		'thirdparty' => [
 			// Ticket and agenda-event tools are ['thirdparty', 'project'];
@@ -1894,7 +1934,8 @@ function classifyIntentUniversal(string $query, Translate $langs)
 			// UI key translates to 'Tag/category' - unusable as a keyword,
 			// hence plain synonyms).
 			'keys'     => ['ThirdParty', 'Customer', 'Supplier', 'Contact', 'Company', 'Ticket', 'Member', 'Subscription', 'Event', 'Agenda'],
-			'synonyms' => ['client', 'partner', 'address', 'phone', 'vendor', 'ticket', 'support', 'incident', 'member', 'adherent', 'membership', 'meeting', 'appointment', 'rdv', 'category', 'categorie', 'tag']
+			// 'supplier' and 'contact': their keys translate to 'Vendor' and 'Contact/Address' in en_US.
+			'synonyms' => ['client', 'partner', 'address', 'phone', 'vendor', 'ticket', 'support', 'incident', 'member', 'adherent', 'membership', 'meeting', 'appointment', 'rdv', 'category', 'categorie', 'tag', 'supplier', 'contact']
 		],
 		'stock' => [
 			'keys'     => ['Product', 'Service', 'Stock', 'Warehouse'],

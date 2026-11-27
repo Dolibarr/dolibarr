@@ -44,6 +44,10 @@ UPDATE llx_c_email_templates SET content = REPLACE(content, '__MEMBER_CIVILITY__
 
 ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
 
+-- Widget box_members.php removed in v16, but added again by activation of the Members module until v24
+DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file = 'box_members.php');
+DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
+
 -- Forgotten in previous versions: sequences of renamed tables were not renamed with pgsql
 -- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_c_methode_commande_fournisseur_rowid_seq RENAME TO llx_c_input_method_rowid_seq;
 -- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_label_rowid_seq RENAME TO llx_extrafields_rowid_seq;
@@ -601,11 +605,14 @@ ALTER TABLE llx_oauth_token ADD COLUMN passkey_aaguid varchar(36) NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_eligible smallint NULL;
 ALTER TABLE llx_oauth_token ADD COLUMN passkey_backup_state smallint NULL;
 ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_id (passkey_credential_id);
+ALTER TABLE llx_oauth_token ADD INDEX idx_oauth_token_fk_user (fk_user);
 
 -- RF or national reference the supplier provides to accept payments
 ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_rum;
 
 ALTER TABLE llx_facture_fourn MODIFY COLUMN payment_reference varchar(35);
+
+ALTER TABLE llx_chargesociales MODIFY COLUMN libelle varchar(128) NOT NULL;
 
 ALTER TABLE llx_bank_account ADD COLUMN sepa_transfer_schema_version varchar(2) AFTER sepa_local_instrument;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_charge_bearer varchar(4) DEFAULT 'SHAR' AFTER sepa_transfer_schema_version;
@@ -758,3 +765,11 @@ ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN doc_date_hour datetime NUL
 -- VMYSQL4.1 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = TIMESTAMP(doc_date, '12:00:00') WHERE doc_date_hour IS NULL;
 -- VPGSQL8.2 UPDATE llx_accounting_bookkeeping SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
 -- VPGSQL8.2 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
+
+ALTER TABLE llx_workstation_workstation ADD COLUMN model_pdf varchar(255) AFTER import_key;
+ALTER TABLE llx_workstation_workstation ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
+
+-- Remove the system prompt of the AI assistant saved by previous versions, so the new default prompt of v25 is used
+--noqa:disable=PRS
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'AI_INTENT_PROMPT';
+--noqa:enable=PRS

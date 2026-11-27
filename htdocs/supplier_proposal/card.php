@@ -2419,7 +2419,7 @@ if ($action == 'create') {
 						'enabled' => $object->status == SupplierProposal::STATUS_DRAFT,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddTitleLine'),
-						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_title_line'], true)
+						'url' => dolBuildUrl('/supplier_proposal/card.php', ['id' => $object->id, 'action' => 'add_title_line'], true)
 					);
 
 					$url_button[] = array(
@@ -2427,7 +2427,7 @@ if ($action == 'create') {
 						'enabled' => $object->status == SupplierProposal::STATUS_DRAFT,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddSubtotalLine'),
-						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
+						'url' => dolBuildUrl('/supplier_proposal/card.php', ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
 					);
 
 					$url_button[] = array(
@@ -2450,7 +2450,7 @@ if ($action == 'create') {
 
 				// Edit
 				if ($object->status == SupplierProposal::STATUS_VALIDATED && $usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=modif&token='.newToken().'">'.$langs->trans('Modify').'</a></div>';
+					print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=modif&token='.newToken());
 				}
 
 				// ReOpen

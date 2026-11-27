@@ -3091,7 +3091,7 @@ if ($action == 'create') {
 						'enabled' => $object->status == CommandeFournisseur::STATUS_DRAFT,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddTitleLine'),
-						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_title_line'], true)
+						'url' => dolBuildUrl('/fourn/commande/card.php', ['id' => $object->id, 'action' => 'add_title_line'], true)
 					);
 
 					$url_button[] = array(
@@ -3099,7 +3099,7 @@ if ($action == 'create') {
 						'enabled' => $object->status == CommandeFournisseur::STATUS_DRAFT,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddSubtotalLine'),
-						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
+						'url' => dolBuildUrl('/fourn/commande/card.php', ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
 					);
 
 					$url_button[] = array(
@@ -3139,7 +3139,7 @@ if ($action == 'create') {
 				// Modify
 				if ($object->status == CommandeFournisseur::STATUS_VALIDATED) {
 					if ($usercanorder) {
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+						print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken());
 					}
 				}
 
@@ -3308,7 +3308,7 @@ if ($action == 'create') {
 				// Delete
 				if (!empty($usercandelete)) {
 					if ($hasreception) {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ReceptionExist").'">'.$langs->trans("Delete").'</a>';
+						print dolGetButtonAction($langs->trans("ReceptionExist"), $langs->trans("Delete"), 'delete', '', '', -1);
 					} else {
 						print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')))."\n";
 					}

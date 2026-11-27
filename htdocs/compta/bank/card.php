@@ -90,6 +90,11 @@ if (GETPOSTINT("id") || GETPOST("ref")) {
 		$object->fetch(0, GETPOST("ref"));
 	}
 }
+if ($fieldid == 'ref' && !empty($id)) {
+	// The access check by ref keeps only digits of the ref, so we check on the id of the account found with the ref
+	$id = (int) $object->id;
+	$fieldid = 'rowid';
+}
 
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
@@ -940,7 +945,7 @@ if ($action == 'create') {
 			}
 
 			if ($user->hasRight('banque', 'configurer') && $object->status == $object::STATUS_OPEN) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+				print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id);
 			}
 
 			if ($user->hasRight('banque', 'configurer') && $object->status == $object::STATUS_OPEN) {

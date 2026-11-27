@@ -914,7 +914,12 @@ if ($search_subtype != '' && $search_subtype != '-1') {
 	$sql .= " AND f.subtype IN (".$db->sanitize($db->escape($search_subtype)).")";
 }
 if ($search_project_ref) {
-	$sql .= natural_search('p.ref', $search_project_ref);
+	if (empty($arrayfields['p.title']['checked'])) {
+		// The project label is shown into the ref column, so search on both
+		$sql .= natural_search(array('p.ref', 'p.title'), $search_project_ref);
+	} else {
+		$sql .= natural_search('p.ref', $search_project_ref);
+	}
 }
 if ($search_project) {
 	$sql .= natural_search('p.title', $search_project);
@@ -2696,9 +2701,14 @@ if ($num > 0) {
 
 			// Project ref
 			if (!empty($arrayfields['p.ref']['checked'])) {
-				print '<td class="tdoverflowmax150">';
+				// When the project label column is not displayed, we show the project label under the project ref
+				$showprojectlabelunderref = (empty($arrayfields['p.title']['checked']) && (string) $obj->project_label !== '');
+				print '<td class="tdoverflowmax150'.($showprojectlabelunderref ? ' tdlineheightsmall' : '').'">';
 				if ($obj->project_id > 0) {
 					print $projectstatic->getNomUrl(1);
+					if ($showprojectlabelunderref) {
+						print '<div class="tdoverflowmax150 lineheightsmall" title="'.dolPrintLabelForAttribute($obj->project_label).'"><span class="spantitle">'.dolPrintLabel($obj->project_label).'</span></div>';
+					}
 				}
 				print '</td>';
 				if (!$i) {

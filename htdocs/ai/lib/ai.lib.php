@@ -28,6 +28,17 @@
 
 include_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
+/**
+ * Max number of messages of past turns sent back to the AI as context with one question.
+ * Hard cap applied server-side, whatever the client sends (pins, "All" mode).
+ *
+ * @return int
+ */
+function aiChatContextMaxMessages()
+{
+	return 20;
+}
+
 
 /**
  * Prepare admin pages header
@@ -59,6 +70,36 @@ function getListOfAIFeatures()
 	);
 
 	return $arrayofaifeatures;
+}
+
+/**
+ * Return the values accepted for the reasoning effort of OpenAI-compatible APIs
+ *
+ * @return string[]
+ */
+function getListOfAiReasoningEfforts(): array
+{
+	return array('none', 'minimal', 'low', 'medium', 'high', 'xhigh');
+}
+
+/**
+ * Return the reasoning effort to send to an OpenAI-compatible API of a service, from the constant AI_API_<SERVICE>_REASONING_EFFORT
+ *
+ * @param	string	$service	Code of the AI service ('custom', 'chatgpt', ...)
+ * @return	string				One value of getListOfAiReasoningEfforts(), or '' to let the model decide
+ */
+function getAiReasoningEffort(string $service): string
+{
+	$effort = strtolower(getDolGlobalString('AI_API_'.strtoupper($service).'_REASONING_EFFORT'));
+	if ($effort === '') {
+		return '';
+	}
+	if (!in_array($effort, getListOfAiReasoningEfforts(), true)) {
+		dol_syslog("getAiReasoningEffort: unknown value '".$effort."' for service ".$service.", ignored", LOG_WARNING);
+		return '';
+	}
+
+	return $effort;
 }
 
 /**
@@ -459,7 +500,7 @@ function ai_convert_office_attachment_to_text($mime, $base64, &$error)
 	}
 
 	$text = '';
-	$maxsize = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000);
+	$maxsize = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);
 	try {
 		if ($type == 'docx' || $type == 'odt') {
 			// Text is in one XML entry of the zip: paragraph ends and tabs are kept, other tags are removed
@@ -1062,6 +1103,25 @@ function getAiAssistantDefaultModel()
 }
 
 /**
+ * Return the default system prompt of the AI Assistant, used when the constant AI_INTENT_PROMPT is empty.
+ *
+ * @return string	The default system prompt
+ */
+function getAiAssistantDefaultPrompt()
+{
+	return "ROLE: Dolibarr ERP AI.
+GOAL: Map user intent to specific JSON commands, or answer directly when no Dolibarr data or action is needed.
+
+CONSTRAINTS:
+1. OUTPUT: Single valid JSON object ONLY. No text outside the JSON.
+   Format: {\"tool\": \"tool_name\", \"arguments\": {\"argument_name\": \"argument_value\", ...}} or {\"type\": \"message\", \"content\": \"...\"}
+2. TOOLS: For Dolibarr data or actions, use ONLY provided tools. If no tool or thirdparty fits, you must first use 'respond_to_user' to inform user. For a request that needs no Dolibarr data (writing a text, translating, summarizing, general question), answer it yourself with {\"type\": \"message\", \"content\": \"...\"}.
+3. ARGS: strict adherence to schema. Do not invent parameters.
+4. MISSING INFO: If a required argument (like an ID) is missing, use 'ask_for_clarification'.
+5. SAFETY: For DELETE/UPDATE actions, you MUST use 'ask_for_confirmation'.";
+}
+
+/**
  * Resolve the API URL used by the AI Assistant for the configured provider
  * (same resolution order as assistant/parse_intent.php).
  *
@@ -1215,7 +1275,7 @@ function getAiChatAssistantConfig()
 		'AIAttachmentBlockedByPrivacy', 'AIAttachmentMustBeConvertedToText', 'AIAttachmentTypeNotAllowed', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
-		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
+		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC', 'UserGroups', 'Group',
 		// General UI
 		'NoDataAvailable',
 		'Error',
@@ -1421,13 +1481,12 @@ function getAiChatAssistantConfig()
 		// Attachment count cap, so the client mirrors the server-side guard
 		// of ai_validate_attachments() instead of hardcoding its own.
 		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
-		// Recent exchanges that follow the model by default (sliding window).
-		// Off (0) until an administrator decides otherwise: past answers carry
-		// business content the privacy masking does not cover, so sending them
-		// back on every request is not a default the module takes by itself.
-		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
+		// Recent messages that follow the model by default (sliding window).
+		// 4 by default, 0 to disable: past answers carry business content the
+		// privacy masking does not cover, so the administrator can turn it off.
+		'autoContext' => min(aiChatContextMaxMessages(), getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_MESSAGES', 4)),
 		// Max size (in characters) of the context sent back to the model, also the cap of one tool result.
-		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000),
+		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000),
 		// The "/" palette of the chat input, always on.
 		'palette' => 1,
 		// The raw API tools in the "/" palette (testing, advanced use); the commands are always there.
@@ -2696,7 +2755,10 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 		// Get parameters
 		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];
 		// requestState is set by the chat after the user confirmed a write, never by the model.
-		unset($toolParams['properties']['requestState']);
+		// The properties of a tool without parameter may be an empty object (encoded as {} in JSON) instead of an array.
+		if (isset($toolParams['properties']) && is_array($toolParams['properties'])) {
+			unset($toolParams['properties']['requestState']);
+		}
 
 		if ($isLargeSchema && isset($toolParams['properties']) && is_array($toolParams['properties'])) {
 			$requiredList = $toolParams['required'] ?? [];
@@ -2713,7 +2775,11 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 				// from the prompt entirely. This saves massive amounts of tokens
 				// on list/search functions (limit, sortorder, sqlfilters, etc).
 				// -----------------------------------------------------------
-				if (!$isRequired && isset($propData['default'])) {
+				// Paging, sort and filter params of list tools are kept (without description): without them,
+				// the model can't answer "the last 5 ..." or filter a list, and gets the 25 first records.
+				// count is kept so a "how many ..." question is answered without loading the records.
+				// subdir, search and recursive are kept so the file tools can list another directory than the root.
+				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters', 'count', 'subdir', 'search', 'recursive'))) {
 					continue;
 				}
 

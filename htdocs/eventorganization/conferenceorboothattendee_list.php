@@ -120,6 +120,7 @@ if (!$sortorder) {
 
 // Initialize array of search criteria
 $search_all = GETPOST('search_all', 'alphanohtml');
+$search_projecttitle = GETPOST('search_projecttitle', 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -154,6 +155,9 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+
+// Add the "Project label" column (from a joined table so not into $object->fields)
+$arrayfields['prj.title'] = array('label' => 'ProjectLabel', 'checked' => 1, 'enabled' => 1, 'position' => null, 'help' => '');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add hook to complete $arrayfield
@@ -162,6 +166,11 @@ $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $objec
 
 // Change position of fields in arrayfield and object
 include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
+// Set the position of the "Project label" column right after the "Project" column, when the user has not already positioned it
+if (!isset($arrayfields['prj.title']['position']) && isset($arrayfields['t.fk_project']['position'])) {
+	$arrayfields['prj.title']['position'] = $arrayfields['t.fk_project']['position'] + 0.5;
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -233,6 +242,7 @@ if (empty($reshook)) {
 				$search[$key.'_dtend'] = '';
 			}
 		}
+		$search_projecttitle = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -291,6 +301,7 @@ $morecss = array();
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
+$sql .= ", prj.title as projecttitle";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -313,6 +324,8 @@ if (!empty($confOrBooth->id)) {
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
+// Add the project table to be able to show the project label
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as prj ON prj.rowid = t.fk_project";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -328,6 +341,9 @@ if (!empty($projectstatic->id)) {
 if (!empty($thirdpartyid)) {
 	$sql .= " AND t.fk_soc = ".((int) $thirdpartyid);
 }
+if ($search_projecttitle != '') {
+	$sql .= natural_search('prj.title', $db->sanitize($search_projecttitle), 0);
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -341,7 +357,7 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search($db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
@@ -417,7 +433,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-eventorganization page-attendee-list classforhorizontalscrolloftabs');
 
 // Copied almost verbertum from htdocs/ticket/list.php and modified based on the project one below
-if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 0) {
+if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth->id > 0) {
 	$withThirdpartyUrl = '';
 
 	if (!empty($withthirdparty)) {
@@ -485,7 +501,7 @@ if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 
 	}
 }
 
-if ($projectstatic->id > 0 || $confOrBooth > 0) {
+if ($projectstatic->id > 0 || $confOrBooth->id > 0) {
 	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 		$projectstatic->fetchComments();
 	}
@@ -822,6 +838,9 @@ foreach ($search as $key => $val) {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }
+if ($search_projecttitle != '') {
+	$param .= '&search_projecttitle='.urlencode($search_projecttitle);
+}
 $param .= $withProjectUrl;
 
 // Add $param from extra fields
@@ -911,7 +930,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup @phan-suppress-current-line PhanTypeMismatchArgument
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -947,7 +966,8 @@ foreach ($object->fields as $key => $val) {
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
-			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
+			$searchcss = (($key == 'fk_project') ? 'width125' : 'maxwidth250');
+			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' '.$searchcss, 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -962,6 +982,13 @@ foreach ($object->fields as $key => $val) {
 		} else {
 			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
+		print '</td>';
+	}
+
+	// Add the "Project label" column after the "Project" column (it is not a field of the object)
+	if ($key == 'fk_project' && !empty($arrayfields['prj.title']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input type="text" class="flat maxwidth75" name="search_projecttitle" value="'.dol_escape_htmltag($search_projecttitle).'">';
 		print '</td>';
 	}
 }
@@ -1006,6 +1033,12 @@ foreach ($object->fields as $key => $val) {
 	$cssforfield = preg_replace('/small\s*/', '', $cssforfield);	// the 'small' css must not be used for the title label
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''), 0, (empty($val['helplist']) ? '' : $val['helplist']))."\n";
+		$totalarray['nbfield']++;
+	}
+
+	// Add the "Project label" column after the "Project" column (it is not a field of the object)
+	if ($key == 'fk_project' && !empty($arrayfields['prj.title']['checked'])) {
+		print getTitleFieldOfList($arrayfields['prj.title']['label'], 0, $_SERVER['PHP_SELF'], 'prj.title', '', $param, 'class="left tdoverflowmax250"', $sortfield, $sortorder, 'left tdoverflowmax250 ')."\n";
 		$totalarray['nbfield']++;
 	}
 }
@@ -1138,6 +1171,16 @@ while ($i < $imaxinloop) {
 						$totalarray['val']['t.'.$key] = 0;
 					}
 					$totalarray['val']['t.'.$key] += $object->$key;
+				}
+			}
+
+			// Add the "Project label" column after the "Project" column (it is not a field of the object)
+			if ($key == 'fk_project' && !empty($arrayfields['prj.title']['checked'])) {
+				print '<td class="left tdoverflowmax250 classfortooltip" title="'.dol_escape_htmltag(dol_trunc($obj->projecttitle, 120)).'">';
+				print '<span class="spantitle">'.dolPrintLabel($obj->projecttitle).'</span>';
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
 				}
 			}
 		}

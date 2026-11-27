@@ -73,11 +73,22 @@ and uses `skill-doli-code-review` for the code review.
    - **r) 🟢 Re-run the CI** → only proposed when it is useful, and always displayed with the 🟢
      emoji in front of it (Markdown has no color). Run the action **Re-run the CI**, then display
      the same PR again with its choices.
+   - **b) 🟢 Update branch** → displayed with the 🟢 emoji like **r)**, only proposed in one of
+     these cases:
+     - the Travis status is `ACTION_REQUIRED` (it can not be restarted from here) and all the
+       other checks are OK;
+     - no CI ran at all on the head commit (empty `statusCheckRollup` and no run returned by
+       `gh run list --commit HEADREFOID`).
 
-   When **m)** or **r)** is not proposed, keep the same letters (a, n) so that a letter always
+     Updating the branch pushes a new commit, so the whole CI, Travis included, runs again.
+     Run the action **Update branch**, then display the same PR again with its choices.
+
+   When **m)**, **r)** or **b)** is not proposed, keep the same letters (a, n) so that a letter always
    means the same choice. There is no Stop choice: when the user asks to stop, go back to the
    initial branch if needed and give a short summary of the session (PRs processed and actions done).
-4. If **a)**, run the "Process a PR" procedure below, then go back to step 3 with the next PR.
+4. If **a)**, run the "Process a PR" procedure below. At its end, after the verdict, do not move
+   to the next PR on your own: propose again the choices for the same PR, **m) Merge** (only if it
+   is still mergeable with the CI OK) and **n) Next one**, and wait for the user's answer.
 5. When the list is empty, say so and stop.
 
 
@@ -111,12 +122,12 @@ run the action **Update branch** (no confirmation).
     `curl -s https://api.travis-ci.com/v3/job/JOBID/log.txt`.
   - Tell apart: error introduced by the PR (to fix), error already existing on the base branch,
     infrastructure error (timeout, network). Fix only the errors introduced by the PR. For other
-    cases, report them to the user and go to the next PR.
+    cases, report them to the user.
   - Make the smallest fix possible, respecting the rules of `AGENTS.md`. Do not change the
     behaviour intended by the PR.
 - **Other failing checks** (e.g. `Check PR quota per user`, PR description check, pre-commit):
   report them to the user, propose the action **Comment** if the author must do something,
-  otherwise go to the next PR.
+  otherwise end the procedure.
 
 ### Case 3 - No CI error: review
 
@@ -144,7 +155,7 @@ run the action **Update branch** (no confirmation).
 5. Give the user a short verdict: OK / minor remarks / **serious problem**.
 6. If a **serious problem** is found (security vulnerability, blocking bug, data loss, regression,
    broken upgrade): run the action **Comment** to describe the problem.
-   For minor remarks, only report them to the user and go to the next PR.
+   For minor remarks, only report them to the user.
 
 
 ## Actions
@@ -193,6 +204,8 @@ gh api -X PUT repos/Dolibarr/dolibarr/pulls/N/update-branch -f expected_head_sha
 
 If GitHub refuses because of a merge conflict, do not try to resolve it here: report it to the user
 and propose the action **Comment** to ask the author to rebase and resolve the conflict.
+If GitHub refuses because the branch is already up to date with its base branch (no new commit on the
+base branch), tell the user: no new CI run can be started this way.
 
 ### Re-run the CI (the choice r) is the confirmation)
 

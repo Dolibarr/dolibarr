@@ -2,7 +2,8 @@
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024-2026	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2026  MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
  */
 
 /**
- *      \file       htdocs/compta/paiement_charge.php
+ *      \file       htdocs/compta/paiement_vat.php
  *      \ingroup    tax
  *      \brief      Page to add payment of a tax
  */
@@ -293,19 +294,15 @@ if ($action == 'create') {
 
 		print '<td class="center">';
 
-		if ($sumpaid != $objp->amount) {
-			$namef = "amount_".$objp->id;
-			$nameRemain = "remain_".$objp->id;
-			/* Disabled, we autofil the amount with remain to pay by default
-			if (!empty($conf->use_javascript_ajax)) {
-					print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
-			} */
-			$remaintopay = (float) $objp->amount - $sumpaid;
-			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" class="right width75" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
-		} else {
-			print '-';
-		}
+		$namef = "amount_".$objp->id;
+		$nameRemain = "remain_".$objp->id;
+		/* Disabled, we autofil the amount with remain to pay by default
+		if (!empty($conf->use_javascript_ajax)) {
+			print img_picto("Auto fill", 'rightarrow.png', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
+		} */
+		$remaintopay = (float) $objp->amount - $sumpaid;
+		print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
+		print '<input type="text" class="right width75" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
 		print "</td>";
 
 		print "</tr>\n";
