@@ -42,6 +42,7 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOST('mode', 'alpha');
+$tabfamily = GETPOST('tabfamily', 'aZ09');	// 'projectstats' to show the tab with the custom reports tool
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
 
@@ -136,6 +137,42 @@ if ($search_project_user == $user->id) {
 }
 
 print_barre_liste($form->textwithpicto($title, $htmltooltip), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+
+// The custom reports tool is not available to external users
+$showtabcustomreports = empty($user->socid);
+$tabfamilycustomreports = 'projectstats';
+
+$h = 0;
+$head = array();
+$head[$h][0] = DOL_URL_ROOT.'/projet/stats/index.php?mode=statistics';
+$head[$h][1] = $langs->trans("ByMonthYear");
+$head[$h][2] = 'byyear';
+$h++;
+
+if ($showtabcustomreports) {
+	$head[$h][0] = DOL_URL_ROOT.'/projet/stats/index.php?tabfamily='.$tabfamilycustomreports;
+	$head[$h][1] = $langs->trans("CustomReport");
+	$head[$h][2] = 'customreports';
+	$h++;
+}
+
+complete_head_from_modules($conf, $langs, null, $head, $h, 'project_stats');
+
+// Show the tab with the custom reports tool
+if ($showtabcustomreports && $tabfamily == $tabfamilycustomreports) {
+	print dol_get_fiche_head($head, 'customreports', '', -1);
+
+	define('USE_CUSTOM_REPORT_AS_TAB', 1);
+	$customreportobjecttype = 'project';
+	include DOL_DOCUMENT_ROOT.'/core/customreports.php';
+
+	print dol_get_fiche_end();
+
+	llxFooter();
+	$db->close();
+	exit;
+}
 
 
 dol_mkdir($dir);
@@ -279,15 +316,6 @@ if (!count($arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 
-
-$h = 0;
-$head = array();
-$head[$h][0] = DOL_URL_ROOT.'/projet/stats/index.php';
-$head[$h][1] = $langs->trans("ByMonthYear");
-$head[$h][2] = 'byyear';
-$h++;
-
-complete_head_from_modules($conf, $langs, null, $head, $h, 'project_stats');
 
 print dol_get_fiche_head($head, 'byyear', '', -1, '');
 

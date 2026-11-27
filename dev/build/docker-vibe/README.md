@@ -56,15 +56,19 @@ Each time the image is rebuilt with changes, the previous image is kept untagged
 ````
 vibes --clean-images
 ````
+To only list these images (the current one, with its status against the build context, and the obsolete ones) and the containers using them, without removing anything, run `vibes --list-images`.
 
 ### Build (or rebuild) image of the container.
-The build context is created on the fly to include the `.pre-commit-config.yaml` of the repository (see the pre-commit section), so build with the same command as `vibes.sh`:
+`vibes.sh` builds the image only when the files used by the Dockerfile (the directory `dev/build/docker-vibe` without `vibes.sh` and `README.md`) have changed since the last build (a hash of the build context is stored as a label of the image). Otherwise the last image built is used as is, whatever the directory `vibes.sh` is launched from: after a rebuild with `vibes --no-cache` from one repository, the containers launched later from the other repositories use this new image.
+
+The build context does not contain any file of the repository (not even its `.pre-commit-config.yaml`, see the pre-commit section), so the image is the same for all the repositories. To build manually, from the root of this repository:
 ````
-tar -cf - -C dev/build/docker-vibe . -C "$PWD" .pre-commit-config.yaml | sudo docker build -t docker-vibe --no-cache -
+tar -cf - --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner --exclude=./vibes.sh --exclude=./README.md -C dev/build/docker-vibe . | sudo docker build -t docker-vibe --label org.dolibarr.docker-vibe=1 --no-cache -
 ````
+An image built manually has no hash label, so the next `vibes.sh` builds it again (from the docker build cache).
 
 ### Run image
-GIT_DIR=`basename $PWD` sudo docker run --rm -it -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e HOST_USER="$(id -un)" --network=host --cap-add=NET_ADMIN -v "$HOME/git/test:/test" -v "$HOME/.vibe:/home/$(id -un)/.vibe" --mount type=bind,src="$HOME/git/$GIT_DIR",dst=/$GIT_DIR -w /$GIT_DIR dockervibe bash
+GIT_DIR=`basename $PWD` sudo docker run --rm -it -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e HOST_USER="$(id -un)" --network=host --cap-add=NET_ADMIN -v "$HOME/git/test:/test" -v "$HOME/.vibe:/home/$(id -un)/.vibe" -v "$HOME/.cache/docker-vibe/pre-commit:/var/cache/pre-commit" --mount type=bind,src="$HOME/git/$GIT_DIR",dst=/$GIT_DIR -w /$GIT_DIR dockervibe bash
 
 ## Clipboard and links work with the desktop of the host
 
@@ -104,9 +108,11 @@ To activate the hooks on your commits, run into the container, once:
 pre-commit install
 ````
 
-The hooks environments are preloaded into the image when it is built (they are the downloads you see at the first use of pre-commit elsewhere).
-They are stored into the directory `/var/cache/pre-commit`, declared with `PRE_COMMIT_HOME` in the Dockerfile, and are already present at the first run into the container.
-If the `.pre-commit-config.yaml` of the repository changes after the image was built (new revision of a hook), only the changed hooks are downloaded at the first run.
+The hooks environments are not preloaded into the image: each repository has its own `.pre-commit-config.yaml` (with its own revisions of the hooks), and the image must stay the same for all the repositories.
+They are stored into the directory `/var/cache/pre-commit` of the container (declared with `PRE_COMMIT_HOME` in the Dockerfile), which is a directory of the host mounted by `vibes.sh`:
+`~/.cache/docker-vibe/pre-commit` (`~/.cache/docker-claude/pre-commit` for `claudes.sh`, the environments are not shared between the two images).
+So the hooks of a revision are downloaded only once, at their first use, then reused by all the next containers, whatever the repository.
+This cache grows with the old revisions of the hooks: to clean it, run `pre-commit gc` into the container (removes the unused revisions) or remove the directory from the host.
 
 ## Playwright and Chromium
 
@@ -150,20 +156,22 @@ Known limits (this is a protection against accidental emails, not a security san
 - Only the sendmail path is intercepted into the image itself. The Dolibarr send modes "SMTP socket" and "SwiftMailer" (see `htdocs/core/class/smtps.class.php`) use the network: they are closed by the block of the outbound SMTP ports of the VM, installed at each container start (see next section).
 - The emails sent through HTTP APIs (SendGrid, Mailjet, ...) on the port 443 are not concerned: they are indistinguishable from any other HTTPS call.
 
-### Block the outbound SMTP ports of the VM
+### Block the outbound SMTP ports of the container
 
-The containers are run with `--network=host`, so their network connections are the ones of the machine that runs them: the image can not block them itself, it must be done at the level of the machine (the VM) with iptables. The script `smtpblock.sh` does it. It is installed into the image (`/usr/local/bin/smtpblock.sh`) and called by `docker-entrypoint.sh` at the start of each container, so the protection is always active and nothing has to be remembered:
+The containers are run with `--network=host` (and `--cgroupns=host`), so their network connections are the ones of the machine that runs them: the image can not block them itself, it must be done at the level of the machine with iptables. The script `smtpblock.sh` does it. It is installed into the image (`/usr/local/bin/smtpblock.sh`) and called by `docker-entrypoint.sh` at the start of each container, so the protection is always active and nothing has to be remembered:
 
 ````
-sudo dev/build/docker-vibe/smtpblock.sh            Install the block (also done automatically at each container start)
-sudo dev/build/docker-vibe/smtpblock.sh --status   Show the state
-sudo dev/build/docker-vibe/smtpblock.sh --remove   Remove the block
+sudo dev/build/docker-vibe/smtpblock.sh                        Install the block (also done automatically at each container start)
+sudo dev/build/docker-vibe/smtpblock.sh --status               Show the state
+sudo dev/build/docker-vibe/smtpblock.sh --remove               Remove the block
 ````
 
-The script rejects the connections to the ports 25, 465 and 587 for the whole VM (IPv4 and IPv6), inserted at the top of the OUTPUT chain so they take precedence over any existing ACCEPT rule. The connections fail immediately (REJECT) instead of hanging.
+The script rejects the connections to the ports 25, 465 and 587 (IPv4 and IPv6), inserted at the top of the OUTPUT chain so they take precedence over any existing ACCEPT rule. The connections fail immediately (REJECT) instead of hanging.
+
+On a machine with the unified cgroup v2 hierarchy (the default on the current distributions, Ubuntu 21.10+), the block installed at the container start is **scoped to the only container** (`--cgroup`, with the cgroup path seen from the host thanks to `--cgroupns=host`): the other processes of the machine can still connect to these ports. Without the unified hierarchy (cgroup v1 on the VM), the block used at the start is the one of the whole machine, and the same is then true when the script is run by hand without `--cgroup`.
 
 Requirements and notes:
 - The container must be run with the capability `--cap-add=NET_ADMIN` (done by `vibes.sh`), otherwise the block can not be installed and the container refuses to start. To start a container that is allowed to send emails (for example to test the SMTP features of Dolibarr), run it with `DOCKER_ALLOW_SMTP=1 vibes` (the variable is passed to the container by `vibes.sh`).
-- The block stays on the VM when the container stops (it is reinstalled at the next start anyway). Use `--remove` to remove it.
-- The rules are not persistent: they are lost at the next reboot of the VM (and reinstalled at the next container start). To have them permanent, save them with `iptables-persistent` (`sudo apt-get install iptables-persistent` then `sudo netfilter-persistent save`).
-- The block applies to all the processes of the VM, not only to the containers: an MTA running on the VM can no longer deliver its queue either, and the local submission to a MTA of the VM through the port 25 is also blocked (this is one of the paths to close).
+- The container must be run with `--cgroupns=host` (done by `vibes.sh`) so the scoped block can identify its cgroup, otherwise it refuses to start (there is no safe way to scope the block when the cgroup of the container is not seen from inside as the kernel sees it).
+- The rules are not persistent: they are lost at the next reboot of the VM (and the scoped one reinstalled at the next container start). A scoped rule left behind by a stopped container does not match anything anymore (its cgroup no longer exists), it can be cleaned with `--remove`. To have a block of the whole machine permanent, save it with `iptables-persistent` (`sudo apt-get install iptables-persistent` then `sudo netfilter-persistent save`).
+- On cgroup v1, the block applies to all the processes of the machine, not only to the containers (this is one of the paths to close).

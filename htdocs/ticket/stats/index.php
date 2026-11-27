@@ -116,7 +116,7 @@ $h++;
 
 if ($showtabcustomreports) {
 	$head[$h][0] = DOL_URL_ROOT.'/ticket/stats/index.php?tabfamily=ticketstats';
-	$head[$h][1] = $langs->trans("Custom");
+	$head[$h][1] = $langs->trans("CustomReport");
 	$head[$h][2] = 'customreports';
 	$h++;
 }

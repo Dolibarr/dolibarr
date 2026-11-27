@@ -186,7 +186,7 @@ $excludedModules = getDolGlobalInt('MAIN_USE_NEW_SUPPLIERMOD') ? array('modFourn
 // every disabled module found on disk. If we are looking at our own entity, $conf->global already
 // has this cached from bootstrap and no query is needed at all.
 if ($entity == $conf->entity) {
-	$enabledmoduleconst = (array) $conf->global;
+	$enabledmoduleconst = get_object_vars($conf->global);
 } else {
 	$enabledmoduleconst = array();
 	$sql = "SELECT ".$db->decrypt('name')." as name, ".$db->decrypt('value')." as value";
@@ -619,6 +619,13 @@ foreach ($arrayofpermission as $i => $obj) {
 			continue;
 		}
 		if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
+			$i++;
+			continue;
+		}
+	}
+	if (!getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
+		// Permissions on delivery receipts are hidden when the delivery receipt feature is disabled
+		if ($obj->module == 'expedition' && in_array($obj->perms, array('delivery', 'delivery_advance'))) {
 			$i++;
 			continue;
 		}

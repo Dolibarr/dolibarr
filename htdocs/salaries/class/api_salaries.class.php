@@ -64,18 +64,21 @@ class Salaries extends DolibarrApi
 	/**
 	 * Get the list of salaries.
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string    $sortfield  Sort field
 	 * @param string    $sortorder  Sort order
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.fk_user:=:6) and (t.datep:>:'20250101')"
+	 * @param int		$count		Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return array                List of salary objects
-	 * @phan-return Salary[]
-	 * @phpstan-return Salary[]
+	 * @phan-return Salary[]|array{count:int}
+	 * @phpstan-return Salary[]|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $count = 0)
 	{
 		$list = array();
 
@@ -103,6 +106,11 @@ class Salaries extends DolibarrApi
 			if ($errormessage) {
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
+		}
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);

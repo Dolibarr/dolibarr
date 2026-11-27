@@ -7,7 +7,7 @@ GET http://{{hostnport}}/api/index.php/warehouses?sortfield=t.rowid&sortorder=AS
 HTTP 200
 
 # GET sorted warehouses
-GET http://{{hostnport}}/api/index.php/warehouses?sortfield=t.rowid&sortorder=DSC
+GET http://{{hostnport}}/api/index.php/warehouses?sortfield=t.rowid&sortorder=DESC
 HTTP 200
 
 # GET with limit and page

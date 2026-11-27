@@ -583,7 +583,7 @@ if (isModEnabled('invoice')) {
 	print '</td></tr>';
 
 	// Mention category of operations
-	// French Decret n°2099-1299 2022-10-07
+	// French Decret n°2022-1299 2022-10-07
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("InvoiceOptionCategoryOfOperations"), $langs->trans('InvoiceOptionCategoryOfOperationsHelp'), 1);
 	print '</td><td>';

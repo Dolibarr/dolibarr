@@ -10,6 +10,7 @@
  * Copyright (C) 2024-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +155,7 @@ $coldisplay = 0;
 
 $coldisplay++;
 ?>
-	<td class="linecoldesc minwidth250onall">
+	<td class="linecoldescription linecoldesc minwidth250onall">
 	<div id="line_<?php echo $line->id; ?>"></div>
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
@@ -267,15 +268,15 @@ $coldisplay++;
 		$type_tva = 2;
 	}
 	if (!$situationinvoicelinewithparent) {
-		print '<td class="right nowraponall">';
+		print '<td class="linecolvat right nowraponall">';
 		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1, (int) $type_tva);
 		print '</td>';
 	} else {
-		print '<td class="right nowraponall"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
+		print '<td class="linecolvat right nowraponall"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
 	}
 
 	$coldisplay++;
-	print '<td class="right"><input type="text" class="flat right width75" id="price_ht" name="price_ht" value="'.(GETPOSTISSET('price_ht') ? GETPOST('price_ht', 'alpha') : (isset($line->pu_ht) ? price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0))).'"';
+	print '<td class="linecoluht right"><input type="text" class="flat right width75" id="price_ht" name="price_ht" value="'.(GETPOSTISSET('price_ht') ? GETPOST('price_ht', 'alpha') : (isset($line->pu_ht) ? price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0))).'"';
 	if ($situationinvoicelinewithparent) {
 		print ' readonly';
 	}
@@ -287,7 +288,7 @@ $coldisplay++;
 		if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
 			$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
 		}
-		print '<td class="right"><input type="text" class="flat right width75" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
+		print '<td class="linecoluttc right"><input type="text" class="flat right width75" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
 		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
@@ -296,7 +297,7 @@ $coldisplay++;
 
 	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
 		$coldisplay++;
-		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
+		print '<td class="linecoluht_currency right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
 
 	if (isModEnabled("multicurrency") && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
@@ -305,10 +306,10 @@ $coldisplay++;
 		if (!$multicurrency_upinctax) {
 			$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // One tax
 		}
-		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_price_ttc" name="multicurrency_price_ttc" value="'. ($multicurrency_upinctax ? $multicurrency_upinctax : price($line->multicurrency_subprice)).'" /></td>';
+		print '<td class="linecoluttc_currency right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_price_ttc" name="multicurrency_price_ttc" value="'. ($multicurrency_upinctax ? $multicurrency_upinctax : price($line->multicurrency_subprice)).'" /></td>';
 	}
 	?>
-	<td class="right">
+	<td class="linecolqty right">
 	<?php $coldisplay++;
 	if (($line->info_bits & 2) != 2) {
 		// I comment warning of stock because it shows the info even when it should not.
@@ -346,7 +347,7 @@ $coldisplay++;
 			}
 		}
 		$coldisplay++;
-		print '<td class="left">';
+		print '<td class="linecoluseunit left">';
 		print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units') : $line->fk_unit, "units", 0, $unit_type);
 		print '</td>';
 	}

@@ -466,7 +466,7 @@ function noteLoadProjet()
 	$notemorehtmlref = function (Project $object, Form $form, string $action): string {
 		$morehtmlref = '<div class="refidno">';
 		// Title
-		$morehtmlref .= $object->title;
+		$morehtmlref .= '<span class="banner-object-name-alias">'.$object->title.'</span>';
 		// Thirdparty
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
@@ -2051,7 +2051,7 @@ function noteLoadMailing()
 
 	// Security check
 	$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-	restrictedArea($user, $object->module, $object->id, $object->table_element, '', '', 'rowid', $isdraft);
+	restrictedArea($user, 'mailing', $object->id, $object->table_element, '', '', 'rowid', $isdraft);
 
 	$notemorehtmlref = function (Mailing $object, Form $form, string $action) use ($user): string {
 		$morehtmlref = '<div class="refidno">';

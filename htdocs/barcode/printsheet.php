@@ -395,9 +395,8 @@ $form = new Form($db);
 llxHeader('', $langs->trans("BarCodePrintsheet"), '', '', 0, 0, '', '', '', 'mod-barcode page-printsheet');
 
 print load_fiche_titre($langs->trans("BarCodePrintsheet"), '', 'barcode');
-print '<br>';
 
-print '<span class="opacitymedium">'.$langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'</span><br>';
+print '<div class="info">'.$langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'</div>';
 print '<br>';
 
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
@@ -516,7 +515,7 @@ if ($user->hasRight('societe', 'lire')) {
 	print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"><label for="fillfromthirdparty"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").'</label>';
 	print '<br>';
 	print '<div class="showforthirdpartyselector">';
-	print $form->select_company(GETPOSTINT('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
+	print $form->select_company(GETPOSTINT('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300 valignmiddle');
 	print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector small" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 	print '</div>';
 }

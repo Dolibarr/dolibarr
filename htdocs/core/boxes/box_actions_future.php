@@ -260,7 +260,7 @@ class box_actions_future extends ModeleBoxes
 				if (getDolGlobalInt('SHOW_DIALOG_HOMEPAGE') > 1) {    // autoclose after this delay
 					$out .= 'setTimeout(function(){';
 					$out .= '$("#dialogboxaction").dialog("close");';
-					$out .= '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE * 1000).');';
+					$out .= '}, '.(getDolGlobalInt('SHOW_DIALOG_HOMEPAGE') * 1000).');';
 				}
 				$out .= '</script>';
 			} else {
