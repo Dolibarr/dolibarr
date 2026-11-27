@@ -275,6 +275,29 @@ class RestAPIAgendaEventsTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * testRestAgendaEventPostReminder
+	 *
+	 * @return void
+	 */
+	public function testRestAgendaEventPostReminder()
+	{
+		$test = "Add a reminder to an agenda event";
+
+		$event_id = $this->createEvent($test);
+
+		try {
+			$result = $this->getUrl('agendaevents/'.$event_id.'/reminders', $test, 'POST', array("typeremind" => "email", "offsetvalue" => 2, "offsetunit" => "d"));
+			$this->assertCount(1, $result['content'], "$test One reminder must be created for the owner");
+			$this->assertGreaterThan(0, (int) $result['content'][0], "$test Id of reminder is not > 0");
+
+			$this->getUrl('agendaevents/'.$event_id.'/reminders', "$test (bad unit)", 'POST', array("typeremind" => "email", "offsetvalue" => 2, "offsetunit" => "y"), 400);
+			$this->getUrl('agendaevents/999999999/reminders', "$test (event not found)", 'POST', array("typeremind" => "email", "offsetvalue" => 2, "offsetunit" => "d"), 404);
+		} finally {
+			$this->getUrl('agendaevents/'.$event_id, "$test (cleanup)", 'DELETE');
+		}
+	}
+
+	/**
 	 * testRestAgendaEventDelete
 	 *
 	 * @return int	Id of the deleted agenda event

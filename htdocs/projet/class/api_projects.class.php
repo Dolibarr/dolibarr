@@ -83,7 +83,7 @@ class Projects extends DolibarrApi
 		}
 
 		$result = $this->project->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Project with supplied id not found');
 		}
 
@@ -115,7 +115,7 @@ class Projects extends DolibarrApi
 		}
 
 		$result = $this->project->fetch(0, $ref);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Project with supplied ref not found');
 		}
 
@@ -147,7 +147,7 @@ class Projects extends DolibarrApi
 		}
 
 		$result = $this->project->fetch(0, '', $ref_ext);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Project with supplied ref_ext not found');
 		}
 
@@ -179,7 +179,7 @@ class Projects extends DolibarrApi
 		}
 
 		$result = $this->project->fetch(0, '', '', $email_msgid);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'Project with supplied email_msgid not found');
 		}
 
@@ -967,7 +967,7 @@ class Projects extends DolibarrApi
 		}
 
 		//this query will return total orders with the filters given
-		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+		$sqlTotals = $sql; // Without ORDER BY and LIMIT
 
 		// Return only the number of records matching the filters
 		if ($count) {
@@ -1003,8 +1003,7 @@ class Projects extends DolibarrApi
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
-			$totalsResult = $this->db->query($sqlTotals);
-			$total = $this->db->fetch_object($totalsResult)->total;
+			$total = $this->_getCountOfRecords($sqlTotals)['count'];
 
 			$tmp = $obj_ret;
 			$obj_ret['data'] = $tmp;
