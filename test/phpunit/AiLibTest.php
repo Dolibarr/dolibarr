@@ -347,4 +347,139 @@ class AiLibTest extends CommonClassTest
 		$withContacts = cleanToolSchemaForLLM(sortAiToolsByObjectBlock(filterToolsByObjects($tools, array('contacts', 'thirdparties'), array())));
 		$this->assertStringStartsWith($thirdpartiesBlockJson.',', (string) json_encode($withContacts), 'Adding an object keeps the thirdparties block first, so the prompt cache still holds it');
 	}
+	/**
+	 * testAiSelectTools
+	 *
+	 * @return void
+	 */
+	public function testAiSelectTools()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = array_merge($bridge->getDefinitions(), array(array('name' => 'navigate_to_page', 'description' => 'Open a page', 'categories' => array('global'))));
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang('fr_FR');
+		$knownObjects = array_keys(getAiToolsVocabulary($tools));
+		$objectToolsOf = static function (array $selected) use ($knownObjects): array {
+			return array_values(array_filter(array_column($selected, 'objects'), static function ($objects) use ($knownObjects): bool {
+				return count(array_intersect((array) $objects, $knownObjects)) > 0;
+			}));
+		};
+
+		$selection = aiSelectTools($tools, array('query' => 'bonjour'), array(), 32000, $langs);
+		$this->assertSame('catalog', $selection['mode'], 'A question of no object never sends the whole catalog');
+		$this->assertSame(array(), $selection['objects']);
+		$this->assertSame(array(), $objectToolsOf($selection['tools']));
+		$this->assertSame(array('navigate_to_page'), array_column($selection['tools'], 'name'), 'Tools of no object stay');
+
+		$selection = aiSelectTools($tools, array('query' => 'bonjour'), array(), 0, $langs);
+		$this->assertSame('categories', $selection['mode'], 'Size 0 keeps the behaviour without a budget');
+		$this->assertSame(array_column(filterToolsProfessional($tools, array()), 'name'), array_column($selection['tools'], 'name'));
+
+		$selection = aiSelectTools($tools, array('query' => 'crée le tiers devcamp'), array('thirdparty'), 32000, $langs);
+		$this->assertSame('objects', $selection['mode']);
+		$this->assertSame(array('thirdparties'), $selection['objects']);
+		$this->assertSame(array_column(filterToolsByObjects($tools, array('thirdparties'), array('thirdparty')), 'name'), array_column($selection['tools'], 'name'));
+
+		$selection = aiSelectTools($tools, array('query' => 'les commandes du client devcamp'), array(), 32000, $langs);
+		$this->assertGreaterThan(32000, aiToolsSize($selection['tools']));
+		$this->assertSame('objects', $selection['mode'], 'At most aiLoadToolsMaxObjects() objects found by the code are sent whatever their size');
+		$this->assertSame(array('thirdparties', 'orders'), $selection['objects']);
+
+		$oldTurn = array('role' => 'assistant', 'text' => "[api_invoices_list result] []\n[api_orders_list result] []\n[api_proposals_list result] []\n[api_products_list result] []");
+		$newTurn = array('role' => 'assistant', 'text' => '[api_contacts_list result] []');
+		$contactsSize = aiToolsSize(filterToolsByObjects($tools, array('contacts'), array()));
+		$selection = aiSelectTools($tools, array('query' => '', 'turns' => array($oldTurn, $newTurn)), array(), $contactsSize, $langs);
+		$this->assertSame('objects', $selection['mode']);
+		$this->assertSame(array('contacts'), $selection['objects'], 'Over budget the objects of the past turns go first, the oldest first, even when the question names none');
+		$selection = aiSelectTools($tools, array('query' => '', 'turns' => array($oldTurn, $newTurn)), array(), 0, $langs);
+		$this->assertCount(5, $selection['objects'], 'Without budget the past turns all count');
+
+		$selection = aiSelectTools($tools, array('query' => 'factures, commandes, propositions commerciales, produits et contacts'), array(), 1000, $langs);
+		$this->assertGreaterThan(aiLoadToolsMaxObjects(), count(classifyQueryObjects('factures, commandes, propositions commerciales, produits et contacts', $langs, $tools)));
+		$this->assertSame('catalog', $selection['mode'], 'More objects than load_tools may ask, over budget, give the catalog');
+		$this->assertSame(array('navigate_to_page'), array_column($selection['tools'], 'name'));
+
+		$selection = aiSelectTools($tools, array('query' => 'bonjour'), array(), 10, $langs);
+		$this->assertSame(array('tools' => array(), 'objects' => array(), 'mode' => 'catalog'), $selection, 'Tools of no object over budget are not sent either');
+
+		$selection = aiSelectTools($tools, array('query' => 'bonjour', 'requested' => array('contacts')), array(), 1000, $langs);
+		$this->assertSame('objects', $selection['mode'], 'Objects asked with load_tools are sent whatever their size');
+		$this->assertSame(array('contacts'), $selection['objects']);
+
+		$selection = aiSelectTools($tools, array('query' => 'Γεια σου', 'latin' => false), array(), 32000, $langs);
+		$this->assertSame('catalog', $selection['mode']);
+		$selection = aiSelectTools($tools, array('query' => 'Γεια σου jean@example.com', 'latin' => false), array(), 32000, $langs);
+		$objects = $selection['objects'];
+		sort($objects);
+		$this->assertSame(array('contacts', 'thirdparties'), $objects, 'A value shape gives its objects in any script');
+		$selection = aiSelectTools($tools, array('query' => 'téléphone', 'latin' => false), array(), 32000, $langs);
+		$this->assertSame('catalog', $selection['mode'], 'Field words are matched in a Latin script only');
+		$selection = aiSelectTools($tools, array('query' => 'Γεια σου', 'latin' => false, 'element' => 'societe'), array(), 32000, $langs);
+		$this->assertSame(array('thirdparties'), $selection['objects'], 'The open card gives its object in any script');
+
+		$smallTools = array(
+			array('name' => 'bill_a', 'description' => 'A', 'categories' => array('billing')),
+			array('name' => 'bill_b', 'description' => 'B', 'categories' => array('billing')),
+			array('name' => 'bill_c', 'description' => 'C', 'categories' => array('billing')),
+			array('name' => 'stock_a', 'description' => 'D', 'categories' => array('stock')),
+		);
+		$selection = aiSelectTools($smallTools, array('query' => 'facture'), array('billing'), 32000, $langs);
+		$this->assertSame('categories', $selection['mode'], 'A category under budget still passes');
+		$this->assertSame(array('bill_a', 'bill_b', 'bill_c'), array_column($selection['tools'], 'name'));
+
+		$conf->global->AI_DISABLE_TOOLS_BY_OBJECT = 1;
+		$selectionNoBudget = aiSelectTools($tools, array('query' => 'crée le tiers devcamp'), array('thirdparty'), 0, $langs);
+		$selection = aiSelectTools($tools, array('query' => 'crée le tiers devcamp'), array('thirdparty'), 32000, $langs);
+		unset($conf->global->AI_DISABLE_TOOLS_BY_OBJECT);
+		$this->assertSame('categories', $selectionNoBudget['mode'], 'AI_DISABLE_TOOLS_BY_OBJECT still sends the tools by category');
+		$this->assertSame('catalog', $selection['mode'], 'AI_DISABLE_TOOLS_BY_OBJECT keeps the budget: a category over it gives the catalog');
+	}
+
+	/**
+	 * testAiToolsCatalog
+	 *
+	 * @return void
+	 */
+	public function testAiToolsCatalog()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$thirdpartyTools = filterToolsByObjects($bridge->getDefinitions(), array('thirdparties'), array());
+		$catalog = aiToolsCatalog($thirdpartyTools);
+		$lines = explode("\n", $catalog);
+		$this->assertCount(count(getAiToolsVocabulary($thirdpartyTools)), $lines, 'One line per object');
+		$this->assertContains('thirdparties: third parties (customers, prospects, suppliers)', $lines);
+		$this->assertStringNotContainsString('invoices', $catalog, 'Only the objects of the tools given');
+
+		$moduleTool = array('name' => 'api_trainings_list', 'objects' => array('trainings'), 'vocabulary' => array('trainings' => array('keys' => array('Training'))));
+		$this->assertSame('trainings', aiToolsCatalog(array($moduleTool)), 'An object without label is listed by its key');
+		$this->assertSame('', aiToolsCatalog(array(array('name' => 'navigate_to_page'))));
+
+		$prompt = aiToolsCatalogPrompt($thirdpartyTools);
+		$this->assertStringContainsString('load_tools', $prompt);
+		$this->assertStringContainsString('ask_for_clarification', $prompt, 'The model may ask the user which object a name is');
+		$this->assertStringContainsString($catalog, $prompt);
+	}
+
+	/**
+	 * testAiLoadToolsObjects
+	 *
+	 * @return void
+	 */
+	public function testAiLoadToolsObjects()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+
+		$this->assertSame(array('contacts', 'thirdparties'), aiLoadToolsObjects(array('contacts', 'unknown', 'thirdparties', 'contacts', 12, array('x')), $tools, false), 'Unknown keys are dropped');
+		$this->assertSame(array('contacts', 'thirdparties', 'invoices', 'products'), aiLoadToolsObjects(array('contacts', 'thirdparties', 'invoices', 'products', 'users', 'proposals'), $tools, false), 'At most 4 objects');
+		$this->assertSame(array(), aiLoadToolsObjects(array('contacts'), $tools, true), 'One load_tools per question');
+		$this->assertSame(array(), aiLoadToolsObjects('contacts', $tools, false));
+		$this->assertSame(array(), aiLoadToolsObjects(array('contacts'), array(), false), 'An object of no tool the user may use is refused');
+	}
 }

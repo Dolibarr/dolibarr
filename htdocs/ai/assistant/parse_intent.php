@@ -668,47 +668,22 @@ try {
 
 		$histTurns = (!empty($data['history']) && is_array($data['history'])) ? aiChatHistoryTurns($db, $user, array_slice($data['history'], -aiChatContextMaxMessages())) : array();
 
-		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
-		$isComplex = isComplexScript($queryForIntent);
+		// Set by the chat after a load_tools answer, for every round of the question
+		$loadedObjects = aiLoadToolsObjects($data['objects'] ?? null, $llmToolsBase, false);
+		// Bytes of the JSON of the tools over which only the catalog of objects is sent (aiSelectTools()), 0 for no budget
+		$toolsMaxSize = getDolGlobalInt('AI_ASSISTANT_TOOLS_MAX_SIZE', 32000);
+		$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
+		$toolSelection = aiSelectTools($llmToolsBase, array(
+			'query' => $queryForIntent,
+			'element' => $aiPageContextElement,
+			'turns' => $histTurns,
+			'latin' => !isComplexScript($queryForIntent),
+			'requested' => $loadedObjects
+		), $detectedCategories, $toolsMaxSize, $langs);
+		$toolsSchema = $toolSelection['tools'];
 
-		$toolsSchema = [];
-
-		if ($isComplex) {
-			// Non-Latin: the classifier matches translated keys (user language
-			// + en_US reference), so try to narrow the schema here too - a Greek
-			// query otherwise always ships all tools, which is the largest
-			// prompt this module can build (documents + full schema overflow
-			// small-context models). No categories detected = full schema, as
-			// before.
-			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
-			if (!empty($detectedCategories)) {
-				if (getDolGlobalString("AI_DEBUG")) {
-					dol_syslog("AI Pro: Non-Latin query classified into ".implode(',', $detectedCategories).". Filtering schema.", LOG_DEBUG, 0, '_ai');
-				}
-				$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
-			} else {
-				if (getDolGlobalString("AI_DEBUG")) {
-					dol_syslog("AI Pro: Non-Latin language detected, no category match. Sending full (cleaned) schema.", LOG_DEBUG, 0, '_ai');
-				}
-				$toolsSchema = $llmToolsBase;
-			}
-		} else {
-			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
-			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
-
-			$queryObjects = array();
-			$toolsSchema = array();
-			if (!getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT')) {
-				$queryObjects = aiQueryObjects($queryForIntent, $aiPageContextElement, $histTurns, $langs, $llmToolsBase);
-				$toolsSchema = filterToolsByObjects($llmToolsBase, $queryObjects, $detectedCategories);
-			}
-			if (empty($toolsSchema)) {
-				$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
-			}
-
-			if (getDolGlobalString("AI_DEBUG")) {
-				dol_syslog("AI Pro: Latin script. Detected: " . json_encode($detectedCategories) . ", objects: " . json_encode($queryObjects) . ". Filtered to " . count($toolsSchema) . " tools.", LOG_DEBUG, 0, '_ai');
-			}
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("AI Pro: categories ".json_encode($detectedCategories).", mode ".$toolSelection['mode'].", objects ".json_encode($toolSelection['objects']).". Filtered to ".count($toolsSchema)." tools.", LOG_DEBUG, 0, '_ai');
 		}
 
 		// If we are sending a lot of tools (Non-Latin or Fallback), we strip descriptions.
@@ -730,6 +705,7 @@ try {
 		if ($query == '/tools') {
 			// Then the tools as sent to the LLM, one folded block per tool, its
 			// parameters as indented JSON.
+			$s .= '<div><strong>Selection</strong> <span class="small">mode '.dol_escape_htmltag($toolSelection['mode']).', objects: '.dol_escape_htmltag(implode(', ', $toolSelection['objects']) ?: '-').'</span></div>';
 			$s .= '<strong>Tools sent to the LLM ('.count($toolsForLLM).')</strong>';
 			foreach ($toolsForLLM as $toolDef) {
 				$toolName = (string) ($toolDef['name'] ?? '');
@@ -782,8 +758,12 @@ try {
 		$systemPrompt .= $systemRules;
 
 		// If option is on, we disable all tools
+		$catalogPrompt = '';
 		if (getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS')) {
 			$toolsForLLM = array();
+		} elseif ($toolsMaxSize > 0) {
+			$catalogPrompt = aiToolsCatalogPrompt($llmToolsBase);
+			$systemPrompt .= $catalogPrompt;
 		}
 
 		$systemPrompt .= "## Tools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n";
@@ -1274,6 +1254,18 @@ try {
 				// Ensure no placeholders remain in the data structure.
 				if ($guard && isset($intentJSON['arguments'])) {
 					$intentJSON['arguments'] = recursiveUnmaskValues($intentJSON['arguments'], $guard);
+				}
+
+				if ($catalogPrompt !== '' && is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'load_tools') {
+					$askedObjects = aiLoadToolsObjects($intentJSON['arguments']['objects'] ?? null, $llmToolsBase, !empty($loadedObjects));
+					if (!empty($askedObjects)) {
+						// The chat posts the question again with these objects, without counting a followup round.
+						$finalResponse = array('tool' => 'load_tools', 'arguments' => array('objects' => $askedObjects));
+						ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 1.0, 'load_tools', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
+						ob_end_clean();
+						echo json_encode($finalResponse);
+						exit;
+					}
 				}
 
 				// Validation check: Check if the AI selected a tool that actually exists in our filtered schema.
@@ -1967,54 +1959,6 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		}
 	}
 	return $detectedCategories;
-}
-
-/**
- * Filter a list of tools based on active intent categories.
- *
- * This function narrows down the available tools by matching their assigned
- * categories against the detected intent categories. Tools tagged as "global"
- * (the default of McpTool::getCategories()) are always kept, as they apply to
- * any object (navigation, tools of external modules without categories, ...).
- *
- * Behavior:
- * - If no categories are provided, or only "global" is present, all tools are returned.
- * - Tools are included if they share at least one category with the target categories.
- * - Tools with the "global" category are always included.
- * - If fewer than 3 tools match a detected category, the full tool list is returned as a fallback.
- *
- *
- * @param array<int,array<string,mixed>> $allTools          List of all available tools.
- * @param string[] $activeCategories  Detected intent categories (e.g., ['billing', 'stock']).
- *
- * @return array<int,array<string,mixed>> Filtered list of tools matching the active categories.
- */
-function filterToolsProfessional(array $allTools, array $activeCategories)
-{
-	if (empty($activeCategories) || (count($activeCategories) === 1 && $activeCategories[0] === 'global')) {
-		return $allTools;
-	}
-
-	$targetCategories = array_merge(['global'], $activeCategories);
-	$filtered = [];
-	$nbMatchingCategory = 0;	// Tools kept for a detected category, not only because they are global
-
-	foreach ($allTools as $tool) {
-		$toolCats = $tool['categories'] ?? ['global'];
-		if (count(array_intersect($toolCats, $targetCategories)) > 0) {
-			$filtered[] = $tool;
-			if (count(array_intersect($toolCats, $activeCategories)) > 0) {
-				$nbMatchingCategory++;
-			}
-		}
-	}
-
-	if ($nbMatchingCategory < 3) {
-		dol_syslog("AI Filter: Too few tools (" . $nbMatchingCategory . ") for the detected categories. Reverting to full schema.", LOG_WARNING);
-		return $allTools;
-	}
-
-	return $filtered;
 }
 
 /**

@@ -79,6 +79,7 @@ class ToolApiBridge extends McpTool
 	 * and 'combines' (object found => keys) when another object plus one of these words names it ("pedidos de proveedores").
 	 * With these words, 'element' (the element of its card, as sent in the page context) keeps its tools while that card is open,
 	 * and 'fields' (CONTACT_FIELDS) gives its tools to a query that names only these fields (aiQueryFieldObjects()).
+	 * Its 'label' names it in the catalog of objects the model asks the tools of (aiToolsCatalog()).
 	 */
 	const ENDPOINT_CATEGORIES = array(
 		'thirdparties' => array('thirdparty', 'billing', 'commercial'),
@@ -3758,7 +3759,7 @@ class ToolApiBridge extends McpTool
 					$def['objects'] = array($key);
 					$words = array_intersect_key($this->enrichments[$key], array_flip(array('langs', 'keys', 'synonyms', 'combines')));
 					if (!empty($words)) {
-						$def['vocabulary'] = array($key => $words + array_intersect_key($this->enrichments[$key], array('element' => 1, 'fields' => 1)));
+						$def['vocabulary'] = array($key => $words + array_intersect_key($this->enrichments[$key], array('element' => 1, 'fields' => 1, 'label' => 1)));
 					}
 					$this->defs[] = $def;
 					$this->routes[$toolname] = [$key, $method];

@@ -30,6 +30,17 @@ include_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 include_once DOL_DOCUMENT_ROOT.'/ai/class/privacy_guard.class.php';
 
 /**
+ * Max number of objects whose tools the model of the AI assistant may ask with load_tools for one question.
+ * A set of objects this small, asked or found by the code, is sent whatever the size budget (aiToolsFitBudget()).
+ *
+ * @return int
+ */
+function aiLoadToolsMaxObjects(): int
+{
+	return 4;
+}
+
+/**
  * Max number of messages of past turns sent back to the AI as context with one question.
  * Hard cap applied server-side, whatever the client sends (pins, "All" mode).
  *
@@ -1372,6 +1383,7 @@ function getAiChatAssistantConfig()
 		'NetworkError',
 		'AIError',
 		'EmptyAIResponse',
+		'AIFunctionalityNotAvailable',
 		'BrowserNotSupported',
 		'AISessionExpiredReload',
 
@@ -2887,10 +2899,10 @@ function aiHistoryTurnForModel(string $text): string
 }
 
 /**
- * Words naming the objects of the AI assistant tools, from the 'vocabulary' each tool carries (the 'langs', 'keys', 'synonyms', 'combines', 'element' and 'fields' of its ToolApiBridge::$enrichments entry)
+ * Words naming the objects of the AI assistant tools, from the 'vocabulary' each tool carries (the 'langs', 'keys', 'synonyms', 'combines', 'element', 'fields' and 'label' of its ToolApiBridge::$enrichments entry)
  *
  * @param	array<int,array<string,mixed>>	$tools	Tools
- * @return	array<string,array{langs?:string[],keys?:string[],synonyms?:string[],combines?:array<string,string[]>,element?:string,fields?:array{keys?:string[],synonyms?:string[]}}>	Words by object
+ * @return	array<string,array{langs?:string[],keys?:string[],synonyms?:string[],combines?:array<string,string[]>,element?:string,fields?:array{keys?:string[],synonyms?:string[]},label?:string}>	Words by object
  */
 function getAiToolsVocabulary(array $tools): array
 {
@@ -3073,12 +3085,13 @@ function aiHistoryObjects(array $turns, Translate $langs, array $tools): array
  * Return the objects of the AI assistant tools whose fields a query names (phone, email, address) or gives a value of
  * (an email address, a phone number, or the token the privacy guard put in its place)
  *
- * @param	string							$query	Query of the user, in a Latin script
- * @param	Translate						$langs	Language of the user
- * @param	array<int,array<string,mixed>>	$tools	Tools the user may use, with the words naming their objects
- * @return	string[]								Objects with these fields
+ * @param	string							$query		Query of the user
+ * @param	Translate						$langs		Language of the user
+ * @param	array<int,array<string,mixed>>	$tools		Tools the user may use, with the words naming their objects
+ * @param	bool							$byWords	False to look only for the values, when the query is not in a Latin script
+ * @return	string[]									Objects with these fields
  */
-function aiQueryFieldObjects(string $query, Translate $langs, array $tools): array
+function aiQueryFieldObjects(string $query, Translate $langs, array $tools, bool $byWords = true): array
 {
 	$vocabularies = array_filter(getAiToolsVocabulary($tools), static function (array $vocabulary): bool {
 		return !empty($vocabulary['fields']);
@@ -3090,6 +3103,9 @@ function aiQueryFieldObjects(string $query, Translate $langs, array $tools): arr
 	$shapePattern = '/\[\[(?:EMAIL|PHONE|ADDR)_/';
 	if (preg_match($shapePattern, $query) || preg_match($shapePattern, (new PrivacyGuard())->mask($query))) {
 		return array_keys($vocabularies);
+	}
+	if (!$byWords) {
+		return array();
 	}
 
 	$langsEnUs = aiLoadVocabularyLangs($vocabularies + array('' => array('langs' => array('companies'))), $langs);
@@ -3109,23 +3125,24 @@ function aiQueryFieldObjects(string $query, Translate $langs, array $tools): arr
  * Return the objects of the AI assistant tools a query is about: those it names, the one of the open card, those of the past turns,
  * or, when none of them gives one, those whose fields it names
  *
- * @param	string							$query		Query of the user, in a Latin script
+ * @param	string							$query		Query of the user
  * @param	string							$element	Element of the card open in the page, validated (empty when none)
  * @param	array<int,array{role:string,text:string}>	$turns	Past turns (aiChatHistoryTurns())
  * @param	Translate						$langs		Language of the user
  * @param	array<int,array<string,mixed>>	$tools		Tools the user may use, with the words naming their objects
+ * @param	bool							$isLatin	False when the query is not in a Latin script: only the open card, the past turns and the values it gives count
  * @return	string[]									Objects of the query
  */
-function aiQueryObjects(string $query, string $element, array $turns, Translate $langs, array $tools): array
+function aiQueryObjects(string $query, string $element, array $turns, Translate $langs, array $tools, bool $isLatin = true): array
 {
 	$objects = array_values(array_unique(array_merge(
-		classifyQueryObjects($query, $langs, $tools),
+		$isLatin ? classifyQueryObjects($query, $langs, $tools) : array(),
 		aiPageContextObjects($element, $tools),
 		aiHistoryObjects($turns, $langs, $tools)
 	)));
 
 	// Field words are weak: a phone or an address also belongs to an object named elsewhere.
-	return empty($objects) ? aiQueryFieldObjects($query, $langs, $tools) : $objects;
+	return empty($objects) ? aiQueryFieldObjects($query, $langs, $tools, $isLatin) : $objects;
 }
 
 /**
@@ -3239,4 +3256,206 @@ function sortAiToolsByObjectBlock(array $tools): array
 	});
 
 	return array_values($tools);
+}
+
+/**
+ * Filter a list of tools based on active intent categories.
+ *
+ * This function narrows down the available tools by matching their assigned
+ * categories against the detected intent categories. Tools tagged as "global"
+ * (the default of McpTool::getCategories()) are always kept, as they apply to
+ * any object (navigation, tools of external modules without categories, ...).
+ *
+ * Behavior:
+ * - If no categories are provided, or only "global" is present, all tools are returned.
+ * - Tools are included if they share at least one category with the target categories.
+ * - Tools with the "global" category are always included.
+ * - If fewer than 3 tools match a detected category, the full tool list is returned as a fallback.
+ *
+ *
+ * @param array<int,array<string,mixed>> $allTools          List of all available tools.
+ * @param string[] $activeCategories  Detected intent categories (e.g., ['billing', 'stock']).
+ *
+ * @return array<int,array<string,mixed>> Filtered list of tools matching the active categories.
+ */
+function filterToolsProfessional(array $allTools, array $activeCategories)
+{
+	if (empty($activeCategories) || (count($activeCategories) === 1 && $activeCategories[0] === 'global')) {
+		return $allTools;
+	}
+
+	$targetCategories = array_merge(['global'], $activeCategories);
+	$filtered = [];
+	$nbMatchingCategory = 0;	// Tools kept for a detected category, not only because they are global
+
+	foreach ($allTools as $tool) {
+		$toolCats = $tool['categories'] ?? ['global'];
+		if (count(array_intersect($toolCats, $targetCategories)) > 0) {
+			$filtered[] = $tool;
+			if (count(array_intersect($toolCats, $activeCategories)) > 0) {
+				$nbMatchingCategory++;
+			}
+		}
+	}
+
+	if ($nbMatchingCategory < 3) {
+		dol_syslog("AI Filter: Too few tools (" . $nbMatchingCategory . ") for the detected categories. Reverting to full schema.", LOG_WARNING);
+		return $allTools;
+	}
+
+	return $filtered;
+}
+
+/**
+ * Return the size of the tools as written in the prompt of the AI assistant, in bytes of their JSON
+ *
+ * @param	array<int,array<string,mixed>>	$tools	Tools
+ * @return	int
+ */
+function aiToolsSize(array $tools): int
+{
+	return strlen((string) json_encode(cleanToolSchemaForLLM($tools, count($tools) > 100), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+}
+
+/**
+ * Choose the tools sent to the model of the AI assistant: those of the objects of the question, else those of its categories,
+ * else, when they are over the size budget, only the tools of no object, the model asking the others with load_tools (aiToolsCatalogPrompt())
+ *
+ * @param	array<int,array<string,mixed>>	$tools		Tools the user may use, with their 'objects', 'vocabulary' and 'categories'
+ * @param	array{query?:string,element?:string,turns?:array<int,array{role:string,text:string}>,latin?:bool,requested?:string[]}	$signals	Question, element of the open card, past turns (aiChatHistoryTurns()), false when the question is not in a Latin script, objects asked with load_tools (aiLoadToolsObjects())
+ * @param	string[]						$categories	Categories of the question (classifyIntentUniversal())
+ * @param	int								$maxSize	Size budget of the tools in bytes (aiToolsSize()), it applies to more than aiLoadToolsMaxObjects() objects and to the categories, 0 for no budget
+ * @param	Translate						$langs		Language of the user
+ * @return	array{tools:array<int,array<string,mixed>>,objects:string[],mode:string}	Tools, objects they were chosen for, and mode: 'objects', 'categories' or 'catalog'
+ */
+function aiSelectTools(array $tools, array $signals, array $categories, int $maxSize, Translate $langs): array
+{
+	$requested = (array) ($signals['requested'] ?? array());
+	if (!empty($requested)) {
+		$kept = filterToolsByObjects($tools, $requested, $categories);
+		if (!empty($kept)) {
+			return array('tools' => $kept, 'objects' => $requested, 'mode' => 'objects');
+		}
+	}
+
+	if (!getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT')) {
+		$query = (string) ($signals['query'] ?? '');
+		$element = (string) ($signals['element'] ?? '');
+		$isLatin = (bool) ($signals['latin'] ?? true);
+		$turns = (array) ($signals['turns'] ?? array());
+		while (true) {
+			$objects = aiQueryObjects($query, $element, $turns, $langs, $tools, $isLatin);
+			$kept = filterToolsByObjects($tools, $objects, $categories);
+			if (!empty($kept) && aiToolsFitBudget($kept, $objects, $maxSize)) {
+				return array('tools' => $kept, 'objects' => $objects, 'mode' => 'objects');
+			}
+			if (empty($turns)) {
+				break;
+			}
+			// Over budget: the objects of the past turns go first, the oldest first.
+			array_shift($turns);
+		}
+		if (!empty($kept)) {
+			return array('tools' => aiCatalogModeTools($tools, $categories, $maxSize), 'objects' => array(), 'mode' => 'catalog');
+		}
+	}
+
+	$kept = filterToolsProfessional($tools, $categories);
+	if ($maxSize > 0 && aiToolsSize($kept) > $maxSize) {
+		return array('tools' => aiCatalogModeTools($tools, $categories, $maxSize), 'objects' => array(), 'mode' => 'catalog');
+	}
+
+	return array('tools' => $kept, 'objects' => array(), 'mode' => 'categories');
+}
+
+/**
+ * Return whether the tools of objects found for a question may be sent: a set of at most aiLoadToolsMaxObjects() objects always is
+ *
+ * @param	array<int,array<string,mixed>>	$tools		Tools of the objects
+ * @param	string[]						$objects	Objects
+ * @param	int								$maxSize	Size budget of the tools in bytes (aiToolsSize()), 0 for no budget
+ * @return	bool
+ */
+function aiToolsFitBudget(array $tools, array $objects, int $maxSize): bool
+{
+	return $maxSize <= 0 || count($objects) <= aiLoadToolsMaxObjects() || aiToolsSize($tools) <= $maxSize;
+}
+
+/**
+ * Return the tools of no object of the catalog (those filterToolsByObjects() keeps by their categories), none when they are over the size budget
+ *
+ * @param	array<int,array<string,mixed>>	$tools		Tools the user may use
+ * @param	string[]						$categories	Categories of the question
+ * @param	int								$maxSize	Size budget of the tools in bytes
+ * @return	array<int,array<string,mixed>>
+ */
+function aiCatalogModeTools(array $tools, array $categories, int $maxSize): array
+{
+	$knownObjects = array_keys(getAiToolsVocabulary($tools));
+	$targetCategories = array_merge(array('global'), $categories);
+	$kept = array_values(array_filter($tools, static function (array $tool) use ($knownObjects, $targetCategories): bool {
+		return count(array_intersect((array) ($tool['objects'] ?? array()), $knownObjects)) === 0
+			&& count(array_intersect((array) ($tool['categories'] ?? array('global')), $targetCategories)) > 0;
+	}));
+
+	return aiToolsSize($kept) > $maxSize ? array() : $kept;
+}
+
+/**
+ * Return the catalog of the objects of the AI assistant tools: one line "key: label" per object having a tool in the list
+ *
+ * @param	array<int,array<string,mixed>>	$tools	Tools, with the words naming their objects
+ * @return	string
+ */
+function aiToolsCatalog(array $tools): string
+{
+	$lines = array();
+	foreach (getAiToolsVocabulary($tools) as $object => $vocabulary) {
+		$label = (string) ($vocabulary['label'] ?? '');
+		$lines[] = $object.($label !== '' ? ': '.$label : '');
+	}
+
+	return implode("\n", $lines);
+}
+
+/**
+ * Return the part of the prompt of the AI assistant that lists the objects whose tools the model may ask with load_tools
+ *
+ * @param	array<int,array<string,mixed>>	$tools	Tools the user may use, with the words naming their objects
+ * @return	string									Empty when no tool has an object
+ */
+function aiToolsCatalogPrompt(array $tools): string
+{
+	$catalog = aiToolsCatalog($tools);
+	if ($catalog === '') {
+		return '';
+	}
+
+	$prompt = "## Objects\n";
+	$prompt .= "Only the tools of some objects are listed in ## Tools. When the request needs Dolibarr data or a Dolibarr action on objects whose tools are not listed, answer only {\"tool\": \"load_tools\", \"arguments\": {\"objects\": [\"key\", ...]}} with at most ".aiLoadToolsMaxObjects()." keys of this list: the question is then sent again with their tools. Do it at most once per question.\n";
+	$prompt .= "When you hesitate between objects (is a name a contact, a user or a third party?), ask the user with {\"tool\": \"ask_for_clarification\", \"arguments\": {\"question\": \"...\"}}.\n";
+	$prompt .= $catalog."\n\n";
+
+	return $prompt;
+}
+
+/**
+ * Validate the objects a load_tools answer of the model, or the chat, asks the tools of: keys of objects the user has tools of, aiLoadToolsMaxObjects() at most
+ *
+ * @param	mixed							$requested		Objects asked
+ * @param	array<int,array<string,mixed>>	$tools			Tools the user may use, with the words naming their objects
+ * @param	bool							$alreadyLoaded	True when the tools of the question were already asked once
+ * @return	string[]										Objects accepted, empty when the request is refused
+ */
+function aiLoadToolsObjects($requested, array $tools, bool $alreadyLoaded): array
+{
+	if ($alreadyLoaded || !is_array($requested)) {
+		return array();
+	}
+	$knownObjects = array_keys(getAiToolsVocabulary($tools));
+	$objects = array_values(array_unique(array_filter($requested, static function ($object) use ($knownObjects): bool {
+		return is_string($object) && in_array($object, $knownObjects, true);
+	})));
+
+	return array_slice($objects, 0, aiLoadToolsMaxObjects());
 }
