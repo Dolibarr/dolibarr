@@ -38,6 +38,11 @@ class LignePrelevement
 	public $id;
 
 	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'prelevement_lignes';
+
+	/**
 	 * @var string String with name of icon
 	 */
 	public $picto = 'generic';
