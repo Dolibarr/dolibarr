@@ -278,7 +278,6 @@ print dol_get_fiche_head($head, 'general', $langs->trans("Proposals"), -1, 'prop
  */
 $propal = new Propal($db);
 $propal->initAsSpecimen();
-$propal->type = 0;
 
 printNumberingModuleList('propale', 'mod_propale_', 'PROPALE_ADDON', $langs->trans("ProposalsNumberingModules"), $propal);
 

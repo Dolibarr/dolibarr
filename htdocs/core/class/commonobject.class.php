@@ -158,6 +158,11 @@ abstract class CommonObject
 	public $import_key;
 
 	/**
+	 * @var string	Tracking id of emails sent about the object, set by triggers
+	 */
+	public $trackid;
+
+	/**
 	 * @var array<string,mixed>	Contains data to manage extrafields
 	 */
 	public $array_options = array();

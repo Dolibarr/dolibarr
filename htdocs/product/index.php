@@ -548,7 +548,7 @@ if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'read')) {
 			$objp = $db->fetch_object($resql);
 
 			$tmpstockmovement->id = $objp->mid;
-			$tmpstockmovement->date = $db->jdate($objp->datem);
+			$tmpstockmovement->datem = $db->jdate($objp->datem);
 			$tmpstockmovement->label = $objp->mlabel;
 			$tmpstockmovement->inventorycode = $objp->mcode;
 			$tmpstockmovement->qty = $objp->qty;
@@ -557,7 +557,7 @@ if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'read')) {
 			$producttmp->ref = $objp->product_ref;
 			$producttmp->label = $objp->product_label;
 			$producttmp->status_batch = $objp->tobatch;
-			$producttmp->status_sell = $objp->tosell;
+			$producttmp->status = $objp->tosell;
 			$producttmp->status_buy = $objp->tobuy;
 
 			$warehouse->id = $objp->warehouse_id;
@@ -576,7 +576,7 @@ if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'read')) {
 			//$latestmovement .= img_picto($langs->trans("Ref").' '.$objp->mid, 'movement', 'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour');
 			$latestmovement .= '</td>';
 			$latestmovement .= '<td class="nowraponall">';
-			$latestmovement .= dol_print_date($tmpstockmovement->date, 'dayhour', 'tzuserrel');
+			$latestmovement .= dol_print_date($tmpstockmovement->datem, 'dayhour', 'tzuserrel');
 			$latestmovement .= "</td>\n";
 			$latestmovement .= '<td class="tdoverflowmax150">';
 			$latestmovement .= $producttmp->getNomUrl(1);

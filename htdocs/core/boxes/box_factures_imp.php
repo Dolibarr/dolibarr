@@ -157,7 +157,6 @@ class box_factures_imp extends ModeleBoxes
 					$facturestatic->status = $objp->status;
 
 					$facturestatic->paye = $objp->paye;
-					$facturestatic->paid = $objp->paye;
 					$facturestatic->alreadypaid = $objp->am;
 					$facturestatic->totalpaid = $objp->am;
 

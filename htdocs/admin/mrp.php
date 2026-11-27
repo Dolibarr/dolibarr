@@ -271,7 +271,6 @@ foreach ($dirmodels as $reldir) {
 						// Info
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$mrp->type = 0;
 						$nextval = $module->getNextValue($product, $mrp);
 						if ((string) $nextval != $langs->trans("NotAvailable")) {
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';

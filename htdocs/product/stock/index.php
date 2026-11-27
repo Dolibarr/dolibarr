@@ -195,7 +195,7 @@ if ($resql) {
 		$producttmp->id = $objp->rowid;
 		$producttmp->ref = $objp->produit;
 		$producttmp->status_batch = $objp->tobatch;
-		$producttmp->status_sell = $objp->tosell;
+		$producttmp->status = $objp->tosell;
 		$producttmp->status_buy = $objp->tobuy;
 
 		$warehouse->id = $objp->warehouse_id;

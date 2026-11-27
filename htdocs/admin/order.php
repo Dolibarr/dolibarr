@@ -363,7 +363,6 @@ foreach ($arrayofmodules as $module) {
 		// Info
 		$htmltooltip = '';
 		$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-		$commande->type = 0;
 
 		$nextval = $module->getNextValue($mysoc, $commande);
 		if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval

@@ -218,7 +218,6 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 				$tmpinvoice->statut = $obj->status;	// deprecated
 				$tmpinvoice->status = $obj->status;
 				$tmpinvoice->paye = $obj->paye;	// deprecated
-				$tmpinvoice->paid = $obj->paye;
 				$tmpinvoice->date_lim_reglement = $db->jdate($obj->datelimite);
 				$tmpinvoice->type = $obj->type;
 

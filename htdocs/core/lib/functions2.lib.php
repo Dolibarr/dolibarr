@@ -442,15 +442,13 @@ function dol_print_object_info($object, $usetable = 0)
 			print $langs->trans("Unknown");
 		}
 
-		if (!empty($object->date_cloture) || !empty($object->date_closing)) {
-			if (isset($object->date_cloture) && !empty($object->date_cloture)) {
-				$object->date_closing = $object->date_cloture;
-			}
+		$dateclosing = !empty($object->date_cloture) ? $object->date_cloture : (!empty($object->date_closing) ? $object->date_closing : '');
+		if (!empty($dateclosing)) {
 			print ' - ';
 			print '<div class="valignmiddle inline-block">';
-			print dol_print_date($object->date_closing, 'dayhour', 'tzserver');
+			print dol_print_date($dateclosing, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
-				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($dateclosing, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 			}
 			print '</div>';
 		}

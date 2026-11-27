@@ -972,6 +972,11 @@ class Societe extends CommonObject
 
 
 	/**
+	 * @var int	Same as $id, set for generic code using $object->socid
+	 */
+	public $socid;
+
+	/**
 	 *    Constructor
 	 *
 	 *    @param	DoliDB		$db		Database handler
