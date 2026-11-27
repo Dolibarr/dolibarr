@@ -4129,20 +4129,21 @@ class Societe extends CommonObject
 	public function LoadSupplierCateg()
 	{
 		// phpcs:enable
-		$this->SupplierCategories = array();
-		$sql = "SELECT rowid, label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE type = ".Categorie::TYPE_SUPPLIER;
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$this->SupplierCategories[$obj->rowid] = $obj->label;
-			}
-			return 0;
-		} else {
+		$this->SupplierCategories = array();
+
+		$categstatic = new Categorie($this->db);
+		$categories = $categstatic->get_all_categories(Categorie::TYPE_SUPPLIER);
+		if (!is_array($categories)) {
+			$this->error = $categstatic->error;
+			$this->errors = $categstatic->errors;
 			return -1;
 		}
+		foreach ($categories as $categ) {
+			$this->SupplierCategories[$categ->id] = $categ->label;
+		}
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -59,6 +59,14 @@ $title = $object->ref." - ".$langs->trans('Info');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 llxHeader('', $title, $help_url);
 
+if (empty($object->id)) {
+	$langs->load('errors');
+	print '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	$db->close();
+	exit;
+}
+
 
 $head = supplier_proposal_prepare_head($object);
 print dol_get_fiche_head($head, 'info', $langs->trans('CommRequest'), -1, 'supplier_proposal');

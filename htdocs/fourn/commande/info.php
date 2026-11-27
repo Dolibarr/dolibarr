@@ -135,6 +135,14 @@ if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $c
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('', $title, $help_url);
 
+if (empty($object->id)) {
+	$langs->load('errors');
+	print '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	$db->close();
+	exit;
+}
+
 $now = dol_now();
 
 $head = ordersupplier_prepare_head($object);
