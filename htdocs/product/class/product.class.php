@@ -3282,7 +3282,7 @@ class Product extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.ref_ext, p.label, p.description, p.url, p.note_public, p.note as note_private, p.customcode, p.fk_country, p.fk_state, p.lifetime, p.qc_frequency, p.price, p.price_ttc,";
 		$sql .= " p.price_min, p.price_min_ttc, p.price_base_type, p.cost_price, p.default_vat_code, p.tva_tx, p.recuperableonly as tva_npr, p.localtax1_tx, p.localtax2_tx, p.localtax1_type, p.localtax2_type, p.tosell,";
-		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_warehouse, p.fk_default_workstation, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
+		$sql .= " p.tobuy, p.fk_product_type, p.duration, p.fk_default_workstation, p.seuil_stock_alerte, p.canvas, p.net_measure, p.net_measure_units, p.weight, p.weight_units,";
 		$sql .= " p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.last_main_doc,";
 		$sql .= " p.surface, p.surface_units, p.volume, p.volume_units, p.barcode, p.fk_barcode_type, p.finished, p.fk_default_bom, p.mandatory_period, p.packaging,";
 		if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
@@ -3294,6 +3294,7 @@ class Product extends CommonObject
 		// For MultiCompany
 		// PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
 		$separatedEntityPMP = false;	// Set to true to get the AWP from table llx_product_perentity instead of field 'pmp' into llx_product.
+		$separatedEntityWarehouse = isModEnabled('multicompany');	// Set to true to get the default warehouse from table llx_product_perentity, with fallback on field 'fk_default_warehouse' of llx_product.
 		$separatedStock = false;		// Set to true will count stock from subtable llx_product_stock. It is slower than using denormalized field 'stock', but it is required when using multientity and shared warehouses.
 		$visibleWarehousesEntities = $conf->entity;
 		if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED')) {
@@ -3314,6 +3315,11 @@ class Product extends CommonObject
 		} else {
 			$sql .= " p.pmp,";
 		}
+		if ($separatedEntityWarehouse) {
+			$sql .= " COALESCE(ppe.fk_default_warehouse, p.fk_default_warehouse) as fk_default_warehouse,";
+		} else {
+			$sql .= " p.fk_default_warehouse,";
+		}
 		$sql .= " p.datec, GREATEST(p.tms, COALESCE(pef.tms, p.tms)) AS tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 		$sql .= " p.price_label,";
@@ -3324,7 +3330,7 @@ class Product extends CommonObject
 		}
 		$sql .= " FROM ".$this->db->prefix()."product as p";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product_extrafields as pef ON pef.fk_object=p.rowid";
-		if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') || $separatedEntityPMP) {
+		if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') || $separatedEntityPMP || $separatedEntityWarehouse) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 		}
 		if ($separatedStock) {
@@ -3358,6 +3364,9 @@ class Product extends CommonObject
 				$sql .= " ppe.pmp,";
 			} else {
 				$sql .= " p.pmp,";
+			}
+			if ($separatedEntityWarehouse) {
+				$sql .= " ppe.fk_default_warehouse,";
 			}
 			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 			$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
