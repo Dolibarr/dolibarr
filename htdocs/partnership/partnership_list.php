@@ -798,7 +798,7 @@ foreach ($all_fields_list as $key => $val) {
 			$formadmin = new FormAdmin($db);
 			print $formadmin->select_language($search[$key], 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} elseif ($key == 'country') {
-			print $form->select_country(in_array($key, $search) ? $search[$key] : 0, 'search_country', '', 0, 'minwidth100imp maxwidth100');
+			print $form->select_country(isset($search[$key]) ? $search[$key] : 0, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 		} else {
 			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
