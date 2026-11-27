@@ -72,8 +72,8 @@ if ($action == 'update') {
 		if ($res <= 0) $error++;
 	}
 
-	if (GETPOSTISSET('AI_CHAT_CONTEXT_AUTO_EXCHANGES')) {
-		$res = dolibarr_set_const($db, "AI_CHAT_CONTEXT_AUTO_EXCHANGES", max(0, GETPOSTINT("AI_CHAT_CONTEXT_AUTO_EXCHANGES")), 'int', 0, '', $conf->entity);
+	if (GETPOSTISSET('AI_CHAT_CONTEXT_AUTO_MESSAGES')) {
+		$res = dolibarr_set_const($db, "AI_CHAT_CONTEXT_AUTO_MESSAGES", min(aiChatContextMaxMessages(), max(0, GETPOSTINT("AI_CHAT_CONTEXT_AUTO_MESSAGES"))), 'int', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -114,8 +114,29 @@ if ($action == 'update') {
 		}
 	}
 
+	if (GETPOSTISSET('AI_ATTACHMENT_MAX_FILES')) {
+		$res = dolibarr_set_const($db, "AI_ATTACHMENT_MAX_FILES", max(1, GETPOSTINT("AI_ATTACHMENT_MAX_FILES")), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
+	if (GETPOSTISSET('AI_ATTACHMENT_MAX_MB')) {
+		$res = dolibarr_set_const($db, "AI_ATTACHMENT_MAX_MB", max(1, GETPOSTINT("AI_ATTACHMENT_MAX_MB")), 'int', 0, '', $conf->entity);
+		if ($res <= 0) {
+			$error++;
+		}
+	}
+
 	if (GETPOSTISSET('AI_INTENT_PROMPT')) {
-		$res = dolibarr_set_const($db, "AI_INTENT_PROMPT", GETPOST("AI_INTENT_PROMPT"), 'chaine', 0, '', $conf->entity);
+		$intentPrompt = GETPOST("AI_INTENT_PROMPT", "nohtml");
+		// The default prompt is saved as empty, so a later change of the default prompt in code still applies.
+		// Compared with spaces and line feeds normalized: browser sends \r\n and the nohtml filter merges double spaces.
+		$defaultIntentPrompt = dol_string_nohtmltag(getAiAssistantDefaultPrompt(), 0);
+		if (preg_replace('/\s+/', ' ', trim($intentPrompt)) === preg_replace('/\s+/', ' ', trim($defaultIntentPrompt))) {
+			$intentPrompt = '';
+		}
+		$res = dolibarr_set_const($db, "AI_INTENT_PROMPT", $intentPrompt, 'chaine', 0, '', $conf->entity);
 		if ($res <= 0) {
 			$error++;
 		}
@@ -221,16 +242,7 @@ $form = new Form($db);
 $apiKey = getDolGlobalString('AI_MCP_API_KEY');
 
 // Default Prompt Logic
-$defaultPromptText = "ROLE: Dolibarr ERP AI.
-GOAL: Map user intent to specific JSON commands.
-
-CONSTRAINTS:
-1. OUTPUT: Single valid JSON object ONLY. No Markdown. No text.
-   Format: {\"tool\": \"tool_name\", \"arguments\": {\"argument_name\": \"argument_value\", ...}}
-2. TOOLS: Use ONLY provided tools. If no tool or thirdparty fits, you must first use 'respond_to_user' to inform user.
-3. ARGS: strict adherence to schema. Do not invent parameters.
-4. MISSING INFO: If a required argument (like an ID) is missing, use 'ask_for_clarification'.
-5. SAFETY: For DELETE/UPDATE actions, you MUST use 'ask_for_confirmation'.";
+$defaultPromptText = getAiAssistantDefaultPrompt();
 
 $currentPrompt = getDolGlobalString('AI_INTENT_PROMPT', $defaultPromptText);
 
@@ -349,13 +361,26 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	// Context window of the chat
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIContextAutoExchanges"), $langs->trans("AIContextAutoExchangesHelp")) . '</td>';
-	print '<td><input class="width50" type="number" min="0" name="AI_CHAT_CONTEXT_AUTO_EXCHANGES" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2) . '"></td>';
+	print '<td><input class="width50" type="number" min="0" max="' . aiChatContextMaxMessages() . '" name="AI_CHAT_CONTEXT_AUTO_MESSAGES" value="' . min(aiChatContextMaxMessages(), getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_MESSAGES', 4)) . '">';
+	print ' <span class="opacitymedium">(' . $langs->trans("Max") . ' ' . aiChatContextMaxMessages() . ')</span></td>';
 	print '</tr>';
 
 	// Max size of the context sent back with the question
 	print '<tr class="oddeven">';
 	print '<td>' . $form->textwithpicto($langs->trans("AIContextMaxSize"), $langs->trans("AIContextMaxSizeHelp")) . '</td>';
-	print '<td><input class="width100" type="number" min="0" name="AI_CHAT_CONTEXT_MAX_SIZE" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 200000) . '"></td>';
+	print '<td><input class="width100" type="number" min="0" name="AI_CHAT_CONTEXT_MAX_SIZE" value="' . getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000) . '"></td>';
+	print '</tr>';
+
+	// Max number of files attached to one message
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIAttachmentMaxFiles"), $langs->trans("AIAttachmentMaxFilesHelp")) . '</td>';
+	print '<td><input class="width50" type="number" min="1" name="AI_ATTACHMENT_MAX_FILES" value="' . getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5) . '"></td>';
+	print '</tr>';
+
+	// Max size of the files attached to one message
+	print '<tr class="oddeven">';
+	print '<td>' . $form->textwithpicto($langs->trans("AIAttachmentMaxSize"), $langs->trans("AIAttachmentMaxSizeHelp", ini_get('post_max_size'))) . '</td>';
+	print '<td><input class="width50" type="number" min="1" name="AI_ATTACHMENT_MAX_MB" value="' . getDolGlobalInt('AI_ATTACHMENT_MAX_MB', 10) . '"></td>';
 	print '</tr>';
 
 	// API tools in the palette of the chat input (the palette itself is always on)
@@ -384,8 +409,8 @@ if (getDolGlobalString('AI_ASSISTANT_ENABLED')) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">';
 	print $form->textwithpicto($langs->trans("SystemPrompt"), $langs->trans("SystemPromptHelp")) . '<br><br>';
-	$doleditor = new DolEditor('AI_INTENT_PROMPT', $currentPrompt, '', 300, 'dolibarr_notes', 'In', false, false, false, ROWS_9, '90%');
-	$doleditor->Create();
+	$doleditor = new DolEditor('AI_INTENT_PROMPT', $currentPrompt, '', 260, 'dolibarr_notes', 'In', false, false, false, 0, '90%');
+	$doleditor->Create(0, '', true, '', '', 'spellcheck="false"');
 	print '</td>';
 	print '</tr>';
 

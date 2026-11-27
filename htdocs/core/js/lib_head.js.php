@@ -1959,7 +1959,8 @@ $(function() {
 	// MAIN_ROW_SINGLECLICK_TOSELECT: when enabled, a plain click anywhere on
 	// a .row-with-select row (not on a link/button/field) also toggles its
 	// checkbox, in addition to the Ctrl/Shift+click behaviour below.
-	let rowSingleClickToSelect = <?php echo getDolGlobalInt('MAIN_ROW_SINGLECLICK_TOSELECT') ? 'true' : 'false'; ?>;
+	// Option is read from a meta tag of the page because this file is cached by the browser.
+	let rowSingleClickToSelect = (jQuery('meta[name="MAIN_ROW_SINGLECLICK_TOSELECT"]').length > 0);
 
 	/**
 	 * @param {jQuery}  el

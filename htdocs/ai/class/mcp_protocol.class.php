@@ -287,12 +287,31 @@ class MCPServer
 		return [
 			'supportedVersions' => self::PROTOCOL_VERSIONS,
 			'capabilities' => $this->serverCapabilities(),
-			// The advertised surface only changes with admin configuration or an
-			// upgrade: safe to cache, but it is per-installation, not user-specific.
+			// Same answer for every caller (capabilities and instructions do not
+			// depend on who asks), so a shared cache may serve it. This hint only
+			// covers server/discover: each result carries its own, and the lists
+			// below, filtered per caller, say 'private' (see privateCacheHints()).
 			'cacheScope' => 'public',
 			'ttlMs' => getDolGlobalInt('AI_MCP_DISCOVER_TTL', 3600) * 1000,
 			'instructions' => 'Dolibarr ERP/CRM MCP server. Tools are permission-filtered per authenticated user; lists honor Dolibarr entity and rights.'
 		];
+	}
+
+	/**
+	 * Caching hints for a result that depends on the authenticated caller.
+	 * Spec 2026-07-28 (server/utilities/caching) requires cacheScope and ttlMs
+	 * on tools/list, resources/list, resources/read and prompts/list. These
+	 * results are filtered by the caller's rights (tools/list since the
+	 * per-tool rights check) or carry business data, so a cache shared between
+	 * authorization contexts must never serve them: 'private'. ttlMs 0 keeps
+	 * today's behaviour (the spec's default when the hint is absent): a client
+	 * refetches, so a change of rights or configuration applies at once.
+	 *
+	 * @return array{cacheScope: string, ttlMs: int}
+	 */
+	private function privateCacheHints(): array
+	{
+		return ['cacheScope' => 'private', 'ttlMs' => 0];
 	}
 
 	// Tool handlers
@@ -300,7 +319,7 @@ class MCPServer
 	 * Handles the 'tools/list' request by delegating to McpHandler.
 	 * Only tools permitted by AI_MCP_SERVER_ALLOWED_TOOLS are returned.
 	 *
-	 * @return array{tools: array<int, array<string, mixed>>} An array containing the list of available tools.
+	 * @return array{tools: array<int, array<string, mixed>>, cacheScope: string, ttlMs: int} An array containing the list of available tools.
 	 */
 	private function handleToolsList(): array
 	{
@@ -309,7 +328,7 @@ class MCPServer
 		$toolsSchema = $this->mcpHandler->getToolsSchema();
 
 		// Wrap it in the 'tools' key as required by the MCP spec.
-		return ['tools' => $toolsSchema];
+		return ['tools' => $toolsSchema] + $this->privateCacheHints();
 	}
 
 	/**
@@ -365,7 +384,7 @@ class MCPServer
 	/**
 	 * Handles the 'resources/list' request.
 	 *
-	 * @return array{resources: array<int, array{uri: string, name: string, description: string, mimeType: string}>} A list of available static resources.
+	 * @return array{resources: array<int, array{uri: string, name: string, description: string, mimeType: string}>, cacheScope: string, ttlMs: int} A list of available static resources.
 	 */
 	private function handleResourcesList(): array
 	{
@@ -382,14 +401,14 @@ class MCPServer
 				'description' => 'Details about the connected service user',
 				'mimeType' => 'application/json'
 			]
-		]];
+		]] + $this->privateCacheHints();
 	}
 
 	/**
 	 * Handles the 'resources/read' request.
 	 *
 	 * @param array{uri?: string} $params Parameters containing the URI of the resource to read.
-	 * @return array{contents: array<int, array{uri: string, mimeType: string, text: string}>} The content of the requested resource.
+	 * @return array{contents: array<int, array{uri: string, mimeType: string, text: string}>, cacheScope: string, ttlMs: int} The content of the requested resource.
 	 * @throws Exception If the resource URI is not found.
 	 */
 	private function handleResourceRead(array $params): array
@@ -415,7 +434,7 @@ class MCPServer
 			'uri' => $uri,
 			'mimeType' => 'application/json',
 			'text' => json_encode($data, JSON_PRETTY_PRINT)
-		]]];
+		]]] + $this->privateCacheHints();
 	}
 
 	// Following 2 functions is proof of concept implementation based on current tool products. This is not viable.
@@ -425,7 +444,7 @@ class MCPServer
 	/**
 	 * Handles the 'prompts/list' request.
 	 *
-	 * @return array{prompts: array<int, array{name: string, description: string, arguments: array<int, array{name: string, description: string, required: bool}>}>} A list of available prompt templates.
+	 * @return array{prompts: array<int, array{name: string, description: string, arguments: array<int, array{name: string, description: string, required: bool}>}>, cacheScope: string, ttlMs: int} A list of available prompt templates.
 	 */
 	private function handlePromptsList(): array
 	{
@@ -437,7 +456,7 @@ class MCPServer
 					['name' => 'product_name', 'description' => 'Name or Ref of the product', 'required' => true]
 				]
 			]
-		]];
+		]] + $this->privateCacheHints();
 	}
 
 	/**

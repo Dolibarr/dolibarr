@@ -90,6 +90,11 @@ if (GETPOSTINT("id") || GETPOST("ref")) {
 		$object->fetch(0, GETPOST("ref"));
 	}
 }
+if ($fieldid == 'ref' && !empty($id)) {
+	// The access check by ref keeps only digits of the ref, so we check on the id of the account found with the ref
+	$id = (int) $object->id;
+	$fieldid = 'rowid';
+}
 
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 

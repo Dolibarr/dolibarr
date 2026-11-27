@@ -224,6 +224,7 @@ class Tickets extends DolibarrApi
 	 * Get a list of tickets
 	 *
 	 * @since	8.0.0	Initial implementation
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param int       $socid      		Filter list with thirdparty ID
 	 * @param string	$sortfield			Sort field
@@ -234,12 +235,13 @@ class Tickets extends DolibarrApi
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param int		$loadcontacts		Load also contacts/addresses (0=No, 1=Yes)
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 *
 	 * @return array Array of ticket objects
-	 * @phan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 */
-	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $loadcontacts = 0, $pagination_data = false)
+	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $loadcontacts = 0, $pagination_data = false, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
@@ -285,6 +287,11 @@ class Tickets extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
@@ -528,7 +535,7 @@ class Tickets extends DolibarrApi
 		$mimetype_list = array();
 		$mimefilename_list = array();
 		if (!empty($attachments)) {
-			global $conf;
+			global $conf, $langs;
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 			$destdir = $conf->ticket->dir_output.'/'.$this->ticket->ref;
@@ -554,6 +561,11 @@ class Tickets extends DolibarrApi
 						throw new RestException(400, 'Failed to decode attachment '.$filename);
 					}
 
+					// Security: rename files with executable content, as the documents API does
+					if (isAFileWithExecutableContent($filename) && !getDolGlobalString('MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED')) {
+						$filename .= '.noexe';
+					}
+
 					$destfile = $destdir.'/'.$filename;
 					if (is_file($destfile)) {
 						$pathinfo = pathinfo($filename);
@@ -563,7 +575,14 @@ class Tickets extends DolibarrApi
 						$destfile = $destdir.'/'.$basename.$suffix.$extension;
 					}
 
+					// Security: refuse cache files/dirs, upload using .. and pipes into filenames
+					if (preg_match('/^\./', basename($destfile)) || preg_match('/\.\./', $destfile) || preg_match('/[<>|]/', $destfile)) {
+						dol_syslog("Refused to deliver file ".$destfile, LOG_WARNING);
+						throw new RestException(400, 'Bad value for the filename of attachment '.$filename);
+					}
+
 					$destfiletmp = DOL_DATA_ROOT.'/admin/temp/'.basename($destfile);
+					dol_delete_file($destfiletmp, 1, 1);
 					if (!dol_is_dir(dirname($destfiletmp))) {
 						dol_mkdir(dirname($destfiletmp));
 					}
@@ -577,6 +596,23 @@ class Tickets extends DolibarrApi
 					if ($nbofbyteswrote === false) {
 						throw new RestException(500, "Failed to write file '".$destfiletmp."'");
 					}
+					dolChmod($destfiletmp);
+
+					// Security: virus scan, as the documents API does
+					$checkvirusarray = dolCheckVirus($destfiletmp, $destfile);
+					if (count($checkvirusarray)) {
+						dol_syslog('Tickets::postNewMessage File "'.$destfiletmp.'" (target name "'.$destfile.'") KO with antivirus: errors='.implode(',', $checkvirusarray), LOG_WARNING);
+						dol_delete_file($destfiletmp, 1, 1);
+						// Differentiate based on the error key in the array
+						$errorkey = array_keys($checkvirusarray)[0];
+						$langs->load('errors');
+						if (in_array($errorkey, array('ErrorFileIsInfectedKnownVirus', 'ErrorAntivirusNotAvailable', 'ErrorFileIsInfectedWithAVirus'))) {
+							$restmsg = $langs->trans($errorkey);
+						} else {
+							$restmsg = $langs->trans('ErrorFileIsInfectedWithAVirus'); // fallback
+						}
+						throw new RestException(500, $restmsg.': '.implode(',', $checkvirusarray));
+					}
 
 					$moreinfo = array(
 						'description' => 'File uploaded using ticket API',
@@ -585,8 +621,9 @@ class Tickets extends DolibarrApi
 						'gen_or_uploaded' => 'uploaded'
 					);
 					// Move the temporary file at its final emplacement, never overwriting an existing file
-					$resultmove = dol_move($destfiletmp, $destfile, '0', 0, 0, 1, $moreinfo);
+					$resultmove = dol_move($destfiletmp, $destfile, '0', 0, 1, 1, $moreinfo);
 					if (!$resultmove) {
+						dol_delete_file($destfiletmp, 1, 1);
 						throw new RestException(500, "Failed to move file into '".$destfile."'");
 					}
 
