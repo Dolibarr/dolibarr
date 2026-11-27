@@ -2961,8 +2961,11 @@ function top_menu_ai()
 	$aijsver = @filemtime($aijsfile);
 	$aijsurl = DOL_URL_ROOT.'/ai/js/ai_assistant.js?v='.urlencode((string) ($aijsver ? $aijsver : DOL_VERSION));
 
+	// The full assistant page runs its own chat: the popover must not open over it.
+	$onAssistantPage = (bool) preg_match('#/ai/assistant/index\.php$#', (string) ($_SERVER['PHP_SELF'] ?? ''));
+
 	$html .= '<script nonce="'.getNonce().'">
-	// Clear the AI chat conversations kept in sessionStorage when the user logs out.
+	// Clear the AI chat state kept in sessionStorage when the user logs out.
 	document.addEventListener("click", function (event) {
 		var link = event.target.closest("a[href*=\"/user/logout.php\"]");
 		if (!link) { return; }
@@ -2971,6 +2974,8 @@ function top_menu_ai()
 				var key = sessionStorage.key(i);
 				if (key && key.indexOf("aiChatHistory_") === 0) { sessionStorage.removeItem(key); }
 			}
+			sessionStorage.removeItem("aiPopoverOpen");
+			sessionStorage.removeItem("aiPendingRequest");
 		} catch (e) { /* storage not available */ }
 	});
 
@@ -3068,7 +3073,8 @@ function top_menu_ai()
 		});
 
 		try {
-			if (sessionStorage.getItem("aiPopoverOpen") === "1") { aiOpenPopover(); }
+			const onAssistantPage = '.($onAssistantPage ? 'true' : 'false').';
+			if (sessionStorage.getItem("aiPopoverOpen") === "1" || (!onAssistantPage && sessionStorage.getItem("aiPendingRequest"))) { aiOpenPopover(); }
 		} catch (e) { /* storage not available */ }
 	})();
 	</script>';

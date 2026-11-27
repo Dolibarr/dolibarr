@@ -113,7 +113,7 @@ if (getDolGlobalString("AI_DEBUG")) {
 	dol_syslog("parse_intent.php ***** BEGIN", LOG_INFO, 0, '_ai');
 }
 
-set_time_limit($timeout + 5);
+set_time_limit(aiParseIntentTimeLimit());
 // The answer is kept for the next page when the browser leaves this one before it arrives.
 ignore_user_abort(true);
 

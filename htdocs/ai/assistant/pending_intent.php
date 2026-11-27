@@ -46,12 +46,12 @@ require_once DOL_DOCUMENT_ROOT.'/ai/lib/ai.lib.php';
  * @var User $user
  */
 
-if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED')) {
+// JSON even when refused: the chat reads an HTML answer as an expired session.
+if (!isModEnabled('ai') || !getDolGlobalString('AI_ASSISTANT_ENABLED') || !$user->hasRight('ai', 'assistant', 'use')) {
 	http_response_code(403);
-	accessforbidden('Module or feature not allowed');
-}
-if (!$user->hasRight('ai', 'assistant', 'use')) {
-	accessforbidden();
+	top_httphead('application/json');
+	echo json_encode(array('status' => 'unknown'));
+	exit;
 }
 
 aiCheckCsrfToken('ai/assistant/pending_intent.php');

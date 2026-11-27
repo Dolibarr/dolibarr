@@ -39,6 +39,16 @@ function aiChatContextMaxMessages()
 	return 20;
 }
 
+/**
+ * Time limit, in seconds, of one call to parse_intent.php: two model calls when the provider rejects the attachments.
+ *
+ * @return int
+ */
+function aiParseIntentTimeLimit(): int
+{
+	return 2 * getDolGlobalInt('AI_REQUEST_TIMEOUT', 120) + 5;
+}
+
 
 /**
  * Prepare admin pages header
@@ -1328,6 +1338,8 @@ function getAiChatAssistantConfig()
 		'EmptyAIResponse',
 		'BrowserNotSupported',
 		'AISessionExpiredReload',
+		'AIPendingAnswerResumed',
+		'AIPendingAnswerLost',
 
 		// Context pins
 		'AIContextPinOn',
@@ -1487,6 +1499,7 @@ function getAiChatAssistantConfig()
 		'autoContext' => min(aiChatContextMaxMessages(), getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_MESSAGES', 4)),
 		// Max size (in characters) of the context sent back to the model, also the cap of one tool result.
 		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000),
+		'requestTimeLimit' => aiParseIntentTimeLimit(),
 		// The "/" palette of the chat input, always on.
 		'palette' => 1,
 		// The raw API tools in the "/" palette (testing, advanced use); the commands are always there.
