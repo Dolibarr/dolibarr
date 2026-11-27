@@ -225,7 +225,7 @@
 #     /createfromorder/{orderid}) — both fully /* */-commented with
 #     intact docblocks, the classic specimen/dead-code artefact
 #     pattern. NO live divergence was found in any GET behaviour: all
-#     pins held on the green run. Comment drafts belong in fase 2.
+#     pins held on the green run. Comment drafts belong in phase 2.
 #     Also noted: validate()/close() share the family 403-empty-body
 #     quirk documented in the docblock (POST-only, out of scope).
 #   SHF7 (CLOSED 2026-11-27): spec-of-record lesson FULLY upheld —
@@ -714,13 +714,13 @@ jsonpath "$" count == 0
 #     | jq '.[0].id, (.[0].id|type)'
 # STRING -> bare-compare asserts above are correct as written; NUMBER
 #   -> flip the round-trip assert to the toString form and log the
-#   FIRST-EVER divergence as SHF6 (new finding, fase 2).
+#   FIRST-EVER divergence as SHF6 (new finding, phase 2).
 # RESULT-FIELD: SHF5 shipments result: OBSERVED 2026-11-27 (manual
 #   probe on commit 817f40c3): jq '.[0].id, (.[0].id|type)' returned
 #   2 / "number" — **id is a NUMBER**, the FIRST-EVER divergence from
 #   the C5/#43386 string convention (five-for-five STRING across
 #   supplierorders, supplierinvoices, supplierproposals, receptions,
-#   stockmovements). Logged as SHF6-issue candidate (fase 2: BUG/WISH
+#   stockmovements). Logged as SHF6-issue candidate (phase 2: BUG/WISH
 #   Markdown with ${DOLIHOST} repro + cross-ref #43386). The bare
 #   compares in this suite remain valid as written (no id-type
 #   compare is asserted; captures are type-agnostic), but any future
@@ -794,7 +794,7 @@ jsonpath "$" count == 0
 #         listed EVERYTHING the filtered call returned, which proves
 #         the absence of foreign rows; socid serializes as STRING
 #         while id serializes as NUMBER — another facet of the SHF5/
-#         SHF6 mixed-serialization finding for the fase-2 issue
+#         SHF6 mixed-serialization finding for the phase-2 issue
 #         draft.)
 
 # ---------------------------------------------------------------- SHF6 / SHF7 / SHF8 — episode-status notes
@@ -805,7 +805,7 @@ jsonpath "$" count == 0
 #   the repo) close the spec-of-record loop.
 # SHF6 watchlist: dead PUT/DELETE code artefacts (#43515/#43514
 #   candidates — the explorer shows PUT /{id} and DELETE /{id};
-#   whether the code behind them is live is a fase-2/source question),
+#   whether the code behind them is live is a phase-2/source question),
 #   specimen artefacts leaking into get() responses, and any
 #   customer-order element_element join analogue (none advertised).
 # SHF8: no GET upload route exists on /shipments (POST-only upload in
