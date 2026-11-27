@@ -2110,12 +2110,12 @@ class Product extends CommonObject
 	 */
 	public static function getSQLJoinPMP($aliasproduct = 'p', $aliasperentity = 'pa', $entity = 0)
 	{
-		global $conf;
+		global $conf, $db;
 
 		if (!self::isPMPPerEntity()) {
 			return '';
 		}
-		return " LEFT JOIN ".MAIN_DB_PREFIX."product_perentity as ".$aliasperentity." ON ".$aliasperentity.".fk_product = ".$aliasproduct.".rowid AND ".$aliasperentity.".entity = ".((int) ($entity > 0 ? $entity : $conf->entity));
+		return " LEFT JOIN ".$db->prefix()."product_perentity as ".$aliasperentity." ON ".$aliasperentity.".fk_product = ".$aliasproduct.".rowid AND ".$aliasperentity.".entity = ".((int) ($entity > 0 ? $entity : $conf->entity));
 	}
 
 	/**

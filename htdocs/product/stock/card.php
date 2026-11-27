@@ -716,13 +716,13 @@ if ($action == 'create') {
 			$sql .= "p.accountancy_code_buy_export,";
 			$sql .= 'p.barcode,';
 			// Product::getSQLPMP() falls back on the global p.pmp when a product has no row yet in llx_product_perentity
-			// (rows are created on the first stock movement), like Product::fetch() does, instead of showing an empty AWP.
+			// (rows are created on the first stock movement), like Product::fetch() does, instead of showing an empty PMP.
 			$sql .= " ".Product::getSQLPMP('p', 'pa')." as ppmp,";
 			$sql .= " ps.reel as value";
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$sql .= ",fk_unit";
 			}
-			// svalue is the sort key of the "estimated value" column, so it must use the same AWP
+			// svalue is the sort key of the "estimated value" column, so it must use the same PMP
 			// as ppmp above (the displayed value is recomputed in PHP from ppmp).
 			$sql .= ", (ps.reel * ".Product::getSQLPMP('p', 'pa').") as svalue";
 			// Add fields from hooks
