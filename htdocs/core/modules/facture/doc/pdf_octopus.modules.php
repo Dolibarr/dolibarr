@@ -3106,9 +3106,11 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// grand total
+			// Note: TTC must be computed on the full HT (before subtracting travaux_sup), so that the cumulated TTC
+			// stays equal to the sum of the TTC of all previous situation invoices (travaux_sup VAT is included in TVA)
+			$TDataSituation['cumul_anterieur']['TTC'] = $TDataSituation['cumul_anterieur']['HT'] + $TDataSituation['cumul_anterieur']['TVA'];
 			$TDataSituation['cumul_anterieur']['HT'] -= $TDataSituation['cumul_anterieur']['travaux_sup'];
 			$TDataSituation['cumul_anterieur']['retenue_garantie'] = $retenue_garantie_anterieure;
-			$TDataSituation['cumul_anterieur']['TTC'] = $TDataSituation['cumul_anterieur']['HT'] + $TDataSituation['cumul_anterieur']['TVA'];
 			$TDataSituation['cumul_anterieur']['total_a_payer'] = $TDataSituation['cumul_anterieur']['TTC'] - $retenue_garantie_anterieure;
 		}
 
