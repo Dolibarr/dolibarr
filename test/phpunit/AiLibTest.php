@@ -67,4 +67,52 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame('[earlier conversation] hello', aiHistoryTurnForModel('[earlier conversation] hello'));
 		$this->assertSame('Create the third party [api_thirdparties_create result]', aiHistoryTurnForModel('Create the third party [api_thirdparties_create result]'));
 	}
+
+	/**
+	 * testClassifyQueryObjects
+	 *
+	 * @return void
+	 */
+	public function testClassifyQueryObjects()
+	{
+		global $conf;
+
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang('fr_FR');
+
+		$this->assertSame(array('thirdparties'), classifyQueryObjects('peux tu me créer un tiers devcamp de type prospect', $langs));
+		$this->assertContains('supplier_orders', classifyQueryObjects('liste les commandes fournisseurs en attente', $langs), 'Each word of a name may be plural');
+		$this->assertContains('supplier_invoices', classifyQueryObjects('show the vendor invoices', $langs), 'English translations work on a French install');
+		$this->assertSame(array('agendaevents'), classifyQueryObjects('mes rendez-vous de demain', $langs));
+		$this->assertSame(array(), classifyQueryObjects('bonjour', $langs));
+	}
+
+	/**
+	 * testFilterToolsByObjects
+	 *
+	 * @return void
+	 */
+	public function testFilterToolsByObjects()
+	{
+		$tools = array(
+			array('name' => 'api_thirdparties_create', 'objects' => array('thirdparties'), 'categories' => array('thirdparty')),
+			array('name' => 'api_invoices_list', 'objects' => array('invoices'), 'categories' => array('billing', 'thirdparty'), 'description' => 'Invoices. Look the rowid up with api_thirdparties_create first.'),
+			array('name' => 'api_external_list', 'objects' => array('externalmodule'), 'categories' => array('thirdparty')),
+			array('name' => 'api_contacts_list', 'objects' => array('contacts'), 'categories' => array('thirdparty'), 'inputSchema' => array('properties' => array('thirdparty_ids' => array('type' => 'string')))),
+			array('name' => 'api_thirdparties_list', 'objects' => array('thirdparties'), 'categories' => array('thirdparty')),
+			array('name' => 'navigate_to_page', 'categories' => array('global')),
+			array('name' => 'report', 'categories' => array('reporting')),
+		);
+
+		$kept = array_column(filterToolsByObjects($tools, array('thirdparties'), array('thirdparty')), 'name');
+		$this->assertSame(array('api_thirdparties_create', 'api_external_list', 'api_thirdparties_list', 'navigate_to_page'), $kept);
+
+		$kept = array_column(filterToolsByObjects($tools, array('contacts'), array()), 'name');
+		$this->assertSame(array('api_contacts_list', 'navigate_to_page', 'api_thirdparties_list'), $kept, 'A rowid argument brings the tool that finds the rowid');
+
+		$kept = array_column(filterToolsByObjects($tools, array('invoices'), array('billing')), 'name');
+		$this->assertSame(array('api_invoices_list', 'navigate_to_page', 'api_thirdparties_create'), $kept, 'A tool named by a kept tool is kept too');
+
+		$this->assertSame(array(), filterToolsByObjects($tools, array('tickets'), array('thirdparty')), 'No tool for the objects named: the caller falls back to the categories');
+	}
 }

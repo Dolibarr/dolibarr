@@ -2746,8 +2746,8 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 		// them, even when the schema is large. Truncating to 3 words ("Create documents
 		// other", "Add a single") breaks tool selection. If the schema really is too
 		// big for the chosen model, the right answer is to filter the toolset before
-		// it reaches the LLM (which is what filterToolsProfessional() already does
-		// upstream of this function), not to mutilate each tool's description.
+		// it reaches the LLM (which is what filterToolsByObjects() and filterToolsProfessional()
+		// already do upstream of this function), not to mutilate each tool's description.
 		// Parameter-level compression (stripping defaults, descriptions of optional
 		// fields, etc.) remains gated on $isLargeSchema below.
 		$desc = $tool['description'];
@@ -2838,4 +2838,194 @@ function aiHistoryTurnForModel(string $text): string
 {
 	// A small model copies "[api_x result] {...}" as its own answer instead of calling the tool.
 	return (string) preg_replace('/^\[([^\]\s]+) result\] */m', 'Done: $1 returned ', $text);
+}
+
+/**
+ * Words naming each object of the AI assistant tools, by endpoint key of ToolApiBridge.
+ * 'keys' are translation keys, matched in the language of the user and in en_US; 'synonyms' are matched as they are.
+ *
+ * @return array<string,array{keys:string[],synonyms:string[]}>
+ */
+function getAiObjectVocabulary(): array
+{
+	return array(
+		'thirdparties' => array('keys' => array('ThirdParty', 'Customer', 'Prospect', 'Supplier', 'Company'), 'synonyms' => array('client', 'customer', 'prospect', 'supplier', 'vendor', 'company')),
+		'suppliers' => array('keys' => array('Supplier'), 'synonyms' => array('supplier', 'vendor')),
+		'contacts' => array('keys' => array('Contact'), 'synonyms' => array('contact')),
+		'invoices' => array('keys' => array('Bill', 'Invoice'), 'synonyms' => array('invoice', 'bill')),
+		'supplier_invoices' => array('keys' => array('SupplierInvoice'), 'synonyms' => array('supplier invoice')),
+		'orders' => array('keys' => array('Order'), 'synonyms' => array('order')),
+		'supplier_orders' => array('keys' => array('SupplierOrder'), 'synonyms' => array('purchase order', 'supplier order')),
+		'proposals' => array('keys' => array('Proposal'), 'synonyms' => array('proposal', 'quote', 'propal', 'propale', 'devis')),
+		'supplier_proposals' => array('keys' => array('SupplierProposal'), 'synonyms' => array('price request', 'supplier proposal')),
+		'products' => array('keys' => array('Product', 'Service'), 'synonyms' => array('product', 'item', 'sku', 'stock')),
+		'productlots' => array('keys' => array('Batch'), 'synonyms' => array('lot', 'batch', 'serial')),
+		'warehouses' => array('keys' => array('Warehouse'), 'synonyms' => array('warehouse')),
+		'stockmovements' => array('keys' => array('StockMovement'), 'synonyms' => array('stock movement', 'stock')),
+		'projects' => array('keys' => array('Project'), 'synonyms' => array('project')),
+		'project_tasks' => array('keys' => array('Task'), 'synonyms' => array('task')),
+		'project_tasks_timespent' => array('keys' => array('Task', 'TimeSpent'), 'synonyms' => array('task', 'timesheet', 'time spent')),
+		'project' => array('keys' => array('Task', 'TimeSpent'), 'synonyms' => array('task', 'timesheet', 'time spent')),
+		'agendaevents' => array('keys' => array('Event', 'Agenda', 'ActionAC_RDV'), 'synonyms' => array('event', 'meeting', 'appointment', 'rdv')),
+		'interventions' => array('keys' => array('Intervention'), 'synonyms' => array('intervention')),
+		'contracts' => array('keys' => array('Contract'), 'synonyms' => array('contract')),
+		'members' => array('keys' => array('Member'), 'synonyms' => array('member', 'adherent', 'membership')),
+		'memberstypes' => array('keys' => array('MemberType'), 'synonyms' => array('member type')),
+		'subscriptions' => array('keys' => array('Subscription'), 'synonyms' => array('subscription', 'cotisation', 'adhesion', 'membership')),
+		'expensereports' => array('keys' => array('ExpenseReport'), 'synonyms' => array('expense report', 'expense')),
+		'tickets' => array('keys' => array('Ticket'), 'synonyms' => array('ticket', 'incident', 'support')),
+		'shipments' => array('keys' => array('Shipment', 'Sending'), 'synonyms' => array('shipment', 'shipping', 'delivery')),
+		'receptions' => array('keys' => array('Reception'), 'synonyms' => array('reception', 'receive')),
+		'bankaccounts' => array('keys' => array('BankAccount', 'Bank'), 'synonyms' => array('bank')),
+		'variouspayments' => array('keys' => array('VariousPayment'), 'synonyms' => array('various payment')),
+		'socialcontributions' => array('keys' => array('SocialContribution'), 'synonyms' => array('social contribution')),
+		'vatpayments' => array('keys' => array('VATPayment', 'VAT'), 'synonyms' => array('vat')),
+		'donations' => array('keys' => array('Donation'), 'synonyms' => array('donation')),
+		'holidays' => array('keys' => array('Holiday', 'Holidays', 'Leave'), 'synonyms' => array('leave', 'holiday')),
+		'boms' => array('keys' => array('BOM'), 'synonyms' => array('bom')),
+		'mos' => array('keys' => array('ManufacturingOrder'), 'synonyms' => array('manufacturing order')),
+		'workstations' => array('keys' => array('Workstation'), 'synonyms' => array('workstation')),
+		'knowledgemanagement' => array('keys' => array(), 'synonyms' => array('knowledge')),
+		'partnerships' => array('keys' => array('Partnership'), 'synonyms' => array('partner', 'partnership')),
+		'multicurrencies' => array('keys' => array('Currency'), 'synonyms' => array('currency')),
+		'websites' => array('keys' => array('WebSite'), 'synonyms' => array('website', 'webpage', 'blog')),
+		'users' => array('keys' => array('User', 'Group'), 'synonyms' => array('user', 'employee')),
+		'categories' => array('keys' => array('Category'), 'synonyms' => array('category', 'categorie', 'tag')),
+		'cronjobs' => array('keys' => array(), 'synonyms' => array('cron', 'scheduled job')),
+	);
+}
+
+/**
+ * Return the en_US translator used to match the English words a user types on any install
+ *
+ * @param	string[]	$langfiles	Language files to load
+ * @return	Translate
+ */
+function getAiTranslatorEnUs(array $langfiles): Translate
+{
+	global $conf;
+
+	static $langsEnUs = null;
+	if ($langsEnUs === null) {
+		$langsEnUs = new Translate('', $conf);
+		$langsEnUs->setDefaultLang('en_US');
+	}
+	$langsEnUs->loadLangs($langfiles);
+
+	return $langsEnUs;
+}
+
+/**
+ * Return the words to look for in a query of the AI assistant: translation keys in the language of the user and in en_US, and synonyms
+ *
+ * @param	string[]	$keys		Translation keys
+ * @param	string[]	$synonyms	Words matched as they are
+ * @param	Translate	$langs		Language of the user
+ * @param	Translate	$langsEnUs	Translator en_US (getAiTranslatorEnUs())
+ * @param	bool		$isLatin	True to return the words lowercase and without accents
+ * @return	string[]
+ */
+function getAiQueryKeywords(array $keys, array $synonyms, Translate $langs, Translate $langsEnUs, bool $isLatin): array
+{
+	$keywords = array();
+	foreach ($keys as $key) {
+		foreach (array($langs->transnoentities($key), $langsEnUs->transnoentities($key)) as $trans) {
+			// An untranslated composite key ('BillStatusUnpaid') is not a word of the user; a plain word equal to its key ('Customer') is.
+			if ($trans !== '' && !($trans === $key && preg_match('/[A-Z]/', dol_substr($key, 1, 200)))) {
+				$keywords[] = $trans;
+			}
+		}
+	}
+	$keywords = array_merge($keywords, $synonyms);
+	if ($isLatin) {
+		$keywords = array_map(static function ($word) {
+			return strtolower(dol_string_unaccent($word));
+		}, $keywords);
+	}
+
+	return array_values(array_unique(array_filter($keywords, static function ($word) {
+		return $word !== '';
+	})));
+}
+
+/**
+ * Return the objects of the AI assistant tools named in a query written in a Latin script
+ *
+ * @param	string		$query	Query of the user
+ * @param	Translate	$langs	Language of the user
+ * @return	string[]			Endpoint keys of getAiObjectVocabulary() named in the query
+ */
+function classifyQueryObjects(string $query, Translate $langs): array
+{
+	$langfiles = array('main', 'bills', 'orders', 'propal', 'companies', 'products', 'projects', 'stocks', 'sendings', 'receptions', 'ticket', 'members', 'agenda', 'commercial', 'interventions', 'contracts', 'trips', 'holiday', 'banks', 'compta', 'donations', 'mrp', 'productbatch', 'partnership', 'multicurrency', 'website', 'users', 'categories', 'supplier_proposal');
+	$langsEnUs = getAiTranslatorEnUs($langfiles);
+	$langs->loadLangs($langfiles);
+
+	$searchQuery = strtolower(dol_string_unaccent($query));
+	$objects = array();
+	foreach (getAiObjectVocabulary() as $object => $vocabulary) {
+		foreach (getAiQueryKeywords($vocabulary['keys'], $vocabulary['synonyms'], $langs, $langsEnUs, true) as $word) {
+			$pattern = implode('s?\s+', array_map(static function ($part) {
+				return preg_quote($part, '/');
+			}, preg_split('/\s+/', $word)));
+			if (preg_match('/\b'.$pattern.'s?\b/u', $searchQuery)) {
+				$objects[] = $object;
+				break;
+			}
+		}
+	}
+
+	return $objects;
+}
+
+/**
+ * Keep the AI assistant tools of the objects named in the query, the tools they name ("look the rowid up with api_thirdparties_list")
+ * and the tools that find the rowids they take.
+ * A tool with no known object (another tool class, an endpoint of an external module) is kept by its categories.
+ *
+ * @param	array<int,array<string,mixed>>	$tools		Tools, with their 'objects' and 'categories'
+ * @param	string[]						$objects	Objects named in the query (classifyQueryObjects())
+ * @param	string[]						$categories	Categories of the query (classifyIntentUniversal())
+ * @return	array<int,array<string,mixed>>				Tools kept, or an empty array when no tool works on the objects named
+ */
+function filterToolsByObjects(array $tools, array $objects, array $categories): array
+{
+	$knownObjects = array_keys(getAiObjectVocabulary());
+	$targetCategories = array_merge(array('global'), $categories);
+	$kept = array();
+	$nbForObjects = 0;
+	foreach ($tools as $tool) {
+		$toolObjects = (array) ($tool['objects'] ?? array());
+		if (count(array_intersect($toolObjects, $objects)) > 0) {
+			$kept[] = $tool;
+			$nbForObjects++;
+		} elseif (count(array_intersect($toolObjects, $knownObjects)) === 0 && count(array_intersect((array) ($tool['categories'] ?? array('global')), $targetCategories)) > 0) {
+			$kept[] = $tool;
+		}
+	}
+
+	if ($nbForObjects === 0) {
+		return array();
+	}
+
+	// A rowid argument needs the tool that finds the rowid from a name.
+	$lookupTools = array('thirdparty_ids' => 'api_thirdparties_list', 'socid' => 'api_thirdparties_list', 'user_ids' => 'api_users_list');
+	$keptNames = array_column($kept, 'name');
+	$named = array();
+	foreach ($kept as $tool) {
+		$schema = (array) ($tool['inputSchema'] ?? $tool['parameters'] ?? array());
+		$text = json_encode(array($tool['description'] ?? '', $schema), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		if (preg_match_all('/\b[a-z][a-z0-9]*(?:_[a-z0-9]+)+\b/', (string) $text, $matches)) {
+			$named = array_merge($named, $matches[0]);
+		}
+		$named = array_merge($named, array_values(array_intersect_key($lookupTools, (array) ($schema['properties'] ?? array()))));
+	}
+	foreach ($tools as $tool) {
+		if (in_array($tool['name'] ?? '', $named, true) && !in_array($tool['name'], $keptNames, true)) {
+			$kept[] = $tool;
+			$keptNames[] = $tool['name'];
+		}
+	}
+
+	return $kept;
 }

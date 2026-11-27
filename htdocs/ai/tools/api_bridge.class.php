@@ -75,6 +75,7 @@ class ToolApiBridge extends McpTool
 	 * carry this vocabulary — anything else gets every bridge tool filtered
 	 * out of the prompt. Endpoints absent from this map (external modules)
 	 * fall back to all categories so they stay selectable.
+	 * A query naming objects is narrowed first to their tools: list the endpoint in getAiObjectVocabulary() too.
 	 */
 	const ENDPOINT_CATEGORIES = array(
 		'thirdparties' => array('thirdparty', 'billing', 'commercial'),
@@ -3586,6 +3587,7 @@ class ToolApiBridge extends McpTool
 				$def = $this->buildToolDefinition($ep, $key, $method, $toolname, $meta);
 				if ($def) {
 					$def['categories'] = self::ENDPOINT_CATEGORIES[$key] ?? array('billing', 'commercial', 'thirdparty', 'stock', 'project', 'reporting');
+					$def['objects'] = array($key);
 					$this->defs[] = $def;
 					$this->routes[$toolname] = [$key, $method];
 				}
@@ -3695,7 +3697,8 @@ class ToolApiBridge extends McpTool
 			'name' => $mergedName,
 			'description' => $mconf['description'].' '.implode(' ', $descriptions),
 			'inputSchema' => array('type' => 'object', 'properties' => $properties, 'required' => array_values(array_unique(array_merge(array('object'), (array) $required)))),
-			'categories' => array_values(array_unique($categories))
+			'categories' => array_values(array_unique($categories)),
+			'objects' => array_keys($sources)
 		);
 		$this->defs = $kept;
 	}
