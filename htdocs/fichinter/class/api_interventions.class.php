@@ -43,12 +43,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 class Interventions extends DolibarrApi
 {
 	/**
-	 * @var string[]	Mandatory fields, checked when create and update object
+	 * @var string[]	Mandatory fields, checked when creating an intervention
 	 */
 	public static $FIELDS = array(
 		'socid',
-		'fk_project',
-		'description',
 	);
 
 	/**
@@ -283,7 +281,9 @@ class Interventions extends DolibarrApi
 	 * @phpstan-param	?array<string,string>	$request_data
 	 * @return			int						ID of created intervention
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Mandatory field missing or parameter not allowed
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	500		Error when creating the intervention
 	 */
 	public function post($request_data = null)
 	{
@@ -296,6 +296,15 @@ class Interventions extends DolibarrApi
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->fichinter->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				$this->fichinter->fetch_optionals();	// To force the load of the extrafields definition by fetch_name_optionals_label()
+
+				foreach ($value as $index => $val) {
+					$this->fichinter->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->fichinter);
+				}
 				continue;
 			}
 
@@ -993,7 +1002,7 @@ class Interventions extends DolibarrApi
 
 
 	/**
-	 * Validate fields before create or update object
+	 * Validate fields before creating an intervention
 	 *
 	 * @param ?array<null|int|float|string> $data   Data to validate
 	 * @return array<string,null|int|float|string>

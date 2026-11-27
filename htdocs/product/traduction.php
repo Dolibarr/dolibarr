@@ -272,7 +272,7 @@ if (empty($reshook)) {
 		if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 			print '<a class="butAction" href="' . DOL_URL_ROOT . '/product/traduction.php?action=add&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("Add") . '</a>';
 			if ($cnt_trans > 0) {
-				print '<a class="butAction" href="' . DOL_URL_ROOT . '/product/traduction.php?action=edit&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("Modify") . '</a>';
+				print dolGetButtonAction($langs->trans("Modify"), '', 'edit', DOL_URL_ROOT . '/product/traduction.php?action=edit&token='.newToken().'&id=' . $object->id);
 			}
 		}
 	}

@@ -54,4 +54,17 @@ class AiLibTest extends CommonClassTest
 
 		unset($conf->global->AI_API_CUSTOM_REASONING_EFFORT);
 	}
+
+	/**
+	 * testAiHistoryTurnForModel
+	 *
+	 * @return void
+	 */
+	public function testAiHistoryTurnForModel()
+	{
+		$this->assertSame('Done: api_thirdparties_create returned {"id":15}', aiHistoryTurnForModel('[api_thirdparties_create result] {"id":15}'), 'The model must not see a tool result in a format it can copy');
+		$this->assertSame("Done: api_a_list returned {}\nDone: api_b_list returned []", aiHistoryTurnForModel("[api_a_list result] {}\n[api_b_list result] []"), 'Each result of a followup is rewritten');
+		$this->assertSame('[earlier conversation] hello', aiHistoryTurnForModel('[earlier conversation] hello'));
+		$this->assertSame('Create the third party [api_thirdparties_create result]', aiHistoryTurnForModel('Create the third party [api_thirdparties_create result]'));
+	}
 }

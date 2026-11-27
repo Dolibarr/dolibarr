@@ -269,7 +269,7 @@ if ($action == 'fetch' && !empty($id)) {
 			// variant child and its vat fields are empty, inherit them from the
 			// parent so the sales/order line gets the default tax preselected
 			// like the non-variant flow does (#30400).
-			if (empty($outtva_tx) && empty($outdefault_vat_code)) {
+			if (isModEnabled('variants') && empty($outtva_tx) && empty($outdefault_vat_code)) {
 				require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 				$combination = new ProductCombination($db);
 				if ($combination->fetchByFkProductChild($object->id, 1) > 0) {
