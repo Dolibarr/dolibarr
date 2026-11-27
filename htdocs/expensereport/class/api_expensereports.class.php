@@ -113,6 +113,9 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -211,7 +214,7 @@ class ExpenseReports extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$expensereport_static = new ExpenseReport($this->db);
-				if ($expensereport_static->fetch($obj->rowid)) {
+				if ($expensereport_static->fetch($obj->rowid) > 0) {
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($expensereport_static), $properties);
 				}
 				$i++;
@@ -328,6 +331,9 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -368,6 +374,9 @@ class ExpenseReports extends DolibarrApi
 		$result = $this->_validateLine($request_data);
 
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -430,6 +439,9 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -497,6 +509,9 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -555,6 +570,9 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -618,6 +636,9 @@ class ExpenseReports extends DolibarrApi
 		}
 
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -659,6 +680,9 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -712,6 +736,9 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -762,6 +789,9 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -813,6 +843,9 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -864,6 +897,9 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -906,6 +942,9 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->expensereport->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -1019,12 +1058,18 @@ class ExpenseReports extends DolibarrApi
 
 		$paymentExpenseReport = new PaymentExpenseReport($this->db);
 		$result = $paymentExpenseReport->fetch($pid);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving payment of expense report: '.$paymentExpenseReport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'paymentExpenseReport not found');
 		}
 
 		// Check access to the parent expense report
 		$result = $this->expensereport->fetch($paymentExpenseReport->fk_expensereport);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
@@ -1148,6 +1193,9 @@ class ExpenseReports extends DolibarrApi
 
 		$paymentExpenseReport = new PaymentExpenseReport($this->db);
 		$result = $paymentExpenseReport->fetch($idp);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving payment of expense report: '.$paymentExpenseReport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Payment of expense report not found');
 		}
@@ -1159,6 +1207,9 @@ class ExpenseReports extends DolibarrApi
 
 		// Check access to the parent expense report
 		$result = $this->expensereport->fetch($paymentExpenseReport->fk_expensereport);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when retrieving expense report: '.$this->expensereport->errorsToString());
+		}
 		if (!$result) {
 			throw new RestException(404, 'Expense report not found');
 		}
