@@ -181,6 +181,8 @@ class AllTests
 		$suite->addTestSuite('ApiEndpointDiscoveryTest');
 		require_once dirname(__FILE__).'/ApiEndpointDiscoveryEquivalenceTest.php';
 		$suite->addTestSuite('ApiEndpointDiscoveryEquivalenceTest');
+		require_once dirname(__FILE__).'/AiLibTest.php';
+		$suite->addTestSuite('AiLibTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeDocumentsTest.php';
@@ -193,6 +195,8 @@ class AllTests
 		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderWorkflowTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeSupplierOrderDeleteLineTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeSupplierOrderDeleteLineTest');
+		require_once dirname(__FILE__).'/AiMcpCacheHintsTest.php';
+		$suite->addTestSuite('AiMcpCacheHintsTest');
 		require_once dirname(__FILE__).'/ApiExplorerAccessControlTest.php';
 		$suite->addTestSuite('ApiExplorerAccessControlTest');
 		require_once dirname(__FILE__).'/ApiListStatusFilterTest.php';

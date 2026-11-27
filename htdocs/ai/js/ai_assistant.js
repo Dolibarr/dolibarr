@@ -705,26 +705,107 @@ export function initAiAssistant(container) {
     }
 
     /**
+     * Inline markdown (bold, italic, code) of an already escaped text.
+     * @param {string} s Escaped text
+     * @return {string} Safe HTML
+     */
+    function renderMarkdownInline(s) {
+        s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>');
+        s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+        return s;
+    }
+
+    /**
+     * Split a markdown table row into its trimmed cells. The outer pipes are optional, "\|" is a literal pipe.
+     * @param {string} line Escaped text of the row
+     * @return {string[]} Cells
+     */
+    function splitMarkdownRow(line) {
+        return line.replace(/\\\|/g, '&#124;').trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
+    }
+
+    /**
+     * Render the markdown table (GFM syntax) starting at a given line.
+     * @param {string[]} lines Escaped lines of the answer
+     * @param {number}   start Index of the line to test as a table header
+     * @return {?{html: string, next: number}} Safe HTML and index of the first line after the table, null if no table starts here
+     */
+    function renderMarkdownTable(lines, start) {
+        // A header row, then a delimiter row (|---|:---:|---:|) with the same number of cells
+        if (start + 1 >= lines.length || lines[start].indexOf('|') < 0 || lines[start + 1].indexOf('|') < 0) return null;
+        const header = splitMarkdownRow(lines[start]);
+        const delimiters = splitMarkdownRow(lines[start + 1]);
+        if (header.length !== delimiters.length || !delimiters.every((c) => /^:?-+:?$/.test(c))) return null;
+
+        const rows = [];
+        let next = start + 2;
+        for (; next < lines.length && lines[next].indexOf('|') >= 0; next++) {
+            const row = splitMarkdownRow(lines[next]);
+            while (row.length < header.length) row.push('');
+            row.length = header.length;
+            rows.push(row);
+        }
+
+        // Classes and not inline styles, so the alignment is kept in the saved conversations.
+        // A column of numbers (amount, quantity, percent...) is right aligned when the model gives no alignment.
+        // Neither numbers nor short single words (ref, date...) are wrapped.
+        const isNumber = (c) => /^[+\-−]?\s*[€$£]?\s*\d[\d\s.,]*(%|[€$£]|[A-Z]{3})?$/.test(c.replace(/\*/g, '').trim());
+        const classes = delimiters.map((d, i) => {
+            const values = rows.map((r) => r[i]).filter((c) => c !== '');
+            const numeric = values.length > 0 && values.every(isNumber);
+            const align = /^:-+:$/.test(d) ? 'center' : (/:$/.test(d) ? 'right' : (numeric && !/^:/.test(d) ? 'right' : ''));
+            const nowrap = numeric || (values.length > 0 && values.every((c) => c.length <= 24 && !/\s/.test(c)));
+            return (align + (nowrap ? ' nowraponall' : '')).trim();
+        });
+        const cell = (tag, content, i) => '<' + tag + (classes[i] ? ' class="' + classes[i] + '"' : '') + '>'
+            // <br> is the only way to write a line break into a markdown cell: the models use it
+            + renderMarkdownInline(content).replace(/&lt;br\s*\/?&gt;/gi, '<br>') + '</' + tag + '>';
+
+        let html = '<div class="chat-table-wrap chat-table-md"><table class="chat-table"><thead><tr>';
+        html += header.map((c, i) => cell('th', c, i)).join('') + '</tr></thead><tbody>';
+        rows.forEach((row) => { html += '<tr>' + row.map((c, i) => cell('td', c, i)).join('') + '</tr>'; });
+        return { html: html + '</tbody></table></div>', next: next };
+    }
+
+    /**
      * Light markdown rendering for free-text LLM answers: the models reply with
-     * markdown (bold, lists, line breaks) that innerHTML would otherwise flatten
+     * markdown (bold, lists, tables, line breaks) that innerHTML would otherwise flatten
      * into one unreadable block with literal asterisks. HTML is escaped FIRST,
      * so the LLM cannot inject markup.
      * @param {string} text Raw model answer
      * @return {string} Safe HTML
      */
     function renderMarkdownLite(text) {
-        let s = escapeHtml(String(text));
-        s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
-        s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>');
-        s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
-        // Numbered/bulleted list items get their own line even when the model
-        // packed them into a single paragraph ("… 5,20 € 2. **Référence** …").
-        // Conservative: only break before "N. **Header**" items (the pattern the
-        // model actually emits); "\S" also matched prose like "version 2. is out".
-        s = s.replace(/\s(\d{1,2}\.\s)(?=<strong>)/g, '<br>$1');
-        s = s.replace(/(^|\n)[-•]\s/g, '$1• ');
-        s = s.replace(/\n/g, '<br>');
-        return s;
+        const renderText = (txt) => {
+            let s = renderMarkdownInline(txt);
+            // Numbered/bulleted list items get their own line even when the model
+            // packed them into a single paragraph ("… 5,20 € 2. **Référence** …").
+            // Conservative: only break before "N. **Header**" items (the pattern the
+            // model actually emits); "\S" also matched prose like "version 2. is out".
+            s = s.replace(/\s(\d{1,2}\.\s)(?=<strong>)/g, '<br>$1');
+            s = s.replace(/(^|\n)[-•]\s/g, '$1• ');
+            return s.replace(/\n/g, '<br>');
+        };
+
+        const lines = escapeHtml(String(text)).split(/\r?\n/);
+        let html = '';
+        let pending = [];       // lines of text not rendered yet
+        let inFence = false;    // into a ``` code block, where a table is not a table
+        for (let i = 0; i < lines.length;) {
+            if (/^\s*```[^`]*$/.test(lines[i])) inFence = !inFence;
+            const table = inFence ? null : renderMarkdownTable(lines, i);
+            if (table) {
+                // The table is a block with its own margins: no blank line around it
+                html += renderText(pending.join('\n').trim()) + table.html;
+                pending = [];
+                i = table.next;
+                while (i < lines.length && lines[i].trim() === '') i++;
+            } else {
+                pending.push(lines[i++]);
+            }
+        }
+        return html + renderText(pending.join('\n'));
     }
 
     // =========================================================================

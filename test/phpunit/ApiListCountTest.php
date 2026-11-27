@@ -162,6 +162,18 @@ class ApiListCountTest extends CommonClassTest
 	}
 
 	/**
+	 * pagination_data=true returns, into pagination.total, the number of records of the full list of timespent.
+	 *
+	 * @return void
+	 */
+	public function testPaginationTotalOfTimespent()
+	{
+		$expected = count($this->callList('Projects', 'listTimespent', array('limit' => 0)));
+		$result = $this->callList('Projects', 'listTimespent', array('limit' => 1, 'pagination_data' => true));
+		$this->assertSame($expected, $result['pagination']['total']);
+	}
+
+	/**
 	 * A filter that matches nothing is a count of 0, not the 404 of the list.
 	 *
 	 * @return void

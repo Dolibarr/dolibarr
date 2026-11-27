@@ -967,7 +967,7 @@ class Projects extends DolibarrApi
 		}
 
 		//this query will return total orders with the filters given
-		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+		$sqlTotals = $sql; // Without ORDER BY and LIMIT
 
 		// Return only the number of records matching the filters
 		if ($count) {
@@ -1003,8 +1003,7 @@ class Projects extends DolibarrApi
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
 		if ($pagination_data) {
-			$totalsResult = $this->db->query($sqlTotals);
-			$total = $this->db->fetch_object($totalsResult)->total;
+			$total = $this->_getCountOfRecords($sqlTotals)['count'];
 
 			$tmp = $obj_ret;
 			$obj_ret['data'] = $tmp;
