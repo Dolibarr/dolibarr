@@ -777,6 +777,12 @@ class MouvementStock extends CommonObject
 				} else {
 					$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
 				}
+				// Safeguard for a negative stock entry (qty < 0 with type 0 or 3, e.g. correction or cancellation of a reception):
+				// - if the stock left after the movement is zero or negative, the weighted average has no meaning, so the AWP is kept;
+				// - the AWP can never become negative (it would if the value removed is higher than the value of the stock).
+				if ($qty < 0 && (($oldqtytouse + $qty) <= 0 || $newpmp < 0)) {
+					$newpmp = $oldpmp;
+				}
 				//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." ";
 				//print "qty=".$qty." newpmp=".$newpmp;
 				//exit;
