@@ -954,7 +954,6 @@ class Workstation extends CommonObject
 		$langs->load("mrp");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'generic_workstation_odt';
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
@@ -965,7 +964,9 @@ class Workstation extends CommonObject
 
 		$modelpath = "core/modules/workstation/doc/";
 
-		$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		if (!empty($modele)) {
+			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
 
 		return $result;
 	}
