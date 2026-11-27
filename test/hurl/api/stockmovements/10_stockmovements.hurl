@@ -14,8 +14,8 @@
 #   class StockMovements
 #   (htdocs/product/stock/class/api_stockmovements.class.php — PATH NOW
 #   CONFIRMED: the full class source was pasted and analysed
-#   2026-11-27; it requires mouvementstock.class.php and wraps
-#   MouvementStock).
+#   2026-11-27; it requires movementstock.class.php and wraps
+#   movementStock).
 #
 # SOURCE READ: COMPLETED 2026-11-27. All routes/params/gates below are
 #   sealed against the class source. Behavioural pins are re-annotated
@@ -68,23 +68,23 @@
 #        the dead code and document immutability.
 #     h) DUAL PERMISSION GATES (new vs the supplier family): index()
 #        requires hasRight('stock', 'lire'); get() requires the
-#        NARROWER hasRight('stock', 'mouvement', 'lire'). The C6
+#        NARROWER hasRight('stock', 'movement', 'lire'). The C6
 #        manual probes below cover BOTH gates.
 #     i) get() carries an EXPLICIT falsy guard BEFORE fetch:
 #        `if ($id == 0) throw RestException(400, 'No stock movement
 #        with id 0 can exist')` — the SMF1 story (see below).
-#     j) index() SQL shape: FROM llx_stock_mouvement t INNER JOIN
+#     j) index() SQL shape: FROM llx_stock_movement t INNER JOIN
 #        entrepot e ON t.fk_entrepot = e.rowid LEFT JOIN
-#        stock_mouvement_extrafields ef, WHERE e.entity IN
+#        stock_movement_extrafields ef, WHERE e.entity IN
 #        (getEntity('stock')) — warehouse-entity scoping is structural;
 #        get() additionally runs _checkAccessToResource('stockmovement',
-#        ..., 'stock_mouvement', '', '', 'rowid', 'fk_entrepot@entrepot').
+#        ..., 'stock_movement', '', '', 'rowid', 'fk_entrepot@entrepot').
 #     Write-side routes (context only, OUT OF SCOPE): POST
 #     /stockmovements — NOT exercised by this GET-only suite.
 #
 # Preconditions: {{hostnport}} in env; DOLAPIKEY supplied by the runner
 #   environment (admin key); product/stock modules enabled with
-#   stock+lire AND stock/mouvement/lire rights for the key (note (h)).
+#   stock+lire AND stock/movement/lire rights for the key (note (h)).
 # FIXTURE RESOLVED (2026-11-27): the instance has >= 1 stock movement —
 #   the capture chain and the count gauge were GREEN on the first run.
 #   If the instance is ever emptied, the LIST section dies with
@@ -131,7 +131,7 @@
 #
 # PERMISSION DEPENDENCE (SOURCE-SEALED, note (h)): index() gates
 #   hasRight('stock', 'lire') FIRST; get() gates hasRight('stock',
-#   'mouvement', 'lire') FIRST, then the id==0 400 guard, then fetch
+#   'movement', 'lire') FIRST, then the id==0 400 guard, then fetch
 #   -> 404, then _checkAccessToResource -> 403. A low-privilege key
 #   sees 403 BEFORE any falsy-id/404/SQL path on BOTH routes.
 #   LOW-PRIVILEGE NEGATIVE CONTROL (C6): NOT AUTOMATED — the zero-rights
@@ -471,7 +471,7 @@ jsonpath "$.data" exists
 jsonpath "$.pagination.limit" == 2
 
 # ---------------------------------------------------------------- GET /stockmovements/{id}
-# Source-sealed shape: gate hasRight('stock','mouvement','lire')
+# Source-sealed shape: gate hasRight('stock','movement','lire')
 #   FIRST (note (h)), then the id==0 400 guard, then fetch($id) ->
 #   404 'stock movement not found' on falsy, then
 #   _checkAccessToResource(..., 'fk_entrepot@entrepot') -> 403.
@@ -556,7 +556,7 @@ jsonpath "$.error" exists
 #   hurl tests via run.sh. C6 coverage for this class is MANUAL, via
 #   curl. SOURCE-SEALED ORDER: rights gate FIRST on BOTH routes —
 #   index(): hasRight('stock', 'lire'); get(): hasRight('stock',
-#   'mouvement', 'lire') — so every probe answers 403 BEFORE the
+#   'movement', 'lire') — so every probe answers 403 BEFORE the
 #   id==0 guard, the fetch/404 and the SQL build. Cover BOTH gates:
 #     LOWKEY=<zero-rights-key> DOLIHOST=localhost:8080 \
 #       bash -c 'for p in "?limit=1" "/0" "/99999999" \
@@ -569,7 +569,7 @@ jsonpath "$.error" exists
 #   400-on-/0 leak (the guard sits BEHIND the rights gate), no
 #   404-on-nonexistent leak, no raw SQL text. EXTRA DATA POINT vs
 #   the family: whether a key with stock/lire but WITHOUT
-#   stock/mouvement/lire exists in the matrix separates the TWO
+#   stock/movement/lire exists in the matrix separates the TWO
 #   gates (index 200 vs get 403) — probe if such a key is available.
 #   RESULT-FIELD:
 #   C6 stockmovements result: PENDING (fill in at the manual run).
