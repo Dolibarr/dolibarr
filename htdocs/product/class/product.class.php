@@ -2119,6 +2119,51 @@ class Product extends CommonObject
 	}
 
 	/**
+	 * Save the PMP of the product for an entity into llx_product_perentity (the row is created if it does not exist yet).
+	 * Only the PMP is written: the global PMP (llx_product.pmp) and the other fields of the row are not changed.
+	 * No transaction is opened here: the caller manages it.
+	 *
+	 * @param	float	$pmp		PMP to save
+	 * @param	int		$entity		Entity of the PMP (0 = current entity)
+	 * @return	int					Return integer <0 if KO, >0 if OK
+	 */
+	public function setPMPPerEntity($pmp, $entity = 0)
+	{
+		global $conf;
+
+		$entity = ($entity > 0 ? $entity : $conf->entity);
+		$pmp = (float) price2num($pmp, 'MU');
+
+		$sql = "SELECT rowid FROM ".$this->db->prefix()."product_perentity";
+		$sql .= " WHERE fk_product = ".((int) $this->id)." AND entity = ".((int) $entity);	// This is a unique key
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		if ($obj) {
+			$sql = "UPDATE ".$this->db->prefix()."product_perentity SET pmp = ".((float) $pmp);
+			$sql .= " WHERE rowid = ".((int) $obj->rowid);
+		} else {
+			$sql = "INSERT INTO ".$this->db->prefix()."product_perentity (fk_product, entity, pmp)";
+			$sql .= " VALUES (".((int) $this->id).", ".((int) $entity).", ".((float) $pmp).")";
+		}
+
+		dol_syslog(get_class($this)."::setPMPPerEntity", LOG_DEBUG);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -2;
+		}
+
+		return 1;
+	}
+
+	/**
 	 * Get the label for sell by or eat by mandatory flag of the current product
 	 *
 	 * @return 	string		Sell or eat by mandatory label

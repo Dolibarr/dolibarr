@@ -588,30 +588,47 @@ class MouvementStock extends CommonObject
 			// Calculate new AWP (PMP)
 			$newpmp = 0;
 			if (!$error) {
-				if ($type == 0 || $type == 3) {
-					// After a stock increase
-					// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
-					// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
-					if ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
-						$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
-						// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
-						if ($oldpmp > 0 && ($oldqtytouse + $qty) != 0) {
-							$newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
-						} else {
-							$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
-						}
-						//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." ";
-						//print "qty=".$qty." newpmp=".$newpmp;
-						//exit;
-					} else {
-						$newpmp = $oldpmp;
-					}
+				$newpmp = $this->calculatePMP($oldqty, $oldpmp, $qty, $price, $type);
+			}
+
+			// PMP per entity (MultiCompany): the PMP of the entity of the warehouse is calculated with the same rule, on the PMP and
+			// the stock of this entity before the movement. It is saved after the triggers (see below).
+			$newpmpperentity = null;
+			$entitypmp = 0;
+			if (!$error && Product::isPMPPerEntity()) {
+				// Entity of the warehouse (it can differ from the current entity, for example with shared warehouses)
+				$sql = "SELECT entity FROM ".$this->db->prefix()."entrepot WHERE rowid = ".((int) $entrepot_id);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					$entitypmp = ($obj ? (int) $obj->entity : 0);
+					$this->db->free($resql);
 				} else {
-					// ($type == 1 || $type == 2)
-					//   -> After a stock decrease, we don't change value of the AWP/PMP of a product.
-					// else
-					//   Type of movement unknown
-					$newpmp = $oldpmp;
+					$this->errors[] = $this->db->lasterror();
+					$error = -2;
+				}
+			}
+			if (!$error && $entitypmp > 0) {
+				// PMP of this entity (global PMP if the product has no row yet for this entity) and stock of the warehouses of this entity, before the movement
+				$sql = "SELECT ".Product::getSQLPMP('p', 'ppe')." as pmp,";
+				$sql .= " (SELECT SUM(ps.reel) FROM ".$this->db->prefix()."product_stock as ps";
+				$sql .= " INNER JOIN ".$this->db->prefix()."entrepot as w ON w.rowid = ps.fk_entrepot";
+				$sql .= " WHERE ps.fk_product = p.rowid AND w.entity = ".((int) $entitypmp).") as stockentity";
+				$sql .= " FROM ".$this->db->prefix()."product as p";
+				$sql .= Product::getSQLJoinPMP('p', 'ppe', $entitypmp);
+				$sql .= " WHERE p.rowid = ".((int) $fk_product);
+
+				dol_syslog(get_class($this)."::_create get PMP and stock of the entity of the warehouse", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj) {
+						$newpmpperentity = $this->calculatePMP((float) $obj->stockentity, (float) $obj->pmp, $qty, $price, $type);
+					}
+					$this->db->free($resql);
+				} else {
+					$this->errors[] = $this->db->lasterror();
+					$error = -2;
 				}
 			}
 			// Update stock quantity
@@ -703,6 +720,15 @@ class MouvementStock extends CommonObject
 				}
 			}
 			// End call triggers
+			// Save the PMP of the entity of the warehouse after the triggers, so it is the value kept even if a trigger
+			// (like the one of module MultiCompany up to version 22) calculates and writes it itself.
+			if (!$error && $newpmpperentity !== null) {
+				$result = $product->setPMPPerEntity($newpmpperentity, $entitypmp);
+				if ($result < 0) {
+					$this->setErrorsFromObject($product);
+					$error++;
+				}
+			}
 			// Check unicity for serial numbered equipment once all movement were done.
 			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
@@ -724,6 +750,49 @@ class MouvementStock extends CommonObject
 		}
 	}
 
+
+	/**
+	 * Calculate the weighted average price (PMP) after a stock movement.
+	 * Used for the PMP of the product and, when the PMP is managed per entity, for the PMP of the entity of the warehouse.
+	 *
+	 * @param	float		$oldqty		Stock before the movement
+	 * @param	float		$oldpmp		PMP before the movement
+	 * @param	float		$qty		Quantity of the movement
+	 * @param	float		$price		Unit price of the movement
+	 * @param	int			$type		Type of movement (0=input, 1=output, 2=output, 3=input)
+	 * @return	float|string			New PMP
+	 */
+	private function calculatePMP($oldqty, $oldpmp, $qty, $price, $type)
+	{
+		$newpmp = 0;
+		if ($type == 0 || $type == 3) {
+			// After a stock increase
+			// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
+			// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
+			if ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
+				$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
+				// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
+				if ($oldpmp > 0 && ($oldqtytouse + $qty) != 0) {
+					$newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
+				} else {
+					$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
+				}
+				//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." ";
+				//print "qty=".$qty." newpmp=".$newpmp;
+				//exit;
+			} else {
+				$newpmp = $oldpmp;
+			}
+		} else {
+			// ($type == 1 || $type == 2)
+			//   -> After a stock decrease, we don't change value of the AWP/PMP of a product.
+			// else
+			//   Type of movement unknown
+			$newpmp = $oldpmp;
+		}
+
+		return $newpmp;
+	}
 
 
 	/**
