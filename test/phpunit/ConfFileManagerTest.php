@@ -248,18 +248,91 @@ class ConfFileManagerTest extends CommonClassTest
 	}
 
 	/**
-	 * Test the documented limitation: a multi-line assignment is not parsed (no false partial capture).
+	 * Test parse(): a multi-line assignment is read whole, other statements are kept in order.
 	 *
 	 * @return	void
 	 */
-	public function testParseMultiLineLimitation()
+	public function testParseStatements()
 	{
 		$confmanager = new ConfFileManager();
 
-		$content = "<?php\n\$dolibarr_main_disabled_modules=array(\n  'dav',\n);\n";
+		$content = "<?php\n\$helper = '1';\n\$dolibarr_main_disabled_modules=array(\n  'dav',\n);\n";
+		$content .= "\$_SERVER['DOLIBARR_MAIN_SECURITY_FORCECSP'] = \"default-src 'self'\"; // lock\n";
+		$content .= "if (true) {\n\t\$dolibarr_x = '1';\n}\n";
 		$parsed = $confmanager->parse($content);
 
-		$this->assertArrayNotHasKey('dolibarr_main_disabled_modules', $parsed['values'], 'Multi-line assignment must not be partially parsed');
+		$this->assertSame("array(\n  'dav',\n)", $parsed['values']['dolibarr_main_disabled_modules']);
+		$this->assertSame(array("\$helper = '1';"), $parsed['statementsBefore']);
+		$this->assertSame(array("\$_SERVER['DOLIBARR_MAIN_SECURITY_FORCECSP'] = \"default-src 'self'\";", "if (true) {\n\t\$dolibarr_x = '1';\n}"), $parsed['statementsAfter']);
+		$this->assertArrayNotHasKey('dolibarr_x', $parsed['values'], 'An assignment inside a block is not a top-level value');
+	}
+
+	/**
+	 * Test that reusing a template keeps the statements that are not $dolibarr_ assignments.
+	 *
+	 * @return	void
+	 */
+	public function testBuildFromTemplateKeepsOtherStatements()
+	{
+		$confmanager = new ConfFileManager();
+
+		$template = "<?php\n";
+		$template .= "\$dolibarr_main_db_host='localhost';\n";
+		$template .= "\$_SERVER['DOLIBARR_MAIN_SECURITY_FORCECSP'] = \"default-src 'self'\";\n";
+		$template .= "include '/etc/dolibarr/secrets.php';\n";
+
+		$result = $confmanager->buildFromTemplate($template);
+
+		$this->assertTrue($confmanager->validateSyntax($result['content']));
+		$this->assertStringContainsString("\$_SERVER['DOLIBARR_MAIN_SECURITY_FORCECSP'] = \"default-src 'self'\";", $result['content']);
+		$this->assertStringContainsString("include '/etc/dolibarr/secrets.php';", $result['content']);
+	}
+
+	/**
+	 * Test that reusing a template keeps expressions and pins an expression key into dolcrypt_key.
+	 *
+	 * @return	void
+	 */
+	public function testBuildFromTemplateKeepsExpressions()
+	{
+		$confmanager = new ConfFileManager();
+
+		$template = "<?php\n";
+		$template .= "\$dolibarr_main_db_pass=getenv('DOLTEST_DBPASS');\n";
+		$template .= "\$dolibarr_main_instance_unique_id=getenv('DOLTEST_UID');\n";
+
+		$result = $confmanager->buildFromTemplate($template);
+		$this->assertStringContainsString("\$dolibarr_main_db_pass=getenv('DOLTEST_DBPASS');", $result['content']);
+
+		putenv('DOLTEST_DBPASS=envpass');
+		putenv('DOLTEST_UID=olduid');
+		$vars = $this->evalConfContent($result['content']);
+		putenv('DOLTEST_DBPASS');
+		putenv('DOLTEST_UID');
+
+		$this->assertSame('envpass', $vars['dolibarr_main_db_pass']);
+		$this->assertSame('olduid', $vars['dolibarr_main_dolcrypt_key']);
+		$this->assertNotSame('olduid', $vars['dolibarr_main_instance_unique_id']);
+	}
+
+	/**
+	 * Test that reusing a template keeps literal values unchanged, quotes and backslashes included.
+	 *
+	 * @return	void
+	 */
+	public function testBuildFromTemplateKeepsLiteralValues()
+	{
+		$confmanager = new ConfFileManager();
+
+		$template = "<?php\n";
+		$template .= "\$dolibarr_main_db_pass='p\\'a\"s\\\\s';\n";
+		$template .= "\$dolibarr_main_db_user=\"dol\\\"user\";\n";
+
+		$result = $confmanager->buildFromTemplate($template);
+		$vars = $this->evalConfContent($result['content']);
+
+		$this->assertSame('p\'a"s\\s', $vars['dolibarr_main_db_pass']);
+		$this->assertSame('dol"user', $vars['dolibarr_main_db_user']);
 	}
 
 	/**
@@ -431,6 +504,25 @@ class ConfFileManagerTest extends CommonClassTest
 		$this->assertSame('dbuser', $params['db_user']);
 		$this->assertSame('llx_', $params['db_prefix']);
 		$this->assertSame('secretpass', $params['db_pass'], 'crypted: password must be decoded');
+	}
+
+	/**
+	 * Test getConnectionParams(): an expression takes the value of the included conf.php.
+	 *
+	 * @return	void
+	 */
+	public function testGetConnectionParamsWithExpression()
+	{
+		$confmanager = new ConfFileManager();
+
+		$template = "<?php\n\$dolibarr_main_db_host='dbhost';\n\$dolibarr_main_db_pass=getenv('DB_PASSWORD');\n";
+
+		$params = $confmanager->getConnectionParams($template, array('dolibarr_main_db_pass' => 'evaluatedpass'));
+		$this->assertSame('dbhost', $params['db_host']);
+		$this->assertSame('evaluatedpass', $params['db_pass']);
+
+		$params = $confmanager->getConnectionParams($template);
+		$this->assertSame('', $params['db_pass'], 'An expression must never be used as a literal value');
 	}
 
 	/**

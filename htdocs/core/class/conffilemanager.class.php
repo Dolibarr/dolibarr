@@ -197,39 +197,42 @@ class ConfFileManager
 	/**
 	 *	Parse the raw content of a conf.php file.
 	 *
-	 *	Only non commented assignments of $dolibarr_* variables are extracted. Values are kept raw (right-hand
-	 *	side as written) so they can be reused verbatim when reusing a template.
-	 *
-	 *	Limitation: only single-line assignments ($var = ...; on one line) are recognized. A multi-line value
-	 *	(e.g. an array spread over several lines) or a concatenated expression is not parsed and is therefore
-	 *	ignored (neither reused nor reported), rather than partially captured.
+	 *	The content is tokenized, never executed. Each top-level statement $dolibarr_xxx = ...; gives a value,
+	 *	kept raw (right-hand side as written, possibly on several lines). Any other statement ($_SERVER[...] = ...,
+	 *	include, define, if...) is returned verbatim, in statementsBefore when it comes before the first
+	 *	$dolibarr_ assignment, in statementsAfter otherwise. Comments outside statements are not kept.
 	 *
 	 *	@param	string	$content	Raw content of the conf.php file.
-	 *	@return	array{values:array<string,string>,unknown:string[],deprecated:string[],missing:string[]}
+	 *	@return	array{values:array<string,string>,unknown:string[],deprecated:string[],missing:string[],statementsBefore:string[],statementsAfter:string[]}
 	 */
 	public function parse($content)
 	{
 		$values = array();
 		$unknown = array();
 		$deprecated = array();
+		$statementsBefore = array();
+		$statementsAfter = array();
 
 		$canvasKeys = $this->getCanvasKeys();
 
-		$lines = preg_split('/\r\n|\r|\n/', (string) $content);
-		if (!is_array($lines)) {
-			$lines = array();
-		}
-		foreach ($lines as $line) {
+		foreach ($this->splitStatements((string) $content) as $statement) {
 			$reg = array();
-			if (!preg_match('/^\s*\$(dolibarr_[a-z0-9_]+)\s*=\s*(.*?);\s*(?:\/\/.*)?$/i', $line, $reg)) {
+			if (!preg_match('/^\$(dolibarr_[a-z0-9_]+)\s*=(?!=)\s*(.*);$/is', $statement, $reg)) {
+				if (empty($values)) {
+					$statementsBefore[] = $statement;
+				} else {
+					$statementsAfter[] = $statement;
+				}
 				continue;
 			}
 			$key = $reg[1];
 			$values[$key] = trim($reg[2]);
 
 			if (array_key_exists($key, self::DEPRECATION_MAP)) {
-				$deprecated[] = $key;
-			} elseif (!in_array($key, $canvasKeys, true)) {
+				if (!in_array($key, $deprecated, true)) {
+					$deprecated[] = $key;
+				}
+			} elseif (!in_array($key, $canvasKeys, true) && !in_array($key, $unknown, true)) {
 				$unknown[] = $key;
 			}
 		}
@@ -241,7 +244,128 @@ class ConfFileManager
 			}
 		}
 
-		return array('values' => $values, 'unknown' => $unknown, 'deprecated' => $deprecated, 'missing' => $missing);
+		return array(
+			'values' => $values,
+			'unknown' => $unknown,
+			'deprecated' => $deprecated,
+			'missing' => $missing,
+			'statementsBefore' => $statementsBefore,
+			'statementsAfter' => $statementsAfter,
+		);
+	}
+
+	/**
+	 *	Split PHP content into its top-level statements, as written.
+	 *
+	 *	@param	string	$content	Raw PHP content.
+	 *	@return	string[]	Statements, trimmed, without the comments found between statements.
+	 */
+	private function splitStatements($content)
+	{
+		$statements = array();
+		$buffer = '';
+		$depth = 0;
+		foreach (token_get_all($content) as $token) {
+			$id = is_array($token) ? $token[0] : null;
+			$text = is_array($token) ? $token[1] : $token;
+			if ($id === T_OPEN_TAG || $id === T_OPEN_TAG_WITH_ECHO || $id === T_CLOSE_TAG || $id === T_INLINE_HTML) {
+				if (trim($buffer) !== '') {
+					$statements[] = trim($buffer);
+				}
+				$buffer = '';
+				$depth = 0;
+				continue;
+			}
+			if ($buffer === '' && ($id === T_WHITESPACE || $id === T_COMMENT || $id === T_DOC_COMMENT)) {
+				continue;
+			}
+			$buffer .= $text;
+			if ($text === '(' || $text === '[' || $text === '{' || $id === T_DOLLAR_OPEN_CURLY_BRACES) {
+				$depth++;
+			} elseif ($text === ')' || $text === ']' || $text === '}') {
+				$depth--;
+			}
+			if ($depth <= 0 && ($text === ';' || $text === '}')) {
+				$statements[] = trim($buffer);
+				$buffer = '';
+				$depth = 0;
+			}
+		}
+		if (trim($buffer) !== '') {
+			$statements[] = trim($buffer);
+		}
+
+		return $statements;
+	}
+
+	/**
+	 *	Decode a right-hand side when it is a plain literal (quoted string, number, true, false or null).
+	 *
+	 *	@param	string	$raw	Right-hand side as written in the file.
+	 *	@return	string|null		Decoded value, or null when the right-hand side is an expression (getenv(), concatenation...).
+	 */
+	private function decodeLiteral($raw)
+	{
+		$significant = array();
+		foreach (token_get_all('<?php '.$raw.';') as $token) {
+			if (is_array($token) && in_array($token[0], array(T_OPEN_TAG, T_WHITESPACE, T_COMMENT, T_DOC_COMMENT), true)) {
+				continue;
+			}
+			$significant[] = $token;
+		}
+		$sign = '';
+		if (count($significant) === 3 && $significant[0] === '-') {
+			$sign = '-';
+			array_shift($significant);
+		}
+		if (count($significant) !== 2 || $significant[1] !== ';' || !is_array($significant[0])) {
+			return null;
+		}
+		$id = $significant[0][0];
+		$text = $significant[0][1];
+		if ($id === T_LNUMBER || $id === T_DNUMBER) {
+			return $sign.$text;
+		}
+		if ($sign !== '') {
+			return null;
+		}
+		if ($id === T_CONSTANT_ENCAPSED_STRING) {
+			$inner = substr($text, 1, -1);
+			if ($text[0] === '\'') {
+				return strtr($inner, array('\\\\' => '\\', '\\\'' => '\''));
+			}
+			return stripcslashes($inner);
+		}
+		if ($id === T_STRING) {
+			$lower = strtolower($text);
+			if ($lower === 'true') {
+				return '1';
+			}
+			if ($lower === 'false' || $lower === 'null') {
+				return '';
+			}
+		}
+		return null;
+	}
+
+	/**
+	 *	Read the value of a template variable.
+	 *
+	 *	@param	array<string,string>	$values				Parsed values (raw right-hand sides).
+	 *	@param	array<string,mixed>		$evaluatedValues	Values of the same file once included, used for expressions.
+	 *	@param	string					$key				Variable name.
+	 *	@return	string	The value, or '' when absent or when it is an expression with no evaluated value.
+	 */
+	private function readTemplateValue($values, $evaluatedValues, $key)
+	{
+		if (!isset($values[$key])) {
+			return '';
+		}
+		$decoded = $this->decodeLiteral($values[$key]);
+		if ($decoded !== null) {
+			return $decoded;
+		}
+		return (isset($evaluatedValues[$key]) && is_scalar($evaluatedValues[$key])) ? (string) $evaluatedValues[$key] : '';
 	}
 
 	/**
@@ -252,7 +376,7 @@ class ConfFileManager
 	 *	reference (so each provisioned instance gets its own unique id, while the old value stays recoverable).
 	 *
 	 *	@param	array<string,string>	$values		Parsed values (raw right-hand sides).
-	 *	@return	array{instanceKey:string,oldKey:string,commentOut:string[]}	New id, old effective key (for dolcrypt) and deprecated variables to keep commented.
+	 *	@return	array{instanceKey:string,oldKey:string,oldKeyRaw:string,commentOut:string[]}	New id, old effective key (decoded, '' for an expression), its right-hand side as written, and deprecated variables to keep commented.
 	 */
 	public function resolveInstanceKey($values)
 	{
@@ -263,9 +387,15 @@ class ConfFileManager
 		// Old effective key, kept so dolcrypt-encrypted data stays decryptable after the id is regenerated:
 		// existing dolcrypt_key, else instance_unique_id, else the legacy cookie_cryptkey.
 		$oldKey = '';
+		$oldKeyRaw = '';
 		foreach (array('dolibarr_main_dolcrypt_key', 'dolibarr_main_instance_unique_id', 'dolibarr_main_cookie_cryptkey') as $k) {
-			if (!empty($values[$k])) {
-				$oldKey = $this->unquoteScalar($values[$k]);
+			if (!isset($values[$k])) {
+				continue;
+			}
+			$decoded = $this->decodeLiteral($values[$k]);
+			if ($decoded === null || $decoded !== '') {
+				$oldKey = (string) $decoded;
+				$oldKeyRaw = $values[$k];
 				break;
 			}
 		}
@@ -275,7 +405,7 @@ class ConfFileManager
 			$commentOut[] = 'dolibarr_main_cookie_cryptkey';
 		}
 
-		return array('instanceKey' => $newId, 'oldKey' => $oldKey, 'commentOut' => $commentOut);
+		return array('instanceKey' => $newId, 'oldKey' => $oldKey, 'oldKeyRaw' => $oldKeyRaw, 'commentOut' => $commentOut);
 	}
 
 	/**
@@ -285,10 +415,11 @@ class ConfFileManager
 	 *	decrypted when stored encrypted (crypted: or dolcrypt:). Used when reusing a template: the parameters
 	 *	then come from the template instead of the (disabled) install form.
 	 *
-	 *	@param	string	$rawTemplate	Raw content of the existing conf.php template.
+	 *	@param	string				$rawTemplate		Raw content of the existing conf.php template.
+	 *	@param	array<string,mixed>	$evaluatedValues	Values of the template once included (keyed by variable name), used when a value is an expression such as getenv().
 	 *	@return	array<string,string>	Map: document_root, data_root, url_root, db_type, db_host, db_port, db_name, db_user, db_prefix, db_pass.
 	 */
-	public function getConnectionParams($rawTemplate)
+	public function getConnectionParams($rawTemplate, $evaluatedValues = array())
 	{
 		$parsed = $this->parse($rawTemplate);
 		$values = $parsed['values'];
@@ -296,16 +427,16 @@ class ConfFileManager
 		$params = array();
 		foreach (array('document_root', 'data_root', 'url_root', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user', 'db_prefix') as $short) {
 			$key = 'dolibarr_main_'.$short;
-			$params[$short] = isset($values[$key]) ? $this->unquoteScalar($values[$key]) : '';
+			$params[$short] = $this->readTemplateValue($values, $evaluatedValues, $key);
 		}
 
 		// dolcrypt key effectively used by the template: dolcrypt_key, else instance_unique_id, else the
 		// legacy cookie_cryptkey (so a password from an old conf can still be decrypted for the connection).
-		$rawpass = isset($values['dolibarr_main_db_pass']) ? $this->unquoteScalar($values['dolibarr_main_db_pass']) : '';
+		$rawpass = $this->readTemplateValue($values, $evaluatedValues, 'dolibarr_main_db_pass');
 		$cryptkey = '';
 		foreach (array('dolibarr_main_dolcrypt_key', 'dolibarr_main_instance_unique_id', 'dolibarr_main_cookie_cryptkey') as $k) {
-			if (!empty($values[$k])) {
-				$cryptkey = $this->unquoteScalar($values[$k]);
+			$cryptkey = $this->readTemplateValue($values, $evaluatedValues, $k);
+			if ($cryptkey !== '') {
 				break;
 			}
 		}
@@ -341,9 +472,10 @@ class ConfFileManager
 	 *
 	 *	@param	array<string,string>	$values		Concrete values keyed by variable name. Missing keys fall back to the canvas default.
 	 *	@param	string					$topBlock	Optional block inserted right after the file header, before the sections.
+	 *	@param	array<string,bool>		$verbatimKeys	Variables whose value is a right-hand side written as is (keyed by variable name).
 	 *	@return	string	Full conf.php content.
 	 */
-	public function build($values, $topBlock = '')
+	public function build($values, $topBlock = '', $verbatimKeys = array())
 	{
 		if (!is_array($values)) {
 			$values = array();
@@ -374,9 +506,13 @@ class ConfFileManager
 			$key = $descriptor['key'];
 			$value = array_key_exists($key, $values) ? $values[$key] : $descriptor['default'];
 
-			$assignment = '$'.$key.'='.$this->serializeValue($descriptor, $value).';';
-			if ($descriptor['mode'] === self::MODE_COMMENT_IF_EMPTY && $this->isEmptyValue($value)) {
-				$assignment = '//'.$assignment;
+			if (isset($verbatimKeys[$key])) {
+				$assignment = '$'.$key.'='.$value.';';
+			} else {
+				$assignment = '$'.$key.'='.$this->serializeValue($descriptor, $value).';';
+				if ($descriptor['mode'] === self::MODE_COMMENT_IF_EMPTY && $this->isEmptyValue($value)) {
+					$assignment = '//'.$assignment;
+				}
 			}
 
 			if (!empty($descriptor['compact'])) {
@@ -412,6 +548,9 @@ class ConfFileManager
 	 *	A fresh instance_unique_id is always generated; when dolcrypt_key is empty, the old key is pinned into it
 	 *	so the values already encrypted with dolEncrypt() stay decryptable. Deprecated variables are kept commented for
 	 *	reference, and custom/unknown variables are preserved verbatim, so nothing is silently lost.
+	 *	Reused values are written back exactly as in the template, so an expression such as getenv() stays an
+	 *	expression. The other statements of the template are written back as is, at the top of the file when they
+	 *	came before the first $dolibarr_ assignment, at the end otherwise.
 	 *
 	 *	@param	string					$rawTemplate	Raw content of the existing conf.php template.
 	 *	@param	array<string,string>	$fallbackValues	Values used when a canvas variable is missing/empty in the template (keyed by variable name).
@@ -427,18 +566,21 @@ class ConfFileManager
 
 		// Reuse the values already set in the template for the known canvas variables.
 		$values = array();
+		$verbatimKeys = array();
 		foreach ($this->getCanvas() as $descriptor) {
 			$key = $descriptor['key'];
-			$reused = null;
 			if (array_key_exists($key, $parsed['values'])) {
-				// 'raw' values (array(...) or pre-quoted literals) are kept verbatim; the others are unquoted
-				// so build() re-serializes them properly (and does not double-escape).
-				$reused = ($descriptor['type'] === 'raw') ? $parsed['values'][$key] : $this->unquoteScalar($parsed['values'][$key]);
+				$raw = $parsed['values'][$key];
+				$decoded = $this->decodeLiteral($raw);
+				$isempty = ($decoded === null) ? $this->isEmptyValue((string) preg_replace('/\s+/', '', $raw)) : $this->isEmptyValue($decoded);
+				// A template value present but empty is treated like a missing one (so mandatory variables fall back).
+				if (!$isempty) {
+					$values[$key] = $raw;
+					$verbatimKeys[$key] = true;
+					continue;
+				}
 			}
-			// A template value present but empty is treated like a missing one (so mandatory variables fall back).
-			if ($reused !== null && !$this->isEmptyValue($reused)) {
-				$values[$key] = $reused;
-			} elseif (isset($fallbackValues[$key]) && $fallbackValues[$key] !== '') {
+			if (isset($fallbackValues[$key]) && $fallbackValues[$key] !== '') {
 				$values[$key] = $fallbackValues[$key];
 			}
 			// else: leave unset -> build() applies the canvas default
@@ -447,10 +589,12 @@ class ConfFileManager
 		// A fresh instance_unique_id is always generated (see resolveInstanceKey).
 		$keyres = $this->resolveInstanceKey($parsed['values']);
 		$values['dolibarr_main_instance_unique_id'] = $keyres['instanceKey'];
+		unset($verbatimKeys['dolibarr_main_instance_unique_id']);
 
 		// Values already encrypted in the database with dolEncrypt() need the old key, whatever the format of db_pass.
-		if (empty($values['dolibarr_main_dolcrypt_key']) && $keyres['oldKey'] !== '') {
-			$values['dolibarr_main_dolcrypt_key'] = $keyres['oldKey'];
+		if (empty($values['dolibarr_main_dolcrypt_key']) && $keyres['oldKeyRaw'] !== '') {
+			$values['dolibarr_main_dolcrypt_key'] = $keyres['oldKeyRaw'];
+			$verbatimKeys['dolibarr_main_dolcrypt_key'] = true;
 		}
 
 		$separator = '// '.str_repeat('=', 61);
@@ -465,11 +609,19 @@ class ConfFileManager
 				$replacement = array_key_exists($key, self::DEPRECATION_MAP) ? self::DEPRECATION_MAP[$key] : '';
 				$note = ($replacement !== '') ? ' (replaced by '.$replacement.')' : ' (no longer used)';
 				$deprecatedBlock .= "\n".'// deprecated'.$note.' :'."\n";
-				$deprecatedBlock .= '//$'.$key.'='.$parsed['values'][$key].';'."\n";
+				$deprecatedBlock .= '//'.str_replace("\n", "\n//", '$'.$key.'='.$parsed['values'][$key].';')."\n";
 			}
 		}
 
-		$content = $this->build($values, $deprecatedBlock);
+		$topBlock = $deprecatedBlock;
+		if (!empty($parsed['statementsBefore'])) {
+			$topBlock .= ($topBlock !== '' ? "\n" : '').$separator."\n";
+			$topBlock .= '//  STATEMENTS KEPT FROM THE EXISTING conf.php'."\n";
+			$topBlock .= $separator."\n\n";
+			$topBlock .= implode("\n", $parsed['statementsBefore'])."\n";
+		}
+
+		$content = $this->build($values, $topBlock, $verbatimKeys);
 
 		// Preserve custom (unknown) variables verbatim so the administrator's additions are not lost.
 		// build() already ends with the trailing blank line, which doubles as the separator before this section.
@@ -482,6 +634,13 @@ class ConfFileManager
 			}
 			// Restore the trailing blank line at the very end of the file.
 			$content .= "\n";
+		}
+
+		if (!empty($parsed['statementsAfter'])) {
+			$content .= $separator."\n";
+			$content .= '//  STATEMENTS KEPT FROM THE EXISTING conf.php'."\n";
+			$content .= $separator."\n\n";
+			$content .= implode("\n", $parsed['statementsAfter'])."\n\n";
 		}
 
 		return array(
@@ -578,25 +737,5 @@ class ConfFileManager
 	private function isEmptyValue($value)
 	{
 		return ($value === '' || $value === null || $value === 'array()');
-	}
-
-	/**
-	 *	Remove the surrounding quotes of a raw scalar right-hand side.
-	 *
-	 *	@param	string	$raw	Raw value as written in the file (e.g. "'abc'").
-	 *	@return	string	Unquoted scalar.
-	 */
-	private function unquoteScalar($raw)
-	{
-		$raw = trim((string) $raw);
-		if (strlen($raw) >= 2) {
-			$first = $raw[0];
-			$last = $raw[strlen($raw) - 1];
-			if (($first === '\'' && $last === '\'') || ($first === '"' && $last === '"')) {
-				$inner = substr($raw, 1, -1);
-				return str_replace(array('\\\'', '\\"', '\\\\'), array('\'', '"', '\\'), $inner);
-			}
-		}
-		return $raw;
 	}
 }

@@ -207,7 +207,14 @@ if (!empty($GLOBALS['force_install_usetemplate'])) {
 if ($usetemplate && file_exists($conffile) && filesize($conffile) > 8) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/conffilemanager.class.php';
 	$confmanagertpl = new ConfFileManager();
-	$tplparams = $confmanagertpl->getConnectionParams((string) file_get_contents($conffile));
+	// inc.php already included this conf.php: its evaluated values resolve expressions such as getenv().
+	$evaluatedconf = array();
+	foreach (array('document_root', 'data_root', 'url_root', 'db_type', 'db_host', 'db_port', 'db_name', 'db_user', 'db_prefix', 'db_pass', 'dolcrypt_key', 'instance_unique_id', 'cookie_cryptkey') as $confshortname) {
+		if (isset($GLOBALS['dolibarr_main_'.$confshortname]) && is_scalar($GLOBALS['dolibarr_main_'.$confshortname])) {
+			$evaluatedconf['dolibarr_main_'.$confshortname] = (string) $GLOBALS['dolibarr_main_'.$confshortname];
+		}
+	}
+	$tplparams = $confmanagertpl->getConnectionParams((string) file_get_contents($conffile), $evaluatedconf);
 	if (!empty($tplparams['document_root'])) {
 		$main_dir = $tplparams['document_root'];
 	}
