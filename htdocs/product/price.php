@@ -93,6 +93,15 @@ if ($object->id > 0) {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
 
+if (empty($object->id)) {
+	llxHeader();
+	$langs->load('errors');
+	print '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	$db->close();
+	exit;
+}
+
 
 /*
  * Actions
