@@ -92,6 +92,7 @@ CategorieRecursivHelp=If option is on, when you add an object into a subcategory
 AddProductServiceIntoCategory=Assign category to the product/service
 AddCustomerIntoCategory=Assign the category to the customer
 AddSupplierIntoCategory=Assign the category to the supplier
+AddSupplier=Create vendor
 AddFichinterIntoCategory=Assign the category to the intervention
 AddOrderIntoCategory=Assign the category to the order
 AddMoIntoCategory=Assign the category to the manufacturing order
