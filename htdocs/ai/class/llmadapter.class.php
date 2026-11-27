@@ -239,7 +239,14 @@ class UniversalLLMAdapter
 			return $json['content'][0]['text'] ?? null;
 		}
 		if ($isGemini) {
-			return $json['candidates'][0]['content']['parts'][0]['text'] ?? null;
+			// The answer can be split into several parts: concatenate the text ones, without the 'thought' ones
+			$text = '';
+			foreach ((array) ($json['candidates'][0]['content']['parts'] ?? array()) as $part) {
+				if (empty($part['thought']) && isset($part['text']) && is_string($part['text'])) {
+					$text .= $part['text'];
+				}
+			}
+			return ($text !== '') ? $text : null;
 		}
 
 		// Default (OpenAI compatible)
