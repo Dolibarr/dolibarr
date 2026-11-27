@@ -2841,10 +2841,10 @@ function aiHistoryTurnForModel(string $text): string
 }
 
 /**
- * Words naming the objects of the AI assistant tools, from the 'vocabulary' each tool carries (the 'langs', 'keys' and 'synonyms' of its ToolApiBridge::$enrichments entry)
+ * Words naming the objects of the AI assistant tools, from the 'vocabulary' each tool carries (the 'langs', 'keys', 'synonyms' and 'combines' of its ToolApiBridge::$enrichments entry)
  *
  * @param	array<int,array<string,mixed>>	$tools	Tools
- * @return	array<string,array{langs?:string[],keys?:string[],synonyms?:string[]}>	Words by object
+ * @return	array<string,array{langs?:string[],keys?:string[],synonyms?:string[],combines?:array<string,string[]>}>	Words by object
  */
 function getAiToolsVocabulary(array $tools): array
 {
@@ -2910,6 +2910,28 @@ function getAiQueryKeywords(array $keys, array $synonyms, Translate $langs, Tran
 }
 
 /**
+ * Return whether a query names one of the words
+ *
+ * @param	string		$searchQuery	Query, lowercase and without accents
+ * @param	string[]	$words			Words, lowercase and without accents (getAiQueryKeywords())
+ * @return	bool
+ */
+function aiQueryNamesOneOf(string $searchQuery, array $words): bool
+{
+	foreach ($words as $word) {
+		// Each word may be singular or plural ("leave" for "Leaves", "parties" for "party"); "don" must not match "don't".
+		$pattern = implode('\s+', array_map(static function (string $part): string {
+			return preg_replace('/y$/', '(?:y|ies)', preg_quote(preg_replace('/(?<=\w\w)s$/', '', $part), '/')).'s?';
+		}, preg_split('/\s+/', $word)));
+		if (preg_match('/\b'.$pattern.'\b(?![\'’]t\b)/u', $searchQuery)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Return the objects of the AI assistant tools named in a query written in a Latin script
  *
  * @param	string							$query	Query of the user
@@ -2931,14 +2953,14 @@ function classifyQueryObjects(string $query, Translate $langs, array $tools): ar
 	$searchQuery = strtolower(dol_string_unaccent($query));
 	$objects = array();
 	foreach ($vocabularies as $object => $vocabulary) {
-		foreach (getAiQueryKeywords((array) ($vocabulary['keys'] ?? array()), (array) ($vocabulary['synonyms'] ?? array()), $langs, $langsEnUs, true) as $word) {
-			// Each word may be singular or plural ("leave" for "Leaves", "parties" for "party"); "don" must not match "don't".
-			$pattern = implode('\s+', array_map(static function (string $part): string {
-				return preg_replace('/y$/', '(?:y|ies)', preg_quote(preg_replace('/(?<=\w\w)s$/', '', $part), '/')).'s?';
-			}, preg_split('/\s+/', $word)));
-			if (preg_match('/\b'.$pattern.'\b(?![\'’]t\b)/u', $searchQuery)) {
+		if (aiQueryNamesOneOf($searchQuery, getAiQueryKeywords((array) ($vocabulary['keys'] ?? array()), (array) ($vocabulary['synonyms'] ?? array()), $langs, $langsEnUs, true))) {
+			$objects[] = $object;
+		}
+	}
+	foreach ($vocabularies as $object => $vocabulary) {
+		foreach ((array) ($vocabulary['combines'] ?? array()) as $named => $keys) {
+			if (!in_array($object, $objects, true) && in_array($named, $objects, true) && aiQueryNamesOneOf($searchQuery, getAiQueryKeywords((array) $keys, array(), $langs, $langsEnUs, true))) {
 				$objects[] = $object;
-				break;
 			}
 		}
 	}

@@ -97,6 +97,12 @@ class AiLibTest extends CommonClassTest
 		$langsNl->setDefaultLang('nl_NL');
 		$this->assertSame(array('invoices'), classifyQueryObjects('toon de onbetaalde facturen', $langsNl, $tools), 'The plural translated by Dolibarr names the object');
 
+		$langsEs = new Translate('', $conf);
+		$langsEs->setDefaultLang('es_ES');
+		$this->assertContains('supplier_orders', classifyQueryObjects('lista los pedidos de proveedores', $langsEs, $tools), 'An object plus a word of its combines names the combined object');
+		$this->assertNotContains('supplier_orders', classifyQueryObjects('combien de commandes clients', $langs, $tools));
+		$this->assertNotContains('supplier_orders', classifyQueryObjects('liste des fournisseurs', $langs, $tools), 'The words of combines alone name nothing');
+
 		$moduleTool = array('name' => 'api_trainings_list', 'objects' => array('trainings'), 'vocabulary' => array('trainings' => array('keys' => array('Training'))));
 		$this->assertSame(array('trainings'), classifyQueryObjects('list the trainings', $langs, array($moduleTool)), 'A module names its objects with the words of its tools');
 

@@ -75,7 +75,8 @@ class ToolApiBridge extends McpTool
 	 * carry this vocabulary — anything else gets every bridge tool filtered
 	 * out of the prompt. Endpoints absent from this map (external modules)
 	 * fall back to all categories so they stay selectable.
-	 * A query naming objects is narrowed first to their tools: give its $enrichments entry 'langs', 'keys' and 'synonyms' (classifyQueryObjects()).
+	 * A query naming objects is narrowed first to their tools: give its $enrichments entry 'langs', 'keys' and 'synonyms' (classifyQueryObjects()),
+	 * and 'combines' (object found => keys) when another object plus one of these words names it ("pedidos de proveedores").
 	 */
 	const ENDPOINT_CATEGORIES = array(
 		'thirdparties' => array('thirdparty', 'billing', 'commercial'),
@@ -519,9 +520,10 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['supplier_invoices'] = [
 			'label' => 'supplier invoices (vendor bills)',
-			'langs' => array('bills'),
+			'langs' => array('bills', 'companies', 'suppliers'),
 			'keys' => array('SupplierInvoice', 'BillsSuppliers'),
 			'synonyms' => array('supplier invoice'),
+			'combines' => array('invoices' => array('Supplier', 'Suppliers')),
 			'methods' => [
 				'index' => [
 					'description' => "List supplier invoices (vendor bills). Filter with sqlfilters, for example to restrict to one supplier.",
@@ -559,9 +561,10 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['supplier_orders'] = [
 			'label' => 'supplier order (purchase order)',
-			'langs' => array('orders'),
+			'langs' => array('orders', 'companies', 'suppliers'),
 			'keys' => array('SupplierOrder', 'SuppliersOrders'),
 			'synonyms' => array('purchase order', 'supplier order'),
+			'combines' => array('orders' => array('Supplier', 'Suppliers')),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -616,9 +619,10 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['supplier_proposals'] = [
 			'label' => 'supplier proposal (price request)',
-			'langs' => array('supplier_proposal'),
+			'langs' => array('supplier_proposal', 'companies', 'suppliers'),
 			'keys' => array('SupplierProposalShort', 'SupplierProposalsShort', 'SupplierProposal'),
 			'synonyms' => array('price request', 'supplier proposal'),
+			'combines' => array('proposals' => array('Supplier', 'Suppliers')),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -1699,7 +1703,7 @@ class ToolApiBridge extends McpTool
 	 * under the module name since the results of all modules are merged:
 	 *   array('mymodule' => array('endpointkey' => array('label' => ..., 'methods' => array(...))))
 	 * where 'endpointkey' is the X of the module's api_X.class.php file.
-	 * Optional 'langs' (lang files, e.g. 'mymodule@mymodule'), 'keys' (translation keys) and 'synonyms' name the object in a query:
+	 * Optional 'langs' (lang files, e.g. 'mymodule@mymodule'), 'keys', 'synonyms' and 'combines' (see ENDPOINT_CATEGORIES) name the object in a query:
 	 * the assistant then sends its tools only when the query names it, as for the core endpoints.
 	 *
 	 * @return void
@@ -3712,7 +3716,7 @@ class ToolApiBridge extends McpTool
 				if ($def) {
 					$def['categories'] = self::ENDPOINT_CATEGORIES[$key] ?? array('billing', 'commercial', 'thirdparty', 'stock', 'project', 'reporting');
 					$def['objects'] = array($key);
-					$words = array_intersect_key($this->enrichments[$key], array_flip(array('langs', 'keys', 'synonyms')));
+					$words = array_intersect_key($this->enrichments[$key], array_flip(array('langs', 'keys', 'synonyms', 'combines')));
 					if (!empty($words)) {
 						$def['vocabulary'] = array($key => $words);
 					}
