@@ -237,10 +237,10 @@ class McpAuth
 			return -1;
 		}
 
-		// An access token minted by our own authorization server names the user
-		// who consented. Recognised by its prefix, so a value that cannot be one
-		// never reaches the token table.
+		// An access token of our own authorization server names the user who consented.
 		require_once DOL_DOCUMENT_ROOT.'/ai/class/mcpoauth.class.php';
+		$mode = self::MODE_USER;
+		$userid = 0;
 		if (McpOauth::looksLikeAccessToken($credential)) {
 			$oauth = new McpOauth($this->db, '', DOL_MAIN_URL_ROOT.'/ai/server/mcp_server.php');
 			$tokenrow = $oauth->validateAccessToken($credential);
@@ -250,16 +250,14 @@ class McpAuth
 				return -1;
 			}
 
-			// A token issued for another resource must not open this one, even
-			// when the same server minted it: that is what stops a token
-			// obtained for one audience being replayed against another.
+			// A token issued for another audience must not open this one (RFC 8707)
 			if (!empty($tokenrow->resource) && !$oauth->isOwnResource($tokenrow->resource)) {
 				dol_syslog('[MCP Server] OAuth access token rejected: issued for another resource ('.$tokenrow->resource.')', LOG_WARNING);
 				$this->error = 'Access token was not issued for this server';
 				return -1;
 			}
-
-			return $this->acceptUser((int) $tokenrow->fk_user, self::MODE_OAUTH);
+			$userid = (int) $tokenrow->fk_user;
+			$mode = self::MODE_OAUTH;
 		}
 
 		// Shared server key, kept for setups configured before per-user keys
@@ -270,9 +268,42 @@ class McpAuth
 			return 1;
 		}
 
-		$userid = $this->fetchUserIdFromApiKey($credential);
+		if ($mode === self::MODE_USER) {
+			$userid = $this->fetchUserIdFromApiKey($credential);
+		}
 		if ($userid > 0) {
-			return $this->acceptUser($userid, self::MODE_USER);
+			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
+			$tmpuser = new User($this->db);
+			if ($tmpuser->fetch($userid) <= 0) {
+				dol_syslog('[MCP Server] Authentication KO: cannot load user '.$userid, LOG_ERR);
+				$this->error = 'Unauthorized';
+				return -1;
+			}
+			$tmpuser->loadRights();
+
+			if (empty($tmpuser->statut)) {
+				dol_syslog('[MCP Server] Authentication KO: user '.$tmpuser->login.' is disabled', LOG_NOTICE);
+				$this->error = 'Unauthorized';
+				return -1;
+			}
+
+			// Same gate as every other AI entry point (assistant/index.php,
+			// parse_intent.php, execute_tool.php...). The right is not granted
+			// by default, so enabling the MCP server does not silently turn
+			// every REST API key into an MCP credential: an administrator
+			// still decides who may talk to the assistant.
+			if (!$tmpuser->hasRight('ai', 'assistant', 'use')) {
+				dol_syslog('[MCP Server] Authentication KO: user '.$tmpuser->login.' has no ai/assistant/use permission', LOG_NOTICE);
+				$this->httpcode = 403;
+				$this->error = 'This Dolibarr user is not allowed to use the AI assistant';
+				return -1;
+			}
+
+			$this->userid = $userid;
+			$this->user = $tmpuser;
+			$this->mode = $mode;
+			return 1;
 		}
 
 		dol_syslog('[MCP Server] Unauthorized access attempt. IP='.(empty($_SERVER['REMOTE_ADDR']) ? 'unknown' : $_SERVER['REMOTE_ADDR']), LOG_WARNING);
@@ -280,54 +311,6 @@ class McpAuth
 
 		$this->error = 'Unauthorized';
 		return -1;
-	}
-
-	/**
-	 * Load the user a credential names, and check they may use the assistant.
-	 *
-	 * Shared by the API-key and the OAuth paths: whichever credential was
-	 * presented, the request ends up running as a Dolibarr user, and the same
-	 * right decides whether that user may talk to the assistant at all.
-	 *
-	 * @param  int $userid Rowid of the user the credential names
-	 * @param  string $mode Credential mode, one of the MODE_* constants
-	 * @return int         1 if the user may proceed, -1 otherwise
-	 */
-	private function acceptUser($userid, $mode)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-
-		$tmpuser = new User($this->db);
-		if ($tmpuser->fetch($userid) <= 0) {
-			dol_syslog('[MCP Server] Authentication KO: cannot load user '.$userid, LOG_ERR);
-			$this->error = 'Unauthorized';
-			return -1;
-		}
-		$tmpuser->loadRights();
-
-		if (empty($tmpuser->statut)) {
-			dol_syslog('[MCP Server] Authentication KO: user '.$tmpuser->login.' is disabled', LOG_NOTICE);
-			$this->error = 'Unauthorized';
-			return -1;
-		}
-
-		// Same gate as every other AI entry point (assistant/index.php,
-		// parse_intent.php, execute_tool.php...). The right is not granted by
-		// default, so enabling the MCP server does not silently turn every REST
-		// API key into an MCP credential: an administrator still decides who
-		// may talk to the assistant.
-		if (!$tmpuser->hasRight('ai', 'assistant', 'use')) {
-			dol_syslog('[MCP Server] Authentication KO: user '.$tmpuser->login.' has no ai/assistant/use permission', LOG_NOTICE);
-			$this->httpcode = 403;
-			$this->error = 'This Dolibarr user is not allowed to use the AI assistant';
-			return -1;
-		}
-
-		$this->userid = $userid;
-		$this->user = $tmpuser;
-		$this->mode = $mode;
-
-		return 1;
 	}
 
 	/**

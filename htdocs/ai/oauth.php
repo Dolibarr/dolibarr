@@ -237,9 +237,10 @@ switch ($mcp_route) {
 			// MCP admin page checks for), it arrives here instead. Without
 			// reading it, client_secret_basic is advertised and dead on
 			// exactly those setups.
+			$requestheaders = array_change_key_case(dolGetRequestHeaders(), CASE_LOWER);
 			$authheader = '';
-			if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
-				$authheader = (string) $_SERVER['HTTP_AUTHORIZATION'];
+			if (!empty($requestheaders['authorization'])) {
+				$authheader = (string) $requestheaders['authorization'];
 			} elseif (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
 				$authheader = (string) $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
 			}
@@ -311,19 +312,14 @@ if (GETPOST('errorcode', 'aZ09') === 'InvalidToken') {
 }
 
 $responsetype = GETPOST('response_type', 'alphanohtml');
-$clientid = GETPOST('client_id', 'alphanohtml');
-$redirecturi = GETPOST('redirect_uri', 'alphanohtml');
-// RFC 6749 section 4.1.2 returns state to the client byte for byte, so it is
-// read raw: alphanohtml would strip characters an opaque value may contain.
-// It is never interpreted here, only echoed, and every echo escapes it.
-// main.inc.php's injection filter still refuses some values (a state holding
-// JSON, for instance) before this line is reached; real clients send an
-// opaque base64url string, which passes.
-$state = isset($_GET['state']) ? (string) $_GET['state'] : (isset($_POST['state']) ? (string) $_POST['state'] : '');
-$codechallenge = dol_trunc((string) GETPOST('code_challenge', 'alphanohtml'), 128, 'right', 'UTF-8', 1);
+// Opaque values the client compares on return: no __XXX__ substitution ($noreplace = 1)
+$clientid = GETPOST('client_id', 'alphanohtml', 0, null, null, 1);
+$redirecturi = GETPOST('redirect_uri', 'alphanohtml', 0, null, null, 1);
+$state = GETPOST('state', 'alphanohtml', 0, null, null, 1);
+$codechallenge = dol_trunc(GETPOST('code_challenge', 'alphanohtml', 0, null, null, 1), 128, 'right', 'UTF-8', 1);
 $codechallengemethod = GETPOST('code_challenge_method', 'alphanohtml');
-$scope = dol_trunc((string) GETPOST('scope', 'alphanohtml'), 255, 'right', 'UTF-8', 1);
-$resourceparam = isset($_GET['resource']) ? (string) $_GET['resource'] : (isset($_POST['resource']) ? (string) $_POST['resource'] : '');
+$scope = dol_trunc(GETPOST('scope', 'alphanohtml'), 255, 'right', 'UTF-8', 1);
+$resourceparam = GETPOST('resource', 'alphanohtml', 0, null, null, 1);
 
 // Before resolving the client: resolving a metadata document means an
 // outbound request on a URL the caller chose, and a user who may not use the
@@ -403,10 +399,10 @@ if ($clienthost === '') {
 // A native client is called back on the loopback, so naming the host would
 // only show "127.0.0.1", which tells the user nothing. What matters to them
 // there is that the answer never leaves their machine.
-$isloopback = in_array(strtolower($clienthost), array('127.0.0.1', '[::1]', '::1', 'localhost'), true);
+$isloopback = in_array(dol_strtolower($clienthost), array('127.0.0.1', '[::1]', '::1', 'localhost'), true);
 $hostline = $isloopback
 	? $langs->trans('AiMcpOauthConsentLocalApp')
-	: $langs->trans('AiMcpOauthConsentHost', $clienthost);
+	: $langs->trans('AiMcpOauthConsentHost', dolPrintLabel($clienthost));
 
 llxHeader('', $langs->trans('AiMcpOauthConsentTitle'), '', '', 0, 0, '', '', '', 'mod-ai page-oauth');
 
@@ -415,7 +411,7 @@ print load_fiche_titre($langs->trans('AiMcpOauthConsentTitle'), '', 'ai');
 // SCRIPT_NAME, not PHP_SELF: under Apache with mod_php the latter already
 // carries the path info, so appending /authorize to it posts the form to
 // /ai/oauth.php/authorize/authorize and the route is not found.
-print '<form method="POST" action="'.dol_escape_htmltag($_SERVER['SCRIPT_NAME'].'/authorize').'">';
+print '<form method="POST" action="'.dolPrintHTMLForAttributeUrl($_SERVER['SCRIPT_NAME'].'/authorize').'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 foreach (array(
 	'response_type' => $responsetype,
@@ -427,18 +423,15 @@ foreach (array(
 	'scope' => $scope,
 	'resource' => $resourceparam,
 ) as $name => $value) {
-	// htmlspecialchars, not dol_escape_htmltag: the latter strips anything that
-	// looks like a tag and turns a newline into a literal \n, which would send
-	// back a state the client did not issue and fail its own CSRF check.
-	print '<input type="hidden" name="'.$name.'" value="'.htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8').'">';
+	print '<input type="hidden" name="'.$name.'" value="'.dolPrintLabelForAttribute($value).'">';
 }
 
 print '<div class="center">';
-print '<p>'.$langs->trans('AiMcpOauthConsentQuestion', $clientname, $user->login).'</p>';
+print '<p>'.$langs->trans('AiMcpOauthConsentQuestion', dolPrintLabel($clientname), dolPrintLabel($user->login)).'</p>';
 print '<p>'.$hostline.'</p>';
 print '<p class="opacitymedium">'.$langs->trans('AiMcpOauthConsentScope').'</p>';
 print '<p class="opacitymedium"><small>'.$langs->trans('AiMcpOauthConsentExpiry').'</small></p>';
-print '<p class="opacitymedium"><small>'.$langs->trans('AiMcpOauthConsentRedirect').' '.dol_escape_htmltag($redirecturi).'</small></p>';
+print '<p class="opacitymedium"><small>'.$langs->trans('AiMcpOauthConsentRedirect').' '.dolPrintLabel($redirecturi).'</small></p>';
 print '<br>';
 print '<button type="submit" class="button" name="action" value="grant">'.$langs->trans('AiMcpOauthAllow').'</button>';
 print ' &nbsp; ';

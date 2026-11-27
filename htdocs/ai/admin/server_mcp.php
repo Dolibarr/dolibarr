@@ -189,7 +189,6 @@ if ($action == 'update_external') {
 	exit;
 }
 
-// Generate New API Key
 $probeauthorization = '';
 $probeauthorizationdetail = '';
 if ($action == 'probe_authorization') {
@@ -208,6 +207,7 @@ if ($action == 'probe_authorization') {
 	}
 }
 
+// Generate New API Key
 if ($action == 'confirm_generate_key' && GETPOST('confirm', 'alpha') == 'yes') {
 	$newKey = dolGetRandomBytes(64);
 
@@ -503,7 +503,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans('AiMcpProbeAuth'), $langs->trans('AiMcpProbeAuthHelp')).'</td>';
 	print '<td>';
-	print '<a class="button small smallpaddingimp" href="'.$_SERVER["PHP_SELF"].'?action=probe_authorization&token='.newToken().'">'.$langs->trans("AiMcpProbeAuthRun").'</a>';
+	print '<a class="button small smallpaddingimp" href="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"].'?action=probe_authorization&token='.newToken()).'">'.$langs->trans("AiMcpProbeAuthRun").'</a>';
 	if ($probeauthorization == 'seen') {
 		print ' <span class="badge badge-status4 badge-status">'.$langs->trans("AiMcpProbeAuthOk").'</span>';
 	} elseif ($probeauthorization == 'lost') {
@@ -513,7 +513,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 		print '<code>fastcgi_param HTTP_AUTHORIZATION $http_authorization;</code> &nbsp;<span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthNginx").'</span>';
 		print '</div>';
 	} elseif ($probeauthorization == 'unreachable') {
-		print ' <span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthUnreachable", dol_escape_htmltag($probeauthorizationdetail)).'</span>';
+		print ' <span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthUnreachable", dolPrintLabel($probeauthorizationdetail)).'</span>';
 	}
 	print '</td>';
 	print '</tr>';
@@ -557,12 +557,12 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	print '<p>'.$langs->trans("AiMcpConnectConnector").'</p>';
 	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto;">';
-	print dol_escape_htmltag($endpoint);
+	print dolPrintLabel($endpoint);
 	print '</pre>';
 
 	print '<p>'.$langs->trans("AiMcpConnectLocalClient").'</p>';
 	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto;">';
-	print htmlspecialchars('{
+	print dolPrintText('{
   "mcpServers": {
     "'.$mcpservername.'": {
       "command": "npx",

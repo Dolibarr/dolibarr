@@ -288,7 +288,7 @@ class McpOauth
 		// Bounded by the column it has to fit in: a longer value would either
 		// be refused by a strict database or silently truncated by a lax one,
 		// and the row would then never be found again by the URL that wrote it.
-		return stripos($clientid, 'https://') === 0 && strlen($clientid) <= 255;
+		return stripos($clientid, 'https://') === 0 && dol_strlen($clientid) <= 255;
 	}
 
 	/**
@@ -364,7 +364,6 @@ class McpOauth
 			$sql .= ", redirect_uri = '".$this->db->escape(implode("\n", $uris))."'";
 			$sql .= ", tms = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $known->rowid);
-			$sql .= " AND service = '".$this->db->escape(self::serviceFor('client'))."'";
 			$stored = (bool) $this->db->query($sql);
 		} else {
 			$stored = $this->insertClientRow($url, null, $name, $uris, 'none');
@@ -399,7 +398,7 @@ class McpOauth
 			dol_syslog('[MCP OAuth] Metadata document unreachable: '.$url.' '.(isset($response['curl_error_msg']) ? $response['curl_error_msg'] : ''), LOG_NOTICE);
 			return null;
 		}
-		if (strlen($response['content']) > 65536) {
+		if (dol_strlen($response['content']) > 65536) {
 			dol_syslog('[MCP OAuth] Metadata document too large: '.$url, LOG_WARNING);
 			return null;
 		}
@@ -620,17 +619,17 @@ class McpOauth
 		// parse_url() is called a component at a time rather than for the whole
 		// array: the SqlInjection plugin reads an array key named 'query' as a
 		// database query and flags it, and there is no database anywhere here.
-		$hosta = strtolower((string) parse_url($known, PHP_URL_HOST));
-		$hostb = strtolower((string) parse_url($redirecturi, PHP_URL_HOST));
+		$hosta = dol_strtolower((string) parse_url($known, PHP_URL_HOST));
+		$hostb = dol_strtolower((string) parse_url($redirecturi, PHP_URL_HOST));
 
 		$loopback = array('127.0.0.1', '[::1]', '::1', 'localhost');
 		if (!in_array($hosta, $loopback, true) || $hosta !== $hostb) {
 			return false;
 		}
-		if (strtolower((string) parse_url($known, PHP_URL_SCHEME)) !== 'http') {
+		if (dol_strtolower((string) parse_url($known, PHP_URL_SCHEME)) !== 'http') {
 			return false;
 		}
-		if (strtolower((string) parse_url($redirecturi, PHP_URL_SCHEME)) !== 'http') {
+		if (dol_strtolower((string) parse_url($redirecturi, PHP_URL_SCHEME)) !== 'http') {
 			return false;
 		}
 
@@ -964,8 +963,7 @@ class McpOauth
 		}
 
 		$sql = "DELETE FROM ".$this->db->prefix()."oauth_token";
-		$sql .= " WHERE service = '".$this->db->escape(self::serviceFor('client'))."'";
-		$sql .= " AND rowid IN (".$this->db->sanitize(implode(',', $unused)).")";
+		$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $unused)).")";
 
 		$this->db->query($sql);
 	}
@@ -987,7 +985,7 @@ class McpOauth
 		// The address sits in the client's tokenstring, written by
 		// clientDetails() through json_encode(), so this is the exact text it
 		// produced for that address.
-		$needle = substr((string) json_encode(array('registered_from' => $ip)), 1, -1);
+		$needle = dol_substr((string) json_encode(array('registered_from' => $ip)), 1, -1);
 
 		$sql = "SELECT COUNT(rowid) as nb";
 		$sql .= " FROM ".$this->db->prefix()."oauth_token";
@@ -1018,7 +1016,7 @@ class McpOauth
 	 */
 	private function isAcceptableRedirectUri($uri)
 	{
-		if ($uri === '' || strlen($uri) > 2000) {
+		if ($uri === '' || dol_strlen($uri) > 2000) {
 			return false;
 		}
 
@@ -1027,8 +1025,8 @@ class McpOauth
 			return false;
 		}
 
-		$scheme = strtolower($parts['scheme']);
-		$host = isset($parts['host']) ? strtolower($parts['host']) : '';
+		$scheme = dol_strtolower($parts['scheme']);
+		$host = isset($parts['host']) ? dol_strtolower($parts['host']) : '';
 
 		if ($scheme === 'https') {
 			return $host !== '';
