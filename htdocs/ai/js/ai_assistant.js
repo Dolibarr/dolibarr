@@ -3098,75 +3098,85 @@ export function initAiAssistant(container) {
                     ))
                 });
                 const intent = await aiJson(intentRes);
-                loadingMsg.remove();
-                // Choices answer this request only: once it went through, the next question asks again.
-                if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
-                if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
-                if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); input.disabled = false; input.focus(); return; }
-                if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
-                if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
-                    // Debug output of /tools, built and escaped server side: shown as is,
-                    // never sent back as context. Only for that query: an 'html' argument
-                    // coming from the model is never trusted.
-                    appendMsg('bot', intent.arguments.html); input.disabled = false; input.focus(); return;
-                }
-                if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
-                if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
-                if (intent.tool === 'generate_navigation_url') {
-                    appendMsg('system', t('GeneratingLink'));
-                    const loadingNav = chat.lastElementChild;
-                    const navRes = await fetch(epUrl('execute_tool.php'), {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(intent)
-                    });
-                    const nav = await aiJson(navRes);
-                    loadingNav.remove();
-                    if (nav.error) { appendMsg('error', nav.error); }
-                    else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
-                    input.disabled = false; input.focus(); return;
-                }
-
-                appendMsg('system', t('FetchingData'));
-                const loadingData = chat.lastElementChild;
-                const toolRes = await fetch(epUrl('execute_tool.php'), {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(intent)
-                });
-                const result = await aiJson(toolRes);
-                loadingData.remove();
-                // The read only fetched the ids the asked action needs: hand its result
-                // back to the model instead of showing it, and let it perform the action.
-                if (round < 2 && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
-                    appendMsg('system', t('AISearchDoneNowPreparingAction') + ' (' + escapeHtml(intent.tool || '') + ')...');
-                    followupSnippets.push(contextSnippetOf(result, intent.tool));
-                    followupResult = result;
-                    continue;
-                }
-                // A write tool does not write on its first call: it answers with the
-                // sentence to confirm and a requestState. Ask the user, the write runs
-                // when executePendingIntent() sends the state back.
-                if (result && result.resultType === 'input_required' && result.requestState) {
-                    const req = (Array.isArray(result.inputRequests) && result.inputRequests[0]) || {};
-                    const confirmed = Object.assign({}, intent, {
-                        arguments: Object.assign({}, intent.arguments || {}, { requestState: result.requestState })
-                    });
-                    delete confirmed.needs_followup;
-                    delete confirmed.resolved_label;
-                    // The id came from a search the user never saw: say which object it is.
-                    const action = (req.prompt || intent.tool) + (intent.resolved_label ? ' - ' + escapeHtml(intent.resolved_label) : '');
-                    handleConfirmation(action, '', { arguments: { original_intent: confirmed } });
-                    input.disabled = false; input.focus(); return;
-                }
-                lastResult = { data: result, tool: intent.tool, query: query };
-                const failedRequest = lastSent;
-                const retry = retryActionsFor(result, () => { if (failedRequest) handleQuery(failedRequest); });
-                appendMsg('bot', formatResult(result, false, intent.tool), retry, contextSnippetOf(result, intent.tool));
-                resolveThirdpartyNames(chat.lastElementChild);
+                const state = { round: round, query: query, followupSnippets: followupSnippets, followupResult: followupResult, sentChoices: sentChoices, loadingMsg: loadingMsg };
+                const outcome = await handleIntent(intent, state);
+                followupResult = state.followupResult;
+                if (outcome === 'continue') continue;
                 break;
             }
         } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
         input.disabled = false;
         input.focus();
+    }
+
+    // Returns 'continue' when the server needs one more round, 'done' otherwise.
+    async function handleIntent(intent, state) {
+        const { round, query, followupSnippets, loadingMsg } = state;
+        loadingMsg.remove();
+        // Choices answer this request only: once it went through, the next question asks again.
+        if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
+        if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return 'done'; }
+        if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); input.disabled = false; input.focus(); return 'done'; }
+        if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return 'done'; }
+        if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
+            // Debug output of /tools, built and escaped server side: shown as is,
+            // never sent back as context. Only for that query: an 'html' argument
+            // coming from the model is never trusted.
+            appendMsg('bot', intent.arguments.html); input.disabled = false; input.focus(); return 'done';
+        }
+        if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return 'done'; }
+        if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return 'done'; }
+        if (intent.tool === 'generate_navigation_url') {
+            appendMsg('system', t('GeneratingLink'));
+            const loadingNav = chat.lastElementChild;
+            const navRes = await fetch(epUrl('execute_tool.php'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(intent)
+            });
+            const nav = await aiJson(navRes);
+            loadingNav.remove();
+            if (nav.error) { appendMsg('error', nav.error); }
+            else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
+            input.disabled = false; input.focus(); return 'done';
+        }
+
+        appendMsg('system', t('FetchingData'));
+        const loadingData = chat.lastElementChild;
+        const toolRes = await fetch(epUrl('execute_tool.php'), {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(intent)
+        });
+        const result = await aiJson(toolRes);
+        loadingData.remove();
+        // The read only fetched the ids the asked action needs: hand its result
+        // back to the model instead of showing it, and let it perform the action.
+        if (round < 2 && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
+            appendMsg('system', t('AISearchDoneNowPreparingAction') + ' (' + escapeHtml(intent.tool || '') + ')...');
+            followupSnippets.push(contextSnippetOf(result, intent.tool));
+            state.followupResult = result;
+            return 'continue';
+        }
+        // A write tool does not write on its first call: it answers with the
+        // sentence to confirm and a requestState. Ask the user, the write runs
+        // when executePendingIntent() sends the state back.
+        if (result && result.resultType === 'input_required' && result.requestState) {
+            const req = (Array.isArray(result.inputRequests) && result.inputRequests[0]) || {};
+            const confirmed = Object.assign({}, intent, {
+                arguments: Object.assign({}, intent.arguments || {}, { requestState: result.requestState })
+            });
+            delete confirmed.needs_followup;
+            delete confirmed.resolved_label;
+            // The id came from a search the user never saw: say which object it is.
+            const action = (req.prompt || intent.tool) + (intent.resolved_label ? ' - ' + escapeHtml(intent.resolved_label) : '');
+            handleConfirmation(action, '', { arguments: { original_intent: confirmed } });
+            input.disabled = false; input.focus(); return 'done';
+        }
+        lastResult = { data: result, tool: intent.tool, query: query };
+        const failedRequest = lastSent;
+        const retry = retryActionsFor(result, () => { if (failedRequest) handleQuery(failedRequest); });
+        appendMsg('bot', formatResult(result, false, intent.tool), retry, contextSnippetOf(result, intent.tool));
+        resolveThirdpartyNames(chat.lastElementChild);
+        return 'done';
     }
 
     // =========================================================================
