@@ -824,6 +824,7 @@ class Tickets extends DolibarrApi
 	 * @throws	RestException	400 Unknown or inactive user
 	 * @throws	RestException	403 Not allowed
 	 * @throws	RestException	404 Ticket not found
+	 * @throws	RestException	409 Ticket closed or canceled
 	 * @throws	RestException	500 Error when assigning
 	 */
 	public function assign($id, $fk_user_assign = 0)
@@ -836,6 +837,10 @@ class Tickets extends DolibarrApi
 		}
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		// As on the card, a closed or canceled ticket can not be assigned (assignUser() would reopen it).
+		if (in_array((int) $this->ticket->status, array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED), true)) {
+			throw new RestException(409, 'Ticket is closed or canceled');
 		}
 		$fk_user_assign = (int) $fk_user_assign;
 		if ($fk_user_assign > 0) {
