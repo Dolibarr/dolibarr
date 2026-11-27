@@ -2944,7 +2944,7 @@ class Expedition extends CommonObject
 			$line->weight_units = 0;		// kg
 
 			$line->volume = 2.34567;
-			$line->volume_unit = 0;
+			$line->volume_units = 0;
 
 			$this->lines[] = $line;
 			$xnbp++;
