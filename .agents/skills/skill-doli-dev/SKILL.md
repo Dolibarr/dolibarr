@@ -176,6 +176,7 @@ This section contains detailed standards and constants for reference only. Do no
 *   **Functions instead of closures:** To factorize code, declare a normal named function (in a `lib/*.lib.php` file of the module, with its PHPDoc) and call it. Do not use closures (`$myfunc = function (...) use (...) {...}`) or arrow functions for this; use `global $langs, $db, ...` inside the function when needed.
 *   **Lazy loading of lang files:** Load a lang file that is needed only to show an error (for example `errors`) only in the code path that builds the error message (`$langs->load("errors");` just before `$langs->trans("ErrorXxx")`), not at the top of the page.
 *   **Global variables**: Dolibarr uses globals like `$db`, `$conf`, `$lang`, `$user`. Do not remove these without understanding the architecture
+*   **Checking a property of a class without instantiating it:** To know if a class declares a property (or an entry in its `$fields`), do not create an object with `new` (its constructor may have side effects and costs). Use the class name: `property_exists($classname, 'prop')` and `get_class_vars($classname)['fields']['prop']`. Note: `get_class_vars()` returns only the declared default values, not what the constructor adds.
 
 
 ### Input Handling Functions

@@ -355,9 +355,9 @@ $sql .= " typent.code as typent_code, c.note_public, c.note_private,";
 $sql .= " state.code_departement as state_code, state.nom as state_name";
 // Subrequest to get the lowest expiration date among open service lines (kept into the main request because the field can be sorted)
 // TODO Add a denormalized field "denormalized_lower_planned_end_date" so we can remove this subrequests ?
-$sqllowerplannedenddate = "(SELECT MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid)";
+$sanitizedsqllowerplannedenddate = "(SELECT MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") FROM ".MAIN_DB_PREFIX."contratdet as cd WHERE cd.fk_contrat = c.rowid)";
 if ($arrayfields['lower_planned_end_date']['checked'] || ($search_dfyear > 0 && $search_op2df)) {
-	$sql .= ", ".$sqllowerplannedenddate." as lower_planned_end_date";	// lowest expiration date among open service lines
+	$sql .= ", ".$sanitizedsqllowerplannedenddate." as lower_planned_end_date";	// lowest expiration date among open service lines
 }
 // Note: The number of service lines per status (nb_initial, nb_running, ...) is loaded later, with one request, for the records of the page only
 // Add fields from extrafields
@@ -576,13 +576,13 @@ if ($search_signed_status != '' && $search_signed_status >= 0) {
 if ($search_dfyear > 0 && $search_op2df) {
 	if ($search_op2df == '<=') {
 		//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
-		$sql .= " AND ".$sqllowerplannedenddate." <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
+		$sql .= " AND ".$sanitizedsqllowerplannedenddate." <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
 	} elseif ($search_op2df == '>=') {
 		//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
-		$sql .= " AND ".$sqllowerplannedenddate." >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
+		$sql .= " AND ".$sanitizedsqllowerplannedenddate." >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
 	} else {
 		//$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
-		$sql .= " AND ".$sqllowerplannedenddate." BETWEEN '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."' AND '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
+		$sql .= " AND ".$sanitizedsqllowerplannedenddate." BETWEEN '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."' AND '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
 	}
 }
 

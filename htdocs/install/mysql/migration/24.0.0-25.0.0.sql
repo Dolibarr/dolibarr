@@ -44,6 +44,10 @@ UPDATE llx_c_email_templates SET content = REPLACE(content, '__MEMBER_CIVILITY__
 
 ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
 
+-- Widget box_members.php removed in v16, but added again by activation of the Members module until v24
+DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file = 'box_members.php');
+DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
+
 -- Forgotten in previous versions: sequences of renamed tables were not renamed with pgsql
 -- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_c_methode_commande_fournisseur_rowid_seq RENAME TO llx_c_input_method_rowid_seq;
 -- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_label_rowid_seq RENAME TO llx_extrafields_rowid_seq;
@@ -608,6 +612,8 @@ ALTER TABLE llx_societe_rib ADD COLUMN payment_reference varchar(35) AFTER date_
 
 ALTER TABLE llx_facture_fourn MODIFY COLUMN payment_reference varchar(35);
 
+ALTER TABLE llx_chargesociales MODIFY COLUMN libelle varchar(128) NOT NULL;
+
 ALTER TABLE llx_bank_account ADD COLUMN sepa_transfer_schema_version varchar(2) AFTER sepa_local_instrument;
 ALTER TABLE llx_bank_account ADD COLUMN sepa_charge_bearer varchar(4) DEFAULT 'SHAR' AFTER sepa_transfer_schema_version;
 
@@ -771,6 +777,9 @@ ALTER TABLE llx_expensereport ADD COLUMN fk_user_approve_secondary integer DEFAU
 ALTER TABLE llx_expensereport ADD COLUMN date_approve_secondary datetime DEFAULT NULL;
 ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_validator_secondary (fk_user_validator_secondary);
 ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_approve_secondary (fk_user_approve_secondary);
+
+ALTER TABLE llx_workstation_workstation ADD COLUMN model_pdf varchar(255) AFTER import_key;
+ALTER TABLE llx_workstation_workstation ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
 -- Remove the system prompt of the AI assistant saved by previous versions, so the new default prompt of v25 is used
 --noqa:disable=PRS

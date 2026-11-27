@@ -1072,9 +1072,14 @@ if ($action == 'showsummary') {
 	// On wide screens (>= 1280), the summary and the preview of the file are shown side by side,
 	// both stretched to the height of the tallest one
 	print '<style>
-@media (min-width: 1280px) {
+@media (min-width: 1600px) {
 	#summary-result { display: flex; flex-wrap: wrap; align-items: stretch; }
 	#divsummary { flex: 1 1 58%; display: flex; }
+	#divpreview { flex: 1 1 40%; }
+}
+@media (min-width: 1280px) {
+	#summary-result { display: flex; flex-wrap: wrap; align-items: stretch; }
+	#divsummary { flex: 1 1 35%; display: flex; }
 	#divpreview { flex: 1 1 40%; }
 }
 </style>';

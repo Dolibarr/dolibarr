@@ -1183,7 +1183,7 @@ class FormFile
 	 *	@param	string		$filedir		Full path to directory to scan
 	 *  @param	string		$filter			Filter filenames on this regex string (Example: '\.pdf$')
 	 *  @param	string		$morecss		Add more css to the download picto
-	 *  @param	int<0,1>	$allfiles		0=Only generated docs, 1=All files
+	 *  @param	int<0,2>	$allfiles		0=Only generated docs, 1=All files, 2=All files of directory whatever is their name (file name is shown into links)
 	 *	@return	string				   	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = 'valignmiddle', $allfiles = 0)
@@ -1210,15 +1210,20 @@ class FormFile
 		} else {
 			$filterforfilesearch = '^'.preg_quote(basename($modulesubdir), '/').'\.';
 		}
-		$file_list = dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$'); // We also discard .meta and .png preview
+		if ($allfiles == 2) {
+			$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC); // We discard .meta and .png preview only
+		} else {
+			$file_list = dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$'); // We also discard .meta and .png preview
+		}
 
 		//var_dump($file_list);
 		// For ajax treatment
 		$out .= '<!-- html.formfile::getDocumentsLink -->'."\n";
 		if (!empty($file_list)) {
+			// With file names as labels, the popup is large, so we open it on the right of the picto to not go under the left menu
 			$out = '<dl class="dropdown inline-block">
 				<dt><a data-ajax="false" href="#" onClick="return false;">'.img_picto('', 'listlight', '', 0, 0, 0, '', $morecss).'</a></dt>
-				<dd><div class="multichoicedoc" style="position:absolute;left:100px;" ><ul class="ulselectedfields">';
+				<dd><div class="multichoicedoc" style="position:absolute;left:'.($allfiles == 2 ? '0' : '100px').';" ><ul class="ulselectedfields'.($allfiles == 2 ? ' selectedfieldsleft' : '').'">';
 			$tmpout = '';
 
 			// Loop on each file found
@@ -1252,20 +1257,23 @@ class FormFile
 				} else {
 					$this->infofiles['extensions'][$ext]++;
 				}
+				// Label shown after "Preview" and "Download": the extension, or the file name when files may have any name
+				$labelfile = ($allfiles == 2 ? dol_escape_htmltag(dol_trunc($file['name'], 24, 'middle')) : $ext);
+				$titlefile = ($allfiles == 2 ? ' title="'.dol_escape_htmltag($file['name']).'"' : '');	// Full file name on hover (native tooltip, so plain text)
 
 				// Preview
 				if (!empty($conf->use_javascript_ajax) && ($conf->browser->layout != 'phone')) {
 					$tmparray = getAdvancedPreviewUrl($modulepart, $relativepath, 1, '&entity='.$entity);
 					if ($tmparray && $tmparray['url']) {
-						$tmpout .= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css'] ? ' class="'.$tmparray['css'].'"' : '').($tmparray['mime'] ? ' mime="'.$tmparray['mime'].'"' : '').($tmparray['target'] ? ' target="'.$tmparray['target'].'"' : '').'>';
+						$tmpout .= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css'] ? ' class="'.$tmparray['css'].'"' : '').($tmparray['mime'] ? ' mime="'.$tmparray['mime'].'"' : '').($tmparray['target'] ? ' target="'.$tmparray['target'].'"' : '').$titlefile.'>';
 						//$tmpout.= img_picto('','detail');
 						$tmpout .= img_picto('', 'search-plus', 'class="paddingright"');
-						$tmpout .= $langs->trans("Preview").' '.$ext.'</a></li>';
+						$tmpout .= $langs->trans("Preview").' '.$labelfile.'</a></li>';
 					}
 				}
 
 				// Download
-				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" ';
+				$tmpout .= '<li class="nowrap"><a class="pictopreview nowraponall" ';	// nowraponall, because nowrap allows wrap on smartphone, so popup is reduced to the longest word
 				if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
 					$tmpout .= 'target="_blank" ';
 				}
@@ -1274,9 +1282,10 @@ class FormFile
 				if (preg_match('/text/', $mime)) {
 					$tmpout .= ' target="_blank" rel="noopener noreferrer"';
 				}
-				$tmpout .= '>';
+				$tmpout .= $titlefile.'>';
 				$tmpout .= img_mime($relativepath, $file["name"]);
-				$tmpout .= $langs->trans("Download").' '.$ext;
+				// On smartphone, the file name alone is shown, to save space
+				$tmpout .= (($allfiles == 2 && $conf->browser->layout == 'phone') ? '' : $langs->trans("Download").' ').$labelfile;
 				$tmpout .= '</a></li>'."\n";
 			}
 			$out .= $tmpout;

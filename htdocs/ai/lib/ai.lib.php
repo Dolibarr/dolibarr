@@ -28,6 +28,17 @@
 
 include_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
+/**
+ * Max number of messages of past turns sent back to the AI as context with one question.
+ * Hard cap applied server-side, whatever the client sends (pins, "All" mode).
+ *
+ * @return int
+ */
+function aiChatContextMaxMessages()
+{
+	return 20;
+}
+
 
 /**
  * Prepare admin pages header
@@ -59,6 +70,36 @@ function getListOfAIFeatures()
 	);
 
 	return $arrayofaifeatures;
+}
+
+/**
+ * Return the values accepted for the reasoning effort of OpenAI-compatible APIs
+ *
+ * @return string[]
+ */
+function getListOfAiReasoningEfforts(): array
+{
+	return array('none', 'minimal', 'low', 'medium', 'high', 'xhigh');
+}
+
+/**
+ * Return the reasoning effort to send to an OpenAI-compatible API of a service, from the constant AI_API_<SERVICE>_REASONING_EFFORT
+ *
+ * @param	string	$service	Code of the AI service ('custom', 'chatgpt', ...)
+ * @return	string				One value of getListOfAiReasoningEfforts(), or '' to let the model decide
+ */
+function getAiReasoningEffort(string $service): string
+{
+	$effort = strtolower(getDolGlobalString('AI_API_'.strtoupper($service).'_REASONING_EFFORT'));
+	if ($effort === '') {
+		return '';
+	}
+	if (!in_array($effort, getListOfAiReasoningEfforts(), true)) {
+		dol_syslog("getAiReasoningEffort: unknown value '".$effort."' for service ".$service.", ignored", LOG_WARNING);
+		return '';
+	}
+
+	return $effort;
 }
 
 /**
@@ -1234,7 +1275,7 @@ function getAiChatAssistantConfig()
 		'AIAttachmentBlockedByPrivacy', 'AIAttachmentMustBeConvertedToText', 'AIAttachmentTypeNotAllowed', 'AIAttachmentHeicUnsupported', 'AIAttachmentTooMany', 'MissingInformation', 'CouldYouClarify',
 		'Ref', 'Label', 'ThirdParty', 'Customer', 'Paid', 'Status', 'Type', 'Email', 'Town', 'Date',
 		'DateInvoice', 'DateMaxPayment', 'AmountHT', 'AmountTTC', 'AmountVAT', 'RemainderToPay',
-		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC',
+		'Price', 'PriceTTC', 'VATRate', 'CustomerCode', 'SupplierCode', 'Supplier', 'TotalHT', 'TotalTTC', 'UserGroups', 'Group',
 		// General UI
 		'NoDataAvailable',
 		'Error',
@@ -1440,11 +1481,10 @@ function getAiChatAssistantConfig()
 		// Attachment count cap, so the client mirrors the server-side guard
 		// of ai_validate_attachments() instead of hardcoding its own.
 		'maxAttachments' => getDolGlobalInt('AI_ATTACHMENT_MAX_FILES', 5),
-		// Recent exchanges that follow the model by default (sliding window).
-		// Off (0) until an administrator decides otherwise: past answers carry
-		// business content the privacy masking does not cover, so sending them
-		// back on every request is not a default the module takes by itself.
-		'autoContext' => getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_EXCHANGES', 2),
+		// Recent messages that follow the model by default (sliding window).
+		// 4 by default, 0 to disable: past answers carry business content the
+		// privacy masking does not cover, so the administrator can turn it off.
+		'autoContext' => min(aiChatContextMaxMessages(), getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_MESSAGES', 4)),
 		// Max size (in characters) of the context sent back to the model, also the cap of one tool result.
 		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000),
 		// The "/" palette of the chat input, always on.
@@ -2715,7 +2755,10 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 		// Get parameters
 		$toolParams = $tool['parameters'] ?? $tool['inputSchema'] ?? [];
 		// requestState is set by the chat after the user confirmed a write, never by the model.
-		unset($toolParams['properties']['requestState']);
+		// The properties of a tool without parameter may be an empty object (encoded as {} in JSON) instead of an array.
+		if (isset($toolParams['properties']) && is_array($toolParams['properties'])) {
+			unset($toolParams['properties']['requestState']);
+		}
 
 		if ($isLargeSchema && isset($toolParams['properties']) && is_array($toolParams['properties'])) {
 			$requiredList = $toolParams['required'] ?? [];
@@ -2734,7 +2777,9 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 				// -----------------------------------------------------------
 				// Paging, sort and filter params of list tools are kept (without description): without them,
 				// the model can't answer "the last 5 ..." or filter a list, and gets the 25 first records.
-				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters'))) {
+				// count is kept so a "how many ..." question is answered without loading the records.
+				// subdir, search and recursive are kept so the file tools can list another directory than the root.
+				if (!$isRequired && isset($propData['default']) && !in_array($propKey, array('limit', 'sortfield', 'sortorder', 'sqlfilters', 'count', 'subdir', 'search', 'recursive'))) {
 					continue;
 				}
 
