@@ -90,6 +90,9 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		if (empty($id)) {
+			throw new RestException(404, 'category not found');
+		}
 		$result = $this->category->fetch($id);
 		if ($result < 0) {
 			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
@@ -325,6 +328,9 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		if (empty($id)) {
+			throw new RestException(404, 'category not found');
+		}
 		$result = $this->category->fetch($id);
 		if ($result < 0) {
 			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
@@ -390,6 +396,9 @@ class Categories extends DolibarrApi
 	{
 		if (!DolibarrApiAccess::$user->hasRight('categorie', 'supprimer')) {
 			throw new RestException(403);
+		}
+		if (empty($id)) {
+			throw new RestException(404, 'category not found');
 		}
 		$result = $this->category->fetch($id);
 		if ($result < 0) {
@@ -548,6 +557,9 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		if (empty($id)) {
+			throw new RestException(404, 'category not found');
+		}
 		$result = $this->category->fetch($id);
 		if ($result < 0) {
 			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
@@ -658,6 +670,9 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		if (empty($id)) {
+			throw new RestException(404, 'category not found');
+		}
 		$result = $this->category->fetch($id);
 		if ($result < 0) {
 			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
@@ -768,6 +783,9 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		if (empty($id)) {
+			throw new RestException(404, 'category not found');
+		}
 		$result = $this->category->fetch($id);
 		if ($result < 0) {
 			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
@@ -871,6 +889,9 @@ class Categories extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		if (empty($id)) {
+			throw new RestException(404, 'category not found');
+		}
 		$result = $this->category->fetch($id);
 		if ($result < 0) {
 			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
@@ -1106,6 +1127,9 @@ class Categories extends DolibarrApi
 			throw new RestException(400, 'The "type" parameter is required.');
 		}
 
+		if (empty($id)) {
+			throw new RestException(404, 'category not found');
+		}
 		$result = $this->category->fetch($id);
 		if ($result < 0) {
 			throw new RestException(500, 'Error when fetching category', array_merge(array($this->category->error), $this->category->errors));
