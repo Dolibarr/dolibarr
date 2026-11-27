@@ -265,6 +265,9 @@ if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 $isInEEC = isInEEC($mysoc);
 
 $alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
+// With MultiCompany per-entity AWP, the AWP shown is the one of the current entity (llx_product_perentity), falling back on the
+// global p.pmp when the product has no row yet for this entity (same convention as stock/list.php and Product::fetch()).
+$pmpperentity = (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED'));
 
 $arraypricelevel = array();
 // Definition of array of fields for columns
@@ -564,7 +567,7 @@ if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 } else {
 	$sql .= " ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export, ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
 }
-$sql .= ' p.datec as date_creation, p.tms as date_modification, p.pmp, p.stock, p.cost_price,';
+$sql .= ' p.datec as date_creation, p.tms as date_modification, '.($pmpperentity ? 'COALESCE(ppe.pmp, p.pmp) as pmp' : 'p.pmp').', p.stock, p.cost_price,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units,';
 $sql .= ' p.customcode, p.fk_country, p.fk_state, p.stockable_product,';
 $sql .= ' p.note_public, p.note as note_private,';
@@ -607,7 +610,7 @@ if (isModEnabled('workstation')) {
 	$sqljoinsremovableforcount['ws'] = " LEFT JOIN " . MAIN_DB_PREFIX . "workstation_workstation as ws ON (p.fk_default_workstation = ws.rowid)";
 	$sql .= $sqljoinsremovableforcount['ws'];
 }
-if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
+if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') || $pmpperentity) {
 	$sqljoinsremovableforcount['ppe'] = " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 	$sql .= $sqljoinsremovableforcount['ppe'];
 }

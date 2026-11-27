@@ -288,14 +288,20 @@ $num = 0;
 
 $title = $langs->trans('StockAtDate');
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, p.pmp,';
+// With MultiCompany per-entity AWP, use the AWP of the current entity (llx_product_perentity), falling back on the global p.pmp
+// when the product has no row yet for this entity (same convention as stock/list.php and Product::fetch()).
+// The AWP is inside an aggregate function, so no AWP column has to be added to the GROUP BY (at most one row per product and entity).
+$pmpperentity = (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED'));
+$sqlpmp = ($pmpperentity ? 'COALESCE(ppe.pmp, p.pmp)' : 'p.pmp');
+
+$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, '.($pmpperentity ? 'MAX('.$sqlpmp.') as pmp' : 'p.pmp').',';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if (!empty($search_fk_warehouse)) {
-	$sql .= " SUM(p.pmp * ps.reel) as currentvalue, SUM(p.price * ps.reel) as sellvalue";
+	$sql .= " SUM(".$sqlpmp." * ps.reel) as currentvalue, SUM(p.price * ps.reel) as sellvalue";
 	$sql .= ', SUM(ps.reel) as stock_reel';
 } else {
-	$sql .= " SUM(p.pmp * p.stock) as currentvalue, SUM(p.price * p.stock) as sellvalue";
+	$sql .= " SUM(".$sqlpmp." * p.stock) as currentvalue, SUM(p.price * p.stock) as sellvalue";
 }
 // Add fields from hooks
 $parameters = array();
@@ -307,6 +313,9 @@ $sqlfields = $sql;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (!empty($search_fk_warehouse)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot IN ('.$db->sanitize(implode(",", $search_fk_warehouse)).")";
+}
+if ($pmpperentity) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = '.((int) $conf->entity);
 }
 // Add fields from hooks
 $parameters = array();
