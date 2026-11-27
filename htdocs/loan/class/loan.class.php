@@ -676,6 +676,7 @@ class Loan extends CommonObject
 	{
 		$sql = 'SELECT l.rowid, l.datec, l.fk_user_author, l.fk_user_modif,';
 		$sql .= ' l.tms as datem';
+		$sql .= ' FROM '.$this->db->prefix().'loan as l';
 		$sql .= ' WHERE l.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
