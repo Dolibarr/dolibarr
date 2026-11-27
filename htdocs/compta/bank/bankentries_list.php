@@ -483,7 +483,7 @@ if (!empty($search_description)) {
 	$param .= '&search_description='.urlencode($search_description);
 }
 if (!empty($search_type)) {
-	$param .= '&type='.urlencode($search_type);
+	$param .= '&search_type='.urlencode($search_type);
 }
 if (!empty($search_thirdparty_user)) {
 	$param .= '&search_thirdparty='.urlencode($search_thirdparty_user);
