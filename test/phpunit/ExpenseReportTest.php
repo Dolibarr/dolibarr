@@ -30,6 +30,7 @@ global $conf,$user,$langs,$db,$mysoc;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/expensereport/class/expensereport.class.php';
+require_once dirname(__FILE__).'/../../htdocs/expensereport/class/paymentexpensereport.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -271,5 +272,33 @@ class ExpenseReportTest extends CommonClassTest
 		$this->assertEquals($lineid, $line->id, "Fetched line id does not match the requested one");
 
 		$expensereport->delete($user);
+	}
+
+	/**
+	 * testPaymentExpenseReportFetchNotFound
+	 *
+	 * @return	void
+	 */
+	public function testPaymentExpenseReportFetchNotFound()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$maxid = 0;
+		$resql = $db->query("SELECT MAX(rowid) as maxid FROM ".MAIN_DB_PREFIX."payment_expensereport");
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			$maxid = (int) ($obj->maxid ?? 0);
+		}
+
+		$payment = new PaymentExpenseReport($db);
+		$result = $payment->fetch($maxid + 1);
+		print __METHOD__." id=".($maxid + 1)." result=".$result."\n";
+
+		$this->assertEquals(0, $result, "PaymentExpenseReport::fetch() must return 0 when the payment does not exist");
+		$this->assertEmpty($payment->id, "No payment must be loaded");
 	}
 }
