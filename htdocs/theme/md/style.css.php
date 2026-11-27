@@ -5647,6 +5647,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	width: 100px;
 	min-height: 40px;
 }
+.boxstats.boxstatsoutstandingok {
+	border-left: 6px solid <?php echo $badgeStatus4; ?>;
+}
+.boxstats.boxstatsoutstandingko {
+	border-left: 6px solid <?php echo $badgeDanger; ?>;
+}
 .boxstats130 {
 	width: 135px;
 	height: 54px;
