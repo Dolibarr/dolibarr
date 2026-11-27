@@ -4708,10 +4708,10 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 				$class = 'butAction butActionDelete';
 			} elseif ($actionType == 'danger' || $actionType == 'delete') {
 				$class = 'butAction butActionDelete';
-				if (!empty($url) && strpos($url, 'token=') === false) {
-					$url .= '&token=' . newToken();
-				}
 			}
+		}
+		if (($actionType == 'danger' || $actionType == 'delete') && !empty($url) && strpos($url, 'token=') === false) {
+			$url .= '&token=' . newToken();
 		}
 	}
 	if (empty($label) && !empty($userRight) && $userRight > 0 && in_array($actionType, array('email', 'clone', 'delete', 'danger', 'cancel'))) {
