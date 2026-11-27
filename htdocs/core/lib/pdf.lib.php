@@ -2916,7 +2916,7 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 			// 2 = situation_percent is non-cumulative (delta of current situation)
 			// 1 = (old mode): situation_percent is cumulative (state at situation)
 			$isCumulative = getDolGlobalInt('INVOICE_USE_SITUATION') === 1;
-			$showDelta = (bool) getDolGlobalInt('SITUATION_DISPLAY_DIFF_ON_PDF');
+			$showDelta = ! (bool) getDolGlobalInt('SITUATION_DISPLAY_SUM_ON_PDF');
 
 			if ($isCumulative xor $showDelta) {
 				// Either:

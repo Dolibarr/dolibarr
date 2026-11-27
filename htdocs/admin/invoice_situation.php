@@ -83,6 +83,10 @@ $situationModeHelp = $langs->trans('SituationInvoiceModeHelp')
 	.'<br><b>'.$langs->trans('SituationInvoiceModeWarning').'</b>';
 $item->nameText = $langs->trans('SituationInvoiceMode').info_admin($situationModeHelp, 0, 0, 'warning', 'clearboth');
 
+$item = $formSetup->newItem('SITUATION_DISPLAY_SUM_ON_PDF')
+	->setAsYesNo()
+	->nameText = $langs->trans('SituationDisplaySumNotCurrentProgress');
+
 $item = $formSetup->newItem('INVOICE_USE_SITUATION_CREDIT_NOTE')
 	->setAsYesNo()
 	->nameText = $langs->trans('UseSituationInvoicesCreditNote');
