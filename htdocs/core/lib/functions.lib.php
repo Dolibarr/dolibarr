@@ -6257,7 +6257,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$allowed_tags_string = implode("><", $allowed_tags);
 	$allowed_tags_string = '<' . $allowed_tags_string . '>';
 
-	$stringtoclean = str_replace('<!DOCTYPE html>', '__!DOCTYPE_HTML__', $stringtoclean);	// Replace DOCTYPE to avoid to have it removed by the strip_tags
+	$stringtoclean = str_replace('<!DOCTYPE html>', '__!DOCTYPE_HTML__', (string) $stringtoclean);	// Replace DOCTYPE to avoid to have it removed by the strip_tags
 
 	$stringtoclean = dol_string_nounprintableascii($stringtoclean, 0);
 
@@ -7039,7 +7039,7 @@ function dol_htmlentitiesbr_decode($stringtodecode, $pagecodeto = 'UTF-8')
  */
 function dol_htmlcleanlastbr($stringtodecode)
 {
-	$ret = preg_replace('/&nbsp;$/i', "", $stringtodecode);		// Because wysiwyg editor may add a &nbsp; at end of last line
+	$ret = preg_replace('/&nbsp;$/i', "", (string) $stringtodecode);		// Because wysiwyg editor may add a &nbsp; at end of last line
 	$ret = preg_replace('/(<br>|<br(\s[\sa-zA-Z_="]*)?\/?>|' . "\n" . '|' . "\r" . ')+$/i', "", $ret);
 	return $ret;
 }
@@ -7079,7 +7079,7 @@ function dol_html_entity_decode($a, $b, $c = 'UTF-8', $keepsomeentities = 0)
  */
 function dol_htmlentities($string, $flags = ENT_QUOTES | ENT_SUBSTITUTE, $encoding = 'UTF-8', $double_encode = false)
 {
-	return htmlentities($string, $flags, $encoding, $double_encode);
+	return htmlentities((string) $string, $flags, $encoding, $double_encode);
 }
 
 /**
