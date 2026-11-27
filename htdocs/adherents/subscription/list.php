@@ -338,6 +338,15 @@ if ($search_login) {
 if ($search_account) {
 	$param .= "&search_account=".urlencode($search_account);
 }
+if ($search_ref) {
+	$param .= '&search_ref='.urlencode((string) $search_ref);
+}
+if ($search_firstname) {
+	$param .= '&search_firstname='.urlencode((string) $search_firstname);
+}
+if ($search_note) {
+	$param .= '&search_note='.urlencode((string) $search_note);
+}
 if ($search_amount) {
 	$param .= "&search_amount=".urlencode($search_amount);
 }
