@@ -138,6 +138,8 @@ $product_static = new Product($db);
 $payment_static = new Paiement($db);
 $paymentfourn_static = new PaiementFourn($db);
 $paymentexpensereport_static = new PaymentExpenseReport($db);
+$user_static = new User($db);
+$userlinks = array();
 
 $morequerystring = '';
 $listofparams = array('date_startmonth', 'date_startyear', 'date_startday', 'date_endmonth', 'date_endyear', 'date_endday');
@@ -312,9 +314,23 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 		$x_both[$my_paye_rate]['paye']['detail'] = array();
 
 		foreach ($x_paye[$my_paye_rate]['facid'] as $id => $dummy) {
-			$invoice_supplier->id = $x_paye[$my_paye_rate]['facid'][$id];
-			$invoice_supplier->ref = $x_paye[$my_paye_rate]['facnum'][$id];
-			$invoice_supplier->type = $x_paye[$my_paye_rate]['type'][$id];
+			if ($x_paye[$my_paye_rate]['ptype'][$id] == 'ExpenseReportPayment') {
+				$expensereport->id = $x_paye[$my_paye_rate]['facid'][$id];
+				$expensereport->ref = $x_paye[$my_paye_rate]['facnum'][$id];
+				$tmpuserid = (int) $x_paye[$my_paye_rate]['user_id'][$id];
+				if (!isset($userlinks[$tmpuserid])) {
+					$user_static->fetch($tmpuserid);
+					$userlinks[$tmpuserid] = $user_static->getNomUrl(1);
+				}
+				$link = $expensereport->getNomUrl(1);
+				$company_link = $userlinks[$tmpuserid];
+			} else {
+				$invoice_supplier->id = $x_paye[$my_paye_rate]['facid'][$id];
+				$invoice_supplier->ref = $x_paye[$my_paye_rate]['facnum'][$id];
+				$invoice_supplier->type = $x_paye[$my_paye_rate]['type'][$id];
+				$link = $invoice_supplier->getNomUrl(1, '', 12);
+				$company_link = $company_static->getNomUrl(1, '', 20);
+			}
 			$x_both[$my_paye_rate]['paye']['detail'][] = array(
 				'id'        =>$x_paye[$my_paye_rate]['facid'][$id],
 				'descr'     =>$x_paye[$my_paye_rate]['descr'][$id],
@@ -322,20 +338,21 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				'pref'      =>$x_paye[$my_paye_rate]['pref'][$id],
 				'ptype'     =>$x_paye[$my_paye_rate]['ptype'][$id],
 				'payment_id'=>$x_paye[$my_paye_rate]['payment_id'][$id],
+				'payment_ref'=>$x_paye[$my_paye_rate]['payment_ref'][$id],
 				'payment_amount'=>$x_paye[$my_paye_rate]['payment_amount'][$id],
 				'ftotal_ttc'=>price2num($x_paye[$my_paye_rate]['ftotal_ttc'][$id]),
 				'dtotal_ttc'=>price2num($x_paye[$my_paye_rate]['dtotal_ttc'][$id]),
 				'dtype'     =>$x_paye[$my_paye_rate]['dtype'][$id],
 				'datef'     =>$x_paye[$my_paye_rate]['datef'][$id],
 				'datep'     =>$x_paye[$my_paye_rate]['datep'][$id],
-				'company_link'=>$company_static->getNomUrl(1, '', 20),
+				'company_link'=>$company_link,
 				'ddate_start'=>$x_paye[$my_paye_rate]['ddate_start'][$id],
 				'ddate_end'  =>$x_paye[$my_paye_rate]['ddate_end'][$id],
 				'totalht'   =>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
 				'localtax1'=> $x_paye[$my_paye_rate]['localtax1_list'][$id],
 				'localtax2'=> $x_paye[$my_paye_rate]['localtax2_list'][$id],
 				'vat'       =>$x_paye[$my_paye_rate]['vat_list'][$id],
-				'link'      =>$invoice_supplier->getNomUrl(1, '', 12)
+				'link'      =>$link
 			);
 		}
 	}
@@ -606,7 +623,11 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
 							$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
 						}
-						if ($fields['payment_amount'] && $fields['ftotal_ttc']) {
+						if ($fields['payment_amount'] && $fields['ftotal_ttc'] && $fields['ptype'] == 'ExpenseReportPayment') {
+							$paymentexpensereport_static->id = $fields['payment_id'];
+							$paymentexpensereport_static->ref = $fields['payment_ref'];
+							print $paymentexpensereport_static->getNomUrl(2);
+						} elseif ($fields['payment_amount'] && $fields['ftotal_ttc']) {
 							$paymentfourn_static->id = $fields['payment_id'];
 							print $paymentfourn_static->getNomUrl(2);
 						}
