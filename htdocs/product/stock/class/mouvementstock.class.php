@@ -557,6 +557,28 @@ class MouvementStock extends CommonObject
 				$error = -1;
 			}
 
+			// A negative stock entry (type 0 or 3) is the cancellation of a previous entry when a positive entry of the same product
+			// with the same origin (for example the same supplier reception) exists before it. The PMP is then calculated as for any entry.
+			// Any other negative stock entry (no origin, or no previous entry of this origin) is handled as an output: the PMP is not changed.
+			$isentrycancellation = false;
+			if (!$error && $qty < 0 && ($type == 0 || $type == 3) && $origin_type != '' && $origin_id > 0) {
+				$sql = "SELECT rowid FROM ".$this->db->prefix()."stock_mouvement";
+				$sql .= " WHERE fk_product = ".((int) $fk_product);
+				$sql .= " AND origintype = '".$this->db->escape($origin_type)."' AND fk_origin = ".((int) $origin_id);
+				$sql .= " AND type_mouvement IN (0, 3) AND value > 0 AND rowid < ".((int) $mvid);
+				$sql .= $this->db->plimit(1);
+
+				dol_syslog(get_class($this)."::_create check if the negative entry cancels a previous entry of the same origin", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$isentrycancellation = ($this->db->num_rows($resql) > 0);
+					$this->db->free($resql);
+				} else {
+					$this->errors[] = $this->db->lasterror();
+					$error = -2;
+				}
+			}
+
 			// Define current values for qty and pmp
 			$oldqty = $product->stock_reel;
 			$oldpmp = $product->pmp;
@@ -588,7 +610,7 @@ class MouvementStock extends CommonObject
 			// Calculate new AWP (PMP)
 			$newpmp = 0;
 			if (!$error) {
-				$newpmp = $this->calculatePMP($oldqty, $oldpmp, $qty, $price, $type);
+				$newpmp = $this->calculatePMP($oldqty, $oldpmp, $qty, $price, $type, $isentrycancellation);
 			}
 
 			// PMP per entity (MultiCompany): the PMP of the entity of the warehouse is calculated with the same rule, on the PMP and
@@ -623,7 +645,7 @@ class MouvementStock extends CommonObject
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj) {
-						$newpmpperentity = $this->calculatePMP((float) $obj->stockentity, (float) $obj->pmp, $qty, $price, $type);
+						$newpmpperentity = $this->calculatePMP((float) $obj->stockentity, (float) $obj->pmp, $qty, $price, $type, $isentrycancellation);
 					}
 					$this->db->free($resql);
 				} else {
@@ -760,16 +782,20 @@ class MouvementStock extends CommonObject
 	 * @param	float		$qty		Quantity of the movement
 	 * @param	float		$price		Unit price of the movement
 	 * @param	int			$type		Type of movement (0=input, 1=output, 2=output, 3=input)
+	 * @param	bool		$isentrycancellation	For a negative entry (qty < 0 with type 0 or 3): true if it cancels a previous entry of the same origin
 	 * @return	float|string			New PMP
 	 */
-	private function calculatePMP($oldqty, $oldpmp, $qty, $price, $type)
+	private function calculatePMP($oldqty, $oldpmp, $qty, $price, $type, $isentrycancellation = false)
 	{
 		$newpmp = 0;
 		if ($type == 0 || $type == 3) {
 			// After a stock increase
 			// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
 			// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
-			if ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
+			if ($qty < 0 && !$isentrycancellation) {
+				// Negative entry that does not cancel a previous entry of the same origin: handled as an output, the PMP is not changed.
+				$newpmp = $oldpmp;
+			} elseif ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
 				$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
 				// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
 				if ($oldpmp > 0 && ($oldqtytouse + $qty) != 0) {
