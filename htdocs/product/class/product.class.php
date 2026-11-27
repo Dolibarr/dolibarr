@@ -3293,15 +3293,14 @@ class Product extends CommonObject
 
 		// For MultiCompany
 		// PMP per entity & Stocks Sharings stock_reel includes only stocks shared with this entity
-		$separatedEntityPMP = false;	// Set to true to get the AWP from table llx_product_perentity instead of field 'pmp' into llx_product.
+		$separatedEntityPMP = false;	// Set to true to get the AWP from table llx_product_perentity (when a row exists for the product and the entity) instead of field 'pmp' into llx_product.
 		$separatedStock = false;		// Set to true will count stock from subtable llx_product_stock. It is slower than using denormalized field 'stock', but it is required when using multientity and shared warehouses.
 		$visibleWarehousesEntities = $conf->entity;
 		if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED')) {
 			if (getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
-				$checkPMPPerEntity = $this->db->query("SELECT pmp FROM " . $this->db->prefix() . "product_perentity WHERE fk_product = ".((int) $id)." AND entity = ".(int) $conf->entity);
-				if ($this->db->num_rows($checkPMPPerEntity) > 0) {
-					$separatedEntityPMP = true;
-				}
+				// The existence of the row of llx_product_perentity is tested inside the main query, so it works
+				// whatever the product is fetched by (id, ref, ref_ext or barcode).
+				$separatedEntityPMP = true;
 			}
 			global $mc;
 			$separatedStock = true;
@@ -3310,7 +3309,8 @@ class Product extends CommonObject
 			}
 		}
 		if ($separatedEntityPMP) {
-			$sql .= " ppe.pmp,";
+			// AWP of the entity if the product has a row for this entity, global AWP otherwise
+			$sql .= " CASE WHEN ppe.rowid IS NOT NULL THEN ppe.pmp ELSE p.pmp END as pmp,";
 		} else {
 			$sql .= " p.pmp,";
 		}
@@ -3355,7 +3355,7 @@ class Product extends CommonObject
 				$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export, ppe.accountancy_code_sell, ppe.accountancy_code_sell_intra, ppe.accountancy_code_sell_export,";
 			}
 			if ($separatedEntityPMP) {
-				$sql .= " ppe.pmp,";
+				$sql .= " ppe.rowid, ppe.pmp, p.pmp,";
 			} else {
 				$sql .= " p.pmp,";
 			}
