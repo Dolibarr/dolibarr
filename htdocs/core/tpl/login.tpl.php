@@ -180,10 +180,23 @@ if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->ma
 		dolSetCookie('DOL_rollback_url_'.$prefix, $_SERVER['REQUEST_URI'], time() + 3600);	// $_SERVER["REQUEST_URI"] is for example /mydolibarr/mypage.php
 	}
 
+	// The authorization code was refused as already used or expired (see functions_openid_connect.php): restart the
+	// login once. The session on the provider is usually still valid, so the user comes back logged in. If it fails
+	// again, the error is shown as before.
+	if (GETPOST('openid_mode') && !empty($_SESSION['dol_openid_connect_invalid_grant'])) {
+		unset($_SESSION['dol_openid_connect_invalid_grant']);
+		unset($_SESSION['dol_loginmesg']);
+		$_SESSION['dol_openid_connect_restarted'] = 1;
+		dol_include_once('/core/lib/openid_connect.lib.php');
+		header("Location: " . openid_connect_get_url(), true, 302);
+		exit();
+	}
+
 	// Auto redirect if OpenID Connect is the only authentication
 	if ($conf->file->main_authentication === 'openid_connect') {
 		// Avoid redirection hell
 		if (empty(GETPOST('openid_mode'))) {
+			unset($_SESSION['dol_openid_connect_restarted']);	// A new login starts, it may be restarted once again
 			dol_include_once('/core/lib/openid_connect.lib.php');
 			header("Location: " . openid_connect_get_url(), true, 302);
 		} elseif (!empty($_SESSION['dol_loginmesg'])) {
