@@ -454,10 +454,10 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				print '</td><td colspan="'.$span.'"></td>';
 				print '</tr>'."\n";
 
-				foreach ($x_both[$thirdparty_id]['coll']['detail'] as $index => $fields) {
-					// Sort by payment date/invoice date
-					usort($x_both[$thirdparty_id]['coll']['detail'], 'cmp_fields_date');
+				// Sort by payment date/invoice date
+				usort($x_both[$thirdparty_id]['coll']['detail'], 'cmp_fields_date');
 
+				foreach ($x_both[$thirdparty_id]['coll']['detail'] as $index => $fields) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
@@ -647,10 +647,10 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				print '<td colspan="'.($span + 1).'"></td>';
 				print '</tr>'."\n";
 
-				foreach ($x_both[$thirdparty_id]['paye']['detail'] as $index => $fields) {
-					// Sort by payment date/invoice date
-					usort($x_both[$thirdparty_id]['paye']['detail'], 'cmp_fields_date');
+				// Sort by payment date/invoice date
+				usort($x_both[$thirdparty_id]['paye']['detail'], 'cmp_fields_date');
 
+				foreach ($x_both[$thirdparty_id]['paye']['detail'] as $index => $fields) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
@@ -825,7 +825,7 @@ $db->close();
  * @param array{datep:int,datef:int}	$b	Right argument to compare
  * @return int<-1,1>  Indicates sort order between arguments
  */
-function cmp_fields_date(&$a, &$b)
+function cmp_fields_date($a, $b)
 {
 	// Compare payment date
 	if ($a['datep'] != $b['datep']) {
