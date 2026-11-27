@@ -286,10 +286,10 @@ if ($optioncss != '') {
 }
 
 if (!empty($search_ref)) {
-	$param .= '&search_ref="'.$search_ref.'"';
+	$param .= '&search_ref='.urlencode($search_ref);
 }
 if (!empty($search_label)) {
-	$param .= '&search_label="'.$search_label.'"';
+	$param .= '&search_label='.urlencode($search_label);
 }
 if (!empty($search_dateend_start)) {
 	$param .= '&search_dateend_startyear='.GETPOSTINT('search_dateend_startyear');
@@ -334,7 +334,7 @@ if (!empty($search_account) && $search_account > 0) {
 	$param .= '&search_account='.$search_account;
 }
 if (!empty($search_amount)) {
-	$param .= '&search_amount="'.$search_amount.'"';
+	$param .= '&search_amount='.urlencode($search_amount);
 }
 if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
