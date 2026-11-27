@@ -99,10 +99,6 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transcountry("ProfId1", $mysoc->country_code)), null, 'errors');
 		$error++;
 	}
-	if (!GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF2")) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transcountry("ProfId2", $mysoc->country_code)), null, 'errors');
-		$error++;
-	}
 
 	$tmpthirdparty = new Societe($db);
 
@@ -131,6 +127,12 @@ if ($action == 'update') {
 
 			activateModulesRequiredByCountry($mysoc->country_code);
 		}
+	}
+
+	// ProfId2 is the SIRET, it is mandatory for France only (check on the submitted country)
+	if (!empty($tmparray['code']) && $tmparray['code'] == 'FR' && !GETPOST("BLOCKEDLOG_REGISTRATION_IDPROF2")) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transcountry("ProfId2", $tmparray['code'])), null, 'errors');
+		$error++;
 	}
 
 	// Check validity of email
@@ -551,7 +553,7 @@ if (empty($mode)) {
 	$item->defaultFieldValue = (GETPOSTISSET('MAIN_INFO_SIRET') ? GETPOST('MAIN_INFO_SIRET') : getDolGlobalString('MAIN_INFO_SIRET', $mysoc->idprof2));
 	$item->fieldValue = (GETPOSTISSET('MAIN_INFO_SIRET') ? GETPOST('MAIN_INFO_SIRET') : getDolGlobalString('MAIN_INFO_SIRET', $mysoc->idprof2));
 	$item->helpText = $langs->trans("Example").': 732 829 320 00074';
-	$item->fieldParams['isMandatory'] = 1;
+	$item->fieldParams['isMandatory'] = ($mysoc->country_code == 'FR' ? 1 : 0);
 	$item->nameText = $langs->transcountry("ProfId2", $mysoc->country_code);
 
 	//Company country code
