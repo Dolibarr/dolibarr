@@ -580,8 +580,11 @@ class Shipments extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->shipment->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->error);
+		// delete() returns a negative value on error, which !$result never caught. 0 means
+		// the shipment is deleted but its document directory could not be removed.
+		$result = $this->shipment->delete(DolibarrApiAccess::$user);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when deleting shipment : '.$this->shipment->errorsToString());
 		}
 
 		return array(
