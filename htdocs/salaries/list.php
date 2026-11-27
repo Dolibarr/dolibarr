@@ -509,6 +509,9 @@ if (!empty($search_date_end_from)) {
 if (!empty($search_date_end_to)) {
 	$param .= "&search_date_end_today=".urlencode(GETPOST('search_date_end_today'))."&search_date_end_tomonth=".urlencode(GETPOST('search_date_end_tomonth'))."&search_date_end_toyear=".urlencode(GETPOST('search_date_end_toyear'));
 }
+if ($search_amount) {
+	$param .= '&search_amount='.urlencode((string) $search_amount);
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
