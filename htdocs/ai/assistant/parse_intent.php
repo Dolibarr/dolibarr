@@ -1076,6 +1076,8 @@ try {
 				$query .= $aiAttachmentsHiddenNote;
 			}
 			$attachments = $attachmentsForModel;	// Only what is sent, for the error messages below
+			// Releases the session lock during the long AI call: $_SESSION changes after this line are not saved unless the session is reopened.
+			$sessionReleased = session_write_close();
 			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachmentsForModel, $history);
 			// The provider rejected the attachments (e.g. "Image input is not enabled for this model"):
 			// remember it for the session and ask again without them, the model still has their references.
@@ -1083,7 +1085,13 @@ try {
 				&& !UniversalLLMAdapter::isModelUnavailableError($rawResponse)
 				&& preg_match('/\b(?:file|files|pdf|document|image_url|image|images|attachment|content.?type|mime|multimodal|vision)\b/i', $rawResponse)) {
 				dol_syslog("parse_intent.php attachments rejected by ".$serviceKey."/".$model.", ask again without them: ".dol_trunc($rawResponse, 200), LOG_WARNING);
+				if ($sessionReleased) {
+					dol_session_start();
+				}
 				ai_attachment_mark_rejected_by_model($attachmentsForModel, $serviceKey, $model);
+				if ($sessionReleased) {
+					session_write_close();
+				}
 				$attachments = array();
 				$query .= $aiAttachmentsHiddenNote;
 				$rawResponse = $adapter->generate($systemPrompt, $query, 'text', array(), $history);
