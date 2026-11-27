@@ -99,6 +99,15 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 	$token_content = json_decode($token_response['content']);
 	dol_syslog("functions_openid_connect::check_user_password_openid_connect /token=".print_r($token_response, true), LOG_DEBUG);
 
+	// The authorization code was already used or has expired, for example when the browser restores a tab that was
+	// on the return page of the provider, or after a reload. login.tpl.php restarts the login once in this case.
+	if (is_object($token_content) && isset($token_content->error) && $token_content->error === 'invalid_grant' && empty($_SESSION['dol_openid_connect_restarted'])) {
+		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".($token_content->error_description ?? $token_content->error).")";
+		$_SESSION['dol_openid_connect_invalid_grant'] = 1;
+		dol_syslog("functions_openid_connect::check_user_password_openid_connect::authorization code refused (invalid_grant), the login is restarted", LOG_NOTICE);
+		return false;
+	}
+
 	if ($token_response['curl_error_no']) {
 		// Token request error
 		$_SESSION["dol_loginmesg"] = "Network error: ".$token_response['curl_error_msg']." (".$token_response['curl_error_no'].")";
@@ -185,6 +194,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		return false;
 	}
 
+	unset($_SESSION['dol_openid_connect_restarted']);
 	$_SESSION['OPENID_CONNECT'] = true;
 
 	// Note: Test on date validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
