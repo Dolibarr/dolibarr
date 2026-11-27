@@ -918,6 +918,15 @@ class AccountancyExport
 			$line->subledger_label = str_replace(array("- ", "…", "..."), "", $line->subledger_label);
 			$line->subledger_label = dol_string_unaccent($line->subledger_label);
 
+			// Quadratus is a fixed-width format: keep only printable ASCII so multibyte chars do not shift the next fields
+			$line->doc_ref = dol_string_nounprintableascii($line->doc_ref, 1, 1);
+			$line->label_operation = dol_string_nounprintableascii($line->label_operation, 1, 1);
+			$line->numero_compte = dol_string_nounprintableascii($line->numero_compte, 1, 1);
+			$line->label_compte = dol_string_nounprintableascii($line->label_compte, 1, 1);
+			$line->subledger_account = dol_string_nounprintableascii($line->subledger_account, 1, 1);
+			$line->subledger_label = dol_string_nounprintableascii($line->subledger_label, 1, 1);
+			$line->code_journal = dol_string_nounprintableascii($line->code_journal, 1, 1);
+
 			$code_compta = $line->numero_compte;
 			if (!empty($line->subledger_account)) {
 				$code_compta = $line->subledger_account;
