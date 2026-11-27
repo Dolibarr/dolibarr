@@ -416,7 +416,7 @@ class Projects extends DolibarrApi
 			throw new RestException(404, 'project not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('ficheinter', $this->project->id)) {
+		if (!DolibarrApi::_checkAccessToResource('project', $this->project->id)) {
 			throw new RestException(403, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
 
