@@ -1220,6 +1220,21 @@ if ($resql) {
 	if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 		$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 	}
+	if (!empty($search_product_category) && $search_product_category != '-1') {
+		$param .= '&search_product_category='.urlencode((string) $search_product_category);
+	}
+	if ($search_town) {
+		$param .= '&search_town='.urlencode((string) $search_town);
+	}
+	if ($search_zip) {
+		$param .= '&search_zip='.urlencode((string) $search_zip);
+	}
+	if ($search_state) {
+		$param .= '&search_state='.urlencode((string) $search_state);
+	}
+	if ($search_country) {
+		$param .= '&search_country='.urlencode((string) $search_country);
+	}
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
