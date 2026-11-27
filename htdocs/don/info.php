@@ -71,6 +71,10 @@ $help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:M
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-donation page-card_info');
 
+if (empty($object->id)) {
+	recordNotFound('', 0);
+}
+
 $form = new Form($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);

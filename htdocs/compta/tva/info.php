@@ -66,6 +66,9 @@ llxHeader("", $title, $help_url);
 
 $object = new Tva($db);
 $object->fetch($id);
+if (empty($object->id)) {
+	recordNotFound('', 0);
+}
 $object->info($id);
 
 $head = vat_prepare_head($object);

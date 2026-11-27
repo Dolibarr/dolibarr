@@ -118,6 +118,9 @@ $help_url = "";
 llxHeader("", $title, $help_url);
 
 $object->fetch($id);
+if (empty($object->id)) {
+	recordNotFound('', 0);
+}
 $object->info($id);
 
 $head = salaries_prepare_head($object);

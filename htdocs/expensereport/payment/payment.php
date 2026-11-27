@@ -42,11 +42,9 @@ $cancel = GETPOST('cancel');
 
 // $id is the id of the expense report to pay (see link on expensereport/card.php)
 $object = new ExpenseReport($db);
-if ($id > 0 || !empty($ref)) {
-	$result = $object->fetch($id, $ref);
-	if ($result <= 0) {
-		recordNotFound();
-	}
+$result = $object->fetch($id, $ref);
+if ($result <= 0) {
+	recordNotFound();
 }
 
 // Security check

@@ -50,6 +50,9 @@ llxHeader("", $langs->trans("Stocks"), $help_url, '', 0, 0, '', '', '', 'mod-pro
 
 $object = new Entrepot($db);
 $object->fetch($id, $ref);
+if (empty($object->id)) {
+	recordNotFound('', 0);
+}
 $object->info($object->id);
 
 $head = stock_prepare_head($object);

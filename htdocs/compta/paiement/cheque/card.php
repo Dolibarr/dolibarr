@@ -333,6 +333,9 @@ if ($action == 'new') {
 		dol_print_error($db, $object->error);
 		exit;
 	}
+	if (empty($object->id)) {
+		recordNotFound('', 0);
+	}
 
 	$h = 0;
 	$head = array();
