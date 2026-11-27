@@ -10,9 +10,11 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	 *   lines are loaded alone with core/ajax/objectline.php, sections with the card loaded without its lines (nolines=1).
 	 *   When lines are reloaded, the fields displayed are refreshed too, so the totals follow the changes of the lines.
 	 * - postCard() posts data to the card like a form of the card (ex: action=updateline)
+	 * - refreshSections() refreshes the sections of the card that change with the object (banner with the status, action buttons,
+	 *   generated documents), scheduleSectionsRefresh() does it when a section is visible (lazy load)
 	 *
 	 * There is one controller by card (element and id), shared by all the scripts of the page: same date of modification, same state.
-	 * Features using it are added as parts of this tool, see definePart().
+	 * The edition of the card in place is done by parts of this tool: Dolibarr.tools.card.fields and Dolibarr.tools.card.lines (experimental).
 	 *
 	 * Containers of fields are [data-dol-field][data-dol-element][data-dol-id] (see Form::editfieldval()), or [data-dol-field]
 	 * without element for the object of the card (ex: totals of the cards).
@@ -27,8 +29,15 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	const ACTION_PARAMS = ['action', 'confirm', 'token', 'massaction'];
 
 	/**
-	 * Classes of the controllers of the cards by element, see card.register()
-	 * @type {Map<string, Function>}
+	 * Sections of all the cards that change with the object, refreshed by refreshSections():
+	 * banner (ref, status...), action buttons and generated documents. Modules can add the selectors of their sections.
+	 * @type {string[]}
+	 */
+	const sections = ['div.arearef', 'div.tabsAction', '#builddoc_form'];
+
+	/**
+	 * Specializations of the cards by element, see card.register()
+	 * @type {Map<string, {sections: string[], Controller: Function|null}>}
 	 */
 	const specializations = new Map();
 
@@ -77,6 +86,29 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
+	 * Check if the anti CSRF token of the session is renewed on each call (MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL):
+	 * the current token and the next one printed by the page are then different
+	 * @returns {boolean}
+	 */
+	function isTokenRenewedOnEachCall() {
+		const current = document.querySelector('meta[name="anti-csrf-currenttoken"]');
+		const next = document.querySelector('meta[name="anti-csrf-newtoken"]');
+
+		return !!(current && next && current.getAttribute('content') !== next.getAttribute('content'));
+	}
+
+	/**
+	 * Check if an element is visible in the window
+	 * @param {HTMLElement} el
+	 * @returns {boolean}
+	 */
+	function isInViewport(el) {
+		const rect = el.getBoundingClientRect();
+
+		return rect.bottom > 0 && rect.top < window.innerHeight && rect.width > 0;
+	}
+
+	/**
 	 * Controller of the card of an object displayed in the page
 	 */
 	class DolibarrCardController {
@@ -93,6 +125,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 			this.element = this.object.element;
 			this.id = this.object.id;
 			this.url = options.url || getCurrentCardUrl();
+			/** State of the lazy refresh of the sections, see scheduleSectionsRefresh() */
+			this.lazySections = { scheduled: false, observer: null, loading: false, pending: false };
 		}
 
 		/**
@@ -114,6 +148,17 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 */
 		hookData(data = {}) {
 			return { element: this.element, id: this.id, ...data };
+		}
+
+		/**
+		 * Selectors of the sections of this card that change with the object: the ones of all the cards and the ones of its element
+		 * (see Dolibarr.tools.card.sections and Dolibarr.tools.card.register())
+		 * @returns {string[]}
+		 */
+		getSections() {
+			const specialization = specializations.get(this.element);
+
+			return [...sections, ...(specialization ? specialization.sections : [])];
 		}
 
 		/**
@@ -366,18 +411,26 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		 * The card answers without its lines (nolines=1), and keeps the event messages of the action in session
 		 * (noflusheventmessages=1): they are returned by the next call of fetchLines() or reload() with lines.
 		 * The anti CSRF tokens of the page are updated with the ones of the card.
+		 * When the card redirects after the action (most cards after adding or deleting a line), the redirect is not followed:
+		 * the messages of the action stay in session.
 		 *
 		 * @param {FormData|Object} data Data posted, the anti CSRF token is added if missing
 		 * @param {Object} [options] See reload()
-		 * @returns {Promise<Document>} Card loaded after the action
+		 * @returns {Promise<Document|null>} Card loaded after the action, null if the card redirected
 		 */
 		async postCard(data, options = {}) {
 			const url = new URL(this.url, window.location.href);
 			url.searchParams.set('nolines', '1');
 			url.searchParams.set('noflusheventmessages', '1');
 
-			const html = await Dolibarr.tools.fetch.post(url.toString(), data, { responseType: 'text', ...options });
-			const doc = new DOMParser().parseFromString(html, 'text/html');
+			const response = await Dolibarr.tools.fetch.post(url.toString(), data, { ...options, responseType: 'response', redirect: 'manual' });
+			if (response.type === 'opaqueredirect') {
+				// The token of the session was renewed by the card and is unknown: it is read from the card loaded without lines
+				if (isTokenRenewedOnEachCall()) await this.fetchCardWithoutLines(options);
+				return null;
+			}
+
+			const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
 			syncCsrfToken(doc);
 
 			return doc;
@@ -418,6 +471,99 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		}
 
 		/**
+		 * Refresh the sections of the card that change with the object (see getSections()): banner with the status,
+		 * action buttons, generated documents. Sections not in the page, or with an edition in progress, are not changed.
+		 *
+		 * @param {Document|null} [doc] Card loaded after the action (see postCard()), the card without lines is loaded if not given
+		 * @param {Object} [options] See reload()
+		 * @returns {Promise<Object<string, HTMLElement|null>>} New sections
+		 */
+		async refreshSections(doc = null, options = {}) {
+			const selectors = this.getSections().filter(selector => {
+				const el = document.querySelector(selector);
+				return el && !el.matches('[data-dol-editing]') && !el.querySelector('[data-dol-editing]');
+			});
+			if (selectors.length === 0) return {};
+
+			const loaded = doc || await this.fetchCardWithoutLines(options);
+
+			// Sections up to date: a lazy refresh scheduled before is not needed anymore
+			if (!this.lazySections.loading) {
+				this.lazySections.scheduled = false;
+				if (this.lazySections.observer) {
+					this.lazySections.observer.disconnect();
+					this.lazySections.observer = null;
+				}
+			}
+
+			const result = {};
+			selectors.forEach(selector => {
+				const node = this.replaceFrom(loaded, selector);
+				result[selector] = node;
+				if (node) {
+					Dolibarr.executeHook('card:SectionReloaded', this.hookData({ selector, node }));
+				}
+			});
+
+			return result;
+		}
+
+		/**
+		 * Refresh the sections of the card later, when one of them is visible (lazy load).
+		 * Use it when the card must be loaded only for these sections (ex: after an update of a field): several changes in a row
+		 * load the card once, and not at all while the sections are out of the window.
+		 */
+		scheduleSectionsRefresh() {
+			const state = this.lazySections;
+			if (state.loading) {
+				state.pending = true; // Changed during the loading: loaded again after
+				return;
+			}
+
+			const elements = this.getSections().map(selector => document.querySelector(selector)).filter(el => el);
+			if (elements.length === 0) return;
+			state.scheduled = true;
+			if (elements.some(el => isInViewport(el)) || typeof IntersectionObserver === 'undefined') {
+				this.flushSections();
+				return;
+			}
+
+			if (!state.observer) {
+				state.observer = new IntersectionObserver(entries => {
+					if (entries.some(entry => entry.isIntersecting)) this.flushSections();
+				});
+			}
+			elements.forEach(el => state.observer.observe(el));
+		}
+
+		/**
+		 * Refresh now the sections of the card scheduled by scheduleSectionsRefresh()
+		 * @returns {Promise<void>}
+		 */
+		async flushSections() {
+			const state = this.lazySections;
+			if (state.loading || !state.scheduled) return;
+
+			state.scheduled = false;
+			if (state.observer) {
+				state.observer.disconnect();
+				state.observer = null;
+			}
+			state.loading = true;
+			try {
+				await this.refreshSections(null, { showErrors: false });
+			} catch (error) {
+				// Sections stay as they are, the page can be reloaded
+			} finally {
+				state.loading = false;
+				if (state.pending) {
+					state.pending = false;
+					this.scheduleSectionsRefresh();
+				}
+			}
+		}
+
+		/**
 		 * Listen to the card:* hooks of this card only
 		 * @param {string} eventName Name without the prefix 'card:', ex: 'LineReloaded'
 		 * @param {function} callback
@@ -446,7 +592,8 @@ document.addEventListener('Dolibarr:Init', function(e) {
 		const key = String(element) + ':' + (parseInt(id, 10) || 0);
 		let controller = controllers.get(key);
 		if (!controller) {
-			const Controller = specializations.get(String(element)) || DolibarrCardController;
+			const specialization = specializations.get(String(element));
+			const Controller = (specialization && specialization.Controller) || DolibarrCardController;
 			controller = new Controller(element, id, options);
 			controllers.set(key, controller);
 		} else if (options.tms && !controller.tms) {
@@ -457,22 +604,27 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	/**
-	 * Specialize the cards of an element with a class extending Dolibarr.tools.card.Controller, for the needs that the server side
-	 * can not cover. To call before a controller of this element is created.
+	 * Specialize the cards of an element, for the needs that the server side can not cover.
+	 * To call before a controller of this element is created.
 	 * @param {string} element Element of the object, ex: 'facture'
 	 * @param {Object} specialization
-	 * @param {Function} specialization.Controller Class extending Dolibarr.tools.card.Controller, used for the cards of this element
+	 * @param {string[]} [specialization.sections] More sections of the card that change with the object (ex: ['#paymenttable'])
+	 * @param {Function} [specialization.Controller] Class extending Dolibarr.tools.card.Controller, used for the cards of this element
 	 */
 	function register(element, specialization = {}) {
-		if (!specialization.Controller || !(specialization.Controller.prototype instanceof DolibarrCardController)) {
-			throw new TypeError('Dolibarr: tools.card.register(): Controller must extend Dolibarr.tools.card.Controller');
+		const current = specializations.get(String(element)) || { sections: [], Controller: null };
+		if (Array.isArray(specialization.sections)) current.sections.push(...specialization.sections);
+		if (specialization.Controller) {
+			if (!(specialization.Controller.prototype instanceof DolibarrCardController)) {
+				throw new TypeError('Dolibarr: tools.card.register(): Controller must extend Dolibarr.tools.card.Controller');
+			}
+			current.Controller = specialization.Controller;
 		}
-		specializations.set(String(element), specialization.Controller);
+		specializations.set(String(element), current);
 	}
 
 	/**
-	 * Define a part of the card tool (a feature using the controllers of the cards, ex: 'fields' for the edition of the fields),
-	 * available as Dolibarr.tools.card.<name>. A part can not be replaced.
+	 * Define a part of the card tool (ex: 'fields', 'lines'), available as Dolibarr.tools.card.<name>. A part can not be replaced.
 	 * @param {string} name
 	 * @param {Object} api
 	 */
@@ -485,6 +637,7 @@ document.addEventListener('Dolibarr:Init', function(e) {
 	}
 
 	card.Controller = DolibarrCardController;
+	card.sections = sections;
 	card.register = register;
 	card.definePart = definePart;
 
