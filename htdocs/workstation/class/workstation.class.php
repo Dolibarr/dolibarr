@@ -954,7 +954,7 @@ class Workstation extends CommonObject
 		$langs->load("mrp");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_workstation';
+			$modele = 'generic_workstation_odt';
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
