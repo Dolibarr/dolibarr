@@ -527,9 +527,9 @@ if (empty($numref)) {
 			print '<span class="spanforajaxedit">'.dol_print_date($db->jdate($objp->dv), "day").'</span>';
 			print '&nbsp;';
 			print '<span class="inline-block">';
-			print '<a class="ajaxforbankoperationchange reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;num='.urlencode($numref).'&amp;account='.$object->id.'&amp;rowid='.$objp->rowid.'&amp;dvid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;token='.newToken().'&amp;num='.urlencode($numref).'&amp;account='.$object->id.'&amp;rowid='.$objp->rowid.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_remove()."</a> ";
-			print '<a class="ajaxforbankoperationchange reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;num='.urlencode($numref).'&amp;account='.$object->id.'&amp;rowid='.$objp->rowid.'&amp;dvid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange reposition" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;token='.newToken().'&amp;num='.urlencode($numref).'&amp;account='.$object->id.'&amp;rowid='.$objp->rowid.'&amp;dvid='.$objp->rowid.'">';
 			print img_edit_add()."</a>";
 			print '</span>';
 			print "</td>\n";
