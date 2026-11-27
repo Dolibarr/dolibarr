@@ -24,25 +24,17 @@
  *          page and receives the page's main object when one is loaded.
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonhookactions.class.php';
+
 /**
  * Class ActionsAi
  */
-class ActionsAi
+class ActionsAi extends CommonHookActions
 {
 	/**
 	 * @var DoliDB
 	 */
 	public $db;
-
-	/**
-	 * @var string
-	 */
-	public $error = '';
-
-	/**
-	 * @var array<string,mixed>
-	 */
-	public $results = array();
 
 	/**
 	 * Constructor.
