@@ -357,7 +357,6 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			if ($x_paye[$my_paye_rate]['ptype'][$id] === 'ExpenseReportPayment') {
 				$expensereport->id = $x_paye[$my_paye_rate]['facid'][$id];
 				$expensereport->ref = $x_paye[$my_paye_rate]['facnum'][$id];
-				$expensereport->type = $x_paye[$my_paye_rate]['type'][$id];
 
 				$x_both[$my_paye_rate]['paye']['detail'][] = array(
 					'id' => $x_paye[$my_paye_rate]['facid'][$id],

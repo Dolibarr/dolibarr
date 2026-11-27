@@ -188,6 +188,16 @@ class ProductFournisseur extends Product
 	 * @var float|int
 	 */
 	public $fourn_unitprice_with_discount;	// not saved into database
+
+	/**
+	 * @var int|''	Creation date of the supplier price
+	 */
+	public $fourn_date_creation;
+
+	/**
+	 * @var int|''	Last modification date of the supplier price
+	 */
+	public $fourn_date_modification;
 	/**
 	 * @var string
 	 */

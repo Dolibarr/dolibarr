@@ -133,6 +133,11 @@ class Dolresource extends CommonObject
 
 
 	/**
+	 * @var string[]
+	 */
+	public $available_resources = array();
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param	DoliDB		$db      Database handler

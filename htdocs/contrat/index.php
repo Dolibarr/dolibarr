@@ -346,7 +346,6 @@ if ($result) {
 		$staticcompany->id = $obj->socid;
 		$staticcompany->name = $obj->name;
 		$staticcompany->name_alias = $obj->name_alias;
-		$staticcompany->photo = 1;
 		$staticcompany->code_client = $obj->code_client;
 		$staticcompany->code_fournisseur = $obj->code_fournisseur;
 		$staticcompany->code_compta = $obj->code_compta_client;
@@ -432,7 +431,6 @@ if ($resql) {
 		$staticcompany->id = $obj->socid;
 		$staticcompany->name = $obj->name;
 		$staticcompany->name_alias = $obj->name_alias;
-		$staticcompany->photo = 1;
 		$staticcompany->code_client = $obj->code_client;
 		$staticcompany->code_fournisseur = $obj->code_fournisseur;
 		$staticcompany->code_compta = $obj->code_compta_client;
@@ -521,7 +519,6 @@ if ($resql) {
 		$staticcompany->id = $obj->thirdpartyid;
 		$staticcompany->name = $obj->name;
 		$staticcompany->name_alias = $obj->name_alias;
-		$staticcompany->photo = 1;
 		$staticcompany->code_client = $obj->code_client;
 		$staticcompany->code_fournisseur = $obj->code_fournisseur;
 		$staticcompany->code_compta = $obj->code_compta_client;
@@ -616,7 +613,6 @@ if ($resql) {
 		$staticcompany->id = $obj->thirdpartyid;
 		$staticcompany->name = $obj->name;
 		$staticcompany->name_alias = $obj->name_alias;
-		$staticcompany->photo = 1;
 		$staticcompany->code_client = $obj->code_client;
 		$staticcompany->code_fournisseur = $obj->code_fournisseur;
 		$staticcompany->code_compta = $obj->code_compta_client;

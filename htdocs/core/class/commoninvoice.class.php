@@ -154,6 +154,14 @@ abstract class CommonInvoice extends CommonObject
 	 * @var int|float
 	 */
 	public $totalcreditnotes;
+	/**
+	 * @var int|float
+	 */
+	public $totaldeposits_multicurrency;
+	/**
+	 * @var int|float
+	 */
+	public $totalcreditnotes_multicurrency;
 
 	/**
 	 * @var int|float|string	May be used for status
