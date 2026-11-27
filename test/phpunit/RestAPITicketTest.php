@@ -220,6 +220,42 @@ class RestAPITicketTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Create a ticket with fields set by core, they must be ignored
+	 *
+	 * @return void
+	 */
+	public function testRestTicketCreateIgnoresCoreFields()
+	{
+		$test = "Create a ticket with fields set by core";
+
+		// A ticket created without these fields gives the author and the default status
+		$ticket_id = $this->createTicket($test);
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$author = (int) ($result['content']['fk_user_create'] ?? 0);
+		$status = (int) ($result['content']['status'] ?? 0);
+		$this->assertGreaterThan(0, $author, "$test The ticket must have the API user as author");
+		$this->assertNotEquals(8, $status, "$test The default status must not be closed");
+
+		$data = array(
+			"subject" => "Ticket created via the REST API with fields set by core",
+			"message" => "Message of the ticket created via the REST API with fields set by core",
+			"fk_user_create" => ($author == 1 ? 2 : 1),
+			"fk_statut" => 8,
+			"status" => 8,
+			"date_close" => dol_now(),
+		);
+		$result = $this->getUrl('tickets', $test, 'POST', $data);
+		$ticket_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $ticket_id, "$test Id of ticket is not > 0");
+		array_unshift($this->objectstodelete, 'tickets/'.$ticket_id);
+
+		$result = $this->getUrl('tickets/'.$ticket_id, $test);
+		$this->assertEquals($author, (int) ($result['content']['fk_user_create'] ?? 0), "$test The author must be the API user");
+		$this->assertEquals($status, (int) ($result['content']['status'] ?? -1), "$test The status must be the default one");
+		$this->assertEmpty($result['content']['date_close'] ?? null, "$test The closing date must be empty");
+	}
+
+	/**
 	 * Unlink internal and external contacts linked to a ticket
 	 *
 	 * @return void

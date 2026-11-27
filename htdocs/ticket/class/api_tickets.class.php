@@ -360,6 +360,11 @@ class Tickets extends DolibarrApi
 	 *   { "id": int (or "contactid"), "type": string (contact type code), "source": "external"|"internal" (default external) }
 	 * The whole creation is atomic: if any contact is invalid, the ticket is not created (rollback + error).
 	 *
+	 * The fields set by core are ignored: id, entity, author (fk_user_create), status
+	 * (status, fk_statut, statut), dates (datec, date_creation, date_read, date_close),
+	 * ip, email_msgid and email_date. A new ticket always gets the default status;
+	 * use the close and assign requests to change it.
+	 *
 	 * @since	8.0.0	Initial implementation
 	 *
 	 * @param array $request_data   Request data
@@ -409,10 +414,23 @@ class Tickets extends DolibarrApi
 		}
 		unset($request_data['contacts']);
 
+		// Fields that are set by core and must not be given, like on the ticket card.
+		// The status is changed with the close and assign requests, which run the triggers.
+		foreach (array('id', 'entity', 'fk_user_create', 'status', 'fk_statut', 'statut', 'datec', 'date_creation', 'date_read', 'date_close', 'ip', 'email_msgid', 'email_date') as $field) {
+			unset($request_data[$field]);
+		}
+
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
 				$this->ticket->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->ticket->array_options[$index] = $this->_checkValExtrafieldsForAPI($index, $val, $this->ticket);
+				}
 				continue;
 			}
 
