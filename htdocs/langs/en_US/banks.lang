@@ -209,3 +209,4 @@ PendingDirectDebitToComplete=Direct debits to close
 PendingCreditTransferToCompleteShort=Credit transfers to close
 PendingCreditTransferToComplete=Credit transfers to close
 Requests=Requests
+ErrorFailedToLoadBankAccount=Failed to load the bank account

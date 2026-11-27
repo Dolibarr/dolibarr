@@ -60,3 +60,5 @@ ReceptionSentByEMail=Reception sent by email
 ReceptionValidated=Reception validated
 DateReception=Reception date
 SetReceptionDate=Set reception date
+Error_RECEPTION_ADDON_NUMBER_NotDefined=Constant RECEPTION_ADDON_NUMBER not defined
+ValidationDateNotDefinedEvenIfReceptionValidated=Validation date not defined although the reception is validated

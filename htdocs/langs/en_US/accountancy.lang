@@ -649,3 +649,4 @@ Clone=Clone
 AlreadyReturnedAccount=Entry n°%s has already been reversed
 SuccessReturnedAccount=Entry n°%s has been reversed
 AccountancyCodeToSet=Accountancy code to set on products/services for
+ErrorNoAccountingModuleEnabled=No accounting module is enabled
