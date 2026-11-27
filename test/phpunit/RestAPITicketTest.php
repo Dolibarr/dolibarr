@@ -330,6 +330,25 @@ class RestAPITicketTest extends AbstractRestAPITest
 	}
 
 	/**
+	 * Update a closed or canceled ticket, like on the ticket card it must be refused
+	 *
+	 * @return void
+	 */
+	public function testRestTicketUpdateClosedTicket()
+	{
+		foreach (array(0 => "Update a closed ticket", 1 => "Update a canceled ticket") as $cancel => $test) {
+			$ticket_id = $this->createTicket($test);
+			$this->getUrl('tickets/'.$ticket_id.'/close', $test, 'POST', array("cancel" => $cancel));
+			$result = $this->getUrl('tickets/'.$ticket_id, $test);
+			$subject = (string) $result['content']['subject'];
+
+			$this->getUrl('tickets/'.$ticket_id, $test, 'PUT', array("subject" => "Ticket updated via the REST API after closing"), 409);
+			$result = $this->getUrl('tickets/'.$ticket_id, $test);
+			$this->assertEquals($subject, $result['content']['subject'] ?? null, "$test The subject must not be changed");
+		}
+	}
+
+	/**
 	 * Unlink a contact that is not linked to a ticket
 	 *
 	 * @return void
