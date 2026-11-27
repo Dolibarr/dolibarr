@@ -150,6 +150,10 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ordernamonly/', getDol
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_messaging');
 
+if (empty($object->id)) {
+	recordNotFound('', 0);
+}
+
 $head = ordersupplier_prepare_head($object);
 
 print dol_get_fiche_head($head, 'agenda', $langs->trans("Order"), -1, $object->picto);

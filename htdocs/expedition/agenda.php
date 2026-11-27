@@ -135,6 +135,10 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/shippingrefonly/', get
 $help_url = "EN:Module_Shippings|FR:Module_Expeditions|ES:M&oacute;dulo_Expediciones";
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-shipping page-card_agenda');
 
+if (empty($object->id)) {
+	recordNotFound('', 0);
+}
+
 $head = shipping_prepare_head($object);
 print dol_get_fiche_head($head, 'agenda', $langs->trans("Shipment"), -1, $object->picto);
 
