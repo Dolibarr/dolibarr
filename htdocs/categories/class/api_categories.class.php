@@ -93,7 +93,7 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -225,7 +225,7 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -265,7 +265,7 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		}
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -366,7 +366,7 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -446,7 +446,7 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -526,7 +526,7 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -604,7 +604,7 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'category not found');
 		}
 
@@ -761,7 +761,7 @@ class Categories extends DolibarrApi
 		}
 
 		$result = $this->category->fetch($id);
-		if (!$result) {
+		if ($result <= 0) {
 			throw new RestException(404, 'category not found');
 		}
 
