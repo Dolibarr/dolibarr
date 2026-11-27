@@ -2651,7 +2651,7 @@ export function initAiAssistant(container) {
                 chatHistoryApi({ action: 'rename', id: c.id, title: v }).then((r) => { c.title = (r && r.title) || v; onDone(c.title); }).catch(() => onDone(null));
             } else { onDone(null); }
         };
-        inp.addEventListener('keydown', (ek) => { if (ek.key === 'Enter') { ek.preventDefault(); finish(true); } else if (ek.key === 'Escape') { finish(false); } });
+        inp.addEventListener('keydown', (ek) => { if (ek.key === 'Enter') { ek.preventDefault(); finish(true); } else if (ek.key === 'Escape') { ek.preventDefault(); finish(false); } });
         inp.addEventListener('blur', () => finish(true));
         inp.addEventListener('click', (ec) => ec.stopPropagation());
     }
