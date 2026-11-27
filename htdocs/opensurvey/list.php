@@ -246,6 +246,15 @@ if (/* !empty($contextpage) && */ $contextpage != $_SERVER["PHP_SELF"]) { // $co
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if (!empty($search_ref)) {
+	$param .= '&search_ref='.urlencode((string) $search_ref);
+}
+if (!empty($search_title)) {
+	$param .= '&search_title='.urlencode((string) $search_title);
+}
+if ($search_status != '-1' && $search_status != '') {
+	$param .= '&search_status='.urlencode((string) $search_status);
+}
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
