@@ -572,7 +572,9 @@ class FormMail extends Form
 				$out .= '<form method="POST" name="mailform" id="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'#formmail">'."\n";
 
 				$out .= '<a id="formmail" name="formmail"></a>';
-				$out .= '<input style="display:none" type="submit" id="sendmailhidden" name="sendmail">';
+				// Disabled default button: pressing Enter into a field must not submit the form. Without it, Enter would
+				// click the first submit button of the form (Add file, Apply template...), and an enabled one would send the email.
+				$out .= '<input style="display:none" type="submit" id="sendmailhidden" disabled="disabled">';
 				$out .= '<input type="hidden" name="token" value="'.newToken().'" />';
 				$out .= '<input type="hidden" name="page_y" value="" />';
 				$out .= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
