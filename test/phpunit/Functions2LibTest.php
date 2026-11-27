@@ -84,6 +84,13 @@ class Functions2LibTest extends CommonClassTest
 	public static function unescapeProvider(): array
 	{
 		return [
+			// UTF-16 surrogate pairs produced by JavaScript escape()
+			['Reports%20%uD83D%uDE00/', 'Reports 😀/'],
+			['Café %ud83c%udf08%u0020%u03BD', 'Café 🌈 ν'],
+			['%uD83D%uDE00%uD83C%uDF08', '😀🌈'],
+			['%uD800%uDC00', "\xF0\x90\x80\x80"],
+			['%uD83D%u0041', '&#55357;A'],
+
 			// Original Mixed %uXXXX only test
 			['%u03BD%u03B5%u03BF','νεο'],
 

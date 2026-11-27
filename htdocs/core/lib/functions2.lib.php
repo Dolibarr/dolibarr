@@ -54,6 +54,10 @@ function jsUnEscape($source)
 				$pos++;
 				$unicodeHexVal = substr($source, $pos, 4);
 				$unicode = hexdec($unicodeHexVal);
+				if ($unicode >= 0xD800 && $unicode <= 0xDBFF && preg_match('/^%u([dD][c-fC-F][0-9a-fA-F]{2})/', substr($source, $pos + 4), $matches)) {
+					$unicode = 0x10000 + (($unicode - 0xD800) << 10) + hexdec($matches[1]) - 0xDC00;
+					$pos += 6;
+				}
 				$entity = "&#".$unicode.';';
 				$decodedStr .= mb_convert_encoding($entity, 'UTF-8', 'ISO-8859-1');
 				$pos += 4;
