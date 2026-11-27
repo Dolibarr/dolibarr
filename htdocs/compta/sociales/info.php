@@ -78,6 +78,9 @@ $help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividen
 llxHeader("", $title, $help_url);
 
 $object->fetch($id);
+if (empty($object->id)) {
+	recordNotFound('', 0);
+}
 $object->info($id);
 
 $head = tax_prepare_head($object);
