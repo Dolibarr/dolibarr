@@ -940,6 +940,7 @@ ShowTransaction=Show entry on bank account
 ShowIntervention=Show intervention
 ShowContract=Show contract
 GoIntoSetupToChangeLogo=Go to Home - Setup - Company to change logo or go to Home - Setup - Display to hide.
+Accept=Accept
 Deny=Deny
 Denied=Denied
 ListOf=List of %s
