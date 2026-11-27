@@ -430,6 +430,9 @@ if ($search_bank_account > 0) {
 if ($search_accountancy_account > 0) {
 	$param .= '&search_accountancy_account='.urlencode($search_accountancy_account);
 }
+if ($search_bank_entry > 0) {
+	$param .= '&search_bank_entry='.urlencode((string) $search_bank_entry);
+}
 if ($search_accountancy_subledger > 0) {
 	$param .= '&search_accountancy_subledger='.urlencode($search_accountancy_subledger);
 }
