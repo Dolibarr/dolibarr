@@ -327,6 +327,68 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $total_localtax2;
 
+	/**
+	 * @var int
+	 */
+	public $product_tosell = 0;
+
+	/**
+	 * @var int
+	 */
+	public $product_tobuy = 0;
+
+	/**
+	 * @var int
+	 */
+	public $product_tobatch;
+
+	/**
+	 * @var int
+	 */
+	public $fk_fournprice;
+
+	/**
+	 * @var float|int|''|null
+	 */
+	public $pa_ht;
+
+	/**
+	 * @var string
+	 */
+	public $vat_src_code;
+
+	/**
+	 * @var string|float
+	 */
+	public $localtax1_tx;
+
+	/**
+	 * @var string|float
+	 */
+	public $localtax2_tx;
+
+	/**
+	 * @var float|string
+	 * @deprecated Use $subprice
+	 * @see $subprice
+	 */
+	public $price;
+
+	/**
+	 * @var int
+	 */
+	public $fk_remise_except;
+
+	/**
+	 * @var int|''|null
+	 */
+	public $date_start;
+
+	/**
+	 * @var int|''|null
+	 */
+	public $date_end;
+
 
 	/**
 	 *	Constructor

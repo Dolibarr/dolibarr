@@ -252,6 +252,13 @@ abstract class CommonObjectLine extends CommonObject
 	public $subprice_ttc;
 
 	/**
+	 * @var float|null
+	 * @deprecated Use $subprice_ttc
+	 * @see $subprice_ttc
+	 */
+	public $pu_ttc;
+
+	/**
 	 * @var float|string
 	 */
 	public $tva_tx;
