@@ -7589,7 +7589,7 @@ function print_fleche_navigation($page, $file, $options = '', $nextpage = 0, $be
 				print '<datalist id="limitlist">';
 			} else {
 				print '<li class="paginationcombolimit valignmiddle">';
-				print '<select id="limit' . (is_numeric($selectlimitsuffix) ? '' : $selectlimitsuffix) . '" name="'.(is_numeric($selectlimitsuffix) ? 'limit' : $selectlimitsuffix).'" class="flat selectlimit nopadding maxwidth75 center' . (is_numeric($selectlimitsuffix) ? '' : ' ' . $selectlimitsuffix) . '" title="' . dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")) . '">';
+				print '<select id="limit' . (is_numeric($selectlimitsuffix) ? '' : $selectlimitsuffix) . '" name="'.((is_numeric($selectlimitsuffix) || empty($selectlimitsuffix)) ? 'limit' : $selectlimitsuffix).'" class="flat selectlimit nopadding maxwidth75 center' . (is_numeric($selectlimitsuffix) ? '' : ' ' . $selectlimitsuffix) . '" title="' . dol_escape_htmltag($langs->trans("MaxNbOfRecordPerPage")) . '">';
 			}
 			$tmpchoice = explode(',', $pagesizechoices);
 			$tmpkey = $limit . ':' . $limit;
