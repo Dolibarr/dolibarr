@@ -44,6 +44,10 @@ UPDATE llx_c_email_templates SET content = REPLACE(content, '__MEMBER_CIVILITY__
 
 ALTER TABLE llx_product_lot ADD COLUMN entity integer DEFAULT 1;
 
+-- Widget box_members.php removed in v16, but added again by activation of the Members module until v24
+DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file = 'box_members.php');
+DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
+
 -- Forgotten in previous versions: sequences of renamed tables were not renamed with pgsql
 -- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_c_methode_commande_fournisseur_rowid_seq RENAME TO llx_c_input_method_rowid_seq;
 -- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_adherent_options_label_rowid_seq RENAME TO llx_extrafields_rowid_seq;
