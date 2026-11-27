@@ -288,7 +288,7 @@ class pdf_standard_stock extends ModelePDFStock
 				$sql .= " ps.reel as value";
 				$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 				if ($pmpperentity) {	// joined on p only, so it can follow the list of tables of the FROM
-					$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = ".((int) $conf->entity);
+					$sql .= " LEFT JOIN ".$this->db->prefix()."product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = ".((int) $conf->entity);
 				}
 				$sql .= " WHERE ps.fk_product = p.rowid";
 				$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
