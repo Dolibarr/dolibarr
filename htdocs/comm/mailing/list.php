@@ -300,7 +300,7 @@ if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
 if ($search_messtype != '') {
-	$param .= '&search_type='.urlencode($search_messtype);
+	$param .= '&search_messtype='.urlencode($search_messtype);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
