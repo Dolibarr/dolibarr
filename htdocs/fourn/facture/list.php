@@ -1012,6 +1012,9 @@ if ($search_country) {
 if ($search_fk_fac_rec_source) {
 	$param .= '&search_fk_fac_rec_source=' . (int) $search_fk_fac_rec_source;
 }
+if (!empty($search_product_category) && $search_product_category != '-1') {
+	$param .= '&search_product_category='.urlencode((string) $search_product_category);
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
