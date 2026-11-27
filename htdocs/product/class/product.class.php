@@ -2069,6 +2069,56 @@ class Product extends CommonObject
 	}
 
 	/**
+	 * Return if the weighted average price (PMP) is managed per entity.
+	 * This is the case with MultiCompany when products are shared and the option "PMP per entity" is enabled:
+	 * the PMP of an entity is then stored into llx_product_perentity.pmp, the global one into llx_product.pmp.
+	 *
+	 * @return	bool		True if the PMP is managed per entity
+	 */
+	public static function isPMPPerEntity()
+	{
+		return (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED'));
+	}
+
+	/**
+	 * Return the SQL expression of the PMP to read in a query on llx_product.
+	 * When the PMP is managed per entity, this is the PMP of the entity, or the global PMP when the product has no row yet
+	 * in llx_product_perentity for this entity. Must be used with the join returned by getSQLJoinPMP().
+	 *
+	 * @param	string	$aliasproduct		Alias of table llx_product in the query
+	 * @param	string	$aliasperentity		Alias of table llx_product_perentity in the query
+	 * @return	string						SQL expression, for example 'COALESCE(pa.pmp, p.pmp)' or 'p.pmp'
+	 * @see getSQLJoinPMP()
+	 */
+	public static function getSQLPMP($aliasproduct = 'p', $aliasperentity = 'pa')
+	{
+		if (self::isPMPPerEntity()) {
+			return 'COALESCE('.$aliasperentity.'.pmp, '.$aliasproduct.'.pmp)';
+		}
+		return $aliasproduct.'.pmp';
+	}
+
+	/**
+	 * Return the SQL join needed by getSQLPMP() (empty string when the PMP is not managed per entity).
+	 * This is a LEFT JOIN, so a product without row in llx_product_perentity is kept (with the global PMP).
+	 *
+	 * @param	string	$aliasproduct		Alias of table llx_product in the query
+	 * @param	string	$aliasperentity		Alias of table llx_product_perentity in the query
+	 * @param	int		$entity				Entity of the PMP to read (0 = current entity)
+	 * @return	string						SQL join, starting with a space, or ''
+	 * @see getSQLPMP()
+	 */
+	public static function getSQLJoinPMP($aliasproduct = 'p', $aliasperentity = 'pa', $entity = 0)
+	{
+		global $conf;
+
+		if (!self::isPMPPerEntity()) {
+			return '';
+		}
+		return " LEFT JOIN ".MAIN_DB_PREFIX."product_perentity as ".$aliasperentity." ON ".$aliasperentity.".fk_product = ".$aliasproduct.".rowid AND ".$aliasperentity.".entity = ".((int) ($entity > 0 ? $entity : $conf->entity));
+	}
+
+	/**
 	 * Get the label for sell by or eat by mandatory flag of the current product
 	 *
 	 * @return 	string		Sell or eat by mandatory label
