@@ -774,10 +774,14 @@ if (count($tasksarray) > 0) {
 		$projectstatic->loadTimeSpent($daytoparse, 0, $usertoprocess->id); // Load time spent from table element_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
 		for ($idw = 0; $idw < 7; $idw++) {
 			$tmpday = dol_time_plus_duree($daytoparse, $idw, 'd');
-			$totalforeachday[$tmpday] += $projectstatic->weekWorkLoad[$tmpday];
+			if (isset($totalforeachday[$tmpday])) {
+				array_key_exists($tmpday, $projectstatic->weekWorkLoad) ? $totalforeachday[$tmpday] += $projectstatic->weekWorkLoad[$tmpday] : '';
+			} else {
+				array_key_exists($tmpday, $projectstatic->weekWorkLoad) ? $totalforeachday[$tmpday] = $projectstatic->weekWorkLoad[$tmpday] : '';
+			}
+			
 		}
 	}
-	//var_dump($totalforeachday);
 
 	// Is there a diff between selected/filtered tasks and all tasks ?
 	$isdiff = 0;

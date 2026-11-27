@@ -2270,8 +2270,8 @@ class Project extends CommonObject
 					$this->weekWorkLoad[$day] = (int) $obj->element_duration; // Float in db used as int
 					$this->weekWorkLoadPerTask[$day][$obj->fk_element] = (int) $obj->element_duration;
 				} else {
-					$this->weekWorkLoad[$day] += (int) $obj->element_duration; // Float in db used as int
-					$this->weekWorkLoadPerTask[$day][$obj->fk_element] += (int) $obj->element_duration;
+					array_key_exists($day, $this->weekWorkLoad) ? $this->weekWorkLoad[$day] += (int) $obj->element_duration : $this->weekWorkLoad[$day] = (int) $obj->element_duration; // Float in db used as int
+					array_key_exists($obj->fk_element ,$this->weekWorkLoadPerTask[$day]) ? $this->weekWorkLoadPerTask[$day][$obj->fk_element] += (int) $obj->element_duration : $this->weekWorkLoadPerTask[$day][$obj->fk_element] = (int) $obj->element_duration;
 				}
 				$dayallreadyfound[$day] = 1;
 				$i++;
