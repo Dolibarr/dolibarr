@@ -131,6 +131,22 @@ class ReceptionLineBatch extends CommonObjectLine
 	 */
 	public $vat_src_code;
 	/**
+	 * @var float
+	 */
+	public $localtax1_tx;
+	/**
+	 * @var float
+	 */
+	public $localtax2_tx;
+	/**
+	 * @var int|string|null
+	 */
+	public $date_start;
+	/**
+	 * @var int|string|null
+	 */
+	public $date_end;
+	/**
 	 * @var string
 	 */
 	public $ref_supplier;
