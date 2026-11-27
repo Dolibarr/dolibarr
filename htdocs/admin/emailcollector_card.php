@@ -274,7 +274,7 @@ $formfile = new FormFile($db);
 
 $help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
 
-llxHeader('', 'EmailCollector', $help_url);
+llxHeader('', $langs->trans("EmailCollector"), $help_url);
 
 // Part to create
 if ($action == 'create') {

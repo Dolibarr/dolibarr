@@ -601,6 +601,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 	$result = $object->fetch($id);
 
 	if ($result <= 0) {
+		$langs->load("errors");
 		print $langs->trans("ErrorRecordNotFound");
 	} else {
 		$head = array();
