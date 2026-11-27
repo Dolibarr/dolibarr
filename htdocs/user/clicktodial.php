@@ -230,7 +230,7 @@ if ($id > 0) {
 	print '<div class="tabsAction">';
 
 	if (!empty($user->admin) && $action != 'edit') {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+		print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken());
 	}
 
 	print "</div>\n";

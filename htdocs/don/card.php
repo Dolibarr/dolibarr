@@ -895,7 +895,7 @@ if (!empty($id) && $action != 'edit') {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
 		}
 
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
+		print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&rowid='.$object->id);
 
 		if ($object->status == $object::STATUS_DRAFT) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=valid_promesse&token='.newToken().'">'.$langs->trans("ValidPromess").'</a></div>';
@@ -927,10 +927,10 @@ if (!empty($id) && $action != 'edit') {
 			if ($object->status != $object::STATUS_PAID && $remaintopay == $object->amount) {
 				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?rowid='.$object->id.'&action=delete&token='.newToken(), '', true, array('attr' => array('class' => 'reposition')))."</div>\n";
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DeletionNotPossibleWhenAPaymentExists").'">'.$langs->trans("Delete")."</a></div>";
+				print dolGetButtonAction($langs->trans("DeletionNotPossibleWhenAPaymentExists"), $langs->trans("Delete"), 'delete', '', '', -1);
 			}
 		} else {
-			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
+			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', '', '', 0);
 		}
 	}
 
