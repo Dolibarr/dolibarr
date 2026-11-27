@@ -276,7 +276,7 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
 			print '<td style="max-width: 250px; word-wrap: break-word; white-space: pre-wrap;">'.dol_escape_htmltag($entry->parameters).'</td>';
 			print '<td>'.$entry->update_interval.'</td>';
 			print '<td>'.$entry->getLastUpdated().'</td>';
-			print '<td class="right"><a class="editfielda paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
+			print '<td class="right"><a class="editfielda paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_updater&token='.newToken().'&selection='.$entry->id.'">'.img_edit().'</a> &nbsp;';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_updater&token='.newToken().'&selection='.$entry->id.'">'.img_delete().'</a></td>';
 			print '</tr>';
 		}
