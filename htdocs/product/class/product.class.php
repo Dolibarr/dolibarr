@@ -1233,31 +1233,9 @@ class Product extends CommonObject
 								$this->error = $this->db->lasterror();
 							}
 
-							// update accountancy for this entity
+							// update accountancy codes for this entity (keep the other columns of the row, like pmp)
 							if (!$error && getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
-								$this->db->query("DELETE FROM " . $this->db->prefix() . "product_perentity WHERE fk_product = " .((int) $this->id) . " AND entity = " . ((int) $conf->entity));
-
-								$sql = "INSERT INTO " . $this->db->prefix() . "product_perentity (";
-								$sql .= " fk_product";
-								$sql .= ", entity";
-								$sql .= ", accountancy_code_buy";
-								$sql .= ", accountancy_code_buy_intra";
-								$sql .= ", accountancy_code_buy_export";
-								$sql .= ", accountancy_code_sell";
-								$sql .= ", accountancy_code_sell_intra";
-								$sql .= ", accountancy_code_sell_export";
-								$sql .= ") VALUES (";
-								$sql .= ((int) $this->id);
-								$sql .= ", " . ((int) $conf->entity);
-								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
-								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
-								$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
-								$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
-								$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_intra) . "'";
-								$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
-								$sql .= ")";
-								$result = $this->db->query($sql);
-								if (!$result) {
+								if ($this->setAccountancyCodesPerEntity() < 0) {
 									$error++;
 									$this->error = 'ErrorFailedToInsertAccountancyForEntity';
 								}
@@ -1698,31 +1676,9 @@ class Product extends CommonObject
 
 				$action = 'update';
 
-				// update accountancy for this entity
+				// update accountancy codes for this entity (keep the other columns of the row, like pmp)
 				if (!$error && getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
-					$this->db->query("DELETE FROM " . $this->db->prefix() . "product_perentity WHERE fk_product = " . ((int) $this->id) . " AND entity = " . ((int) $conf->entity));
-
-					$sql = "INSERT INTO " . $this->db->prefix() . "product_perentity (";
-					$sql .= " fk_product";
-					$sql .= ", entity";
-					$sql .= ", accountancy_code_buy";
-					$sql .= ", accountancy_code_buy_intra";
-					$sql .= ", accountancy_code_buy_export";
-					$sql .= ", accountancy_code_sell";
-					$sql .= ", accountancy_code_sell_intra";
-					$sql .= ", accountancy_code_sell_export";
-					$sql .= ") VALUES (";
-					$sql .= ((int) $this->id);
-					$sql .= ", " . ((int) $conf->entity);
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_intra) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
-					$sql .= ")";
-					$result = $this->db->query($sql);
-					if (!$result) {
+					if ($this->setAccountancyCodesPerEntity() < 0) {
 						$error++;
 						$this->error = 'ErrorFailedToUpdateAccountancyForEntity';
 					}
@@ -2444,7 +2400,62 @@ class Product extends CommonObject
 	}
 
 
+	/**
+	 * Save the accountancy codes of the product for the current entity into llx_product_perentity.
+	 * Only the accountancy code columns are written: an existing row is updated, never deleted, so the
+	 * other columns of the row (like the per-entity AWP "pmp" managed when MULTICOMPANY_PMP_PER_ENTITY_ENABLED is on)
+	 * are kept. A row is inserted only if none exists yet for this product and entity.
+	 *
+	 * @return	int		Return integer <0 if KO, >0 if OK
+	 */
+	private function setAccountancyCodesPerEntity()
+	{
+		global $conf;
+
+		$sql = "SELECT rowid FROM " . $this->db->prefix() . "product_perentity";
+		$sql .= " WHERE fk_product = " . ((int) $this->id) . " AND entity = " . ((int) $conf->entity);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		$obj = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+
+		if ($obj) {
+			$sql = "UPDATE " . $this->db->prefix() . "product_perentity SET";
+			$sql .= " accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
+			$sql .= ", accountancy_code_buy_intra = '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
+			$sql .= ", accountancy_code_buy_export = '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
+			$sql .= ", accountancy_code_sell = '" . $this->db->escape($this->accountancy_code_sell) . "'";
+			$sql .= ", accountancy_code_sell_intra = '" . $this->db->escape($this->accountancy_code_sell_intra) . "'";
+			$sql .= ", accountancy_code_sell_export = '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
+			$sql .= " WHERE rowid = " . ((int) $obj->rowid);
+		} else {
+			$sql = "INSERT INTO " . $this->db->prefix() . "product_perentity (";
+			$sql .= " fk_product, entity, accountancy_code_buy, accountancy_code_buy_intra, accountancy_code_buy_export, accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export";
+			$sql .= ") VALUES (";
+			$sql .= ((int) $this->id) . ", " . ((int) $conf->entity);
+			$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
+			$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_intra) . "'";
+			$sql .= ", '" . $this->db->escape($this->accountancy_code_buy_export) . "'";
+			$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+			$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_intra) . "'";
+			$sql .= ", '" . $this->db->escape($this->accountancy_code_sell_export) . "'";
+			$sql .= ")";
+		}
+
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		return 1;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
 	/**
 	 *  Insert a track that we changed a customer price
 	 *
