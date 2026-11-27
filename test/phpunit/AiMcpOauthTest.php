@@ -18,10 +18,7 @@
 /**
  *      \file       test/phpunit/AiMcpOauthTest.php
  *      \ingroup    test
- *      \brief      PHPUnit tests for the MCP authorization server
- *                  (ai/class/mcpoauth.class.php): PKCE, one-shot authorization
- *                  codes, refresh rotation, redirect URI matching and the rules
- *                  that decide which redirect URIs may be registered at all.
+ *      \brief      PHPUnit tests for the MCP authorization server (ai/class/mcpoauth.class.php).
  */
 
 global $conf,$user,$langs,$db;
@@ -64,14 +61,7 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
-	 * Make sure the ai module tables exist, creating them if they do not.
-	 *
-	 * The CI database enables a fixed list of modules and ai is not among
-	 * them, so these tables are absent there. Skipping would leave every
-	 * security property of this server — PKCE, one-shot codes, refresh
-	 * rotation, client binding — unverified on the only run that gates a
-	 * merge, which is worse than the small cost of creating two tables from
-	 * the very files the module installs.
+	 * Skip the test when the llx_oauth_token columns used by the server are missing.
 	 *
 	 * @return void
 	 */
@@ -79,9 +69,7 @@ class AiMcpOauthTest extends CommonClassTest
 	{
 		global $db;
 
-		// Clients and tokens live in the core llx_oauth_token, extended by
-		// #40762. A database installed before that has the table but not the
-		// columns, and nothing below can run on it.
+		// Columns added to the core llx_oauth_token by #40762.
 		if (!$db->query("SELECT token_hash, fk_oauth_client, revoked FROM ".$db->prefix()."oauth_token WHERE 1 = 0")) {
 			$this->markTestSkipped('Needs the llx_oauth_token columns added by PR #40762');
 		}
@@ -118,7 +106,7 @@ class AiMcpOauthTest extends CommonClassTest
 			'redirect_uris' => array('https://example.org/callback'),
 			'token_endpoint_auth_method' => $authmethod,
 		));
-		$this->assertNotNull($registration, 'Registration should have succeeded');
+		$this->assertTrue($registration !== null, 'Registration should have succeeded');
 
 		return $server->getClient($registration['client_id']);
 	}
@@ -153,13 +141,7 @@ class AiMcpOauthTest extends CommonClassTest
 		$this->assertTrue($as['authorization_response_iss_parameter_supported'], 'RFC 9207 must be advertised');
 		$this->assertTrue($as['client_id_metadata_document_supported'], 'Clients must be told they may use a metadata document');
 
-		// This document is the RFC 8414 one, and it must stay free of the
-		// OpenID fields: carrying them is a claim to be an OpenID provider,
-		// which this is not — opaque access tokens, never an id_token,
-		// nothing signed, no openid scope — and the claude.ai and ChatGPT
-		// connectors refuse a document that makes it. The three are served on
-		// the openid-configuration route instead, where the caller asked for
-		// OpenID and validates what it gets as such (htdocs/ai/oauth.php).
+		// The RFC 8414 document must not claim to be an OpenID provider: some connectors refuse it.
 		$this->assertArrayNotHasKey('jwks_uri', $as);
 		$this->assertArrayNotHasKey('subject_types_supported', $as);
 		$this->assertArrayNotHasKey('id_token_signing_alg_values_supported', $as);
@@ -169,11 +151,7 @@ class AiMcpOauthTest extends CommonClassTest
 		$this->assertSame('https://example.org/ai/server/mcp_server.php', $prm['resource']);
 		$this->assertSame(array('https://example.org/ai/oauth.php'), $prm['authorization_servers']);
 
-		// With self-onboarding off, an unknown client must not be invited to
-		// try either of the two ways in. Advertising them anyway sends every
-		// client down a path that answers 403, and an administrator who
-		// turned the setting off would reasonably expect neither to be
-		// offered.
+		// With self-onboarding off, neither way for an unknown client is advertised.
 		$conf->global->AI_MCP_OAUTH_DYNAMIC_REGISTRATION = '0';
 
 		$closed = $server->metadataAuthorizationServer();
@@ -204,8 +182,7 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
-	 * Which redirect URIs may be registered at all. The ones refused here are
-	 * the ones that would let an authorization code land somewhere else.
+	 * Which redirect URIs may be registered, so a code cannot land elsewhere.
 	 *
 	 * @return void
 	 */
@@ -235,8 +212,7 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
-	 * Redirect URIs are compared whole. Prefix matching is how a code ends up
-	 * on someone else's server.
+	 * Redirect URIs are compared whole, never by prefix.
 	 *
 	 * @return void
 	 */
@@ -265,22 +241,21 @@ class AiMcpOauthTest extends CommonClassTest
 		$client = $this->makeClient();
 
 		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
-		$this->assertNotNull($code);
+		$this->assertTrue($code !== null);
 
 		$tokens = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
-		$this->assertNotNull($tokens, 'A correct exchange should return tokens');
+		$this->assertTrue($tokens !== null, 'A correct exchange should return tokens');
 		$this->assertArrayHasKey('access_token', $tokens);
 		$this->assertArrayHasKey('refresh_token', $tokens);
 		$this->assertSame('Bearer', $tokens['token_type']);
 
 		$replay = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
-		$this->assertNull($replay, 'The same code must not be exchangeable twice');
+		$this->assertTrue($replay === null, 'The same code must not be exchangeable twice');
 		$this->assertSame('invalid_grant', $server->error);
 	}
 
 	/**
-	 * A wrong verifier is refused, and burns the code on the way: the attacker
-	 * who guessed wrong does not get a second try, and neither does anyone else.
+	 * A wrong PKCE verifier is refused and burns the code.
 	 *
 	 * @return void
 	 */
@@ -293,9 +268,9 @@ class AiMcpOauthTest extends CommonClassTest
 
 		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
 
-		$this->assertNull($server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', 'a-wrong-verifier-that-is-long-enough'));
-		$this->assertNull(
-			$server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier),
+		$this->assertTrue($server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', 'a-wrong-verifier-that-is-long-enough') === null);
+		$this->assertTrue(
+			$server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier) === null,
 			'The code must be spent even though the exchange failed'
 		);
 	}
@@ -314,7 +289,7 @@ class AiMcpOauthTest extends CommonClassTest
 
 		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
 
-		$this->assertNull($server->exchangeAuthorizationCode($client, $code, 'https://example.org/elsewhere', $this->verifier));
+		$this->assertTrue($server->exchangeAuthorizationCode($client, $code, 'https://example.org/elsewhere', $this->verifier) === null);
 	}
 
 	/**
@@ -332,12 +307,11 @@ class AiMcpOauthTest extends CommonClassTest
 
 		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
 
-		$this->assertNull($server->exchangeAuthorizationCode($other, $code, 'https://example.org/callback', $this->verifier));
+		$this->assertTrue($server->exchangeAuthorizationCode($other, $code, 'https://example.org/callback', $this->verifier) === null);
 	}
 
 	/**
-	 * No PKCE challenge, no code. A code exchangeable without a verifier is a
-	 * code an interceptor can exchange.
+	 * No PKCE challenge, no code.
 	 *
 	 * @return void
 	 */
@@ -348,7 +322,7 @@ class AiMcpOauthTest extends CommonClassTest
 		$server = $this->getServer();
 		$client = $this->makeClient();
 
-		$this->assertNull($server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', '', 'dolibarr', ''));
+		$this->assertTrue($server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', '', 'dolibarr', '') === null);
 		$this->assertSame('invalid_request', $server->error);
 	}
 
@@ -368,15 +342,14 @@ class AiMcpOauthTest extends CommonClassTest
 		$first = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
 
 		$second = $server->refreshTokens($client, $first['refresh_token']);
-		$this->assertNotNull($second);
+		$this->assertTrue($second !== null);
 		$this->assertNotSame($first['access_token'], $second['access_token']);
 
-		$this->assertNull($server->refreshTokens($client, $first['refresh_token']), 'A spent refresh token must not work again');
+		$this->assertTrue($server->refreshTokens($client, $first['refresh_token']) === null, 'A spent refresh token must not work again');
 	}
 
 	/**
-	 * An access token resolves to the user who consented, and only while it is
-	 * meant to.
+	 * An access token resolves to the consenting user until it expires.
 	 *
 	 * @return void
 	 */
@@ -393,17 +366,17 @@ class AiMcpOauthTest extends CommonClassTest
 		$tokens = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
 
 		$row = $server->validateAccessToken($tokens['access_token']);
-		$this->assertNotNull($row);
+		$this->assertTrue($row !== null);
 		$this->assertSame((int) $user->id, (int) $row->fk_user);
 
-		$this->assertNull($server->validateAccessToken('dolmcp_a'.str_repeat('0', 64)), 'An unknown token resolves to nothing');
+		$this->assertTrue($server->validateAccessToken('dolmcp_a'.str_repeat('0', 64)) === null, 'An unknown token resolves to nothing');
 
 		// Expire it in place rather than waiting an hour.
 		$sql = "UPDATE ".$db->prefix()."oauth_token SET expire_at = '".$db->idate(dol_now() - 60)."'";
 		$sql .= " WHERE token_hash = '".$db->escape(hash('sha256', $tokens['access_token']))."'";
 		$db->query($sql);
 
-		$this->assertNull($server->validateAccessToken($tokens['access_token']), 'An expired token must stop working');
+		$this->assertTrue($server->validateAccessToken($tokens['access_token']) === null, 'An expired token must stop working');
 	}
 
 	/**
@@ -421,12 +394,11 @@ class AiMcpOauthTest extends CommonClassTest
 		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
 		$tokens = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
 
-		$this->assertNull($server->validateAccessToken($tokens['refresh_token']));
+		$this->assertTrue($server->validateAccessToken($tokens['refresh_token']) === null);
 	}
 
 	/**
-	 * What the prefix test is for: recognising our own access tokens without
-	 * asking the database about every credential that comes in.
+	 * Our access tokens are recognised by prefix, without a database lookup.
 	 *
 	 * @return void
 	 */
@@ -440,8 +412,7 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
-	 * A confidential client must prove itself; a public one has nothing to prove
-	 * and is protected by PKCE instead.
+	 * A confidential client must prove itself; a public one relies on PKCE.
 	 *
 	 * @return void
 	 */
@@ -466,8 +437,7 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
-	 * An unknown client_id resolves to nothing, which is what keeps the
-	 * authorize endpoint from being used as an open redirector.
+	 * An unknown client_id resolves to nothing (no open redirector).
 	 *
 	 * @return void
 	 */
@@ -477,13 +447,11 @@ class AiMcpOauthTest extends CommonClassTest
 
 		$server = $this->getServer();
 
-		$this->assertNull($server->getClient('dolmcp_cdoesnotexist'));
-		$this->assertNull($server->getClient(''));
+		$this->assertTrue($server->getClient('dolmcp_cdoesnotexist') === null);
+		$this->assertTrue($server->getClient('') === null);
 	}
 	/**
-	 * A client_id that is an HTTPS URL is a document to fetch; anything else is
-	 * a registration to look up. Getting this wrong either breaks metadata
-	 * document clients or turns every unknown id into an outbound request.
+	 * An HTTPS client_id is a metadata document URL; anything else is a registration id.
 	 *
 	 * @return void
 	 */
@@ -496,8 +464,7 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
-	 * /register takes no credential, so a registration that never led to a
-	 * token is collected. One that did is kept whatever its age.
+	 * Old clients that never obtained a token are purged; the others are kept.
 	 *
 	 * @return void
 	 */
@@ -520,8 +487,8 @@ class AiMcpOauthTest extends CommonClassTest
 
 		$server->purgeExpired();
 
-		$this->assertNull($server->getClient($unused->client_id), 'A client that never obtained a token should be gone');
-		$this->assertNotNull($server->getClient($used->client_id), 'A client that obtained a token should be kept');
+		$this->assertTrue($server->getClient($unused->client_id) === null, 'A client that never obtained a token should be gone');
+		$this->assertTrue($server->getClient($used->client_id) !== null, 'A client that obtained a token should be kept');
 	}
 
 	/**
@@ -549,13 +516,7 @@ class AiMcpOauthTest extends CommonClassTest
 		$this->assertSame(0, $server->countRecentRegistrations(''), 'No address, nothing to count');
 	}
 	/**
-	 * A native client listens on a port the operating system hands it when it
-	 * starts, so it cannot publish that port in its metadata. RFC 8252 section
-	 * 7.3 requires the port to be free at request time on loopback — Codex
-	 * registers http://127.0.0.1/callback and asks for
-	 * http://127.0.0.1:1455/callback.
-	 *
-	 * Only the port may differ, and only on loopback.
+	 * On loopback only the redirect URI port may differ (RFC 8252 section 7.3).
 	 *
 	 * @return void
 	 */
@@ -580,10 +541,7 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
-	 * The token table is the core llx_oauth_token, shared with every other
-	 * OAuth and API credential of the instance. Purging what this server
-	 * issued must never reach a row it did not issue — an expired Google or
-	 * Stripe token is one its module still means to refresh.
+	 * The purge never touches rows of other services in the shared llx_oauth_token.
 	 *
 	 * @return void
 	 */
@@ -609,8 +567,7 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
-	 * An access token counts its uses in the columns the shared table has for
-	 * that, as the REST API does for its own keys.
+	 * Access token uses are counted, as the REST API does for its keys.
 	 *
 	 * @return void
 	 */
@@ -636,8 +593,7 @@ class AiMcpOauthTest extends CommonClassTest
 	}
 
 	/**
-	 * A spent code presented again means someone else holds a copy: the tokens
-	 * already issued from that grant must stop working (RFC 6749 4.1.2).
+	 * A replayed code revokes the tokens already issued from it (RFC 6749 4.1.2).
 	 *
 	 * @return void
 	 */
@@ -651,10 +607,35 @@ class AiMcpOauthTest extends CommonClassTest
 		$client = $this->makeClient();
 		$code = $server->createAuthorizationCode($client, (int) $user->id, 'https://example.org/callback', $this->challenge(), 'dolibarr', '');
 		$tokens = $server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier);
-		$this->assertNotNull($server->validateAccessToken($tokens['access_token']));
+		$this->assertTrue($server->validateAccessToken($tokens['access_token']) !== null);
 
-		$this->assertNull($server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier), 'The replay itself is refused');
-		$this->assertNull($server->validateAccessToken($tokens['access_token']), 'Tokens issued from a replayed code must be revoked');
-		$this->assertNull($server->refreshTokens($client, $tokens['refresh_token']), 'Their refresh token too');
+		$this->assertTrue($server->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $this->verifier) === null, 'The replay itself is refused');
+		$this->assertTrue($server->validateAccessToken($tokens['access_token']) === null, 'Tokens issued from a replayed code must be revoked');
+		$this->assertTrue($server->refreshTokens($client, $tokens['refresh_token']) === null, 'Their refresh token too');
+	}
+
+	/**
+	 * Opaque values read by /authorize with GETPOST() come back intact through the consent form.
+	 *
+	 * @return void
+	 */
+	public function testOpaqueParametersComeBackIntact()
+	{
+		$values = array(
+			'state' => array('Xq3_v-9kT0aZ1bC2dE3fG4hI5jK6lM7nO8pQ9rS0tUw', 'aGVsbG8+d29ybGQ/Zm9v/YmFy+cXV4==', '3f2504e0-4f89-11d3-9a0c-0305e82c3301', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.abc_DEF-123'),
+			'redirect_uri' => array('https://claude.ai/api/mcp/auth_callback', 'http://127.0.0.1:33418/oauth/callback?x=1&y=2', 'https://x.example/cb?next=%2Fhome%3Fa%3D1'),
+			'code_challenge' => array('E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM'),
+			'resource' => array('https://example.org/ai/server/mcp_server.php'),
+		);
+		foreach ($values as $name => $list) {
+			foreach ($list as $value) {
+				$_GET[$name] = $value;
+				$read = GETPOST($name, 'alphanohtml', 0, null, null, 1);
+				$this->assertSame($value, $read, 'GETPOST must not alter '.$name);
+				$posted = html_entity_decode(dolPrintLabelForAttribute($read), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+				$this->assertSame($value, $posted, 'The hidden field must give back '.$name);
+				unset($_GET[$name]);
+			}
+		}
 	}
 }

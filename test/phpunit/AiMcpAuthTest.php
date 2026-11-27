@@ -18,11 +18,7 @@
 /**
  *      \file       test/phpunit/AiMcpAuthTest.php
  *      \ingroup    test
- *      \brief      PHPUnit tests for ai/class/mcpauth.class.php, which decides
- *                  which Dolibarr user an MCP request runs as: where the
- *                  credential is read from, which credentials are accepted,
- *                  and the permission and audience checks that stand between
- *                  a token and the data.
+ *      \brief      PHPUnit tests for ai/class/mcpauth.class.php (MCP request authentication).
  */
 
 global $conf,$user,$langs,$db;
@@ -49,11 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class AiMcpAuthTest extends CommonClassTest
 {
 	/**
-	 * Where a credential may be presented.
-	 *
-	 * The Authorization header is read from several places because Apache in
-	 * CGI or FPM mode does not expose it, and the usual workaround republishes
-	 * it under another name. Losing that is a 401 with no diagnostic.
+	 * The credential is read from every accepted place (Apache CGI/FPM hides Authorization).
 	 *
 	 * @return void
 	 */
@@ -71,8 +63,7 @@ class AiMcpAuthTest extends CommonClassTest
 		$this->assertSame('k6', $auth->getCredential(array(), array('api_key' => 'k6')));
 		$this->assertSame('', $auth->getCredential(array(), array()));
 
-		// The header wins over the query string, which only exists for clients
-		// whose connector UI has nowhere to put one.
+		// The header wins over the query string.
 		$this->assertSame(
 			'header',
 			$auth->getCredential(array('HTTP_DOLAPIKEY' => 'header'), array('api_key' => 'query'))
@@ -80,10 +71,7 @@ class AiMcpAuthTest extends CommonClassTest
 	}
 
 	/**
-	 * The probe of the admin page must see the header wherever getCredential()
-	 * reads it, the republished name included, and say no when none came: it
-	 * reads the request headers with dolGetRequestHeaders(), which also works
-	 * where getallheaders() does not exist (this test runs from the CLI).
+	 * The admin page probe sees the Authorization header wherever getCredential() reads it.
 	 *
 	 * @return void
 	 */
@@ -95,9 +83,7 @@ class AiMcpAuthTest extends CommonClassTest
 	}
 
 	/**
-	 * No credential, and an encrypted value read straight out of the database,
-	 * are answered differently: the second is an administrator's mistake worth
-	 * naming rather than a silent 401.
+	 * A missing credential gives 401, an encrypted value copied from the database gives 503.
 	 *
 	 * @return void
 	 */
@@ -115,8 +101,7 @@ class AiMcpAuthTest extends CommonClassTest
 	}
 
 	/**
-	 * The shared server key still works, and runs as nobody in particular —
-	 * the caller falls back to the service user.
+	 * The shared server key is accepted and names no user.
 	 *
 	 * @return void
 	 */
@@ -131,14 +116,13 @@ class AiMcpAuthTest extends CommonClassTest
 		$this->assertSame(1, $auth->authenticate(array('HTTP_DOLAPIKEY' => 'shared-key-for-tests'), array()));
 		$this->assertSame(McpAuth::MODE_SHARED, $auth->mode);
 		$this->assertSame(0, $auth->userid);
-		$this->assertNull($auth->user);
+		$this->assertTrue($auth->user === null);
 
 		$conf->global->AI_MCP_API_KEY = $old;
 	}
 
 	/**
-	 * An access token names the user who consented, and that user's rights are
-	 * what the request will run with.
+	 * An access token runs as the user who consented.
 	 *
 	 * @return void
 	 */
@@ -157,7 +141,7 @@ class AiMcpAuthTest extends CommonClassTest
 		$this->assertSame(1, $auth->authenticate(array('HTTP_AUTHORIZATION' => 'Bearer '.$tokens['access_token']), array()));
 		$this->assertSame(McpAuth::MODE_OAUTH, $auth->mode);
 		$this->assertSame((int) $user->id, $auth->userid);
-		$this->assertNotNull($auth->user);
+		$this->assertTrue($auth->user !== null);
 	}
 
 	/**
@@ -184,9 +168,7 @@ class AiMcpAuthTest extends CommonClassTest
 	}
 
 	/**
-	 * A token issued for another audience does not open this endpoint, even
-	 * though this server minted it. Without the check, a token obtained for
-	 * one resource is replayable against another.
+	 * A token issued for another audience is refused, so it cannot be replayed here.
 	 *
 	 * @return void
 	 */
@@ -201,8 +183,7 @@ class AiMcpAuthTest extends CommonClassTest
 
 		$tokens = $this->grantTo((int) $user->id, $oauth);
 
-		// Repoint the token at another audience, which is what a server that
-		// did not check the resource at /authorize would have stored.
+		// Repoint the token at another audience.
 		$sql = "UPDATE ".$db->prefix()."oauth_token SET resource = 'https://elsewhere.example/mcp'";
 		$sql .= " WHERE token_hash = '".$db->escape(hash('sha256', $tokens['access_token']))."'";
 		$db->query($sql);
@@ -213,8 +194,7 @@ class AiMcpAuthTest extends CommonClassTest
 	}
 
 	/**
-	 * The right every other AI entry point checks also gates this one: a user
-	 * who may not talk to the assistant cannot reach it through a token.
+	 * A user without the AI assistant right is refused, even with a valid token.
 	 *
 	 * @return void
 	 */
@@ -242,8 +222,7 @@ class AiMcpAuthTest extends CommonClassTest
 	}
 
 	/**
-	 * The challenge a 401 carries, which is what turns a refusal into a
-	 * sign-in for a client that can do OAuth.
+	 * The WWW-Authenticate challenge sent with a 401.
 	 *
 	 * @return void
 	 */
@@ -257,14 +236,12 @@ class AiMcpAuthTest extends CommonClassTest
 		$this->assertStringStartsWith('Bearer ', $challenge);
 		$this->assertStringContainsString('resource_metadata="https://example.org/prm"', $challenge);
 
-		// Without a metadata URL the parameters must still follow the scheme
-		// properly: "Bearer, scope=..." is malformed (RFC 7235 section 4.1).
+		// Without metadata URL, "Bearer, scope=..." would be malformed (RFC 7235 4.1).
 		$this->assertStringStartsWith('Bearer scope=', $auth->getWwwAuthenticateHeader(''));
 	}
 
 	/**
-	 * An authorization server bound to this install, or null when the tables
-	 * are absent.
+	 * An authorization server bound to this install, or null when tables are absent.
 	 *
 	 * @return McpOauth|null
 	 */
@@ -294,17 +271,17 @@ class AiMcpAuthTest extends CommonClassTest
 		$conf->global->AI_MCP_OAUTH_DYNAMIC_REGISTRATION = '1';
 
 		$registration = $oauth->registerClient(array('redirect_uris' => array('https://example.org/callback')));
-		$this->assertNotNull($registration);
+		$this->assertTrue($registration !== null);
 		$client = $oauth->getClient($registration['client_id']);
 
 		$verifier = 'jTMZAFeqqAgVv8LRiVUq1IhZTvRIzqQ-3DHsxHJfNyc';
 		$challenge = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
 
 		$code = $oauth->createAuthorizationCode($client, $userid, 'https://example.org/callback', $challenge, 'dolibarr', '');
-		$this->assertNotNull($code);
+		$this->assertTrue($code !== null);
 
 		$tokens = $oauth->exchangeAuthorizationCode($client, $code, 'https://example.org/callback', $verifier);
-		$this->assertNotNull($tokens);
+		$this->assertTrue($tokens !== null);
 
 		$conf->global->AI_MCP_OAUTH_DYNAMIC_REGISTRATION = $old;
 
