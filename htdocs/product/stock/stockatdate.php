@@ -315,7 +315,7 @@ if (!empty($search_fk_warehouse)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot IN ('.$db->sanitize(implode(",", $search_fk_warehouse)).")";
 }
 if ($pmpperentity) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = '.((int) $conf->entity);
+	$sql .= ' LEFT JOIN '.$db->prefix().'product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = '.((int) $conf->entity);
 }
 // Add fields from hooks
 $parameters = array();
