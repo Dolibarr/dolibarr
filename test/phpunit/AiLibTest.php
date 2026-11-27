@@ -24,6 +24,8 @@
 global $conf, $user, $langs, $db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/ai/lib/ai.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/ai/class/mcptool.class.php';
+require_once dirname(__FILE__).'/../../htdocs/ai/tools/api_bridge.class.php';
 require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
@@ -75,19 +77,28 @@ class AiLibTest extends CommonClassTest
 	 */
 	public function testClassifyQueryObjects()
 	{
-		global $conf;
+		global $conf, $db, $user;
 
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
 		$langs = new Translate('', $conf);
 		$langs->setDefaultLang('fr_FR');
 
-		$this->assertSame(array('thirdparties'), classifyQueryObjects('peux tu me créer un tiers devcamp de type prospect', $langs));
-		$this->assertContains('supplier_orders', classifyQueryObjects('liste les commandes fournisseurs en attente', $langs), 'Each word of a name may be plural');
-		$this->assertContains('supplier_invoices', classifyQueryObjects('show the vendor invoices', $langs), 'English translations work on a French install');
-		$this->assertSame(array('agendaevents'), classifyQueryObjects('mes rendez-vous de demain', $langs));
-		$this->assertSame(array('thirdparties'), classifyQueryObjects('list the third parties created this week', $langs), 'A word in y may be plural in ies');
-		$this->assertSame(array(), classifyQueryObjects("I don't know, I don’t see", $langs), 'A contraction is another word');
-		$this->assertContains('thirdparties', classifyQueryObjects("show the customer's invoices", $langs), 'A possessive still names the object');
-		$this->assertSame(array(), classifyQueryObjects('bonjour', $langs));
+		$this->assertSame(array('thirdparties'), classifyQueryObjects('peux tu me créer un tiers devcamp de type prospect', $langs, $tools));
+		$this->assertContains('supplier_orders', classifyQueryObjects('liste les commandes fournisseurs en attente', $langs, $tools), 'Each word of a name may be plural');
+		$this->assertContains('supplier_invoices', classifyQueryObjects('show the vendor invoices', $langs, $tools), 'English translations work on a French install');
+		$this->assertSame(array('agendaevents'), classifyQueryObjects('mes rendez-vous de demain', $langs, $tools));
+		$this->assertSame(array('thirdparties'), classifyQueryObjects('list the third parties created this week', $langs, $tools), 'A word in y may be plural in ies');
+		$this->assertSame(array(), classifyQueryObjects("I don't know, I don’t see", $langs, $tools), 'A contraction is another word');
+		$this->assertContains('thirdparties', classifyQueryObjects("show the customer's invoices", $langs, $tools), 'A possessive still names the object');
+		$this->assertSame(array(), classifyQueryObjects('bonjour', $langs, $tools));
+
+		$langsNl = new Translate('', $conf);
+		$langsNl->setDefaultLang('nl_NL');
+		$this->assertSame(array('invoices'), classifyQueryObjects('toon de onbetaalde facturen', $langsNl, $tools), 'The plural translated by Dolibarr names the object');
+
+		$moduleTool = array('name' => 'api_trainings_list', 'objects' => array('trainings'), 'vocabulary' => array('trainings' => array('keys' => array('Training'))));
+		$this->assertSame(array('trainings'), classifyQueryObjects('list the trainings', $langs, array($moduleTool)), 'A module names its objects with the words of its tools');
 	}
 
 	/**
@@ -98,10 +109,10 @@ class AiLibTest extends CommonClassTest
 	public function testFilterToolsByObjects()
 	{
 		$tools = array(
-			array('name' => 'api_thirdparties_create', 'objects' => array('thirdparties'), 'categories' => array('thirdparty')),
-			array('name' => 'api_invoices_list', 'objects' => array('invoices'), 'categories' => array('billing', 'thirdparty'), 'description' => 'Invoices. Look the rowid up with api_thirdparties_create first.'),
+			array('name' => 'api_thirdparties_create', 'objects' => array('thirdparties'), 'vocabulary' => array('thirdparties' => array('keys' => array('ThirdParty'))), 'categories' => array('thirdparty')),
+			array('name' => 'api_invoices_list', 'objects' => array('invoices'), 'vocabulary' => array('invoices' => array('keys' => array('Invoice'))), 'categories' => array('billing', 'thirdparty'), 'description' => 'Invoices. Look the rowid up with api_thirdparties_create first.'),
 			array('name' => 'api_external_list', 'objects' => array('externalmodule'), 'categories' => array('thirdparty')),
-			array('name' => 'api_contacts_list', 'objects' => array('contacts'), 'categories' => array('thirdparty'), 'inputSchema' => array('properties' => array('thirdparty_ids' => array('type' => 'string')))),
+			array('name' => 'api_contacts_list', 'objects' => array('contacts'), 'vocabulary' => array('contacts' => array('keys' => array('Contact'))), 'categories' => array('thirdparty'), 'inputSchema' => array('properties' => array('thirdparty_ids' => array('type' => 'string')))),
 			array('name' => 'api_thirdparties_list', 'objects' => array('thirdparties'), 'categories' => array('thirdparty')),
 			array('name' => 'navigate_to_page', 'categories' => array('global')),
 			array('name' => 'report', 'categories' => array('reporting')),
