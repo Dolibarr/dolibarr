@@ -5742,7 +5742,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 			// TODO This is the case of VAT exemption 'VATEX-EU-IC'
 			// If entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-EU-IC)'
 			// If not, we add it and we return '0 (VATEX-EU-IC)'
-			$vatvalue = 0;
+			$vatcode = getDolGlobalString('MAIN_VATRULE6_CODE');
+			$vatvalue = !empty($vatcode) ? '0 (' . $vatcode . ')' : 0;
 			$vatrule = 'VATRULE 6';
 		}
 	}
@@ -5764,6 +5765,12 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	// TODO This is the case of VAT exemption 'VATEX-EU-G'
 	// If entry for the VAT exemption code exists in llx_vat, we can return '0 (VATEX-xxx)'
 	// If not, we add it and we return '0 (VATEX-xxx)'
+	if (empty($vatrule)) {
+		//print 'VATRULE 7';
+		$vatcode = getDolGlobalString('MAIN_VATRULE7_CODE');
+		$vatvalue = !empty($vatcode) ? '0 (' . $vatcode . ')' : 0;
+		$vatrule = 'VATRULE 7';
+	}
 
 	// Allow an external module to bypass the calculation of prices
 	$parameters = array('vatvalue' => $vatvalue, 'vatrule' => $vatrule);
