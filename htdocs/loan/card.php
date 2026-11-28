@@ -845,7 +845,7 @@ if ($id > 0) {
 
 				// Edit
 				if (($object->paid == 0 || $object->paid == 2) && $user->hasRight('loan', 'write')) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>';
+					print dolGetButtonAction($langs->trans("Modify"), '', 'edit', DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=edit&token='.newToken());
 				}
 
 				// Emit payment

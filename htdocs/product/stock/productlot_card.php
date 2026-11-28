@@ -477,7 +477,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			/*TODO
 			if ($user->hasRight('stock', 'lire')) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>'."\n";
+				print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken());
 			}
 			*/
 			print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', dolBuildUrl($_SERVER["PHP_SELF"], ['id' => $object->id, 'action' => 'delete'], true), 'delete', $permissiontodelete, array('attr' => array('class' => 'reposition')))."\n";
