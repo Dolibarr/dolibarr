@@ -61,6 +61,9 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 // Initialize a technical objects
 $object = new Calendar($db);
+if (!isModEnabled("bookcal")) {
+	accessforbidden();
+}
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('calendarcard', 'globalcard')); // Note that conf->hooks_modules contains array
 
@@ -119,9 +122,6 @@ if ($object->id > 0 && !checkUserAccessToObject($user, array($object->element), 
 	accessforbidden();
 }
 if (in_array($action, array('create', 'add', 'update', 'set_thirdparty')) && GETPOSTINT('fk_soc') > 0 && !checkUserAccessToObject($user, array('societe'), GETPOSTINT('fk_soc'))) {
-	accessforbidden();
-}
-if (!isModEnabled("bookcal")) {
 	accessforbidden();
 }
 if (!$permissiontoread) {

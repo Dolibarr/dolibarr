@@ -2430,10 +2430,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		} else {
 			$out .= '<input type="hidden" name="id" value="' . $filterobj->id . '" />';
 		}
-		if ($filterobj && get_class($filterobj) == 'Societe') {
-			$out .= '<input type="hidden" name="socid" value="' . $filterobj->id . '" />';
-		} else {
-			$out .= '<input type="hidden" name="userid" value="' . $filterobj->id . '" />';
+		if (is_object($filterobj)) {
+			if (get_class($filterobj) == 'Societe') {
+				$out .= '<input type="hidden" name="socid" value="' . $filterobj->id . '" />';
+			} else {
+				$out .= '<input type="hidden" name="userid" value="' . $filterobj->id . '" />';
+			}
 		}
 
 		$out .= "\n";

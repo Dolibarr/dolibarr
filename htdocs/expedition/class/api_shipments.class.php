@@ -95,6 +95,8 @@ class Shipments extends DolibarrApi
 	 *
 	 * Get a list of shipments
 	 *
+	 * @since 25.0.0 Parameter count
+	 *
 	 * @param string		   $sortfield			Sort field
 	 * @param string		   $sortorder			Sort order
 	 * @param int			   $limit				Limit for list
@@ -103,13 +105,14 @@ class Shipments extends DolibarrApi
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:>:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int			$count					Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return  array                               Array of shipment objects
-	 * @phan-return Expedition[]
-	 * @phpstan-return Expedition[]
+	 * @phan-return Expedition[]|array{count:int}
+	 * @phpstan-return Expedition[]|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
@@ -166,6 +169,11 @@ class Shipments extends DolibarrApi
 
 		//this query will return total shipments with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -255,28 +263,57 @@ class Shipments extends DolibarrApi
 			foreach ($request_data["lines"] as $line) {
 				$shipmentline = new ExpeditionLigne($this->db);
 
-				$shipmentline->entrepot_id = (int) $line['entrepot_id'];
+				$shipmentline->entrepot_id = (int) ($line['entrepot_id'] ?? 0);	// a line with lots takes the warehouse of its lots
 				$shipmentline->fk_element = (int) ($line['fk_element'] ?? $line['origin_id']);				// example: order id.  this->origin is 'commande'
 				$shipmentline->origin_line_id = (int) ($line['fk_elementdet'] ?? $line['origin_line_id']);	// example: order id
 				$shipmentline->fk_elementdet = (int) ($line['fk_elementdet'] ?? $line['origin_line_id']);	// example: order line id
 				$shipmentline->origin_type = $line['element_type'] ?? $line['origin_type'];			// example 'commande' or 'order'
 				$shipmentline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'commande' or 'order'
 				$shipmentline->qty = (float) $line['qty'];
-				$shipmentline->rang = (int) $line['rang'];
-				$array_options = $line['array_options'];
+				$shipmentline->rang = (int) ($line['rang'] ?? 0);
+				$array_options = $line['array_options'] ?? null;
 				if (is_array($array_options)) {
 					$shipmentline->array_options = $array_options;
 				}
-				$detail_batch = $line['detail_batch'];
-				if (is_array($detail_batch) || is_object($detail_batch)) {
-					$shipmentline->detail_batch = $detail_batch;
-				}
-
 				// Expedition::create() expands a kit into its components only when the line carries its product.
 				// Without this, the kit is stored as a parent line with a warehouse and no child lines.
 				$orderline = new OrderLine($this->db);
 				if ($orderline->fetch($shipmentline->fk_elementdet) > 0 && (empty($orderline->product_type) || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES'))) {
 					$shipmentline->fk_product = (int) $orderline->fk_product;
+				}
+
+				// Lots and serial numbers arrive as plain arrays, while Expedition::create_line_batch() needs
+				// ExpeditionLineBatch objects: without them the line was silently not recorded. They are built
+				// as the shipment card builds them, with addline_batch(). Each lot is given by its stock record
+				// (fk_origin_stock, as a shipment is read back, or id_batch) and its quantity (qty or q).
+				$detail_batch = $line['detail_batch'] ?? ($line['detail'] ?? null);
+				if (is_array($detail_batch) || is_object($detail_batch)) {
+					$detail = array();
+					foreach ($detail_batch as $batch) {
+						$batch = (array) $batch;
+						$detail[] = array(
+							'id_batch' => (int) ($batch['fk_origin_stock'] ?? ($batch['id_batch'] ?? 0)),
+							'q' => (float) ($batch['qty'] ?? ($batch['q'] ?? 0)),
+						);
+					}
+					$batchshipment = new Expedition($this->db);
+					$result = $batchshipment->addline_batch(
+						array('qty' => $shipmentline->qty, 'ix_l' => $shipmentline->fk_elementdet, 'detail' => $detail),
+						array(),
+						$orderline
+					);
+					if ($result < 0) {
+						throw new RestException(400, "Error on the lots of a shipment line", array_merge(array($batchshipment->error), $batchshipment->errors));
+					}
+					if ($result > 0) {
+						foreach ($batchshipment->lines[0]->detail_batch as $i => $linebatch) {
+							if (empty($linebatch->fk_warehouse)) {	// fetchFromStock() found no such stock record
+								throw new RestException(400, "Lot stock record ".$detail[$i]['id_batch']." not found");
+							}
+						}
+						$shipmentline->detail_batch = $batchshipment->lines[0]->detail_batch;
+						$shipmentline->entrepot_id = (int) $batchshipment->lines[0]->entrepot_id;
+					}
 				}
 
 				$lines[] = $shipmentline;

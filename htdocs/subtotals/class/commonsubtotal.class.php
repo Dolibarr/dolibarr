@@ -891,6 +891,7 @@ trait CommonSubtotal
 			$blocklines[] = $line;
 		}
 
+		/** @var array<int,CommonObjectLine> $blocklines */
 		return $blocklines;
 	}
 

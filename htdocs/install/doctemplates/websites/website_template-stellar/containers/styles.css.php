@@ -384,6 +384,7 @@ span.text-primary {
   font-family: "Courier New", monospace;
   font-size: 0.9em;
   margin: 0 0 2em 0;
+  white-space: break-spaces;
 }
 .bodywebsite pre code {
   display: block;

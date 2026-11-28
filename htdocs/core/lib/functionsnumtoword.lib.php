@@ -306,6 +306,43 @@ function dolConvertIntToFrenchWords($n, $reform = false)
 
 
 /**
+ * Return the French word of a currency for an amount: the name of the currency, in lower case
+ * and agreed in number with the integer part (singular for 0 and 1).
+ *
+ * @param	string		$currency	Currency code (EUR), or label of the main currency already translated (Euros), or any other text
+ * @param	int			$intpart	Integer part of the amount
+ * @param	Translate	$langs		Language object
+ * @return	string					Currency word. Any other text, or a code with no translation, is returned as given.
+ */
+function dolConvertCurrencyToFrenchWord($currency, $intpart, $langs)
+{
+	global $conf;
+
+	$langs->load('dict');
+
+	$code = '';
+	if (preg_match('/^[A-Z]{3}$/', $currency)) {
+		$code = $currency;
+	} elseif (!empty($conf->currency) && $currency === $langs->transnoentitiesnoconv('Currency'.$conf->currency)) {
+		$code = $conf->currency;
+	}
+	if ($code === '') {
+		return $currency;
+	}
+
+	// In French, 0 and 1 take the singular
+	$key = ($intpart < 2 ? 'CurrencySing' : 'Currency').$code;
+	$label = $langs->transnoentitiesnoconv($key);
+	if ($label === $key) {
+		return $currency;
+	}
+
+	// A currency name is written in lower case in French (euros, dollars US, francs suisses)
+	return mb_strtolower(mb_substr($label, 0, 1)).mb_substr($label, 1);
+}
+
+
+/**
  * Convert a number into French words. Used by dol_convertToWord() for French languages.
  *
  * @param	float		$num		Number to convert
@@ -337,7 +374,7 @@ function dolConvertToWordFrench($num, $langs, $currency = '', $centimes = false)
 		if ($result === '') {
 			$result = 'zéro';
 		}
-		$result .= ' '.$currency;
+		$result .= ' '.dolConvertCurrencyToFrenchWord($currency, $intpart, $langs);
 	}
 
 	if ($cents > 0) {

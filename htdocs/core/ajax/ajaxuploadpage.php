@@ -175,7 +175,12 @@ if ($modulepart == 'invoice_supplier') {
 	 },
 	 "vendor": {
 	  "name": "<name>",
-	  "address": "<address>",
+	  "address": {
+	   "street": "<street>",
+	   "postal_code": "<postal code>",
+	   "city": "<city>",
+	   "country_code": "<ISO 3166-1 alpha-2 country code>"
+	  },
 	  "phone": "<phone number>",
 	  "email": "<email>",
 	  "vatnumber": "<vat number>",
@@ -183,7 +188,12 @@ if ($modulepart == 'invoice_supplier') {
 	 },
 	 "recipient": {
 	  "name": "<name>",
-	  "address": "<address>",
+	  "address": {
+	   "street": "<street>",
+	   "postal_code": "<postal code>",
+	   "city": "<city>",
+	   "country_code": "<ISO 3166-1 alpha-2 country code>"
+	  },
 	  "phone": "<phone number>",
 	  "email": "<email>",
 	  "vatnumber": "<vat number>",

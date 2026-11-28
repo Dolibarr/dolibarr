@@ -475,7 +475,21 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 		$found = 0;
 		// Search if it exists into $filearrayindatabase
 		foreach ($filearrayindatabase as $key2 => $val2) {
-			if (($filearrayindatabase[$key2]['path'] == $filearray[$key]['path']) && ($filearrayindatabase[$key2]['name'] == $tmpfilename)) {
+			$samepath = ($filearrayindatabase[$key2]['path'] == $filearray[$key]['path']);
+			$samename = ($filearrayindatabase[$key2]['name'] == $tmpfilename);
+			// The SQL search may be case insensitive (mysql), so a record differing only by case is the same record (unique key). We fix its case.
+			if ((!$samepath || !$samename) && dol_strtolower($filearrayindatabase[$key2]['path']) == dol_strtolower($filearray[$key]['path']) && dol_strtolower($filearrayindatabase[$key2]['name']) == dol_strtolower($tmpfilename) && !dol_is_file($filearrayindatabase[$key2]['fullname'])) {
+				$rel_dirfixed = trim(preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['path']), "/\\");
+				dol_syslog("list_of_documents The file '".$tmpfilename."' is indexed with a different case, we fix the record ".$filearrayindatabase[$key2]['rowid'], LOG_WARNING);
+				$sqlfix = "UPDATE ".MAIN_DB_PREFIX."ecm_files SET filepath = '".$db->escape($rel_dirfixed)."', filename = '".$db->escape($tmpfilename)."'";
+				$sqlfix .= " WHERE rowid = ".((int) $filearrayindatabase[$key2]['rowid']);
+				$db->query($sqlfix);
+				$filearrayindatabase[$key2]['path'] = $filearray[$key]['path'];
+				$filearrayindatabase[$key2]['name'] = $tmpfilename;
+				$samepath = true;
+				$samename = true;
+			}
+			if ($samepath && $samename) {
 				$filearray[$key]['position_name'] = ($filearrayindatabase[$key2]['position'] ? $filearrayindatabase[$key2]['position'] : '0').'_'.$filearrayindatabase[$key2]['name'];
 				$filearray[$key]['position'] = $filearrayindatabase[$key2]['position'];
 				$filearray[$key]['cover'] = $filearrayindatabase[$key2]['cover'];

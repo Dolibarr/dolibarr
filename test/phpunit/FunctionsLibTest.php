@@ -3347,4 +3347,45 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertStringContainsString("'Escape'", $out);
 		$this->assertStringNotContainsString('console.log', $out);
 	}
+
+	/**
+	 * testDolGetButtonActionDeleteAddsTokenWhateverTheButtonStyle
+	 *
+	 * @return void
+	 */
+	public function testDolGetButtonActionDeleteAddsTokenWhateverTheButtonStyle()
+	{
+		global $conf, $user, $langs, $db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/html.lib.php';
+
+		$savedconst = (property_exists($conf->global, 'MAIN_BUTTON_SHOW_FULL_TITLE') ? getDolGlobalString('MAIN_BUTTON_SHOW_FULL_TITLE') : null);
+
+		$outs = [];
+		foreach ([0, 1] as $fulltitle) {
+			$conf->global->MAIN_BUTTON_SHOW_FULL_TITLE = $fulltitle;
+			$outs[$fulltitle] = [
+				'delete' => dolGetButtonAction('Delete', 'Delete', 'delete', '/test.php?id=1&action=delete', '', 1),
+				'danger' => dolGetButtonAction('Danger', 'Danger', 'danger', '/test.php?id=1&action=disable', '', 1),
+				'withtoken' => dolGetButtonAction('Delete', 'Delete', 'delete', '/test.php?id=1&action=delete&token=abc', '', 1),
+			];
+		}
+
+		if ($savedconst === null) {
+			unset($conf->global->MAIN_BUTTON_SHOW_FULL_TITLE);
+		} else {
+			$conf->global->MAIN_BUTTON_SHOW_FULL_TITLE = $savedconst;
+		}
+
+		// A delete/danger link triggers a sensitive GET action: main.inc.php refuses it without token
+		foreach ($outs as $fulltitle => $out) {
+			$this->assertStringContainsString('token=', $out['delete'], 'MAIN_BUTTON_SHOW_FULL_TITLE='.$fulltitle);
+			$this->assertStringContainsString('token=', $out['danger'], 'MAIN_BUTTON_SHOW_FULL_TITLE='.$fulltitle);
+			$this->assertSame(1, substr_count($out['withtoken'], 'token='), 'MAIN_BUTTON_SHOW_FULL_TITLE='.$fulltitle);
+		}
+	}
 }

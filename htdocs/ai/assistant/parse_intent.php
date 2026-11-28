@@ -690,8 +690,10 @@ try {
 			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
 			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
 
-			// Category filter applied to $llmToolsBase — system tools already excluded
-			$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
+			$toolsSchema = getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT') ? array() : filterToolsByObjects($llmToolsBase, classifyQueryObjects($queryForIntent, $langs, $llmToolsBase), $detectedCategories);
+			if (empty($toolsSchema)) {
+				$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
+			}
 
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog("AI Pro: Latin script. Detected: " . json_encode($detectedCategories) . ". Filtered to " . count($toolsSchema) . " tools.", LOG_DEBUG, 0, '_ai');
@@ -890,6 +892,7 @@ try {
 
 		if (!empty($apiKey)) {
 			$adapter = new UniversalLLMAdapter($adapterType, $apiKey, $url, $model, $timeout);
+			$adapter->setReasoningEffort(getAiReasoningEffort($serviceKey));
 
 			dol_syslog("parse_intent.php Prepare call AI API for model=".$model, LOG_DEBUG);
 			if (getDolGlobalString("AI_DEBUG")) {
@@ -916,7 +919,9 @@ try {
 			// stay one-shot), per-turn and global caps, privacy redaction applied.
 			$history = array();
 			if (!empty($data['history']) && is_array($data['history'])) {
-				$histTurns = array_slice($data['history'], 0, 12);
+				// Keep the LAST turns: the most recent exchanges, and the search result
+				// appended at the end on a followup round, are the ones that matter.
+				$histTurns = array_slice($data['history'], -aiChatContextMaxMessages());
 
 				// Persisted turns arrive as ids only: the text is rebuilt here from
 				// the stored conversation (llx_ai_chat_message.content_raw), so the
@@ -946,7 +951,8 @@ try {
 
 				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);	// in characters
 				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
-				foreach ($histTurns as $turn) {
+				// Newest first, so the budget drops the oldest turns; put back in chronological order after.
+				foreach (array_reverse($histTurns) as $turn) {
 					if (is_array($turn) && !empty($turn['id'])) {
 						$turn = $histRows[(int) $turn['id']] ?? null;
 					}
@@ -973,7 +979,14 @@ try {
 					if ($histBudget < 0) {
 						break;
 					}
-					$history[] = array('role' => ((($turn['role'] ?? '') === 'assistant') ? 'assistant' : 'user'), 'text' => $htext);
+					$history[] = (($turn['role'] ?? '') === 'assistant') ? array('role' => 'assistant', 'text' => aiHistoryTurnForModel($htext)) : array('role' => 'user', 'text' => $htext);
+				}
+				$history = array_reverse($history);
+
+				// The cut may start the history on an answer whose question was dropped: remove such
+				// orphan answers (some providers want a user turn first), but never the search result of a followup.
+				while (count($history) > ($isFollowup ? 1 : 0) && $history[0]['role'] === 'assistant') {
+					array_shift($history);
 				}
 			}
 
@@ -1013,7 +1026,7 @@ try {
 						if ($memBudget < 0) {
 							break;
 						}
-						$memHistory[] = array('role' => ((string) $mobj->role === 'assistant' ? 'assistant' : 'user'), 'text' => '[earlier conversation] '.$mtext);
+						$memHistory[] = ((string) $mobj->role === 'assistant') ? array('role' => 'assistant', 'text' => '[earlier conversation] '.aiHistoryTurnForModel($mtext)) : array('role' => 'user', 'text' => '[earlier conversation] '.$mtext);
 					}
 					// Older context goes first: cross-conversation turns before pinned.
 					$history = array_merge($memHistory, $history);
@@ -1065,6 +1078,8 @@ try {
 				$query .= $aiAttachmentsHiddenNote;
 			}
 			$attachments = $attachmentsForModel;	// Only what is sent, for the error messages below
+			// Releases the session lock during the long AI call: $_SESSION changes after this line are not saved unless the session is reopened.
+			$sessionReleased = session_write_close();
 			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachmentsForModel, $history);
 			// The provider rejected the attachments (e.g. "Image input is not enabled for this model"):
 			// remember it for the session and ask again without them, the model still has their references.
@@ -1072,7 +1087,13 @@ try {
 				&& !UniversalLLMAdapter::isModelUnavailableError($rawResponse)
 				&& preg_match('/\b(?:file|files|pdf|document|image_url|image|images|attachment|content.?type|mime|multimodal|vision)\b/i', $rawResponse)) {
 				dol_syslog("parse_intent.php attachments rejected by ".$serviceKey."/".$model.", ask again without them: ".dol_trunc($rawResponse, 200), LOG_WARNING);
+				if ($sessionReleased) {
+					dol_session_start();
+				}
 				ai_attachment_mark_rejected_by_model($attachmentsForModel, $serviceKey, $model);
+				if ($sessionReleased) {
+					session_write_close();
+				}
 				$attachments = array();
 				$query .= $aiAttachmentsHiddenNote;
 				$rawResponse = $adapter->generate($systemPrompt, $query, 'text', array(), $history);
@@ -1123,9 +1144,6 @@ try {
 					$clean = $guard->unmaskAiResponse($clean);
 				}
 
-				// Removed carriage returns and newlines
-				$clean = preg_replace('/[\r\n]/', ' ', $clean);
-
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog('parse_intent.php response var clean='.$clean, LOG_DEBUG, 0, '_ai');
 				}
@@ -1138,6 +1156,22 @@ try {
 					// [ "type": "function", "function": "name": "api_...", "arguments": { ... } ]
 
 					$intentJSON = json_decode($clean, true);
+					if ($intentJSON === null) {
+						// Some models write real control characters (newlines, tabs...) inside the json strings, which is not valid: escape them
+						// (and not remove them, the markdown of the answer needs its lines) and try again.
+						$cleanescaped = preg_replace_callback(
+							'/"(?:[^"\\\\]++|\\\\.)*+"/s',
+							/**
+							 * @param string[] $reg Matches
+							 * @return string
+							 */
+							static function ($reg) {
+								return (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', strtr($reg[0], array("\r\n" => '\n', "\r" => '\n', "\n" => '\n', "\t" => '\t')));
+							},
+							$clean
+						);
+						$intentJSON = json_decode((string) $cleanescaped, true);
+					}
 					if (getDolGlobalString("AI_DEBUG")) {
 						dol_syslog('parse_intent.php intentJSON = '.var_export($intentJSON, true), LOG_DEBUG, 0, '_ai');
 					}
@@ -1230,12 +1264,23 @@ try {
 							dol_syslog('parse_intent.php clean response is array', LOG_DEBUG, 0, '_ai');
 						}
 
+						// Only one tool runs per answer. When the model sent several calls, run the
+						// first and ask a followup round, so the model can do the next one with its result.
+						$nbFunctionCalls = 0;
+						foreach ($intentJSON as $f) {
+							if (is_array($f) && ($f['type'] ?? '') === 'function' && !empty($f['function']['name'])) {
+								$nbFunctionCalls++;
+							}
+						}
 						foreach ($intentJSON as $f) {
 							if (($f['type'] ?? '') === 'function' && isset($f['function']) && !empty($f['function']['name']) && !empty($f['function']['arguments'])) {
 								$intentJSON = [
 									"tool" => $f['function']['name'] ?? '',
 									'arguments' => json_decode($f['function']['arguments'], true) ?? []
 								];
+								if ($nbFunctionCalls > 1) {
+									$intentJSON['needs_followup'] = true;
+								}
 								break;
 							}
 						}
@@ -1919,45 +1964,11 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		]
 	];
 
-	// en_US reference translator (loaded once; Translate caches files)
-	static $langsEnUs = null;
-	if ($langsEnUs === null) {
-		global $conf;
-		$langsEnUs = new Translate('', $conf);
-		$langsEnUs->setDefaultLang('en_US');
-		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions', 'website', 'trips'));
-	}
+	$langsEnUs = getAiTranslatorEnUs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions', 'website', 'trips'));
 
 	$detectedCategories = [];
 	foreach ($intentMap as $category => $data) {
-		$keywords = [];
-		foreach ($data['keys'] as $key) {
-			// Matched in the user's language AND in the en_US reference: keys
-			// translate to the UI language only, but users routinely type
-			// English terms on non-English installs. One mechanism, no
-			// separate synonym lists to translate.
-			foreach (array($langs->transnoentities($key), $langsEnUs->transnoentities($key)) as $trans) {
-				if ($trans === '' || ($trans === $key && preg_match('/[A-Z]/', dol_substr($key, 1, 200)))) {
-					// Untranslated composite key (e.g. 'BillStatusUnpaid'):
-					// matching it would be noise. A plain word equal to its
-					// key ('Customer' in en_US) is a real keyword - keep it.
-					continue;
-				}
-				if ($isLatin) {
-					$trans = strtolower(dol_string_unaccent($trans));
-				}
-				$keywords[] = $trans;
-			}
-		}
-		$keywords = array_unique($keywords);
-
-		// Hardcoded English colloquialisms (words no UI key carries) - words no
-		// UI key carries; translated vocabulary already arrives through the
-		// dual-language keys above.
-		foreach ($data['synonyms'] as $syn) {
-			$keywords[] = $isLatin ? strtolower(dol_string_unaccent($syn)) : $syn;
-		}
-		$keywords = array_unique($keywords);
+		$keywords = getAiQueryKeywords($data['keys'], $data['synonyms'], $langs, $langsEnUs, $isLatin);
 
 		$normalizedQuery = aiNormalizeForMatch($searchQuery, false);
 		foreach ($keywords as $word) {
