@@ -259,7 +259,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
 if (!empty($search_id)) {
-	$param .= '&search_status='.urlencode($search_status);
+	$param .= '&search_id='.urlencode($search_id);
 }
 if (!empty($search_month) && $search_month > 0) {
 	$param .= '&search_month='.urlencode((string) ($search_month));
@@ -429,31 +429,31 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 if (!empty($arrayfields['cpl.rowid']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'cpl.rowid', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'cpl.rowid', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cpl.date_action']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.date_action']['label'], $_SERVER["PHP_SELF"], 'date_action', '', '', '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['cpl.date_action']['label'], $_SERVER["PHP_SELF"], 'date_action', '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.fk_user_action']['label'], $_SERVER["PHP_SELF"], 'fk_user_action', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cpl.fk_user_action']['label'], $_SERVER["PHP_SELF"], 'fk_user_action', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cpl.fk_user_update']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.fk_user_update']['label'], $_SERVER["PHP_SELF"], 'fk_user_update', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cpl.fk_user_update']['label'], $_SERVER["PHP_SELF"], 'fk_user_update', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cpl.type_action']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.type_action']['label'], $_SERVER["PHP_SELF"], 'type_action', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cpl.type_action']['label'], $_SERVER["PHP_SELF"], 'type_action', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cpl.fk_type']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.fk_type']['label'], $_SERVER["PHP_SELF"], 'fk_type', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cpl.fk_type']['label'], $_SERVER["PHP_SELF"], 'fk_type', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cpl.prev_solde']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.prev_solde']['label'], $_SERVER["PHP_SELF"], 'prev_solde', '', '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['cpl.prev_solde']['label'], $_SERVER["PHP_SELF"], 'prev_solde', '', $param, '', $sortfield, $sortorder, 'right ');
 }
 if (!empty($arrayfields['variation']['checked'])) {
-	print_liste_field_titre($arrayfields['variation']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['variation']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 }
 if (!empty($arrayfields['cpl.new_solde']['checked'])) {
-	print_liste_field_titre($arrayfields['cpl.new_solde']['label'], $_SERVER["PHP_SELF"], 'new_solde', '', '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['cpl.new_solde']['label'], $_SERVER["PHP_SELF"], 'new_solde', '', $param, '', $sortfield, $sortorder, 'right ');
 }
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
