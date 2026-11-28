@@ -3590,7 +3590,16 @@ function aiLoadToolsObjects($requested, array $tools, bool $alreadyLoaded): arra
  */
 function aiLoadToolsNames($requested, array $tools, bool $alreadyLoaded): array
 {
-	return aiLoadToolsAccepted($requested, array_column($tools, 'name'), aiLoadToolsMaxTools(), $alreadyLoaded);
+	$names = array_column($tools, 'name');
+	if (is_array($requested)) {
+		foreach ($requested as $index => $value) {
+			if (is_string($value)) {
+				$requested[$index] = aiFullToolName($value, $names);
+			}
+		}
+	}
+
+	return aiLoadToolsAccepted($requested, $names, aiLoadToolsMaxTools(), $alreadyLoaded);
 }
 
 /**
@@ -3905,6 +3914,41 @@ function aiValidToolNames(array $allTools, array $userTools, array $sentNames, b
 	}
 
 	return array_values(array_diff($names, array_diff(array_column($userTools, 'name'), $sentNames)));
+}
+
+/**
+ * Return the call of the model of the AI assistant with the full names of the tools it calls, itself or wrapped in an ask_for_confirmation
+ *
+ * @param	array<string,mixed>	$intent		Call of the model: tool and arguments
+ * @param	string[]			$toolNames	Names of the tools
+ * @return	array<string,mixed>
+ */
+function aiIntentWithFullToolNames(array $intent, array $toolNames): array
+{
+	if (is_string($intent['tool'] ?? null)) {
+		$intent['tool'] = aiFullToolName($intent['tool'], $toolNames);
+	}
+	if (is_array($intent['arguments']['original_intent'] ?? null) && is_string($intent['arguments']['original_intent']['tool'] ?? null)) {
+		$intent['arguments']['original_intent']['tool'] = aiFullToolName($intent['arguments']['original_intent']['tool'], $toolNames);
+	}
+
+	return $intent;
+}
+
+/**
+ * Return the name of a tool, with the api_ prefix a small model drops when it builds the name from the catalog (contacts_update)
+ *
+ * @param	string		$name		Name given by the model
+ * @param	string[]	$toolNames	Names of the tools
+ * @return	string
+ */
+function aiFullToolName(string $name, array $toolNames): string
+{
+	if ($name !== '' && !in_array($name, $toolNames, true) && in_array('api_'.$name, $toolNames, true)) {
+		return 'api_'.$name;
+	}
+
+	return $name;
 }
 
 /**

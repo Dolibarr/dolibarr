@@ -1322,6 +1322,9 @@ try {
 					$intentJSON['arguments'] = recursiveUnmaskValues($intentJSON['arguments'], $guard);
 				}
 
+				if (is_array($intentJSON) && isset($intentJSON['tool'])) {
+					$intentJSON = aiIntentWithFullToolNames($intentJSON, array_column($allToolsSchema, 'name'));
+				}
 				$alreadyLoaded = !empty($loadedObjects) || !empty($loadedTools);
 				$askedObjects = array();
 				$askedTools = array();

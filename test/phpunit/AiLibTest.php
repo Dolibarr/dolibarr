@@ -541,6 +541,7 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame(6, aiLoadToolsMaxTools());
 		$this->assertSame(array(), aiLoadToolsNames(array('api_contacts_create'), $tools, true), 'One load_tools per question');
 		$this->assertSame(array(), aiLoadToolsNames('api_contacts_create', $tools, false));
+		$this->assertSame(array('api_contacts_update'), aiLoadToolsNames(array('contacts_update'), $tools, false), 'A name built from the catalog without its api_ prefix');
 		$withoutContactCreate = array_values(array_filter($tools, static function (array $tool): bool {
 			return $tool['name'] !== 'api_contacts_create';
 		}));
@@ -791,5 +792,22 @@ class AiLibTest extends CommonClassTest
 		$this->assertNotContains('api_contacts_create', aiValidToolNames($allTools, $tools, $sent, true), 'Round 2: the wrapped tool not sent is refused, not confirmed with guessed arguments');
 		$this->assertSame(array('tool' => 'api_contacts_list'), aiCalledIntent(array('tool' => 'api_contacts_list')));
 		$this->assertSame(array('tool' => 'ask_for_confirmation', 'arguments' => array('original_intent' => 'x')), aiCalledIntent(array('tool' => 'ask_for_confirmation', 'arguments' => array('original_intent' => 'x'))));
+	}
+
+	/**
+	 * testAiIntentWithFullToolNames
+	 *
+	 * @return void
+	 */
+	public function testAiIntentWithFullToolNames()
+	{
+		$names = array('api_thirdparties_update', 'navigate_to_page', 'ask_for_confirmation');
+
+		$this->assertSame(array('tool' => 'api_thirdparties_update', 'arguments' => array()), aiIntentWithFullToolNames(array('tool' => 'thirdparties_update', 'arguments' => array()), $names));
+		$wrapped = aiIntentWithFullToolNames(array('tool' => 'ask_for_confirmation', 'arguments' => array('original_intent' => array('tool' => 'thirdparties_update'))), $names);
+		$this->assertSame('ask_for_confirmation', $wrapped['tool']);
+		$this->assertSame('api_thirdparties_update', $wrapped['arguments']['original_intent']['tool']);
+		$this->assertSame('navigate_to_page', aiFullToolName('navigate_to_page', array('navigate_to_page', 'api_navigate_to_page')), 'A known name is kept, even when an api_ tool of that name exists');
+		$this->assertSame('list_products', aiFullToolName('list_products', $names), 'No api_ name: kept, refused later');
 	}
 }
