@@ -58,6 +58,7 @@ if (preg_match('/mysql/i', $conf->db->type)) {
 if (!$base) {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 } else {
+	$row = array();
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -68,7 +69,13 @@ if (!$base) {
 		}
 	}
 
-	if ($base == 1) {	// mysql
+	if ($base == 1 && $table === '') {
+		$langs->load("errors");
+		print '<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Table")).'</div>';
+	} elseif ($base == 1 && empty($row)) {
+		$langs->load("errors");
+		print '<div class="error">'.$langs->trans("ErrorTableNotFound", dol_escape_htmltag($table)).'</div>';
+	} elseif ($base == 1) {	// mysql
 		$link = array();
 		$cons = explode(";", $row[14]);
 		if (!empty($cons)) {
