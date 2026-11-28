@@ -707,10 +707,7 @@ if ($action == 'create') {
 			$totalvalue = $totalvaluesell = 0;
 
 			//For MultiCompany PMP per entity
-			$separatedPMP = false;
-			if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
-				$separatedPMP = true;
-			}
+			$separatedPMP = Product::isPMPPerEntity();
 
 			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.price, p.price_ttc, p.entity,";
 			$sql .= "p.tosell, p.tobuy,";
@@ -721,25 +718,15 @@ if ($action == 'create') {
 			$sql .= "p.accountancy_code_buy_intra,";
 			$sql .= "p.accountancy_code_buy_export,";
 			$sql .= 'p.barcode,';
-			if ($separatedPMP) {
-				// COALESCE: a product may have no row yet in llx_product_perentity (rows are created
-				// on the first stock movement), so fall back on the global p.pmp like Product::fetch()
-				// does, instead of showing an empty AWP.
-				$sql .= " COALESCE(pa.pmp, p.pmp) as ppmp,";
-			} else {
-				$sql .= " p.pmp as ppmp,";
-			}
+			// Global p.pmp when a product has no row yet in llx_product_perentity, like Product::fetch()
+			$sql .= " ".Product::getSQLPMP('p', 'pa')." as ppmp,";
 			$sql .= " ps.reel as value";
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$sql .= ",fk_unit";
 			}
 			// svalue is the sort key of the "estimated value" column, so it must use the same AWP
 			// as ppmp above (the displayed value is recomputed in PHP from ppmp).
-			if ($separatedPMP) {
-				$sql .= ", (ps.reel * COALESCE(pa.pmp, p.pmp)) as svalue";
-			} else {
-				$sql .= ", (ps.reel * p.pmp) as svalue";
-			}
+			$sql .= ", (ps.reel * ".Product::getSQLPMP('p', 'pa').") as svalue";
 			// Add fields from hooks
 			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -749,11 +736,9 @@ if ($action == 'create') {
 			$sql .= $hookmanager->resPrint;
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 
-			if ($separatedPMP) {
-				// LEFT JOIN (not an inner join): a product with no llx_product_perentity row must
-				// still be listed in the warehouse content, falling back on the global p.pmp.
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = ".((int) $conf->entity);
-			}
+			// LEFT JOIN (not an inner join): a product with no llx_product_perentity row must
+			// still be listed in the warehouse content, falling back on the global p.pmp.
+			$sql .= Product::getSQLJoinPMP('p', 'pa', (int) $conf->entity);
 			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0

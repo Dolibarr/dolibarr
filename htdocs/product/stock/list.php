@@ -37,6 +37,7 @@ require '../../main.inc.php';
  * @var User $user
  */
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -249,16 +250,9 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 
 //For Multicompany PMP per entity
-$separatedPMP = false;
-if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
-	$separatedPMP = true;
-	// COALESCE: a product may have no row yet in llx_product_perentity (rows are created on the
-	// first stock movement), so fall back on the global p.pmp like Product::fetch() does, instead
-	// of valuing such a product at 0.
-	$sql .= ", SUM(COALESCE(pa.pmp, p.pmp) * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
-} else {
-	$sql .= ", SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
-}
+// Global p.pmp when a product has no row yet in llx_product_perentity, like Product::fetch()
+$separatedPMP = Product::isPMPPerEntity();
+$sql .= ", SUM(".Product::getSQLPMP('p', 'pa')." * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue, SUM(ps.reel) as stockqty";
 
 
 // Add fields from hooks

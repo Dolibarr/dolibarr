@@ -2069,6 +2069,50 @@ class Product extends CommonObject
 	}
 
 	/**
+	 * Return if the weighted average price (PMP) is managed per entity (MultiCompany with shared products and PMP per entity).
+	 *
+	 * @return	bool		True if the PMP is read from llx_product_perentity.pmp
+	 */
+	public static function isPMPPerEntity(): bool
+	{
+		return (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED'));
+	}
+
+	/**
+	 * Return the SQL expression of the PMP, to use with the join returned by getSQLJoinPMP().
+	 * With PMP per entity, the global PMP is used when the product has no row yet for the entity.
+	 *
+	 * @param	string	$aliasproduct		Alias of table llx_product
+	 * @param	string	$aliasperentity		Alias of table llx_product_perentity
+	 * @return	string						'COALESCE(pa.pmp, p.pmp)' or 'p.pmp'
+	 */
+	public static function getSQLPMP(string $aliasproduct = 'p', string $aliasperentity = 'pa'): string
+	{
+		if (self::isPMPPerEntity()) {
+			return 'COALESCE('.$aliasperentity.'.pmp, '.$aliasproduct.'.pmp)';
+		}
+		return $aliasproduct.'.pmp';
+	}
+
+	/**
+	 * Return the LEFT JOIN on llx_product_perentity needed by getSQLPMP(), or '' without PMP per entity.
+	 *
+	 * @param	string	$aliasproduct		Alias of table llx_product
+	 * @param	string	$aliasperentity		Alias of table llx_product_perentity
+	 * @param	int		$entity				Entity of the PMP (0 = current entity)
+	 * @return	string						SQL join, starting with a space, or ''
+	 */
+	public static function getSQLJoinPMP(string $aliasproduct = 'p', string $aliasperentity = 'pa', int $entity = 0): string
+	{
+		global $conf, $db;
+
+		if (!self::isPMPPerEntity()) {
+			return '';
+		}
+		return " LEFT JOIN ".$db->prefix()."product_perentity as ".$aliasperentity." ON ".$aliasperentity.".fk_product = ".$aliasproduct.".rowid AND ".$aliasperentity.".entity = ".((int) ($entity > 0 ? $entity : $conf->entity));
+	}
+
+	/**
 	 * Get the label for sell by or eat by mandatory flag of the current product
 	 *
 	 * @return 	string		Sell or eat by mandatory label
