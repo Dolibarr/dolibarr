@@ -264,12 +264,9 @@ class ExpenseReports extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
-		// Same rule as expensereport/card.php: a report can be created only for the user or a user of his hierarchy
 		$fk_user_author = (int) ($request_data['fk_user_author'] ?? 0);
-		if ($fk_user_author > 0 && $fk_user_author != DolibarrApiAccess::$user->id
-			&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !DolibarrApiAccess::$user->hasRight('expensereport', 'writeall_advance'))
-			&& !in_array($fk_user_author, DolibarrApiAccess::$user->getAllChildIds(1))) {
-			throw new RestException(403, 'User '.$fk_user_author.' is not in the hierarchy of login '.DolibarrApiAccess::$user->login);
+		if ($fk_user_author > 0) {
+			$this->checkUserAuthorAllowed($fk_user_author);
 		}
 		// Exclude properties that must be set by the workflow methods or computed from the lines
 		foreach (ExpenseReports::$FIELDSNOTUPDATABLE as $field) {
@@ -546,13 +543,15 @@ class ExpenseReports extends DolibarrApi
 	 * @param	array	$request_data		Expense report data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
+	 * @param	int		$notrigger			1=Does not execute triggers, 0=Execute triggers
 	 * @return	Object						Updated object
 	 *
-	 * @throws	RestException	401		Not allowed
+	 * @throws	RestException	400		User given in fk_user_author not found
+	 * @throws	RestException	403		Not allowed
 	 * @throws  RestException	404		Expense report not found
 	 * @throws	RestException	500		System error
 	 */
-	public function put($id, $request_data = null)
+	public function put($id, $request_data = null, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
 			throw new RestException(403);
@@ -573,12 +572,22 @@ class ExpenseReports extends DolibarrApi
 		if (!in_array($this->expensereport->status, array(ExpenseReport::STATUS_DRAFT, ExpenseReport::STATUS_REFUSED))) {
 			throw new RestException(403, 'Only a draft or refused expense report can be modified');
 		}
+		// The user the expense report is for can be changed only to a user allowed by the same rule as post()
+		$userofexpensereport = null;
+		$fk_user_author = (int) ($request_data['fk_user_author'] ?? 0);
+		if ($fk_user_author > 0 && $fk_user_author != $this->expensereport->fk_user_author) {
+			$userofexpensereport = new User($this->db);
+			if ($userofexpensereport->fetch($fk_user_author) <= 0) {
+				throw new RestException(400, 'User '.$fk_user_author.' not found');
+			}
+			$this->checkUserAuthorAllowed($fk_user_author);
+		}
 		// Exclude properties that must be set by the workflow methods or computed from the lines
 		foreach (ExpenseReports::$FIELDSNOTUPDATABLE as $field) {
 			unset($request_data[$field]);
 		}
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') {
+			if ($field == 'id' || $field == 'notrigger') {
 				continue;
 			}
 			if ($field === 'caller') {
@@ -594,15 +603,32 @@ class ExpenseReports extends DolibarrApi
 				continue;
 			}
 
-			if (!in_array($field, array('fk_statut', 'fk_user_approve'))) {	// Exclude properties that must be set by other workflow methods
-				$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
-			}
+			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
 		}
 
-		if ($this->expensereport->update(DolibarrApiAccess::$user) > 0) {
+		if ($this->expensereport->update(DolibarrApiAccess::$user, $notrigger, $userofexpensereport) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->expensereport->errorsToString());
+		}
+	}
+
+	/**
+	 * Check the API user can have an expense report for a given user.
+	 * Same rule as expensereport/card.php: the user himself or a user of his hierarchy,
+	 * or anybody with the advanced permission to write the expense reports of everybody.
+	 *
+	 * @param	int		$fk_user_author		Id of the user the expense report is for
+	 * @return	void
+	 *
+	 * @throws	RestException	403		User not allowed
+	 */
+	private function checkUserAuthorAllowed($fk_user_author)
+	{
+		if ($fk_user_author != DolibarrApiAccess::$user->id
+			&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !DolibarrApiAccess::$user->hasRight('expensereport', 'writeall_advance'))
+			&& !in_array($fk_user_author, DolibarrApiAccess::$user->getAllChildIds(1))) {
+			throw new RestException(403, 'User '.$fk_user_author.' is not in the hierarchy of login '.DolibarrApiAccess::$user->login);
 		}
 	}
 
