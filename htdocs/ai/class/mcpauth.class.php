@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026	Morgan Demoulin			<morgan.demoulin@gmail.com>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,6 +55,11 @@ class McpAuth
 	 * Credential mode: the shared AI_MCP_API_KEY was presented.
 	 */
 	const MODE_SHARED = 'shared';
+
+	/**
+	 * Credential mode: an OAuth access token was presented.
+	 */
+	const MODE_OAUTH = 'oauth';
 
 	/**
 	 * @var DoliDB Database handler
@@ -175,6 +181,25 @@ class McpAuth
 	}
 
 	/**
+	 * Tell whether an Authorization header reached PHP (probe of the admin page).
+	 *
+	 * @param 	array<string,mixed>|null 	$server 	Server variables, defaults to $_SERVER
+	 * @return 	bool 									True when a non-empty Authorization header is visible
+	 */
+	public static function seesAuthorizationHeader($server = null)
+	{
+		if ($server === null) {
+			$server = $_SERVER;
+		}
+		if (!empty($server['HTTP_AUTHORIZATION']) || !empty($server['REDIRECT_HTTP_AUTHORIZATION'])) {
+			return true;
+		}
+		// Same reader as getCredential(), whatever the SAPI
+		$headers = array_change_key_case(dolGetRequestHeaders(), CASE_LOWER);
+		return !empty($headers['authorization']);
+	}
+
+	/**
 	 * Authenticate the caller.
 	 *
 	 * On success, $this->userid holds the user to run the request as (0 when
@@ -209,6 +234,29 @@ class McpAuth
 			return -1;
 		}
 
+		// An access token of our own authorization server names the user who consented.
+		require_once DOL_DOCUMENT_ROOT.'/ai/class/mcpoauth.class.php';
+		$mode = self::MODE_USER;
+		$userid = 0;
+		if (McpOauth::looksLikeAccessToken($credential)) {
+			$oauth = new McpOauth($this->db, '', DOL_MAIN_URL_ROOT.'/ai/server/mcp_server.php');
+			$tokenrow = $oauth->validateAccessToken($credential);
+			if ($tokenrow === null) {
+				dol_syslog('[MCP Server] OAuth access token rejected (unknown, expired or revoked)', LOG_NOTICE);
+				$this->error = 'Invalid or expired access token';
+				return -1;
+			}
+
+			// A token issued for another audience must not open this one (RFC 8707)
+			if (!empty($tokenrow->resource) && !$oauth->isOwnResource($tokenrow->resource)) {
+				dol_syslog('[MCP Server] OAuth access token rejected: issued for another resource ('.$tokenrow->resource.')', LOG_WARNING);
+				$this->error = 'Access token was not issued for this server';
+				return -1;
+			}
+			$userid = (int) $tokenrow->fk_user;
+			$mode = self::MODE_OAUTH;
+		}
+
 		// Shared server key, kept for setups configured before per-user keys
 		// were accepted. Compared first because it is a single cheap test.
 		$sharedkey = getDolGlobalString('AI_MCP_API_KEY');
@@ -217,7 +265,9 @@ class McpAuth
 			return 1;
 		}
 
-		$userid = $this->fetchUserIdFromApiKey($credential);
+		if ($mode === self::MODE_USER) {
+			$userid = $this->fetchUserIdFromApiKey($credential);
+		}
 		if ($userid > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
@@ -229,6 +279,12 @@ class McpAuth
 			}
 			$tmpuser->loadRights();
 
+			if (empty($tmpuser->statut)) {
+				dol_syslog('[MCP Server] Authentication KO: user '.$tmpuser->login.' is disabled', LOG_NOTICE);
+				$this->error = 'Unauthorized';
+				return -1;
+			}
+
 			// Same gate as every other AI entry point (assistant/index.php,
 			// parse_intent.php, execute_tool.php...). The right is not granted
 			// by default, so enabling the MCP server does not silently turn
@@ -237,13 +293,13 @@ class McpAuth
 			if (!$tmpuser->hasRight('ai', 'assistant', 'use')) {
 				dol_syslog('[MCP Server] Authentication KO: user '.$tmpuser->login.' has no ai/assistant/use permission', LOG_NOTICE);
 				$this->httpcode = 403;
-				$this->error = 'The user owning this API key is not allowed to use the AI assistant';
+				$this->error = 'This Dolibarr user is not allowed to use the AI assistant';
 				return -1;
 			}
 
 			$this->userid = $userid;
 			$this->user = $tmpuser;
-			$this->mode = self::MODE_USER;
+			$this->mode = $mode;
 			return 1;
 		}
 
@@ -268,10 +324,17 @@ class McpAuth
 	 */
 	public function getWwwAuthenticateHeader($resourcemetadataurl = '')
 	{
-		$challenge = 'Bearer realm="Dolibarr MCP"';
+		// Scheme, a space, then parameters separated by commas (RFC 7235 section 4.1)
+		$parameters = array();
 		if ($resourcemetadataurl !== '') {
-			$challenge .= ', resource_metadata="'.$resourcemetadataurl.'"';
+			$parameters[] = 'resource_metadata="'.$resourcemetadataurl.'"';
 		}
+		$parameters[] = 'scope="dolibarr"';
+		if ($this->httpcode == 401 && $this->error !== '') {
+			$parameters[] = 'error="invalid_token"';
+		}
+
+		$challenge = 'Bearer '.implode(', ', $parameters);
 
 		return $challenge;
 	}

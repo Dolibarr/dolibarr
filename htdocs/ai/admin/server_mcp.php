@@ -5,6 +5,7 @@
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2026		Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,6 +187,22 @@ if ($action == 'update_external') {
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home");
 	exit;
+}
+
+$probeauthorization = '';
+$probeauthorizationdetail = '';
+if ($action == 'probe_authorization') {
+	// Ask the MCP endpoint itself (local addresses allowed: it is our own URL)
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+	$probeurl = dol_buildpath('/ai/server/mcp_server.php', 3);
+	$probe = getURLContent($probeurl, 'POST', '{}', 1, array('Content-Type: application/json', 'Accept: application/json, text/event-stream', 'Authorization: Bearer dolibarr-probe', 'X-Dolibarr-Probe: 1'), array('http', 'https'), 2, -1);
+	$probejson = (empty($probe['curl_error_no']) && !empty($probe['content'])) ? json_decode($probe['content'], true) : null;
+	if (is_array($probejson) && isset($probejson['authorization_seen'])) {
+		$probeauthorization = $probejson['authorization_seen'] ? 'seen' : 'lost';
+	} else {
+		$probeauthorization = 'unreachable';
+		$probeauthorizationdetail = !empty($probe['curl_error_msg']) ? $probe['curl_error_msg'] : 'HTTP '.(isset($probe['http_code']) ? $probe['http_code'] : '?');
+	}
 }
 
 // Generate New API Key
@@ -477,6 +494,35 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print '<td></td>';
 	print '</tr>';
 
+	// Does the Authorization header reach PHP? Apache with CGI/FastCGI drops it without CGIPassAuth.
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans('AiMcpProbeAuth'), $langs->trans('AiMcpProbeAuthHelp')).'</td>';
+	print '<td>';
+	print '<a class="button small smallpaddingimp" href="'.dolPrintHTMLForAttributeUrl($_SERVER["PHP_SELF"].'?action=probe_authorization&token='.newToken()).'">'.$langs->trans("AiMcpProbeAuthRun").'</a>';
+	if ($probeauthorization == 'seen') {
+		print ' <span class="badge badge-status4 badge-status">'.$langs->trans("AiMcpProbeAuthOk").'</span>';
+	} elseif ($probeauthorization == 'lost') {
+		print '<div class="warning" style="margin-top: 6px;">'.$langs->trans("AiMcpProbeAuthLost").'<br>';
+		print '<code>CGIPassAuth On</code> &nbsp;<span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthApache").'</span><br>';
+		print '<code>SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1</code> &nbsp;<span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthApacheAlt").'</span><br>';
+		print '<code>fastcgi_param HTTP_AUTHORIZATION $http_authorization;</code> &nbsp;<span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthNginx").'</span>';
+		print '</div>';
+	} elseif ($probeauthorization == 'unreachable') {
+		print ' <span class="opacitymedium">'.$langs->trans("AiMcpProbeAuthUnreachable", dolPrintLabel($probeauthorizationdetail)).'</span>';
+	}
+	print '</td>';
+	print '<td></td>';
+	print '</tr>';
+
+	// Self-registration of OAuth connectors, off by default
+	print '<tr class="oddeven">';
+	print '<td>'.$form->textwithpicto($langs->trans('AiMcpOauthDynamicRegistration'), $langs->trans('AiMcpOauthDynamicRegistrationHelp')).'</td>';
+	print '<td>';
+	print ajax_constantonoff('AI_MCP_OAUTH_DYNAMIC_REGISTRATION', array(), null, 0, 0, 1);
+	print '</td>';
+	print '<td></td>';
+	print '</tr>';
+
 	print '</table>';
 	print '</div>';
 
@@ -487,7 +533,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 
 	print '<br>';
 
-	// Configuration Examples
+	// How to connect a client
 	print '<br>';
 	print '<div style="background:#fcfcfc; border:1px solid #eee; padding:15px; border-radius:5px;">';
 
@@ -499,6 +545,25 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	print ' <label for="AI_MCP_BEHIND_BASIC_AUTH">'.$form->textwithpicto($langs->trans("MCPServerBehindBasicAuth"), $langs->trans("MCPServerBehindBasicAuthHelp", $basicauthplaceholder)).'</label>';
 	print '</form>';
 	print '<br>';
+
+	print '<strong>'.$langs->trans("AiMcpConnectTitle").'</strong>';
+
+	print '<p>'.$langs->trans("AiMcpConnectConnector").'</p>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto;">';
+	print dolPrintLabel($endpoint);
+	print '</pre>';
+
+	print '<p>'.$langs->trans("AiMcpConnectLocalClient").'</p>';
+	print '<pre style="background:#333; color:#fff; padding:10px; border-radius:4px; overflow:auto;">';
+	print dolPrintText('{
+  "mcpServers": {
+    "'.$mcpservername.'": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "'.$endpoint.'"]
+    }
+  }
+}');
+	print '</pre>';
 
 	// Command line to declare the MCP server into Mistral Vibe, the key being read from its .env file
 	print '<strong>' . $langs->trans("MistralVibeConfig") . '</strong><br>';
@@ -546,6 +611,7 @@ if (getDolGlobalString('AI_MCP_ENABLED')) {
 	  }
 	}');
 	print '</pre>';
+
 	print '</div>';
 }
 

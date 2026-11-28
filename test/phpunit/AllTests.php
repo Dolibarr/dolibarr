@@ -183,8 +183,12 @@ class AllTests
 		$suite->addTestSuite('ApiEndpointDiscoveryEquivalenceTest');
 		require_once dirname(__FILE__).'/AiLibTest.php';
 		$suite->addTestSuite('AiLibTest');
+		require_once dirname(__FILE__).'/AiMcpAuthTest.php';
+		$suite->addTestSuite('AiMcpAuthTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeTest');
+		require_once dirname(__FILE__).'/AiMcpOauthTest.php';
+		$suite->addTestSuite('AiMcpOauthTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeDocumentsTest.php';
 		$suite->addTestSuite('AiMcpApiBridgeDocumentsTest');
 		require_once dirname(__FILE__).'/AiMcpApiBridgeProjectsTest.php';

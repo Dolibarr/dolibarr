@@ -42,6 +42,10 @@ if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', 1);
 }
 define('NOLOGIN', 1);
+// No session: clients send a token or an API key, never a cookie
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 require '../../main.inc.php';
 /**
@@ -75,6 +79,29 @@ if (!isModEnabled('ai') || !getDolGlobalString('AI_MCP_ENABLED')) {
 header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
 
+// Discovery asked under this endpoint's own path, as some clients (Codex) derive it from the URL
+$mcp_wellknown = empty($_SERVER['PATH_INFO']) ? '' : (string) $_SERVER['PATH_INFO'];
+if (in_array($mcp_wellknown, array('/.well-known/oauth-protected-resource', '/.well-known/oauth-authorization-server', '/.well-known/openid-configuration'), true)) {
+	require_once DOL_DOCUMENT_ROOT . '/ai/class/mcpoauth.class.php';
+
+	$mcpOauth = new McpOauth(
+		$db,
+		DOL_MAIN_URL_ROOT . '/ai/oauth.php',
+		DOL_MAIN_URL_ROOT . '/ai/server/mcp_server.php'
+	);
+
+	if ($mcp_wellknown === '/.well-known/oauth-protected-resource') {
+		// This document describes the resource, so it is served here
+		header('Cache-Control: no-store');
+		echo json_encode($mcpOauth->metadataProtectedResource());
+		exit;
+	}
+
+	// Redirected, not copied: the issuer must match the URL of the document (RFC 8414 section 3.3)
+	header('Location: ' . DOL_MAIN_URL_ROOT . '/ai/oauth.php' . $mcp_wellknown, true, 302);
+	exit;
+}
+
 // Request headers, used by the transport-header validation further down.
 $headers = dolGetRequestHeaders();
 $headers = array_change_key_case($headers, CASE_LOWER);
@@ -89,12 +116,22 @@ $logrequest .= "\n".file_get_contents('php://input');
 dol_syslog('[MCP Server] Request received:'."\n".$logrequest, LOG_DEBUG, 0, '_ai');
 */
 
+// Probe of the admin page: did the Authorization header reach PHP? Answers nothing else.
+if (!empty($headers['x-dolibarr-probe'])) {
+	header('Cache-Control: no-store');
+	echo json_encode(['probe' => 'authorization', 'authorization_seen' => McpAuth::seesAuthorizationHeader()]);
+	exit;
+}
+
 $mcpAuth = new McpAuth($db);
 
 if ($mcpAuth->authenticate() < 0) {
 	if ($mcpAuth->httpcode == 401) {
 		// RFC 6750 section 3: a rejected Bearer request must say what it wanted.
-		header('WWW-Authenticate: ' . $mcpAuth->getWwwAuthenticateHeader());
+		// RFC 9728 section 5.1: point at the protected resource metadata
+		header('WWW-Authenticate: ' . $mcpAuth->getWwwAuthenticateHeader(
+			DOL_MAIN_URL_ROOT . '/ai/oauth.php/.well-known/oauth-protected-resource'
+		));
 	}
 
 	http_response_code($mcpAuth->httpcode);
