@@ -766,6 +766,18 @@ ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN doc_date_hour datetime NUL
 -- VPGSQL8.2 UPDATE llx_accounting_bookkeeping SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
 -- VPGSQL8.2 UPDATE llx_accounting_bookkeeping_tmp SET doc_date_hour = doc_date + time '12:00:00' WHERE doc_date_hour IS NULL;
 
+-- Optional second approval for leave requests and expense reports
+ALTER TABLE llx_holiday ADD COLUMN fk_validator_secondary integer DEFAULT NULL;
+ALTER TABLE llx_holiday ADD COLUMN fk_user_approve_secondary integer DEFAULT NULL;
+ALTER TABLE llx_holiday ADD COLUMN date_approval_secondary datetime DEFAULT NULL;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_validator_secondary (fk_validator_secondary);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_approve_secondary (fk_user_approve_secondary);
+ALTER TABLE llx_expensereport ADD COLUMN fk_user_validator_secondary integer DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD COLUMN fk_user_approve_secondary integer DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD COLUMN date_approve_secondary datetime DEFAULT NULL;
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_validator_secondary (fk_user_validator_secondary);
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_approve_secondary (fk_user_approve_secondary);
+
 ALTER TABLE llx_workstation_workstation ADD COLUMN model_pdf varchar(255) AFTER import_key;
 ALTER TABLE llx_workstation_workstation ADD COLUMN last_main_doc varchar(255) AFTER model_pdf;
 
