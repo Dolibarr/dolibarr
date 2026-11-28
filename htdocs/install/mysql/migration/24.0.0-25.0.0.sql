@@ -773,3 +773,6 @@ ALTER TABLE llx_workstation_workstation ADD COLUMN last_main_doc varchar(255) AF
 --noqa:disable=PRS
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'AI_INTENT_PROMPT';
 --noqa:enable=PRS
+
+-- The workflow option on vendor proposals now closes them when the purchase order is placed
+UPDATE llx_const SET name = __ENCRYPT('WORKFLOW_SUPPLIER_ORDER_CLOSE_SUPPLIER_PROPOSAL')__ WHERE __DECRYPT('name')__ = 'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL';
