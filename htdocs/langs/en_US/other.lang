@@ -755,7 +755,6 @@ NetworkError=Failed to load
 AIError=AI Error
 AIPdfReport=PDF report
 AISessionExpiredReload=Your session has expired: please reload the page and sign in again
-AIPendingAnswerResumed=Answer being prepared...
 AIPendingAnswerLost=The answer to your last question could not be retrieved: please ask it again
 AIContextCounter=Statistics: %s exchange(s), %s message(s) =~ %s tokens
 AIContextLabel=Number of last messages resent:

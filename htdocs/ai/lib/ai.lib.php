@@ -1338,7 +1338,6 @@ function getAiChatAssistantConfig()
 		'EmptyAIResponse',
 		'BrowserNotSupported',
 		'AISessionExpiredReload',
-		'AIPendingAnswerResumed',
 		'AIPendingAnswerLost',
 
 		// Context pins

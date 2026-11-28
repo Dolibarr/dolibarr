@@ -3208,7 +3208,7 @@ export function initAiAssistant(container) {
         if (document.documentElement.dataset.aiPendingResumed === pending.key) return;
         document.documentElement.dataset.aiPendingResumed = pending.key;
         if (welcome) welcome.style.display = 'none';
-        appendMsg('system', '<span class="fa fa-circle-notch fa-spin"></span> ' + escapeHtml(t('AIPendingAnswerResumed')));
+        appendTyping();
         const waiting = chat.lastElementChild;
         let outcome = 'lost';
         let failure = t('AIPendingAnswerLost');
