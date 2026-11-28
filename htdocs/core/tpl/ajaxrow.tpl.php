@@ -64,7 +64,7 @@ $nboflines = (isset($object->lines) ? count($object->lines) : (isset($tasksarray
 $jsConf = [
 	'object' => [
 		'id' => $object->id,
-		'fkElement' => empty($object->fk_element) ? $fk_element : $object->fk_element,
+		'fkElement' => empty($object->fk_element) ? (isset($fk_element) ? $fk_element : '') : $object->fk_element,
 		'tableElementLine' =>  (empty($table_element_line) ? $object->table_element_line : $table_element_line),
 		'nbOfLines' => $nboflines,
 	],
