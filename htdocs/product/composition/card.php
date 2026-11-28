@@ -612,7 +612,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$totalsell = 0;
 		$total = 0;
-		$potential_kit_stock = 0;
+		$potential_kit_stock = null;
 		if (count($prods_arbo)) {
 			foreach ($prods_arbo as $value) {
 				$productstatic->fetch($value['id']);
@@ -681,19 +681,19 @@ if ($id > 0 || !empty($ref)) {
 					if (isModEnabled('stock')) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
-					// Check if the component has a required quantity and stock.
-					if ($value['nb'] > 0 && is_numeric($value['stock'])) {
-						// Calculate how many full kits this component can support.
-						$possible_with_this = floor($value['stock'] / $value['nb']);
+					// Only components with a managed stock can limit the number of kits (services without stock are ignored).
+					if ($productstatic->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+						if ($value['nb'] > 0 && is_numeric($value['stock'])) {
+							// Calculate how many full kits this component can support.
+							$possible_with_this = max(0, (int) floor($value['stock'] / $value['nb']));
+						} else {
+							// If a component has no required quantity or its stock is not available, no kit can be made.
+							$possible_with_this = 0;
+						}
 						// Keep the smallest value across all components (the limiting factor).
-						if ($potential_kit_stock === 0 || $possible_with_this < $potential_kit_stock) {
+						if ($potential_kit_stock === null || $possible_with_this < $potential_kit_stock) {
 							$potential_kit_stock = $possible_with_this;
 						}
-					} else {
-						// If a component has no required quantity or its stock is not available, no kit can be made.
-						$potential_kit_stock = 0;
-						// Optionally, break the loop early for efficiency.
-						break;
 					}
 					// Hook fields
 					$parameters = array();
@@ -808,29 +808,29 @@ if ($id > 0 || !empty($ref)) {
 
 			// Stock
 			if (isModEnabled('stock')) {
-				// Add a new row for the potential kits stock.
-				$colspan_counter = 4;
-				print '<tr class="total-row right">';
-				print '<td></td><td></td><td></td>';
-				print '<td colspan="' . ($colspan_counter) . '" class="titlefield">' . $langs->trans("PotentialKitsFromStock") . '</td>';
-					// Calculate the value to display. If $potential_kit_stock is null or 0, show 0.
-				$stock_to_display = $potential_kit_stock;
-				print '<td class="total-value">' . price($stock_to_display) . '</td>';
-				print '</tr>';
 				print '<td class="liste_total right">&nbsp;</td>';
 			}
 
-			print '<td></td>';
+			print '<td class="liste_total"></td>';
 
-			print '<td class="center">';
+			print '<td class="liste_total center">';
 			if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 				print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			}
 			print '</td>';
 
-			print '<td></td>';
+			print '<td class="liste_total"></td>';
 
 			print '</tr>'."\n";
+
+			// Potential kits from stock (only when at least one component has a managed stock)
+			if (isModEnabled('stock') && $potential_kit_stock !== null) {
+				print '<tr class="liste_total">';
+				print '<td class="liste_total right" colspan="7">'.$langs->trans("PotentialKitsFromStock").'</td>';
+				print '<td class="liste_total right">'.((int) $potential_kit_stock).'</td>';
+				print '<td class="liste_total" colspan="3"></td>';
+				print '</tr>'."\n";
+			}
 		} else {
 			$colspan = 10;
 			if (isModEnabled('stock')) {
