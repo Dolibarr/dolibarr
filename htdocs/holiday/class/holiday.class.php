@@ -238,7 +238,7 @@ class Holiday extends CommonObject
 	public function getNextNumRef($objsoc)
 	{
 		global $langs, $conf;
-		$langs->load("order");
+		$langs->load("orders");
 
 		if (!getDolGlobalString('HOLIDAY_ADDON')) {
 			$conf->global->HOLIDAY_ADDON = 'mod_holiday_madonna';

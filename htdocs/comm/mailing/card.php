@@ -245,7 +245,7 @@ if (empty($reshook)) {
 					// Loop on each email and send it
 					$iforemailloop = 0;
 
-					while ($iforemailloop < $num && $iforemailloop < $conf->global->MAILING_LIMIT_SENDBYWEB) {
+					while ($iforemailloop < $num && $iforemailloop < getDolGlobalInt('MAILING_LIMIT_SENDBYWEB')) {
 						// Here code is common with same loop ino mailing-send.php
 						$res = 1;
 						$now = dol_now();
@@ -432,8 +432,8 @@ if (empty($reshook)) {
 							}
 
 							if (getDolGlobalString('MAILING_DELAY')) {
-								dol_syslog("Wait a delay of MAILING_DELAY=".((float) $conf->global->MAILING_DELAY));
-								usleep((int) ((float) $conf->global->MAILING_DELAY * 1000000));
+								dol_syslog("Wait a delay of MAILING_DELAY=".(getDolGlobalFloat('MAILING_DELAY')));
+								usleep((int) (getDolGlobalFloat('MAILING_DELAY') * 1000000));
 							}
 
 							//test if CHECK READ change statut prospect contact
@@ -1032,10 +1032,10 @@ if ($action == 'create') {	// aaa
 					$action = '';
 				} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < 0) {
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL') && $sendingmode == 'mail') {
-						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+						setEventMessages($langs->transnoentitiesnoconv(getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL')), null, 'warnings');
 					}
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_NOPHPMAIL') && $sendingmode != 'mail') {
-						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
+						setEventMessages($langs->transnoentitiesnoconv(getDolGlobalString('MAILING_LIMIT_WARNING_NOPHPMAIL')), null, 'warnings');
 					}
 
 					// The feature is forbidden from GUI, we show just message to use from command line.
@@ -1047,10 +1047,10 @@ if ($action == 'create') {	// aaa
 					$action = '';
 				} else {
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL') && $sendingmode == 'mail') {
-						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
+						setEventMessages($langs->transnoentitiesnoconv(getDolGlobalString('MAILING_LIMIT_WARNING_PHPMAIL')), null, 'warnings');
 					}
 					if (getDolGlobalString('MAILING_LIMIT_WARNING_NOPHPMAIL') && $sendingmode != 'mail') {
-						setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
+						setEventMessages($langs->transnoentitiesnoconv(getDolGlobalString('MAILING_LIMIT_WARNING_NOPHPMAIL')), null, 'warnings');
 					}
 
 					$text = '';
@@ -1062,7 +1062,7 @@ if ($action == 'create') {	// aaa
 					$text .= $langs->trans('ConfirmSendingEmailing').'<br>';
 					$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 
-					if (!isset($conf->global->MAILING_LIMIT_SENDBYCLI) || getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') >= 0) {
+					if (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') >= 0) {
 						$text .= '<br><br>';
 						$text .= '<u>'.$langs->trans("AdvancedAlternative").':</u> '.$langs->trans("MailingNeedCommand");
 						$text .= '<br><textarea class="quatrevingtpercent" rows="'.ROWS_2.'" wrap="soft" disabled>php ./scripts/emailings/mailing-send.php '.$object->id.' '.$user->login.'</textarea>';
@@ -1289,7 +1289,7 @@ if ($action == 'create') {	// aaa
 
 				if (($object->status == 0 || $object->status == 1 || $object->status == 2) && $user->hasRight('mailing', 'creer')) {
 					if (isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_MAILING') && $object->messtype != 'sms') {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Edit").'</a>';
+						print dolGetButtonAction($langs->trans("Edit"), '', 'edit', $_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id);
 					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edittxt&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithTextEditor").'</a>';
 					}
@@ -1343,7 +1343,7 @@ if ($action == 'create') {	// aaa
 
 				if (($object->status <= 1 && $user->hasRight('mailing', 'creer')) || $user->hasRight('mailing', 'supprimer')) {
 					if ($object->status > 0 && (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('mailing', 'mailing_advance', 'delete'))) {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Delete").'</a>';
+						print dolGetButtonAction('', $langs->trans("Delete"), 'delete', '', '', 0);
 					} else {
 						print dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', $_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.(!empty($urlfrom) ? '&urlfrom='.$urlfrom : ''), '', true, array('attr' => array('class' => 'reposition')))."\n";
 					}

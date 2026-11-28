@@ -356,7 +356,9 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Update a line of a draft intervention with the create permission";
 
-		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
+		$line_id = $tmparray[1];
 		$api_key = $this->createRestrictedUser($test, array(array('ficheinter', 'lire'), array('ficheinter', 'creer'), array('societe', 'client')));
 
 		$data = array(
@@ -381,7 +383,9 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Update a line of an intervention with the read permission only";
 
-		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
+		$line_id = $tmparray[1];
 		// The user can see all third parties, so it has access to the intervention and only the permission can refuse it
 		$api_key = $this->createRestrictedUser($test, array(array('ficheinter', 'lire'), array('societe', 'client')));
 
@@ -402,7 +406,9 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Update a line of a validated intervention";
 
-		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
+		$line_id = $tmparray[1];
 		$this->validateIntervention($test, $intervention_id);
 
 		$data = array("description" => "Line updated after validation", "duration" => 7200);
@@ -420,7 +426,9 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Update a line of a validated intervention the user has no access to";
 
-		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
+		$line_id = $tmparray[1];
 		$this->validateIntervention($test, $intervention_id);
 		// The user cannot see all third parties and is not a representative of the third party of the intervention
 		$api_key = $this->createRestrictedUser($test, array(array('ficheinter', 'lire'), array('ficheinter', 'creer')));
@@ -444,7 +452,9 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Delete a line of a draft intervention";
 
-		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
+		$line_id = $tmparray[1];
 		$result = $this->getUrl('interventions/'.$intervention_id.'/lines', $test, 'POST', $this->lineData(array("description" => "Line to keep")));
 		$other_line_id = (int) $result['content'];
 		$this->assertGreaterThan(0, $other_line_id, "$test Id of the second line is not > 0");
@@ -470,7 +480,9 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Delete a line of a validated intervention";
 
-		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
+		$line_id = $tmparray[1];
 		$this->validateIntervention($test, $intervention_id);
 
 		$this->getUrl('interventions/'.$intervention_id.'/lines/'.$line_id, $test, 'DELETE', null, 403);
@@ -487,8 +499,11 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Delete a line through another intervention";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
-		list($other_intervention_id, $other_line_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
+		$tmparray = $this->createInterventionWithLine($test);
+		$other_intervention_id = $tmparray[0];
+		$other_line_id = $tmparray[1];
 
 		$this->getUrl('interventions/'.$intervention_id.'/lines/'.$other_line_id, $test, 'DELETE', null, 403);
 
@@ -504,7 +519,9 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Delete a line that does not exist";
 
-		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
+		$line_id = $tmparray[1];
 
 		$this->getUrl('interventions/'.$intervention_id.'/lines/999999999', $test, 'DELETE', null, 404);
 
@@ -520,7 +537,9 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Delete a line of a validated intervention the user has no access to";
 
-		list($intervention_id, $line_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
+		$line_id = $tmparray[1];
 		$this->validateIntervention($test, $intervention_id);
 		// The user cannot see all third parties and is not a representative of the third party of the intervention
 		$api_key = $this->createRestrictedUser($test, array(array('ficheinter', 'lire'), array('ficheinter', 'creer')));
@@ -619,7 +638,8 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Update an intervention";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
 
 		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'PUT', array("note_private" => "Private note updated via the REST API"));
 		$this->assertEquals($intervention_id, $result['content']['id'] ?? null, "$test Put must return the intervention");
@@ -638,7 +658,8 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Update an intervention with an empty body";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
 		$this->getUrl('interventions/'.$intervention_id, $test, 'PUT', array("note_private" => "Private note before the empty update"));
 		$before = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
 
@@ -697,7 +718,8 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Validate then close an intervention";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
 
 		$result = $this->getUrl('interventions/'.$intervention_id.'/validate', $test, 'POST', array("notrigger" => 0));
 		$this->assertEquals(Fichinter::STATUS_VALIDATED, $result['content']['status'] ?? null, "$test Validate must return the validated intervention");
@@ -720,7 +742,8 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Validate an intervention already validated";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
 		$this->validateIntervention($test, $intervention_id);
 
 		$this->assertPostNotModified('interventions/'.$intervention_id.'/validate', $test, array("notrigger" => 0));
@@ -738,7 +761,8 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Close a draft intervention";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
 
 		$result = $this->getUrl('interventions/'.$intervention_id.'/close', $test, 'POST', array("notrigger" => 0), 403);
 		$this->assertStringContainsString('draft status', $result['content']['error']['message'] ?? '', "$test The status must be the reason of the refusal");
@@ -756,7 +780,8 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Close an intervention already closed";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
 		$this->validateIntervention($test, $intervention_id);
 		$this->closeIntervention($test, $intervention_id);
 
@@ -775,7 +800,8 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Validate a closed intervention";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
 		$this->validateIntervention($test, $intervention_id);
 		$this->closeIntervention($test, $intervention_id);
 		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
@@ -929,7 +955,8 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Set a validated intervention back to draft";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
 		$this->validateIntervention($test, $intervention_id);
 
 		$result = $this->getUrl('interventions/'.$intervention_id.'/settodraft', $test, 'POST', array());
@@ -948,7 +975,8 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Set a draft intervention to draft";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
 
 		$this->assertPostNotModified('interventions/'.$intervention_id.'/settodraft', $test, array());
 
@@ -965,7 +993,8 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 	{
 		$test = "Set a closed intervention to draft";
 
-		list($intervention_id) = $this->createInterventionWithLine($test);
+		$tmparray = $this->createInterventionWithLine($test);
+		$intervention_id = $tmparray[0];
 		$this->validateIntervention($test, $intervention_id);
 		$this->closeIntervention($test, $intervention_id);
 
@@ -974,5 +1003,64 @@ class RestAPIInterventionTest extends AbstractRestAPITest
 
 		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
 		$this->assertEquals(Fichinter::STATUS_CLOSED, $result['content']['status'] ?? null, "$test Intervention must stay closed");
+	}
+
+	/**
+	 * testRestInterventionPostWithoutProject
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionPostWithoutProject()
+	{
+		$test = "Create an intervention without project nor description";
+
+		$result = $this->getUrl('interventions', $test, 'POST', array("socid" => 1));
+		$intervention_id = (int) $result['content'];
+		$this->assertGreaterThan(0, $intervention_id, "$test Id of intervention is not > 0");
+		array_unshift($this->objectstodelete, 'interventions/'.$intervention_id);
+
+		$result = $this->getUrl('interventions/'.$intervention_id, $test, 'GET');
+		$this->assertEquals($intervention_id, $result['content']['id'] ?? null, "$test The intervention must be found");
+		$this->assertEmpty($result['content']['fk_project'] ?? null, "$test The intervention must have no project");
+	}
+
+	/**
+	 * testRestInterventionPostWithoutSocid
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionPostWithoutSocid()
+	{
+		$test = "Create an intervention without third party";
+
+		$result = $this->getUrl('interventions', $test, 'POST', array("description" => "Intervention without third party"), 400);
+		$this->assertStringContainsString('socid', $result['content']['error']['message'] ?? '', "$test The missing third party must be the reason of the refusal");
+	}
+
+	/**
+	 * testRestInterventionPostExtrafieldHtml
+	 *
+	 * @return void
+	 */
+	public function testRestInterventionPostExtrafieldHtml()
+	{
+		$test = "Create an intervention with an html extrafield";
+
+		$attrname = 'apitest'.mt_rand(0, 99999999);
+		$extrafield = array(
+			'label' => $attrname, 'type' => 'html', 'pos' => 100, 'size' => '', 'list' => '1', 'default' => '', 'param' => '', 'perms' => '', 'help' => '',
+			'computed' => '', 'langfile' => '', 'unique' => 0, 'required' => 0, 'alwayseditable' => 1, 'totalizable' => 0, 'printable' => 0, 'showintooltip' => 0,
+		);
+		$this->getUrl('setup/extrafields/fichinter/'.$attrname, "$test (create extrafield)", 'POST', $extrafield);
+
+		try {
+			$intervention_id = $this->createIntervention($test, array("array_options" => array($attrname => '<strong>Bold</strong> text')));
+			array_unshift($this->objectstodelete, 'interventions/'.$intervention_id);
+
+			$result = $this->getUrl('interventions/'.$intervention_id, "$test (read after create)", 'GET');
+			$this->assertStringContainsString('<strong>Bold</strong>', $result['content']['array_options']['options_'.$attrname] ?? '', "$test Extrafield must keep its allowed markup");
+		} finally {
+			$this->getUrl('setup/extrafields/fichinter/'.$attrname, "$test (cleanup extrafield)", 'DELETE');
+		}
 	}
 }

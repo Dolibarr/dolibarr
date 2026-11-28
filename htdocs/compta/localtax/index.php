@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
+$langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "products", "trips", "admin"));
 
 $localTaxType = GETPOSTINT('localTaxType');
 
@@ -65,7 +65,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 			$date_start = dol_get_first_day($year_start, GETPOSTINT("month"), false);
 			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), false);
 		} else {
-			$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
+			$date_start = dol_get_first_day($year_start, getDolGlobalInt('SOCIETE_FISCAL_MONTH_START'), false);
 			$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
 		}
 	} else {

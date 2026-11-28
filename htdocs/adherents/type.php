@@ -130,6 +130,9 @@ foreach ($object->fields as $key => $val) {
 // Technical ID
 $arrayfields['d.rowid'] = array('label' => 'TechnicalID', 'checked' => -1, 'enabled' => 1, 'position' => 1);
 
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -354,7 +357,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
 		$selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 		//$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -370,57 +373,52 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 			$totalarray['nbfield']++;
 		}
-		// Technical ID
-		if (!empty($arrayfields['d.rowid']['checked'])) {
-			print '<th class="center">'.$langs->trans("ID").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.rowid']['checked'])) {
-			print '<th>'.$langs->trans("Ref").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.libelle']['checked'])) {
-			print '<th>'.$langs->trans($arrayfields['t.libelle']['label']).'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.morphy']['checked'])) {
-			print '<th class="center">'.$langs->trans("MembersNature").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.duration']['checked'])) {
-			print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.subscription']['checked'])) {
-			print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.caneditamount']['checked'])) {
-				print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
-				$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.minimumamount']['checked'])) {
-				print '<th class="center">'.$langs->trans("MinimumAmountShort").'</th>';
-				$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.amount']['checked'])) {
-			print '<th class="center">'.$langs->trans("Amount").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
-			print '<th class="center">'.$langs->trans("AmountFormulaDescription").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.vote']['checked'])) {
-			print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.tms']['checked'])) {
-			print '<th class="center">'.$langs->trans("DateModification").'</th>';
-			$totalarray['nbfield']++;
-		}
-		if (!empty($arrayfields['t.statut']['checked'])) {
-			print '<th class="center">'.$langs->trans("Status").'</th>';
+		// Fields title with position ordered by user setup
+		foreach ($arrayfields as $key => $val) {
+			if (empty($val['checked'])) {
+				continue;
+			}
+			switch ($key) {
+				case 'd.rowid':
+					print '<th class="center">'.$langs->trans("ID").'</th>';
+					break;
+				case 't.rowid':
+					print '<th>'.$langs->trans("Ref").'</th>';
+					break;
+				case 't.libelle':
+					print '<th>'.$langs->trans($val['label']).'</th>';
+					break;
+				case 't.morphy':
+					print '<th class="center">'.$langs->trans("MembersNature").'</th>';
+					break;
+				case 't.duration':
+					print '<th class="center">'.$langs->trans("MembershipDuration").'</th>';
+					break;
+				case 't.subscription':
+					print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
+					break;
+				case 't.caneditamount':
+					print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
+					break;
+				case 't.minimumamount':
+					print '<th class="right">'.$langs->trans("MinimumAmountShort").'</th>';
+					break;
+				case 't.amount':
+					print '<th class="right">'.$langs->trans("Amount").'</th>';
+					break;
+				case 't.amountformuladescription':
+					print '<th class="center">'.$langs->trans("AmountFormulaDescription").'</th>';
+					break;
+				case 't.vote':
+					print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
+					break;
+				case 't.tms':
+					print '<th class="center">'.$langs->trans("DateModification").'</th>';
+					break;
+				case 't.statut':
+					print '<th class="center">'.$langs->trans("Status").'</th>';
+					break;
+			}
 			$totalarray['nbfield']++;
 		}
 		if (!$conf->main_checkbox_left_column) {
@@ -471,75 +469,81 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
-				// Technical ID
-				if (!empty($arrayfields['d.rowid']['checked'])) {
-					print '<td class="center" data-key="id">'.dolPrintHTML($objp->rowid).'</td>';
-				}
-				if (!empty($arrayfields['t.rowid']['checked'])) {
-					print '<td class="nowraponall">';
-					print $membertype->getNomUrl(1);
-					//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
-					print '</td>';
-				}
-				if (!empty($arrayfields['t.libelle']['checked'])) {
-					print '<td><span class="spantitle">'.dolPrintHTML($objp->label).'</td>';
-				}
-				if (!empty($arrayfields['t.morphy']['checked'])) {
-					print '<td class="center">';
-					print $membertype->getmorphylib($objp->morphy, 1);
-					print '</td>';
-				}
-				if (!empty($arrayfields['t.duration']['checked'])) {
-					print '<td class="center nowrap">';
-					if ($objp->duration) {
-						$duration_value = intval($objp->duration);
-						if ($duration_value > 1) {
-							$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
-						} else {
-							$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
-						}
-						$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
-						print max(1, $duration_value).' '.$dur[$unit];
+				// Fields with position ordered by user setup
+				foreach ($arrayfields as $key => $val) {
+					if (empty($val['checked'])) {
+						continue;
 					}
-					print '</td>';
-				}
-				if (!empty($arrayfields['t.subscription']['checked'])) {
-					print '<td class="center">'.yn($objp->subscription).'</td>';
-				}
-				if (!empty($arrayfields['t.caneditamount']['checked'])) {
-					print '<td class="center">'.yn($objp->caneditamount).'</td>';
-				}
-				// Minimum amount
-				if (!empty($arrayfields['t.minimumamount']['checked'])) {
-					print '<td class="center">';
-					$minimumamount = ((is_null($objp->minimumamount) || $objp->minimumamount === '') ? '' : price($objp->minimumamount));
-					print $minimumamount;
-					print '</td>';
-				}
-				if (!empty($arrayfields['t.amount']['checked'])) {
-					print '<td class="center">';
-					$amount = (is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount));
-					$minimumamount = (is_null($objp->minimumamount) || $objp->minimumamount === '' ? '' : price($objp->minimumamount));
-					print '<span class="amount">'.$amount.'</span>';
-					if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
-						print img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup');
+					switch ($key) {
+						case 'd.rowid':
+							print '<td class="center" data-key="id">'.dolPrintHTML($objp->rowid).'</td>';
+							break;
+						case 't.rowid':
+							print '<td class="nowraponall">';
+							print $membertype->getNomUrl(1);
+							//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
+							print '</td>';
+							break;
+						case 't.libelle':
+							print '<td><span class="spantitle">'.dolPrintHTML($objp->label).'</td>';
+							break;
+						case 't.morphy':
+							print '<td class="center">';
+							print $membertype->getmorphylib($objp->morphy, 1);
+							print '</td>';
+							break;
+						case 't.duration':
+							print '<td class="center nowrap">';
+							if ($objp->duration) {
+								$duration_value = intval($objp->duration);
+								if ($duration_value > 1) {
+									$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
+								} else {
+									$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
+								}
+								$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
+								print max(1, $duration_value).' '.$dur[$unit];
+							}
+							print '</td>';
+							break;
+						case 't.subscription':
+							print '<td class="center">'.yn($objp->subscription).'</td>';
+							break;
+						case 't.caneditamount':
+							print '<td class="center">'.yn($objp->caneditamount).'</td>';
+							break;
+						case 't.minimumamount':
+							print '<td class="right">';
+							$minimumamount = ((is_null($objp->minimumamount) || $objp->minimumamount === '') ? '' : price($objp->minimumamount));
+							print '<span class="amount">'.$minimumamount.'</span>';
+							print '</td>';
+							break;
+						case 't.amount':
+							print '<td class="right">';
+							$amount = (is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount));
+							$minimumamount = (is_null($objp->minimumamount) || $objp->minimumamount === '' ? '' : price($objp->minimumamount));
+							if ($amount && $amount < (float) getDolGlobalInt("MEMBER_MIN_AMOUNT")) {
+								print img_warning('Amount lower than minimum of '.price(getDolGlobalInt("MEMBER_MIN_AMOUNT")).' defined in setup').' ';
+							}
+							if ($amount && $minimumamount && $amount < $minimumamount) {
+								print img_warning('Amount lower than minimum of '.price($minimumamount).' defined in setup').' ';
+							}
+							print '<span class="amount">'.$amount.'</span>';
+							print '</td>';
+							break;
+						case 't.amountformuladescription':
+							print '<td class="center">'.dolPrintHTML($objp->amountformuladescription).'</td>';
+							break;
+						case 't.vote':
+							print '<td class="center">'.yn($objp->vote).'</td>';
+							break;
+						case 't.tms':
+							print '<td class="center">'.dol_print_date($db->jdate($objp->tms), 'dayhour').'</td>';
+							break;
+						case 't.statut':
+							print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
+							break;
 					}
-					if ($amount && $minimumamount && $amount < $minimumamount) {
-						print img_warning('Amount lower than minimum of '.price($minimumamount).' defined in setup');
-					}
-					print '</td>';
-				}
-				if (!empty($arrayfields['t.amountformuladescription']['checked'])) {
-					print '<td class="center">'.dolPrintHTML($objp->amountformuladescription).'</td>';
-				}
-				if (!empty($arrayfields['t.vote']['checked'])) {
-					print '<td class="center">'.yn($objp->vote).'</td>';
-				}
-				if (!empty($arrayfields['t.tms']['checked'])) {
-					print '<td class="center">'.dol_print_date($db->jdate($objp->tms), 'dayhour').'</td>';
-				}
-				if (!empty($arrayfields['t.statut']['checked'])) {
-					print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 				}
 				if (!$conf->main_checkbox_left_column) {
 					if ($user->hasRight('adherent', 'configurer')) {
@@ -778,7 +782,7 @@ if ($rowid > 0) {
 
 		// Edit
 		if ($user->hasRight('adherent', 'configurer')) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'edit', 'rowid' => $object->id], true).'">'.$langs->trans("Modify").'</a></div>';
+			print dolGetButtonAction($langs->trans("Modify"), '', 'edit', dolBuildUrl($_SERVER['PHP_SELF'], ['action' => 'edit', 'rowid' => $object->id], true));
 		}
 
 		// Add
@@ -845,10 +849,10 @@ if ($rowid > 0) {
 			$sql .= natural_search("d.email", $search_email);
 		}
 		if ($filter == 'uptodate') {
-			$sql .= " AND (datefin >= '".$db->idate($now)."') OR t.subscription = 0)";
+			$sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = '0')";
 		}
 		if ($filter == 'outofdate') {
-			$sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
+			$sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = '1')";
 		}
 
 		// Count total nb of records

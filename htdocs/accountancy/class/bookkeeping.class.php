@@ -66,6 +66,11 @@ class BookKeeping extends CommonObject
 	public $doc_date;
 
 	/**
+	 * @var ?int	Date and hour of source document, in db datetime NULL
+	 */
+	public $doc_date_hour;
+
+	/**
 	 * @var int|null|'' 	Deadline for payment
 	 */
 	public $date_lim_reglement;
@@ -420,8 +425,14 @@ class BookKeeping extends CommonObject
 
 				$now = dol_now();
 
+				// When hour of source document is unknown, we use doc_date at noon
+				if (!isDolTms($this->doc_date_hour) && isDolTms($this->doc_date)) {
+					$this->doc_date_hour = $this->getDocDateHourAtNoon($this->doc_date);
+				}
+
 				$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (";
 				$sql .= "doc_date";
+				$sql .= ", doc_date_hour";
 				$sql .= ", date_lim_reglement";
 				$sql .= ", doc_type";
 				$sql .= ", doc_ref";
@@ -446,6 +457,7 @@ class BookKeeping extends CommonObject
 				$sql .= ', entity';
 				$sql .= ") VALUES (";
 				$sql .= "'".$this->db->idate($this->doc_date)."'";
+				$sql .= ", ".(isDolTms($this->doc_date_hour) ? "'".$this->db->idate($this->doc_date_hour)."'" : 'NULL');
 				$sql .= ", ".(isDolTms($this->date_lim_reglement) ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'NULL');
 				$sql .= ", '".$this->db->escape($this->doc_type)."'";
 				$sql .= ", '".$this->db->escape($this->doc_ref)."'";
@@ -761,9 +773,15 @@ class BookKeeping extends CommonObject
 		// Check parameters
 		$this->journal_label = $langs->trans($this->journal_label);
 
+		// When hour of source document is unknown, we use doc_date at noon
+		if (!isDolTms($this->doc_date_hour) && isDolTms($this->doc_date)) {
+			$this->doc_date_hour = $this->getDocDateHourAtNoon($this->doc_date);
+		}
+
 		// Insert request
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.$mode.' (';
 		$sql .= 'doc_date,';
+		$sql .= 'doc_date_hour,';
 		$sql .= 'date_lim_reglement,';
 		$sql .= 'doc_type,';
 		$sql .= 'doc_ref,';
@@ -788,6 +806,7 @@ class BookKeeping extends CommonObject
 		$sql .= 'entity';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(isDolTms($this->doc_date) ? "'".$this->db->idate($this->doc_date)."'" : 'NULL').',';
+		$sql .= ' '.(isDolTms($this->doc_date_hour) ? "'".$this->db->idate($this->doc_date_hour)."'" : 'NULL').',';
 		$sql .= ' '.(isDolTms($this->date_lim_reglement) ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'NULL').',';
 		$sql .= ' '.(!isset($this->doc_type) ? 'NULL' : "'".$this->db->escape($this->doc_type)."'").',';
 		$sql .= ' '.(!isset($this->doc_ref) ? 'NULL' : "'".$this->db->escape($this->doc_ref)."'").',';
@@ -861,6 +880,7 @@ class BookKeeping extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		$sql .= " t.doc_date,";
+		$sql .= " t.doc_date_hour,";
 		$sql .= " t.date_lim_reglement,";
 		$sql .= " t.doc_type,";
 		$sql .= " t.doc_ref,";
@@ -907,6 +927,7 @@ class BookKeeping extends CommonObject
 				$this->id = $obj->rowid;
 
 				$this->doc_date = $this->db->jdate($obj->doc_date);
+				$this->doc_date_hour = $this->db->jdate($obj->doc_date_hour);
 				$this->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 				$this->doc_type = $obj->doc_type;
 				$this->doc_ref = $obj->doc_ref;
@@ -980,6 +1001,7 @@ class BookKeeping extends CommonObject
 		} else {
 			$sql .= ' t.rowid,';
 			$sql .= " t.doc_date,";
+			$sql .= " t.doc_date_hour,";
 			$sql .= " t.doc_type,";
 			$sql .= " t.doc_ref,";
 			$sql .= " t.fk_doc,";
@@ -1108,6 +1130,7 @@ class BookKeeping extends CommonObject
 					$line->id = $obj->rowid;
 
 					$line->doc_date = $this->db->jdate($obj->doc_date);
+					$line->doc_date_hour = $this->db->jdate($obj->doc_date_hour);
 					$line->doc_type = $obj->doc_type;
 					$line->doc_ref = $obj->doc_ref;
 					$line->fk_doc = $obj->fk_doc;
@@ -1178,6 +1201,7 @@ class BookKeeping extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		$sql .= " t.doc_date,";
+		$sql .= " t.doc_date_hour,";
 		$sql .= " t.doc_type,";
 		$sql .= " t.doc_ref,";
 		$sql .= " t.fk_doc,";
@@ -1304,6 +1328,7 @@ class BookKeeping extends CommonObject
 				$line->id = $obj->rowid;
 
 				$line->doc_date = $this->db->jdate($obj->doc_date);
+				$line->doc_date_hour = $this->db->jdate($obj->doc_date_hour);
 				$line->doc_type = $obj->doc_type;
 				$line->doc_ref = $obj->doc_ref;
 				$line->fk_doc = $obj->fk_doc;
@@ -1568,9 +1593,15 @@ class BookKeeping extends CommonObject
 		// Check parameters
 		// Put here code to add a control on parameters values
 
+		// When hour of source document is unknown, we use doc_date at noon
+		if (!isDolTms($this->doc_date_hour) && isDolTms($this->doc_date)) {
+			$this->doc_date_hour = $this->getDocDateHourAtNoon($this->doc_date);
+		}
+
 		// Update request
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.$mode.' SET';
 		$sql .= ' doc_date = '.(isDolTms($this->doc_date) ? "'".$this->db->idate($this->doc_date)."'" : 'null').',';
+		$sql .= ' doc_date_hour = '.(isDolTms($this->doc_date_hour) ? "'".$this->db->idate($this->doc_date_hour)."'" : 'null').',';
 		$sql .= ' doc_type = '.(isset($this->doc_type) ? "'".$this->db->escape($this->doc_type)."'" : "null").',';
 		$sql .= ' doc_ref = '.(isset($this->doc_ref) ? "'".$this->db->escape($this->doc_ref)."'" : "null").',';
 		$sql .= ' fk_doc = '.(isset($this->fk_doc) ? ((int) $this->fk_doc) : "null").',';
@@ -1659,6 +1690,11 @@ class BookKeeping extends CommonObject
 		if (!$error) {
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element.$mode;
 			$sql .= " SET ".$this->db->sanitize($field)." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
+			if ($field == 'doc_date') {
+				// Hour of source document is unknown when only the day is changed, so we use noon
+				$docdatehour = $this->getDocDateHourAtNoon($this->db->jdate($value));
+				$sql .= ", doc_date_hour = ".(isDolTms($docdatehour) ? "'".$this->db->idate($docdatehour)."'" : "NULL");
+			}
 			$sql .= $sqlwhere;
 
 			$resql = $this->db->query($sql);
@@ -2032,6 +2068,7 @@ class BookKeeping extends CommonObject
 
 		$this->id = 0;
 		$this->doc_date = $now;
+		$this->doc_date_hour = $now;
 		$this->doc_type = '';
 		$this->doc_ref = '';
 		$this->fk_doc = 0;
@@ -2067,7 +2104,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT piece_num, ref, doc_date, code_journal, journal_label, doc_ref, doc_type, fk_doc,";
+		$sql = "SELECT piece_num, ref, doc_date, doc_date_hour, code_journal, journal_label, doc_ref, doc_type, fk_doc,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation, date_lim_reglement, import_key";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
@@ -2087,6 +2124,7 @@ class BookKeeping extends CommonObject
 			$this->code_journal = $obj->code_journal;
 			$this->journal_label = $obj->journal_label;
 			$this->doc_date = $this->db->jdate($obj->doc_date);
+			$this->doc_date_hour = $this->db->jdate($obj->doc_date_hour);
 			$this->doc_ref = $obj->doc_ref;
 			$this->doc_type = $obj->doc_type;
 			$this->fk_doc = $obj->fk_doc;
@@ -2203,7 +2241,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, doc_date, doc_type,";
+		$sql = "SELECT rowid, doc_date, doc_date_hour, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,";
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
 		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, journal_label, piece_num,";
@@ -2225,6 +2263,7 @@ class BookKeeping extends CommonObject
 				$line->id = $obj->rowid;
 
 				$line->doc_date = $this->db->jdate($obj->doc_date);
+				$line->doc_date_hour = $this->db->jdate($obj->doc_date_hour);
 				$line->doc_type = $obj->doc_type;
 				$line->doc_ref = $obj->doc_ref;
 				$line->fk_doc = $obj->fk_doc;
@@ -2273,7 +2312,7 @@ class BookKeeping extends CommonObject
 		// phpcs:enable
 		global $conf;
 
-		$sql = "SELECT rowid, doc_date, doc_type,";
+		$sql = "SELECT rowid, doc_date, doc_date_hour, doc_type,";
 		$sql .= " doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,";
 		$sql .= " numero_compte, label_compte, label_operation, debit, credit,";
 		$sql .= " montant as amount, sens, fk_user_author, import_key, code_journal, piece_num,";
@@ -2295,6 +2334,7 @@ class BookKeeping extends CommonObject
 				$line->id = $obj->rowid;
 
 				$line->doc_date = $this->db->jdate($obj->doc_date);
+				$line->doc_date_hour = $this->db->jdate($obj->doc_date_hour);
 				$line->doc_type = $obj->doc_type;
 				$line->doc_ref = $obj->doc_ref;
 				$line->fk_doc = $obj->fk_doc;
@@ -2378,11 +2418,11 @@ class BookKeeping extends CommonObject
 			}
 
 			if (!$error) {
-				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.' (doc_date, doc_type, ref,';
+				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.' (doc_date, doc_date_hour, doc_type, ref,';
 				$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation)';
-				$sql .= ' SELECT doc_date, doc_type,' . "'".$this->db->escape($ref)."',";
+				$sql .= ' SELECT doc_date, doc_date_hour, doc_type,' . "'".$this->db->escape($ref)."',";
 				$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.((int) $next_piecenum).", '".$this->db->idate($now)."'";
@@ -2423,11 +2463,11 @@ class BookKeeping extends CommonObject
 			}
 
 			if (!$error) {
-				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'_tmp (doc_date, doc_type, ref,';
+				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'_tmp (doc_date, doc_date_hour, doc_type, ref,';
 				$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num)';
-				$sql .= ' SELECT doc_date, doc_type,' . "'".$this->db->escape($ref)."',";
+				$sql .= ' SELECT doc_date, doc_date_hour, doc_type,' . "'".$this->db->escape($ref)."',";
 				$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num';
@@ -2798,6 +2838,23 @@ class BookKeeping extends CommonObject
 
 		dol_syslog(get_class($this) . "::accountingLabelForOperation: " . $accountingLabelOperation, LOG_DEBUG);
 		return $accountingLabelOperation;
+	}
+
+	/**
+	 * Return the date to store into doc_date_hour when the hour of the source document is unknown:
+	 * the day of $date (in server timezone, as stored into doc_date by idate()) at 12:00:00.
+	 *
+	 * @param	int|string	$date		Date of source document
+	 * @return	int|''					Timestamp of the day of $date at 12:00:00, or '' if $date is not a date
+	 */
+	public function getDocDateHourAtNoon($date)
+	{
+		if (!isDolTms($date)) {
+			return '';
+		}
+		$tmparray = dol_getdate((int) $date, false, 'tzserver');
+
+		return dol_mktime(12, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], 'tzserver');
 	}
 
 	/**
@@ -3683,10 +3740,10 @@ class BookKeeping extends CommonObject
 							}
 
 							$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-							$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref,";
+							$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, doc_date_hour, fk_user_author, doc_ref,";
 							$sql_insert .= " fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant, subledger_account, subledger_label)";
 							$sql_insert .= " VALUES";
-							$sql_insert .= " (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
+							$sql_insert .= " (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate) . "', '" . $this->db->idate($this->getDocDateHourAtNoon($docdate)) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
 							$sql_insert .= " ". ((int) $obj->fk_doc) . ", " . ((int) $obj->fk_docdet) . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($docdate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ", '" . $this->db->escape($obj->subledger_account) . "', '" . $this->db->escape($obj->subledger_label) . "')";
 
 							$resqlInsert = $this->db->query($sql_insert);
@@ -3800,6 +3857,7 @@ class BookKeeping extends CommonObject
 									$sql_insert .= ", doc_type";
 									$sql_insert .= ", code_journal";
 									$sql_insert .= ", doc_date";
+									$sql_insert .= ", doc_date_hour";
 									$sql_insert .= ", date_creation";
 									$sql_insert .= ", fk_user_author";
 									$sql_insert .= ", doc_ref";
@@ -3821,6 +3879,7 @@ class BookKeeping extends CommonObject
 									$sql_insert .= ", ''";
 									$sql_insert .= ", '" . $this->db->escape($code_journal) . "'";
 									$sql_insert .= ", '" . $this->db->idate($docdate)."'";
+									$sql_insert .= ", '" . $this->db->idate($this->getDocDateHourAtNoon($docdate))."'";
 									$sql_insert .= ", '" . $this->db->idate($now)."'";
 									$sql_insert .= ", ".($user->id > 0 ? ((int) $user->id) : "NULL");
 									$sql_insert .= ", '" . $this->db->escape($docRef) . "'";
@@ -3989,6 +4048,12 @@ class BookKeepingLine extends CommonObjectLine
 	 * @var ?int	Date of source document
 	 */
 	public $doc_date = null;
+
+	/**
+	 * @var ?int	Date and hour of source document
+	 */
+	public $doc_date_hour = null;
+
 	/**
 	 * @var string 	Doc type
 	 */

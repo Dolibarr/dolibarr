@@ -124,7 +124,7 @@ if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolis
 
 $morehtmlref = '<div class="refidno">';
 // Title
-$morehtmlref .= $object->title;
+$morehtmlref .= '<span class="banner-object-name-alias">'.$object->title.'</span>';
 // Thirdparty
 if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
@@ -186,7 +186,7 @@ print '<table class="border centpercent">';
 
 // Description
 print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-print nl2br($object->description);
+print nl2br((string) $object->description);
 print '</td></tr>';
 
 // Categories

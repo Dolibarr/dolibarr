@@ -113,10 +113,19 @@ foreach ($arrayofai as $ia => $iarecord) {
 	if ($ia == 'anthropic') {
 		$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_MAX_TOKENS')->setAsNumber(1);
 		$item->nameText = $langs->trans("AI_API_MAX_TOKENS").' ('.$ialabel.')';
-		$item->defaultFieldValue = '1024';
+		$item->defaultFieldValue = '100000';
 		$item->fieldParams['trClass'] = 'iaservice '.$ia;
 		$item->cssClass = 'width100 input'.$ia;
-		$item->helpText = $langs->trans("AI_API_MAX_TOKENSHelp");
+		$item->helpText = $langs->trans("AI_API_MAX_TOKENSHelp", $item->defaultFieldValue);
+	}
+
+	if (($iarecord['adapter_type'] ?? '') === 'openai') {
+		$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_REASONING_EFFORT');
+		$item->setAsSelect(array_merge(array('' => ''), array_combine(getListOfAiReasoningEfforts(), getListOfAiReasoningEfforts())));
+		$item->nameText = $langs->trans("AI_API_REASONING_EFFORT").' ('.$ialabel.')';
+		$item->fieldParams['trClass'] = 'iaservice '.$ia;
+		$item->cssClass = 'minwidth100 input'.$ia;
+		$item->helpText = $langs->trans("AI_API_REASONING_EFFORTHelp");
 	}
 }
 
@@ -181,7 +190,7 @@ if ($action == 'edit') {
 } elseif (!empty($formSetup->items)) {
 	print $formSetup->generateOutput();
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken());
 	print '</div>';
 } else {
 	print $langs->trans("NothingToSetup");

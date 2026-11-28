@@ -915,7 +915,7 @@ class CMailFile
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL = 10;
 			}
 			$tmparray1 = explode(',', $this->addr_to);
-			if (count($tmparray1) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL) {
+			if (count($tmparray1) > getDolGlobalInt('MAIL_MAX_NB_OF_RECIPIENTS_TO_IN_SAME_EMAIL')) {
 				$this->error = 'Too much recipients in to:';
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
@@ -924,7 +924,7 @@ class CMailFile
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL = 10;
 			}
 			$tmparray2 = explode(',', $this->addr_cc);
-			if (count($tmparray2) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL) {
+			if (count($tmparray2) > getDolGlobalInt('MAIL_MAX_NB_OF_RECIPIENTS_CC_IN_SAME_EMAIL')) {
 				$this->error = 'Too much recipients in cc:';
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
@@ -933,7 +933,7 @@ class CMailFile
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL = 10;
 			}
 			$tmparray3 = explode(',', $this->addr_bcc);
-			if (count($tmparray3) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL) {
+			if (count($tmparray3) > getDolGlobalInt('MAIL_MAX_NB_OF_RECIPIENTS_BCC_IN_SAME_EMAIL')) {
 				$this->error = 'Too much recipients in bcc:';
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
@@ -941,7 +941,7 @@ class CMailFile
 			if (!getDolGlobalString('MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL')) {
 				$conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL = 10;
 			}
-			if ((count($tmparray1) + count($tmparray2) + count($tmparray3)) > $conf->global->MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL) {
+			if ((count($tmparray1) + count($tmparray2) + count($tmparray3)) > getDolGlobalInt('MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL')) {
 				$this->error = 'Too much recipients in to:, cc:, bcc:';
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_WARNING);
 				return false;
@@ -1018,7 +1018,7 @@ class CMailFile
 						// So forcing using the option -f of sendmail is possible if constant MAIN_MAIL_ALLOW_SENDMAIL_F is defined.
 						// Having this variable defined may create problems with some sendmail (option -f refused)
 						// Having this variable not defined may create problems with some other sendmail (option -f required)
-						$additionnalparam .= ($additionnalparam ? ' ' : '').(getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? '-f'.$this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO, 2) : ($this->addr_from != '' ? '-f'.$this->getValidAddress($this->addr_from, 2) : ''));
+						$additionnalparam .= ($additionnalparam ? ' ' : '').(getDolGlobalString('MAIN_MAIL_ERRORS_TO') ? '-f'.$this->getValidAddress(getDolGlobalString('MAIN_MAIL_ERRORS_TO'), 2) : ($this->addr_from != '' ? '-f'.$this->getValidAddress($this->addr_from, 2) : ''));
 					}
 					if (getDolGlobalString('MAIN_MAIL_SENDMAIL_FORCE_BA')) {    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
 						$additionnalparam .= ($additionnalparam ? ' ' : '').'-ba';
@@ -1097,10 +1097,10 @@ class CMailFile
 				$this->smtps->setTransportType(0); // Only this method is coded in SMTPs library
 
 				// Clean parameters
-				if (empty($conf->global->$keyforsmtpserver)) {
+				if (!getDolGlobalString($keyforsmtpserver)) {
 					$conf->global->$keyforsmtpserver = ini_get('SMTP');
 				}
-				if (empty($conf->global->$keyforsmtpport)) {
+				if (!getDolGlobalString($keyforsmtpport)) {
 					$conf->global->$keyforsmtpport = ini_get('smtp_port');
 				}
 
@@ -1306,10 +1306,10 @@ class CMailFile
 				require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
 
 				// Clean parameters
-				if (empty($conf->global->$keyforsmtpserver)) {
+				if (!getDolGlobalString($keyforsmtpserver)) {
 					$conf->global->$keyforsmtpserver = ini_get('SMTP');
 				}
-				if (empty($conf->global->$keyforsmtpport)) {
+				if (!getDolGlobalString($keyforsmtpport)) {
 					$conf->global->$keyforsmtpport = ini_get('smtp_port');
 				}
 
@@ -2305,7 +2305,10 @@ class CMailFile
 		// For example when:
 		// <img alt="" src="/src="data:image....;base64,...." />
 		$matches = array();
-		preg_match_all('/src="data:image\/('.implode('|', $extensions).');base64,([^"]+)"/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
+		// Optional MIME parameters may come before ";base64", for example when a screenshot is pasted into the WYSIWYG editor:
+		// src="data:image/png;filename=Screenshot%202024-10-09.png;base64,...". Without them in the regex, the image stays
+		// inline into the HTML body as one very long line that SMTP relays refuse ("line too long").
+		preg_match_all('/src="data:image\/('.implode('|', $extensions).')(?:;[a-z0-9_.+-]+=[^;",]*)*;base64,([^"]+)"/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
 
 		if (!empty($matches) && !empty($matches[1])) {
 			if (empty($images_dir)) {
@@ -2348,7 +2351,7 @@ class CMailFile
 					// type
 					$this->html_images[$i]["type"] = 'cidfromdata';
 
-					$this->html = str_replace('src="data:image/'.$ext.';base64,'.$filecontent.'"', 'src="cid:'.$this->html_images[$i]["cid"].'"', $this->html);
+					$this->html = str_replace($matches[0][$key], 'src="cid:'.$this->html_images[$i]["cid"].'"', $this->html);
 				}
 				$i++;
 			}
@@ -2394,7 +2397,7 @@ class CMailFile
 	{
 		$ret = '';
 
-		$address = trim(str_replace(array("\r", "\n", "\0"), '', $address));
+		$address = trim(str_replace(array("\r", "\n", "\0"), '', (string) $address));
 		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
 
 		// Loop over every component of the address

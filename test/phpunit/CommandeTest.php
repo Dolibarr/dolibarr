@@ -207,7 +207,8 @@ class CommandeTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($localobject, $lineid) = $params;
+		$localobject = $params[0];
+		$lineid = $params[1];
 		$beforelinecount = count($localobject->lines);
 		$beforetotalht = (float) $localobject->total_ht;
 
@@ -241,7 +242,8 @@ class CommandeTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($localobject, $lineid) = $params;
+		$localobject = $params[0];
+		$lineid = $params[1];
 		$beforelinecount = count($localobject->lines);
 		$beforetotalht = (float) $localobject->total_ht;
 
@@ -505,7 +507,10 @@ class CommandeTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($localobject, $productid, $savconst) = $this->initPackagingOrder(6);
+		$tmparray = $this->initPackagingOrder(6);
+		$localobject = $tmparray[0];
+		$productid = $tmparray[1];
+		$savconst = $tmparray[2];
 
 		$result = array();
 		foreach (array(-4, -7, -12) as $qty) {
@@ -541,7 +546,10 @@ class CommandeTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		list($localobject, $productid, $savconst) = $this->initPackagingOrder(0.1);
+		$tmparray = $this->initPackagingOrder(0.1);
+		$localobject = $tmparray[0];
+		$productid = $tmparray[1];
+		$savconst = $tmparray[2];
 
 		$lineid = $localobject->addline('Line', 10, 0.1, 20, 0, 0, $productid);
 		$this->assertGreaterThan(0, $lineid, (string) $localobject->error);

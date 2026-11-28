@@ -577,7 +577,7 @@ if ($result) {
 		$totalarray['nbfield']++;
 	}
 	// Hook fields
-	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -686,7 +686,7 @@ if ($result) {
 		// Current account
 		if (!empty($arrayfields['aa.data_suggest']['checked'])) {
 			print '<td>';
-			print length_accountg(html_entity_decode($objp->code_buy));
+			print length_accountg(html_entity_decode((string) $objp->code_buy));
 			print '</td>';
 			$totalarray['nbfield']++;
 		}

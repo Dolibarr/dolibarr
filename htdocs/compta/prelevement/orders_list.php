@@ -48,12 +48,13 @@ $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choi
 $confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'withdrawalsreceiptslist'; // To manage different context of search. Must differ from the one of other lists to not share the selection of fields.
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
 // Get supervariables
+$search_id = trim(GETPOST('search_id', 'alpha'));	// Can contains a numeric test like ">10" or "!= 34"
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_status = GETPOSTISARRAY('search_status') ? GETPOST('search_status', 'array:int') : (GETPOSTISSET('search_status') ? GETPOST('search_status', 'array:intcomma') : array());
@@ -101,22 +102,17 @@ if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
-// Definition of array of fields for columns from ->fields
-$tableprefix = 't';
-$arrayfields = array();
-foreach ($object->fields as $key => $val) {
-	// If $val['visible']==0, then we never show the field
-	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval((string) $val['visible'], 1);
-		$arrayfields[$tableprefix.'.'.$key] = array(
-			'label' => $val['label'],
-			'checked' => (($visible < 0) ? '0' : '1'),
-			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
-			'position' => $val['position'],
-			'help' => isset($val['help']) ? $val['help'] : ''
-		);
-	}
-}
+// Definition of array of fields for columns (only the columns this page can output)
+$arrayfields = array(
+	't.rowid' => array('label' => 'TechnicalID', 'checked' => '-1', 'enabled' => '1', 'position' => 1),
+	't.ref' => array('label' => 'Ref', 'checked' => '1', 'enabled' => '1', 'position' => 10),
+	't.datec' => array('label' => 'DateCreation', 'checked' => '1', 'enabled' => '1', 'position' => 20),
+	't.date_trans' => array('label' => 'TransData', 'checked' => '1', 'enabled' => '1', 'position' => 30),
+	't.date_credit' => array('label' => 'CreditDate', 'checked' => '1', 'enabled' => '1', 'position' => 40),
+	't.fk_bank_account' => array('label' => 'BankAccount', 'checked' => '1', 'enabled' => '1', 'position' => 50),
+	't.amount' => array('label' => 'Amount', 'checked' => '1', 'enabled' => '1', 'position' => 60),
+	't.statut' => array('label' => 'Status', 'checked' => '1', 'enabled' => '1', 'position' => 1000),
+);
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -124,13 +120,22 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
+
+$arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 /*
  * Actions
  */
 $error = 0;
 
+// Selection of new fields
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	$search_id = '';
 	$search_ref = "";
 	$search_amount = "";
 	$search_status = array();
@@ -301,6 +306,9 @@ if ($type == 'bank-transfer') {
 } else {
 	$sql .= " AND p.type = 'debit-order'";
 }
+if ($search_id != '') {
+	$sql .= natural_search("p.rowid", $search_id, 1);
+}
 if ($search_ref) {
 	$sql .= natural_search("p.ref", $search_ref);
 }
@@ -371,6 +379,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 if ($optioncss != '') {
 	$query += ['optioncss' => $optioncss];
+}
+if ($search_id != '') {
+	$query += ['search_id' => $search_id];
 }
 if ($search_amount) {
 	$query += ['search_amount' => $search_amount];
@@ -448,7 +459,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -465,21 +476,59 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
-print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
-$arrayofstatus = array(
-	BonPrelevement::STATUS_DRAFT => $langs->trans('StatusWaiting'),
-	BonPrelevement::STATUS_TRANSFERED => $langs->trans('StatusTrans'),
-	BonPrelevement::STATUS_CREDITED => $langs->trans('Closed'),
-	BonPrelevement::STATUS_CANCELED => $langs->trans('Canceled')
-);
-print $form->multiselectarray('search_status', $arrayofstatus, $search_status, 0, 0, 'search_status width200 right onrightofpage', 0, 0, '');
-print '</td>';
+// Fields with position ordered by user setup
+foreach ($arrayfields as $arraykey => $arrayval) {
+	switch ($arraykey) {
+		case 't.rowid':
+			if (!empty($arrayfields['t.rowid']['checked'])) {
+				print '<td class="liste_titre center"><input type="text" class="flat width50" name="search_id" value="'.dolPrintHTMLForAttribute($search_id).'"></td>';
+			}
+			break;
+		case 't.ref':
+			if (!empty($arrayfields['t.ref']['checked'])) {
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+			}
+			break;
+		case 't.datec':
+			if (!empty($arrayfields['t.datec']['checked'])) {
+				print '<td class="liste_titre">&nbsp;</td>';
+			}
+			break;
+		case 't.date_trans':
+			if (!empty($arrayfields['t.date_trans']['checked'])) {
+				print '<td class="liste_titre">&nbsp;</td>';
+			}
+			break;
+		case 't.date_credit':
+			if (!empty($arrayfields['t.date_credit']['checked'])) {
+				print '<td class="liste_titre">&nbsp;</td>';
+			}
+			break;
+		case 't.amount':
+			if (!empty($arrayfields['t.amount']['checked'])) {
+				print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
+			}
+			break;
+		case 't.fk_bank_account':
+			if (!empty($arrayfields['t.fk_bank_account']['checked'])) {
+				print '<td class="liste_titre">&nbsp;</td>';
+			}
+			break;
+		case 't.statut':
+			if (!empty($arrayfields['t.statut']['checked'])) {
+				print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
+				$arrayofstatus = array(
+					BonPrelevement::STATUS_DRAFT => $langs->trans('StatusWaiting'),
+					BonPrelevement::STATUS_TRANSFERED => $langs->trans('StatusTrans'),
+					BonPrelevement::STATUS_CREDITED => $langs->trans('Closed'),
+					BonPrelevement::STATUS_CANCELED => $langs->trans('Canceled')
+				);
+				print $form->multiselectarray('search_status', $arrayofstatus, $search_status, 0, 0, 'search_status width200 right onrightofpage', 0, 0, '');
+				print '</td>';
+			}
+			break;
+	}
+}
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print '<td class="liste_titre center maxwidthsearch">';
@@ -500,20 +549,59 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre($titlekey, $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
-$totalarray['nbfield']++;
-print_liste_field_titre("TransData", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
-$totalarray['nbfield']++;
-print_liste_field_titre("CreditDate", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
-$totalarray['nbfield']++;
-print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, '', $sortfield, $sortorder, 'right ');
-$totalarray['nbfield']++;
-print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "p.fk_bank_account", "", $param, '', $sortfield, $sortorder);
-$totalarray['nbfield']++;
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
-$totalarray['nbfield']++;
+// Fields with position ordered by user setup
+foreach ($arrayfields as $arraykey => $arrayval) {
+	switch ($arraykey) {
+		case 't.rowid':
+			if (!empty($arrayfields['t.rowid']['checked'])) {
+				print_liste_field_titre($arrayfields['t.rowid']['label'], $_SERVER["PHP_SELF"], "p.rowid", '', $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 't.ref':
+			if (!empty($arrayfields['t.ref']['checked'])) {
+				print_liste_field_titre($titlekey, $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 't.datec':
+			if (!empty($arrayfields['t.datec']['checked'])) {
+				print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 't.date_trans':
+			if (!empty($arrayfields['t.date_trans']['checked'])) {
+				print_liste_field_titre("TransData", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 't.date_credit':
+			if (!empty($arrayfields['t.date_credit']['checked'])) {
+				print_liste_field_titre("CreditDate", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 't.amount':
+			if (!empty($arrayfields['t.amount']['checked'])) {
+				print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 't.fk_bank_account':
+			if (!empty($arrayfields['t.fk_bank_account']['checked'])) {
+				print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "p.fk_bank_account", "", $param, '', $sortfield, $sortorder);
+				$totalarray['nbfield']++;
+			}
+			break;
+		case 't.statut':
+			if (!empty($arrayfields['t.statut']['checked'])) {
+				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
+				$totalarray['nbfield']++;
+			}
+			break;
+	}
+}
 // Action column
 if (!$conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
@@ -581,50 +669,93 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		print '<td>';
-		print $directdebitorder->getNomUrl(1);
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+		// Fields with position ordered by user setup
+		foreach ($arrayfields as $arraykey => $arrayval) {
+			switch ($arraykey) {
+				case 't.rowid':
+					// Technical ID
+					if (!empty($arrayfields['t.rowid']['checked'])) {
+						print '<td class="center">'.((int) $obj->rowid).'</td>';
+						if (!$i) {
+							$totalarray['nbfield']++;
+						}
+					}
+					break;
 
-		print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+				case 't.ref':
+					if (!empty($arrayfields['t.ref']['checked'])) {
+						print '<td>';
+						print $directdebitorder->getNomUrl(1);
+						print "</td>\n";
+						if (!$i) {
+							$totalarray['nbfield']++;
+						}
+					}
+					break;
 
-		print '<td class="center">'.dol_print_date($db->jdate($obj->date_trans), 'day')."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+				case 't.datec':
+					if (!empty($arrayfields['t.datec']['checked'])) {
+						print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+						if (!$i) {
+							$totalarray['nbfield']++;
+						}
+					}
+					break;
 
-		print '<td class="center">'.dol_print_date($db->jdate($obj->date_credit), 'day')."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+				case 't.date_trans':
+					if (!empty($arrayfields['t.date_trans']['checked'])) {
+						print '<td class="center">'.dol_print_date($db->jdate($obj->date_trans), 'day')."</td>\n";
+						if (!$i) {
+							$totalarray['nbfield']++;
+						}
+					}
+					break;
 
-		print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+				case 't.date_credit':
+					if (!empty($arrayfields['t.date_credit']['checked'])) {
+						print '<td class="center">'.dol_print_date($db->jdate($obj->date_credit), 'day')."</td>\n";
+						if (!$i) {
+							$totalarray['nbfield']++;
+						}
+					}
+					break;
 
-		print '<td>';
-		if ($obj->fk_bank_account > 0) {
-			// TODO Use a cache here
-			$bankaccount = new Account($db);
-			$bankaccount->fetch($obj->fk_bank_account);
-			print $bankaccount->getNomUrl(1);
-		}
-		print "</td>";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+				case 't.amount':
+					if (!empty($arrayfields['t.amount']['checked'])) {
+						print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+						if (!$i) {
+							$totalarray['nbfield']++;
+						}
+					}
+					break;
 
-		print '<td class="center">';
-		print $object->LibStatut($obj->status, 5);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+				case 't.fk_bank_account':
+					if (!empty($arrayfields['t.fk_bank_account']['checked'])) {
+						print '<td>';
+						if ($obj->fk_bank_account > 0) {
+							// TODO Use a cache here
+							$bankaccount = new Account($db);
+							$bankaccount->fetch($obj->fk_bank_account);
+							print $bankaccount->getNomUrl(1);
+						}
+						print "</td>";
+						if (!$i) {
+							$totalarray['nbfield']++;
+						}
+					}
+					break;
+
+				case 't.statut':
+					if (!empty($arrayfields['t.statut']['checked'])) {
+						print '<td class="center">';
+						print $object->LibStatut($obj->status, 5);
+						print '</td>';
+						if (!$i) {
+							$totalarray['nbfield']++;
+						}
+					}
+					break;
+			}
 		}
 
 		// Action column

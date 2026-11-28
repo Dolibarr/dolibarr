@@ -561,7 +561,7 @@ if ($action == 'edit') {
 	// Landing page
 	print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
 	print '<td>';
-	print(!getDolGlobalString('MAIN_LANDING_PAGE') ? '' : $conf->global->MAIN_LANDING_PAGE);
+	print(!getDolGlobalString('MAIN_LANDING_PAGE') ? '' : getDolGlobalString('MAIN_LANDING_PAGE'));
 	print '</td>';
 	print '<td class="nowrap"><input class="oddeven" name="check_MAIN_LANDING_PAGE" disabled id="check_MAIN_LANDING_PAGE" type="checkbox" '.(!empty($object->conf->MAIN_LANDING_PAGE) ? " checked" : "");
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
@@ -635,13 +635,13 @@ if ($action == 'edit') {
 
 	print '<div class="tabsAction">';
 	if (empty($user->admin) && !empty($dolibarr_main_demo)) {
-		print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("FeatureDisabledInDemo").'" href="#">'.$langs->trans("Modify").'</a>';
+		print dolGetButtonAction($langs->trans("FeatureDisabledInDemo"), $langs->trans("Modify"), 'edit', '', '', -1);
 	} else {
 		if ($caneditfield || !empty($user->admin)) {
 			// If the user editing is the current user (no special permissions required as this is an output modification page and not a data modification page), or if they are an admin.
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+			print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id);
 		} else {
-			print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Modify").'</a>';
+			print dolGetButtonAction('', $langs->trans("Modify"), 'edit', '', '', 0);
 		}
 	}
 

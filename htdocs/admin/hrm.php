@@ -111,7 +111,7 @@ if ($action == 'update') {
 				if (empty($skill->lines)) {
 					$skill->fetchLines();
 				}
-				if (count($skill->lines) < $conf->global->HRM_MAXRANK) {
+				if (count($skill->lines) < getDolGlobalInt('HRM_MAXRANK')) {
 					$skill->createSkills(count($skill->lines) + 1);
 				}
 			}
@@ -182,7 +182,7 @@ if ($action == 'update') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		if (!empty($tmpobjectkey)) {
-			$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+			$constforval = 'EVALUATION_ADDON_PDF';
 			if (getDolGlobalString($constforval) == "$value") {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
@@ -191,7 +191,7 @@ if ($action == 'update') {
 } elseif ($action == 'setdoc') {
 	// Set or unset default model
 	if (!empty($tmpobjectkey)) {
-		$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+		$constforval = 'EVALUATION_ADDON_PDF';
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
 			// The constant that was read before the new set
 			// We therefore requires a variable to have a coherent view
@@ -206,7 +206,7 @@ if ($action == 'update') {
 	}
 } elseif ($action == 'unsetdoc') {
 	if (!empty($tmpobjectkey)) {
-		$constforval = 'HRMTEST_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
+		$constforval = 'EVALUATION_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
 	}
 }
@@ -452,7 +452,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 										// Default
 										print '<td class="center">';
-										$constforvar = 'HRMTEST_'.strtoupper($myTmpObjectKey).'_ADDON';
+										$constforvar = 'EVALUATION_ADDON_PDF';
 										if (getDolGlobalString($constforvar) == $name) {
 											//print img_picto($langs->trans("Default"), 'on');
 											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset
@@ -666,7 +666,7 @@ if ($action != 'editxxx') {
 		print '</table>';
 
 		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+		print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit');
 		print '</div>';
 	} else {
 		print '<br>'.$langs->trans("NothingToSetup");

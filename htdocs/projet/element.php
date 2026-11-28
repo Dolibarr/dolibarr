@@ -353,7 +353,7 @@ if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolis
 
 $morehtmlref = '<div class="refidno">';
 // Title
-$morehtmlref .= $object->title;
+$morehtmlref .= '<span class="banner-object-name-alias">'.$object->title.'</span>';
 // Thirdparty
 if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
@@ -886,7 +886,7 @@ if (!$showdatefilter) {
 
 // Show balance for whole project
 
-$langs->loadLangs(array("suppliers", "bills", "orders", "proposals", "margins"));
+$langs->loadLangs(array("suppliers", "bills", "orders", "propal", "margins"));
 
 if (isModEnabled('stock') || isModEnabled('stocktransfer')) {
 	$langs->load('stocks');
@@ -1615,7 +1615,7 @@ foreach ($listofreferent as $key => $value) {
 				$total_time_by_line = 0;
 				if ($tablename == 'expensereport_det') {
 					'@phan-var-force ExpenseReportLine $element';
-					$date = $element->date; // No draft status on lines
+					$date = $element->dates; // No draft status on lines. ->date is the raw SQL string, ->dates the timestamp
 				} elseif ($tablename == 'stock_mouvement') {
 					'@phan-var-force MouvementStock $element';
 					$date = $element->datem;
@@ -1734,7 +1734,7 @@ foreach ($listofreferent as $key => $value) {
 				if ($tablename == 'fichinter') {
 					'@phan-var-force FichInter $element';
 					print '<td>';
-					print convertSecondToTime($element->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+					print convertSecondToTime($element->duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY'));
 					$total_duration += $element->duration;
 					print '</td>';
 				}
@@ -1980,7 +1980,7 @@ foreach ($listofreferent as $key => $value) {
 				//elseif (empty($value['disableamount']) && in_array($tablename, array('projet_task'))) print '<td class="right" width="100">'.$langs->trans("Total").' : '.price($total_ht).'</td>';
 				// If fichinter add the total_duration
 				if ($tablename == 'fichinter') {
-					print '<td class="left">'.convertSecondToTime($total_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+					print '<td class="left">'.convertSecondToTime($total_duration, 'all', getDolGlobalInt('MAIN_DURATION_OF_WORKDAY')).'</td>';
 				}
 				// Additional total columns from hooks
 				$parameters = array('key' => $key, 'value' => $value, 'tablename' => $tablename, 'nbelement' => $i);

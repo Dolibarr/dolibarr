@@ -1573,10 +1573,10 @@ class pdf_octopus extends ModelePDFFactures
 				$posy = $pdf->GetY();
 			}
 
-			// Show if Option VAT debit option is on also if transmitter is french
-			// Decret n°2099-1299 2022-10-07
+			// Show if Option VAT debit option is on also if transmitter is french and subject to VAT
+			// Decret n°2022-1299 2022-10-07
 			// French legal mention: "Option pour le paiement de la taxe d'apres les debits"
-			if ($this->emetteur->country_code == 'FR') {
+			if ($this->emetteur->country_code == 'FR' && !empty($this->emetteur->tva_assuj)) {
 				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, null, null, $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
@@ -1601,7 +1601,7 @@ class pdf_octopus extends ModelePDFFactures
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					global $langs;
 
-					$langs->loadLangs(array('payment', 'stripe'));
+					$langs->loadLangs(array('stripe'));
 					$servicename = $langs->transnoentities('Online');
 					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0, '', 0);
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
@@ -2303,7 +2303,7 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT', '1'))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -3106,9 +3106,11 @@ class pdf_octopus extends ModelePDFFactures
 			}
 
 			// grand total
+			// Note: TTC must be computed on the full HT (before subtracting travaux_sup), so that the cumulated TTC
+			// stays equal to the sum of the TTC of all previous situation invoices (travaux_sup VAT is included in TVA)
+			$TDataSituation['cumul_anterieur']['TTC'] = $TDataSituation['cumul_anterieur']['HT'] + $TDataSituation['cumul_anterieur']['TVA'];
 			$TDataSituation['cumul_anterieur']['HT'] -= $TDataSituation['cumul_anterieur']['travaux_sup'];
 			$TDataSituation['cumul_anterieur']['retenue_garantie'] = $retenue_garantie_anterieure;
-			$TDataSituation['cumul_anterieur']['TTC'] = $TDataSituation['cumul_anterieur']['HT'] + $TDataSituation['cumul_anterieur']['TVA'];
 			$TDataSituation['cumul_anterieur']['total_a_payer'] = $TDataSituation['cumul_anterieur']['TTC'] - $retenue_garantie_anterieure;
 		}
 

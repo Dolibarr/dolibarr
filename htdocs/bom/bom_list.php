@@ -781,7 +781,7 @@ while ($i < $imaxinloop) {
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, (string) $object->id, '');
+					print (int) $object->id;	// Not showOutputField() that returns nothing when the Technical ID is hidden by the object (MAIN_SHOW_TECHNICAL_ID off)
 				} elseif ($key == 'ref' && empty($arrayfields['t.label']['checked'])) {
 					// Show label under the ref when label column is not enabled
 					print '<div class="tdoverflowmax150 inline-block lineheightsmall">';

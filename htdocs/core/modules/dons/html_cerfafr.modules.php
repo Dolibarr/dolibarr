@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 
 
@@ -213,6 +214,13 @@ class html_cerfafr extends ModeleDon
 				$donmodel = DOL_DOCUMENT_ROOT."/core/modules/dons/html_cerfafr.html";
 
 				$form = file_get_contents($donmodel);
+
+				// The receipt is a standalone HTML file, downloaded or sent to the donor: embed the Cerfa logo,
+				// a relative path to the theme is broken as soon as the file leaves Dolibarr.
+				$logocerfa = DOL_DOCUMENT_ROOT.'/theme/common/logo_cerfa.png';
+				if (dol_is_file($logocerfa)) {
+					$form = str_replace('./theme/common/logo_cerfa.png', 'data:image/png;base64,'.base64_encode((string) file_get_contents($logocerfa)), $form);
+				}
 
 				// TODO Remove what was already included into getCommonSubstitutionArray / make_substitutions
 				$form = str_replace('__REF__', (string) $don->id, $form);

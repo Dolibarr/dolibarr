@@ -74,6 +74,9 @@ $pagenext = $page + 1;
 
 // Initialize a technical objects
 $object = new Calendar($db);
+if (!isModEnabled("bookcal")) {
+	accessforbidden('Module bookcal not enabled');
+}
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
@@ -140,10 +143,18 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 // Extra fields
+$extrafieldspositionoffset = 1000;	// To keep extrafields after the hardcoded fields by default
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+// By default, the status is the last column, after the extrafields
+if (isset($arrayfields['t.status'])) {
+	$arrayfields['t.status']['position'] = (int) max(array_column($arrayfields, 'position')) + 1;
+}
 // Add hook to complete $arrayfield
 $parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('completeArrayFields', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+// Change position of fields in arrayfield and object
+include DOL_DOCUMENT_ROOT.'/core/tpl/arrayfield_object_position_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
@@ -170,9 +181,6 @@ if ($user->socid > 0) {
 //$socid = 0; if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, 0, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled("bookcal")) {
-	accessforbidden('Module bookcal not enabled');
-}
 if (!$permissiontoread) {
 	accessforbidden();
 }
@@ -276,6 +284,17 @@ if ($object->ismultientitymanaged == 1) {
 	$sql .= " WHERE t.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 } else {
 	$sql .= " WHERE 1 = 1";
+}
+// Restriction on sale representative (a sales representative not allowed to see all customers is limited to his own customers)
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+		$userschilds = $user->getAllChildIds();
+		if (!empty($userschilds)) {
+			$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
+		}
+	}
+	$sql .= ")";
 }
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
@@ -479,7 +498,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -496,7 +515,21 @@ if ($conf->main_checkbox_left_column) {
 	print $searchpicto;
 	print '</td>';
 }
-foreach ($object->fields as $key => $val) {
+// Fields and extrafields ordered by position (fields of hooks are output after)
+foreach ($arrayfields as $arraykey => $arrayval) {
+	$regkey = array();
+	// Extra fields
+	if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($object->fields[$regkey[1]])) {
+		continue;
+	}
+	$key = $regkey[1];
+	$val = $object->fields[$key];
 	$searchkey = empty($search[$key]) ? '' : $search[$key];
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
@@ -513,7 +546,7 @@ foreach ($object->fields as $key => $val) {
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
-			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
+			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.($key == 'fk_soc' ? ' maxwidth150' : ' maxwidth250'), 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -531,8 +564,6 @@ foreach ($object->fields as $key => $val) {
 		print '</td>';
 	}
 }
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
@@ -561,7 +592,21 @@ if ($conf->main_checkbox_left_column) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-foreach ($object->fields as $key => $val) {
+// Fields and extrafields ordered by position (fields of hooks are output after)
+foreach ($arrayfields as $arraykey => $arrayval) {
+	$regkey = array();
+	// Extra fields
+	if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+		$extrafieldsonlykey = $regkey[1];
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+		$extrafieldsonlykey = '';
+		continue;
+	}
+	if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($object->fields[$regkey[1]])) {
+		continue;
+	}
+	$key = $regkey[1];
+	$val = $object->fields[$key];
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -578,8 +623,6 @@ foreach ($object->fields as $key => $val) {
 		$totalarray['nbfield']++;
 	}
 }
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -660,7 +703,21 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		foreach ($object->fields as $key => $val) {
+		// Fields and extrafields ordered by position (fields of hooks are output after)
+		foreach ($arrayfields as $arraykey => $arrayval) {
+			$regkey = array();
+			// Extra fields
+			if (preg_match('/^ef\.(.+)$/', $arraykey, $regkey)) {
+				$extrafieldsonlykey = $regkey[1];
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+				$extrafieldsonlykey = '';
+				continue;
+			}
+			if (!preg_match('/^t\.(.+)$/', $arraykey, $regkey) || !isset($object->fields[$regkey[1]])) {
+				continue;
+			}
+			$key = $regkey[1];
+			$val = $object->fields[$key];
 			$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 				$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -710,8 +767,6 @@ while ($i < $imaxinloop) {
 				}
 			}
 		}
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

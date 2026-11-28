@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
  */
 
 // Translations
-$langs->loadLangs(array("admin", "webportal", "website"));
+$langs->loadLangs(array("admin", "website"));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('webportalthemesetup', 'globalsetup'));
@@ -156,7 +156,7 @@ if ($action == 'edit') {
 } elseif (!empty($formSetup->items)) {
 	print $formSetup->generateOutput();
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=edit&token=' . newToken() . '">' . $langs->trans("Modify") . '</a>';
+	print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"] . '?action=edit&token=' . newToken());
 	print '</div>';
 } else {
 	print '<br>' . $langs->trans("NothingToSetup");

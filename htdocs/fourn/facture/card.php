@@ -77,9 +77,6 @@ if (isModEnabled('accounting')) {
 }
 
 $langs->loadLangs(array('bills', 'compta', 'suppliers', 'companies', 'products', 'banks', 'admin'));
-if (isModEnabled('incoterm')) {
-	$langs->load('incoterm');
-}
 
 $id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
 
@@ -4678,7 +4675,7 @@ if ($action == 'create') {
 						'enabled' => true,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddTitleLine'),
-						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_title_line'], true)
+						'url' => dolBuildUrl('/fourn/facture/card.php', ['id' => $object->id, 'action' => 'add_title_line'], true)
 					);
 
 					$url_button[] = array(
@@ -4686,7 +4683,7 @@ if ($action == 'create') {
 						'enabled' => true,
 						'perm' => (bool) $usercancreate,
 						'label' => $langs->trans('AddSubtotalLine'),
-						'url' => dolBuildUrl($_SERVER['PHP_SELF'], ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
+						'url' => dolBuildUrl('/fourn/facture/card.php', ['id' => $object->id, 'action' => 'add_subtotal_line'], true)
 					);
 
 					$url_button[] = array(
@@ -4705,9 +4702,9 @@ if ($action == 'create') {
 					$ventilExportCompta = $object->getVentilExportCompta(); // Should be 0 since the sum of payments are zero. But we keep the protection.
 
 					if ($ventilExportCompta == 0) {
-						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
+						print dolGetButtonAction($langs->trans('Modify'), '', 'edit', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken(), '', true, ['attr' => ['class' => ($conf->use_javascript_ajax ? 'reposition' : '')]]);
 					} else {
-						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseDispatchedInBookkeeping").'">'.$langs->trans('Modify').'</span>';
+						print dolGetButtonAction($langs->trans("DisabledBecauseDispatchedInBookkeeping"), $langs->trans('Modify'), 'edit', '', '', -1);
 					}
 				}
 

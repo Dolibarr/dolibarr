@@ -1031,7 +1031,7 @@ if ($action == 'edit') {
 	// Actions button
 	print '<div class="tabsAction">';
 
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print dolGetButtonAction($langs->trans("Modify"), '', 'edit', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken());
 
 	if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') != 'mail' || !$linuxlike) {

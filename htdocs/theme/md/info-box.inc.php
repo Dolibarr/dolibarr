@@ -119,6 +119,22 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	border-radius: 3px;
 	white-space: nowrap;
 }
+/* Badge around a phone number, border and text have same color than the phone picto (.fa-phone) */
+.phone-border {
+	border: 1px solid var(--colorphone);
+	color: var(--colorphone);
+	padding: 1px 4px 1px 3px;
+	margin: 2px;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+.phone-border a:link, .phone-border a:visited, .phone-border a:hover, .phone-border a:active {
+	color: var(--colorphone);
+}
+.phone-border .fa-phone, .phone-border .fa-mobile-alt, .phone-border .fa-fax {
+	color: var(--colorphone);
+	opacity: 1;
+}
 
 
 .bg-infobox-project{

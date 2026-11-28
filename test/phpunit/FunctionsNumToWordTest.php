@@ -226,6 +226,34 @@ class FunctionsNumToWordTest extends CommonClassTest
 	}
 
 	/**
+	 * Test the currency word of a French amount: a currency code is written with its French name,
+	 * in lower case and agreed in number (singular for 0 and 1, plural otherwise).
+	 *
+	 * @return	void
+	 */
+	public function testDolConvertToWordFrenchCurrencyAgreement()
+	{
+		global $conf, $langs;
+
+		$this->assertSame('un euro', dol_convertToWord(1, $langs, 'EUR', true));
+		$this->assertSame('un euro et un centime', dol_convertToWord(1.01, $langs, 'EUR', true));
+		$this->assertSame('zéro euro et cinquante centimes', dol_convertToWord(0.50, $langs, 'EUR', true));
+		$this->assertSame('dix euros et cinquante-six centimes', dol_convertToWord(10.56, $langs, 'EUR', true));
+		$this->assertSame('deux mille dollars US', dol_convertToWord(2000, $langs, 'USD', true));
+
+		// The label of the main currency, as given by the CERFA donation receipt, gets the same agreement
+		$savcurrency = $conf->currency;
+		$conf->currency = 'EUR';
+		$langs->load('dict');
+		$this->assertSame('un euro', dol_convertToWord(1, $langs, $langs->transnoentitiesnoconv('CurrencyEUR'), true));
+		$this->assertSame('dix euros', dol_convertToWord(10, $langs, $langs->transnoentitiesnoconv('CurrencyEUR'), true));
+		$conf->currency = $savcurrency;
+
+		// Any other text is kept as given
+		$this->assertSame('deux dirhams', dol_convertToWord(2, $langs, 'dirhams', true));
+	}
+
+	/**
 	 * Non-regression test for the cents extraction bug (e.g. 0.07 must be 7 cents, not 70),
 	 * checked on the generic (non-French) path in English.
 	 *

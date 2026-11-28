@@ -10,6 +10,7 @@
  * Copyright (C) 2018-2026  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2024-2026	MDW				        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -825,7 +826,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 			while ($datep <= $repeateventlimitdate && !$error) {
 				$finalobject = clone $object;
-
+				$finalobject->uid = '';	// Each occurrence is a new event, create() gives it its own uid (the uid column is unique)
 
 				$finalobject->datep = $datep;
 				$finalobject->datef = $datef;
@@ -3040,22 +3041,22 @@ if ($id > 0 && $action != 'create') {
 		if ($action != 'edit') {
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+				print dolGetButtonAction($langs->trans("Modify"), '', 'edit', 'card.php?action=edit&token='.newToken().'&id='.$object->id);
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
+				print dolGetButtonAction($langs->trans("NotAllowed"), $langs->trans("Modify"), 'edit', '', '', -1);
 			}
 
 			if ($user->hasRight('agenda', 'allactions', 'create') ||
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'))) {
 				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("ToClone"), $langs->trans("ToClone"), 'clone', 'card.php?action=clone&token='.newToken().'&object='.$object->element.'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
+				print dolGetButtonAction($langs->trans("NotAllowed"), $langs->trans("ToClone"), 'clone', '', '', -1);
 			}
 
 			if ($usercandelete) {
 				print '<div class="inline-block divButAction">'.dolGetButtonAction($langs->trans("Delete"), $langs->trans("Delete"), 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', true, array('attr' => array('class' => 'reposition'))).'</div>'."\n";
 			} else {
-				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
+				print dolGetButtonAction($langs->trans("NotAllowed"), $langs->trans("Delete"), 'delete', '', '', -1);
 			}
 		}
 	}

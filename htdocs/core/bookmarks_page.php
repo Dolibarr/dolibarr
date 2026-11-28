@@ -52,7 +52,7 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
 }
 
-$langs->loadLangs(array("bookmarks"));
+$langs->loadLangs(array("main"));
 
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
@@ -109,7 +109,7 @@ if (!isModEnabled('bookmark')) {
 	if ($resql = $db->query($sql)) {
 		$bookmarkList = '<div id="dropdown-bookmarks-list" class="start">';
 		$i = 0;
-		while ((!getDolGlobalString('BOOKMARKS_SHOW_IN_MENU') || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
+		while ((!getDolGlobalString('BOOKMARKS_SHOW_IN_MENU') || $i < getDolGlobalInt('BOOKMARKS_SHOW_IN_MENU')) && $obj = $db->fetch_object($resql)) {
 			$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank" rel="noopener noreferrer"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
 			$bookmarkList .= dol_escape_htmltag($obj->title);
 			$bookmarkList .= '</a>';
