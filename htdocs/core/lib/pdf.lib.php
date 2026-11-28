@@ -1446,6 +1446,7 @@ function pdfConvertIndentToBlockquote($html)
 			$nblevel = (int) round((float) $submatches[1] / $indentstep);
 			return '';
 		}, $matches[3]);
+		$attributes = preg_replace('/\s*style\s*=\s*(["\'])\s*\1/i', '', $attributes);
 		$stack[] = $nblevel;
 
 		if ($nblevel == 0) {
