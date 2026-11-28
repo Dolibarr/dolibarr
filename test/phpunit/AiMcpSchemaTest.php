@@ -222,4 +222,30 @@ class AiMcpSchemaTest extends CommonClassTest
 		$this->assertSame(array('args' => array('request_data' => $line), 'error' => ''), McpHandler::checkArgumentTypes(array('request_data' => $line), $schema), 'A string of the schema may stand for a PHP array');
 		$this->assertSame(array('args' => array('request_data' => array('product_ref' => 'PINKDRESS')), 'error' => ''), McpHandler::checkArgumentTypes(array('request_data' => array('product_ref' => 'PINKDRESS')), $schema), 'A one-field object is not a one-value list');
 	}
+
+	/**
+	 * A tool the user may not run is told apart from a tool that does not exist.
+	 *
+	 * @return void
+	 */
+	public function testIsToolDeniedByRights()
+	{
+		global $db, $conf;
+
+		$noRightUser = new User($db);
+		$noRightUser->id = 0;
+		$noRightUser->admin = 0;
+		$noRightUser->rights = new stdClass();
+		$mcp = new McpHandler($db, $noRightUser, $conf, McpHandler::CTX_ASSISTANT);
+		$mcp->loadTools();
+
+		$this->assertTrue($mcp->isToolDeniedByRights('api_contacts_create'));
+		$this->assertFalse($mcp->isToolDeniedByRights('api_no_such_tool_zzz'));
+		$this->assertFalse($mcp->isToolDeniedByRights('respond_to_user'));
+
+		$noRightUser->rights->societe = new stdClass();
+		$noRightUser->rights->societe->contact = new stdClass();
+		$noRightUser->rights->societe->contact->creer = 1;
+		$this->assertFalse($mcp->isToolDeniedByRights('api_contacts_create'));
+	}
 }

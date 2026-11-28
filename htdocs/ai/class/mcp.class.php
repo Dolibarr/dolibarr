@@ -544,6 +544,26 @@ class McpHandler
 	}
 
 	/**
+	 * Tell whether a tool exists in this tool context but the acting user lacks a right it declares.
+	 *
+	 * @param string $toolName Tool name.
+	 * @return bool
+	 */
+	public function isToolDeniedByRights(string $toolName): bool
+	{
+		if (!isset($this->toolsByName[$toolName]) || $this->isSystemTool($this->toolsByName[$toolName])) {
+			return false;
+		}
+		$allowed = $this->getAllowedToolsList();
+		if (!empty($allowed) && !in_array($toolName, $allowed, true)) {
+			return false;
+		}
+		$missingRight = $this->checkToolRights($this->toolsByName[$toolName], $toolName);
+
+		return $missingRight !== '' && $missingRight !== 'undeclared';
+	}
+
+	/**
 	 * Check the rights a tool declared for the acting user.
 	 *
 	 * @param McpTool $tool     Tool instance.

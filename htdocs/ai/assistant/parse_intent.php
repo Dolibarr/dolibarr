@@ -1322,11 +1322,10 @@ try {
 					if (!in_array($intentJSON['tool'], $validToolNames)) {
 						dol_syslog("parse_intent.php AI Validation: Tool '" . $intentJSON['tool'] . "' not found in filtered schema. Send error message via respond_to_user.", LOG_WARNING);
 
-						// Force the standard response for non-existent functionality
 						$intentJSON = [
 							"tool" => "respond_to_user",
 							"arguments" => [
-								"message" => "I apologize, but the requested functionality is not currently available in the system."
+								"message" => $mcp->isToolDeniedByRights((string) $intentJSON['tool']) ? $langs->transnoentitiesnoconv('NotEnoughPermissions') : "I apologize, but the requested functionality is not currently available in the system."
 							]
 						];
 						$confidence = 1.0;
