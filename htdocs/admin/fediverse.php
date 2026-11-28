@@ -131,6 +131,7 @@ if ($action == 'add') {
 			$result = dolibarr_set_const($db, "SOCIAL_NETWORKS_DATA_".$socialNetworkName, $jsonData, 'chaine', 0, '', $conf->entity);
 			if ($result <= 0) {
 				$error++;
+				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorInputRequired"), null, 'errors');
 			}
 		}

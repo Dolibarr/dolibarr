@@ -85,3 +85,4 @@ VendorFirstname=Vendor first name
 VendorEmail=Vendor email
 DOL_VALUE_CUSTOMER_POINTS=Customer points
 DOL_VALUE_OBJECT_POINTS=Object points
+TestPrinterTemplate=Test the template on the printer

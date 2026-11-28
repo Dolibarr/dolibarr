@@ -58,3 +58,7 @@ PrintingDriverDescprintipp=Configuration variables for printing driver Cups.
 PrintTestDescprintgcp=List of Printers for Google Cloud Print.
 PrintTestDescprintipp=List of Printers for Cups.
 PrinterLocation=Printer location
+PrintModule=Module
+PrintDriver=Driver
+PrinterId=Printer ID
+NumberOfCopy=Number of copies

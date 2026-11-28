@@ -129,6 +129,7 @@ if (preg_match('/set_(.*)/', $action, $reg)) {
 		$enabled = trim(GETPOST('AGENDA_EXT_ENABLED'.$i, 'alpha'));
 
 		if (!empty($src) && !dol_is_url($src)) {
+			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorParamMustBeAnUrl"), null, 'errors');
 			$error++;
 			$errorsaved++;

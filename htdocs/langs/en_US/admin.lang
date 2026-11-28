@@ -2926,3 +2926,6 @@ extModuleConfirmInstallText=You are about to install the following module:<br><b
 Install=Install
 ReInstall=Re-install
 YouAlsoNeedToBeAdminForThisPermission=You also need to have the status flag "admin"to be allowed to use this permission
+ContactSuperAdminForChange=Contact your super administrator to change this setting
+FeatureNotAvailableWithThisDatabaseDriver=Feature not available with this database driver
+GeoIPLibVersion=GeoIP library version

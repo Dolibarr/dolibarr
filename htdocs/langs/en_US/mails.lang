@@ -213,3 +213,6 @@ SelectSomeArticlesOrEnterYourOwnContent=Select your articles or enter your own t
 SelectOneArticleOrEnterYourOwnContent=Select one product or service or enter your own text...
 MailingOf=EMailing of %s
 OtherEMailingsForProject=Other emailings of project
+NewEMailTemplate=New email template
+RobotEmail=Robot email
+NoOperations=No operation defined for this collector

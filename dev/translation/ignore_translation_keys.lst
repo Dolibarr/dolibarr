@@ -195,7 +195,6 @@ ConnectingToStripeTerminal
 Constant
 ContactAddress
 ContactDefault_
-ContactSuperAdminForChange
 ContactUs
 Container
 Control
@@ -283,7 +282,6 @@ ErrorBadEmail
 ErrorBadInvoice
 ErrorBadParameterCat
 ErrorBadParameterQty
-ErrorBadPhone
 ErrorBadSocialNetworkValue
 ErrorBadValue
 ErrorBadValueForBatch
@@ -312,9 +310,7 @@ ErrorFailedToLoadDiscount
 ErrorFailedToSetNewPassword
 ErrorFileNameInvalid
 ErrorImportOfChartLimitedToCurrentChart
-ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT
 ErrorMailFromRequired
-ErrorNegativeValueNotAllowed
 ErrorNoAccountingModuleEnabled
 ErrorNoPhoneDefinedForThisUser
 ErrorNoUrl
@@ -327,7 +323,6 @@ ErrorObjectNoSupportedByFunction
 ErrorOccurredReviseAndRetry
 ErrorOnlyOrderNotDraftCanBeSentInMassAction
 ErrorOnlyProposalNotDraftCanBeSentInMassAction
-ErrorParamMustBeAnUrl
 ErrorPriceExpression
 ErrorProductIdIsMandatory
 ErrorSetupOfCountryMustBeDone
@@ -338,7 +333,6 @@ ErrorThirdPartyIdIsMandatory
 ErrorTicketIsNotValid
 ErrorTitreAlreadyExists
 ErrorUserFetch
-ErrorValueMustBeInteger
 ErrorValueTooHigh
 ErrorVerif
 ErrorWarehouseRequiredIntoReceptionLine
@@ -377,7 +371,6 @@ FailedToUncompressFile
 FailedToUpdatePrice
 FailedtoSetToApprove
 FailedtoSetToDeny
-FeatureNotAvailableWithThisDatabaseDriver
 FieldNotFoundInObject
 File encoding
 FileDidAlreadyExist
@@ -394,14 +387,12 @@ FullPathOrig
 Function_getNextValue_InModuleNotWorking
 Gantt
 GeneratePDF
-GeoIPLibVersion
 Get
 GetCompanyParentsError
 GlobalGroup
 GlobalVariableUpdaterHelp
 GlobalVariableUpdaterHelpFormat
 GlobalVariableUpdaterType
-GoOnTokenProviderToDeleteToken
 GoSourceInvoice
 Gzip
 HTTPBasicPassword
@@ -514,7 +505,6 @@ Network
 NewAdherent
 NewAdherentAddress
 NewDeposit
-NewEMailTemplate
 NewLead
 NewPartnershipForm
 NewProperty
@@ -526,7 +516,6 @@ NoEntriesToShow
 NoEstablishmentFound
 NoMail
 NoModuleFound
-NoOperations
 NoReader
 NoRecordedUnpaidInvoices
 NoRecords
@@ -550,7 +539,6 @@ Note: The function password_hash exists on your PHP
 Notification
 Notify_
 Num
-NumberOfCopy
 NumberOfDonationsByMonth
 Numeric
 OK
@@ -607,11 +595,7 @@ Posts
 PredefinedInterventional
 PrevRangeToThisRange
 Print
-PrintDriver
-PrintModule
 PrintUserConfDesc
-PrinterId
-PrinterIdEmpty
 PrinterParameterEmpty
 Printing
 ProductCodeDesc
@@ -664,7 +648,6 @@ ResponseNonOK
 Results
 Retry
 Reverse
-RobotEmail
 Roles
 Rowid
 RulesPurchaseTurnoverCollectedOfExpenseAccounts
@@ -675,7 +658,6 @@ STATE_
 STATE_IPP_
 STRIPE_APPLICATION_FEE_PLATFORM
 ST_
-SaveFailed
 Saved
 Script
 SeeWikiPage
@@ -770,10 +752,7 @@ TargetType
 Targets
 Taxes
 Template
-TemplateIdEmpty
-TemplateNameEmpty
 Templates
-TestPrinterTemplate
 TestTemplateToPrinter
 Theme
 ThisIsInformationOnDocumentToSign
@@ -925,7 +904,6 @@ Dimension
 Don
 ECM
 EmptyMessageNotAllowedError
-ErrorInputRequired
 ErrorUpdating
 Extra
 FailedToConnectToSFTPAfterSSHAuthentication
