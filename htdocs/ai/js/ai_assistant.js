@@ -3060,9 +3060,11 @@ export function initAiAssistant(container) {
             let followupResult = null;
             // The third parties the user picked, for every round of this request.
             const sentChoices = Object.assign({}, thirdpartyChoices);
+            // Objects whose tools the model asked with load_tools, sent on every round of this request.
+            let loadedObjects = null;
             // Three rounds at most: the server never flags the last followup round itself.
             for (let round = 0; round < 3; round++) {
-                if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
+                if (!loadingMsg.parentNode) { appendTyping(); loadingMsg = chat.lastElementChild; }
                 const intentRes = await fetch(epUrl('parse_intent.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     // Page context (set by the printCommonFooter hook on card pages)
@@ -3071,6 +3073,7 @@ export function initAiAssistant(container) {
                     body: JSON.stringify(Object.assign(
                         chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
                         Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
+                        loadedObjects ? { objects: loadedObjects } : {},
                         (function () {
                             // followup_result: only to name the object in the confirmation, never sent to the model.
                             // All the search results in one assistant turn, followup is the number of the round.
@@ -3102,6 +3105,13 @@ export function initAiAssistant(container) {
                 // Choices answer this request only: once it went through, the next question asks again.
                 if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
                 if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'load_tools') {
+                    if (loadedObjects || !intent.arguments || !Array.isArray(intent.arguments.objects)) { handleResponse(t('AIFunctionalityNotAvailable'), false); input.disabled = false; input.focus(); return; }
+                    // Same round again: loading the tools is not a followup round.
+                    loadedObjects = intent.arguments.objects;
+                    round--;
+                    continue;
+                }
                 if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); input.disabled = false; input.focus(); return; }
                 if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
                 if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {

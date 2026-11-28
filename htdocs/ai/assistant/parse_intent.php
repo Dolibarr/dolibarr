@@ -139,6 +139,7 @@ try {
 	// one-line description is added to the system prompt so the model can
 	// resolve "this invoice" into real tool arguments.
 	$aiPageContextLine = '';
+	$aiPageContextElement = '';
 	$ctxNamesToMask = array();
 	if (!empty($data['context']) && is_array($data['context'])) {
 		$ctxElement = isset($data['context']['element']) ? (string) $data['context']['element'] : '';
@@ -253,6 +254,9 @@ try {
 						$aiPageContextLine = "The user is currently viewing the page with alias \"".$ctxObj->pageurl."\" (page id ".(int) $ctxObj->id.") of the website with ref \"".$ctxWebsite->ref."\" (website id ".(int) $ctxWebsite->id.").";
 						$aiPageContextLine .= " When the user says \"this page\"/\"it\", use this page id as the pageid argument and this website id as the id argument of the website tools. NEVER ask the user for ids already given here.";
 					}
+				}
+				if ($aiPageContextLine !== '') {
+					$aiPageContextElement = $ctxElement;
 				}
 				if (getDolGlobalString("AI_DEBUG")) {
 					dol_syslog("AI Pro: page context accepted: ".$ctxElement." #".$ctxId, LOG_INFO, 0, '_ai');
@@ -662,42 +666,24 @@ try {
 			$s .= '</ul>';
 		}
 
-		// Detect if query is in a Non-Latin language (Russian, Greek, Chinese, Arabic, etc.)
-		$isComplex = isComplexScript($queryForIntent);
+		$histTurns = (!empty($data['history']) && is_array($data['history'])) ? aiChatHistoryTurns($db, $user, array_slice($data['history'], -aiChatContextMaxMessages())) : array();
 
-		$toolsSchema = [];
+		// Set by the chat after a load_tools answer, for every round of the question
+		$loadedObjects = aiLoadToolsObjects($data['objects'] ?? null, $llmToolsBase, false);
+		// Bytes of the JSON of the tools over which only the catalog of objects is sent (aiSelectTools()), 0 for no budget
+		$toolsMaxSize = getDolGlobalInt('AI_ASSISTANT_TOOLS_MAX_SIZE', 32000);
+		$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
+		$toolSelection = aiSelectTools($llmToolsBase, array(
+			'query' => $queryForIntent,
+			'element' => $aiPageContextElement,
+			'turns' => $histTurns,
+			'latin' => !isComplexScript($queryForIntent),
+			'requested' => $loadedObjects
+		), $detectedCategories, $toolsMaxSize, $langs);
+		$toolsSchema = $toolSelection['tools'];
 
-		if ($isComplex) {
-			// Non-Latin: the classifier matches translated keys (user language
-			// + en_US reference), so try to narrow the schema here too - a Greek
-			// query otherwise always ships all tools, which is the largest
-			// prompt this module can build (documents + full schema overflow
-			// small-context models). No categories detected = full schema, as
-			// before.
-			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
-			if (!empty($detectedCategories)) {
-				if (getDolGlobalString("AI_DEBUG")) {
-					dol_syslog("AI Pro: Non-Latin query classified into ".implode(',', $detectedCategories).". Filtering schema.", LOG_DEBUG, 0, '_ai');
-				}
-				$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
-			} else {
-				if (getDolGlobalString("AI_DEBUG")) {
-					dol_syslog("AI Pro: Non-Latin language detected, no category match. Sending full (cleaned) schema.", LOG_DEBUG, 0, '_ai');
-				}
-				$toolsSchema = $llmToolsBase;
-			}
-		} else {
-			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
-			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
-
-			$toolsSchema = getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT') ? array() : filterToolsByObjects($llmToolsBase, classifyQueryObjects($queryForIntent, $langs, $llmToolsBase), $detectedCategories);
-			if (empty($toolsSchema)) {
-				$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
-			}
-
-			if (getDolGlobalString("AI_DEBUG")) {
-				dol_syslog("AI Pro: Latin script. Detected: " . json_encode($detectedCategories) . ". Filtered to " . count($toolsSchema) . " tools.", LOG_DEBUG, 0, '_ai');
-			}
+		if (getDolGlobalString("AI_DEBUG")) {
+			dol_syslog("AI Pro: categories ".json_encode($detectedCategories).", mode ".$toolSelection['mode'].", objects ".json_encode($toolSelection['objects']).". Filtered to ".count($toolsSchema)." tools.", LOG_DEBUG, 0, '_ai');
 		}
 
 		// If we are sending a lot of tools (Non-Latin or Fallback), we strip descriptions.
@@ -710,7 +696,8 @@ try {
 		// We raise the threshold to 100 to effectively disable compression for the
 		// default install (~30 tools), while still leaving a safety net for very large
 		// custom installs that register dozens of additional addMcpTools hooks.
-		$isLargeSchema = count($toolsSchema) > 100;
+		$toolsSchema = sortAiToolsByObjectBlock($toolsSchema);
+		$isLargeSchema = aiToolsAreLargeSchema($toolsSchema);
 		$toolsForLLM = cleanToolSchemaForLLM($toolsSchema, $isLargeSchema);
 
 
@@ -718,6 +705,7 @@ try {
 		if ($query == '/tools') {
 			// Then the tools as sent to the LLM, one folded block per tool, its
 			// parameters as indented JSON.
+			$s .= '<div><strong>Selection</strong> <span class="small">mode '.dol_escape_htmltag($toolSelection['mode']).', objects: '.dol_escape_htmltag(implode(', ', $toolSelection['objects']) ?: '-').'</span></div>';
 			$s .= '<strong>Tools sent to the LLM ('.count($toolsForLLM).')</strong>';
 			foreach ($toolsForLLM as $toolDef) {
 				$toolName = (string) ($toolDef['name'] ?? '');
@@ -762,10 +750,6 @@ try {
 		$systemRules .= '* Answer a JSON message: {"type": "message", "content": "..."} or {"tool":..., "arguments":{...}}'."\n";
 		$systemRules .= "* ALWAYS write user-facing text (the message/question/answer argument values) in the SAME LANGUAGE as the user's message. English context notes, tool names, or schemas never change the response language.\n";
 		$systemRules .= "* When a tool matches the user request, use it to fulfill the user's request - never explain limitations, and never claim a capability is missing while a matching tool is listed.\n";
-		if (!$isFollowup) {
-			// The chat runs the search, then calls back with its result so the action can follow.
-			$systemRules .= "* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it if the requested search is itself the FINAL answer.\n";
-		}
 		// Pure LLM tasks need no tool: without this rule, the model refuses them because no tool "generates text".
 		$systemRules .= "* When the request needs no Dolibarr data and no Dolibarr action (write or rewrite a text, an article or an email, translate, summarize, explain, answer a general question...), do it yourself and answer directly with {\"type\": \"message\", \"content\": \"...\"}. Never refuse such a request because no tool matches it.\n";
 		$systemRules .= "* Only when the request needs Dolibarr data or a Dolibarr action that genuinely NO tool can do, use `respond_to_user` to say so plainly instead of guessing a business reason.\n";
@@ -774,8 +758,12 @@ try {
 		$systemPrompt .= $systemRules;
 
 		// If option is on, we disable all tools
+		$catalogPrompt = '';
 		if (getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS')) {
 			$toolsForLLM = array();
+		} elseif ($toolsMaxSize > 0) {
+			$catalogPrompt = aiToolsCatalogPrompt($llmToolsBase);
+			$systemPrompt .= $catalogPrompt;
 		}
 
 		$systemPrompt .= "## Tools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n";
@@ -813,12 +801,12 @@ try {
 			$systemPrompt .= "\n";
 		}
 
-		// A bare date is not enough for weaker models: state explicitly that
-		// relative periods are the assistant's job to resolve, not the user's.
-		// Use date ISO 8601
+		// What changes on every call goes after the history, at the end of the last user message:
+		// a local model reuses only the prompt prefix shared with its previous call.
 		$date = new DateTime('now', new DateTimeZone('UTC'));
+		$promptTail = "\n\n## Date\n";
+		$promptTail .= "Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".\n";
 		$systemPrompt .= "## Context\n";
-		$systemPrompt .= "Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".\n";
 		if (!empty($aiPageContextLine)) {
 			// Masked like the query itself: under enforced redaction the ref
 			// becomes a placeholder that is restored server-side in tool
@@ -836,6 +824,8 @@ try {
 		// 'me' in sqlfilters (__USER_ID__ covers it too) and in user fields of
 		// write calls — no personal data sent to the provider for this.
 		$systemPrompt .= "Current user rowid: ".((int) $user->id)."\n";
+		// A bare date is not enough for weaker models: state explicitly that
+		// relative periods are the assistant's job to resolve, not the user's.
 		$systemPrompt .= "Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.\n";
 
 		// Get API configuration
@@ -918,47 +908,11 @@ try {
 			// roles constrained, embedded attachment payloads stripped (attachments
 			// stay one-shot), per-turn and global caps, privacy redaction applied.
 			$history = array();
-			if (!empty($data['history']) && is_array($data['history'])) {
-				// Keep the LAST turns: the most recent exchanges, and the search result
-				// appended at the end on a followup round, are the ones that matter.
-				$histTurns = array_slice($data['history'], -aiChatContextMaxMessages());
-
-				// Persisted turns arrive as ids only: the text is rebuilt here from
-				// the stored conversation (llx_ai_chat_message.content_raw), so the
-				// client is not trusted for what the conversation was. Only rows of
-				// conversations owned by the current user resolve; anything else
-				// silently drops. Turns of a not-yet-persisted message (history
-				// disabled, save still in flight) keep the inline text fallback.
-				$histIds = array();
-				foreach ($histTurns as $turn) {
-					if (is_array($turn) && !empty($turn['id']) && (int) $turn['id'] > 0) {
-						$histIds[] = (int) $turn['id'];
-					}
-				}
-				$histRows = array();
-				if (!empty($histIds)) {
-					$sqlh = "SELECT m.rowid, m.role, m.content_raw FROM ".$db->prefix()."ai_chat_message as m";
-					$sqlh .= " INNER JOIN ".$db->prefix()."ai_chat_conversation as c ON c.rowid = m.fk_conversation";
-					$sqlh .= " AND c.fk_user = ".((int) $user->id)." AND c.entity = ".((int) getEntity('ai'));
-					$sqlh .= " WHERE m.rowid IN (".$db->sanitize(implode(',', $histIds)).")";
-					$resqlh = $db->query($sqlh);
-					if ($resqlh) {
-						while ($objh = $db->fetch_object($resqlh)) {
-							$histRows[(int) $objh->rowid] = array('role' => (string) $objh->role, 'text' => (string) $objh->content_raw);
-						}
-					}
-				}
-
+			if (!empty($histTurns)) {
 				$histBudget = getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000);	// in characters
 				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
 				// Newest first, so the budget drops the oldest turns; put back in chronological order after.
 				foreach (array_reverse($histTurns) as $turn) {
-					if (is_array($turn) && !empty($turn['id'])) {
-						$turn = $histRows[(int) $turn['id']] ?? null;
-					}
-					if (!is_array($turn) || empty($turn['text']) || !is_string($turn['text'])) {
-						continue;
-					}
 					$htext = preg_replace('/__FILE_ATTACHMENT__\[[^\]]*\]::[^\s]+/', '[attachment removed]', $turn['text']);
 					$htext = trim((string) $htext);
 					if ($htext === '') {
@@ -979,7 +933,7 @@ try {
 					if ($histBudget < 0) {
 						break;
 					}
-					$history[] = (($turn['role'] ?? '') === 'assistant') ? array('role' => 'assistant', 'text' => aiHistoryTurnForModel($htext)) : array('role' => 'user', 'text' => $htext);
+					$history[] = array('role' => $turn['role'], 'text' => ($turn['role'] === 'assistant' ? aiHistoryTurnForModel($htext) : $htext));
 				}
 				$history = array_reverse($history);
 
@@ -1042,14 +996,17 @@ try {
 			if (!empty($history)) {
 				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references needed for final action. The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
 			}
-			if ($isFollowup && !$isLastFollowup) {
-				$systemPrompt .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result.";
-				$systemPrompt .= " Run another search only in these 2 cases: to find a DIFFERENT kind of object still needed for the action, or to retry ONE time a search that returned nothing, with less restrictive criteria. A search for the same objects must never be run more than 2 times in total, even with other or less restrictive criteria.";
-				$systemPrompt .= " Add \"needs_followup\": true to such a search only if it is a step toward the action asked, not if it is itself the FINAL answer.";
-				$systemPrompt .= " If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why.";
-			} elseif ($isLastFollowup) {
-				$systemPrompt .= "\n\nSTEP 3 (LAST STEP): the searches you chose for the last user message were already executed; their results are the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in these results, or give your final answer with respond_to_user.";
-				$systemPrompt .= " Do NOT run any search again, even with other or less restrictive criteria, and do not add needs_followup. If the results do not identify one object with certainty, are empty, or the action cannot be done, answer with respond_to_user and say why.";
+			if (!$isFollowup) {
+				// The chat runs the search, then calls back with its result so the action can follow.
+				$promptTail .= "\n## Rules\n* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it if the requested search is itself the FINAL answer.\n";
+			} elseif (!$isLastFollowup) {
+				$promptTail .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result.";
+				$promptTail .= " Run another search only in these 2 cases: to find a DIFFERENT kind of object still needed for the action, or to retry ONE time a search that returned nothing, with less restrictive criteria. A search for the same objects must never be run more than 2 times in total, even with other or less restrictive criteria.";
+				$promptTail .= " Add \"needs_followup\": true to such a search only if it is a step toward the action asked, not if it is itself the FINAL answer.";
+				$promptTail .= " If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why.";
+			} else {
+				$promptTail .= "\n\nSTEP 3 (LAST STEP): the searches you chose for the last user message were already executed; their results are the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in these results, or give your final answer with respond_to_user.";
+				$promptTail .= " Do NOT run any search again, even with other or less restrictive criteria, and do not add needs_followup. If the results do not identify one object with certainty, are empty, or the action cannot be done, answer with respond_to_user and say why.";
 			}
 
 			// The rules come before the long tools list. Small models weigh what is
@@ -1059,7 +1016,7 @@ try {
 
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog('parse_intent.php systemPrompt = '.$systemPrompt, LOG_DEBUG, 0, '_ai');
-				dol_syslog('parse_intent.php query = '.$query, LOG_DEBUG, 0, '_ai');
+				dol_syslog('parse_intent.php query = '.$query.$promptTail, LOG_DEBUG, 0, '_ai');
 			}
 
 			// Sent as separate messages, so not in the systemPrompt (masked when privacy masking is on).
@@ -1080,7 +1037,7 @@ try {
 			$attachments = $attachmentsForModel;	// Only what is sent, for the error messages below
 			// Releases the session lock during the long AI call: $_SESSION changes after this line are not saved unless the session is reopened.
 			$sessionReleased = session_write_close();
-			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachmentsForModel, $history);
+			$rawResponse = $adapter->generate($systemPrompt, $query.$promptTail, 'text', $attachmentsForModel, $history);
 			// The provider rejected the attachments (e.g. "Image input is not enabled for this model"):
 			// remember it for the session and ask again without them, the model still has their references.
 			if (!empty($attachmentsForModel) && is_string($rawResponse) && strpos($rawResponse, 'Error:') === 0
@@ -1096,7 +1053,7 @@ try {
 				}
 				$attachments = array();
 				$query .= $aiAttachmentsHiddenNote;
-				$rawResponse = $adapter->generate($systemPrompt, $query, 'text', array(), $history);
+				$rawResponse = $adapter->generate($systemPrompt, $query.$promptTail, 'text', array(), $history);
 			}
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
@@ -1297,6 +1254,18 @@ try {
 				// Ensure no placeholders remain in the data structure.
 				if ($guard && isset($intentJSON['arguments'])) {
 					$intentJSON['arguments'] = recursiveUnmaskValues($intentJSON['arguments'], $guard);
+				}
+
+				if ($catalogPrompt !== '' && is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'load_tools') {
+					$askedObjects = aiLoadToolsObjects($intentJSON['arguments']['objects'] ?? null, $llmToolsBase, !empty($loadedObjects));
+					if (!empty($askedObjects)) {
+						// The chat posts the question again with these objects, without counting a followup round.
+						$finalResponse = array('tool' => 'load_tools', 'arguments' => array('objects' => $askedObjects));
+						ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 1.0, 'load_tools', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
+						ob_end_clean();
+						echo json_encode($finalResponse);
+						exit;
+					}
 				}
 
 				// Validation check: Check if the AI selected a tool that actually exists in our filtered schema.
@@ -1990,54 +1959,6 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		}
 	}
 	return $detectedCategories;
-}
-
-/**
- * Filter a list of tools based on active intent categories.
- *
- * This function narrows down the available tools by matching their assigned
- * categories against the detected intent categories. Tools tagged as "global"
- * (the default of McpTool::getCategories()) are always kept, as they apply to
- * any object (navigation, tools of external modules without categories, ...).
- *
- * Behavior:
- * - If no categories are provided, or only "global" is present, all tools are returned.
- * - Tools are included if they share at least one category with the target categories.
- * - Tools with the "global" category are always included.
- * - If fewer than 3 tools match a detected category, the full tool list is returned as a fallback.
- *
- *
- * @param array<int,array<string,mixed>> $allTools          List of all available tools.
- * @param string[] $activeCategories  Detected intent categories (e.g., ['billing', 'stock']).
- *
- * @return array<int,array<string,mixed>> Filtered list of tools matching the active categories.
- */
-function filterToolsProfessional(array $allTools, array $activeCategories)
-{
-	if (empty($activeCategories) || (count($activeCategories) === 1 && $activeCategories[0] === 'global')) {
-		return $allTools;
-	}
-
-	$targetCategories = array_merge(['global'], $activeCategories);
-	$filtered = [];
-	$nbMatchingCategory = 0;	// Tools kept for a detected category, not only because they are global
-
-	foreach ($allTools as $tool) {
-		$toolCats = $tool['categories'] ?? ['global'];
-		if (count(array_intersect($toolCats, $targetCategories)) > 0) {
-			$filtered[] = $tool;
-			if (count(array_intersect($toolCats, $activeCategories)) > 0) {
-				$nbMatchingCategory++;
-			}
-		}
-	}
-
-	if ($nbMatchingCategory < 3) {
-		dol_syslog("AI Filter: Too few tools (" . $nbMatchingCategory . ") for the detected categories. Reverting to full schema.", LOG_WARNING);
-		return $allTools;
-	}
-
-	return $filtered;
 }
 
 /**
