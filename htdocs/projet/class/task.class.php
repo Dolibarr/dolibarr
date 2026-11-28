@@ -1630,6 +1630,10 @@ class Task extends CommonObjectLine
 			dol_print_error(null, "Method addTimeSpent was called with wrong parameter user");
 			return -1;
 		}
+		if ($this->timespent_date == '') {
+			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Date"));
+			return -1;
+		}
 
 		// Clean parameters
 		if (isset($this->timespent_note)) {
@@ -2246,7 +2250,7 @@ class Task extends CommonObjectLine
 
 		$error = 0;
 
-		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
+		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS') && $this->timespent_date != '') {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 
