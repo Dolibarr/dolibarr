@@ -546,27 +546,32 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->printRoundedRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $tab_height + 1, $this->corner_radius, 0, 0, 'D');	 // Rect takes a length in 3rd parameter and 4th parameter
 
 		if (empty($hidebottom)) {
-			$employee_name = '';
-			if (!empty($object)) {
-				$arrayidcontact = $object->getIdContact('internal', 'INTERVENING');
-				if (count($arrayidcontact) > 0) {
-					$object->fetch_user($arrayidcontact[0]);
-					$employee_name = $object->user->getFullName($outputlangs);
-				}
-			}
+			$internalBox = self::getSignatureBox(true);
+			$externalBox = self::getSignatureBox(false);
 
-			$pdf->SetXY(20, 230);
-			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"), 0, 'L', false);
+			$pdf->SetXY($internalBox['x'], $internalBox['y'] - 5);
+			$pdf->MultiCell($internalBox['width'], 5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"), 0, 'L', false);
 
-			$pdf->SetXY(20, 235);
-			$pdf->MultiCell(80, 25, $employee_name, 1, 'L');
+			$pdf->SetXY($internalBox['x'], $internalBox['y']);
+			$pdf->MultiCell($internalBox['width'], $internalBox['height'], '', 1, 'L');
 
-			$pdf->SetXY(110, 230);
-			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"), 0, 'L', false);
+			$pdf->SetXY($externalBox['x'], $externalBox['y'] - 5);
+			$pdf->MultiCell($externalBox['width'], 5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"), 0, 'L', false);
 
-			$pdf->SetXY(110, 235);
-			$pdf->MultiCell(80, 25, '', 1);
+			$pdf->SetXY($externalBox['x'], $externalBox['y']);
+			$pdf->MultiCell($externalBox['width'], $externalBox['height'], '', 1);
 		}
+	}
+
+	/**
+	 * Return the coordinates of an existing signature box on the last page, in millimetres.
+	 *
+	 * @param bool $internal Select the technician's box
+	 * @return array{x:int,y:int,width:int,height:int}
+	 */
+	public static function getSignatureBox(bool $internal): array
+	{
+		return array('x' => $internal ? 20 : 110, 'y' => 235, 'width' => 80, 'height' => 25);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

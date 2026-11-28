@@ -229,6 +229,197 @@ class Fichinter extends CommonObject
 	 */
 	const STATUS_CANCELED = 9;
 
+
+	/**
+	 * Check the intervention state and the internal contact assignment.
+	 *
+	 * @param User $user Signing user
+	 * @return bool
+	 */
+	public function isAssignedTechnicianForSignature(User $user)
+	{
+		return $this->id > 0 && $user->id > 0 && !$user->isExternalUser()
+			&& (int) $this->status === self::STATUS_VALIDATED
+			&& in_array((int) $user->id, array_map('intval', $this->getIdContact('internal', 'INTERVENING', 4) ?? array()), true);
+	}
+
+	/**
+	 * Resolve the current PDF in the intervention owner's document directory.
+	 *
+	 * @return string Absolute PDF path, or an empty string
+	 */
+	public function getPdfForTechnicianSignature()
+	{
+		global $conf;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		if ($this->id <= 0 || $this->entity <= 0 || empty($conf->ficheinter->multidir_output[$this->entity])
+			|| empty($this->last_main_doc) || !preg_match('/\.pdf$/iD', $this->last_main_doc)) {
+			return '';
+		}
+
+		$output = getMultidirOutput($this, 'ficheinter', 1);
+		if (!is_string($output) || $output === '' || strpos($output, 'error-') === 0) {
+			return '';
+		}
+
+		$root = realpath(DOL_DATA_ROOT);
+		$moduleDir = realpath($conf->ficheinter->multidir_output[$this->entity]);
+		$directory = realpath($output);
+		$source = realpath(DOL_DATA_ROOT.'/'.$this->last_main_doc);
+		if ($root === false || $moduleDir === false || $directory === false || $source === false
+			|| strpos($directory, $moduleDir.DIRECTORY_SEPARATOR) !== 0
+			|| strpos($directory, $root.DIRECTORY_SEPARATOR) !== 0
+			|| dirname($source) !== $directory || dol_basename($this->last_main_doc) !== dol_basename(str_replace(DIRECTORY_SEPARATOR, '/', $source))
+			|| !dol_is_file($source) || !is_readable($source)) {
+			return '';
+		}
+
+		return str_replace(DIRECTORY_SEPARATOR, '/', $source);
+	}
+
+	/**
+	 * Check whether the current PDF contains the technician's signature.
+	 *
+	 * @param bool $separatePageOnly Match documents signed before the in-box layout
+	 * @return bool
+	 */
+	public function hasTechnicianSignedPdf(bool $separatePageOnly = false)
+	{
+		$marker = $separatePageOnly ? '' : '(?:box-)?';
+		return preg_match('/_technician-signed-'.$marker.'[a-f0-9]{24}(?:_signed-[0-9]{14})*\.pdf$/D', (string) $this->last_main_doc) === 1;
+	}
+
+	/**
+	 * Refresh the signature state under a row lock held by the caller's transaction.
+	 *
+	 * @return bool
+	 */
+	public function lockSignatureDocument()
+	{
+		$sql = "SELECT last_main_doc, signed_status, fk_statut, model_pdf FROM ".$this->db->prefix().$this->table_element;
+		$sql .= ' WHERE rowid = '.((int) $this->id).' AND entity = '.((int) $this->entity);
+		$sql .= ' FOR UPDATE';
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			return false;
+		}
+		$row = $this->db->fetch_object($resql);
+		$this->db->free($resql);
+		if (!$row) {
+			return false;
+		}
+
+		$this->last_main_doc = $row->last_main_doc;
+		$this->model_pdf = $row->model_pdf;
+		$this->signed_status = (int) $row->signed_status;
+		$this->status = (int) $row->fk_statut;
+		$this->statut = $this->status; // deprecated
+		return true;
+	}
+
+	/**
+	 * Sign the technician's box on the Soleil PDF the user reviewed.
+	 *
+	 * @param User      $user           Signing user
+	 * @param Translate $outputlangs    PDF language
+	 * @param string    $signature      Base64-encoded PNG
+	 * @param string    $reviewedDigest SHA-256 of the reviewed PDF
+	 * @return int                      1 on success, -1 on failure
+	 */
+	public function signAsTechnician(User $user, Translate $outputlangs, string $signature, string $reviewedDigest)
+	{
+		global $conf;
+
+		if ((int) $this->entity !== (int) $conf->entity || !$user->hasRight('ficheinter', 'creer')
+			|| !$this->isAssignedTechnicianForSignature($user)) {
+			return -1;
+		}
+
+		$image = dol_strlen($signature) <= 350000 ? base64_decode($signature, true) : false;
+		$imageInfo = is_string($image) && $image !== '' ? @getimagesizefromstring($image) : false;
+		if (!$imageInfo || $imageInfo[2] !== IMAGETYPE_PNG || $imageInfo[0] > 2048 || $imageInfo[1] > 512) {
+			return -1;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+		if (!$this->db->begin()) {
+			return -1;
+		}
+		$destination = '';
+		try {
+			if (!$this->lockSignatureDocument() || !$this->isAssignedTechnicianForSignature($user) || $this->model_pdf !== 'soleil' || $this->hasTechnicianSignedPdf()) {
+				$this->db->rollback();
+				return -1;
+			}
+			$source = $this->getPdfForTechnicianSignature();
+			$digest = $source !== '' ? hash_file('sha256', $source) : false;
+			if ($digest === false || !hash_equals($digest, $reviewedDigest)) {
+				$this->db->rollback();
+				return -1;
+			}
+
+			$destination = dirname($source).'/'.dol_sanitizeFileName($this->ref).'_technician-signed-box-'.bin2hex(random_bytes(12)).'.pdf';
+			$pdf = pdf_getInstance();
+			if (!$pdf instanceof TCPDI) {
+				$this->db->rollback();
+				return -1;
+			}
+			$pdf->setPrintHeader(false);
+			$pdf->setPrintFooter(false);
+			$pageCount = $pdf->setSourceFile($source);
+			if ($pageCount < 1) {
+				$this->db->rollback();
+				return -1;
+			}
+			for ($page = 1; $page <= $pageCount; $page++) {
+				$template = $pdf->importPage($page);
+				$size = $pdf->getTemplateSize($template);
+				$pdf->AddPage($size['h'] > $size['w'] ? 'P' : 'L', array($size['w'], $size['h']));
+				$pdf->useTemplate($template);
+			}
+
+			require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/doc/pdf_soleil.modules.php';
+			$box = pdf_soleil::getSignatureBox(true);
+			if ($box['x'] + $box['width'] > $pdf->getPageWidth() || $box['y'] + $box['height'] > $pdf->getPageHeight()) {
+				$this->db->rollback();
+				return -1;
+			}
+			$outputlangs->load('main');
+			$pdf->SetAutoPageBreak(false);
+			dolPrintSignatureImage($pdf, $outputlangs, array(
+				'online_sign_name' => $user->getFullName($outputlangs),
+				'pathtoimage' => '@'.$image,
+				'xforimgstart' => $box['x'] + 2,
+				'yforimgstart' => $box['y'] + 4,
+				'wforimg' => $box['width'] - 16,
+				'fitlabel' => 1,
+			));
+			if (hash_file('sha256', $source) !== $digest) {
+				$this->db->rollback();
+				return -1;
+			}
+			$pdf->Output($destination, 'F');
+
+			$status = in_array($this->signed_status, array(self::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER'], self::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], self::$SIGNED_STATUSES['STATUS_SIGNED_ALL']), true)
+				? self::$SIGNED_STATUSES['STATUS_SIGNED_ALL'] : self::$SIGNED_STATUSES['STATUS_SIGNED_SENDER'];
+			if (dol_is_file($destination) && $this->indexFile($destination, 1) > 0
+				&& $this->setSignedStatus($user, $status, 0, 'FICHINTER_MODIFY') > 0 && $this->db->commit()) {
+				return 1;
+			}
+		} catch (Throwable $e) {
+			dol_syslog(__METHOD__.': '.$e->getMessage(), LOG_ERR);
+		}
+
+		$this->db->rollback();
+		if ($destination !== '' && dol_is_file($destination)) {
+			dol_delete_file($destination);
+		}
+		return -1;
+	}
+
+
 	/**
 	 * Date of delivery of receipt
 	 * @var null|int|''		Date the intervention receipt has been delivered

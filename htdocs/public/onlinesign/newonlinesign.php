@@ -610,7 +610,10 @@ if ($source == 'proposal') {
 		$object->generateDocument($defaulttemplate, $langs);
 	}
 
-	$directdownloadlink = $object->getLastMainDocLink('fichinter');
+	// The valid intervention signing link also allows review of the technician-signed PDF.
+	$shareTechnicianPdf = $object->hasTechnicianSignedPdf() && getDolGlobalInt('FICHINTER_ALLOW_ONLINE_SIGN')
+		&& $object->getPdfForTechnicianSignature() !== '';
+	$directdownloadlink = $object->getLastMainDocLink('fichinter', (int) $shareTechnicianPdf);
 	if ($directdownloadlink) {
 		print '<br><a href="'.$directdownloadlink.'">';
 		print img_mime($object->last_main_doc, '');

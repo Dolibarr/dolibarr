@@ -2136,6 +2136,11 @@ if ($action == 'create') {
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
+				if ($permissiontoadd && (int) $object->entity === (int) $conf->entity && $object->isAssignedTechnicianForSignature($user)
+					&& $object->model_pdf === 'soleil' && !$object->hasTechnicianSignedPdf() && $object->getPdfForTechnicianSignature() !== '') {
+					print dolGetButtonAction('', $langs->trans('SignInterventionAsTechnician'), 'default', DOL_URL_ROOT.'/fichinter/techniciansignature.php?id='.$object->id);
+				}
+
 				// Sign
 				if ($object->status > Fichinter::STATUS_DRAFT && $object->status != Fichinter::STATUS_CLOSED && $object->status != Fichinter::STATUS_CANCELED) {
 					if ($object->signed_status != Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {

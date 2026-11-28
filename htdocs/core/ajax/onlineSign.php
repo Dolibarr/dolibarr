@@ -699,8 +699,22 @@ if ($action == "importSignature") {
 			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/pdf.lib.php';
 			$object = new Fichinter($db);
-			$object->fetch(0, $ref);
+			if ($object->fetch(0, $ref) <= 0 || !$db->begin()) {
+				http_response_code(500);
+				exit;
+			}
+			if (!$object->lockSignatureDocument()) {
+				$db->rollback();
+				http_response_code(500);
+				exit;
+			}
 
+			$hasTechnicianSignature = $object->hasTechnicianSignedPdf();
+			if ($hasTechnicianSignature && $object->signed_status === Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
+				$db->rollback();
+				echo 'success';
+				exit;
+			}
 			$upload_dir = !empty($conf->ficheinter->multidir_output[$object->entity ?? $conf->entity]) ? $conf->ficheinter->multidir_output[$object->entity ?? $conf->entity] : $conf->ficheinter->dir_output;
 			$upload_dir .= '/'.dol_sanitizeFileName($object->ref).'/';
 
@@ -710,6 +724,7 @@ if ($action == "importSignature") {
 			$default_font = pdf_getPDFFont($langs);	// Must be
 
 			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$newpdffilename = '';
 			$filename = "signatures/" . $date . "_signature.png";
 			if (!is_dir($upload_dir . "signatures/")) {
 				if (!dol_mkdir($upload_dir . "signatures/")) {
@@ -744,6 +759,7 @@ if ($action == "importSignature") {
 						$reshook = $hookmanager->executeHooks('AddSignature', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 						if ($reshook < 0) {
 							setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+							$error++;
 						}
 
 						if (empty($reshook)) {
@@ -761,6 +777,10 @@ if ($action == "importSignature") {
 
 							//$pdf->Open();
 							$pagecount = $pdf->setSourceFile($sourcefile);        // original PDF
+							// Older technician-signed PDFs have a dedicated last page.
+							$lastCustomerPage = $object->hasTechnicianSignedPdf(true) ? $pagecount - 1 : $pagecount;
+							$lastCustomerPageSize = array();
+							$onAllPages = getDolGlobalInt('FICHINTER_SIGNATURE_ON_ALL_PAGES');
 
 							$param = array();
 							$param['online_sign_name'] = $online_sign_name;
@@ -771,10 +791,13 @@ if ($action == "importSignature") {
 								try {
 									$tppl = $pdf->importPage($i);
 									$s = $pdf->getTemplatesize($tppl);
-									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L', array($s['w'], $s['h']));
 									$pdf->useTemplate($tppl);
 
-									if (getDolGlobalString("FICHINTER_SIGNATURE_ON_ALL_PAGES")) {
+									if ($i === $lastCustomerPage) {
+										$lastCustomerPageSize = $s;
+									}
+									if ($i <= $lastCustomerPage && $onAllPages) {
 										// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 										// TODO Get position of box from PDF template
 
@@ -803,23 +826,40 @@ if ($action == "importSignature") {
 								}
 							}
 
-							if (!getDolGlobalString("FICHINTER_SIGNATURE_ON_ALL_PAGES")) {
-								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-								// TODO Get position of box from PDF template
-
-								$param['xforimgstart'] = (empty($s['w']) ? 110 : round($s['w'] * 0.53));
-								$param['yforimgstart'] = (empty($s['h']) ? 250 : $s['h'] - 60);
-								$param['wforimg'] = $s['w'] - ($param['xforimgstart'] + 16);
-
+							if (empty($lastCustomerPageSize)) {
+								$error++;
+							}
+							if (!$error && !$onAllPages) {
+								// Sign the last original page, even if a technician signature page follows it.
+								$pdf->setPage($lastCustomerPage);
+								$param['xforimgstart'] = round($lastCustomerPageSize['w'] * 0.53);
+								$param['yforimgstart'] = $lastCustomerPageSize['h'] - 60;
+								$param['wforimg'] = $lastCustomerPageSize['w'] - ($param['xforimgstart'] + 16);
+								if ($object->model_pdf === 'soleil') {
+									require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/doc/pdf_soleil.modules.php';
+									$box = pdf_soleil::getSignatureBox(false);
+									if ($box['x'] + $box['width'] <= $lastCustomerPageSize['w'] && $box['y'] + $box['height'] <= $lastCustomerPageSize['h']) {
+										$param['xforimgstart'] = $box['x'] + 2;
+										$param['yforimgstart'] = $box['y'] + 4;
+										$param['wforimg'] = $box['width'] - 16;
+										$param['fitlabel'] = 1;
+									}
+								}
 								dolPrintSignatureImage($pdf, $langs, $param);
 							}
 
 							//$pdf->Close();
-							$pdf->Output($newpdffilename, "F");
+							if (!$error) {
+								$pdf->Output($newpdffilename, "F");
 
-							// Index the new file and update the last_main_doc property of object.
-							$object->indexFile($newpdffilename, 1);
+								// Index the new file and update the last_main_doc property of object.
+								if (!dol_is_file($newpdffilename) || $object->indexFile($newpdffilename, 1) <= 0) {
+									$error++;
+								}
+							}
 						}
+					} elseif ($hasTechnicianSignature) {
+						$error++;
 					}
 					if (!$error) {
 						$response = "success";
@@ -832,7 +872,19 @@ if ($action == "importSignature") {
 					// We should just create an image file with the signature.
 				}
 				$user = new User($db);
-				$object->setSignedStatus($user, Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'], 0, 'FICHINTER_MODIFY');
+				$status = $hasTechnicianSignature ? Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_ALL'] : Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE'];
+				if (!$error && $object->setSignedStatus($user, $status, 0, 'FICHINTER_MODIFY') <= 0) {
+					$error++;
+				}
+			}
+			if ($error || !$db->commit()) {
+				$db->rollback();
+				if (!empty($newpdffilename) && dol_is_file($newpdffilename)) {
+					dol_delete_file($newpdffilename);
+				}
+				$error++;
+				$langs->load('errors');
+				$response = $langs->transnoentitiesnoconv('ErrorCantSignDocument');
 			}
 		} elseif ($mode == "societe_rib") {
 			$langs->load('withdrawals');
@@ -1196,32 +1248,3 @@ if ($error) {
 }
 
 echo $response;
-
-
-/**
- * Output the signature file into the PDF object.
- *
- * @param 	TCPDF 		$pdf		PDF handler
- * @param	Translate	$langs		Language
- * @param	array<string,int|float|string|mixed[]>		$params		Array of params
- * @return	void
- */
-function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)
-{
-	$default_font_size = pdf_getPDFFontSize($langs);	// Must be after pdf_getInstance
-	$default_font = pdf_getPDFFont($langs);	// Must be
-	$xforimgstart = $params['xforimgstart'];
-	$yforimgstart = $params['yforimgstart'];
-	$wforimg = $params['wforimg'];
-
-	$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
-	$pdf->SetFont($default_font, '', $default_font_size - 1);
-	$pdf->SetTextColor(80, 80, 80);
-	$pdf->MultiCell($wforimg, 4, $langs->transnoentities("Signature") . ': ' . dol_print_date(dol_now(), "day", false, $langs, true). ' - '.$params['online_sign_name'], 0, 'L');
-	//$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
-	//$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname") . ': ' . $online_sign_name, 0, 'L');
-
-	$pdf->Image($params['pathtoimage'], $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
-
-	return;
-}
