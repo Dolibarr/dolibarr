@@ -137,7 +137,7 @@ class UniversalLLMAdapter
 	 * @param 	string 			$msg 		User message
 	 * @param 	string 			$mode 		'json' or 'text'
 	 * @param 	array<int,array{mime:string,data:string}> $attachments 		Optional attachments sent as native multimodal parts
-	 * @param 	array<int,array{role:string,text:string}> $history 			Optional prior turns inserted before the current query
+	 * @param 	array<int,array{role:string,text:string,attachments?:array<int,array{mime:string,data:string}>}> $history 			Optional prior turns inserted before the current query, a user turn may keep its files
 	 * @return 	string|null 				Response content or null on failure
 	 */
 	private function callOpenAI(string $sys, string $msg, string $mode = 'text', array $attachments = array(), array $history = array()): ?string
@@ -147,36 +147,11 @@ class UniversalLLMAdapter
 			$url .= '/chat/completions';
 		}
 
-		// With attachments, the user content becomes an array of typed parts
-		// (vision input); without, it stays a plain string (widest compatibility).
-		$userContent = $msg;
-		if (!empty($attachments)) {
-			$userContent = array(array("type" => "text", "text" => $msg));
-			foreach ($attachments as $att) {
-				if ($att['mime'] === 'application/pdf') {
-					// OpenAI compatible APIs reject non-image MIME inside image_url;
-					// PDFs use the dedicated 'file' content part.
-					$userContent[] = array(
-						"type" => "file",
-						"file" => array(
-							"filename" => "document.pdf",
-							"file_data" => "data:application/pdf;base64,".$att['data']
-						)
-					);
-				} else {
-					$userContent[] = array(
-						"type" => "image_url",
-						"image_url" => array("url" => "data:".$att['mime'].";base64,".$att['data'])
-					);
-				}
-			}
-		}
-
 		$messages = array(array("role" => "system", "content" => $sys));
 		foreach ($history as $turn) {
-			$messages[] = array("role" => (($turn['role'] ?? '') === 'assistant' ? 'assistant' : 'user'), "content" => (string) $turn['text']);
+			$messages[] = array("role" => (($turn['role'] ?? '') === 'assistant' ? 'assistant' : 'user'), "content" => $this->openAIContent((string) $turn['text'], (array) ($turn['attachments'] ?? array())));
 		}
-		$messages[] = array("role" => "user", "content" => $userContent);
+		$messages[] = array("role" => "user", "content" => $this->openAIContent($msg, $attachments));
 
 		$data = array(
 			"model" => $this->model,
@@ -208,6 +183,42 @@ class UniversalLLMAdapter
 		$answer = $this->curl($url, $data, array("Content-Type: application/json", "Authorization: Bearer " . $this->key));
 
 		return $answer;
+	}
+
+	/**
+	 * Return the content of a user message for an OpenAI compatible API: a plain string (widest compatibility),
+	 * or an array of typed parts when it has files (vision input)
+	 *
+	 * @param	string										$text			Text of the message
+	 * @param	array<int,array{mime:string,data:string}>	$attachments	Files of the message
+	 * @return	string|array<int,array<string,mixed>>
+	 */
+	private function openAIContent(string $text, array $attachments)
+	{
+		if (empty($attachments)) {
+			return $text;
+		}
+		$content = array(array("type" => "text", "text" => $text));
+		foreach ($attachments as $att) {
+			if ($att['mime'] === 'application/pdf') {
+				// OpenAI compatible APIs reject non-image MIME inside image_url;
+				// PDFs use the dedicated 'file' content part.
+				$content[] = array(
+					"type" => "file",
+					"file" => array(
+						"filename" => "document.pdf",
+						"file_data" => "data:application/pdf;base64,".$att['data']
+					)
+				);
+			} else {
+				$content[] = array(
+					"type" => "image_url",
+					"image_url" => array("url" => "data:".$att['mime'].";base64,".$att['data'])
+				);
+			}
+		}
+
+		return $content;
 	}
 
 	/**

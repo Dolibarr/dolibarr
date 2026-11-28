@@ -671,7 +671,7 @@ try {
 		// Set by the chat after a load_tools answer, for every round of the question
 		$loadedObjects = aiLoadToolsObjects($data['objects'] ?? null, $llmToolsBase, false);
 		$loadedTools = aiLoadToolsNames($data['tools'] ?? null, $llmToolsBase, false);
-		$catalogFirst = aiToolsCatalogFirst((string) $serviceKey);
+		$catalogFirst = aiToolsCatalogFirst((string) $serviceKey) && !getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS');
 		// Bytes of the JSON of the tools over which only the catalog of objects is sent (aiSelectTools()), 0 for no budget
 		$toolsMaxSize = getDolGlobalInt('AI_ASSISTANT_TOOLS_MAX_SIZE', 32000);
 		$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
@@ -700,7 +700,7 @@ try {
 		// We raise the threshold to 100 to effectively disable compression for the
 		// default install (~30 tools), while still leaving a safety net for very large
 		// custom installs that register dozens of additional addMcpTools hooks.
-		$toolsSchema = sortAiToolsByObjectBlock($toolsSchema, $catalogFirst);
+		$toolsSchema = sortAiToolsByObjectBlock($toolsSchema);
 		$isLargeSchema = aiToolsAreLargeSchema($toolsSchema);
 		$toolsForLLM = cleanToolSchemaForLLM($toolsSchema, $isLargeSchema);
 
@@ -770,6 +770,24 @@ try {
 			$systemPrompt .= $catalogPrompt;
 		}
 
+		$catalogFirstToolsMessage = '';
+		if ($catalogFirst) {
+			// The system prompt stays the same for the whole conversation: only the tools of every round are in it, the tools asked come in a message.
+			$baseToolNames = array_column(aiCatalogFirstBaseTools($llmToolsBase, $toolsMaxSize), 'name');
+			$askedToolsForLLM = array();
+			$baseToolsForLLM = array();
+			foreach ($toolsForLLM as $toolForLLM) {
+				if (in_array($toolForLLM['name'] ?? '', $baseToolNames, true)) {
+					$baseToolsForLLM[] = $toolForLLM;
+				} else {
+					$askedToolsForLLM[] = $toolForLLM;
+				}
+			}
+			$toolsForLLM = $baseToolsForLLM;
+			if (!empty($loadedObjects) || !empty($loadedTools)) {
+				$catalogFirstToolsMessage = aiCatalogFirstToolsMessage($askedToolsForLLM);
+			}
+		}
 		$systemPrompt .= "## Tools:\n" . json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n";
 		$systemPrompt .= "\n";
 
@@ -805,12 +823,17 @@ try {
 			$systemPrompt .= "\n";
 		}
 
-		// What changes on every call goes after the history, at the end of the last user message:
+		// What changes on every call goes after the history, at the end of the question message:
 		// a local model reuses only the prompt prefix shared with its previous call.
 		$date = new DateTime('now', new DateTimeZone('UTC'));
 		$promptTail = "\n\n## Date\n";
-		$promptTail .= "Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".\n";
-		$systemPrompt .= "## Context\n";
+		if ($catalogFirst) {
+			// Every round of the question repeats this message: to the hour only.
+			$promptTail .= aiCatalogFirstDateLine((string) ($_SESSION['dol_tz_string'] ?? 'UTC'), dol_now())."\n";
+		} else {
+			$promptTail .= "Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".\n";
+		}
+		$contextPrompt = "## Context\n";
 		if (!empty($aiPageContextLine)) {
 			// Masked like the query itself: under enforced redaction the ref
 			// becomes a placeholder that is restored server-side in tool
@@ -821,16 +844,21 @@ try {
 			if (!empty($doRedact) && !empty($guard)) {
 				$aiPageContextLine = $guard->mask($doRedactNames ? $guard->maskNames($aiPageContextLine, $ctxNamesToMask) : $aiPageContextLine);
 			}
-			$systemPrompt .= "Page context: ".$aiPageContextLine."\n";
-			$systemPrompt .= "If the user asks which page or record they are on, answer from this page context with respond_to_user, without calling another tool.\n";
+			$contextPrompt .= "Page context: ".$aiPageContextLine."\n";
+			$contextPrompt .= "If the user asks which page or record they are on, answer from this page context with respond_to_user, without calling another tool.\n";
 		}
 		// The acting user's identity: the rowid alone lets the model resolve
 		// 'me' in sqlfilters (__USER_ID__ covers it too) and in user fields of
 		// write calls — no personal data sent to the provider for this.
-		$systemPrompt .= "Current user rowid: ".((int) $user->id)."\n";
+		$contextPrompt .= "Current user rowid: ".((int) $user->id)."\n";
 		// A bare date is not enough for weaker models: state explicitly that
 		// relative periods are the assistant's job to resolve, not the user's.
-		$systemPrompt .= "Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.\n";
+		$contextPrompt .= "Resolve relative periods yourself from the current date — today, yesterday, this week, this month, last month, this quarter, this year — into explicit YYYY-MM-DD values for date parameters (e.g. this month = first day of the current month to the current date). Never ask the user for dates you can compute.\n";
+		if ($catalogFirst) {
+			$promptTail .= "\n".$contextPrompt;
+		} else {
+			$systemPrompt .= $contextPrompt;
+		}
 
 		// Get API configuration
 		$servicesList = getListOfAIServices();
@@ -997,20 +1025,14 @@ try {
 			// cancelled, then a new one) read as "two things to do", and with a
 			// single tool call per answer the model picks the older one - field
 			// case: "set the phone of X" answered by creating "X bis".
-			if (!empty($history)) {
-				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references needed for final action. The ONLY request to act on is the LAST user message. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
+			if (!empty($history) || $catalogFirst) {
+				$systemPrompt .= "\n\nCONVERSATION CONTEXT: the earlier turns are context only, to resolve references needed for final action. The ONLY request to act on is the LAST question of the user. Never resume, redo or complete an earlier request, even one that looks unanswered or unfinished.";
 			}
-			if (!$isFollowup) {
+			if (!$isFollowup || $catalogFirst) {
 				// The chat runs the search, then calls back with its result so the action can follow.
 				$promptTail .= "\n## Rules\n* If you need to do a search before performing the action the user asked, answer with a search tool `api_theobjecttosearch_list` and add \"needs_followup\": true at the top level of the JSON, next to \"tool\", the result of the search is then sent back to you to perform the action. Do not add it if the requested search is itself the FINAL answer.\n";
-			} elseif (!$isLastFollowup) {
-				$promptTail .= "\n\nSTEP 2: the tool you chose for the last user message was already executed; its result is the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in that result.";
-				$promptTail .= " Run another search only in these 2 cases: to find a DIFFERENT kind of object still needed for the action, or to retry ONE time a search that returned nothing, with less restrictive criteria. A search for the same objects must never be run more than 2 times in total, even with other or less restrictive criteria.";
-				$promptTail .= " Add \"needs_followup\": true to such a search only if it is a step toward the action asked, not if it is itself the FINAL answer.";
-				$promptTail .= " If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why.";
 			} else {
-				$promptTail .= "\n\nSTEP 3 (LAST STEP): the searches you chose for the last user message were already executed; their results are the last assistant turn. Now perform the action the user asked for in the last user message, with the ids found in these results, or give your final answer with respond_to_user.";
-				$promptTail .= " Do NOT run any search again, even with other or less restrictive criteria, and do not add needs_followup. If the results do not identify one object with certainty, are empty, or the action cannot be done, answer with respond_to_user and say why.";
+				$promptTail .= "\n\n".aiFollowupStepText($followupRound);
 			}
 
 			// The rules come before the long tools list. Small models weigh what is
@@ -1040,8 +1062,26 @@ try {
 			}
 			$attachments = $attachmentsForModel;	// Only what is sent, for the error messages below
 			// Releases the session lock during the long AI call: $_SESSION changes after this line are not saved unless the session is reopened.
+			$roundMessages = static function (string $question, array $files) use ($catalogFirst, $history, $isFollowup, $loadedObjects, $loadedTools, $catalogFirstToolsMessage, $adapterType): array {
+				if (!$catalogFirst) {
+					return array('history' => $history, 'user' => $question, 'attachments' => $files);
+				}
+				// A followup round gets the results of the searches as its last turn, one line per round (aiHistoryTurnForModel()).
+				$pastTurns = $history;
+				$results = array();
+				if ($isFollowup && !empty($pastTurns) && end($pastTurns)['role'] === 'assistant') {
+					$results = preg_split('/\n(?=Done: \S+ returned )/', array_pop($pastTurns)['text']);
+				}
+				$loadToolsAnswer = $catalogFirstToolsMessage !== '' ? aiLoadToolsAnswer($loadedObjects, $loadedTools) : '';
+				// Only the OpenAI compatible adapter sends the files of a past turn.
+				if ($adapterType !== 'openai') {
+					return array_merge(aiCatalogFirstMessages($pastTurns, $question, $loadToolsAnswer, $catalogFirstToolsMessage, $results), array('attachments' => $files));
+				}
+				return aiCatalogFirstMessages($pastTurns, $question, $loadToolsAnswer, $catalogFirstToolsMessage, $results, $files);
+			};
 			$sessionReleased = session_write_close();
-			$rawResponse = $adapter->generate($systemPrompt, $query.$promptTail, 'text', $attachmentsForModel, $history);
+			$messages = $roundMessages($query.$promptTail, $attachmentsForModel);
+			$rawResponse = $adapter->generate($systemPrompt, $messages['user'], 'text', $messages['attachments'], $messages['history']);
 			// The provider rejected the attachments (e.g. "Image input is not enabled for this model"):
 			// remember it for the session and ask again without them, the model still has their references.
 			if (!empty($attachmentsForModel) && is_string($rawResponse) && strpos($rawResponse, 'Error:') === 0
@@ -1057,7 +1097,8 @@ try {
 				}
 				$attachments = array();
 				$query .= $aiAttachmentsHiddenNote;
-				$rawResponse = $adapter->generate($systemPrompt, $query.$promptTail, 'text', array(), $history);
+				$messages = $roundMessages($query.$promptTail, array());
+				$rawResponse = $adapter->generate($systemPrompt, $messages['user'], 'text', $messages['attachments'], $messages['history']);
 			}
 
 			// $rawResponse should be a json string with format '{"tool":..., "arguments":{text answer}}' but sometimes it is just 'text answer'
@@ -1266,7 +1307,7 @@ try {
 					$askedTools = aiLoadToolsNames($intentJSON['arguments']['tools'] ?? null, $llmToolsBase, $alreadyLoaded);
 					if (!empty($askedObjects) || !empty($askedTools)) {
 						// The chat posts the question again with these objects and tools, without counting a followup round.
-						$finalResponse = array('tool' => 'load_tools', 'arguments' => array('objects' => $askedObjects, 'tools' => $askedTools));
+						$finalResponse = json_decode(aiLoadToolsAnswer($askedObjects, $askedTools), true);
 						ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 1.0, 'load_tools', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 						ob_end_clean();
 						echo json_encode($finalResponse);

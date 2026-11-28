@@ -3251,11 +3251,10 @@ function filterToolsByObjects(array $tools, array $objects, array $categories, a
  * Order AI assistant tools by block of object: hub objects first, then the other objects by key, then the tools of several objects, then the tools of no object.
  * A local model reuses only the longest common prefix of the prompt: the same set gives the same bytes, and adding an object keeps the hub blocks in front.
  *
- * @param	array<int,array<string,mixed>>	$tools			Tools, with their 'objects'
- * @param	bool							$noObjectFirst	True to put the tools of no object first, when they are the same in every round (aiToolsCatalogFirst())
- * @return	array<int,array<string,mixed>>					Tools ordered by block, then by name
+ * @param	array<int,array<string,mixed>>	$tools	Tools, with their 'objects'
+ * @return	array<int,array<string,mixed>>			Tools ordered by block, then by name
  */
-function sortAiToolsByObjectBlock(array $tools, bool $noObjectFirst = false): array
+function sortAiToolsByObjectBlock(array $tools): array
 {
 	$hubObjects = array('thirdparties', 'contacts', 'products', 'users');
 	$sortKeys = array();
@@ -3270,10 +3269,8 @@ function sortAiToolsByObjectBlock(array $tools, bool $noObjectFirst = false): ar
 				$rank = count($hubObjects);
 				$object = (string) $toolObjects[0];
 			}
-		} elseif (count($toolObjects) > 1) {
-			$rank = count($hubObjects) + 1;
 		} else {
-			$rank = $noObjectFirst ? -1 : count($hubObjects) + 2;
+			$rank = count($hubObjects) + (count($toolObjects) > 1 ? 1 : 2);
 		}
 		$sortKeys[$index] = array('rank' => $rank, 'object' => $object, 'name' => (string) ($tool['name'] ?? ''));
 	}
@@ -3406,7 +3403,7 @@ function aiSelectTools(array $tools, array $signals, array $categories, int $max
 		}
 	}
 	if ($catalogFirst) {
-		return array('tools' => aiCatalogModeTools($tools, $categories, $maxSize > 0 ? $maxSize : PHP_INT_MAX), 'objects' => array(), 'mode' => 'catalog');
+		return array('tools' => aiCatalogFirstBaseTools($tools, $maxSize), 'objects' => array(), 'mode' => 'catalog');
 	}
 
 	if (!getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT')) {
@@ -3475,6 +3472,18 @@ function aiCatalogModeTools(array $tools, array $categories, int $maxSize): arra
 	}));
 
 	return aiToolsSize($kept) > $maxSize ? array() : $kept;
+}
+
+/**
+ * Return the tools sent in every round when the catalog goes first: the tools of no object of the category 'global', none when they are over the size budget
+ *
+ * @param	array<int,array<string,mixed>>	$tools		Tools the user may use
+ * @param	int								$maxSize	Size budget of the tools in bytes, 0 for no budget
+ * @return	array<int,array<string,mixed>>
+ */
+function aiCatalogFirstBaseTools(array $tools, int $maxSize): array
+{
+	return aiCatalogModeTools($tools, array(), $maxSize > 0 ? $maxSize : PHP_INT_MAX);
 }
 
 /**
@@ -3600,4 +3609,112 @@ function aiLoadToolsAccepted($requested, array $known, int $max, bool $alreadyLo
 	})));
 
 	return array_slice($accepted, 0, $max);
+}
+
+/**
+ * Return the load_tools answer of the AI assistant as JSON: the answer sent to the chat, and the assistant turn of the next round
+ *
+ * @param	string[]	$objects	Objects accepted (aiLoadToolsObjects())
+ * @param	string[]	$tools		Tools accepted (aiLoadToolsNames())
+ * @return	string
+ */
+function aiLoadToolsAnswer(array $objects, array $tools): string
+{
+	return (string) json_encode(array('tool' => 'load_tools', 'arguments' => array('objects' => array_values($objects), 'tools' => array_values($tools))), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+}
+
+/**
+ * Return the message of the AI assistant that gives the model the tools it asked with load_tools, when the catalog goes first
+ *
+ * @param	array<int,array<string,mixed>>	$toolsForLLM	Tools asked, as sent to the model (cleanToolSchemaForLLM())
+ * @return	string
+ */
+function aiCatalogFirstToolsMessage(array $toolsForLLM): string
+{
+	if (empty($toolsForLLM)) {
+		return "The tools you asked are already listed in the system prompt. Now act on the LAST question of the user with one of them, or answer with respond_to_user.";
+	}
+
+	return "## Tools:\n".json_encode($toolsForLLM, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)."\n\nThese are the tools you asked. Now act on the LAST question of the user with one of them, or answer with respond_to_user.";
+}
+
+/**
+ * Return the line of the date of the question when the catalog goes first: the local time of the user, to the hour,
+ * so that every round of the question sends the same message
+ *
+ * @param	string	$timezone	Timezone of the user, UTC when not valid
+ * @param	int		$now		Timestamp
+ * @return	string
+ */
+function aiCatalogFirstDateLine(string $timezone, int $now): string
+{
+	try {
+		$zone = new DateTimeZone($timezone);
+	} catch (Exception $e) {
+		$timezone = 'UTC';
+		$zone = new DateTimeZone('UTC');
+	}
+	$date = new DateTime('@'.$now);
+	$date->setTimezone($zone);
+
+	return 'Current date and time ('.$timezone.'): '.$date->format('Y-m-d H:00').'.';
+}
+
+/**
+ * Return the instruction of a followup round of the AI assistant, sent with the result of the search of the round before
+ *
+ * @param	int		$followupRound	1 for the round after the first search, 2 for the last round
+ * @return	string
+ */
+function aiFollowupStepText(int $followupRound): string
+{
+	if ($followupRound < 2) {
+		$text = "STEP 2: the tool you chose for the LAST question of the user was already executed; its result is the last assistant turn. Now perform the action the user asked for in that question, with the ids found in that result.";
+		$text .= " Run another search only in these 2 cases: to find a DIFFERENT kind of object still needed for the action, or to retry ONE time a search that returned nothing, with less restrictive criteria. A search for the same objects must never be run more than 2 times in total, even with other or less restrictive criteria.";
+		$text .= " Add \"needs_followup\": true to such a search only if it is a step toward the action asked, not if it is itself the FINAL answer.";
+		$text .= " If the result does not identify one object with certainty, or the action cannot be done, answer with respond_to_user and say why.";
+
+		return $text;
+	}
+
+	$text = "STEP 3 (LAST STEP): the searches you chose for the LAST question of the user were already executed; their results are in the last assistant turn(s). Now perform the action the user asked for in that question, with the ids found in these results, or give your final answer with respond_to_user.";
+	$text .= " Do NOT run any search again, even with other or less restrictive criteria, and do not add needs_followup. If the results do not identify one object with certainty, are empty, or the action cannot be done, answer with respond_to_user and say why.";
+
+	return $text;
+}
+
+/**
+ * Return the messages of a round of the AI assistant when the catalog goes first. Each round only appends to the messages of the round before:
+ * the question with its context, then the load_tools answer and the tools asked, then one result and one step instruction per followup round.
+ * A local model with sliding window attention (llama.cpp) reuses its cache only for a prompt that extends the previous one.
+ *
+ * @param	array<int,array{role:string,text:string}>	$pastTurns			Turns before the question
+ * @param	string										$question			Question, with its date, context and rules
+ * @param	string										$loadToolsAnswer	load_tools answer (aiLoadToolsAnswer()), '' before it
+ * @param	string										$toolsMessage		Tools asked (aiCatalogFirstToolsMessage()), '' before load_tools
+ * @param	string[]									$results			Result of the search of each followup round, as an assistant turn
+ * @param	array<int,array{mime:string,data:string}>	$attachments		Files of the question, kept on its turn in every round
+ * @return	array{history:array<int,array{role:string,text:string,attachments?:array<int,array{mime:string,data:string}>}>,user:string,attachments:array<int,array{mime:string,data:string}>}	Turns before the last message, the last message and its files
+ */
+function aiCatalogFirstMessages(array $pastTurns, string $question, string $loadToolsAnswer, string $toolsMessage, array $results, array $attachments = array()): array
+{
+	$turns = $pastTurns;
+	$turns[] = array('role' => 'user', 'text' => $question, 'attachments' => $attachments);
+	if ($loadToolsAnswer !== '') {
+		$turns[] = array('role' => 'assistant', 'text' => $loadToolsAnswer);
+		$turns[] = array('role' => 'user', 'text' => $toolsMessage);
+	}
+	foreach (array_values($results) as $index => $result) {
+		$turns[] = array('role' => 'assistant', 'text' => $result);
+		$turns[] = array('role' => 'user', 'text' => aiFollowupStepText($index + 1));
+	}
+	$last = array_pop($turns);
+	$turns = array_map(static function (array $turn): array {
+		if (empty($turn['attachments'])) {
+			unset($turn['attachments']);
+		}
+		return $turn;
+	}, $turns);
+
+	return array('history' => $turns, 'user' => $last['text'], 'attachments' => (array) ($last['attachments'] ?? array()));
 }

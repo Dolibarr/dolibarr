@@ -331,7 +331,6 @@ class AiLibTest extends CommonClassTest
 			array('name' => 'api_thirdparties_list', 'objects' => array('thirdparties')),
 		);
 		$this->assertSame(array_reverse(array_column($tools, 'name')), array_column(sortAiToolsByObjectBlock($tools), 'name'), 'Hub objects, other objects by key, several objects, no object');
-		$this->assertSame('navigate_to_page', sortAiToolsByObjectBlock($tools, true)[0]['name'], 'Catalog first: the tools of no object are in both rounds, they go first');
 
 		$bridge = new ToolApiBridge($db, $user, $conf);
 		$tools = $bridge->getDefinitions();
@@ -447,6 +446,7 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame(array('navigate_to_page'), array_column($selection['tools'], 'name'));
 		$selection = aiSelectTools($tools, array('query' => $question, 'catalog_first' => true), array('thirdparty'), 0, $langs);
 		$this->assertSame('catalog', $selection['mode'], 'Catalog first does not depend on the budget');
+		$this->assertSame(array('navigate_to_page'), array_column(aiCatalogFirstBaseTools($tools, 0), 'name'), 'The tools of every round, whatever the question');
 		$selection = aiSelectTools($tools, array('query' => $question, 'catalog_first' => true, 'requested_tools' => array('api_contacts_create')), array('thirdparty'), 32000, $langs);
 		$this->assertSame('tools', $selection['mode']);
 		$names = array_column($selection['tools'], 'name');
@@ -454,8 +454,6 @@ class AiLibTest extends CommonClassTest
 		$this->assertContains('api_thirdparties_list', $names, 'The tool that finds the socid of the contact comes with it');
 		$this->assertNotContains('api_contacts_list', $names, 'Only the tools asked, not all the tools of their object');
 		$this->assertSame(array_column(filterToolsByObjects($tools, array(), array(), array('api_contacts_create')), 'name'), $names);
-		$round1Json = rtrim((string) json_encode(cleanToolSchemaForLLM(sortAiToolsByObjectBlock(aiSelectTools($tools, array('query' => $question, 'catalog_first' => true), array(), 32000, $langs)['tools'], true))), ']');
-		$this->assertStringStartsWith($round1Json.',', (string) json_encode(cleanToolSchemaForLLM(sortAiToolsByObjectBlock($selection['tools'], true))), 'Round 2 adds its tools after those of round 1, so the prompt cache still holds them');
 
 		$conf->global->AI_DISABLE_TOOLS_BY_OBJECT = 1;
 		$selectionNoBudget = aiSelectTools($tools, array('query' => 'crée le tiers devcamp'), array('thirdparty'), 0, $langs);
@@ -587,5 +585,51 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame(array(), aiLoadToolsObjects(array('contacts'), $tools, true), 'One load_tools per question');
 		$this->assertSame(array(), aiLoadToolsObjects('contacts', $tools, false));
 		$this->assertSame(array(), aiLoadToolsObjects(array('contacts'), array(), false), 'An object of no tool the user may use is refused');
+	}
+
+	/**
+	 * testAiCatalogFirstMessages
+	 *
+	 * @return void
+	 */
+	public function testAiCatalogFirstMessages()
+	{
+		$this->assertSame('Current date and time (Europe/Paris): 2026-11-29 00:00.', aiCatalogFirstDateLine('Europe/Paris', (int) strtotime('2026-11-28T23:30:00Z')), 'The local date of the user, to the hour: right "today" around midnight');
+		$this->assertSame('Current date and time (UTC): 2026-11-28 23:00.', aiCatalogFirstDateLine('Not/AZone', (int) strtotime('2026-11-28T23:30:00Z')));
+
+		$flatten = static function (array $messages): array {
+			return array_merge($messages['history'], array(array('role' => 'user', 'text' => $messages['user'])));
+		};
+		$past = array(array('role' => 'user', 'text' => 'liste les tiers'), array('role' => 'assistant', 'text' => 'Done: api_thirdparties_list returned []'));
+		$question = "crée moi un contact jonathan lescaut sur devcamp\n\n## Date\nCurrent date: 2026-11-28";
+		$loadToolsAnswer = aiLoadToolsAnswer(array(), array('api_contacts_create'));
+		$this->assertSame('{"tool":"load_tools","arguments":{"objects":[],"tools":["api_contacts_create"]}}', $loadToolsAnswer);
+		$toolsMessage = aiCatalogFirstToolsMessage(array(array('name' => 'api_contacts_create', 'description' => 'Create a contact', 'parameters' => array())));
+		$this->assertStringStartsWith("## Tools:\n[{\"name\":\"api_contacts_create\"", $toolsMessage);
+
+		$round1 = aiCatalogFirstMessages($past, $question, '', '', array());
+		$this->assertSame(array('history' => $past, 'user' => $question, 'attachments' => array()), $round1);
+		$round2 = aiCatalogFirstMessages($past, $question, $loadToolsAnswer, $toolsMessage, array());
+		$this->assertSame($flatten($round1), array_slice($flatten($round2), 0, count($flatten($round1))), 'Round 2 only appends to round 1: a model with sliding window attention reuses its cache only then');
+		$this->assertSame($toolsMessage, $round2['user']);
+		$step2 = aiCatalogFirstMessages($past, $question, $loadToolsAnswer, $toolsMessage, array('Done: api_thirdparties_list returned [{"id":3}]'));
+		$this->assertSame($flatten($round2), array_slice($flatten($step2), 0, count($flatten($round2))), 'A followup round only appends too');
+		$this->assertSame(aiFollowupStepText(1), $step2['user']);
+		$step3 = aiCatalogFirstMessages($past, $question, $loadToolsAnswer, $toolsMessage, array('Done: api_thirdparties_list returned [{"id":3}]', 'Done: api_contacts_list returned []'));
+		$this->assertSame($flatten($step2), array_slice($flatten($step3), 0, count($flatten($step2))));
+		$this->assertSame(aiFollowupStepText(2), $step3['user']);
+		$this->assertStringContainsString('LAST STEP', aiFollowupStepText(2));
+		$this->assertStringContainsString('the LAST question of the user', aiFollowupStepText(1), 'The step instruction is the last message, it must point at the question');
+
+		$this->assertStringNotContainsString('## Tools:', aiCatalogFirstToolsMessage(array()), 'No empty tool list when every tool asked was already sent');
+		$attachments = array(array('mime' => 'image/png', 'data' => 'iVBORw0KGgo='));
+		$round1WithFile = aiCatalogFirstMessages($past, $question, '', '', array(), $attachments);
+		$this->assertSame($attachments, $round1WithFile['attachments'], 'Round 1: the files go with the question, the last message');
+		$round2WithFile = aiCatalogFirstMessages($past, $question, $loadToolsAnswer, $toolsMessage, array(), $attachments);
+		$this->assertSame(array(), $round2WithFile['attachments']);
+		$this->assertSame($attachments, $round2WithFile['history'][count($past)]['attachments'], 'Round 2: the files stay on the question turn, so round 2 extends round 1');
+
+		$nextQuestion = aiCatalogFirstMessages(array_merge($flatten($step3), array(array('role' => 'assistant', 'text' => 'Done: api_contacts_create returned {"id":9}'))), 'et son téléphone ?', '', '', array());
+		$this->assertSame($flatten($step3), array_slice($flatten($nextQuestion), 0, count($flatten($step3))), 'With the whole conversation as past turns, the next question appends too');
 	}
 }
