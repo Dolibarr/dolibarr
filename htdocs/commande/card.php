@@ -2751,7 +2751,7 @@ if ($action == 'create' && $usercancreate) {
 			// TODO for compatibility
 			if ($origin == 'contrat') {
 				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-				$objectsrc->update_price(1);
+				$objectsrc->update_price(1, 'auto', 1, $mysoc);	// Totals are only needed in memory: the contract table has no tva/multicurrency columns
 			}
 
 			print "\n<!-- " . $classname . " info -->\n";
