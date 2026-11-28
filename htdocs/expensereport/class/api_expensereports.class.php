@@ -680,6 +680,12 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Same users as the confirm_setdraft action of expensereport/card.php: the author, the user who validated the report, or a supervisor of the author
+		$apiuser = DolibarrApiAccess::$user;
+		if ($apiuser->id != $this->expensereport->fk_user_author && $apiuser->id != $this->expensereport->fk_user_valid && !in_array($this->expensereport->fk_user_author, $apiuser->getAllChildIds(1))) {
+			throw new RestException(403, 'Only the author of the expense report, the user who validated it or a supervisor of the author can set it to draft');
+		}
+
 		// Same source statuses as the confirm_setdraft action of expensereport/card.php (a draft report is left to the 304 below)
 		$allowedstatus = array(ExpenseReport::STATUS_DRAFT, ExpenseReport::STATUS_VALIDATED);
 		if (DolibarrApiAccess::$user->hasRight('expensereport', 'to_paid')) {
@@ -940,6 +946,12 @@ class ExpenseReports extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		// Same users as the confirm_cancel action of expensereport/card.php: the author or the user who validated the report
+		$apiuser = DolibarrApiAccess::$user;
+		if ($apiuser->id != $this->expensereport->fk_user_author && $apiuser->id != $this->expensereport->fk_user_valid) {
+			throw new RestException(403, 'Only the author of the expense report or the user who validated it can cancel it');
 		}
 
 		if ($this->expensereport->status == ExpenseReport::STATUS_CANCELED) {

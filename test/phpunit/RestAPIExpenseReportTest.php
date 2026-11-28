@@ -36,6 +36,16 @@ require_once __DIR__."/../../htdocs/expensereport/class/expensereport.class.php"
 class RestAPIExpenseReportTest extends AbstractRestAPITest
 {
 	/**
+	 * @var int[]	Ids of the expense reports created for other users, to delete at end of the test
+	 */
+	private $reportstodelete = array();
+
+	/**
+	 * @var int[]	Ids of the users created by the test, to delete at end of the test
+	 */
+	private $userstodelete = array();
+
+	/**
 	 * setUpBeforeClass
 	 *
 	 * @return void
@@ -44,6 +54,28 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 	{
 		self::assertTrue(isModEnabled('expensereport'), 'module expensereport must be enabled');
 		parent::setUpBeforeClass();
+	}
+
+	/**
+	 * Delete the users and expense reports created by the test. The API server does not see the transaction
+	 * of the test class, so what is created for it is committed and is not removed by the final rollback.
+	 *
+	 * @return void
+	 */
+	protected function tearDown(): void
+	{
+		$reportstodelete = $this->reportstodelete;
+		$userstodelete = $this->userstodelete;
+		$this->reportstodelete = array();
+		$this->userstodelete = array();
+		foreach ($reportstodelete as $id) {
+			$this->getUrl('expensereports/'.$id, "Delete expense report $id at end of the test", 'DELETE');
+		}
+		foreach ($userstodelete as $id) {
+			$this->getUrl('users/'.$id, "Delete user $id at end of the test", 'DELETE');
+		}
+
+		parent::tearDown();
 	}
 
 	/**
@@ -286,6 +318,129 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 
 		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
 		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
+	}
+
+	/**
+	 * Create an internal user whose supervisor is the API user. The user is deleted at end of the test.
+	 *
+	 * @param string							$test			Text to be added to output
+	 * @param int								$apiuserid		Id of the user of the API key, set as supervisor
+	 * @param array<array{0:string,1:string}>	$rights			List of array(module, perms) to add to the user
+	 * @return array{0:int,1:string}							Id and API key of the user
+	 */
+	private function createSubordinateOfApiUser($test, $apiuserid, $rights)
+	{
+		global $db, $user;
+
+		$password = 'Ab1-'.bin2hex(random_bytes(8));
+
+		$tmpuser = new User($db);
+		$tmpuser->login = 'testrestexpensereport'.mt_rand(0, 99999999);
+		$tmpuser->lastname = $tmpuser->login;
+		$tmpuser->entity = 1;
+		// The supervisor must be the user of the API key (login of setUp()), not the user of the test class (id 1)
+		$tmpuser->fk_user = $apiuserid;
+
+		// The API server reads the user with its own connection, so it must be committed out of the transaction of the test class
+		$db->commit();
+		$id = $tmpuser->create($user);
+		$resultpassword = ($id > 0 ? $tmpuser->setPassword($user, $password) : '');
+		$tmpuser->addrights(0, 'user', 'self');		// Needed by the login API to generate the API key
+		foreach ($rights as $right) {
+			$tmpuser->addrights(0, $right[0], $right[1]);
+		}
+		$db->begin();
+
+		$this->assertGreaterThan(0, $id, "$test Creation of user failed: ".$tmpuser->error);
+		$this->assertNotEmpty($resultpassword, "$test Password of user not set: ".$tmpuser->error);
+		array_unshift($this->userstodelete, $id);
+
+		$result = $this->getUrl('login', $test, 'GET', array("login" => $tmpuser->login, "password" => $password));
+
+		return array($id, (string) $result['content']['success']['token']);
+	}
+
+	/**
+	 * Create two subordinates of the API user, and an expense report of the first one, validated by himself.
+	 * The second user can read all expense reports, so only the per-user checks of cancel and settodraft refuse him.
+	 *
+	 * @param string	$test	Text to be added to output
+	 * @return array{0:int,1:string,2:string}	Id of the validated expense report, API key of its author, API key of the other user
+	 */
+	private function createReportValidatedBySubordinate($test)
+	{
+		$result = $this->getUrl('users/info', $test, 'GET');
+		$apiuserid = (int) ($result['content']['id'] ?? 0);
+		$this->assertGreaterThan(0, $apiuserid, "$test Id of API user is not > 0");
+
+		list($authorid, $authorkey) = $this->createSubordinateOfApiUser($test, $apiuserid, array(array('expensereport', 'lire'), array('expensereport', 'creer')));
+		list(, $otherkey) = $this->createSubordinateOfApiUser($test, $apiuserid, array(array('expensereport', 'lire'), array('expensereport', 'creer'), array('expensereport', 'readall')));
+
+		$data = array(
+			"fk_user_author" => $authorid,
+			"date_debut" => dol_now(),
+			"date_fin" => dol_now(),
+			"note_private" => "Created by ".get_class($this),
+		);
+		$result = $this->getUrl('expensereports', $test, 'POST', $data);
+		$id = (int) $result['content'];
+		$this->assertGreaterThan(0, $id, "$test Id of expense report is not > 0");
+		array_unshift($this->reportstodelete, $id);
+
+		$this->getUrl('expensereports/'.$id.'/validate', "$test (validate by author)", 'POST', array("notrigger" => 0), 0, $authorkey);
+		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
+
+		return array($id, $authorkey, $otherkey);
+	}
+
+	/**
+	 * Only the author or the user who validated the report can cancel it (confirm_cancel of expensereport/card.php)
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportCancelOnlyByAuthorOrValidator()
+	{
+		$test = "Cancel an expense report as another user";
+
+		list($id, $authorkey, $otherkey) = $this->createReportValidatedBySubordinate($test);
+		$data = array("detail" => "Canceled by ".get_class($this), "notrigger" => 0);
+
+		// A user who can read the report but is neither its author nor its validator
+		$this->getUrl('expensereports/'.$id.'/cancel', "$test (other user)", 'POST', $data, 403, $otherkey);
+		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, "$test (other user)");
+
+		// The API user, supervisor of the author, is not enough to cancel
+		$this->getUrl('expensereports/'.$id.'/cancel', "$test (supervisor)", 'POST', $data, 403);
+		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, "$test (supervisor)");
+
+		$this->getUrl('expensereports/'.$id.'/cancel', "$test (author)", 'POST', $data, 0, $authorkey);
+		$this->assertStatus($id, ExpenseReport::STATUS_CANCELED, "$test (author)");
+	}
+
+	/**
+	 * Only the author, the user who validated the report or a supervisor of the author can set it to draft (confirm_setdraft of expensereport/card.php)
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportSetToDraftOnlyByAuthorValidatorOrSupervisor()
+	{
+		$test = "Set an expense report to draft as another user";
+
+		list($id, $authorkey, $otherkey) = $this->createReportValidatedBySubordinate($test);
+
+		// A user who can read the report but is neither its author, its validator nor a supervisor of the author
+		$this->getUrl('expensereports/'.$id.'/settodraft', "$test (other user)", 'POST', array(), 403, $otherkey);
+		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, "$test (other user)");
+
+		$this->getUrl('expensereports/'.$id.'/settodraft', "$test (author)", 'POST', array(), 0, $authorkey);
+		$this->assertStatus($id, ExpenseReport::STATUS_DRAFT, "$test (author)");
+
+		$this->getUrl('expensereports/'.$id.'/validate', "$test (validate again by author)", 'POST', array("notrigger" => 0), 0, $authorkey);
+		$this->assertStatus($id, ExpenseReport::STATUS_VALIDATED, $test);
+
+		// The API user is the supervisor of the author
+		$this->getUrl('expensereports/'.$id.'/settodraft', "$test (supervisor)", 'POST', array(), 0);
+		$this->assertStatus($id, ExpenseReport::STATUS_DRAFT, "$test (supervisor)");
 	}
 
 	/**
