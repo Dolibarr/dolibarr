@@ -78,6 +78,10 @@ if (@file_exists($forcedfile)) {
 	include_once $forcedfile;
 }
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+	session_start();
+}
+
 dolibarr_install_syslog("- check: Dolibarr install/upgrade process started");
 
 
@@ -342,6 +346,8 @@ if (is_readable($conffile) && filesize($conffile) > 8) {
 	// First install: no upgrade necessary/required
 	$allowupgrade = false;
 }
+// This page copies conf.php.example when conf.php is missing: only this flag tells fileconf.php that a conf.php was there before.
+$_SESSION['dol_install_conf_preexisted'] = $confexists;
 
 
 // File is missing and cannot be created
