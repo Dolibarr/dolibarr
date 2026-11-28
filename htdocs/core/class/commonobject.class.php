@@ -6208,7 +6208,9 @@ abstract class CommonObject
 	/**
 	 *	Add/Update all extra fields values for the current object.
 	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
+	 *  This function updates the existing record of extrafields, or inserts it if it does not exist yet, from the array $this->array_options.
+	 *  Only the extrafields of the current entity found into $this->array_options are written: the other columns of the record
+	 *  (extrafields of other entities, extrafields not provided) keep their value.
 	 *
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
@@ -6404,6 +6406,12 @@ abstract class CommonObject
 				}
 			}
 
+			if (empty($this->id)) {
+				$this->error = 'ErrorBadParameters';
+				dol_syslog(get_class($this)."::insertExtraFields called with an empty object id", LOG_ERR);
+				return -1;
+			}
+
 			$this->db->begin();
 
 			$table_element = $this->table_element;
@@ -6411,59 +6419,65 @@ abstract class CommonObject
 				$table_element = 'categories'; // For compatibility
 			}
 
-			dol_syslog(get_class($this)."::insertExtraFields delete then insert", LOG_DEBUG);
+			$extrafieldsTable = $this->db->prefix().$table_element."_extrafields";
 
-			$sql_del = "DELETE FROM ".$this->db->prefix().$table_element."_extrafields WHERE fk_object = ".((int) $this->id);
-			$this->db->query($sql_del);
-
-			$sql = "INSERT INTO ".$this->db->prefix().$table_element."_extrafields (fk_object";
+			// Values of the extrafields of the current entity, as SQL expressions
+			$sqlColumnValues = array();
 			foreach ($new_array_options as $key => $value) {
 				$attributeKey = substr($key, 8); // Remove 'options_' prefix
-				// Add field of attribut
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') { // Only for other type than separator
-					$sql .= ",".$attributeKey;
-				}
-			}
-			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-			if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
-				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as $tmpkey => $tmpval) {
-					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {    // If field not already added previously
-						$sql .= ",".$tmpkey;
-					}
-				}
-			}
-			$sql .= ") VALUES (".$this->id;
-
-			foreach ($new_array_options as $key => $value) {
-				$attributeKey = substr($key, 8); // Remove 'options_' prefix
-				// Add field of attribute
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') { // Only for other type than separator)
 					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0') {
-						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
+						$sqlColumnValues[$attributeKey] = "'".$this->db->escape($new_array_options[$key])."'";
 					} else {
-						$sql .= ",null";
+						$sqlColumnValues[$attributeKey] = "null";
 					}
 				}
 			}
-			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-			if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
-				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as $tmpkey => $tmpval) {
-					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {   // If field not already added previously
-						if (in_array($tmpval, array('int', 'double', 'price'))) {
-							$sql .= ", 0";
-						} else {
-							$sql .= ", ''";
+
+			dol_syslog(get_class($this)."::insertExtraFields update or insert", LOG_DEBUG);
+
+			// The row may hold values of extrafields of other entities (object shared between entities): those
+			// extrafields are not loaded for the current entity, so the row must be updated, never deleted then
+			// inserted again, otherwise their values are lost.
+			$existingRow = $this->db->getRow("SELECT fk_object FROM ".$extrafieldsTable." WHERE fk_object = ".((int) $this->id));
+			if ($existingRow === false) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+
+			$sql = '';
+			if ($existingRow) {
+				$sqlSet = array();
+				foreach ($sqlColumnValues as $column => $sqlValue) {
+					$sqlSet[] = $column." = ".$sqlValue;
+				}
+				// If there is no extrafield of the current entity to save, the existing row is kept as is
+				if (!empty($sqlSet)) {
+					$sql = "UPDATE ".$extrafieldsTable." SET ".implode(", ", $sqlSet)." WHERE fk_object = ".((int) $this->id);
+				}
+			} else {
+				// We must insert a default value for fields for other entities that are mandatory to avoid not null error
+				if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
+					foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as $tmpkey => $tmpval) {
+						if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {    // If field not already added previously
+							$sqlColumnValues[$tmpkey] = in_array($tmpval, array('int', 'double', 'price')) ? "0" : "''";
 						}
 					}
 				}
+				$sql = "INSERT INTO ".$extrafieldsTable." (fk_object";
+				$sql .= (empty($sqlColumnValues) ? "" : ", ".implode(", ", array_keys($sqlColumnValues)));
+				$sql .= ") VALUES (".((int) $this->id);
+				$sql .= (empty($sqlColumnValues) ? "" : ", ".implode(", ", array_values($sqlColumnValues)));
+				$sql .= ")";
 			}
 
-			$sql .= ")";
-
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->error = $this->db->lasterror();
-				$error++;
+			if ($sql) {
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$this->error = $this->db->lasterror();
+					$error++;
+				}
 			}
 
 			if (!$error && $trigger) {
