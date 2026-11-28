@@ -2779,6 +2779,8 @@ export function initAiAssistant(container) {
     // Number of recent messages (questions and answers) that follow the model by
     // default. 0 = fully manual: nothing goes back unless the user pins it.
     const AUTO_CONTEXT = Math.max(0, parseInt(config.autoContext, 10) || 0);
+    // Catalog first (local model), unless the context setting is 0: the whole conversation travels, the server keeps a window that does not slide turn by turn.
+    const APPEND_ONLY_CONTEXT = parseInt(config.appendOnlyContext, 10) === 1;
 
     // Bubbles that can be sent back as context (they carry a plain-text form).
     function contextBubbles() {
@@ -2805,7 +2807,7 @@ export function initAiAssistant(container) {
         // waits outside the window until its answer arrives.
         const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
         if (pending) { pending.classList.remove('ctx-pinned', 'ctx-excluded'); pending.dataset.ctxWindow = ''; }
-        const windowStart = Math.max(0, msgs.length - AUTO_CONTEXT);
+        const windowStart = APPEND_ONLY_CONTEXT ? 0 : Math.max(0, msgs.length - AUTO_CONTEXT);
         msgs.forEach((m, i) => {
             const inWindow = i >= windowStart;
             const state = m.dataset.ctx || '';
@@ -3060,6 +3062,8 @@ export function initAiAssistant(container) {
             let followupResult = null;
             // The third parties the user picked, for every round of this request.
             const sentChoices = Object.assign({}, thirdpartyChoices);
+            // The server keys the question it keeps by conversation: a new conversation must have its id first.
+            if (APPEND_ONLY_CONTEXT) await persistQueue;
             // Objects and tools the model asked with load_tools, sent on every round of this request.
             let loadedObjects = null;
             let loadedTools = null;
@@ -3073,6 +3077,7 @@ export function initAiAssistant(container) {
                     // ids against the user's rights before trusting them.
                     body: JSON.stringify(Object.assign(
                         chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                        (APPEND_ONLY_CONTEXT && conversationId) ? { conversation_id: conversationId } : {},
                         Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
                         loadedObjects ? { objects: loadedObjects, tools: loadedTools } : {},
                         (function () {

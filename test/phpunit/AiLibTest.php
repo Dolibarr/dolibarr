@@ -632,4 +632,120 @@ class AiLibTest extends CommonClassTest
 		$nextQuestion = aiCatalogFirstMessages(array_merge($flatten($step3), array(array('role' => 'assistant', 'text' => 'Done: api_contacts_create returned {"id":9}'))), 'et son téléphone ?', '', '', array());
 		$this->assertSame($flatten($step3), array_slice($flatten($nextQuestion), 0, count($flatten($step3))), 'With the whole conversation as past turns, the next question appends too');
 	}
+
+	/**
+	 * testAiAppendOnlyHistoryStart
+	 *
+	 * @return void
+	 */
+	public function testAiAppendOnlyHistoryStart()
+	{
+		$this->assertSame(0, aiAppendOnlyHistoryStart(0, 20));
+		$this->assertSame(0, aiAppendOnlyHistoryStart(19, 20), 'The window starts at the first turn while it holds less than the max');
+		$this->assertSame(10, aiAppendOnlyHistoryStart(20, 20), 'Then it moves by half the max at once');
+		$this->assertSame(10, aiAppendOnlyHistoryStart(29, 20), 'And stays fixed until the next move, so the prompt keeps its prefix');
+		$this->assertSame(20, aiAppendOnlyHistoryStart(30, 20));
+	}
+
+	/**
+	 * testAiCatalogFirstNextQuestion
+	 *
+	 * @return void
+	 */
+	public function testAiCatalogFirstNextQuestion()
+	{
+		$flatten = static function (array $messages): array {
+			return array_merge($messages['history'], array(array('role' => 'user', 'text' => $messages['user'])));
+		};
+		$typed = 'crée moi un contact jonathan lescaut sur devcamp';
+		$sent = $typed."\n\n## Date\nCurrent UTC date: 2026-11-28\n\n## Context\nPage context: thirdparty devcamp\n";
+		$past = aiCatalogFirstPastTurns(array(array('role' => 'user', 'text' => 'bonjour'), array('role' => 'assistant', 'text' => 'Bonjour !')), array(), 7);
+		$questionN = aiCatalogFirstMessages($past, $sent, '', '', array());
+
+		$this->assertSame(array(array('role' => 'user', 'text' => 'bonjour'), array('role' => 'assistant', 'text' => 'Bonjour !')), $past, 'A turn without its sent message stays as stored');
+		$this->assertSame(array(
+			array('role' => 'user', 'text' => 'a'),
+			array('role' => 'assistant', 'text' => aiNoAnswerTurn()),
+			array('role' => 'user', 'text' => 'b'),
+			array('role' => 'assistant', 'text' => aiNoAnswerTurn()),
+		), aiCatalogFirstPastTurns(array(array('role' => 'user', 'text' => 'a'), array('role' => 'user', 'text' => 'b')), array(), 7), 'A question left without answer gets a fixed assistant turn: two user turns in a row do not extend the previous prompt');
+
+		$unanswered = array(array('role' => 'user', 'text' => 'a'));
+		$round1 = aiCatalogFirstMessages(aiCatalogFirstPastTurns($unanswered, array(), 7), $sent, '', '', array());
+		$withResult = aiCatalogFirstPastTurns(array_merge($unanswered, array(array('role' => 'assistant', 'text' => 'Done: api_thirdparties_list returned [{"id":3}]'))), array(), 7, true);
+		$result = array_pop($withResult);
+		$step2 = aiCatalogFirstMessages($withResult, $sent, '', '', array($result['text']));
+		$this->assertSame($flatten($round1), array_slice($flatten($step2), 0, count($flatten($round1))), 'The result of a search is not the answer of the previous question: the search round still extends round 1');
+		$sentQuestions = array(aiSentQuestionKey(7, ' '.$typed.' ') => $sent);
+		$stored = array_merge($past, array(array('role' => 'user', 'text' => $typed), array('role' => 'assistant', 'text' => 'Done: api_contacts_create returned {"id":9}')));
+		$this->assertArrayNotHasKey('sent', aiCatalogFirstPastTurns($stored, $sentQuestions, 8)[2], 'The same question in another conversation was sent with another context');
+		$pastNext = aiCatalogFirstPastTurns($stored, $sentQuestions, 7);
+		$this->assertTrue($pastNext[2]['sent']);
+		$questionNext = aiCatalogFirstMessages(array_map(static function (array $turn): array {
+			return array('role' => $turn['role'], 'text' => $turn['text']);
+		}, $pastNext), "et son téléphone ?\n\n## Date\nCurrent UTC date: 2026-11-28", '', '', array());
+		$this->assertSame($flatten($questionN), array_slice($flatten($questionNext), 0, count($flatten($questionN))), 'Question N+1 starts with the round-1 messages of question N, byte for byte');
+	}
+
+	/**
+	 * testAiRememberSentQuestion
+	 *
+	 * @return void
+	 */
+	public function testAiRememberSentQuestion()
+	{
+		unset($_SESSION['ai_sent_questions']);
+		for ($i = 0; $i < 55; $i++) {
+			aiRememberSentQuestion(aiSentQuestionKey(1, 'question '.$i), 'sent '.$i, false, false);
+		}
+		$sent = aiSentQuestions(false);
+		$this->assertCount(50, $sent, 'The session keeps the 50 last questions');
+		$this->assertArrayNotHasKey(aiSentQuestionKey(1, 'question 4'), $sent);
+		$this->assertSame('sent 5', reset($sent));
+
+		aiRememberSentQuestion(aiSentQuestionKey(1, 'question 5'), 'sent again 5', false, false);
+		$sent = aiSentQuestions(false);
+		$this->assertSame(aiSentQuestionKey(1, 'question 5'), array_key_last($sent), 'A question asked again moves to the end, it is not the next one dropped');
+		$this->assertSame('sent again 5', end($sent));
+
+		aiRememberSentQuestion(aiSentQuestionKey(1, 'masked'), 'sent', true, false);
+		aiRememberSentQuestion(aiSentQuestionKey(1, 'with a document'), 'sent', false, true);
+		aiRememberSentQuestion(aiSentQuestionKey(1, 'long'), str_repeat('x', 8193), false, false);
+		$sent = aiSentQuestions(false);
+		$this->assertArrayNotHasKey(aiSentQuestionKey(1, 'masked'), $sent, 'Masked values of an older request cannot be restored: never replayed');
+		$this->assertArrayNotHasKey(aiSentQuestionKey(1, 'with a document'), $sent, 'A document would fill the session');
+		$this->assertArrayNotHasKey(aiSentQuestionKey(1, 'long'), $sent);
+		$this->assertSame(array(), aiSentQuestions(true), 'Under the privacy guard no question is replayed');
+
+		unset($_SESSION['ai_sent_questions']);
+	}
+
+	/**
+	 * testAiAppendOnlyContext
+	 *
+	 * @return void
+	 */
+	public function testAiAppendOnlyContext()
+	{
+		global $conf;
+
+		$service = getDolGlobalString('AI_API_SERVICE');
+		$autoMessages = getDolGlobalString('AI_CHAT_CONTEXT_AUTO_MESSAGES');
+		unset($conf->global->AI_ASSISTANT_TOOLS_CATALOG_FIRST, $conf->global->AI_ASSISTANT_DISABLE_TOOLS);
+		$conf->global->AI_API_SERVICE = 'custom';
+		$conf->global->AI_CHAT_CONTEXT_AUTO_MESSAGES = 4;
+		$this->assertTrue(aiAppendOnlyContext());
+		$conf->global->AI_CHAT_CONTEXT_AUTO_MESSAGES = 0;
+		$this->assertFalse(aiAppendOnlyContext(), 'No automatic context is a privacy choice of the admin: catalog first must not send the conversation');
+		$conf->global->AI_CHAT_CONTEXT_AUTO_MESSAGES = 4;
+		$conf->global->AI_API_SERVICE = 'chatgpt';
+		$this->assertFalse(aiAppendOnlyContext());
+
+		$conf->global->AI_API_SERVICE = $service;
+		if ($autoMessages === '') {
+			unset($conf->global->AI_CHAT_CONTEXT_AUTO_MESSAGES);
+		} else {
+			$conf->global->AI_CHAT_CONTEXT_AUTO_MESSAGES = $autoMessages;
+		}
+	}
 }

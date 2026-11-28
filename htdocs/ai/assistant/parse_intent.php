@@ -666,12 +666,22 @@ try {
 			$s .= '</ul>';
 		}
 
-		$histTurns = (!empty($data['history']) && is_array($data['history'])) ? aiChatHistoryTurns($db, $user, array_slice($data['history'], -aiChatContextMaxMessages())) : array();
+		$catalogFirst = aiAssistantCatalogFirst();
+		$appendOnlyContext = aiAppendOnlyContext();
+		$conversationId = (int) ($data['conversation_id'] ?? 0);
+		$sentQuestionKey = aiSentQuestionKey($conversationId, (string) ($data['query'] ?? ''));
+		$sentHistory = (!empty($data['history']) && is_array($data['history'])) ? array_values($data['history']) : array();
+		if ($appendOnlyContext) {
+			// The result of the search of a followup round is the last turn: it does not move the window.
+			$sentHistory = array_slice($sentHistory, aiAppendOnlyHistoryStart(count($sentHistory) - ($isFollowup ? 1 : 0), aiChatContextMaxMessages()));
+			$histTurns = aiCatalogFirstPastTurns(aiChatHistoryTurns($db, $user, $sentHistory), aiSentQuestions($guard !== null), $conversationId, $isFollowup);
+		} else {
+			$histTurns = aiChatHistoryTurns($db, $user, array_slice($sentHistory, -aiChatContextMaxMessages()));
+		}
 
 		// Set by the chat after a load_tools answer, for every round of the question
 		$loadedObjects = aiLoadToolsObjects($data['objects'] ?? null, $llmToolsBase, false);
 		$loadedTools = aiLoadToolsNames($data['tools'] ?? null, $llmToolsBase, false);
-		$catalogFirst = aiToolsCatalogFirst((string) $serviceKey) && !getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS');
 		// Bytes of the JSON of the tools over which only the catalog of objects is sent (aiSelectTools()), 0 for no budget
 		$toolsMaxSize = getDolGlobalInt('AI_ASSISTANT_TOOLS_MAX_SIZE', 32000);
 		$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
@@ -945,6 +955,14 @@ try {
 				$histTurnMaxSize = $histBudget;	// cap of one turn, same as the whole budget
 				// Newest first, so the budget drops the oldest turns; put back in chronological order after.
 				foreach (array_reverse($histTurns) as $turn) {
+					if (!empty($turn['sent'])) {
+						$histBudget -= dol_strlen($turn['text']);
+						if ($histBudget < 0) {
+							break;
+						}
+						$history[] = array('role' => 'user', 'text' => $turn['text']);
+						continue;
+					}
 					$htext = preg_replace('/__FILE_ATTACHMENT__\[[^\]]*\]::[^\s]+/', '[attachment removed]', $turn['text']);
 					$htext = trim((string) $htext);
 					if ($htext === '') {
@@ -1079,6 +1097,9 @@ try {
 				}
 				return aiCatalogFirstMessages($pastTurns, $question, $loadToolsAnswer, $catalogFirstToolsMessage, $results, $files);
 			};
+			if ($appendOnlyContext) {
+				aiRememberSentQuestion($sentQuestionKey, $query.$promptTail, $guard !== null, !empty($aiDocuments['blocks']));
+			}
 			$sessionReleased = session_write_close();
 			$messages = $roundMessages($query.$promptTail, $attachmentsForModel);
 			$rawResponse = $adapter->generate($systemPrompt, $messages['user'], 'text', $messages['attachments'], $messages['history']);

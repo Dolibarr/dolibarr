@@ -1570,6 +1570,7 @@ function getAiChatAssistantConfig()
 		// 4 by default, 0 to disable: past answers carry business content the
 		// privacy masking does not cover, so the administrator can turn it off.
 		'autoContext' => min(aiChatContextMaxMessages(), getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_MESSAGES', 4)),
+		'appendOnlyContext' => aiAppendOnlyContext() ? 1 : 0,
 		// Max size (in characters) of the context sent back to the model, also the cap of one tool result.
 		'contextMaxSize' => getDolGlobalInt('AI_CHAT_CONTEXT_MAX_SIZE', 250000),
 		// The "/" palette of the chat input, always on.
@@ -3717,4 +3718,129 @@ function aiCatalogFirstMessages(array $pastTurns, string $question, string $load
 	}, $turns);
 
 	return array('history' => $turns, 'user' => $last['text'], 'attachments' => (array) ($last['attachments'] ?? array()));
+}
+
+/**
+ * Return whether the AI assistant of this install sends the catalog first (aiToolsCatalogFirst()), tools being enabled
+ *
+ * @return bool
+ */
+function aiAssistantCatalogFirst(): bool
+{
+	return aiToolsCatalogFirst(getDolGlobalString('AI_API_SERVICE')) && !getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS');
+}
+
+/**
+ * Return the index of the first past turn sent with a question when the catalog goes first. The window does not slide turn by turn:
+ * it starts at the first turn, then moves by half the max at once, so the prompt of the next question extends the previous one between two moves.
+ *
+ * @param	int		$count	Number of past turns of the conversation
+ * @param	int		$max	Max number of past turns sent (aiChatContextMaxMessages())
+ * @return	int
+ */
+function aiAppendOnlyHistoryStart(int $count, int $max): int
+{
+	$step = max(1, intdiv($max, 2));
+
+	return max(0, (intdiv($count, $step) - 1) * $step);
+}
+
+/**
+ * Return whether the chat sends the whole conversation, in a window that does not slide turn by turn (aiAppendOnlyHistoryStart()):
+ * when the catalog goes first, unless the admin turned the automatic context off
+ *
+ * @return bool
+ */
+function aiAppendOnlyContext(): bool
+{
+	return aiAssistantCatalogFirst() && getDolGlobalInt('AI_CHAT_CONTEXT_AUTO_MESSAGES', 4) > 0;
+}
+
+/**
+ * Return the key of a question in the messages kept by aiRememberSentQuestion()
+ *
+ * @param	int		$conversationId	Conversation of the question, 0 when not saved
+ * @param	string	$typed			Question as typed by the user, as the chat saves it
+ * @return	string
+ */
+function aiSentQuestionKey(int $conversationId, string $typed): string
+{
+	return sha1($conversationId.'|'.trim($typed));
+}
+
+/**
+ * Keep, for the session, the message a question was sent in when the catalog goes first (question with its date, context and rules),
+ * to send it again the same way as a past turn of the next questions. Not kept when masked by the privacy guard (its values could not
+ * be restored in a later request), with a document, or over 8 KB.
+ *
+ * @param	string	$key			Key of the question (aiSentQuestionKey())
+ * @param	string	$message		Message sent to the model
+ * @param	bool	$masked			True when the privacy guard masked the question
+ * @param	bool	$hasDocuments	True when documents are attached to the question
+ * @return	void
+ */
+function aiRememberSentQuestion(string $key, string $message, bool $masked, bool $hasDocuments): void
+{
+	if ($masked || $hasDocuments || strlen($message) > 8192) {
+		return;
+	}
+	$sent = (array) ($_SESSION['ai_sent_questions'] ?? array());
+	unset($sent[$key]);
+	$sent[$key] = $message;
+	$_SESSION['ai_sent_questions'] = array_slice($sent, -50, null, true);
+}
+
+/**
+ * Return the messages kept by aiRememberSentQuestion(), none under the privacy guard
+ *
+ * @param	bool	$masked	True when the privacy guard is on
+ * @return	array<string,string>	Messages by key
+ */
+function aiSentQuestions(bool $masked): array
+{
+	return $masked ? array() : (array) ($_SESSION['ai_sent_questions'] ?? array());
+}
+
+/**
+ * Return the past turns of a question when the catalog goes first: a question asked in this session gets back the message it was sent in,
+ * flagged 'sent', a question without answer is followed by aiNoAnswerTurn(); the other turns stay as stored
+ *
+ * @param	array<int,array{role:string,text:string}>	$turns			Past turns (aiChatHistoryTurns())
+ * @param	array<string,string>						$sentQuestions	Messages by key (aiSentQuestions())
+ * @param	int											$conversationId	Conversation of the turns
+ * @param	bool										$searchResult	True when the last turn is the result of the search of a followup round, kept last as it is
+ * @return	array<int,array{role:string,text:string,sent?:bool}>
+ */
+function aiCatalogFirstPastTurns(array $turns, array $sentQuestions, int $conversationId, bool $searchResult = false): array
+{
+	$turns = array_values($turns);
+	$lastTurn = ($searchResult && !empty($turns)) ? array_pop($turns) : null;
+	$pastTurns = array();
+	foreach ($turns as $index => $turn) {
+		$key = aiSentQuestionKey($conversationId, $turn['text']);
+		if ($turn['role'] === 'user' && isset($sentQuestions[$key])) {
+			$turn = array('role' => 'user', 'text' => $sentQuestions[$key], 'sent' => true);
+		}
+		$pastTurns[] = $turn;
+		$next = $turns[$index + 1] ?? null;
+		if ($turn['role'] === 'user' && ($next === null || $next['role'] !== 'assistant')) {
+			$pastTurns[] = array('role' => 'assistant', 'text' => aiNoAnswerTurn());
+		}
+	}
+	if ($lastTurn !== null) {
+		$pastTurns[] = $lastTurn;
+	}
+
+	return $pastTurns;
+}
+
+/**
+ * Return the assistant turn put after a past question left without answer (confirmation not given, cancelled action, error left out),
+ * the same text every time: a question followed by another user turn does not extend the prompt it was sent in
+ *
+ * @return string
+ */
+function aiNoAnswerTurn(): string
+{
+	return '(no answer)';
 }
