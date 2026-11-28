@@ -182,6 +182,39 @@ class AiLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testAiCatalogFirstObjectsLine
+	 *
+	 * @return void
+	 */
+	public function testAiCatalogFirstObjectsLine()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang('fr_FR');
+
+		$question = 'ajoute à Jean Martin du tiers acme son numéro de téléphone 01 02 03 04 05 et son mail jean@example.com';
+		$line = aiCatalogFirstObjectsLine($question, '', array(), $langs, $tools);
+		$this->assertSame('Objects found in the question: contacts, thirdparties.', $line);
+		$this->assertSame($line, aiCatalogFirstObjectsLine($question, '', array(), $langs, $tools), 'Every round of a question sends the same bytes');
+		$this->assertSame('', aiCatalogFirstObjectsLine('bonjour', '', array(), $langs, $tools));
+		$this->assertSame('', aiCatalogFirstObjectsLine('les tiers, les factures, les commandes, les contacts, les produits', '', array(), $langs, $tools), 'More objects than a load_tools may ask: no line');
+
+		$replayed = array(
+			array('role' => 'user', 'text' => "quel est son numéro de téléphone ?\n\n## Date\nCurrent date.\nObjects found in the question: contacts, thirdparties.\n\n## Rules\n* the user asked for a search", 'sent' => true),
+			array('role' => 'assistant', 'text' => '(no answer)'),
+		);
+		$this->assertSame('', aiCatalogFirstObjectsLine('bonjour', '', $replayed, $langs, $tools), 'The tail of a replayed question is not the words of the user');
+		$this->assertSame('Objects found in the question: invoices.', aiCatalogFirstObjectsLine('crée une facture', '', $replayed, $langs, $tools));
+
+		$conf->global->AI_DISABLE_TOOLS_BY_OBJECT = 1;
+		$this->assertSame('', aiCatalogFirstObjectsLine($question, '', array(), $langs, $tools));
+		unset($conf->global->AI_DISABLE_TOOLS_BY_OBJECT);
+	}
+
+	/**
 	 * testAiQueryFieldObjects
 	 *
 	 * @return void
@@ -521,6 +554,7 @@ class AiLibTest extends CommonClassTest
 		$this->assertStringContainsString('"tools"', $prompt, 'The model asks tools by name');
 		$this->assertStringContainsString('at most '.aiLoadToolsMaxTools().' ', $prompt);
 		$this->assertSame($prompt, aiToolsCatalogPrompt(array_reverse($tools), true), 'Round 1 and round 2 share this prefix');
+		$this->assertStringContainsString('Objects found in the question', $prompt);
 	}
 
 	/**

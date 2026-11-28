@@ -848,6 +848,11 @@ try {
 		if ($catalogFirst) {
 			// Every round of the question repeats this message: to the hour only.
 			$promptTail .= aiCatalogFirstDateLine((string) ($_SESSION['dol_tz_string'] ?? 'UTC'), dol_now())."\n";
+			// Same inputs in every round: the turns before the question, not the search result of a followup round.
+			$objectsLine = aiCatalogFirstObjectsLine($queryForIntent, $aiPageContextElement, $isFollowup ? array_slice($histTurns, 0, -1) : $histTurns, $langs, $llmToolsBase, !isComplexScript($queryForIntent));
+			if ($objectsLine !== '') {
+				$promptTail .= $objectsLine."\n";
+			}
 		} else {
 			$promptTail .= "Current UTC date: " . $date->format('Y-m-d\TH:i:sP')." and User timezone: ".($_SESSION['dol_tz_string'] ?? 'UTC').".\n";
 		}

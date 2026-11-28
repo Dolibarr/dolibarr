@@ -3556,7 +3556,7 @@ function aiToolsCatalogPrompt(array $tools, bool $catalogFirst = false, array $s
 
 	$prompt = "## Objects\n";
 	if ($catalogFirst) {
-		$prompt .= "## Tools lists only the tools already asked. When the request needs Dolibarr data or a Dolibarr action whose tool is not in ## Tools, answer only {\"tool\": \"load_tools\", \"arguments\": {\"tools\": [\"api_contacts_create\", ...]}} with at most ".aiLoadToolsMaxTools()." tool names of this list: the action X of the object key K is the tool api_K_X, a name starting with api_ or listed in the line other is the tool itself. The question is then sent again with these tools and the tools that find the ids they take. Do it at most once per question.\n";
+		$prompt .= "## Tools lists only the tools already asked. When the request needs Dolibarr data or a Dolibarr action whose tool is not in ## Tools, answer only {\"tool\": \"load_tools\", \"arguments\": {\"tools\": [\"api_contacts_create\", ...]}} with at most ".aiLoadToolsMaxTools()." tool names of this list: the action X of the object key K is the tool api_K_X, a name starting with api_ or listed in the line other is the tool itself. The question is then sent again with these tools and the tools that find the ids they take. Do it at most once per question. The line Objects found in the question, when present, comes from the code: use it to choose the tools to ask.\n";
 	} else {
 		$prompt .= "Only the tools of some objects are listed in ## Tools. When the request needs Dolibarr data or a Dolibarr action on objects whose tools are not listed, answer only {\"tool\": \"load_tools\", \"arguments\": {\"objects\": [\"key\", ...]}} with at most ".aiLoadToolsMaxObjects()." keys of this list: the question is then sent again with their tools. Do it at most once per question.\n";
 	}
@@ -3670,6 +3670,43 @@ function aiCatalogFirstDateLine(string $timezone, int $now): string
 	$date->setTimezone($zone);
 
 	return 'Current date and time ('.$timezone.'): '.$date->format('Y-m-d H:00').'.';
+}
+
+/**
+ * Return the line telling the model which objects the code found in a question when the catalog goes first, empty when
+ * the AI_DISABLE_TOOLS_BY_OBJECT option is on, or when it found none or more than aiLoadToolsMaxObjects()
+ *
+ * @param	string							$query		Query of the user
+ * @param	string							$element	Element of the card open in the page, validated (empty when none)
+ * @param	array<int,array{role:string,text:string,sent?:bool}>	$turns	Turns before the question, without the result of a search of its followup rounds
+ * @param	Translate						$langs		Language of the user
+ * @param	array<int,array<string,mixed>>	$tools		Tools the user may use, with the words naming their objects
+ * @param	bool							$isLatin	False when the query is not in a Latin script
+ * @return	string
+ */
+function aiCatalogFirstObjectsLine(string $query, string $element, array $turns, Translate $langs, array $tools, bool $isLatin = true): string
+{
+	if (getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT')) {
+		return '';
+	}
+
+	foreach ($turns as $index => $turn) {
+		if (!empty($turn['sent'])) {
+			// Must match the tail parse_intent.php appends to the question: rules, date and hints are not the user's words.
+			$turns[$index]['text'] = explode("\n\n## Date\n", $turn['text'], 2)[0];
+		}
+	}
+
+	$objects = array_values(array_unique(array_merge(
+		aiQueryObjects($query, $element, $turns, $langs, $tools, $isLatin),
+		aiQueryFieldObjects($query, $langs, $tools, $isLatin)
+	)));
+	if (empty($objects) || count($objects) > aiLoadToolsMaxObjects()) {
+		return '';
+	}
+	sort($objects);
+
+	return 'Objects found in the question: '.implode(', ', $objects).'.';
 }
 
 /**
