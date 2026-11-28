@@ -1,5 +1,8 @@
 # test/hurl/api/holidays/10_holidays.hurl
 #
+# PR: https://github.com/Dolibarr/dolibarr/pull/43664 (branch
+#   hurl_tests_api_holidays, head f3e23f9, opened 2026-11-28).
+#
 # PLACEMENT NOTE: FLAT FILE in the workdir per contributor instruction
 #   (convention since the multicurrencies episode): only ONE file is
 #   delivered for phase 1 — 10_holidays.hurl, no directories. The
@@ -233,8 +236,14 @@
 #     the source pins page_count==1 ('($limit > 0 ? ceil : 1)').
 #   HOL5: serialisation (id AND the date/halfday fields — the
 #     quadrant: id/value, computed/stored, main-object (no
-#     subresource), specimen/real). Fixture jq round decides; targets
-#     #43307 (tenth STRING member?) + #43386/#43568 (mixed-type map).
+#     subresource), specimen/real). OBSERVED 2026-11-28 (manual jq
+#     round, admin key): id NUMBER (SECOND NUMBER member of the
+#     tally, #43307: nine STRING vs TWO NUMBER); date_debut/
+#     date_fin NUMBERs; halfday/status NUMBER; date_valid/
+#     date_approval EMPTY STRINGS when unset — a NOVEL shape for
+#     the series (paiements renders null). FILED AS BUG:
+#     GitHub issue #43661 (POSTED 2026-11-28; see
+#     BUG_holidays_emptystring_dates.md authoring record).
 #   HOL6: gate order — GATE-FIRST on both routes predicted (fourth
 #     #43620-kin datapoint); INDEX-vs-GET gate divergence (read OR
 #     readall vs read-only) is a holidays-NOVEL facet; the
@@ -250,9 +259,10 @@
 #     503, so banned clauses are dropped SILENTLY inside
 #     forgeSQLFromUniversalSearchCriteria (strip confirmed by column-
 #     existence contrast: u.pass exists nowhere on the query surface).
-#     The anti-leak ban works, but WITHOUT an error signal — phase-2
-#     material (WISH/BUG candidate: silent drop vs 400, security
-#     observability). Probe 8 adds the strip-vs-execute pair.
+#     The anti-leak ban works, but WITHOUT an error signal — FILED
+#     AS WISH: GitHub issue #43663 (POSTED 2026-11-28; see
+#     WISH_holidays_silent_strip.md authoring record). Probe 8
+#     confirms the strip (identical counts).
 #   HOL8: by-value routes NONE (refuted, both sources); dead unset()
 #     families in _cleanObjectDatas (dead-code kin); docblock SO-%
 #     artefact + t.date_creation flip-candidate; UserNotInHierachy
