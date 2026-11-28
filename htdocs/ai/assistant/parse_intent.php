@@ -690,8 +690,10 @@ try {
 			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
 			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
 
-			// Category filter applied to $llmToolsBase — system tools already excluded
-			$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
+			$toolsSchema = getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT') ? array() : filterToolsByObjects($llmToolsBase, classifyQueryObjects($queryForIntent, $langs, $llmToolsBase), $detectedCategories);
+			if (empty($toolsSchema)) {
+				$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
+			}
 
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog("AI Pro: Latin script. Detected: " . json_encode($detectedCategories) . ". Filtered to " . count($toolsSchema) . " tools.", LOG_DEBUG, 0, '_ai');
@@ -1959,45 +1961,11 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		]
 	];
 
-	// en_US reference translator (loaded once; Translate caches files)
-	static $langsEnUs = null;
-	if ($langsEnUs === null) {
-		global $conf;
-		$langsEnUs = new Translate('', $conf);
-		$langsEnUs->setDefaultLang('en_US');
-		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions', 'website'));
-	}
+	$langsEnUs = getAiTranslatorEnUs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions', 'website'));
 
 	$detectedCategories = [];
 	foreach ($intentMap as $category => $data) {
-		$keywords = [];
-		foreach ($data['keys'] as $key) {
-			// Matched in the user's language AND in the en_US reference: keys
-			// translate to the UI language only, but users routinely type
-			// English terms on non-English installs. One mechanism, no
-			// separate synonym lists to translate.
-			foreach (array($langs->transnoentities($key), $langsEnUs->transnoentities($key)) as $trans) {
-				if ($trans === '' || ($trans === $key && preg_match('/[A-Z]/', dol_substr($key, 1, 200)))) {
-					// Untranslated composite key (e.g. 'BillStatusUnpaid'):
-					// matching it would be noise. A plain word equal to its
-					// key ('Customer' in en_US) is a real keyword - keep it.
-					continue;
-				}
-				if ($isLatin) {
-					$trans = strtolower(dol_string_unaccent($trans));
-				}
-				$keywords[] = $trans;
-			}
-		}
-		$keywords = array_unique($keywords);
-
-		// Hardcoded English colloquialisms (words no UI key carries) - words no
-		// UI key carries; translated vocabulary already arrives through the
-		// dual-language keys above.
-		foreach ($data['synonyms'] as $syn) {
-			$keywords[] = $isLatin ? strtolower(dol_string_unaccent($syn)) : $syn;
-		}
-		$keywords = array_unique($keywords);
+		$keywords = getAiQueryKeywords($data['keys'], $data['synonyms'], $langs, $langsEnUs, $isLatin);
 
 		$normalizedQuery = aiNormalizeForMatch($searchQuery, false);
 		foreach ($keywords as $word) {
