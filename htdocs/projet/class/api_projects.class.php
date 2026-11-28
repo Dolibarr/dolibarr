@@ -898,7 +898,7 @@ class Projects extends DolibarrApi
 		}
 
 		//this query will return total orders with the filters given
-		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+		$sqlTotals = "SELECT COUNT(*) as total FROM (".$sql.") as tmpcount";
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -933,6 +933,7 @@ class Projects extends DolibarrApi
 			$total = $this->db->fetch_object($totalsResult)->total;
 
 			$tmp = $obj_ret;
+			$obj_ret = [];
 			$obj_ret['data'] = $tmp;
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
