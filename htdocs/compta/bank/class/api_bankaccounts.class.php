@@ -139,7 +139,7 @@ class BankAccounts extends DolibarrApi
 	 * Get account by ID.
 	 *
 	 * @param	int			$id				ID of account
-	 * @param	int			$includebalance	1 to also return the current balance of the account into the property 'balance' {@choice 0,1}
+	 * @param	int			$includebalance	1 to also return the current balance of the account into the property 'balance'
 	 * @return  Object						Object with cleaned properties
 	 *
 	 * @throws RestException
