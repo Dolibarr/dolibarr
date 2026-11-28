@@ -275,6 +275,15 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($search_line) {
+	$param .= '&search_line='.urlencode((string) $search_line);
+}
+if ($search_code) {
+	$param .= '&search_code='.urlencode((string) $search_code);
+}
+if ($search_company) {
+	$param .= '&search_company='.urlencode((string) $search_company);
+}
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
