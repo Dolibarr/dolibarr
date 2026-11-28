@@ -546,14 +546,19 @@ if ($ext == 'csv') {
 	}
 	print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td class="liste_titre"><input class="flat" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
 	if ($mode == 'future') {
+		print '<td class="liste_titre"></td>';	// Current stock
 		print '<td class="liste_titre"></td>';
+		print '<td class="liste_titre"></td>';	// Virtual stock at date
+		print '<td class="liste_titre"></td>';	// Virtual stock
 	} else {
-		print '<td class="liste_titre"></td>';
-		print '<td class="liste_titre"></td>';
+		print '<td class="liste_titre"></td>';	// Stock at date
+		if ($usercancreadsupplierprice) {		// Same condition as the title of the column
+			print '<td class="liste_titre"></td>';	// Estimated value at AWP
+		}
+		print '<td class="liste_titre"></td>';	// Estimated value at selling price
+		print '<td class="liste_titre"></td>';	// Movements since date
+		print '<td class="liste_titre"></td>';	// Current stock
 	}
 	// Fields from hook
 	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);

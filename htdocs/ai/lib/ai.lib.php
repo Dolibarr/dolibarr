@@ -3229,7 +3229,7 @@ function sortAiToolsByObjectBlock(array $tools): array
 		}
 		$sortKeys[$index] = array('rank' => $rank, 'object' => $object, 'name' => (string) ($tool['name'] ?? ''));
 	}
-	uksort($tools, static function ($a, $b) use ($sortKeys): int {
+	uksort($tools, static function (int $a, int $b) use ($sortKeys): int {
 		$keyA = $sortKeys[$a];
 		$keyB = $sortKeys[$b];
 		if ($keyA['rank'] !== $keyB['rank']) {
