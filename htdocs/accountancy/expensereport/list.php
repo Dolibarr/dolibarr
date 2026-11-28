@@ -686,7 +686,7 @@ if ($result) {
 		// Current account
 		if (!empty($arrayfields['aa.data_suggest']['checked'])) {
 			print '<td>';
-			print length_accountg(html_entity_decode($objp->code_buy));
+			print length_accountg(html_entity_decode((string) $objp->code_buy));
 			print '</td>';
 			$totalarray['nbfield']++;
 		}
