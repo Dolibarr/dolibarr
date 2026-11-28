@@ -988,8 +988,32 @@ if ($search_categ_sup > 0) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.$search_type_thirdparty;
 }
+if ($search_sale && $search_sale != '-1') {
+	$param .= '&search_sale='.urlencode((string) $search_sale);
+}
+if ($search_user > 0) {
+	$param .= '&search_user='.urlencode((string) $search_user);
+}
+if ($search_project) {
+	$param .= '&search_project='.urlencode((string) $search_project);
+}
+if ($search_town) {
+	$param .= '&search_town='.urlencode((string) $search_town);
+}
+if ($search_zip) {
+	$param .= '&search_zip='.urlencode((string) $search_zip);
+}
+if ($search_state) {
+	$param .= '&search_state='.urlencode((string) $search_state);
+}
+if ($search_country) {
+	$param .= '&search_country='.urlencode((string) $search_country);
+}
 if ($search_fk_fac_rec_source) {
 	$param .= '&search_fk_fac_rec_source=' . (int) $search_fk_fac_rec_source;
+}
+if (!empty($search_product_category) && $search_product_category != '-1') {
+	$param .= '&search_product_category='.urlencode((string) $search_product_category);
 }
 
 // Add $param from extra fields
