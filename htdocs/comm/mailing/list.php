@@ -338,6 +338,12 @@ if ($optioncss != '') {
 if ($search_ref != '') {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
+if ($search_title != '') {
+	$param .= '&search_title='.urlencode($search_title);
+}
+if ($search_subject != '') {
+	$param .= '&search_subject='.urlencode($search_subject);
+}
 if ($search_messtype != '') {
 	$param .= '&search_type='.urlencode($search_messtype);
 }
