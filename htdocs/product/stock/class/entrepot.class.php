@@ -677,6 +677,23 @@ class Entrepot extends CommonObject
 		return $liste;
 	}
 
+	/**
+	 * Return the SQL filter that excludes the variant parents from the stock of warehouses when the stock of a parent is the sum of its variants,
+	 * so that parents are not counted twice.
+	 *
+	 * @param	DoliDB	$dbs				Database handler
+	 * @param	string	$fieldproductid		Field of the SQL request that contains the id of the product (for example 'p.rowid')
+	 * @return	string						SQL filter starting with ' AND', or '' when parents must be counted
+	 */
+	public static function getSqlFilterExcludingVariantParents(DoliDB $dbs, $fieldproductid)
+	{
+		if (!isModEnabled('variants') || getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') != 2) {
+			return '';
+		}
+
+		return " AND ".$dbs->sanitize($fieldproductid)." NOT IN (SELECT pac.fk_product_parent FROM ".MAIN_DB_PREFIX."product_attribute_combination as pac WHERE pac.entity IN (".getEntity('product')."))";
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return number of unique different product into a warehouse
@@ -693,6 +710,8 @@ class Entrepot extends CommonObject
 		$sql .= ", ".$this->db->prefix()."product as p";
 		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
 		$sql .= " AND ps.fk_product = p.rowid";
+		$excludefilter = self::getSqlFilterExcludingVariantParents($this->db, 'p.rowid');
+		$sql .= $excludefilter;
 
 		//print $sql;
 		$result = $this->db->query($sql);
@@ -743,6 +762,8 @@ class Entrepot extends CommonObject
 		}
 		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
 		$sql .= " AND ps.fk_product = p.rowid";
+		$excludefilter = self::getSqlFilterExcludingVariantParents($this->db, 'p.rowid');
+		$sql .= $excludefilter;
 		//print $sql;
 		$result = $this->db->query($sql);
 		if ($result) {

@@ -339,6 +339,15 @@ class MouvementStock extends CommonObject
 			$movestock = 1;
 		}
 
+		// When the stock of a variant parent is the sum of its variants, it can't move by itself
+		if ($movestock && $product->stockable_product == Product::ENABLED_STOCK && getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') == 2 && $product->hasVariants() > 0) {
+			$langs->load("products");
+			$this->error = $langs->trans('ErrorStockMovementOnVariantParent', $product->ref);
+			$this->errors[] = $this->error;
+			dol_syslog(get_class($this)."::_create ".$this->error, LOG_WARNING);
+			return -1;
+		}
+
 		$this->db->begin();
 
 		// Set value $product->stock_reel and detail per warehouse into $product->stock_warehouse array
@@ -694,6 +703,11 @@ class MouvementStock extends CommonObject
 			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode, $datem); // we use 0 as price, because AWP must not change for subproduct
 		}
 
+		// When the stock of parents is the sum of their variants, recalculate the parent of a variant from all its variants, once the movement is done
+		if (!$error && $movestock && $product->stockable_product == Product::ENABLED_STOCK && isModEnabled('variants') && getDolGlobalInt('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT') == 2) {
+			$error = $this->recalculateStockOfVariantParentOf($fk_product);
+		}
+
 		if ($movestock && !$error) {
 			// Call trigger
 			if ($product->stockable_product != Product::DISABLED_STOCK ) {
@@ -862,6 +876,151 @@ class MouvementStock extends CommonObject
 		}
 
 		return $error;
+	}
+
+	/**
+	 * Recalculate the stock of the parent of a variant from the stock of all its variants.
+	 * The stock of the parent is a value calculated from its variants and stored: it is recalculated, never moved,
+	 * so a difference, whatever its cause, is corrected at the next movement of one of its variants.
+	 *
+	 * @param	int		$fk_product		Id of the product that may be a variant
+	 * @return	int						0 if OK or if product is not a variant, <0 if KO
+	 */
+	private function recalculateStockOfVariantParentOf($fk_product)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
+
+		$combination = new ProductCombination($this->db);
+		$fk_parent = $combination->fetchByFkProductChild($fk_product, 1);
+		if ($fk_parent < 0) {
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
+		if ($fk_parent == 0) {
+			return 0;
+		}
+
+		return $this->setStockOfVariantParent($fk_parent);
+	}
+
+	/**
+	 * Store as stock of a variant parent the sum of the stock of its variants in each warehouse, then its total stock.
+	 * No stock movement is recorded: the parent is not a real item, its stock is a total.
+	 *
+	 * @param	int		$fk_parent		Id of the parent product
+	 * @return	int						0 if OK, <0 if KO
+	 */
+	private function setStockOfVariantParent($fk_parent)
+	{
+		// Sum of the stock of the variants in each warehouse
+		$sums = array();
+		$sql = "SELECT ps.fk_entrepot, SUM(ps.reel) as qty";
+		$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product_attribute_combination as pac ON pac.fk_product_child = ps.fk_product";
+		$sql .= " WHERE pac.fk_product_parent = ".((int) $fk_parent);
+		$sql .= " GROUP BY ps.fk_entrepot";
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
+		while ($obj = $this->db->fetch_object($resql)) {
+			$sums[(int) $obj->fk_entrepot] = (float) price2num($obj->qty, 'MS');
+		}
+		$this->db->free($resql);
+
+		// Stock currently stored for the parent in each warehouse
+		$lines = array();
+		$sql = "SELECT ps.rowid, ps.fk_entrepot, ps.reel";
+		$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
+		$sql .= " WHERE ps.fk_product = ".((int) $fk_parent);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
+		while ($obj = $this->db->fetch_object($resql)) {
+			$lines[(int) $obj->fk_entrepot] = array('rowid' => (int) $obj->rowid, 'reel' => (float) $obj->reel);
+			if (!isset($sums[(int) $obj->fk_entrepot])) {
+				$sums[(int) $obj->fk_entrepot] = 0;	// No variant left in this warehouse
+			}
+		}
+		$this->db->free($resql);
+
+		foreach ($sums as $fk_entrepot => $qty) {
+			if (isset($lines[$fk_entrepot])) {
+				if ($lines[$fk_entrepot]['reel'] == $qty) {
+					continue;
+				}
+				$sql = "UPDATE ".$this->db->prefix()."product_stock SET reel = ".((float) $qty);
+				$sql .= " WHERE rowid = ".((int) $lines[$fk_entrepot]['rowid']);
+			} elseif (empty($qty)) {
+				continue;
+			} else {
+				$sql = "INSERT INTO ".$this->db->prefix()."product_stock";
+				$sql .= " (reel, fk_entrepot, fk_product) VALUES";
+				$sql .= " (".((float) $qty).", ".((int) $fk_entrepot).", ".((int) $fk_parent).")";
+			}
+			if (!$this->db->query($sql)) {
+				$this->errors[] = $this->db->lasterror();
+				return -1;
+			}
+		}
+
+		// Total stock of the parent, as after any movement. Warning: Do not use "SET p.stock", does not works with pgsql
+		$sql = "UPDATE ".$this->db->prefix()."product as p";
+		$sql .= " SET stock = (SELECT SUM(ps.reel) FROM ".$this->db->prefix()."product_stock as ps WHERE ps.fk_product = p.rowid)";
+		$sql .= " WHERE rowid = ".((int) $fk_parent);
+		if (!$this->db->query($sql)) {
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
+
+		// A line at 0 is removed, as after any movement, unless batch details are attached to it
+		$sql = "DELETE FROM ".$this->db->prefix()."product_stock";
+		$sql .= " WHERE fk_product = ".((int) $fk_parent)." AND reel = 0";
+		$sql .= " AND rowid NOT IN (SELECT pb.fk_product_stock FROM ".$this->db->prefix()."product_batch as pb)";
+		if (!$this->db->query($sql)) {
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Set the stock of each variant parent to the sum of the stock of its variants, warehouse by warehouse.
+	 * Used when the stock of variant parents becomes the sum of their variants (VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT = 2).
+	 *
+	 * @return	int		Number of parent products recalculated if OK, <0 if KO
+	 */
+	public function recalculateVariantParentStocks()
+	{
+		$parents = array();
+		$sql = "SELECT DISTINCT pac.fk_product_parent";
+		$sql .= " FROM ".$this->db->prefix()."product_attribute_combination as pac";
+		$sql .= " WHERE pac.entity IN (".getEntity('product').")";
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		while ($obj = $this->db->fetch_object($resql)) {
+			$parents[] = (int) $obj->fk_product_parent;
+		}
+		$this->db->free($resql);
+
+		$this->db->begin();
+		foreach ($parents as $fk_parent) {
+			if ($this->setStockOfVariantParent($fk_parent) < 0) {
+				$this->error = $this->errorsToString();
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		$this->db->commit();
+
+		return count($parents);
 	}
 
 
