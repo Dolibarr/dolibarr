@@ -504,6 +504,9 @@ if ($search_status != '') {
 if ($search_option) {
 	$param .= "&amp;search_option=".urlencode($search_option);
 }
+if ($search_product_category > 0) {
+	$param .= '&search_product_category='.urlencode((string) $search_product_category);
+}
 if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1) {
 	$param .= '&amp;filter_opouvertureprevue='.urlencode($filter_opouvertureprevue);
 }
