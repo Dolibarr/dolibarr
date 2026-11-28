@@ -15830,14 +15830,13 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 			$objecttmp = new $className($db);
 			'@phan-var-force CommonObject $objecttmp';
 			/** @var CommonObject $objecttmp */
+			if (empty($objecttmp->module)) {
+				$objecttmp->module = $element_prop['module'];
+			}
 
 			if ($element_id > 0 || !empty($element_ref)) {
 				$ret = $objecttmp->fetch($element_id, $element_ref);
 				if ($ret > 0) {
-					if (empty($objecttmp->module)) {
-						$objecttmp->module = $element_prop['module'];
-					}
-
 					if ($useCache > 0) {
 						if (!isset($conf->cache['fetchObjectByElement'][$element_type])) {
 							$conf->cache['fetchObjectByElement'][$element_type] = [];

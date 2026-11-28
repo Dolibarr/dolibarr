@@ -81,7 +81,8 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 					if (in_array($typeofextrafield, array('link', 'sellist', 'text', 'html'))) {
 						$morecss = 'maxwidth200';
 					}
-					print $extrafields->showInputField($key, (!isset($search_array_options[$search_options_pattern.$tmpkey]) ? '' : $search_array_options[$search_options_pattern.$tmpkey]), '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
+					$searchobject = ($object instanceof CommonObject && empty($object->id) && $object->table_element == $extrafieldsobjectkey) ? $object : 0;
+					print $extrafields->showInputField($key, (!isset($search_array_options[$search_options_pattern.$tmpkey]) ? '' : $search_array_options[$search_options_pattern.$tmpkey]), '', '', $search_options_pattern, $morecss, $searchobject, $extrafieldsobjectkey, 1);
 				}
 				print '</td>';
 			}
