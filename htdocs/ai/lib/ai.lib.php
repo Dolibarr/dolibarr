@@ -2766,8 +2766,8 @@ function cleanToolSchemaForLLM(array $tools, bool $isLargeSchema = false)
 		// them, even when the schema is large. Truncating to 3 words ("Create documents
 		// other", "Add a single") breaks tool selection. If the schema really is too
 		// big for the chosen model, the right answer is to filter the toolset before
-		// it reaches the LLM (which is what filterToolsProfessional() already does
-		// upstream of this function), not to mutilate each tool's description.
+		// it reaches the LLM (which is what filterToolsByObjects() and filterToolsProfessional()
+		// already do upstream of this function), not to mutilate each tool's description.
 		// Parameter-level compression (stripping defaults, descriptions of optional
 		// fields, etc.) remains gated on $isLargeSchema below.
 		$desc = $tool['description'];
@@ -2858,4 +2858,184 @@ function aiHistoryTurnForModel(string $text): string
 {
 	// A small model copies "[api_x result] {...}" as its own answer instead of calling the tool.
 	return (string) preg_replace('/^\[([^\]\s]+) result\] */m', 'Done: $1 returned ', $text);
+}
+
+/**
+ * Words naming the objects of the AI assistant tools, from the 'vocabulary' each tool carries (the 'langs', 'keys', 'synonyms' and 'combines' of its ToolApiBridge::$enrichments entry)
+ *
+ * @param	array<int,array<string,mixed>>	$tools	Tools
+ * @return	array<string,array{langs?:string[],keys?:string[],synonyms?:string[],combines?:array<string,string[]>}>	Words by object
+ */
+function getAiToolsVocabulary(array $tools): array
+{
+	$vocabulary = array();
+	foreach ($tools as $tool) {
+		$vocabulary += (array) ($tool['vocabulary'] ?? array());
+	}
+
+	return $vocabulary;
+}
+
+/**
+ * Return the en_US translator used to match the English words a user types on any install
+ *
+ * @param	string[]	$langfiles	Language files to load
+ * @return	Translate
+ */
+function getAiTranslatorEnUs(array $langfiles): Translate
+{
+	global $conf;
+
+	static $langsEnUs = null;
+	if ($langsEnUs === null) {
+		$langsEnUs = new Translate('', $conf);
+		$langsEnUs->setDefaultLang('en_US');
+	}
+	$langsEnUs->loadLangs($langfiles);
+
+	return $langsEnUs;
+}
+
+/**
+ * Return the words to look for in a query of the AI assistant: translation keys in the language of the user and in en_US, and synonyms
+ *
+ * @param	string[]	$keys		Translation keys
+ * @param	string[]	$synonyms	Words matched as they are
+ * @param	Translate	$langs		Language of the user
+ * @param	Translate	$langsEnUs	Translator en_US (getAiTranslatorEnUs())
+ * @param	bool		$isLatin	True to return the words lowercase and without accents
+ * @return	string[]
+ */
+function getAiQueryKeywords(array $keys, array $synonyms, Translate $langs, Translate $langsEnUs, bool $isLatin): array
+{
+	$keywords = array();
+	foreach ($keys as $key) {
+		foreach (array($langs->transnoentities($key), $langsEnUs->transnoentities($key)) as $trans) {
+			// An untranslated composite key ('BillStatusUnpaid') is not a word of the user; a plain word equal to its key ('Customer') is.
+			if ($trans !== '' && !($trans === $key && preg_match('/[A-Z]/', dol_substr($key, 1, 200)))) {
+				$keywords[] = $trans;
+			}
+		}
+	}
+	$keywords = array_merge($keywords, $synonyms);
+	if ($isLatin) {
+		$keywords = array_map(static function (string $word): string {
+			return strtolower(dol_string_unaccent($word));
+		}, $keywords);
+	}
+
+	return array_values(array_unique(array_filter($keywords, static function (string $word): bool {
+		return $word !== '';
+	})));
+}
+
+/**
+ * Return whether a query names one of the words
+ *
+ * @param	string		$searchQuery	Query, lowercase and without accents
+ * @param	string[]	$words			Words, lowercase and without accents (getAiQueryKeywords())
+ * @return	bool
+ */
+function aiQueryNamesOneOf(string $searchQuery, array $words): bool
+{
+	foreach ($words as $word) {
+		// Each word may be singular or plural ("leave" for "Leaves", "parties" for "party"); "don" must not match "don't".
+		$pattern = implode('\s+', array_map(static function (string $part): string {
+			return preg_replace('/y$/', '(?:y|ies)', preg_quote(preg_replace('/(?<=\w\w)s$/', '', $part), '/')).'s?';
+		}, preg_split('/\s+/', $word)));
+		if (preg_match('/\b'.$pattern.'\b(?![\'’]t\b)/u', $searchQuery)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Return the objects of the AI assistant tools named in a query written in a Latin script
+ *
+ * @param	string							$query	Query of the user
+ * @param	Translate						$langs	Language of the user
+ * @param	array<int,array<string,mixed>>	$tools	Tools, with the words naming their objects
+ * @return	string[]								Objects named in the query
+ */
+function classifyQueryObjects(string $query, Translate $langs, array $tools): array
+{
+	$vocabularies = getAiToolsVocabulary($tools);
+	$langfiles = array('main');
+	foreach ($vocabularies as $vocabulary) {
+		$langfiles = array_merge($langfiles, (array) ($vocabulary['langs'] ?? array()));
+	}
+	$langfiles = array_values(array_unique($langfiles));
+	$langsEnUs = getAiTranslatorEnUs($langfiles);
+	$langs->loadLangs($langfiles);
+
+	$searchQuery = strtolower(dol_string_unaccent($query));
+	$objects = array();
+	foreach ($vocabularies as $object => $vocabulary) {
+		if (aiQueryNamesOneOf($searchQuery, getAiQueryKeywords((array) ($vocabulary['keys'] ?? array()), (array) ($vocabulary['synonyms'] ?? array()), $langs, $langsEnUs, true))) {
+			$objects[] = $object;
+		}
+	}
+	foreach ($vocabularies as $object => $vocabulary) {
+		foreach ((array) ($vocabulary['combines'] ?? array()) as $named => $keys) {
+			if (!in_array($object, $objects, true) && in_array($named, $objects, true) && aiQueryNamesOneOf($searchQuery, getAiQueryKeywords((array) $keys, array(), $langs, $langsEnUs, true))) {
+				$objects[] = $object;
+			}
+		}
+	}
+
+	return $objects;
+}
+
+/**
+ * Keep the AI assistant tools of the objects named in the query, the tools they name ("look the rowid up with api_thirdparties_list")
+ * and the tools that find the rowids they take.
+ * A tool whose objects have no words (another tool class, an endpoint of an external module that gives none) is kept by its categories.
+ *
+ * @param	array<int,array<string,mixed>>	$tools		Tools, with their 'objects', 'vocabulary' and 'categories'
+ * @param	string[]						$objects	Objects named in the query (classifyQueryObjects())
+ * @param	string[]						$categories	Categories of the query (classifyIntentUniversal())
+ * @return	array<int,array<string,mixed>>				Tools kept, or an empty array when no tool works on the objects named
+ */
+function filterToolsByObjects(array $tools, array $objects, array $categories): array
+{
+	$knownObjects = array_keys(getAiToolsVocabulary($tools));
+	$targetCategories = array_merge(array('global'), $categories);
+	$kept = array();
+	$nbForObjects = 0;
+	foreach ($tools as $tool) {
+		$toolObjects = (array) ($tool['objects'] ?? array());
+		if (count(array_intersect($toolObjects, $objects)) > 0) {
+			$kept[] = $tool;
+			$nbForObjects++;
+		} elseif (count(array_intersect($toolObjects, $knownObjects)) === 0 && count(array_intersect((array) ($tool['categories'] ?? array('global')), $targetCategories)) > 0) {
+			$kept[] = $tool;
+		}
+	}
+
+	if ($nbForObjects === 0) {
+		return array();
+	}
+
+	// A rowid argument needs the tool that finds the rowid from a name.
+	$lookupTools = array('thirdparty_ids' => 'api_thirdparties_list', 'socid' => 'api_thirdparties_list', 'user_ids' => 'api_users_list');
+	$keptNames = array_column($kept, 'name');
+	$named = array();
+	foreach ($kept as $tool) {
+		$schema = (array) ($tool['inputSchema'] ?? $tool['parameters'] ?? array());
+		$text = json_encode(array($tool['description'] ?? '', $schema), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		if (preg_match_all('/\b[a-z][a-z0-9]*(?:_[a-z0-9]+)+\b/', (string) $text, $matches)) {
+			$named = array_merge($named, $matches[0]);
+		}
+		$named = array_merge($named, array_values(array_intersect_key($lookupTools, (array) ($schema['properties'] ?? array()))));
+	}
+	foreach ($tools as $tool) {
+		if (in_array($tool['name'] ?? '', $named, true) && !in_array($tool['name'], $keptNames, true)) {
+			$kept[] = $tool;
+			$keptNames[] = $tool['name'];
+		}
+	}
+
+	return $kept;
 }
