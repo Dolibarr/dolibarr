@@ -314,12 +314,34 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			return $ret;
 		}
 
-		// classify billed order & billed proposal
+		// Close the signed vendor proposal at the origin of a purchase order when this order is placed
+		if ($action == 'ORDER_SUPPLIER_SUBMIT' && $object instanceof CommandeFournisseur) {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+			if (isModEnabled('supplier_proposal') && getDolGlobalString('WORKFLOW_SUPPLIER_ORDER_CLOSE_SUPPLIER_PROPOSAL')) {
+				$object->fetchObjectLinked(0, 'supplier_proposal', $object->id, $object->element);
+				if (!empty($object->linkedObjects['supplier_proposal'])) {
+					foreach ($object->linkedObjects['supplier_proposal'] as $element) {
+						/** @var SupplierProposal $element */
+						if ($element->status == SupplierProposal::STATUS_SIGNED) {
+							$element->fetch_thirdparty();
+							// cloture() overwrites the private note, so we give it the current one
+							$ret = $element->cloture($user, SupplierProposal::STATUS_CLOSE, (string) $element->note_private);
+							if ($ret < 0) {
+								return $ret;
+							}
+						}
+					}
+				}
+			}
+			return 0;
+		}
+
+		// classify billed order
 		if ($action == 'BILL_SUPPLIER_VALIDATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			// Firstly, we set to purchase order to "Billed" if WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER is set.
-			// After we will set proposals
+			// We set the purchase order to "Billed" if WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER is set.
 			if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && getDolGlobalString('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER')) {
 				$object->fetchObjectLinked(0, 'order_supplier', $object->id, $object->element);
 				if (!empty($object->linkedObjects['order_supplier'])) {
@@ -339,30 +361,6 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 						|| ($samemulticurrencycode && !empty($object->multicurrency_total_ht) && $this->shouldClassify($conf, $totalonlinkedelements_multicurrency, (float) $object->multicurrency_total_ht))) {
 						foreach ($object->linkedObjects['order_supplier'] as $element) {
 							/** @var CommandeFournisseur $element */
-							$ret = $element->classifyBilled($user);
-							if ($ret < 0) {
-								return $ret;
-							}
-						}
-					}
-				}
-			}
-
-			// Secondly, we set to linked Proposal to "Billed" if WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL is set.
-			if (isModEnabled('supplier_proposal') && getDolGlobalString('WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL')) {
-				$object->fetchObjectLinked(0, 'supplier_proposal', $object->id, $object->element);
-				if (!empty($object->linkedObjects['supplier_proposal'])) {
-					$totalonlinkedelements = 0;
-					foreach ($object->linkedObjects['supplier_proposal'] as $element) {
-						/** @var SupplierProposal $element */
-						if ($element->status == SupplierProposal::STATUS_SIGNED || $element->status == SupplierProposal::STATUS_CLOSE) {
-							$totalonlinkedelements += $element->total_ht;
-						}
-					}
-					dol_syslog("Amount of linked supplier proposals = ".$totalonlinkedelements.", of supplier invoice = ".$object->total_ht.", egality is ".json_encode($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, (float) $object->total_ht)) {
-						foreach ($object->linkedObjects['supplier_proposal'] as $element) {
-							/** @var SupplierProposal $element */
 							$ret = $element->classifyBilled($user);
 							if ($ret < 0) {
 								return $ret;
