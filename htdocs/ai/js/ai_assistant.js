@@ -3060,8 +3060,9 @@ export function initAiAssistant(container) {
             let followupResult = null;
             // The third parties the user picked, for every round of this request.
             const sentChoices = Object.assign({}, thirdpartyChoices);
-            // Objects whose tools the model asked with load_tools, sent on every round of this request.
+            // Objects and tools the model asked with load_tools, sent on every round of this request.
             let loadedObjects = null;
+            let loadedTools = null;
             // Three rounds at most: the server never flags the last followup round itself.
             for (let round = 0; round < 3; round++) {
                 if (!loadingMsg.parentNode) { appendTyping(); loadingMsg = chat.lastElementChild; }
@@ -3073,7 +3074,7 @@ export function initAiAssistant(container) {
                     body: JSON.stringify(Object.assign(
                         chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
                         Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
-                        loadedObjects ? { objects: loadedObjects } : {},
+                        loadedObjects ? { objects: loadedObjects, tools: loadedTools } : {},
                         (function () {
                             // followup_result: only to name the object in the confirmation, never sent to the model.
                             // All the search results in one assistant turn, followup is the number of the round.
@@ -3106,9 +3107,10 @@ export function initAiAssistant(container) {
                 if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
                 if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
                 if (intent.tool === 'load_tools') {
-                    if (loadedObjects || !intent.arguments || !Array.isArray(intent.arguments.objects)) { handleResponse(t('AIFunctionalityNotAvailable'), false); input.disabled = false; input.focus(); return; }
+                    if (loadedObjects || !intent.arguments || !Array.isArray(intent.arguments.objects) || !Array.isArray(intent.arguments.tools)) { handleResponse(t('AIFunctionalityNotAvailable'), false); input.disabled = false; input.focus(); return; }
                     // Same round again: loading the tools is not a followup round.
                     loadedObjects = intent.arguments.objects;
+                    loadedTools = intent.arguments.tools;
                     round--;
                     continue;
                 }

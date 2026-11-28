@@ -307,6 +307,9 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame(array('api_invoices_list', 'navigate_to_page', 'api_thirdparties_create'), $kept, 'A tool named by a kept tool is kept too');
 
 		$this->assertSame(array(), filterToolsByObjects($tools, array('tickets'), array('thirdparty')), 'No tool for the objects named: the caller falls back to the categories');
+
+		$kept = array_column(filterToolsByObjects($tools, array(), array(), array('api_contacts_list')), 'name');
+		$this->assertSame(array('api_contacts_list', 'navigate_to_page', 'api_thirdparties_list'), $kept, 'A tool asked by name brings the tool that finds its rowids, not the other tools of its object');
 	}
 
 	/**
@@ -328,6 +331,7 @@ class AiLibTest extends CommonClassTest
 			array('name' => 'api_thirdparties_list', 'objects' => array('thirdparties')),
 		);
 		$this->assertSame(array_reverse(array_column($tools, 'name')), array_column(sortAiToolsByObjectBlock($tools), 'name'), 'Hub objects, other objects by key, several objects, no object');
+		$this->assertSame('navigate_to_page', sortAiToolsByObjectBlock($tools, true)[0]['name'], 'Catalog first: the tools of no object are in both rounds, they go first');
 
 		$bridge = new ToolApiBridge($db, $user, $conf);
 		$tools = $bridge->getDefinitions();
@@ -437,6 +441,22 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame('categories', $selection['mode'], 'A category under budget still passes');
 		$this->assertSame(array('bill_a', 'bill_b', 'bill_c'), array_column($selection['tools'], 'name'));
 
+		$question = 'crée moi un contact jonathan lescaut sur devcamp';
+		$selection = aiSelectTools($tools, array('query' => $question, 'catalog_first' => true), array('thirdparty'), 32000, $langs);
+		$this->assertSame('catalog', $selection['mode'], 'Catalog first: no tool of an object before the model chose');
+		$this->assertSame(array('navigate_to_page'), array_column($selection['tools'], 'name'));
+		$selection = aiSelectTools($tools, array('query' => $question, 'catalog_first' => true), array('thirdparty'), 0, $langs);
+		$this->assertSame('catalog', $selection['mode'], 'Catalog first does not depend on the budget');
+		$selection = aiSelectTools($tools, array('query' => $question, 'catalog_first' => true, 'requested_tools' => array('api_contacts_create')), array('thirdparty'), 32000, $langs);
+		$this->assertSame('tools', $selection['mode']);
+		$names = array_column($selection['tools'], 'name');
+		$this->assertContains('api_contacts_create', $names);
+		$this->assertContains('api_thirdparties_list', $names, 'The tool that finds the socid of the contact comes with it');
+		$this->assertNotContains('api_contacts_list', $names, 'Only the tools asked, not all the tools of their object');
+		$this->assertSame(array_column(filterToolsByObjects($tools, array(), array(), array('api_contacts_create')), 'name'), $names);
+		$round1Json = rtrim((string) json_encode(cleanToolSchemaForLLM(sortAiToolsByObjectBlock(aiSelectTools($tools, array('query' => $question, 'catalog_first' => true), array(), 32000, $langs)['tools'], true))), ']');
+		$this->assertStringStartsWith($round1Json.',', (string) json_encode(cleanToolSchemaForLLM(sortAiToolsByObjectBlock($selection['tools'], true))), 'Round 2 adds its tools after those of round 1, so the prompt cache still holds them');
+
 		$conf->global->AI_DISABLE_TOOLS_BY_OBJECT = 1;
 		$selectionNoBudget = aiSelectTools($tools, array('query' => 'crée le tiers devcamp'), array('thirdparty'), 0, $langs);
 		$selection = aiSelectTools($tools, array('query' => 'crée le tiers devcamp'), array('thirdparty'), 32000, $langs);
@@ -471,6 +491,83 @@ class AiLibTest extends CommonClassTest
 		$this->assertStringContainsString('ask_for_clarification', $prompt, 'The model may ask the user which object a name is');
 		$this->assertStringContainsString('comes before any rule above about a missing tool', $prompt, 'A small model must ask for tools before saying one is missing');
 		$this->assertStringContainsString($catalog, $prompt);
+	}
+
+	/**
+	 * testAiToolsCatalogWithActions
+	 *
+	 * @return void
+	 */
+	public function testAiToolsCatalogWithActions()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = array_merge($bridge->getDefinitions(), array(array('name' => 'api_objects_contacts_link', 'objects' => array('tickets'))));
+		$catalog = aiToolsCatalog($tools, true);
+		$this->assertSame($catalog, aiToolsCatalog(array_reverse($tools), true), 'The same tools give the same bytes, whatever their order');
+		$this->assertMatchesRegularExpression('/^contacts: [^\n]*\bactions: [^\n]*\bcreate\b/m', $catalog, 'An action is the end of the name of the tool');
+		$this->assertMatchesRegularExpression('/^tickets: [^\n]*\bapi_objects_contacts_link\b/m', $catalog, 'A tool not named after its object is given by its full name');
+		$this->assertCount(count(getAiToolsVocabulary($tools)), explode("\n", $catalog), 'One line per object');
+		$this->assertStringNotContainsString('actions:', aiToolsCatalog($tools), 'Without actions, the catalog of task 4 is unchanged');
+
+		$withOther = array_merge($tools, array(array('name' => 'make_coffee', 'categories' => array('office')), array('name' => 'brew_tea', 'categories' => array('office')), array('name' => 'navigate_to_page', 'categories' => array('global'))));
+		$catalogWithOther = aiToolsCatalog($withOther, true);
+		$this->assertStringEndsWith("\nother - actions: brew_tea, make_coffee", $catalogWithOther, 'A tool of no object outside the global category can be asked by its name');
+		$this->assertSame($catalogWithOther, aiToolsCatalog(array_reverse($withOther), true));
+		$this->assertStringNotContainsString('other - actions', aiToolsCatalog($withOther), 'Only the catalog with actions lists tools');
+
+		$prompt = aiToolsCatalogPrompt($tools, true);
+		$this->assertStringContainsString($catalog, $prompt);
+		$this->assertStringContainsString('"tools"', $prompt, 'The model asks tools by name');
+		$this->assertStringContainsString('at most '.aiLoadToolsMaxTools().' ', $prompt);
+		$this->assertSame($prompt, aiToolsCatalogPrompt(array_reverse($tools), true), 'Round 1 and round 2 share this prefix');
+	}
+
+	/**
+	 * testAiLoadToolsNames
+	 *
+	 * @return void
+	 */
+	public function testAiLoadToolsNames()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+
+		$this->assertSame(array('api_contacts_create', 'api_thirdparties_list'), aiLoadToolsNames(array('api_contacts_create', 'api_unknown_list', 'api_thirdparties_list', 'api_contacts_create', 12, array('x')), $tools, false), 'Unknown names are dropped');
+		$many = array('api_contacts_create', 'api_contacts_list', 'api_contacts_get', 'api_thirdparties_list', 'api_thirdparties_get', 'api_invoices_list', 'api_orders_list');
+		$this->assertSame(array_slice($many, 0, aiLoadToolsMaxTools()), aiLoadToolsNames($many, $tools, false), 'At most aiLoadToolsMaxTools() tools');
+		$this->assertSame(6, aiLoadToolsMaxTools());
+		$this->assertSame(array(), aiLoadToolsNames(array('api_contacts_create'), $tools, true), 'One load_tools per question');
+		$this->assertSame(array(), aiLoadToolsNames('api_contacts_create', $tools, false));
+		$withoutContactCreate = array_values(array_filter($tools, static function (array $tool): bool {
+			return $tool['name'] !== 'api_contacts_create';
+		}));
+		$this->assertSame(array('api_contacts_list'), aiLoadToolsNames(array('api_contacts_create', 'api_contacts_list'), $withoutContactCreate, false), 'A tool the user may not use is refused');
+	}
+
+	/**
+	 * testAiToolsCatalogFirst
+	 *
+	 * @return void
+	 */
+	public function testAiToolsCatalogFirst()
+	{
+		global $conf;
+
+		unset($conf->global->AI_ASSISTANT_TOOLS_CATALOG_FIRST);
+		$this->assertTrue(aiToolsCatalogFirst('custom'), 'On by default for a local model');
+		$this->assertFalse(aiToolsCatalogFirst('chatgpt'), 'Off by default for an online service');
+		$this->assertFalse(aiToolsCatalogFirst('anthropic'));
+
+		$conf->global->AI_ASSISTANT_TOOLS_CATALOG_FIRST = '1';
+		$this->assertTrue(aiToolsCatalogFirst('chatgpt'));
+		$conf->global->AI_ASSISTANT_TOOLS_CATALOG_FIRST = '0';
+		$this->assertFalse(aiToolsCatalogFirst('custom'));
+
+		unset($conf->global->AI_ASSISTANT_TOOLS_CATALOG_FIRST);
 	}
 
 	/**

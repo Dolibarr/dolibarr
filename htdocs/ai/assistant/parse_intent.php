@@ -670,6 +670,8 @@ try {
 
 		// Set by the chat after a load_tools answer, for every round of the question
 		$loadedObjects = aiLoadToolsObjects($data['objects'] ?? null, $llmToolsBase, false);
+		$loadedTools = aiLoadToolsNames($data['tools'] ?? null, $llmToolsBase, false);
+		$catalogFirst = aiToolsCatalogFirst((string) $serviceKey);
 		// Bytes of the JSON of the tools over which only the catalog of objects is sent (aiSelectTools()), 0 for no budget
 		$toolsMaxSize = getDolGlobalInt('AI_ASSISTANT_TOOLS_MAX_SIZE', 32000);
 		$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
@@ -678,7 +680,9 @@ try {
 			'element' => $aiPageContextElement,
 			'turns' => $histTurns,
 			'latin' => !isComplexScript($queryForIntent),
-			'requested' => $loadedObjects
+			'requested' => $loadedObjects,
+			'requested_tools' => $loadedTools,
+			'catalog_first' => $catalogFirst
 		), $detectedCategories, $toolsMaxSize, $langs);
 		$toolsSchema = $toolSelection['tools'];
 
@@ -696,7 +700,7 @@ try {
 		// We raise the threshold to 100 to effectively disable compression for the
 		// default install (~30 tools), while still leaving a safety net for very large
 		// custom installs that register dozens of additional addMcpTools hooks.
-		$toolsSchema = sortAiToolsByObjectBlock($toolsSchema);
+		$toolsSchema = sortAiToolsByObjectBlock($toolsSchema, $catalogFirst);
 		$isLargeSchema = aiToolsAreLargeSchema($toolsSchema);
 		$toolsForLLM = cleanToolSchemaForLLM($toolsSchema, $isLargeSchema);
 
@@ -761,8 +765,8 @@ try {
 		$catalogPrompt = '';
 		if (getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS')) {
 			$toolsForLLM = array();
-		} elseif ($toolsMaxSize > 0) {
-			$catalogPrompt = aiToolsCatalogPrompt($llmToolsBase);
+		} elseif ($catalogFirst || $toolsMaxSize > 0) {
+			$catalogPrompt = aiToolsCatalogPrompt($llmToolsBase, $catalogFirst);
 			$systemPrompt .= $catalogPrompt;
 		}
 
@@ -1257,10 +1261,12 @@ try {
 				}
 
 				if ($catalogPrompt !== '' && is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'load_tools') {
-					$askedObjects = aiLoadToolsObjects($intentJSON['arguments']['objects'] ?? null, $llmToolsBase, !empty($loadedObjects));
-					if (!empty($askedObjects)) {
-						// The chat posts the question again with these objects, without counting a followup round.
-						$finalResponse = array('tool' => 'load_tools', 'arguments' => array('objects' => $askedObjects));
+					$alreadyLoaded = !empty($loadedObjects) || !empty($loadedTools);
+					$askedObjects = aiLoadToolsObjects($intentJSON['arguments']['objects'] ?? null, $llmToolsBase, $alreadyLoaded);
+					$askedTools = aiLoadToolsNames($intentJSON['arguments']['tools'] ?? null, $llmToolsBase, $alreadyLoaded);
+					if (!empty($askedObjects) || !empty($askedTools)) {
+						// The chat posts the question again with these objects and tools, without counting a followup round.
+						$finalResponse = array('tool' => 'load_tools', 'arguments' => array('objects' => $askedObjects, 'tools' => $askedTools));
 						ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 1.0, 'load_tools', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
 						ob_end_clean();
 						echo json_encode($finalResponse);

@@ -41,6 +41,33 @@ function aiLoadToolsMaxObjects(): int
 }
 
 /**
+ * Max number of tools the model of the AI assistant may ask by name with load_tools for one question
+ *
+ * @return int
+ */
+function aiLoadToolsMaxTools(): int
+{
+	return 6;
+}
+
+/**
+ * Return whether the AI assistant sends the catalog of the objects first, without any tool of an object, then only the tools the model asks with load_tools.
+ * AI_ASSISTANT_TOOLS_CATALOG_FIRST: 1 always, 0 never, unset for a local model only (service 'custom', an OpenAI compatible endpoint such as Ollama).
+ *
+ * @param	string	$service	Code of the AI service
+ * @return	bool
+ */
+function aiToolsCatalogFirst(string $service): bool
+{
+	$value = getDolGlobalString('AI_ASSISTANT_TOOLS_CATALOG_FIRST');
+	if ($value !== '') {
+		return (bool) (int) $value;
+	}
+
+	return $service === 'custom';
+}
+
+/**
  * Max number of messages of past turns sent back to the AI as context with one question.
  * Hard cap applied server-side, whatever the client sends (pins, "All" mode).
  *
@@ -3168,16 +3195,17 @@ function aiPageContextObjects(string $element, array $tools): array
 }
 
 /**
- * Keep the AI assistant tools of the objects named in the query, the tools they name ("look the rowid up with api_thirdparties_list")
- * and the tools that find the rowids they take.
+ * Keep the AI assistant tools of the objects named in the query and the tools asked by name, the tools they name
+ * ("look the rowid up with api_thirdparties_list") and the tools that find the rowids they take.
  * A tool whose objects have no words (another tool class, an endpoint of an external module that gives none) is kept by its categories.
  *
  * @param	array<int,array<string,mixed>>	$tools		Tools, with their 'objects', 'vocabulary' and 'categories'
  * @param	string[]						$objects	Objects named in the query (classifyQueryObjects())
  * @param	string[]						$categories	Categories of the query (classifyIntentUniversal())
- * @return	array<int,array<string,mixed>>				Tools kept, or an empty array when no tool works on the objects named
+ * @param	string[]						$names		Names of tools asked with load_tools (aiLoadToolsNames())
+ * @return	array<int,array<string,mixed>>				Tools kept, or an empty array when no tool works on the objects named and no tool is asked
  */
-function filterToolsByObjects(array $tools, array $objects, array $categories): array
+function filterToolsByObjects(array $tools, array $objects, array $categories, array $names = array()): array
 {
 	$knownObjects = array_keys(getAiToolsVocabulary($tools));
 	$targetCategories = array_merge(array('global'), $categories);
@@ -3185,7 +3213,7 @@ function filterToolsByObjects(array $tools, array $objects, array $categories): 
 	$nbForObjects = 0;
 	foreach ($tools as $tool) {
 		$toolObjects = (array) ($tool['objects'] ?? array());
-		if (count(array_intersect($toolObjects, $objects)) > 0) {
+		if (count(array_intersect($toolObjects, $objects)) > 0 || in_array($tool['name'] ?? '', $names, true)) {
 			$kept[] = $tool;
 			$nbForObjects++;
 		} elseif (aiToolKeptByCategories($tool, $knownObjects, $targetCategories)) {
@@ -3223,10 +3251,11 @@ function filterToolsByObjects(array $tools, array $objects, array $categories): 
  * Order AI assistant tools by block of object: hub objects first, then the other objects by key, then the tools of several objects, then the tools of no object.
  * A local model reuses only the longest common prefix of the prompt: the same set gives the same bytes, and adding an object keeps the hub blocks in front.
  *
- * @param	array<int,array<string,mixed>>	$tools	Tools, with their 'objects'
- * @return	array<int,array<string,mixed>>			Tools ordered by block, then by name
+ * @param	array<int,array<string,mixed>>	$tools			Tools, with their 'objects'
+ * @param	bool							$noObjectFirst	True to put the tools of no object first, when they are the same in every round (aiToolsCatalogFirst())
+ * @return	array<int,array<string,mixed>>					Tools ordered by block, then by name
  */
-function sortAiToolsByObjectBlock(array $tools): array
+function sortAiToolsByObjectBlock(array $tools, bool $noObjectFirst = false): array
 {
 	$hubObjects = array('thirdparties', 'contacts', 'products', 'users');
 	$sortKeys = array();
@@ -3241,8 +3270,10 @@ function sortAiToolsByObjectBlock(array $tools): array
 				$rank = count($hubObjects);
 				$object = (string) $toolObjects[0];
 			}
+		} elseif (count($toolObjects) > 1) {
+			$rank = count($hubObjects) + 1;
 		} else {
-			$rank = count($hubObjects) + (count($toolObjects) > 1 ? 1 : 2);
+			$rank = $noObjectFirst ? -1 : count($hubObjects) + 2;
 		}
 		$sortKeys[$index] = array('rank' => $rank, 'object' => $object, 'name' => (string) ($tool['name'] ?? ''));
 	}
@@ -3343,28 +3374,39 @@ function aiToolKeptByCategories(array $tool, array $knownObjects, array $targetC
 }
 
 /**
- * Choose the tools sent to the model of the AI assistant: those of the objects of the question, else those of its categories,
- * else, when they are over the size budget, only the tools of no object, the model asking the others with load_tools (aiToolsCatalogPrompt())
+ * Choose the tools sent to the model of the AI assistant: those asked with load_tools, else those of the objects of the question,
+ * else those of its categories, else, when they are over the size budget or the catalog goes first, only the tools of no object,
+ * the model asking the others with load_tools (aiToolsCatalogPrompt())
  *
  * @param	array<int,array<string,mixed>>	$tools		Tools the user may use, with their 'objects', 'vocabulary' and 'categories'
- * @param	array{query?:string,element?:string,turns?:array<int,array{role:string,text:string}>,latin?:bool,requested?:string[]}	$signals	Question, element of the open card, past turns (aiChatHistoryTurns()), false when the question is not in a Latin script, objects asked with load_tools (aiLoadToolsObjects())
+ * @param	array{query?:string,element?:string,turns?:array<int,array{role:string,text:string}>,latin?:bool,requested?:string[],requested_tools?:string[],catalog_first?:bool}	$signals	Question, element of the open card, past turns (aiChatHistoryTurns()), false when the question is not in a Latin script, objects and tools asked with load_tools (aiLoadToolsObjects(), aiLoadToolsNames()), true when the catalog goes first (aiToolsCatalogFirst())
  * @param	string[]						$categories	Categories of the question (classifyIntentUniversal())
  * @param	int								$maxSize	Size budget of the tools in bytes (aiToolsSize()), it applies to more than aiLoadToolsMaxObjects() objects and to the categories, 0 for no budget
  * @param	Translate						$langs		Language of the user
- * @return	array{tools:array<int,array<string,mixed>>,objects:string[],mode:string}	Tools, objects they were chosen for, and mode: 'objects', 'categories' or 'catalog'
+ * @return	array{tools:array<int,array<string,mixed>>,objects:string[],mode:string}	Tools, objects they were chosen for, and mode: 'tools', 'objects', 'categories' or 'catalog'
  */
 function aiSelectTools(array $tools, array $signals, array $categories, int $maxSize, Translate $langs): array
 {
 	// No catalog can be offered without objects.
-	if (empty(getAiToolsVocabulary($tools))) {
+	$hasCatalog = !empty(getAiToolsVocabulary($tools));
+	if (!$hasCatalog) {
 		$maxSize = 0;
 	}
+	$catalogFirst = $hasCatalog && !empty($signals['catalog_first']);
+	if ($catalogFirst) {
+		// The model chose: what the code detects in the question must not change the tools nor the prompt prefix.
+		$categories = array();
+	}
 	$requested = (array) ($signals['requested'] ?? array());
-	if (!empty($requested)) {
-		$kept = filterToolsByObjects($tools, $requested, $categories);
+	$requestedTools = (array) ($signals['requested_tools'] ?? array());
+	if (!empty($requested) || !empty($requestedTools)) {
+		$kept = filterToolsByObjects($tools, $requested, $categories, $requestedTools);
 		if (!empty($kept)) {
-			return array('tools' => $kept, 'objects' => $requested, 'mode' => 'objects');
+			return array('tools' => $kept, 'objects' => $requested, 'mode' => empty($requestedTools) ? 'objects' : 'tools');
 		}
+	}
+	if ($catalogFirst) {
+		return array('tools' => aiCatalogModeTools($tools, $categories, $maxSize > 0 ? $maxSize : PHP_INT_MAX), 'objects' => array(), 'mode' => 'catalog');
 	}
 
 	if (!getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT')) {
@@ -3436,37 +3478,76 @@ function aiCatalogModeTools(array $tools, array $categories, int $maxSize): arra
 }
 
 /**
- * Return the catalog of the objects of the AI assistant tools: one line "key: label" per object having a tool in the list
+ * Return the catalog of the objects of the AI assistant tools: one line "key: label" per object having a tool in the list, in the order of the keys
  *
- * @param	array<int,array<string,mixed>>	$tools	Tools, with the words naming their objects
+ * @param	array<int,array<string,mixed>>	$tools			Tools, with the words naming their objects
+ * @param	bool							$withActions	True to add the actions of each object: the end of the names "api_<key>_<action>", or the full name of a tool named otherwise, and a last line "other" with the tools of no object that are not always sent (aiCatalogModeTools())
  * @return	string
  */
-function aiToolsCatalog(array $tools): string
+function aiToolsCatalog(array $tools, bool $withActions = false): string
 {
+	$actions = array();
+	if ($withActions) {
+		foreach ($tools as $tool) {
+			$name = (string) ($tool['name'] ?? '');
+			foreach ((array) ($tool['objects'] ?? array()) as $object) {
+				$prefix = 'api_'.$object.'_';
+				$actions[$object][] = strpos($name, $prefix) === 0 ? substr($name, strlen($prefix)) : $name;
+			}
+		}
+	}
+	$vocabularies = getAiToolsVocabulary($tools);
+	ksort($vocabularies);
 	$lines = array();
-	foreach (getAiToolsVocabulary($tools) as $object => $vocabulary) {
+	foreach ($vocabularies as $object => $vocabulary) {
 		$label = (string) ($vocabulary['label'] ?? '');
-		$lines[] = $object.($label !== '' ? ': '.$label : '');
+		$line = $object.($label !== '' ? ': '.$label : '');
+		if (!empty($actions[$object])) {
+			$objectActions = array_unique($actions[$object]);
+			sort($objectActions);
+			$line .= ($label !== '' ? ' - ' : ': ').'actions: '.implode(', ', $objectActions);
+		}
+		$lines[] = $line;
+	}
+	if ($withActions && !empty($lines)) {
+		$knownObjects = array_keys($vocabularies);
+		$others = array();
+		foreach ($tools as $tool) {
+			if (count(array_intersect((array) ($tool['objects'] ?? array()), $knownObjects)) === 0 && !aiToolKeptByCategories($tool, $knownObjects, array('global'))) {
+				$others[] = (string) ($tool['name'] ?? '');
+			}
+		}
+		$others = array_values(array_unique(array_filter($others)));
+		sort($others);
+		if (!empty($others)) {
+			$lines[] = 'other - actions: '.implode(', ', $others);
+		}
 	}
 
 	return implode("\n", $lines);
 }
 
 /**
- * Return the part of the prompt of the AI assistant that lists the objects whose tools the model may ask with load_tools
+ * Return the part of the prompt of the AI assistant that lists the objects whose tools the model may ask with load_tools.
+ * It depends only on the tools given: the same text in every round of every question, for the prompt cache of a local model.
  *
- * @param	array<int,array<string,mixed>>	$tools	Tools the user may use, with the words naming their objects
- * @return	string									Empty when no tool has an object
+ * @param	array<int,array<string,mixed>>	$tools			Tools the user may use, with the words naming their objects
+ * @param	bool							$catalogFirst	True when the model asks the tools by name (aiToolsCatalogFirst())
+ * @return	string											Empty when no tool has an object
  */
-function aiToolsCatalogPrompt(array $tools): string
+function aiToolsCatalogPrompt(array $tools, bool $catalogFirst = false): string
 {
-	$catalog = aiToolsCatalog($tools);
+	$catalog = aiToolsCatalog($tools, $catalogFirst);
 	if ($catalog === '') {
 		return '';
 	}
 
 	$prompt = "## Objects\n";
-	$prompt .= "Only the tools of some objects are listed in ## Tools. When the request needs Dolibarr data or a Dolibarr action on objects whose tools are not listed, answer only {\"tool\": \"load_tools\", \"arguments\": {\"objects\": [\"key\", ...]}} with at most ".aiLoadToolsMaxObjects()." keys of this list: the question is then sent again with their tools. Do it at most once per question.\n";
+	if ($catalogFirst) {
+		$prompt .= "## Tools lists only the tools already asked. When the request needs Dolibarr data or a Dolibarr action whose tool is not in ## Tools, answer only {\"tool\": \"load_tools\", \"arguments\": {\"tools\": [\"api_contacts_create\", ...]}} with at most ".aiLoadToolsMaxTools()." tool names of this list: the action X of the object key K is the tool api_K_X, a name starting with api_ or listed in the line other is the tool itself. The question is then sent again with these tools and the tools that find the ids they take. Do it at most once per question.\n";
+	} else {
+		$prompt .= "Only the tools of some objects are listed in ## Tools. When the request needs Dolibarr data or a Dolibarr action on objects whose tools are not listed, answer only {\"tool\": \"load_tools\", \"arguments\": {\"objects\": [\"key\", ...]}} with at most ".aiLoadToolsMaxObjects()." keys of this list: the question is then sent again with their tools. Do it at most once per question.\n";
+	}
 	$prompt .= "This comes before any rule above about a missing tool: a tool is missing only when no object of this list can do it.\n";
 	$prompt .= "When you hesitate between objects (is a name a contact, a user or a third party?), ask the user with {\"tool\": \"ask_for_clarification\", \"arguments\": {\"question\": \"...\"}}.\n";
 	$prompt .= $catalog."\n\n";
@@ -3484,13 +3565,39 @@ function aiToolsCatalogPrompt(array $tools): string
  */
 function aiLoadToolsObjects($requested, array $tools, bool $alreadyLoaded): array
 {
+	return aiLoadToolsAccepted($requested, array_keys(getAiToolsVocabulary($tools)), aiLoadToolsMaxObjects(), $alreadyLoaded);
+}
+
+/**
+ * Validate the tools a load_tools answer of the model, or the chat, asks by name: tools of the list the user may use, aiLoadToolsMaxTools() at most
+ *
+ * @param	mixed							$requested		Names asked
+ * @param	array<int,array<string,mixed>>	$tools			Tools the user may use (McpHandler::getToolsSchemaForLLM())
+ * @param	bool							$alreadyLoaded	True when the tools of the question were already asked once
+ * @return	string[]										Names accepted, empty when the request is refused
+ */
+function aiLoadToolsNames($requested, array $tools, bool $alreadyLoaded): array
+{
+	return aiLoadToolsAccepted($requested, array_column($tools, 'name'), aiLoadToolsMaxTools(), $alreadyLoaded);
+}
+
+/**
+ * Return the values of a load_tools request found in a list, without duplicates, $max at most
+ *
+ * @param	mixed		$requested		Values asked
+ * @param	string[]	$known			Values accepted
+ * @param	int			$max			Max number of values
+ * @param	bool		$alreadyLoaded	True when the tools of the question were already asked once
+ * @return	string[]					Values accepted, empty when the request is refused
+ */
+function aiLoadToolsAccepted($requested, array $known, int $max, bool $alreadyLoaded): array
+{
 	if ($alreadyLoaded || !is_array($requested)) {
 		return array();
 	}
-	$knownObjects = array_keys(getAiToolsVocabulary($tools));
-	$objects = array_values(array_unique(array_filter($requested, static function ($object) use ($knownObjects): bool {
-		return is_string($object) && in_array($object, $knownObjects, true);
+	$accepted = array_values(array_unique(array_filter($requested, static function ($value) use ($known): bool {
+		return is_string($value) && in_array($value, $known, true);
 	})));
 
-	return array_slice($objects, 0, aiLoadToolsMaxObjects());
+	return array_slice($accepted, 0, $max);
 }
