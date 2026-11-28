@@ -4098,6 +4098,7 @@ abstract class CommonObject
 		}
 		if ($this->element == 'invoice_supplier_rec') {
 			$fieldup = 'pu_ht';
+			$fieldupttc = 'pu_ttc';
 		}
 		if ($this->element == 'expensereport') {
 			// Force rounding mode to '0', otherwise when you set MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND to 1, you may have lines with different totals.

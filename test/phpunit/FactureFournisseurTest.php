@@ -230,4 +230,132 @@ class FactureFournisseurTest extends CommonClassTest
 			date_default_timezone_set($savtz);
 		}
 	}
+
+	/**
+	 * testUpdatePriceKeepsSupplierInvoiceLineEnteredIncludingTax
+	 *
+	 * @return	void
+	 */
+	public function testUpdatePriceKeepsSupplierInvoiceLineEnteredIncludingTax()
+	{
+		global $conf;
+		$conf = $this->savconf;
+
+		$savdecimals = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
+		$conf->global->MAIN_MAX_DECIMALS_UNIT = 2;
+		try {
+			$invoice = $this->createDraftSupplierInvoice();
+			$lineid = $invoice->addline('Line entered including tax', 35.01, 20, 0, 0, 1, 0, 0, 0, 0, 0, 0, 'TTC');
+			$this->assertGreaterThan(0, $lineid, $invoice->errorsToString());
+
+			$this->assertGreaterThan(0, $invoice->update_price(1));
+
+			$this->assertEquals([5.83, 35.01], $this->fetchLineVatAndTotalInclTax('facture_fourn_det', 'tva', $lineid));
+		} finally {
+			$conf->global->MAIN_MAX_DECIMALS_UNIT = $savdecimals;
+		}
+	}
+
+	/**
+	 * testUpdatePriceStillFixesCorruptedSupplierInvoiceLine
+	 *
+	 * @return	void
+	 */
+	public function testUpdatePriceStillFixesCorruptedSupplierInvoiceLine()
+	{
+		global $conf;
+		$conf = $this->savconf;
+		$db = $this->savdb;
+
+		$savdecimals = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
+		$conf->global->MAIN_MAX_DECIMALS_UNIT = 2;
+		try {
+			$invoice = $this->createDraftSupplierInvoice();
+			$lineid = $invoice->addline('Line entered excluding tax', 29.18, 20, 0, 0, 1);
+			$this->assertGreaterThan(0, $lineid, $invoice->errorsToString());
+
+			// Total incl. tax matches neither the unit price excl. tax nor the unit price incl. tax
+			$sql = "UPDATE ".$db->prefix()."facture_fourn_det SET tva = 5.83, total_ttc = 35.01 WHERE rowid = ".((int) $lineid);
+			$this->assertNotFalse($db->query($sql), (string) $db->lasterror());
+
+			$this->assertGreaterThan(0, $invoice->update_price(1));
+
+			$this->assertEquals([5.84, 35.02], $this->fetchLineVatAndTotalInclTax('facture_fourn_det', 'tva', $lineid));
+		} finally {
+			$conf->global->MAIN_MAX_DECIMALS_UNIT = $savdecimals;
+		}
+	}
+
+	/**
+	 * testUpdatePriceKeepsSupplierInvoiceTemplateLineEnteredIncludingTax
+	 *
+	 * @return	void
+	 */
+	public function testUpdatePriceKeepsSupplierInvoiceTemplateLineEnteredIncludingTax()
+	{
+		global $conf;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$db = $this->savdb;
+
+		$savdecimals = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
+		$conf->global->MAIN_MAX_DECIMALS_UNIT = 2;
+		try {
+			$invoice = $this->createDraftSupplierInvoice();
+
+			$template = new FactureFournisseurRec($db);
+			$template->title = 'Template '.dol_print_date(dol_now(), 'dayhourlog').' '.mt_rand();
+			$templateid = $template->create($user, $invoice->id);
+			$this->assertGreaterThan(0, $templateid, $template->errorsToString());
+
+			$lineid = $template->addline(0, '', '', 'Line entered including tax', 0, 35.01, 1, 0, 20, 0, 0, 'TTC');
+			$this->assertGreaterThan(0, $lineid, $template->errorsToString());
+
+			$this->assertGreaterThan(0, $template->update_price(1));
+
+			$this->assertEquals([5.83, 35.01], $this->fetchLineVatAndTotalInclTax('facture_fourn_det_rec', 'total_tva', $lineid));
+		} finally {
+			$conf->global->MAIN_MAX_DECIMALS_UNIT = $savdecimals;
+		}
+	}
+
+	/**
+	 * Create a draft supplier invoice from the specimen
+	 *
+	 * @return	FactureFournisseur
+	 */
+	private function createDraftSupplierInvoice()
+	{
+		$user = $this->savuser;
+		$db = $this->savdb;
+
+		$invoice = new FactureFournisseur($db);
+		$invoice->initAsSpecimen();
+		$invoice->ref_supplier = 'TTC-'.dol_print_date(dol_now(), 'dayhourlog').'-'.mt_rand();
+		$this->assertGreaterThan(0, $invoice->create($user), $invoice->errorsToString());
+
+		return $invoice;
+	}
+
+	/**
+	 * Read the stored VAT and total including tax of a line
+	 *
+	 * @param	string	$table		Line table without prefix
+	 * @param	string	$fieldvat	VAT amount column of this table
+	 * @param	int		$lineid		Line id
+	 * @return	float[]				[VAT amount, total including tax]
+	 */
+	private function fetchLineVatAndTotalInclTax($table, $fieldvat, $lineid)
+	{
+		$db = $this->savdb;
+
+		$sql = "SELECT ".$db->sanitize($fieldvat)." as total_tva, total_ttc FROM ".$db->prefix().$db->sanitize($table)." WHERE rowid = ".((int) $lineid);
+		$resql = $db->query($sql);
+		$this->assertNotFalse($resql, (string) $db->lasterror());
+		$obj = $db->fetch_object($resql);
+		$db->free($resql);
+		$this->assertNotEmpty($obj, 'Line '.$lineid.' not found in '.$table);
+
+		return [(float) $obj->total_tva, (float) $obj->total_ttc];
+	}
 }
