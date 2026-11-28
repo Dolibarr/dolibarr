@@ -91,6 +91,9 @@ if (empty($senderissupplier)) {
 if (empty($inputalsopricewithtax)) {
 	$inputalsopricewithtax = 0;
 }
+if (!isset($usehm)) {
+	$usehm = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE'); // Not visible when this template is included by formAddObjectLine()
+}
 // Define colspan for the button 'Add'
 $colspan = 3; // Columns: total ht + col edit + col delete
 if (isModEnabled("multicurrency") && $this->multicurrency_code && $this->multicurrency_code != $conf->currency) {
