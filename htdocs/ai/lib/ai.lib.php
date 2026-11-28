@@ -3197,7 +3197,7 @@ function aiPageContextObjects(string $element, array $tools): array
 
 /**
  * Keep the AI assistant tools of the objects named in the query and the tools asked by name, the tools they name
- * ("look the rowid up with api_thirdparties_list") and the tools that find the rowids they take.
+ * ("look the rowid up with api_thirdparties_list") and the tools that find the rowids they take (the list tool of its object, for a tool asked by name that takes an 'id').
  * A tool whose objects have no words (another tool class, an endpoint of an external module that gives none) is kept by its categories.
  *
  * @param	array<int,array<string,mixed>>	$tools		Tools, with their 'objects', 'vocabulary' and 'categories'
@@ -3237,6 +3237,10 @@ function filterToolsByObjects(array $tools, array $objects, array $categories, a
 			$named = array_merge($named, $matches[0]);
 		}
 		$named = array_merge($named, array_values(array_intersect_key($lookupTools, (array) ($schema['properties'] ?? array()))));
+		$toolObjects = array_values((array) ($tool['objects'] ?? array()));
+		if (in_array($tool['name'] ?? '', $names, true) && count($toolObjects) === 1 && isset($schema['properties']['id'])) {
+			$named[] = 'api_'.$toolObjects[0].'_list';
+		}
 	}
 	foreach ($tools as $tool) {
 		if (in_array($tool['name'] ?? '', $named, true) && !in_array($tool['name'], $keptNames, true)) {

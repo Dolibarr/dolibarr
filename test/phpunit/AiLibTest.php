@@ -346,6 +346,39 @@ class AiLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testFilterToolsByObjectsAddsListToolForId
+	 *
+	 * @return void
+	 */
+	public function testFilterToolsByObjectsAddsListToolForId()
+	{
+		$contacts = array('contacts');
+		$tools = array(
+			array('name' => 'api_contacts_update', 'objects' => $contacts, 'categories' => array('thirdparty'), 'inputSchema' => array('properties' => array('id' => array('type' => 'integer'), 'phone' => array('type' => 'string')))),
+			array('name' => 'api_contacts_create', 'objects' => $contacts, 'categories' => array('thirdparty'), 'inputSchema' => array('properties' => array('lastname' => array('type' => 'string')))),
+			array('name' => 'api_contacts_list', 'objects' => $contacts, 'categories' => array('thirdparty'), 'inputSchema' => array('properties' => array('thirdparty_ids' => array('type' => 'string')))),
+			array('name' => 'api_thirdparties_list', 'objects' => array('thirdparties'), 'categories' => array('thirdparty')),
+			array('name' => 'navigate_to_page', 'categories' => array('global')),
+		);
+
+		$kept = array_column(filterToolsByObjects($tools, array(), array(), array('api_contacts_update')), 'name');
+		$this->assertSame(array('api_contacts_update', 'navigate_to_page', 'api_contacts_list'), $kept, 'A tool asked by name with an id property brings the list tool of its object, not the tools that list tool names');
+		$this->assertSame(json_encode($kept), json_encode(array_column(filterToolsByObjects($tools, array(), array(), array('api_contacts_update')), 'name')), 'Same request, same set');
+
+		$kept = array_column(filterToolsByObjects($tools, array(), array(), array('api_contacts_create')), 'name');
+		$this->assertNotContains('api_contacts_list', $kept, 'No id taken: no list tool added');
+
+		$kept = array_column(filterToolsByObjects($tools, array(), array(), array('api_contacts_update', 'api_contacts_list')), 'name');
+		$this->assertSame(array('api_contacts_update', 'api_contacts_list', 'navigate_to_page', 'api_thirdparties_list'), $kept, 'List tool already asked: nothing added twice');
+
+		$withoutList = array_values(array_filter($tools, static function (array $tool): bool {
+			return $tool['name'] !== 'api_contacts_list';
+		}));
+		$kept = array_column(filterToolsByObjects($withoutList, array(), array(), array('api_contacts_update')), 'name');
+		$this->assertSame(array('api_contacts_update', 'navigate_to_page'), $kept, 'A user without the list tool gets none');
+	}
+
+	/**
 	 * testSortAiToolsByObjectBlock
 	 *
 	 * @return void
