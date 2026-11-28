@@ -1022,6 +1022,13 @@ class Mo extends CommonObject
 			return -2;
 		}
 
+		// A line of a produced or canceled MO can't be deleted (reverting a stock movement with $fk_movement is still allowed)
+		if (empty($fk_movement) && in_array($this->status, array(self::STATUS_PRODUCED, self::STATUS_CANCELED))) {
+			$langs->load('errors');
+			$this->error = $langs->trans('ErrorDeleteLineNotAllowedByObjectStatus');
+			return -2;
+		}
+
 		// The line must belong to this MO (checked before any stock movement is reversed)
 		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE rowid = ".((int) $idline)." AND fk_mo = ".((int) $this->id);
