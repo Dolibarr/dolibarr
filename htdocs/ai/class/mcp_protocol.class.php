@@ -2,6 +2,7 @@
 /* Copyright (C) 2026	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2026	Nick Fragoulis
  * Copyright (C) 2026       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -323,9 +324,11 @@ class MCPServer
 	 */
 	private function handleToolsList(): array
 	{
-		// McpHandler::getToolsSchema() applies the CTX_MCP_SERVER allow-list,
-		// so disabled tools are never included in this response.
-		$toolsSchema = $this->mcpHandler->getToolsSchema();
+		// McpHandler::getToolsSchemaForLLM() applies the CTX_MCP_SERVER allow-list,
+		// so disabled tools are never included in this response. It also leaves out
+		// the system tools (ask_for_confirmation, respond_to_user...): they are the
+		// answer channels of the chat of Dolibarr and must not be offered to a model.
+		$toolsSchema = $this->mcpHandler->getToolsSchemaForLLM();
 
 		// Wrap it in the 'tools' key as required by the MCP spec.
 		return ['tools' => $toolsSchema] + $this->privateCacheHints();

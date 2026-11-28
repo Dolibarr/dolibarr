@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2026 Nick Fragoulis
+ * Copyright (C) 2026	Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -302,5 +303,40 @@ class AiMcpWireTest extends CommonClassTest
 
 		$this->assertArrayHasKey('result', $response);
 		$this->assertArrayNotHasKey('error', $response);
+	}
+
+	/**
+	 * The system tools (ask_for_confirmation, respond_to_user...) are the answer
+	 * channels of the chat of Dolibarr: an MCP client must neither be offered
+	 * them by tools/list nor be able to run them.
+	 *
+	 * @return void
+	 */
+	public function testSystemToolsAreNotOfferedToMcpClients()
+	{
+		$server = $this->getServer();
+		$systemtools = array('ask_for_clarification', 'respond_to_user', 'ask_for_confirmation', 'reject_general_question');
+
+		$response = $server->handleRequest(array(
+			'jsonrpc' => '2.0',
+			'id' => 1,
+			'method' => 'tools/list',
+		));
+
+		$this->assertArrayHasKey('result', $response);
+		foreach ($response['result']['tools'] as $tool) {
+			$this->assertNotContains($tool['name'], $systemtools, 'A system tool must not be listed to an MCP client');
+			$this->assertTrue(empty($tool['is_system']), 'A tool flagged as system must not be listed to an MCP client');
+		}
+
+		$response = $server->handleRequest(array(
+			'jsonrpc' => '2.0',
+			'id' => 2,
+			'method' => 'tools/call',
+			'params' => array('name' => 'respond_to_user', 'arguments' => array('message' => 'hello')),
+		));
+
+		$this->assertArrayHasKey('result', $response);
+		$this->assertTrue($response['result']['isError'], 'A system tool must not run for an MCP client');
 	}
 }
