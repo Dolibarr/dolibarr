@@ -910,6 +910,9 @@ class Projects extends DolibarrApi
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_time as et ON (et.fk_element = t.rowid AND et.elementtype = 'task')";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = p.fk_soc)";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user AS u ON (u.rowid = et.fk_user)";
+		if ($category > 0) {
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie_project AS c ON (c.fk_project = p.rowid)";
+		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('project').')';
 		if ($socids) {
 			$sql .= " AND p.fk_soc IN (".$this->db->sanitize($socids).")";
@@ -930,7 +933,7 @@ class Projects extends DolibarrApi
 		}
 		// Select projects of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_project = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".((int) $category);
 		}
 
 		// Add sql filters
