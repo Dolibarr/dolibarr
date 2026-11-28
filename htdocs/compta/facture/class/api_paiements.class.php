@@ -260,9 +260,10 @@ class Paiements extends DolibarrApi
 			throw new RestException(403, 'Access to this payment not allowed for this user');
 		}
 
-		if ($this->paiement->delete(DolibarrApiAccess::$user) == 0) {
+		$result = $this->paiement->delete(DolibarrApiAccess::$user);
+		if ($result == 0) {
 			throw new RestException(409, 'Error when deleting Paiement : '.$this->paiement->errorsToString());
-		} elseif ($this->paiement->delete(DolibarrApiAccess::$user) < 0) {
+		} elseif ($result < 0) {
 			throw new RestException(500, 'Error when deleting Paiement : '.$this->paiement->errorsToString());
 		}
 
