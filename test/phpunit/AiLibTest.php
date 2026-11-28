@@ -511,7 +511,8 @@ class AiLibTest extends CommonClassTest
 
 		$withOther = array_merge($tools, array(array('name' => 'make_coffee', 'categories' => array('office')), array('name' => 'brew_tea', 'categories' => array('office')), array('name' => 'navigate_to_page', 'categories' => array('global'))));
 		$catalogWithOther = aiToolsCatalog($withOther, true);
-		$this->assertStringEndsWith("\nother - actions: brew_tea, make_coffee", $catalogWithOther, 'A tool of no object outside the global category can be asked by its name');
+		$this->assertStringEndsWith("\nother - actions: brew_tea, make_coffee, navigate_to_page", $catalogWithOther, 'A tool of no object can be asked by its name, even when the budget sends none of them');
+		$this->assertStringEndsWith("\nother - actions: brew_tea, make_coffee", aiToolsCatalog($withOther, true, array('navigate_to_page')), 'A tool sent in every round is not offered again');
 		$this->assertSame($catalogWithOther, aiToolsCatalog(array_reverse($withOther), true));
 		$this->assertStringNotContainsString('other - actions', aiToolsCatalog($withOther), 'Only the catalog with actions lists tools');
 
@@ -747,5 +748,48 @@ class AiLibTest extends CommonClassTest
 		} else {
 			$conf->global->AI_CHAT_CONTEXT_AUTO_MESSAGES = $autoMessages;
 		}
+	}
+
+	/**
+	 * testAiImplicitLoadTools
+	 *
+	 * @return void
+	 */
+	public function testAiImplicitLoadTools()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+		$none = array('objects' => array(), 'tools' => array());
+		$sent = array('navigate_to_page');
+
+		$this->assertSame(array('objects' => array(), 'tools' => array('api_contacts_create')), aiImplicitLoadTools(array('tool' => 'api_contacts_create', 'arguments' => array()), $tools, $sent, false), 'A tool of the catalog called without its schema is loaded first');
+		$this->assertSame($none, aiImplicitLoadTools(array('tool' => 'api_contacts_create'), $tools, array('api_contacts_create'), false), 'A tool sent in this round runs');
+		$this->assertSame($none, aiImplicitLoadTools(array('tool' => 'api_unknown_create'), $tools, $sent, false), 'An unknown tool is refused');
+		$withoutCreate = array_values(array_filter($tools, static function (array $tool): bool {
+			return $tool['name'] !== 'api_contacts_create';
+		}));
+		$this->assertSame($none, aiImplicitLoadTools(array('tool' => 'api_contacts_create'), $withoutCreate, $sent, false), 'A tool the user may not use is refused');
+		$this->assertSame($none, aiImplicitLoadTools(array('tool' => 'api_contacts_create'), $tools, $sent, true), 'One load per question');
+		$this->assertSame(array('objects' => array('contacts'), 'tools' => array()), aiImplicitLoadTools(array('tool' => 'api_objects_contacts_list', 'arguments' => array('object' => 'contacts')), $tools, array('api_objects_contacts_list'), false), 'A tool of several objects called for an object it does not take loads the tools of that object');
+		$this->assertSame(array('objects' => array(), 'tools' => array('api_objects_contacts_list')), aiImplicitLoadTools(array('tool' => 'api_objects_contacts_list', 'arguments' => array('object' => 'nothing')), $tools, $sent, false), 'An unknown object: the tool itself is loaded');
+		$this->assertSame($none, aiImplicitLoadTools(array('tool' => 'api_objects_contacts_list', 'arguments' => array('object' => 'invoices')), $tools, array('api_objects_contacts_list'), false), 'An object the tool takes: it runs');
+
+		$allTools = array_merge($tools, array(array('name' => 'respond_to_user', 'is_system' => true)));
+		$sentRound2 = array('api_contacts_create', 'api_thirdparties_list', 'navigate_to_page');
+		$valid = aiValidToolNames($allTools, $tools, $sentRound2, true);
+		$this->assertNotContains('api_contacts_list', $valid, 'Round 2: a tool not sent, whose load is refused, does not run with guessed arguments');
+		$this->assertContains('api_contacts_create', $valid);
+		$this->assertContains('respond_to_user', $valid, 'System tools are never sent and always valid');
+		$this->assertContains('api_contacts_list', aiValidToolNames($allTools, $tools, $sentRound2, false), 'Without the catalog first, every tool is valid as before');
+
+		$confirmation = array('tool' => 'ask_for_confirmation', 'arguments' => array('original_intent' => array('tool' => 'api_contacts_create', 'arguments' => array('lastname' => 'X'))));
+		$this->assertSame($confirmation['arguments']['original_intent'], aiCalledIntent($confirmation), 'A confirmation asked by the model is checked as the call it wraps');
+		$this->assertSame(array('objects' => array(), 'tools' => array('api_contacts_create')), aiImplicitLoadTools(aiCalledIntent($confirmation), $tools, $sent, false), 'Round 1: the wrapped tool is loaded');
+		$this->assertSame($none, aiImplicitLoadTools(aiCalledIntent($confirmation), $tools, $sent, true));
+		$this->assertNotContains('api_contacts_create', aiValidToolNames($allTools, $tools, $sent, true), 'Round 2: the wrapped tool not sent is refused, not confirmed with guessed arguments');
+		$this->assertSame(array('tool' => 'api_contacts_list'), aiCalledIntent(array('tool' => 'api_contacts_list')));
+		$this->assertSame(array('tool' => 'ask_for_confirmation', 'arguments' => array('original_intent' => 'x')), aiCalledIntent(array('tool' => 'ask_for_confirmation', 'arguments' => array('original_intent' => 'x'))));
 	}
 }

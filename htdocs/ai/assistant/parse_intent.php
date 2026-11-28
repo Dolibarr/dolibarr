@@ -776,7 +776,7 @@ try {
 		if (getDolGlobalString('AI_ASSISTANT_DISABLE_TOOLS')) {
 			$toolsForLLM = array();
 		} elseif ($catalogFirst || $toolsMaxSize > 0) {
-			$catalogPrompt = aiToolsCatalogPrompt($llmToolsBase, $catalogFirst);
+			$catalogPrompt = aiToolsCatalogPrompt($llmToolsBase, $catalogFirst, $catalogFirst ? array_column(aiCatalogFirstBaseTools($llmToolsBase, $toolsMaxSize), 'name') : array());
 			$systemPrompt .= $catalogPrompt;
 		}
 
@@ -1322,24 +1322,39 @@ try {
 					$intentJSON['arguments'] = recursiveUnmaskValues($intentJSON['arguments'], $guard);
 				}
 
+				$alreadyLoaded = !empty($loadedObjects) || !empty($loadedTools);
+				$askedObjects = array();
+				$askedTools = array();
+				$wrappedRefused = false;
 				if ($catalogPrompt !== '' && is_array($intentJSON) && ($intentJSON['tool'] ?? '') === 'load_tools') {
-					$alreadyLoaded = !empty($loadedObjects) || !empty($loadedTools);
 					$askedObjects = aiLoadToolsObjects($intentJSON['arguments']['objects'] ?? null, $llmToolsBase, $alreadyLoaded);
 					$askedTools = aiLoadToolsNames($intentJSON['arguments']['tools'] ?? null, $llmToolsBase, $alreadyLoaded);
-					if (!empty($askedObjects) || !empty($askedTools)) {
-						// The chat posts the question again with these objects and tools, without counting a followup round.
-						$finalResponse = json_decode(aiLoadToolsAnswer($askedObjects, $askedTools), true);
-						ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 1.0, 'load_tools', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
-						ob_end_clean();
-						echo json_encode($finalResponse);
-						exit;
+				} elseif ($catalogFirst && $catalogPrompt !== '' && is_array($intentJSON) && isset($intentJSON['tool'])) {
+					// A small model calls a tool of the catalog without its schema: load it, the model calls it again in round 2.
+					$calledIntent = aiCalledIntent($intentJSON);
+					$implicitLoad = aiImplicitLoadTools($calledIntent, $llmToolsBase, array_column($toolsSchema, 'name'), $alreadyLoaded);
+					$askedObjects = $implicitLoad['objects'];
+					$askedTools = $implicitLoad['tools'];
+					// A confirmation of a tool not sent, not loadable: checked below as the call it wraps, so refused.
+					if (empty($askedObjects) && empty($askedTools) && !in_array($calledIntent['tool'], aiValidToolNames($allToolsSchema, $llmToolsBase, array_column($toolsSchema, 'name'), true), true)) {
+						$intentJSON = $calledIntent;
+						$wrappedRefused = true;
 					}
+				}
+				if (!empty($askedObjects) || !empty($askedTools)) {
+					// The chat posts the question again with these objects and tools, without counting a followup round.
+					$finalResponse = json_decode(aiLoadToolsAnswer($askedObjects, $askedTools), true);
+					ai_log_request($db, $user, $query, $finalResponse, $providerUsed, microtime(true) - $startTime, 1.0, 'load_tools', $errorDetails, $rawRequestLog, $rawResponseLog, $usageContext);
+					ob_end_clean();
+					echo json_encode($finalResponse);
+					exit;
 				}
 
 				// Validation check: Check if the AI selected a tool that actually exists in our filtered schema.
 				if ($intentJSON && isset($intentJSON['tool'])) {
-					$validToolNames = array_column($allToolsSchema, 'name');
-					if (!in_array($intentJSON['tool'], $validToolNames)) {
+					$validToolNames = aiValidToolNames($allToolsSchema, $llmToolsBase, array_column($toolsSchema, 'name'), $catalogFirst && $catalogPrompt !== '');
+					// A refused confirmation is never recovered: the recovered tool would run without its confirmation.
+					if (empty($wrappedRefused) && !in_array($intentJSON['tool'], $validToolNames)) {
 						// Near-miss name: recover only on a single match, same verb, all tokens present.
 						$reqTokens = explode('_', dol_strtolower((string) $intentJSON['tool']));
 						$candidates = array();

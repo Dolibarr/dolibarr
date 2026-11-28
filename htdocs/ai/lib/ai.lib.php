@@ -3491,10 +3491,11 @@ function aiCatalogFirstBaseTools(array $tools, int $maxSize): array
  * Return the catalog of the objects of the AI assistant tools: one line "key: label" per object having a tool in the list, in the order of the keys
  *
  * @param	array<int,array<string,mixed>>	$tools			Tools, with the words naming their objects
- * @param	bool							$withActions	True to add the actions of each object: the end of the names "api_<key>_<action>", or the full name of a tool named otherwise, and a last line "other" with the tools of no object that are not always sent (aiCatalogModeTools())
+ * @param	bool							$withActions	True to add the actions of each object: the end of the names "api_<key>_<action>", or the full name of a tool named otherwise, and a last line "other" with the tools of no object not in $sentAlways
+ * @param	string[]						$sentAlways		Names of the tools sent in every round (aiCatalogFirstBaseTools())
  * @return	string
  */
-function aiToolsCatalog(array $tools, bool $withActions = false): string
+function aiToolsCatalog(array $tools, bool $withActions = false, array $sentAlways = array()): string
 {
 	$actions = array();
 	if ($withActions) {
@@ -3523,7 +3524,7 @@ function aiToolsCatalog(array $tools, bool $withActions = false): string
 		$knownObjects = array_keys($vocabularies);
 		$others = array();
 		foreach ($tools as $tool) {
-			if (count(array_intersect((array) ($tool['objects'] ?? array()), $knownObjects)) === 0 && !aiToolKeptByCategories($tool, $knownObjects, array('global'))) {
+			if (count(array_intersect((array) ($tool['objects'] ?? array()), $knownObjects)) === 0 && !in_array($tool['name'] ?? '', $sentAlways, true)) {
 				$others[] = (string) ($tool['name'] ?? '');
 			}
 		}
@@ -3543,11 +3544,12 @@ function aiToolsCatalog(array $tools, bool $withActions = false): string
  *
  * @param	array<int,array<string,mixed>>	$tools			Tools the user may use, with the words naming their objects
  * @param	bool							$catalogFirst	True when the model asks the tools by name (aiToolsCatalogFirst())
+ * @param	string[]						$sentAlways		Names of the tools sent in every round, left out of the catalog
  * @return	string											Empty when no tool has an object
  */
-function aiToolsCatalogPrompt(array $tools, bool $catalogFirst = false): string
+function aiToolsCatalogPrompt(array $tools, bool $catalogFirst = false, array $sentAlways = array()): string
 {
-	$catalog = aiToolsCatalog($tools, $catalogFirst);
+	$catalog = aiToolsCatalog($tools, $catalogFirst, $sentAlways);
 	if ($catalog === '') {
 		return '';
 	}
@@ -3843,4 +3845,80 @@ function aiCatalogFirstPastTurns(array $turns, array $sentQuestions, int $conver
 function aiNoAnswerTurn(): string
 {
 	return '(no answer)';
+}
+
+/**
+ * Return the load_tools request a call of the model implies when the catalog goes first: a tool of the user not sent in this round
+ * (the model saw only its name in the catalog), or a tool of several objects called for an object it does not take (then the tools of that object).
+ * Same checks as load_tools (aiLoadToolsObjects(), aiLoadToolsNames()).
+ *
+ * @param	array<string,mixed>				$intent			Call of the model: tool and arguments
+ * @param	array<int,array<string,mixed>>	$tools			Tools the user may use
+ * @param	string[]						$sentNames		Names of the tools sent in this round
+ * @param	bool							$alreadyLoaded	True when the tools of the question were already asked once
+ * @return	array{objects:string[],tools:string[]}		Objects and tools to load, both empty when the call runs as it is or is refused
+ */
+function aiImplicitLoadTools(array $intent, array $tools, array $sentNames, bool $alreadyLoaded): array
+{
+	$name = (string) ($intent['tool'] ?? '');
+	$tool = null;
+	foreach ($tools as $candidate) {
+		if (($candidate['name'] ?? '') === $name) {
+			$tool = $candidate;
+			break;
+		}
+	}
+	if ($tool === null) {
+		return array('objects' => array(), 'tools' => array());
+	}
+
+	$toolObjects = (array) ($tool['objects'] ?? array());
+	$object = $intent['arguments']['object'] ?? null;
+	if (count($toolObjects) > 1 && is_string($object) && !in_array($object, $toolObjects, true)) {
+		$objects = aiLoadToolsObjects(array($object), $tools, $alreadyLoaded);
+		if (!empty($objects)) {
+			return array('objects' => $objects, 'tools' => array());
+		}
+	}
+	if (in_array($name, $sentNames, true)) {
+		return array('objects' => array(), 'tools' => array());
+	}
+
+	return array('objects' => array(), 'tools' => aiLoadToolsNames(array($name), $tools, $alreadyLoaded));
+}
+
+/**
+ * Return the names of the tools the model of the AI assistant may call in this round: all the tools, except, when the catalog goes first,
+ * the tools of the user not sent in this round (their call was turned into a load of them, aiImplicitLoadTools(), or refused)
+ *
+ * @param	array<int,array<string,mixed>>	$allTools		All the tools, system tools included (McpHandler::getToolsSchema())
+ * @param	array<int,array<string,mixed>>	$userTools		Tools the user may use (McpHandler::getToolsSchemaForLLM())
+ * @param	string[]						$sentNames		Names of the tools sent in this round
+ * @param	bool							$catalogFirst	True when the catalog goes first
+ * @return	string[]
+ */
+function aiValidToolNames(array $allTools, array $userTools, array $sentNames, bool $catalogFirst): array
+{
+	$names = array_column($allTools, 'name');
+	if (!$catalogFirst) {
+		return $names;
+	}
+
+	return array_values(array_diff($names, array_diff(array_column($userTools, 'name'), $sentNames)));
+}
+
+/**
+ * Return the call of the model of the AI assistant to check: the call an ask_for_confirmation of the model wraps, else the call itself
+ *
+ * @param	array<string,mixed>	$intent	Call of the model: tool and arguments
+ * @return	array<string,mixed>
+ */
+function aiCalledIntent(array $intent): array
+{
+	$wrapped = $intent['arguments']['original_intent'] ?? null;
+	if (($intent['tool'] ?? '') === 'ask_for_confirmation' && is_array($wrapped) && is_string($wrapped['tool'] ?? null)) {
+		return $wrapped;
+	}
+
+	return $intent;
 }
