@@ -435,14 +435,14 @@ class modTicket extends DolibarrModules
 		}
 
 		$sql = [
-			["sql" => "INSERT INTO ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110120, 'ticket',  'internal', 'SUPPORTTEC', 'Utilisateur assigné au ticket', 1);", "ignoreerror" => 1],
-			["sql" => "INSERT INTO ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110121, 'ticket',  'internal', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1],
-			["sql" => "INSERT INTO ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110122, 'ticket',  'external', 'SUPPORTCLI', 'Contact client suivi incident', 1);", "ignoreerror" => 1],
-			["sql" => "INSERT INTO ".$this->db->prefix()."c_type_contact(rowid, element, source, code, libelle, active ) values (110123, 'ticket',  'external', 'CONTRIBUTOR', 'Intervenant', 1);", "ignoreerror" => 1],
+			["sql" => "INSERT INTO ".$this->db->prefix()."c_type_contact (rowid, element, source, code, libelle, active) SELECT 110120 AS rowid, 'ticket' AS element, 'internal' AS source, 'SUPPORTTEC' AS code, 'Utilisateur assigné au ticket' AS libelle, 1 AS active FROM (SELECT 1) AS tmp WHERE NOT EXISTS (SELECT 1 FROM ".$this->db->prefix()."c_type_contact WHERE element = 'ticket' AND source = 'internal' AND code = 'SUPPORTTEC')", "ignoreerror" => 1],
+			["sql" => "INSERT INTO ".$this->db->prefix()."c_type_contact (rowid, element, source, code, libelle, active) SELECT 110121 AS rowid, 'ticket' AS element, 'internal' AS source, 'CONTRIBUTOR' AS code, 'Intervenant' AS libelle, 1 AS active FROM (SELECT 1) AS tmp WHERE NOT EXISTS (SELECT 1 FROM ".$this->db->prefix()."c_type_contact WHERE element = 'ticket' AND source = 'internal' AND code = 'CONTRIBUTOR')", "ignoreerror" => 1],
+			["sql" => "INSERT INTO ".$this->db->prefix()."c_type_contact (rowid, element, source, code, libelle, active) SELECT 110122 AS rowid, 'ticket' AS element, 'external' AS source, 'SUPPORTCLI' AS code, 'Contact client suivi incident' AS libelle, 1 AS active FROM (SELECT 1) AS tmp WHERE NOT EXISTS (SELECT 1 FROM ".$this->db->prefix()."c_type_contact WHERE element = 'ticket' AND source = 'external' AND code = 'SUPPORTCLI')", "ignoreerror" => 1],
+			["sql" => "INSERT INTO ".$this->db->prefix()."c_type_contact (rowid, element, source, code, libelle, active) SELECT 110123 AS rowid, 'ticket' AS element, 'external' AS source, 'CONTRIBUTOR' AS code, 'Intervenant' AS libelle, 1 AS active FROM (SELECT 1) AS tmp WHERE NOT EXISTS (SELECT 1 FROM ".$this->db->prefix()."c_type_contact WHERE element = 'ticket' AND source = 'external' AND code = 'CONTRIBUTOR')", "ignoreerror" => 1],
 			// remove old settings
 			["sql" => "DELETE FROM ".$this->db->prefix()."document_model WHERE nom = 'TICKET_ADDON_PDF_ODT_PATH' AND type = 'ticket' AND entity = ".((int) $conf->entity), "ignoreerror" => 1],
 			// activate default odt templates
-			["sql" => "INSERT INTO ".$this->db->prefix()."document_model (nom, type, libelle, entity, description) VALUES('generic_ticket_odt','ticket','ODT templates',".((int) $conf->entity).",'TICKET_ADDON_PDF_ODT_PATH');", "ignoreerror" => 1],
+			["sql" => "INSERT INTO ".$this->db->prefix()."document_model (nom, type, libelle, entity, description) SELECT 'generic_ticket_odt' AS nom, 'ticket' AS type, 'ODT templates' AS libelle, ".((int) $conf->entity)." AS entity, 'TICKET_ADDON_PDF_ODT_PATH' AS description FROM (SELECT 1) AS tmp WHERE NOT EXISTS (SELECT 1 FROM ".$this->db->prefix()."document_model WHERE nom = 'generic_ticket_odt' AND type = 'ticket' AND entity = ".((int) $conf->entity).")", "ignoreerror" => 1],
 		];
 
 		return $this->_init($sql, $options);
