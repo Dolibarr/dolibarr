@@ -138,6 +138,12 @@ $item->cssClass = 'width75';
 $item->fieldAttr['placeholder'] = (string) getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30);
 $item->helpText = $langs->trans("AI_USE_RESPONSE_TIMEOUTHelp", getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
+$item = $formSetup->newItem('AI_ASSISTANT_TOOLS_CATALOG_FIRST');
+$item->setAsSelect(array('' => $langs->trans("AI_ASSISTANT_TOOLS_CATALOG_FIRSTAuto"), '1' => $langs->trans("Yes"), '0' => $langs->trans("No")));
+$item->fieldParams['trClass'] = 'iaservicechosen';
+$item->cssClass = 'minwidth200';
+$item->helpText = $langs->trans("AI_ASSISTANT_TOOLS_CATALOG_FIRSTHelp");
+
 $setupnotempty = + count($formSetup->items);
 
 

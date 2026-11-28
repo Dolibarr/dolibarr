@@ -392,6 +392,7 @@ export function initAiAssistant(container) {
         clearConversation();
         setConversationId(0);
         refreshContext();
+        warmUpConversation();
         input.focus();
     }
     // Non-destructive since the conversation stays in the history: no confirm.
@@ -2779,6 +2780,17 @@ export function initAiAssistant(container) {
     // Number of recent messages (questions and answers) that follow the model by
     // default. 0 = fully manual: nothing goes back unless the user pins it.
     const AUTO_CONTEXT = Math.max(0, parseInt(config.autoContext, 10) || 0);
+    // Catalog first (local model), unless the context setting is 0: the whole conversation travels, the server keeps a window that does not slide turn by turn.
+    const APPEND_ONLY_CONTEXT = parseInt(config.appendOnlyContext, 10) === 1;
+
+    function warmUpConversation() {
+        if (!APPEND_ONLY_CONTEXT || contextBubbles().length) return;
+        const chosenModel = resolveModel();
+        fetch(epUrl('parse_intent.php'), {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(chosenModel ? { warm_up: true, model: chosenModel } : { warm_up: true })
+        }).catch(() => {});
+    }
 
     // Bubbles that can be sent back as context (they carry a plain-text form).
     function contextBubbles() {
@@ -2805,7 +2817,7 @@ export function initAiAssistant(container) {
         // waits outside the window until its answer arrives.
         const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
         if (pending) { pending.classList.remove('ctx-pinned', 'ctx-excluded'); pending.dataset.ctxWindow = ''; }
-        const windowStart = Math.max(0, msgs.length - AUTO_CONTEXT);
+        const windowStart = APPEND_ONLY_CONTEXT ? 0 : Math.max(0, msgs.length - AUTO_CONTEXT);
         msgs.forEach((m, i) => {
             const inWindow = i >= windowStart;
             const state = m.dataset.ctx || '';
@@ -3060,9 +3072,14 @@ export function initAiAssistant(container) {
             let followupResult = null;
             // The third parties the user picked, for every round of this request.
             const sentChoices = Object.assign({}, thirdpartyChoices);
+            // The server keys the question it keeps by conversation: a new conversation must have its id first.
+            if (APPEND_ONLY_CONTEXT) await persistQueue;
+            // Objects and tools the model asked with load_tools, sent on every round of this request.
+            let loadedObjects = null;
+            let loadedTools = null;
             // Three rounds at most: the server never flags the last followup round itself.
             for (let round = 0; round < 3; round++) {
-                if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
+                if (!loadingMsg.parentNode) { appendTyping(); loadingMsg = chat.lastElementChild; }
                 const intentRes = await fetch(epUrl('parse_intent.php'), {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     // Page context (set by the printCommonFooter hook on card pages)
@@ -3070,7 +3087,9 @@ export function initAiAssistant(container) {
                     // ids against the user's rights before trusting them.
                     body: JSON.stringify(Object.assign(
                         chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                        (APPEND_ONLY_CONTEXT && conversationId) ? { conversation_id: conversationId } : {},
                         Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
+                        loadedObjects ? { objects: loadedObjects, tools: loadedTools } : {},
                         (function () {
                             // followup_result: only to name the object in the confirmation, never sent to the model.
                             // All the search results in one assistant turn, followup is the number of the round.
@@ -3102,6 +3121,14 @@ export function initAiAssistant(container) {
                 // Choices answer this request only: once it went through, the next question asks again.
                 if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
                 if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
+                if (intent.tool === 'load_tools') {
+                    if (loadedObjects || !intent.arguments || !Array.isArray(intent.arguments.objects) || !Array.isArray(intent.arguments.tools)) { handleResponse(t('AIFunctionalityNotAvailable'), false); input.disabled = false; input.focus(); return; }
+                    // Same round again: loading the tools is not a followup round.
+                    loadedObjects = intent.arguments.objects;
+                    loadedTools = intent.arguments.tools;
+                    round--;
+                    continue;
+                }
                 if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); input.disabled = false; input.focus(); return; }
                 if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
                 if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
@@ -3446,6 +3473,7 @@ export function initAiAssistant(container) {
         loadConversation(openConv);
     } else {
         restoreChatHistory();
+        warmUpConversation();
     }
 }
 

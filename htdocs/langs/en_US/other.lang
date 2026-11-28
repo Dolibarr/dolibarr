@@ -781,6 +781,7 @@ AIHideConversations=Hide the conversations column
 AIShowConversations=Show the conversations column
 AIYou=You
 EmptyAIResponse=Empty AI Response
+AIFunctionalityNotAvailable=I apologize, but the requested functionality is not currently available in the system.
 BrowserNotSupported=Browser is not supported
 YesProceed=Yes Proceed
 ActionCancelled=Action Cancelled
