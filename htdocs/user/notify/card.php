@@ -504,7 +504,7 @@ if ($result > 0) {
 				$userstatic->gender = $obj->gender;
 
 				print $userstatic->getNomUrl(-1);
-				print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");
+				print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoEMail");
 			} else {
 				print $obj->email;
 			}

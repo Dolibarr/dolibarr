@@ -443,7 +443,6 @@ LdapUacf_
 Level
 Lifetime
 LinkedElementsInvalidDeleted
-LinkedToAConcialitedTransaction
 ListTicketsLinkToContract
 Load
 LocalTaxReport
@@ -524,7 +523,6 @@ NoAuthorityURLDefined
 NoCurrencyRateSelected
 NoEntriesToShow
 NoEstablishmentFound
-NoMail
 NoModuleFound
 NoOperations
 NoReader
@@ -604,7 +602,6 @@ Picto
 PlanStripe
 Poll
 Posts
-PredefinedInterventional
 PrevRangeToThisRange
 Print
 PrintDriver
@@ -724,7 +721,6 @@ ShowPosition
 ShowProductAttribute
 ShowProductFournisseurPrice
 ShowProductOrService
-ShowProposal
 ShowRecruitmentCandidature
 ShowRecruitmentJobPosition
 ShowSearchFields
