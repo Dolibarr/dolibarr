@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2026		Jose Martinez		<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +108,7 @@ if ($action == 'convert') {
 			if ($vat_src_code_old) {
 				$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 			} else {
-				$sql .= " AND default_vat_code = IS NULL";
+				$sql .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
 			}
 
 			$resql = $db->query($sql);
@@ -209,7 +210,7 @@ if ($action == 'convert') {
 		if ($vat_src_code_old) {
 			$sql .= " AND default_vat_code = '".$db->escape($vat_src_code_old)."'";
 		} else {
-			$sql .= " AND default_vat_code = IS NULL";
+			$sql .= " AND (default_vat_code IS NULL OR default_vat_code = '')";
 		}
 		$sql .= " AND s.fk_pays = ".((int) $country_id);
 
