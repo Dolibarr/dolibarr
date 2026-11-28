@@ -510,6 +510,7 @@ if ($action == 'searchfiles' || $action == 'dl') {	// Test on permission not req
 
 $dirfortmpfile = (!empty($conf->accounting->dir_temp) ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
 if (empty($dirfortmpfile)) {
+	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorNoAccountingModuleEnabled"), null, 'errors');
 	$error++;
 }

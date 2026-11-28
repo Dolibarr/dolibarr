@@ -198,5 +198,4 @@ CashLifetime=Cash lifetime
 ChequeLifetime=Cheque lifetime
 CardLifetime=Card lifetime
 DefaultCashPOSLabel=Cash account for POS
-OnlyTerminal1IsAvailableForCashDeskModule=Only terminal 1 is available with the CashDesk module
 Declared=Declared

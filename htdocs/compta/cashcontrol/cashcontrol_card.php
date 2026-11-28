@@ -525,6 +525,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 		if ($posmodule == 'cashdesk' && $terminaltouse != '' && $terminaltouse != '1') {
 			$terminaltouse = '';
+			$langs->load("errors");
 			setEventMessages($langs->trans("OnlyTerminal1IsAvailableForCashDeskModule"), null, 'errors');
 			$error++;
 		}

@@ -86,5 +86,4 @@ TypeContact_fichinter_external_CUSTOMER=Customer contact of intervention follow-
 NotARecurringInterventionalTemplate=Not a recurring intervention template
 ShowInterventionModel=Show intervention model
 CreateRepeatableIntervention=Create recurring intervention
-Error_FICHEINTER_ADDON_NotDefined=Constant FICHEINTER_ADDON not defined
 NbOfIntervention=Number of interventions

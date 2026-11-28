@@ -5624,6 +5624,7 @@ class Societe extends CommonObject
 				if (getDolGlobalString('COMPANY_ADDON_PDF')) {
 					$modele = getDolGlobalString('COMPANY_ADDON_PDF');
 				} else {
+					$langs->load("errors");
 					print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
 					return 0;
 				}

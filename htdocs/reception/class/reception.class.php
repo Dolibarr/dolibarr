@@ -283,6 +283,7 @@ class Reception extends CommonObject
 				return "";
 			}
 		} else {
+			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("Error_RECEPTION_ADDON_NUMBER_NotDefined");
 			return "";
 		}
