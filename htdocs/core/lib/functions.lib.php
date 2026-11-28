@@ -12992,6 +12992,12 @@ function printCommonFooter($zone = 'private')
 											return true;
 										}
 
+										// Submit done by javascript to reload the page (for example after a change of thirdparty), not to save
+										if (\$(this).find('input[name=\"changecompany\"]').val() == '1') {
+											console.log('Submit is a reload of page after a change of company, so we accept submit with no need to check mandatory fields');
+											return true;
+										}
+
 										console.log('We did not click on cancel button but on something else, we check that field [name=".dol_escape_js($paramkey)."] is not empty');
 
 										var tmpvalue = jQuery('[name=\"".dol_escape_js($paramkey)."\"]').val();
