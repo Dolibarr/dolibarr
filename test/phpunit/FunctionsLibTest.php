@@ -2037,6 +2037,19 @@ class FunctionsLibTest extends CommonClassTest
 		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 5');
 
+		// Test RULE 1b: with option MAIN_USE_VAT_OF_PRODUCT_FOR_ALL_CUSTOMERS on, VAT of product whatever the buyer, 0 if seller does not use VAT
+		$conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_ALL_CUSTOMERS = 1;
+		print __METHOD__." rule=RULE 1b FR-IT company, FR-DE not a company, FR-US company, FR no VAT-MC\n";
+		$vat = get_default_tva($companyfr, $companyit, 0);
+		$this->assertEquals(20, $vat, 'RULE 1b FR-IT company');
+		$vat = get_default_tva($companyfr, $notcompanyde, 0);
+		$this->assertEquals(20, $vat, 'RULE 1b FR-DE not a company');
+		$vat = get_default_tva($companyfr, $companyus, 0);
+		$this->assertEquals(20, $vat, 'RULE 1b FR-US company');
+		$vat = get_default_tva($companyfrnovat, $companymc, 0);
+		$this->assertEquals(0, $vat, 'RULE 1b seller does not use VAT');
+		unset($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_ALL_CUSTOMERS);
+
 
 		// We do same tests but with option SERVICE_ARE_ECOMMERCE_200238EC on.
 		$conf->global->SERVICE_ARE_ECOMMERCE_200238EC = 1;

@@ -213,6 +213,9 @@ if (empty($mysoc->tva_assuj)) {
 	$key = 'CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT';
 	print '<tr><td>'.$langs->trans($key).'</td><td>'.ajax_constantonoff($key).'</td></tr>';
 
+	$key = 'MAIN_USE_VAT_OF_PRODUCT_FOR_ALL_CUSTOMERS';
+	print '<tr><td>'.$langs->trans($key).'</td><td>'.ajax_constantonoff($key).'</td></tr>';
+
 	print '</table>';
 	print '</div>';
 
