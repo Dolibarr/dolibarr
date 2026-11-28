@@ -202,7 +202,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	} else {
 		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle = '".$db->escape($object->label)."'";
-		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		$sql .= " AND entity IN (".getEntity('member_type').")";
 		$result = $db->query($sql);
 		$num = null;
 		if ($result) {
