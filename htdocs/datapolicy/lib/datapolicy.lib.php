@@ -47,9 +47,39 @@ function datapolicyAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/datapolicy/admin/dpo.php";
+	$head[$h][1] = $langs->trans("DPO");
+	$head[$h][2] = 'dpo';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'datapolicy');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'datapolicy', 'remove');
 
 	return $head;
+}
+
+/**
+ * Return the active DPO record for the current entity (or null if none).
+ *
+ * @param  DoliDB        $db Database handler
+ * @return stdClass|null     Active DPO row or null
+ */
+function datapolicyGetActiveDpo(DoliDB $db)
+{
+	global $conf;
+
+	$today = $db->idate(dol_now(), 'date');
+	$sql = "SELECT rowid, dpo_type, fk_user, fk_soc, fk_socpeople, lastname, firstname, job, email, phone, contact_form_url, gdpr_prerequisites_validated, gdpr_skills_certificate_file, gdpr_authority_declaration_file, date_start, date_end"
+		." FROM ".$db->prefix()."datapolicy_dpo"
+		." WHERE entity = ".((int) $conf->entity)
+		." AND date_start <= '".$today."'"
+		." AND (date_end IS NULL OR date_end >= '".$today."')"
+		." ORDER BY date_start DESC, rowid DESC LIMIT 1";
+	$res = $db->query($sql);
+	if ($res && $db->num_rows($res) > 0) {
+		return $db->fetch_object($res);
+	}
+
+	return null;
 }

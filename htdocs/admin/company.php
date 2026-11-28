@@ -232,7 +232,9 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	}
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_GDPR", GETPOST("MAIN_INFO_GDPR", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	if (!isModEnabled('datapolicy')) {
+		dolibarr_set_const($db, "MAIN_INFO_GDPR", GETPOST("MAIN_INFO_GDPR", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	}
 	dolibarr_set_const($db, "MAIN_INFO_CAPITAL", GETPOST("capital", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE", GETPOST("forme_juridique_code", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SIREN", GETPOST("siren", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -649,7 +651,22 @@ print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="directors" class="minwidth30
 print '<tr class="oddeven"><td class="smallheight">';
 print $form->textwithpicto($langs->trans("GDPRContact"), $langs->trans("GDPRContactDesc"));
 print '</td><td>';
-print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value="'.dolPrintHTMLForAttribute((GETPOSTISSET("MAIN_INFO_GDPR") ? GETPOST("MAIN_INFO_GDPR", 'alphanohtml') : getDolGlobalString('MAIN_INFO_GDPR'))).'"></td></tr>';
+if (isModEnabled('datapolicy')) {
+	require_once DOL_DOCUMENT_ROOT.'/datapolicy/lib/datapolicy.lib.php';
+	$langs->load('datapolicy');
+	$activeDpo = datapolicyGetActiveDpo($db);
+	if ($activeDpo !== null) {
+		print dolPrintHTML(trim($activeDpo->firstname.' '.$activeDpo->lastname)).' ('.dolPrintHTML((string) $activeDpo->email).') &nbsp; ';
+	} elseif (getDolGlobalString('MAIN_INFO_GDPR')) {
+		print dolPrintHTML(getDolGlobalString('MAIN_INFO_GDPR')).' &nbsp; ';
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("None").'</span> &nbsp; ';
+	}
+	print '<a href="'.DOL_URL_ROOT.'/datapolicy/admin/dpo.php">'.img_picto('', 'setup', 'class="pictofixedwidth"').$langs->trans("DatapolicyConfigureDpoLink").'</a>';
+} else {
+	print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value="'.dolPrintHTMLForAttribute((GETPOSTISSET("MAIN_INFO_GDPR") ? GETPOST("MAIN_INFO_GDPR", 'alphanohtml') : getDolGlobalString('MAIN_INFO_GDPR'))).'">';
+}
+print '</td></tr>';
 
 // Capital
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';

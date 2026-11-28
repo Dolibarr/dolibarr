@@ -3775,6 +3775,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->accounting->dir_output.'/'.$original_file;
+	} elseif ($modulepart == 'datapolicy' && (!empty($conf->datapolicy->multidir_output[$entity]) || !empty($conf->datapolicy->dir_output))) {
+		// Wrapping for datapolicy documents (admin only)
+		if ($fuser->admin) {
+			$accessallowed = 1;
+		}
+		$original_file = (!empty($conf->datapolicy->multidir_output[$entity]) ? $conf->datapolicy->multidir_output[$entity] : $conf->datapolicy->dir_output).'/'.$original_file;
 	} elseif (($modulepart == 'expedition' || $modulepart == 'shipment' || $modulepart == 'shipping') && !empty($conf->expedition->dir_output)) {
 		// Wrapping for shipments
 		if ($fuser->hasRight('expedition', $lire) || preg_match('/^specimen/i', $original_file)) {
