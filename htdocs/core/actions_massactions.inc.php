@@ -1454,7 +1454,7 @@ if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoa
 	$nbok = 0;
 	$db->begin();
 	if (GETPOSTISSET('pricerate')) {
-		$pricepercentage = GETPOSTINT('pricerate');
+		$pricepercentage = GETPOSTFLOAT('pricerate');
 		if ($pricepercentage == 0) {
 			setEventMessages($langs->trans("RecordsModified", 0), null);
 		} else {
