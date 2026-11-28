@@ -621,7 +621,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Reload BOM to consume and produce
 	if ($action == 'reload') {
-		$object->createProduction($user, 0);
+		$result = $object->createProduction($user, 0);
+		if ($result < 0) {	// The lines are kept, ex: a hook processBOMLines refused the new ones
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Confirmation of validation
