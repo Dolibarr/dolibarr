@@ -1377,12 +1377,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 
 						// Action delete line, if no consumption has occurred for this product
-						if ($permissiontodelete && empty($arrayoflines)) {
-							$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int) $line->id);
+						if ($permissiontodelete) {
 							print '<td class="center">';
-							print '<a class="reposition" href="' . $href . '">';
-							print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
-							print '</a>';
+							if (empty($arrayoflines) && !in_array($object->status, array(Mo::STATUS_PRODUCED, Mo::STATUS_CANCELED))) {
+								$href = $_SERVER["PHP_SELF"] . '?id=' . ((int) $object->id) . '&action=deleteline&token=' . newToken() . '&lineid=' . ((int) $line->id);
+								print '<a class="reposition" href="' . $href . '">';
+								print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
+								print '</a>';
+							}
 							print '</td>';
 						}
 
@@ -1863,7 +1865,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 					// Delete, if nothing was produced for this line
 					if ($permissiontodelete) {
-						if ($line->origin_type == 'free' && empty($arrayoflines)) {
+						if ($line->origin_type == 'free' && empty($arrayoflines) && !in_array($object->status, array(Mo::STATUS_PRODUCED, Mo::STATUS_CANCELED))) {
 							$href = $_SERVER["PHP_SELF"];
 							$href .= '?id='.$object->id;
 							$href .= '&action=deleteline';
