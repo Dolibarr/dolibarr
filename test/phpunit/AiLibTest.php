@@ -150,7 +150,7 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame(array('thirdparties', 'contacts'), aiHistoryObjects(array(array('role' => 'assistant', 'text' => "[api_thirdparties_list result] []\n[api_contacts_create result] {\"id\":5}")), $langs, $tools), 'Each result of a followup answer counts');
 
 		$turns = array(
-			array('role' => 'user', 'text' => 'ajoute le contacts Jean Exemple au tier devcamp'),
+			array('role' => 'user', 'text' => 'ajoute le contacts Jean Martin au tier devcamp'),
 			array('role' => 'assistant', 'text' => '[api_contacts_create result] {"id":5}'),
 		);
 		$objects = aiHistoryObjects($turns, $langs, $tools);
