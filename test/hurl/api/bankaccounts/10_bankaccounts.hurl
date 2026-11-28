@@ -151,12 +151,15 @@
 #       "http://${DOLIHOST}/api/index.php/bankaccounts?limit=100&count=1"
 #   Empty instance ({"count":0}) = MISSING FIXTURE, not a pin failure.
 # Instans-commit: FIRST GREEN RUN OBSERVED 2026-11-28 — 68/68
-#   requests in 5766 ms on <HASH PENDING>. Red-run history leading
-#   here: 37 -> 41 -> 42 -> 45 -> 57 -> 66 -> 66 -> 68 requests (each
-#   red round sealed one finding; no pin flipped without evidence).
+#   requests in 5766 ms on **0235f08142a9a9b3a8f052ef67ca615093ed50f2**
+#   (HEAD -> develop, origin/develop, merge of #43593 "FIX Add
+#   missing Accept translation key", Laurent Destailleur, 2026-11-28
+#   02:27:57 +0100). Red-run history leading here: 37 -> 41 -> 42 ->
+#   45 -> 57 -> 66 -> 66 -> 68 requests (each red round sealed one
+#   finding; no pin flipped without evidence).
 #   RE-CONFIRMED second green run 2026-11-28: 68/68 in 4922 ms
-#   (stable). Convention: append the hash of these green runs here;
-#   pin history ... -> a6eb6f21 -> 3d7bc9ab -> 41b713fa -> <this run>.
+#   (stable). Pin history convention:
+#   ... -> a6eb6f21 -> 3d7bc9ab -> 41b713fa -> 0235f081 -> <next>.
 #
 # ENVIRONMENT / VARIABLES:
 #   - All requests: http://{{hostnport}}/api/index.php/... (runner env)
