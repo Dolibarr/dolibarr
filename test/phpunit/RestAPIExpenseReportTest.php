@@ -672,4 +672,143 @@ class RestAPIExpenseReportTest extends AbstractRestAPITest
 		$result = $this->getUrl('expensereports/'.$id, $test, 'GET');
 		$this->assertEquals(10, (float) $result['content']['total_ttc'], "$test Total of the report must not change");
 	}
+
+	/**
+	 * Create an approved expense report of the API user with one line
+	 *
+	 * @param string	$test		Text to be added to output
+	 * @param float		$amount		Amount including tax of the line
+	 * @return int					Id of the expense report
+	 */
+	private function createApprovedExpenseReport($test, $amount)
+	{
+		global $db;
+
+		// Any active expense type, without assuming a given code exists in the dictionary
+		$fk_c_type_fees = 0;
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_type_fees WHERE active = 1 ORDER BY id");
+		if ($resql && ($obj = $db->fetch_object($resql))) {
+			$fk_c_type_fees = (int) $obj->id;
+		}
+		$this->assertGreaterThan(0, $fk_c_type_fees, "$test No active expense type");
+
+		$id = $this->createExpenseReport($test);
+
+		$data = array(
+			"date" => dol_now(),
+			"fk_c_type_fees" => $fk_c_type_fees,
+			"qty" => 1,
+			"value_unit" => $amount,
+			"vatrate" => 0,
+			"comments" => "Line created by ".get_class($this),
+		);
+		$this->getUrl('expensereports/'.$id.'/line', $test, 'POST', $data);
+
+		$this->getUrl('expensereports/'.$id.'/validate', $test, 'POST', array("notrigger" => 0));
+		$this->getUrl('expensereports/'.$id.'/approve', $test, 'POST', array("notrigger" => 0));
+		$this->assertStatus($id, ExpenseReport::STATUS_APPROVED, $test);
+
+		return $id;
+	}
+
+	/**
+	 * Mandatory data of a payment, with a bank account when the bank module is enabled
+	 *
+	 * @param string	$test		Text to be added to output
+	 * @param float		$amount		Amount of the payment
+	 * @return array<string,mixed>	Data of the payment
+	 */
+	private function getPaymentData($test, $amount)
+	{
+		global $db, $conf;
+
+		$result = $this->getUrl('users/info', $test, 'GET');
+		$userid = (int) ($result['content']['id'] ?? 0);
+
+		$fk_typepayment = 0;
+		$resql = $db->query("SELECT id FROM ".MAIN_DB_PREFIX."c_paiement WHERE active = 1 ORDER BY id");
+		if ($resql && ($obj = $db->fetch_object($resql))) {
+			$fk_typepayment = (int) $obj->id;
+		}
+		$this->assertGreaterThan(0, $fk_typepayment, "$test No active payment type");
+
+		$data = array(
+			"fk_typepayment" => $fk_typepayment,
+			"datep" => dol_now(),
+			"amounts" => array($userid => $amount),
+			"note_public" => "Payment created by ".get_class($this),
+		);
+
+		if (isModEnabled('bank')) {
+			$ref = "ER".mt_rand(0, 99999999);	// ref is 12 chars max, ref and label must be unique
+			$account = array(
+				"ref" => $ref,
+				"label" => "testRestExpenseReportPayment ".$ref,
+				"type" => 1,
+				"currency_code" => $conf->currency,
+				"country_id" => 1,
+			);
+			$result = $this->getUrl('bankaccounts', $test, 'POST', $account);
+			$this->assertGreaterThan(0, (int) $result['content'], "$test Id of bank account is not > 0");
+			$data["accountid"] = (int) $result['content'];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * A payment is created on the report and the report is set paid once fully paid
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportAddPayment()
+	{
+		$test = "Add payments to an approved expense report";
+
+		$id = $this->createApprovedExpenseReport($test, 10);
+
+		$result = $this->getUrl('expensereports/'.$id.'/payments', $test, 'POST', $this->getPaymentData($test, 4));
+		$pid = (int) $result['content'];
+		$this->assertGreaterThan(0, $pid, "$test Id of payment is not > 0");
+
+		$result = $this->getUrl('expensereports/payments/'.$pid, $test, 'GET');
+		$this->assertEquals($id, (int) ($result['content']['fk_expensereport'] ?? 0), "$test Payment must be on expense report ".$id);
+		$this->assertEquals(4, (float) ($result['content']['amount'] ?? 0), "$test Amount of payment");
+		$this->assertStatus($id, ExpenseReport::STATUS_APPROVED, $test);
+
+		// More than the remainder to pay is refused
+		$this->getUrl('expensereports/'.$id.'/payments', $test, 'POST', $this->getPaymentData($test, 7), 400);
+
+		$this->getUrl('expensereports/'.$id.'/payments', $test, 'POST', $this->getPaymentData($test, 6));
+		$this->assertStatus($id, ExpenseReport::STATUS_CLOSED, $test);
+	}
+
+	/**
+	 * The request can not move the payment to another expense report or set server side fields
+	 *
+	 * @return void
+	 */
+	public function testRestExpenseReportAddPaymentOtherReport()
+	{
+		$test = "Add a payment with fk_expensereport of another expense report";
+
+		$id = $this->createApprovedExpenseReport($test, 10);
+		$otherid = $this->createApprovedExpenseReport($test, 10);
+
+		$result = $this->getUrl('users/info', $test, 'GET');
+		$userid = (int) ($result['content']['id'] ?? 0);
+
+		$data = $this->getPaymentData($test, 3);
+		$data["fk_expensereport"] = $otherid;
+		$data["id"] = 999999;
+		$data["fk_user_creat"] = $userid + 1000;
+		$result = $this->getUrl('expensereports/'.$id.'/payments', $test, 'POST', $data);
+		$pid = (int) $result['content'];
+		$this->assertGreaterThan(0, $pid, "$test Id of payment is not > 0");
+		$this->assertNotEquals(999999, $pid, "$test Id of payment must not come from the request");
+
+		$result = $this->getUrl('expensereports/payments/'.$pid, $test, 'GET');
+		$this->assertEquals($id, (int) ($result['content']['fk_expensereport'] ?? 0), "$test Payment must be on expense report ".$id." of the route, not ".$otherid);
+		$this->assertEquals($userid, (int) ($result['content']['fk_user_creat'] ?? 0), "$test Creator of payment must be the API user");
+	}
 }

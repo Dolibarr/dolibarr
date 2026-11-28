@@ -82,6 +82,13 @@ class ExpenseReports extends DolibarrApi
 		'ref', 'entity',
 	);
 
+	/**
+	 * @var string[]	Properties never taken from the request by addPayment(): set from the route or by the server
+	 */
+	public static $FIELDSPAYMENTNOTUPDATABLE = array(
+		'id', 'rowid', 'fk_expensereport', 'fk_bank', 'fk_user_creat', 'fk_user_modif', 'datec', 'tms',
+	);
+
 
 	/**
 	 * Constructor
@@ -1106,11 +1113,16 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Exclude properties set from the route or by the server, so the payment is always created on the report checked above
+		foreach (ExpenseReports::$FIELDSPAYMENTNOTUPDATABLE as $field) {
+			unset($request_data[$field]);
+		}
+
 		$paymentExpenseReport = new PaymentExpenseReport($this->db);
-		$paymentExpenseReport->fk_expensereport = $id;
 		foreach ($request_data as $field => $value) {
 			$paymentExpenseReport->$field = $this->_checkValForAPI($field, $value, $paymentExpenseReport);
 		}
+		$paymentExpenseReport->fk_expensereport = $this->expensereport->id;
 
 		// Same checks as expensereport/payment/payment.php: only an approved report is paid, never more than the remainder
 		if ($this->expensereport->status != ExpenseReport::STATUS_APPROVED) {
