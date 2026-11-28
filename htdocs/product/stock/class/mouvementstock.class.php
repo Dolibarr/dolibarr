@@ -1505,4 +1505,98 @@ class MouvementStock extends CommonObject
 
 		return $date;
 	}
+
+	/**
+	 * Return the products and warehouses whose stock (llx_product_stock.reel) is not equal to the sum of their stock movements.
+	 * Products managed by lot or serial number are not checked. Warehouses are the ones of getEntity('stock').
+	 *
+	 * @param	int		$fk_product		Only this product (0 = all)
+	 * @param	int		$fk_entrepot	Only this warehouse (0 = all)
+	 * @return	array<int,array{fk_product:int,product_ref:string,product_label:string,fk_entrepot:int,warehouse_ref:string,stock:float,movements:float,difference:float}>|int	Differences, or -1 if error
+	 */
+	public function getStockDifferences(int $fk_product = 0, int $fk_entrepot = 0)
+	{
+		$sql = "SELECT x.fk_product, x.fk_entrepot, p.ref as product_ref, p.label as product_label, e.ref as warehouse_ref,";
+		$sql .= " SUM(x.stock) as stock, SUM(x.movements) as movements";
+		$sql .= " FROM (";
+		$sql .= "SELECT ps.fk_product, ps.fk_entrepot, ps.reel as stock, 0 as movements FROM ".$this->db->prefix()."product_stock as ps";
+		$sql .= " UNION ALL";
+		$sql .= " SELECT sm.fk_product, sm.fk_entrepot, 0 as stock, SUM(sm.value) as movements FROM ".$this->db->prefix()."stock_mouvement as sm";
+		$sql .= " GROUP BY sm.fk_product, sm.fk_entrepot";
+		$sql .= ") as x";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product as p ON p.rowid = x.fk_product AND p.tobatch = 0";
+		$sql .= " INNER JOIN ".$this->db->prefix()."entrepot as e ON e.rowid = x.fk_entrepot AND e.entity IN (".getEntity('stock').")";
+		$sql .= " WHERE 1 = 1";
+		if ($fk_product > 0) {
+			$sql .= " AND x.fk_product = ".((int) $fk_product);
+		}
+		if ($fk_entrepot > 0) {
+			$sql .= " AND x.fk_entrepot = ".((int) $fk_entrepot);
+		}
+		$sql .= " GROUP BY x.fk_product, x.fk_entrepot, p.ref, p.label, e.ref";
+		$sql .= " HAVING ABS(SUM(x.stock) - SUM(x.movements)) > 0.00000001";	// ROUND(double, int) does not exist in PostgreSQL
+		$sql .= $this->db->order("p.ref,e.ref", "ASC,ASC");
+
+		dol_syslog(get_class($this)."::getStockDifferences", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+
+		$differences = array();
+		while ($obj = $this->db->fetch_object($resql)) {
+			$differences[] = array(
+				'fk_product' => (int) $obj->fk_product,
+				'product_ref' => (string) $obj->product_ref,
+				'product_label' => (string) $obj->product_label,
+				'fk_entrepot' => (int) $obj->fk_entrepot,
+				'warehouse_ref' => (string) $obj->warehouse_ref,
+				'stock' => (float) $obj->stock,
+				'movements' => (float) $obj->movements,
+				'difference' => (float) price2num((float) $obj->stock - (float) $obj->movements, 'MS'),
+			);
+		}
+		$this->db->free($resql);
+
+		return $differences;
+	}
+
+	/**
+	 * Add a stock movement for the difference between the stock of a product in a warehouse and the sum of its movements.
+	 * The movement has no price and is written directly, without trigger: the stock and the PMP are not changed.
+	 *
+	 * @param	User	$user			User making the regularization
+	 * @param	int		$fk_product		Product
+	 * @param	int		$fk_entrepot	Warehouse
+	 * @param	string	$label			Label of the movement
+	 * @param	string	$inventorycode	Code of the operation, to find the movements in the list of movements
+	 * @return	int						Id of the movement, 0 if there is no difference, <0 if error
+	 */
+	public function regularizeStockDifference(User $user, int $fk_product, int $fk_entrepot, string $label, string $inventorycode): int
+	{
+		$differences = $this->getStockDifferences($fk_product, $fk_entrepot);
+		if (!is_array($differences)) {
+			return -1;
+		}
+		if (empty($differences)) {
+			return 0;
+		}
+		$difference = $differences[0]['difference'];
+
+		$sql = "INSERT INTO ".$this->db->prefix()."stock_mouvement";
+		$sql .= " (datem, fk_product, fk_entrepot, value, price, type_mouvement, fk_user_author, label, inventorycode, fk_projet)";
+		$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $fk_product).", ".((int) $fk_entrepot).", ".((float) $difference).", 0,";
+		$sql .= " ".($difference > 0 ? 0 : 1).", ".((int) $user->id).", '".$this->db->escape($label)."', '".$this->db->escape($inventorycode)."', 0)";
+
+		dol_syslog(get_class($this)."::regularizeStockDifference", LOG_DEBUG);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -2;
+		}
+
+		return (int) $this->db->last_insert_id($this->db->prefix()."stock_mouvement");
+	}
 }
