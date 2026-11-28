@@ -93,6 +93,13 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '68' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'Bou Saâda' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '68');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 1301 AS fk_region, '69' AS code_departement, '' AS cheflieu, 0 AS tncc, '' AS ncc, 'El Abiodh Sidi Cheikh' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 1301 AND code_departement = '69');
 
+-- Add the four Indonesian provinces created in 2022 (UU No. 14, 15, 16 and 29 Tahun 2022) and fix the ncc of Bengkulu.
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 11801 AS fk_region, 'PD' AS code_departement, '' AS cheflieu, 0 AS tncc, 'PD' AS ncc, 'Papua Barat Daya' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 11801 AND code_departement = 'PD');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 11801 AS fk_region, 'PE' AS code_departement, '' AS cheflieu, 0 AS tncc, 'PE' AS ncc, 'Papua Pegunungan' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 11801 AND code_departement = 'PE');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 11801 AS fk_region, 'PS' AS code_departement, '' AS cheflieu, 0 AS tncc, 'PS' AS ncc, 'Papua Selatan' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 11801 AND code_departement = 'PS');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) SELECT 11801 AS fk_region, 'PT' AS code_departement, '' AS cheflieu, 0 AS tncc, 'PT' AS ncc, 'Papua Tengah' AS nom WHERE NOT EXISTS (SELECT 1 FROM llx_c_departements WHERE fk_region = 11801 AND code_departement = 'PT');
+UPDATE llx_c_departements SET ncc = 'BE' WHERE fk_region = 11801 AND code_departement = 'BE' AND ncc = 'BA';
+
 -- Add per entity payment terms/modes and bank account (issue #39146)
 ALTER TABLE llx_societe_perentity ADD COLUMN fk_account integer DEFAULT NULL;
 ALTER TABLE llx_societe_perentity ADD COLUMN mode_reglement integer DEFAULT NULL;
