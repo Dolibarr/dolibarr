@@ -322,4 +322,44 @@ class ProductTest extends CommonClassTest
 
 		$product->delete($user);
 	}
+
+	/**
+	 * testPMPPerEntitySQL
+	 *
+	 * Product::isPMPPerEntity(), getSQLPMP() and getSQLJoinPMP() follow the two MultiCompany options.
+	 *
+	 * @return	void
+	 */
+	public function testPMPPerEntitySQL()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$saved = array();
+		foreach (array('MULTICOMPANY_PRODUCT_SHARING_ENABLED', 'MULTICOMPANY_PMP_PER_ENTITY_ENABLED') as $key) {
+			$saved[$key] = isset($conf->global->$key) ? $conf->global->$key : null;
+		}
+
+		$conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED = '1';
+		$conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED = '';
+		$this->assertFalse(Product::isPMPPerEntity());
+		$this->assertEquals('p.pmp', Product::getSQLPMP('p', 'pa'));
+		$this->assertEquals('', Product::getSQLJoinPMP('p', 'pa'));
+
+		$conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED = '1';
+		$this->assertTrue(Product::isPMPPerEntity());
+		$this->assertEquals('COALESCE(pa.pmp, p.pmp)', Product::getSQLPMP('p', 'pa'));
+		$this->assertEquals(' LEFT JOIN '.$db->prefix().'product_perentity as pa ON pa.fk_product = p.rowid AND pa.entity = 3', Product::getSQLJoinPMP('p', 'pa', 3));
+
+		foreach ($saved as $key => $value) {
+			if ($value === null) {
+				unset($conf->global->$key);
+			} else {
+				$conf->global->$key = $value;
+			}
+		}
+	}
 }
