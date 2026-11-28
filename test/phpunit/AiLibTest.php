@@ -111,6 +111,126 @@ class AiLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testClassifyQueryObjectsSocid
+	 *
+	 * @return void
+	 */
+	public function testClassifyQueryObjectsSocid()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang('fr_FR');
+
+		$this->assertSame(array('thirdparties'), classifyQueryObjects('combien me doit socid:12 ?', $langs, $tools), 'A third party replaced by the privacy guard is still a third party');
+		$this->assertSame(array(), classifyQueryObjects('combien me doit socid:12 ?', $langs, array()), 'No thirdparty tool given, no object');
+	}
+
+	/**
+	 * testAiHistoryObjects
+	 *
+	 * @return void
+	 */
+	public function testAiHistoryObjects()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+		$langs = new Translate('', $conf);
+		$langs->setDefaultLang('fr_FR');
+
+		$this->assertSame(array('contacts'), aiHistoryObjects(array(array('role' => 'assistant', 'text' => '[api_contacts_create result] {"id":5}')), $langs, $tools));
+		$this->assertSame(array(), aiHistoryObjects(array(array('role' => 'assistant', 'text' => '[api_unknown_tool result] {}')), $langs, $tools), 'An unknown tool name gives nothing');
+		$this->assertSame(array(), aiHistoryObjects(array(array('role' => 'assistant', 'text' => '[api_objects_contacts_list result] []')), $langs, $tools), 'A tool of several objects gives nothing');
+		$this->assertSame(array(), aiHistoryObjects(array(array('role' => 'assistant', 'text' => 'Voici les contacts du tiers.')), $langs, $tools), 'Only the tool name of an answer counts');
+		$this->assertSame(array(), aiHistoryObjects(array(array('role' => 'assistant', 'text' => '[api_contacts_create result] {}')), $langs, array()), 'A tool the user may not use gives nothing');
+		$this->assertSame(array('thirdparties', 'contacts'), aiHistoryObjects(array(array('role' => 'assistant', 'text' => "[api_thirdparties_list result] []\n[api_contacts_create result] {\"id\":5}")), $langs, $tools), 'Each result of a followup answer counts');
+
+		$turns = array(
+			array('role' => 'user', 'text' => 'ajoute le contacts Jean Martin au tier devcamp'),
+			array('role' => 'assistant', 'text' => '[api_contacts_create result] {"id":5}'),
+		);
+		$objects = aiHistoryObjects($turns, $langs, $tools);
+		sort($objects);
+		$this->assertSame(array('contacts', 'thirdparties'), $objects, 'The question of the previous turn is classified too');
+	}
+
+	/**
+	 * testAiPageContextObjects
+	 *
+	 * @return void
+	 */
+	public function testAiPageContextObjects()
+	{
+		global $conf, $db, $user;
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+
+		$this->assertSame(array('thirdparties'), aiPageContextObjects('societe', $tools));
+		$this->assertSame(array('contacts'), aiPageContextObjects('contact', $tools));
+		$this->assertSame(array('invoices'), aiPageContextObjects('facture', $tools));
+		$this->assertSame(array('supplier_orders'), aiPageContextObjects('order_supplier', $tools));
+		$this->assertSame(array(), aiPageContextObjects('user', $tools), 'An element of no object gives nothing');
+		$this->assertSame(array(), aiPageContextObjects('', $tools));
+
+		$moduleTool = array('name' => 'api_trainings_list', 'objects' => array('trainings'), 'vocabulary' => array('trainings' => array('keys' => array('Training'), 'element' => 'training')));
+		$this->assertSame(array('trainings'), aiPageContextObjects('training', array($moduleTool)), 'A module maps its card to its object with the element of its tools');
+	}
+
+	/**
+	 * testAiChatHistoryTurns
+	 *
+	 * @return void
+	 */
+	public function testAiChatHistoryTurns()
+	{
+		global $db, $user;
+
+		$idOwn = $this->createAiChatMessage((int) $user->id, 'assistant', '[api_contacts_create result] {"id":5}');
+		$idOther = $this->createAiChatMessage((int) $user->id + 1000, 'user', 'question of another user');
+		$idSystem = $this->createAiChatMessage((int) $user->id, 'system', 'stored with another role');
+
+		$turns = aiChatHistoryTurns($db, $user, array(
+			array('id' => $idOwn, 'role' => 'user', 'text' => 'sent by the client'),
+			array('id' => $idOther),
+			array('role' => 'user', 'text' => 'not yet saved'),
+			'garbage',
+		));
+		$this->assertSame(array(
+			array('role' => 'assistant', 'text' => '[api_contacts_create result] {"id":5}'),
+			array('role' => 'user', 'text' => 'not yet saved'),
+		), $turns, 'A saved turn is read from the database, only from a conversation of the user');
+
+		$this->assertSame(array(array('role' => 'user', 'text' => 'stored with another role')), aiChatHistoryTurns($db, $user, array(array('id' => $idSystem))), 'A role other than assistant comes back as user');
+	}
+
+	/**
+	 * Create a message of a chat conversation
+	 *
+	 * @param	int		$fkUser		Owner of the conversation
+	 * @param	string	$role		user or assistant
+	 * @param	string	$text		Content
+	 * @return	int					Id of the message
+	 */
+	private function createAiChatMessage(int $fkUser, string $role, string $text): int
+	{
+		global $db;
+
+		$now = $db->idate(dol_now());
+		$db->query("INSERT INTO ".$db->prefix()."ai_chat_conversation (entity, fk_user, title, date_creation) VALUES (".((int) getEntity('ai')).", ".$fkUser.", 'test', '".$now."')");
+		$fkConversation = $db->last_insert_id($db->prefix().'ai_chat_conversation');
+		$db->query("INSERT INTO ".$db->prefix()."ai_chat_message (fk_conversation, role, content_raw, datec) VALUES (".((int) $fkConversation).", '".$db->escape($role)."', '".$db->escape($text)."', '".$now."')");
+		$id = $db->last_insert_id($db->prefix().'ai_chat_message');
+		$this->assertGreaterThan(0, $id);
+
+		return (int) $id;
+	}
+
+	/**
 	 * testFilterToolsByObjects
 	 *
 	 * @return void
@@ -137,5 +257,44 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame(array('api_invoices_list', 'navigate_to_page', 'api_thirdparties_create'), $kept, 'A tool named by a kept tool is kept too');
 
 		$this->assertSame(array(), filterToolsByObjects($tools, array('tickets'), array('thirdparty')), 'No tool for the objects named: the caller falls back to the categories');
+	}
+
+	/**
+	 * testSortAiToolsByObjectBlock
+	 *
+	 * @return void
+	 */
+	public function testSortAiToolsByObjectBlock()
+	{
+		global $conf, $db, $user;
+
+		$tools = array(
+			array('name' => 'navigate_to_page'),
+			array('name' => 'api_objects_categories_list', 'objects' => array('contacts', 'thirdparties')),
+			array('name' => 'api_invoices_list', 'objects' => array('invoices')),
+			array('name' => 'api_agendaevents_list', 'objects' => array('agendaevents')),
+			array('name' => 'api_users_list', 'objects' => array('users')),
+			array('name' => 'api_contacts_list', 'objects' => array('contacts')),
+			array('name' => 'api_thirdparties_list', 'objects' => array('thirdparties')),
+		);
+		$this->assertSame(array_reverse(array_column($tools, 'name')), array_column(sortAiToolsByObjectBlock($tools), 'name'), 'Hub objects, other objects by key, several objects, no object');
+
+		$bridge = new ToolApiBridge($db, $user, $conf);
+		$tools = $bridge->getDefinitions();
+
+		$thirdparties = cleanToolSchemaForLLM(sortAiToolsByObjectBlock(filterToolsByObjects($tools, array('thirdparties'), array())));
+		$this->assertSame(json_encode($thirdparties), json_encode(cleanToolSchemaForLLM(sortAiToolsByObjectBlock(filterToolsByObjects(array_reverse($tools), array('thirdparties'), array())))), 'The same set gives the same bytes');
+
+		$nbThirdpartiesBlock = 0;
+		foreach (sortAiToolsByObjectBlock(filterToolsByObjects($tools, array('thirdparties'), array())) as $tool) {
+			if ((array) ($tool['objects'] ?? array()) !== array('thirdparties')) {
+				break;
+			}
+			$nbThirdpartiesBlock++;
+		}
+		$this->assertGreaterThan(0, $nbThirdpartiesBlock);
+		$thirdpartiesBlockJson = rtrim((string) json_encode(array_slice($thirdparties, 0, $nbThirdpartiesBlock)), ']');
+		$withContacts = cleanToolSchemaForLLM(sortAiToolsByObjectBlock(filterToolsByObjects($tools, array('contacts', 'thirdparties'), array())));
+		$this->assertStringStartsWith($thirdpartiesBlockJson.',', (string) json_encode($withContacts), 'Adding an object keeps the thirdparties block first, so the prompt cache still holds it');
 	}
 }
