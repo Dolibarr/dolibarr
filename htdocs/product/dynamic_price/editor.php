@@ -42,6 +42,9 @@ $tab = (!empty($tab)) ? $tab : 'card';
 $tab = strtolower($tab);
 
 // Security check
+if (!isModEnabled('dynamicprices')) {
+	accessforbidden();
+}
 $result = restrictedArea($user, 'produit|service&fournisseur', $id, 'product&product', '', '', 'rowid');
 
 //Initialize objects

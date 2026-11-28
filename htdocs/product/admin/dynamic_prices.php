@@ -39,7 +39,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $selection = GETPOST('selection', 'int');
 
 // Security check
-if (!$user->admin) {
+if (!$user->admin || !isModEnabled('dynamicprices')) {
 	accessforbidden();
 }
 
