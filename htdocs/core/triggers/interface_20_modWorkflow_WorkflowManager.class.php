@@ -529,6 +529,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							if ($orderline->product_type == 9) {
 								continue;
 							}
+							// A line with quantity 0 (an option, or a remainder that will never be delivered) has nothing
+							// to ship: it must not prevent the order from being closed
+							if (empty((float) $orderline->qty)) {
+								continue;
+							}
 							if (isset($qtyordred[$orderline->fk_product])) {
 								$qtyordred[$orderline->fk_product] += $orderline->qty;
 							} else {
@@ -538,8 +543,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					}
 					//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
 					//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
-					//Compare array
-					$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
+					//Compare array: everything is shipped when each product is shipped at least in the ordered quantity
+					//(a product shipped in a higher quantity than ordered must not prevent the order from being closed)
+					$diff_array = array();
+					foreach ($qtyordred as $productid => $qtyordered) {
+						if (!isset($qtyshipped[$productid]) || price2num($qtyshipped[$productid] - $qtyordered, 'MS') < 0) {
+							$diff_array[$productid] = $qtyordered;
+						}
+					}
 					if (count($diff_array) == 0) {
 						//No diff => mean everything is shipped
 						$ret = $order->cloture($user, 0, 0);	// 0 = do not check the close permission: this is an automatic action of the workflow, the user right checked is the one on the shipment
