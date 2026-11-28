@@ -81,7 +81,7 @@ abstract class CommonDocGenerator
 	/**
 	 * @var string	The name of constant to use to scan ODT files (Example: 'COMMANDE_ADDON_PDF_ODT_PATH')
 	 */
-	public $scandir;
+	public $scandir = '';
 
 	/**
 	 * @var string model description (short text)
