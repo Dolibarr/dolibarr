@@ -216,7 +216,6 @@ Datee
 Dateo
 Dates
 Datet
-Declared
 Decline
 DefaultCashPOSLabel
 Delays_
@@ -288,7 +287,6 @@ ErrorBadSocialNetworkValue
 ErrorBadValue
 ErrorBadValueForBatch
 ErrorCanNotDeleteDir
-ErrorCantSplitAUsedDiscount
 ErrorChartOfAccountSystemNotSelected
 ErrorCheckVersionIsDefined
 ErrorCreateUserSkill
@@ -307,15 +305,12 @@ ErrorFailedToCopyProposal
 ErrorFailedToDeleteFile
 ErrorFailedToFindSomeFiles
 ErrorFailedToGetListOfNotificationsToSend
-ErrorFailedToLoadBankAccount
-ErrorFailedToLoadDiscount
 ErrorFailedToSetNewPassword
 ErrorFileNameInvalid
 ErrorImportOfChartLimitedToCurrentChart
 ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT
 ErrorMailFromRequired
 ErrorNegativeValueNotAllowed
-ErrorNoAccountingModuleEnabled
 ErrorNoPhoneDefinedForThisUser
 ErrorNoUrl
 ErrorNoValueForLinkType
@@ -344,13 +339,9 @@ ErrorVerif
 ErrorWarehouseRequiredIntoReceptionLine
 ErrorWebServicesFieldsRequired
 Error_BOM_ADDON_NotDefined
-Error_COMPANY_ADDON_PDF_NotDefined
-Error_FICHEINTER_ADDON_NotDefined
 Error_HOLIDAY_ADDON_NotDefined
 Error_MRP_MO_ADDON_NotDefined
-Error_RECEPTION_ADDON_NUMBER_NotDefined
 ErrorloadUserOnSendingMail
-EstimatedWeight
 Evaluation
 Evaluationdet
 Evaluations
@@ -402,14 +393,11 @@ GlobalVariableUpdaterHelp
 GlobalVariableUpdaterHelpFormat
 GlobalVariableUpdaterType
 GoOnTokenProviderToDeleteToken
-GoSourceInvoice
 Gzip
 HTTPBasicPassword
-HelpAbandonProductReturned
 HideVersionLink
 Hook
 Hooks
-IBANNotDefined
 ID
 IPP_COLOR_
 IconFieldSelector
@@ -505,7 +493,6 @@ NPR counterpart
 Name of the new third party. In the meantime we check if it already exists...
 Nb
 NbOfDonations
-NbOfIntervention
 NbOfOrder
 NbOfSendingsByMonth
 NbOfTicket
@@ -562,7 +549,6 @@ Omit sub-projects
 Online
 OnlineSignature
 OnlyAdminUsersCanDisableAdminUsers
-OnlyTerminal1IsAvailableForCashDeskModule
 OpenSurvey
 Operation
 Operations
@@ -618,7 +604,6 @@ ProductCodeDesc
 ProductFournisseurPrice
 ProductLot
 ProductNotDefined
-ProductReturned
 Production
 ProfId
 Profile
@@ -685,7 +670,6 @@ SetContract
 SetModel
 SetReceptionMethod
 SetRefExt
-SetRefusedAndClose
 SetSendingMethod
 SetTransDate
 SetVATReverseCharge
@@ -813,8 +797,6 @@ Url
 Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER
 VCard
 Vacant
-ValidateAndSign
-ValidationDateNotDefinedEvenIfReceptionValidated
 ValueFromBom
 Variable
 Variant
@@ -990,7 +972,6 @@ PDF/A-1b
 PDF/A-3b
 PartnershipSentByEMail
 PdfTitle
-ProcessingError
 Recruited
 Ref. Product
 RefNewContract

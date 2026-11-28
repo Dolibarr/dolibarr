@@ -753,3 +753,6 @@ CreditNoteNotCreatedErrorOnDiscount=Credit note for <b>%s</b> not created: error
 CreditNoteNotCreatedAlreadyConverted=Credit note for <b>%s</b> not created: invoice already converted
 CreditNotesCreated=%s credit note(s) created
 ThisMassActionIsOnlyForInvoices=This mass action is only available for invoices
+GoSourceInvoice=Go to the source invoice
+ProductReturned=Products returned
+HelpAbandonProductReturned=This invoice was closed because some products were returned

@@ -159,6 +159,7 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 	}
 
 	if (!($actarget->id > 0)) {
+		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFailedToLoadBankAccount"), null, 'errors');
 		$error++;
 	}

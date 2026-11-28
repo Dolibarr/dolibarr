@@ -61,3 +61,4 @@ ReceptionSentByEMail=Reception sent by email
 ReceptionValidated=Reception validated
 DateReception=Reception date
 SetReceptionDate=Set reception date
+ValidationDateNotDefinedEvenIfReceptionValidated=Validation date not defined although the reception is validated

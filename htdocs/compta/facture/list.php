@@ -556,6 +556,7 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 							}
 						} elseif ($reshook < 0) {
 							$error++;
+							$langs->load("errors");
 							setEventMessages($facture->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
 						}
 

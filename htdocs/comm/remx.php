@@ -87,6 +87,7 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 	$res = $discount->fetch($remid);
 	if (!($res > 0)) {
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
 	} elseif ($discount->fk_soc != $socid) {
 		// The discount must belong to the thirdparty of the page
@@ -196,6 +197,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 	}
 	if (!$error && $discount->fk_facture_line) {
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorCantSplitAUsedDiscount"), null, 'errors');
 	}
 	if (!$error) {
