@@ -19,3 +19,8 @@ ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_passkey_credential_i
 
 -- To find the tokens or passkeys of a user (for example the count of passkeys of each user into the user list)
 ALTER TABLE llx_oauth_token ADD INDEX idx_oauth_token_fk_user (fk_user);
+
+-- Lookup of a hashed credential or client. Rows that do not use token_hash leave it
+-- NULL, and NULLs never collide in a unique index, so other services are unaffected.
+ALTER TABLE llx_oauth_token ADD UNIQUE INDEX uk_oauth_token_service_hash (service, token_hash);
+ALTER TABLE llx_oauth_token ADD INDEX idx_oauth_token_fk_oauth_client (fk_oauth_client);

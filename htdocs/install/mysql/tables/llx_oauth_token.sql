@@ -41,5 +41,11 @@ CREATE TABLE llx_oauth_token (
     passkey_sign_count			integer NULL,			-- last signature counter returned by the authenticator (0 for synced passkeys)
     passkey_aaguid				varchar(36) NULL,		-- model of authenticator, as UUID
     passkey_backup_eligible		smallint NULL,			-- 1 if the passkey can be synced to other devices
-    passkey_backup_state		smallint NULL			-- 1 if the passkey was synced at last use
+    passkey_backup_state		smallint NULL,			-- 1 if the passkey was synced at last use
+    token_hash		varchar(64) NULL,					-- SHA-256 of a code or token that must not be readable back, or of a client_id to find its row (MCP OAuth server)
+    fk_oauth_client	integer NULL,						-- For tokens issued by Dolibarr as an OAuth server: rowid of the client they were issued to (a 'mcp_client' row of this table)
+    resource		varchar(255) NULL,					-- For tokens issued by Dolibarr as an OAuth server: the audience (RFC 8707)
+    code_challenge	varchar(128) NULL,					-- For authorization codes: the PKCE challenge
+    redirect_uri	text NULL,							-- For authorization codes: the redirect URI the code is bound to. For a registered client: its redirect URIs, one per line.
+    revoked			smallint DEFAULT 0 NOT NULL			-- 1 once the credential is spent or revoked
 )ENGINE=innodb;
