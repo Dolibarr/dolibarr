@@ -588,31 +588,7 @@ class MouvementStock extends CommonObject
 			// Calculate new AWP (PMP)
 			$newpmp = 0;
 			if (!$error) {
-				if ($type == 0 || $type == 3) {
-					// After a stock increase
-					// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
-					// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
-					if ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
-						$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
-						// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
-						if ($oldpmp > 0 && ($oldqtytouse + $qty) != 0) {
-							$newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
-						} else {
-							$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
-						}
-						//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." ";
-						//print "qty=".$qty." newpmp=".$newpmp;
-						//exit;
-					} else {
-						$newpmp = $oldpmp;
-					}
-				} else {
-					// ($type == 1 || $type == 2)
-					//   -> After a stock decrease, we don't change value of the AWP/PMP of a product.
-					// else
-					//   Type of movement unknown
-					$newpmp = $oldpmp;
-				}
+				$newpmp = $this->calculatePMP($oldqty, $oldpmp, $qty, $price, $type);
 			}
 			// Update stock quantity
 			if (!$error) {
@@ -725,6 +701,48 @@ class MouvementStock extends CommonObject
 	}
 
 
+
+	/**
+	 * Calculate the weighted average price (PMP) of the product after a stock movement.
+	 *
+	 * @param	float		$oldqty		Stock before the movement
+	 * @param	float		$oldpmp		PMP before the movement
+	 * @param	float		$qty		Quantity of the movement
+	 * @param	float		$price		Unit price of the movement
+	 * @param	int			$type		Type of movement (0=input, 1=output, 2=output, 3=input)
+	 * @return	float|string			New PMP
+	 */
+	private function calculatePMP($oldqty, $oldpmp, $qty, $price, $type)
+	{
+		$newpmp = 0;
+		if ($type == 0 || $type == 3) {
+			// After a stock increase
+			// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
+			// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
+			if ($price > 0 || (getDolGlobalString('STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL') && $price == 0 && in_array($this->origin_type, array('order_supplier', 'invoice_supplier')))) {
+				$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
+				// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
+				if ($oldpmp > 0 && ($oldqtytouse + $qty) != 0) {
+					$newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
+				} else {
+					$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
+				}
+				//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." ";
+				//print "qty=".$qty." newpmp=".$newpmp;
+				//exit;
+			} else {
+				$newpmp = $oldpmp;
+			}
+		} else {
+			// ($type == 1 || $type == 2)
+			//   -> After a stock decrease, we don't change value of the AWP/PMP of a product.
+			// else
+			//   Type of movement unknown
+			$newpmp = $oldpmp;
+		}
+
+		return $newpmp;
+	}
 
 	/**
 	 * Load object in memory from the database
