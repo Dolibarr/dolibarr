@@ -249,6 +249,21 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+// Keep in sync with core/ajax/bankconciliate.php
+if (in_array($action, ['doprev', 'donext', 'dvprev', 'dvnext']) && ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate'))) {
+	$bankline = new AccountLine($db);
+	$lineid = GETPOSTINT('rowid');
+	if ($action == 'doprev') {
+		$bankline->dateo_previous($lineid);
+	} elseif ($action == 'donext') {
+		$bankline->dateo_next($lineid);
+	} elseif ($action == 'dvprev') {
+		$bankline->datev_previous($lineid);
+	} else {
+		$bankline->datev_next($lineid);
+	}
+}
+
 $rowids = GETPOST('rowid', 'array:int');
 
 // Conciliation
@@ -1640,9 +1655,9 @@ if ($resql) {
 			print "</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
-			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;token='.newToken().'&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove()."</a> ";
-			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;token='.newToken().'&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_add()."</a>";
 			print '</span>';
 			print "</td>\n";
@@ -1659,9 +1674,9 @@ if ($resql) {
 			print "</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
-			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;token='.newToken().'&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_remove()."</a> ";
-			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;token='.newToken().'&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
 			print img_edit_add()."</a>";
 			print '</span>';
 			print "</td>\n";
