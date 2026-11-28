@@ -69,7 +69,7 @@ $result = $db->query($sql);
 if ($result) {
 	$obj = $db->fetch_object($result);
 	$reg = array();
-	preg_match('/([0-9]+)$/i', $obj->name, $reg);
+	preg_match('/([0-9]+)$/i', (string) $obj->name, $reg);
 	if (!empty($reg[1])) {
 		$lastftpentry = $reg[1];
 	}
@@ -257,7 +257,7 @@ if (!function_exists('ftp_connect')) {
 			$obj = $db->fetch_object($resql);
 
 			$reg = array();
-			preg_match('/([0-9]+)$/i', $obj->name, $reg);
+			preg_match('/([0-9]+)$/i', (string) $obj->name, $reg);
 			$idrss = $reg[0];
 			//print "x".join(',',$reg)."=".$obj->name."=".$idrss;
 

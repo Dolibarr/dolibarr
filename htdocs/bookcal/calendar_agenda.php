@@ -81,6 +81,9 @@ if (!$sortorder) {
 
 // Initialize a technical objects
 $object = new Calendar($db);
+if (!isModEnabled("bookcal")) {
+	accessforbidden();
+}
 $diroutputmassaction = $conf->bookcal->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('calendaragenda', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
@@ -108,9 +111,6 @@ if ($enablepermissioncheck) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled("bookcal")) {
-	accessforbidden();
-}
 if (!$permissiontoread) {
 	accessforbidden();
 }
