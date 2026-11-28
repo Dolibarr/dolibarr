@@ -219,6 +219,7 @@ class ConfFileReuseTest extends CommonClassTest
 		$this->expectException(Exception::class);
 		$reuse->apply($template, ['dolibarr_main_instance_unique_id' => self::OLD_ID], false, false);
 	}
+
 	/**
 	 * cookie_cryptkey is commented out once instance_unique_id is set.
 	 *
