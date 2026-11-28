@@ -461,12 +461,6 @@ function conf($dolibarr_main_document_root, $realpathconf = null)
 	$conf->db->name = trim((string) $dolibarr_main_db_name);
 	$conf->db->user = trim((string) $dolibarr_main_db_user);
 	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim((string) $dolibarr_main_db_pass));
-	// filefunc.inc.php is loaded before conf.php during install, so the password is decoded here, with the same key.
-	if (preg_match('/^crypted:/i', $conf->db->pass)) {
-		$conf->db->pass = dol_decode(preg_replace('/^crypted:/i', '', $conf->db->pass));
-	} elseif (preg_match('/^dolcrypt:/i', $conf->db->pass)) {
-		$conf->db->pass = dolDecrypt($conf->db->pass, (empty($dolibarr_main_dolcrypt_key) ? (empty($dolibarr_main_instance_unique_id) ? (string) $dolibarr_main_cookie_cryptkey : $dolibarr_main_instance_unique_id) : $dolibarr_main_dolcrypt_key));
-	}
 
 	// Mysql driver support has been removed in favor of mysqli
 	if ($conf->db->type == 'mysql') {
@@ -478,6 +472,8 @@ function conf($dolibarr_main_document_root, $realpathconf = null)
 	$conf->file->character_set_client = strtoupper($character_set_client);
 	// Unique id of instance
 	$conf->file->instance_unique_id = empty($dolibarr_main_instance_unique_id) ? (empty($dolibarr_main_cookie_cryptkey) ? '' : $dolibarr_main_cookie_cryptkey) : $dolibarr_main_instance_unique_id;
+	// filefunc.inc.php is loaded before conf.php during install: the password is decoded here, with the same key.
+	$conf->db->pass = dolDecrypt($conf->db->pass, empty($dolibarr_main_dolcrypt_key) ? $conf->file->instance_unique_id : $dolibarr_main_dolcrypt_key);
 	if (empty($dolibarr_main_db_character_set)) {
 		$dolibarr_main_db_character_set = ($conf->db->type == 'mysqli' ? 'utf8' : '');
 	}
