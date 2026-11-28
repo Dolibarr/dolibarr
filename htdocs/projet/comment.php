@@ -186,7 +186,7 @@ print '<table class="border centpercent">';
 
 // Description
 print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-print nl2br($object->description);
+print nl2br((string) $object->description);
 print '</td></tr>';
 
 // Categories
