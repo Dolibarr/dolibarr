@@ -384,7 +384,7 @@ if (!empty($sql_select)) {
 
 $disabled = 0;
 $showempty = 2;
-if (empty($elementTypeArray) && !$object->thirdparty->client && !$object->thirdparty->fournisseur) {
+if (empty($elementTypeArray) && (empty($object->thirdparty) || (!$object->thirdparty->client && !$object->thirdparty->fournisseur))) {
 	$showempty = $langs->trans("ThirdpartyNotCustomerNotSupplierSoNoRef");
 	$disabled = 1;
 }

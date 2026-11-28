@@ -357,7 +357,7 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search($db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
@@ -433,7 +433,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-eventorganization page-attendee-list classforhorizontalscrolloftabs');
 
 // Copied almost verbertum from htdocs/ticket/list.php and modified based on the project one below
-if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 0) {
+if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth->id > 0) {
 	$withThirdpartyUrl = '';
 
 	if (!empty($withthirdparty)) {
@@ -501,7 +501,7 @@ if (($thirdpartyid > 0 && $user->hasRight('societe', 'lire')) || $confOrBooth > 
 	}
 }
 
-if ($projectstatic->id > 0 || $confOrBooth > 0) {
+if ($projectstatic->id > 0 || $confOrBooth->id > 0) {
 	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 		$projectstatic->fetchComments();
 	}
@@ -930,7 +930,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column, 1);  // This also change content of $arrayfields with user setup @phan-suppress-current-line PhanTypeMismatchArgument
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 

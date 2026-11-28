@@ -109,6 +109,7 @@ class AgendaEvents extends DolibarrApi
 	 *
 	 * @since	5.0.0	Initial implementation
 	 * @since	21.0.0	Added data pagination
+	 * @since	25.0.0	Parameter count
 	 *
 	 * @param	string	$sortfield			Sort field
 	 * @param	string	$sortorder			Sort order
@@ -118,13 +119,14 @@ class AgendaEvents extends DolibarrApi
 	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.datec:<:'20160101')"
 	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param	int		$count				Set to 1 to return only the number of records matching the filters, as an array with the key 'count', instead of the list of records (limit and page are then ignored)
 	 * @return	array						Array of order objects
-	 * @phan-return ActionComm[]|array{data:ActionComm[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return ActionComm[]|array{data:ActionComm[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return ActionComm[]|array{data:ActionComm[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
+	 * @phpstan-return ActionComm[]|array{data:ActionComm[],pagination:array{total:int,page:int,page_count:int,limit:int}}|array{count:int}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $count = 0)
 	{
 		$obj_ret = array();
 
@@ -179,6 +181,11 @@ class AgendaEvents extends DolibarrApi
 
 		//this query will return total orders with the filters given
 		$sqlTotals = str_replace('SELECT t.id', 'SELECT count(t.id) as total', $sql);
+
+		// Return only the number of records matching the filters
+		if ($count) {
+			return $this->_getCountOfRecords($sql);
+		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -369,6 +376,81 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		return $this->get($id);
+	}
+
+	/**
+	 * Add a reminder to an agenda event
+	 *
+	 * Like on the event card, a reminder is created for each user assigned to the event,
+	 * and replaces the reminder of the same type not sent yet. It is sent only if its type
+	 * is enabled in the agenda setup.
+	 *
+	 * @since	25.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of Agenda Event
+	 * @param	string	$typeremind			{@from body} Type of reminder {@choice email,browser,sms}
+	 * @param	int		$offsetvalue		{@from body} Delay before the event date {@min 0}
+	 * @param	string	$offsetunit			{@from body} Unit of the delay: i=minute, h=hour, d=day, w=week {@choice i,h,d,w}
+	 * @param	int		$fk_email_template	{@from body} ID of the email template, for an email reminder (optional)
+	 * @return	int[]						IDs of the created reminders
+	 *
+	 * @url	POST {id}/reminders
+	 *
+	 * @throws RestException
+	 */
+	public function postReminder($id, $typeremind, $offsetvalue, $offsetunit, $fk_email_template = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'myactions', 'create')) {
+			throw new RestException(403, "Insufficient rights to update your Agenda Event");
+		}
+
+		$result = $this->actioncomm->fetch($id);
+		if ($result < 0) {
+			throw new RestException(500, 'Error when fetching Agenda Event : '.$this->actioncomm->errorsToString());
+		}
+		if (!$result) {
+			throw new RestException(404, 'Agenda Event not found');
+		}
+		$this->actioncomm->fetch_userassigned();
+
+		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'create') && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
+			throw new RestException(403, "Insufficient rights to update an Agenda Event of owner id ".$this->actioncomm->userownerid.' Your id is '.DolibarrApiAccess::$user->id);
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$reminder = new ActionCommReminder($this->db);
+		$reminder->dateremind = dol_time_plus_duree((int) $this->actioncomm->datep, -1 * $offsetvalue, $offsetunit);
+		$reminder->typeremind = $typeremind;
+		$reminder->offsetvalue = $offsetvalue;
+		$reminder->offsetunit = $offsetunit;
+		$reminder->status = ActionCommReminder::STATUS_TODO;
+		$reminder->fk_actioncomm = $this->actioncomm->id;
+		if ($typeremind == 'email') {
+			$reminder->fk_email_template = $fk_email_template;
+		}
+
+		$reminderids = array();
+		$this->db->begin();
+		$sqldelete = "DELETE FROM ".$this->db->prefix()."actioncomm_reminder";
+		$sqldelete .= " WHERE fk_actioncomm = ".((int) $this->actioncomm->id)." AND typeremind = '".$this->db->escape($typeremind)."' AND status = ".((int) ActionCommReminder::STATUS_TODO);
+		if (!$this->db->query($sqldelete)) {
+			$this->db->rollback();
+			throw new RestException(500, 'Error when replacing the reminder : '.$this->db->lasterror());
+		}
+		foreach ($this->actioncomm->userassigned as $userassigned) {
+			$reminder->fk_user = $userassigned['id'];
+			if ($reminder->create(DolibarrApiAccess::$user) <= 0) {
+				$this->db->rollback();
+				throw new RestException(500, 'Error when creating the reminder : '.$reminder->errorsToString());
+			}
+			$reminderids[] = (int) $reminder->id;
+		}
+		$this->db->commit();
+
+		return $reminderids;
 	}
 
 	/**

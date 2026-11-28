@@ -247,7 +247,7 @@ class PaymentExpenseReport extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param  int		$id         Id object
-	 *  @return int         		Return integer <0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -297,10 +297,13 @@ class PaymentExpenseReport extends CommonObject
 
 				$this->bank_account = $obj->fk_account;
 				$this->bank_line = $obj->fk_bank;
+
+				$this->db->free($resql);
+				return 1;
 			}
 			$this->db->free($resql);
 
-			return 1;
+			return 0;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;

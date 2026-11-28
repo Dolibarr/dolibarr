@@ -705,26 +705,107 @@ export function initAiAssistant(container) {
     }
 
     /**
+     * Inline markdown (bold, italic, code) of an already escaped text.
+     * @param {string} s Escaped text
+     * @return {string} Safe HTML
+     */
+    function renderMarkdownInline(s) {
+        s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>');
+        s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+        return s;
+    }
+
+    /**
+     * Split a markdown table row into its trimmed cells. The outer pipes are optional, "\|" is a literal pipe.
+     * @param {string} line Escaped text of the row
+     * @return {string[]} Cells
+     */
+    function splitMarkdownRow(line) {
+        return line.replace(/\\\|/g, '&#124;').trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
+    }
+
+    /**
+     * Render the markdown table (GFM syntax) starting at a given line.
+     * @param {string[]} lines Escaped lines of the answer
+     * @param {number}   start Index of the line to test as a table header
+     * @return {?{html: string, next: number}} Safe HTML and index of the first line after the table, null if no table starts here
+     */
+    function renderMarkdownTable(lines, start) {
+        // A header row, then a delimiter row (|---|:---:|---:|) with the same number of cells
+        if (start + 1 >= lines.length || lines[start].indexOf('|') < 0 || lines[start + 1].indexOf('|') < 0) return null;
+        const header = splitMarkdownRow(lines[start]);
+        const delimiters = splitMarkdownRow(lines[start + 1]);
+        if (header.length !== delimiters.length || !delimiters.every((c) => /^:?-+:?$/.test(c))) return null;
+
+        const rows = [];
+        let next = start + 2;
+        for (; next < lines.length && lines[next].indexOf('|') >= 0; next++) {
+            const row = splitMarkdownRow(lines[next]);
+            while (row.length < header.length) row.push('');
+            row.length = header.length;
+            rows.push(row);
+        }
+
+        // Classes and not inline styles, so the alignment is kept in the saved conversations.
+        // A column of numbers (amount, quantity, percent...) is right aligned when the model gives no alignment.
+        // Neither numbers nor short single words (ref, date...) are wrapped.
+        const isNumber = (c) => /^[+\-−]?\s*[€$£]?\s*\d[\d\s.,]*(%|[€$£]|[A-Z]{3})?$/.test(c.replace(/\*/g, '').trim());
+        const classes = delimiters.map((d, i) => {
+            const values = rows.map((r) => r[i]).filter((c) => c !== '');
+            const numeric = values.length > 0 && values.every(isNumber);
+            const align = /^:-+:$/.test(d) ? 'center' : (/:$/.test(d) ? 'right' : (numeric && !/^:/.test(d) ? 'right' : ''));
+            const nowrap = numeric || (values.length > 0 && values.every((c) => c.length <= 24 && !/\s/.test(c)));
+            return (align + (nowrap ? ' nowraponall' : '')).trim();
+        });
+        const cell = (tag, content, i) => '<' + tag + (classes[i] ? ' class="' + classes[i] + '"' : '') + '>'
+            // <br> is the only way to write a line break into a markdown cell: the models use it
+            + renderMarkdownInline(content).replace(/&lt;br\s*\/?&gt;/gi, '<br>') + '</' + tag + '>';
+
+        let html = '<div class="chat-table-wrap chat-table-md"><table class="chat-table"><thead><tr>';
+        html += header.map((c, i) => cell('th', c, i)).join('') + '</tr></thead><tbody>';
+        rows.forEach((row) => { html += '<tr>' + row.map((c, i) => cell('td', c, i)).join('') + '</tr>'; });
+        return { html: html + '</tbody></table></div>', next: next };
+    }
+
+    /**
      * Light markdown rendering for free-text LLM answers: the models reply with
-     * markdown (bold, lists, line breaks) that innerHTML would otherwise flatten
+     * markdown (bold, lists, tables, line breaks) that innerHTML would otherwise flatten
      * into one unreadable block with literal asterisks. HTML is escaped FIRST,
      * so the LLM cannot inject markup.
      * @param {string} text Raw model answer
      * @return {string} Safe HTML
      */
     function renderMarkdownLite(text) {
-        let s = escapeHtml(String(text));
-        s = s.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
-        s = s.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, '$1<em>$2</em>');
-        s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
-        // Numbered/bulleted list items get their own line even when the model
-        // packed them into a single paragraph ("… 5,20 € 2. **Référence** …").
-        // Conservative: only break before "N. **Header**" items (the pattern the
-        // model actually emits); "\S" also matched prose like "version 2. is out".
-        s = s.replace(/\s(\d{1,2}\.\s)(?=<strong>)/g, '<br>$1');
-        s = s.replace(/(^|\n)[-•]\s/g, '$1• ');
-        s = s.replace(/\n/g, '<br>');
-        return s;
+        const renderText = (txt) => {
+            let s = renderMarkdownInline(txt);
+            // Numbered/bulleted list items get their own line even when the model
+            // packed them into a single paragraph ("… 5,20 € 2. **Référence** …").
+            // Conservative: only break before "N. **Header**" items (the pattern the
+            // model actually emits); "\S" also matched prose like "version 2. is out".
+            s = s.replace(/\s(\d{1,2}\.\s)(?=<strong>)/g, '<br>$1');
+            s = s.replace(/(^|\n)[-•]\s/g, '$1• ');
+            return s.replace(/\n/g, '<br>');
+        };
+
+        const lines = escapeHtml(String(text)).split(/\r?\n/);
+        let html = '';
+        let pending = [];       // lines of text not rendered yet
+        let inFence = false;    // into a ``` code block, where a table is not a table
+        for (let i = 0; i < lines.length;) {
+            if (/^\s*```[^`]*$/.test(lines[i])) inFence = !inFence;
+            const table = inFence ? null : renderMarkdownTable(lines, i);
+            if (table) {
+                // The table is a block with its own margins: no blank line around it
+                html += renderText(pending.join('\n').trim()) + table.html;
+                pending = [];
+                i = table.next;
+                while (i < lines.length && lines[i].trim() === '') i++;
+            } else {
+                pending.push(lines[i++]);
+            }
+        }
+        return html + renderText(pending.join('\n'));
     }
 
     // =========================================================================
@@ -1460,7 +1541,7 @@ export function initAiAssistant(container) {
             // A table does not size its bubble (it scrolls inside): such a bubble takes the whole row
             if (bubble.querySelector('.chat-table-wrap')) bubble.classList.add('msg-bubble-wide');
             if (actions) bubble.appendChild(buildActions(actions));
-            // Context pin: the last AUTO_CONTEXT exchanges follow the model by
+            // Context pin: the last AUTO_CONTEXT messages follow the model by
             // default (sliding window), the user pins older ones explicitly or
             // excludes recent ones - the token cost stays visible in the bar.
             if (rawText) {
@@ -2695,7 +2776,7 @@ export function initAiAssistant(container) {
         return '[' + (toolName || 'tool') + ' result] ' + s;
     }
 
-    // Number of recent exchanges (question + answer) that follow the model by
+    // Number of recent messages (questions and answers) that follow the model by
     // default. 0 = fully manual: nothing goes back unless the user pins it.
     const AUTO_CONTEXT = Math.max(0, parseInt(config.autoContext, 10) || 0);
 
@@ -2712,8 +2793,8 @@ export function initAiAssistant(container) {
         return msgs;
     }
 
-    // Effective context = the sliding window of the last AUTO_CONTEXT exchanges
-    // (counted from the questions) + explicit pins - explicit exclusions. Each
+    // Effective context = the sliding window of the last AUTO_CONTEXT messages
+    // (questions and answers) + explicit pins - explicit exclusions. Each
     // bubble holds its own decision in data-ctx: '' follows the window, 'on' is
     // pinned for good, 'off' is excluded. Recomputed after every change, so the
     // window slides as the conversation grows while the pins stay put.
@@ -2724,14 +2805,7 @@ export function initAiAssistant(container) {
         // waits outside the window until its answer arrives.
         const pending = (all.length > msgs.length) ? all[all.length - 1] : null;
         if (pending) { pending.classList.remove('ctx-pinned', 'ctx-excluded'); pending.dataset.ctxWindow = ''; }
-        let windowStart = msgs.length;
-        if (AUTO_CONTEXT > 0) {
-            let questions = 0;
-            for (let i = msgs.length - 1; i >= 0; i--) {
-                if (msgs[i].dataset.aiRole === 'user' && ++questions === AUTO_CONTEXT) { windowStart = i; break; }
-                if (i === 0) windowStart = 0;
-            }
-        }
+        const windowStart = Math.max(0, msgs.length - AUTO_CONTEXT);
         msgs.forEach((m, i) => {
             const inWindow = i >= windowStart;
             const state = m.dataset.ctx || '';
@@ -2792,8 +2866,7 @@ export function initAiAssistant(container) {
         const pinned = collectPinnedContext();
         if (!past.length) { if (bar) bar.remove(); return; }
         const tokens = Math.round(pinned.reduce((n, p) => n + p.text.length, 0) / 4);
-        // The setting counts exchanges (question + answer), so the bar says
-        // both: exchanges, then messages - one unit on its own misleads.
+        // The setting counts messages; the bar also says how many questions they hold.
         const exchanges = pinned.filter((p) => p.role === 'user').length;
         if (!bar) {
             bar = document.createElement('div');
@@ -3130,7 +3203,8 @@ export function initAiAssistant(container) {
         date: 'DateInvoice', datef: 'DateInvoice', date_lim_reglement: 'DateMaxPayment',
         total_ht: 'TotalHT', total_ttc: 'TotalTTC', total_tva: 'AmountVAT',
         remaintopay: 'RemainderToPay', price: 'Price', price_ttc: 'PriceTTC', tva_tx: 'VATRate',
-        code_client: 'CustomerCode', code_fournisseur: 'SupplierCode', fournisseur: 'Supplier'
+        code_client: 'CustomerCode', code_fournisseur: 'SupplierCode', fournisseur: 'Supplier',
+        user_group_list: 'UserGroups'
     };
     const MONEY_FIELDS = new Set(['total_ht', 'total_ttc', 'total_tva', 'total_localtax1', 'total_localtax2',
         'remaintopay', 'resteapayer', 'price', 'price_ttc', 'price_min', 'subprice', 'totalpaid',
@@ -3143,6 +3217,11 @@ export function initAiAssistant(container) {
         'no_email', 'typent_id', 'stcomm_id', 'fk_prospectlevel', 'country_id', 'fk_multicurrency', 'multicurrency_tx',
         'remise_supplier_percent'
         ]);
+    // Columns shown for a table nested into a single-object result, with their label key (null = default label).
+    // Display only: the LLM and the MCP still receive all fields.
+    const NESTED_COLUMNS = {
+        user_group_list: { id: null, name: 'Group' }
+    };
     // Local tax fields are shown only when the country of the company uses this local tax.
     [1, 2].forEach((x) => {
         if (!parseInt(config['useLocalTax' + x] || 0, 10)) {
@@ -3230,6 +3309,12 @@ export function initAiAssistant(container) {
         if (k === 'paye') return (String(v) === '1' ? '✓' : '✗');
         return escapeHtml(decodeHtmlEntities(String(v)));
     }
+    // True if the value is a text (not an amount, a date or a number sent as a string by the API)
+    function isTextCell(k, v) {
+        if (typeof v !== 'string' || v.trim() === '') return false;
+        if (MONEY_FIELDS.has(k) || isDateField(k)) return false;
+        return isNaN(Number(v.trim()));
+    }
     // socid -> customer name, resolved once per render through the bridge.
     async function resolveThirdpartyNames(container) {
         const cells = container.querySelectorAll('td[data-socid]');
@@ -3256,7 +3341,7 @@ export function initAiAssistant(container) {
         } catch (e) { /* names stay as ids */ }
     }
 
-    function formatResult(data, isRecursive = false, toolName = '') {
+    function formatResult(data, isRecursive = false, toolName = '', columns = null) {
         if (!data) return t('NoDataAvailable');
         if (data.error) {
             // 'detail' is the reason given by the API (e.g. a 403 that explains itself), shown under the translated error
@@ -3272,12 +3357,16 @@ export function initAiAssistant(container) {
             if (data.length === 0) return t('NoRecordFound');
             isArray = true;
             let keys = Object.keys(data[0]).filter(k => k !== 'url' && k !== 'rowid' && !HIDDEN_FIELDS.has(k));
+            // A table with its own list of columns shows only these ones, in this order
+            if (columns) {
+                keys = Object.keys(columns).filter(k => keys.includes(k));
+            }
             content += '<div class="chat-table-wrap"><table class="chat-table"><thead><tr>';
             // Rows that are files (their url is a document.php download): the
             // "name" column is the file, not a third party, and the file gets a
             // magnifier opening Dolibarr's preview (same link, attachment=0).
             const isFileList = data.length > 0 && typeof data[0].url === 'string' && /\/document\.php\?/.test(data[0].url);
-            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : fieldLabel(k)}</th>`);
+            keys.forEach(k => content += `<th>${(isFileList && k === 'name') ? escapeHtml(t('File')) : ((columns && columns[k]) ? escapeHtml(t(columns[k])) : fieldLabel(k))}</th>`);
             content += '</tr></thead><tbody>';
             data.forEach(row => {
                 content += '<tr>';
@@ -3292,10 +3381,11 @@ export function initAiAssistant(container) {
                         }
                     }
                     // Content is wrapped into a div: the 2 lines max clamp can't be set on a td (it needs display -webkit-box)
+                    // A socid cell is a text cell too: its id is replaced later by the name of the third party
                     if ((k === 'socid' || k === 'fk_soc') && row[k]) {
-                        content += `<td data-socid="${escapeHtml(String(row[k]))}"><div class="chat-cell">${val}</div></td>`;
+                        content += `<td class="tdoverflowmax100" data-socid="${escapeHtml(String(row[k]))}"><div class="chat-cell">${val}</div></td>`;
                     } else {
-                        content += `<td><div class="chat-cell">${val}</div></td>`;
+                        content += `<td${isTextCell(k, row[k]) ? ' class="tdoverflowmax100"' : ''}><div class="chat-cell">${val}</div></td>`;
                     }
                 });
                 content += '</tr>';
@@ -3316,7 +3406,11 @@ export function initAiAssistant(container) {
                 // in {count, offset, limit, results} would otherwise show only the
                 // counters, and the rows would never reach the user.
                 else if (Array.isArray(value) && value.length && typeof value[0] === 'object') {
-                    nested += formatResult(value, true, toolName);
+                    // Title of the table, except for the rows of a wrapper (data, results) that are the answer itself
+                    if (key !== 'data' && key !== 'results') {
+                        nested += `<div class="chat-nested-title">${escapeHtml(fieldLabel(key))}</div>`;
+                    }
+                    nested += formatResult(value, true, toolName, NESTED_COLUMNS[key] || null);
                 }
             }
             content += '</ul></div>';

@@ -75,6 +75,8 @@ class ToolApiBridge extends McpTool
 	 * carry this vocabulary — anything else gets every bridge tool filtered
 	 * out of the prompt. Endpoints absent from this map (external modules)
 	 * fall back to all categories so they stay selectable.
+	 * A query naming objects is narrowed first to their tools: give its $enrichments entry 'langs', 'keys' and 'synonyms' (classifyQueryObjects()),
+	 * and 'combines' (object found => keys) when another object plus one of these words names it ("pedidos de proveedores").
 	 */
 	const ENDPOINT_CATEGORIES = array(
 		'thirdparties' => array('thirdparty', 'billing', 'commercial'),
@@ -373,6 +375,7 @@ class ToolApiBridge extends McpTool
 		'page' => "Zero-based page index for pagination.",
 		'sqlfilters' => "Dolibarr Universal Search Filter (see 'sqlfilters format' in instructions): (t.field:operator:'value') combined with AND/OR and parentheses. E.g. \"(t.ref:like:'AB%') AND (t.datefield:>=:'2026-01-01')\"",
 		'properties' => "Comma-separated list of properties to include in the response, to reduce its size (e.g. 'id,ref,label').",
+		'count' => "Set to 1 to get only the number of records matching the filters, as {\"count\": N}, instead of the records (limit, page and sort are then ignored). Use it to answer a 'how many' question.",
 		'id' => "Integer technical ID of the record."
 	];
 
@@ -419,6 +422,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['thirdparties'] = [
 			'label' => 'third parties (customers, prospects, suppliers)',
+			'langs' => array('companies', 'commercial', 'suppliers'),
+			'keys' => array('ThirdParty', 'ThirdParties', 'Customer', 'Prospect', 'Supplier', 'Company', 'Customers', 'Prospects', 'Suppliers', 'Companies'),
+			'synonyms' => array('client', 'customer', 'prospect', 'supplier', 'vendor', 'company'),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -458,7 +464,7 @@ class ToolApiBridge extends McpTool
 					'params' => [
 						'mode' => "Nature filter: 0=all (default), 1=customers/prospects, 2=prospects only, 3=neither customer nor prospect, 4=suppliers.",
 						'category' => "Rowid of a third-party category (tag) to restrict the list to.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}} instead of a bare list; use it to know the total count."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}} instead of a bare list. To know only how many third parties match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -490,6 +496,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['categories'] = [
 			'label' => 'categories / tags',
+			'langs' => array('main'),
+			'keys' => array('Category', 'Categories'),
+			'synonyms' => array('category', 'categorie', 'tag'),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -527,6 +536,10 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['supplier_invoices'] = [
 			'label' => 'supplier invoices (vendor bills)',
+			'langs' => array('bills', 'companies', 'suppliers'),
+			'keys' => array('SupplierInvoice', 'BillsSuppliers'),
+			'synonyms' => array('supplier invoice'),
+			'combines' => array('invoices' => array('Supplier', 'Suppliers')),
 			'methods' => [
 				'index' => [
 					'description' => "List supplier invoices (vendor bills). Filter with sqlfilters, for example to restrict to one supplier.",
@@ -564,6 +577,10 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['supplier_orders'] = [
 			'label' => 'supplier order (purchase order)',
+			'langs' => array('orders', 'companies', 'suppliers'),
+			'keys' => array('SupplierOrder', 'SuppliersOrders'),
+			'synonyms' => array('purchase order', 'supplier order'),
+			'combines' => array('orders' => array('Supplier', 'Suppliers')),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -618,6 +635,10 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['supplier_proposals'] = [
 			'label' => 'supplier proposal (price request)',
+			'langs' => array('supplier_proposal', 'companies', 'suppliers'),
+			'keys' => array('SupplierProposalShort', 'SupplierProposalsShort', 'SupplierProposal'),
+			'synonyms' => array('price request', 'supplier proposal'),
+			'combines' => array('proposals' => array('Supplier', 'Suppliers')),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -648,6 +669,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['invoices'] = [
 			'label' => 'customer invoices',
+			'langs' => array('bills'),
+			'keys' => array('Invoice', 'Invoices', 'Bill'),
+			'synonyms' => array('invoice', 'bill'),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -678,7 +702,7 @@ class ToolApiBridge extends McpTool
 						'status' => "One of 'draft', 'unpaid' (validated and not fully paid), 'paid', 'cancelled'. Empty = all.",
 						'withLines' => "false to omit invoice lines from each record (recommended for lists).",
 						'loadlinkedobjects' => "1 to include linked objects (orders, proposals, shipments) — slower, default 0.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many invoices match."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many invoices match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -715,6 +739,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['orders'] = [
 			'label' => 'sale orders',
+			'langs' => array('orders'),
+			'keys' => array('Order', 'Orders'),
+			'synonyms' => array('order'),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -741,7 +768,7 @@ class ToolApiBridge extends McpTool
 					'params' => [
 						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
 						'loadlinkedobjects' => "1 to include linked objects (proposals, shipments, invoices) — slower, default 0.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many orders match."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many orders match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -759,6 +786,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['proposals'] = [
 			'label' => 'commercial proposals (quotes / devis)',
+			'langs' => array('propal'),
+			'keys' => array('Proposal', 'Proposals'),
+			'synonyms' => array('proposal', 'quote', 'propal', 'propale', 'devis'),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -783,7 +813,7 @@ class ToolApiBridge extends McpTool
 					'params' => [
 						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
 						'loadlinkedobjects' => "1 to include linked objects (orders, invoices) — slower, default 0.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many proposals match."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many proposals match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -801,6 +831,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['tickets'] = [
 			'label' => 'support tickets',
+			'langs' => array('ticket'),
+			'keys' => array('Ticket', 'Tickets'),
+			'synonyms' => array('ticket', 'incident', 'support'),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -1005,6 +1038,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['projects'] = [
 			'label' => 'projects (including opportunities/leads)',
+			'langs' => array('main'),
+			'keys' => array('Project', 'Projects'),
+			'synonyms' => array('project'),
 			'methods' => [
 				'index' => [
 					'default_properties' => 'id,ref,title,fk_soc,public,date_start,date_end,fk_statut,opp_status,opp_amount',
@@ -1031,6 +1067,9 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['project_tasks'] = [
 			'endpoint' => 'tasks',
 			'label' => 'project tasks',
+			'langs' => array('projects'),
+			'keys' => array('Task', 'Tasks'),
+			'synonyms' => array('task'),
 			'methods' => [
 				'index' => [
 					'default_properties' => 'id,ref,label,fk_projet,progress,planned_workload,duration_effective,date_start,date_end',
@@ -1077,6 +1116,9 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['project'] = [
 			'endpoint' => 'tasks',
 			'label' => 'project tasks',
+			'langs' => array('projects'),
+			'keys' => array('Task', 'TimeSpent', 'Tasks'),
+			'synonyms' => array('task', 'timesheet', 'time spent'),
 			'methods' => [
 				'addTimeSpent' => [
 					'suffix' => 'tasks_timespent_create',
@@ -1110,6 +1152,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['agendaevents'] = [
 			'label' => 'agenda / calendar events (meetings, calls)',
+			'langs' => array('main', 'agenda', 'commercial'),
+			'keys' => array('Event', 'Events', 'Agenda', 'ActionAC_RDV'),
+			'synonyms' => array('event', 'meeting', 'appointment', 'rdv'),
 			'methods' => [
 				'index' => [
 					'default_properties' => 'id,ref,label,type_code,datep,datef,fulldayevent,percentage,fk_soc,userownerid',
@@ -1127,6 +1172,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['interventions'] = [
 			'label' => 'field service interventions',
+			'langs' => array('interventions'),
+			'keys' => array('Intervention', 'Interventions'),
+			'synonyms' => array('intervention'),
 			'methods' => [
 				'index' => [
 					'default_properties' => 'id,ref,socid,fk_statut,description,datec,duration',
@@ -1144,6 +1192,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['contracts'] = [
 			'label' => 'contracts (recurring services)',
+			'langs' => array('contracts'),
+			'keys' => array('Contract', 'Contracts'),
+			'synonyms' => array('contract'),
 			'methods' => [
 				'index' => [
 					'default_properties' => 'id,ref,socid,date_contrat,statut',
@@ -1168,6 +1219,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['members'] = [
 			'label' => 'foundation/association members',
+			'langs' => array('members'),
+			'keys' => array('Member', 'Members'),
+			'synonyms' => array('member', 'adherent', 'membership'),
 			'methods' => [
 				'index' => [
 					'default_properties' => 'id,ref,firstname,lastname,societe,email,typeid,statut,datefin',
@@ -1196,6 +1250,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['subscriptions'] = [
 			'label' => 'subscriptions',
+			'langs' => array('members'),
+			'keys' => array('Subscription', 'Subscriptions'),
+			'synonyms' => array('subscription', 'cotisation', 'adhesion', 'membership'),
 			'methods' => [
 				'index' => [
 					'description' => "All membership subscriptions (with fee payments or not) across members: fk_adherent (member rowid), dateh (period start), datef (period end), amount. NB: the default sortfield here is 'dateadh' WITHOUT the 't.' prefix (API quirk). To get the fees of one member prefer api_members_subscriptions_list.",
@@ -1211,6 +1268,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['stockmovements'] = [
 			'label' => 'stock movements (in/out/transfer history)',
+			'langs' => array('stocks'),
+			'keys' => array('StockMovement', 'StockMovements'),
+			'synonyms' => array('stock movement', 'stock'),
 			'methods' => [
 				'index' => [
 					'default_properties' => 'id,product_id,warehouse_id,qty,date,type,label,inventorycode',
@@ -1225,6 +1285,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['warehouses'] = [
 			'label' => 'warehouses',
+			'langs' => array('stocks'),
+			'keys' => array('Warehouse', 'Warehouses'),
+			'synonyms' => array('warehouse'),
 			'methods' => [
 				'index' => [
 					'description' => "Warehouses/locations: ref (name), lieu (short location), statut (1=open, 0=closed). Search by name with sqlfilters on t.ref. Per-product stock by warehouse is NOT here — use api_products_get with includestockdata=1.",
@@ -1241,6 +1304,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['shipments'] = [
 			'label' => 'customer shipments (expéditions, goods sent)',
+			'langs' => array('sendings'),
+			'keys' => array('Shipment', 'Shipments', 'Sending'),
+			'synonyms' => array('shipment', 'shipping', 'delivery'),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -1272,7 +1338,7 @@ class ToolApiBridge extends McpTool
 					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods left), 2=closed (billed / processed). Dates are unix timestamps: date_shipping (sent), date_delivery (planned delivery). Useful sqlfilters fields: t.ref, t.ref_customer, t.fk_soc, t.fk_statut, t.date_delivery.",
 					'params' => [
 						'thirdparty_ids' => "Comma-separated third-party rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many shipments match."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many shipments match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -1288,6 +1354,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['receptions'] = [
 			'label' => 'supplier receptions (réceptions, goods received)',
+			'langs' => array('receptions'),
+			'keys' => array('Reception', 'Receptions'),
+			'synonyms' => array('reception', 'receive'),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -1323,7 +1392,7 @@ class ToolApiBridge extends McpTool
 					'description' => "Statuses (t.fk_statut): 0=draft (reference '(PROVnn)' until validated), 1=validated (goods received into stock), 2=closed / processed. Dates are unix timestamps: date_reception (received), date_delivery (planned). Useful sqlfilters fields: t.ref, t.ref_supplier, t.fk_soc, t.fk_statut, t.date_delivery. A draft created by the chat keeps its '(PROVnn)' reference: search it by id or with sqlfilters on t.ref_supplier.",
 					'params' => [
 						'thirdparty_ids' => "Comma-separated supplier rowids to restrict to (e.g. '1,5'). Look the rowid up with api_thirdparties_list first when only a name is known.",
-						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many receptions match."
+						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many receptions match, use count=1 instead."
 					]
 				],
 				'get' => [
@@ -1339,6 +1408,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['expensereports'] = [
 			'label' => 'employee expense reports (notes de frais)',
+			'langs' => array('main'),
+			'keys' => array('ExpenseReport', 'ExpenseReports'),
+			'synonyms' => array('expense report', 'expense'),
 			'methods' => [
 				'index' => [
 					'default_properties' => 'id,ref,fk_user_author,date_debut,date_fin,total_ht,total_ttc,fk_statut',
@@ -1374,6 +1446,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['products'] = [
 			'label' => 'products and services catalog',
+			'langs' => array('products'),
+			'keys' => array('Product', 'Products', 'Service'),
+			'synonyms' => array('product', 'item', 'sku', 'stock'),
 			'methods' => [
 				'post' => [
 					'suffix' => 'create',
@@ -1386,8 +1461,8 @@ class ToolApiBridge extends McpTool
 						'product_create' => true,
 						// As the creation form proposes: on sale, on purchase, a weight in kilograms.
 						'defaults' => ['status' => 1, 'status_buy' => 1, 'weight_units' => 0],
-						// Said by name, stored by rowid.
-						'rename' => ['unit' => 'fk_unit', 'default_warehouse' => 'fk_default_warehouse'],
+						// Said by name, stored by rowid. The type of the barcode is read by the product class as barcode_type.
+						'rename' => ['unit' => 'fk_unit', 'default_warehouse' => 'fk_default_warehouse', 'fk_barcode_type' => 'barcode_type'],
 						'right' => ['produit', 'creer']
 					],
 					'params' => [
@@ -1411,7 +1486,7 @@ class ToolApiBridge extends McpTool
 						'mode' => "0=all (default), 1=products only, 2=services only.",
 						'category' => "Rowid of a product category to restrict the list to.",
 						'variant_filter' => "0=all (default), 1=products without variants, 2=parents of variants only, 3=variants only.",
-						'ids_only' => "true to return only rowids (fast, use for counting).",
+						'ids_only' => "true to return only rowids (fast). To know only how many products match, use count=1 instead.",
 						'includestockdata' => "1 to add stock_reel / stock_theorique per product (slower; requires the Stock module).",
 						'pagination_data' => "Set to true to get {data, pagination:{total,page,page_count,limit}}."
 					]
@@ -1644,6 +1719,8 @@ class ToolApiBridge extends McpTool
 	 * under the module name since the results of all modules are merged:
 	 *   array('mymodule' => array('endpointkey' => array('label' => ..., 'methods' => array(...))))
 	 * where 'endpointkey' is the X of the module's api_X.class.php file.
+	 * Optional 'langs' (lang files, e.g. 'mymodule@mymodule'), 'keys', 'synonyms' and 'combines' (see ENDPOINT_CATEGORIES) name the object in a query:
+	 * the assistant then sends its tools only when the query names it, as for the core endpoints.
 	 *
 	 * @return void
 	 */
@@ -1703,10 +1780,16 @@ class ToolApiBridge extends McpTool
 	{
 		global $mysoc, $dolibarr_website_allow_custom_php;
 
-		$pagination = "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many records match.";
+		// pagination_data of the list methods, that also accept count=1 to only count the records
+		$pagination = "Set to true to get {data, pagination:{total,page,page_count,limit}}. To know only how many records match, use count=1 instead.";
+		// pagination_data of the list methods with no parameter count
+		$paginationnocount = "Set to true to get {data, pagination:{total,page,page_count,limit}}; use it to know how many records match.";
 
 		$this->enrichments['bankaccounts'] = array(
 			'label' => 'bank and cash accounts',
+			'langs' => array('banks'),
+			'keys' => array('BankAccount', 'BankAccounts', 'Bank'),
+			'synonyms' => array('bank'),
 			'methods' => array(
 				'index' => array(
 					'default_properties' => 'id,ref,label,bank,currency_code,clos,courant',
@@ -1733,6 +1816,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['variouspayments'] = array(
 			'label' => 'miscellaneous bank payments',
+			'langs' => array('banks'),
+			'keys' => array('VariousPayment', 'VariousPayments'),
+			'synonyms' => array('various payment'),
 			'methods' => array(
 				'index' => array(
 					'description' => "Payments recorded directly on a bank account, outside invoices: date (datep), amount, sens (0 money out, 1 money in), label, accounting account.",
@@ -1744,6 +1830,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['socialcontributions'] = array(
 			'label' => 'social and fiscal contributions (taxes, charges)',
+			'langs' => array('compta'),
+			'keys' => array('SocialContribution', 'SocialContributions'),
+			'synonyms' => array('social contribution'),
 			'methods' => array(
 				'index' => array(
 					'description' => "Social and fiscal charges to pay: label, type, period, amount, paye (1 paid). Unpaid ones: sqlfilters \"(t.paye:=:0)\".",
@@ -1776,6 +1865,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['vatpayments'] = array(
 			'label' => 'VAT declarations and payments',
+			'langs' => array('compta', 'main'),
+			'keys' => array('VATDeclaration', 'VATDeclarations', 'VATPayment', 'VAT'),
+			'synonyms' => array('vat'),
 			'methods' => array(
 				'index' => array(
 					'description' => "VAT to pay or refund per period: label, period end (datev), amount, paye (1 paid).",
@@ -1808,6 +1900,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['donations'] = array(
 			'label' => 'donations',
+			'langs' => array('donations'),
+			'keys' => array('Donation', 'Donations'),
+			'synonyms' => array('donation'),
 			'methods' => array(
 				'index' => array(
 					'description' => "Donations received: donor, amount, date, project. Statuses (t.fk_statut): 0 draft, 1 validated (promised), 2 paid, -1 canceled.",
@@ -1822,6 +1917,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['holidays'] = array(
 			'label' => 'leave requests (holidays, days off)',
+			'langs' => array('holiday'),
+			'keys' => array('Holiday', 'Holidays', 'Leave'),
+			'synonyms' => array('leave', 'holiday'),
 			'methods' => array(
 				'index' => array(
 					'description' => "Leave requests of employees: fk_user (the employee, a USER rowid), date_debut / date_fin (start / end), leave type (fk_type). Statuses (t.statut): 1 draft, 2 waiting for approval, 3 approved, 4 canceled, 5 refused. Who is off on a day: approved ones with sqlfilters \"(t.date_debut:<=:'YYYY-MM-DD') AND (t.date_fin:>=:'YYYY-MM-DD')\".",
@@ -1841,6 +1939,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['boms'] = array(
 			'label' => 'bills of materials (BOM)',
+			'langs' => array('mrp'),
+			'keys' => array('BillOfMaterials', 'Bom', 'BOM'),
+			'synonyms' => array('bom'),
 			'methods' => array(
 				'index' => array(
 					'description' => "Bills of materials: ref, label, the product it makes (fk_product), quantity made. Statuses (t.status): 0 draft, 1 validated, 9 canceled. The components are in api_boms_lines_list."
@@ -1856,6 +1957,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['mos'] = array(
 			'label' => 'manufacturing orders (MO)',
+			'langs' => array('mrp'),
+			'keys' => array('ManufacturingOrder', 'MOs'),
+			'synonyms' => array('manufacturing order'),
 			'methods' => array(
 				'index' => array(
 					'description' => "Manufacturing orders: ref, product to make (fk_product), quantity, bill of materials (fk_bom), planned dates. Statuses (t.status): 0 draft, 1 validated (to produce), 2 in progress, 3 produced, 9 canceled."
@@ -1866,6 +1970,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['productlots'] = array(
 			'label' => 'product lots and serial numbers',
+			'langs' => array('productbatch'),
+			'keys' => array('Batch'),
+			'synonyms' => array('lot', 'batch', 'serial'),
 			'methods' => array(
 				'index' => array(
 					'description' => "Lots and serial numbers of products: batch (the number), fk_product, eat-by date (eatby), sell-by date (sellby). Lots of one product: sqlfilters \"(t.fk_product:=:ID)\".",
@@ -1877,6 +1984,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['workstations'] = array(
 			'label' => 'workstations (manufacturing)',
+			'langs' => array('mrp'),
+			'keys' => array('Workstation', 'Workstations'),
+			'synonyms' => array('workstation'),
 			'methods' => array(
 				'index' => array('description' => "Workstations used in manufacturing: ref, label, type, hourly costs."),
 				'get' => array(
@@ -1889,6 +1999,7 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['knowledgemanagement'] = array(
 			'label' => 'knowledge base articles',
+			'synonyms' => array('knowledge'),
 			'methods' => array(
 				'index' => array(
 					'description' => "Knowledge base articles: ref, question, answer, language. Statuses (t.status): 0 draft, 1 validated, 9 canceled. Search the question with sqlfilters \"(t.question:like:'%word%')\".",
@@ -1903,6 +2014,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['memberstypes'] = array(
 			'label' => 'member types',
+			'langs' => array('members'),
+			'keys' => array('MemberType', 'MembersTypes'),
+			'synonyms' => array('member type'),
 			'methods' => array(
 				'index' => array('description' => "Types of members: label, whether a subscription is due, its amount and duration."),
 				'get' => array('description' => "One member type.")
@@ -1911,6 +2025,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['partnerships'] = array(
 			'label' => 'partnerships',
+			'langs' => array('partnership'),
+			'keys' => array('Partnership', 'Partnerships'),
+			'synonyms' => array('partner', 'partnership'),
 			'methods' => array(
 				'index' => array('description' => "Partnerships with third parties or members: type, dates. Statuses (t.status): 0 draft, 1 validated, 2 approved, 3 refused, 9 canceled."),
 				'get' => array('description' => "One partnership.")
@@ -1919,6 +2036,9 @@ class ToolApiBridge extends McpTool
 
 		$this->enrichments['multicurrencies'] = array(
 			'label' => 'currencies and exchange rates',
+			'langs' => array('main'),
+			'keys' => array('Currency'),
+			'synonyms' => array('currency'),
 			'methods' => array(
 				'index' => array('description' => "Currencies in use, with their code and current rate."),
 				'get' => array(
@@ -1945,6 +2065,9 @@ class ToolApiBridge extends McpTool
 		$websitephpcontent = ($websitephpallowed ? "PHP code (<?php ... ?>) is allowed only if the user has the permission to edit PHP content." : "Never add or change PHP code: keep the existing PHP blocks (<?php ... ?>) exactly as they are.");
 		$this->enrichments['websites'] = array(
 			'label' => 'websites (website module)',
+			'langs' => array('main'),
+			'keys' => array('WebSite'),
+			'synonyms' => array('website', 'webpage', 'blog'),
 			'methods' => array(
 				'index' => array(
 					'description' => "Websites built with the website module: ref, description, main language, virtual host, home page (fk_default_home). Statuses (t.status): 0 offline, 1 online.",
@@ -2031,6 +2154,9 @@ class ToolApiBridge extends McpTool
 		// Contacts (people of third parties), read side.
 		$this->enrichments['contacts'] = array(
 			'label' => 'contacts (people of third parties)',
+			'langs' => array('companies'),
+			'keys' => array('Contact', 'Contacts'),
+			'synonyms' => array('contact'),
 			'methods' => array(
 				'index' => array(
 					'default_properties' => 'id,firstname,lastname,poste,email,phone_pro,phone_mobile,socid,statut',
@@ -2086,6 +2212,9 @@ class ToolApiBridge extends McpTool
 		// creation, password, group assignment) is left out on purpose.
 		$this->enrichments['users'] = array(
 			'label' => 'users (staff accounts) and user groups',
+			'langs' => array('main'),
+			'keys' => array('User', 'Users', 'Group'),
+			'synonyms' => array('user', 'employee'),
 			'methods' => array(
 				'index' => array(
 					'default_properties' => 'id,login,firstname,lastname,email,job,statut,admin,employee',
@@ -2159,6 +2288,7 @@ class ToolApiBridge extends McpTool
 		// to a model, even behind a confirmation. delete stays out too.
 		$this->enrichments['cronjobs'] = array(
 			'label' => 'scheduled cron jobs',
+			'synonyms' => array('cron', 'scheduled job'),
 			'methods' => array(
 				'index' => array(
 					'default_properties' => 'id,label,jobtype,module_name,command,classesname,methodename,frequency,unitfrequency,status,datelastrun,datenextrun,lastresult,nbrun',
@@ -2195,6 +2325,9 @@ class ToolApiBridge extends McpTool
 		$this->enrichments['project_tasks_timespent'] = array(
 			'endpoint' => 'projects',
 			'label' => 'time spent on project tasks',
+			'langs' => array('projects'),
+			'keys' => array('Task', 'TimeSpent', 'Tasks'),
+			'synonyms' => array('task', 'timesheet', 'time spent'),
 			'methods' => array(
 				'listTimespent' => array(
 					'suffix' => 'list',
@@ -2210,7 +2343,7 @@ class ToolApiBridge extends McpTool
 				'listProducts' => array(
 					'suffix' => 'products_list',
 					'description' => "Products stored in one warehouse, with their stock there when includestockdata=1. Answers \"what is in warehouse X\".",
-					'params' => array('id' => "Rowid of the warehouse.", 'includestockdata' => "1 to add the stock of each product.", 'pagination_data' => $pagination)
+					'params' => array('id' => "Rowid of the warehouse.", 'includestockdata' => "1 to add the stock of each product.", 'pagination_data' => $paginationnocount)
 				)
 			),
 			'products' => array(
@@ -3639,6 +3772,11 @@ class ToolApiBridge extends McpTool
 				$def = $this->buildToolDefinition($ep, $key, $method, $toolname, $meta);
 				if ($def) {
 					$def['categories'] = self::ENDPOINT_CATEGORIES[$key] ?? array('billing', 'commercial', 'thirdparty', 'stock', 'project', 'reporting');
+					$def['objects'] = array($key);
+					$words = array_intersect_key($this->enrichments[$key], array_flip(array('langs', 'keys', 'synonyms', 'combines')));
+					if (!empty($words)) {
+						$def['vocabulary'] = array($key => $words);
+					}
 					$this->defs[] = $def;
 					$this->routes[$toolname] = [$key, $method];
 				}
@@ -3715,6 +3853,7 @@ class ToolApiBridge extends McpTool
 		$objectsOf = array();
 		$categories = array();
 		$descriptions = array();
+		$vocabulary = array();
 		foreach ($sources as $key => $def) {
 			foreach ((array) ($def['inputSchema']['properties'] ?? array()) as $pname => $pdef) {
 				$objectsOf[$pname][] = $key;
@@ -3729,6 +3868,7 @@ class ToolApiBridge extends McpTool
 			$categories = array_merge($categories, (array) ($def['categories'] ?? array()));
 			if (isset($merged[$key])) {
 				$descriptions[] = $key.': '.(string) ($def['description'] ?? '');
+				$vocabulary = array_merge($vocabulary, (array) ($def['vocabulary'] ?? array()));
 			}
 		}
 		if (!empty($viaobjects)) {
@@ -3748,7 +3888,9 @@ class ToolApiBridge extends McpTool
 			'name' => $mergedName,
 			'description' => $mconf['description'].' '.implode(' ', $descriptions),
 			'inputSchema' => array('type' => 'object', 'properties' => $properties, 'required' => array_values(array_unique(array_merge(array('object'), (array) $required)))),
-			'categories' => array_values(array_unique($categories))
+			'categories' => array_values(array_unique($categories)),
+			'objects' => array_keys($sources),
+			'vocabulary' => $vocabulary
 		);
 		$this->defs = $kept;
 	}
@@ -7162,7 +7304,64 @@ class ToolApiBridge extends McpTool
 			$args['code_fournisseur'] = 'auto';
 		}
 
+		// The codes, checked as the creation will check them. A numbering rule that leaves the code free
+		// does not number it: when the code is mandatory, core refuses the creation once the user has
+		// approved, with nothing that says why. Asked for now instead.
+		if ($this->db && (!empty($args['client']) || !empty($args['fournisseur']))) {
+			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+			$probe = new Societe($this->db);
+			$probe->name = $name;
+			$probe->client = (int) ($args['client'] ?? 0);
+			$probe->fournisseur = empty($args['fournisseur']) ? 0 : 1;
+			$probe->country_id = (int) ($args['country'] ?? 0);
+			if ($probe->client) {
+				$probe->code_client = is_scalar($args['code_client']) ? trim((string) $args['code_client']) : '';
+				$numbered = in_array($probe->code_client, array('auto', '-1'), true);
+				if ($numbered) {
+					$probe->get_codeclient($probe, 0);
+				}
+				$this->thirdpartyCodeProblem($probe->check_codeclient(), $numbered, (string) $probe->code_client, 'code_client', 'CustomerCode', array(-1 => 'ErrorBadCustomerCodeSyntax', -3 => 'ErrorCustomerCodeAlreadyUsed', -4 => 'ErrorPrefixRequired'));
+			}
+			if ($probe->fournisseur) {
+				$probe->code_fournisseur = is_scalar($args['code_fournisseur']) ? trim((string) $args['code_fournisseur']) : '';
+				$numbered = in_array($probe->code_fournisseur, array('auto', '-1'), true);
+				if ($numbered) {
+					$probe->get_codefournisseur($probe, 1);
+				}
+				$this->thirdpartyCodeProblem($probe->check_codefournisseur(), $numbered, (string) $probe->code_fournisseur, 'code_fournisseur', 'SupplierCode', array(-1 => 'ErrorBadSupplierCodeSyntax', -3 => 'ErrorSupplierCodeAlreadyUsed', -4 => 'ErrorPrefixRequired'));
+			}
+		}
+
 		return $args;
+	}
+
+	/**
+	 * Say why the code of a third party to create would be refused, from the answer of the numbering rule.
+	 *
+	 * @param  int               $rescode  Answer of Societe::check_codeclient() or check_codefournisseur() (0 or -5 = accepted).
+	 * @param  bool              $numbered True when the code was left to Dolibarr.
+	 * @param  string            $code     Code checked.
+	 * @param  string            $field    Argument that carries the code.
+	 * @param  string            $labelkey Translation key of the name of the code.
+	 * @param  array<int,string> $errors   Translation key of the reason, by answer.
+	 * @return void
+	 */
+	private function thirdpartyCodeProblem($rescode, $numbered, $code, $field, $labelkey, array $errors)
+	{
+		global $langs;
+
+		if ($rescode == 0 || $rescode == -5) {
+			return;
+		}
+		$langs->loadLangs(array('other', 'errors', 'companies'));
+		$label = dol_strtolower($langs->transnoentitiesnoconv($labelkey));
+		if ($rescode == -2 || ($numbered && $code === '')) {
+			// A mandatory code that the numbering rule does not give.
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteThirdpartyCodeRequired', $label, $field);
+		} else {
+			$reason = isset($errors[$rescode]) ? $langs->transnoentitiesnoconv($errors[$rescode]) : $langs->transnoentitiesnoconv('Error').' '.$rescode;
+			$this->writeProblems[] = $langs->transnoentitiesnoconv('AIWriteThirdpartyCodeRefused', $label, $code, $reason);
+		}
 	}
 
 	/**
