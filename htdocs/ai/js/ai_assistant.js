@@ -3077,7 +3077,7 @@ export function initAiAssistant(container) {
             }
         } catch (e) {
             if (state.loadingMsg.parentNode) state.loadingMsg.remove();
-            if (!pageLeaving) appendMsg('error', t('NetworkError') + ': ' + e.message);
+            if (!pageLeaving && !pageLeftOnce) appendMsg('error', t('NetworkError') + ': ' + e.message);
         }
         input.disabled = false;
         input.focus();
@@ -3105,6 +3105,7 @@ export function initAiAssistant(container) {
     async function fetchIntent(state, chosenModel, pinned) {
         const { round, sentQuery, followupSnippets, followupResult, sentChoices, pageContext } = state;
         const requestKey = newRequestKey();
+        pageLeftOnce = false;
         pendingSave({
             key: requestKey, query: state.query, sentQuery: sentQuery, round: round,
             followupSnippets: followupSnippets, followupResult: followupResult, sentChoices: sentChoices,
@@ -3133,8 +3134,10 @@ export function initAiAssistant(container) {
             pendingClear(requestKey);
             return intent;
         } catch (e) {
+            // Browsers may abort the fetch as soon as a link is followed, before pagehide: wait for the page to go.
+            if (!(e && e.sessionExpired) && Date.now() - navigationStartedAt < LEAVE_WAIT_MS) await pageGone(LEAVE_WAIT_MS);
             // Leaving the page aborts the fetch: the next page fetches the answer instead.
-            if (!pageLeaving) pendingClear(requestKey);
+            if (!pageLeaving && !pageLeftOnce) pendingClear(requestKey);
             throw e;
         }
     }
@@ -3145,8 +3148,21 @@ export function initAiAssistant(container) {
     const PENDING_MAX_AGE_MS = Math.min(30 * 60, (parseInt(config.requestTimeLimit, 10) || 245) + 30) * 1000;
     const PENDING_POLL_MS = 3000;
     let pageLeaving = false;
-    window.addEventListener('pagehide', () => { pageLeaving = true; });
+    // beforeunload also fires for downloads and mailto links that keep the page: it only opens a wait for pagehide.
+    let navigationStartedAt = 0;
+    const LEAVE_WAIT_MS = 15000;
+    window.addEventListener('beforeunload', () => { navigationStartedAt = Date.now(); });
+    let pageLeftOnce = false;
+    window.addEventListener('pagehide', () => { pageLeaving = true; pageLeftOnce = true; });
     window.addEventListener('pageshow', () => { pageLeaving = false; });
+
+    function pageGone(maxMs) {
+        return new Promise((resolve) => {
+            const until = Date.now() + maxMs;
+            const check = () => { if (pageLeaving || pageLeftOnce || Date.now() > until) resolve(); else setTimeout(check, 100); };
+            check();
+        });
+    }
 
     function newRequestKey() {
         const bytes = new Uint8Array(16);
