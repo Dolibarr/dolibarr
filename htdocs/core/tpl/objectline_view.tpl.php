@@ -577,6 +577,49 @@ if ($object->element == 'commande' && isModEnabled('stock') && isModEnabled('shi
 	}
 	print '</td>';
 }
+// Received / to receive on an open supplier order (not on a closed one: nothing is left to receive):
+// quantities of the validated or closed receptions (and of the dispatches without reception), drafts shown apart.
+// One query per order, cached for the other lines.
+if ($object->element == 'order_supplier' && isModEnabled('stock') && in_array((int) $object->status, array(CommandeFournisseur::STATUS_ORDERSENT, CommandeFournisseur::STATUS_RECEIVED_PARTIALLY))) {
+	$coldisplay++;
+	print '<td class="linecolreceived right nowraponall">';
+	if ($line->fk_product > 0 && $line->product_type == 0 && !($line->info_bits & 2) && $line->qty > 0) {
+		static $receivedcache = array();
+		if (!isset($receivedcache[$object->id])) {
+			$receivedcache[$object->id] = array();
+			$sqlreceived = "SELECT rb.fk_elementdet,";
+			$sqlreceived .= " SUM(CASE WHEN r.rowid IS NULL OR r.fk_statut > 0 THEN rb.qty ELSE 0 END) as qty_received,";
+			$sqlreceived .= " SUM(CASE WHEN r.fk_statut = 0 THEN rb.qty ELSE 0 END) as qty_draft";
+			$sqlreceived .= " FROM ".$this->db->prefix()."receptiondet_batch as rb";
+			$sqlreceived .= " LEFT JOIN ".$this->db->prefix()."reception as r ON r.rowid = rb.fk_reception";
+			$sqlreceived .= " WHERE rb.fk_element = ".((int) $object->id)." AND rb.element_type = 'supplier_order'";
+			$sqlreceived .= " GROUP BY rb.fk_elementdet";
+			$resqlreceived = $this->db->query($sqlreceived);
+			if ($resqlreceived) {
+				while ($objreceived = $this->db->fetch_object($resqlreceived)) {
+					$receivedcache[$object->id][(int) $objreceived->fk_elementdet] = array('received' => (float) $objreceived->qty_received, 'draft' => (float) $objreceived->qty_draft);
+				}
+				$this->db->free($resqlreceived);
+			}
+		}
+		$langs->load("sendings");
+		$qtyreceived = isset($receivedcache[$object->id][$line->id]) ? $receivedcache[$object->id][$line->id]['received'] : 0;
+		$qtydraft = isset($receivedcache[$object->id][$line->id]) ? $receivedcache[$object->id][$line->id]['draft'] : 0;
+		$qtytoreceive = $line->qty - $qtyreceived;
+		print '<span title="'.dol_escape_htmltag($langs->trans("QtyReceived")).'">'.price2num($qtyreceived, 'MS').'</span>';
+		if ($qtytoreceive > 0) {
+			print '<br><span class="small warning nowraponall">'.$langs->trans("QtyToReceive").' : '.price2num($qtytoreceive, 'MS').'</span>';
+		} else {
+			print ' '.img_picto($langs->trans("Received"), 'check', 'class="valignmiddle opacitymedium"');
+		}
+		if ($qtydraft > 0) {
+			print '<br><span class="small opacitymedium nowraponall">+'.price2num($qtydraft, 'MS').' ('.$langs->trans("Draft").')</span>';
+		}
+	} else {
+		print '&nbsp;';
+	}
+	print '</td>';
+}
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit nowrap left">';
 	$label = $line->getLabelOfUnit('short', $langs);
