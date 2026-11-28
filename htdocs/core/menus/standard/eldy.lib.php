@@ -1368,6 +1368,10 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$langs->load("products");
 				$newmenu->add(dolBuildUrl('/product/admin/product_tools.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("ProductVatMassChange"), 1, $user->admin);
 			}
+			if (isModEnabled('stock')) {
+				$langs->load("stocks");
+				$newmenu->add(dolBuildUrl('/product/admin/stock_tools.php', ['mainmenu' => 'home', 'leftmenu' => 'admintools']), $langs->trans("Stock"), 1, $user->admin);
+			}
 		}
 
 		$newmenu->add(dolBuildUrl('/user/home.php', ['leftmenu' => 'users']), $langs->trans("MenuUsersAndGroups"), 0, $user->hasRight('user', 'user', 'read'), '', $mainmenu, 'users', 0, '', '', '', img_picto('', 'user', 'class="paddingright pictofixedwidth"'));

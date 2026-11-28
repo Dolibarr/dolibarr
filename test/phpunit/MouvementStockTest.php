@@ -280,4 +280,58 @@ class MouvementStockTest extends CommonClassTest
 		print __METHOD__." balance=".$balance."\n";
 		$this->assertEquals(2.5, $balance, 'Fractional stock balance must not be truncated to an integer');
 	}
+
+	/**
+	 * testStockDifferences
+	 *
+	 * A stock that differs from the sum of the movements is found, then regularized without changing the stock.
+	 *
+	 * @return	void
+	 */
+	public function testStockDifferences()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$product = new Product($db);
+		$product->initAsSpecimen();
+		$product->ref .= ' phpunit differences';
+		$product->label .= ' phpunit differences';
+		$productid = $product->create($user);
+		$this->assertGreaterThan(0, $productid, 'Failed to create product');
+
+		$warehouse = new Entrepot($db);
+		$warehouse->initAsSpecimen();
+		$warehouse->label .= ' phpunit differences';
+		$warehouseid = $warehouse->create($user);
+		$this->assertGreaterThan(0, $warehouseid, 'Failed to create warehouse');
+
+		$movement = new MouvementStock($db);
+		$result = $movement->_create($user, $productid, $warehouseid, 5, 0, 10, 'Input for unit test');
+		$this->assertGreaterThan(0, $result, 'Failed to create stock movement');
+
+		$differences = $movement->getStockDifferences($productid, $warehouseid);
+		$this->assertIsArray($differences);
+		$this->assertCount(0, $differences, 'Stock equal to the movements must not be listed');
+
+		// Stock changed without movement
+		$db->query("UPDATE ".$db->prefix()."product_stock SET reel = 8 WHERE fk_product = ".((int) $productid)." AND fk_entrepot = ".((int) $warehouseid));
+		$differences = $movement->getStockDifferences($productid, $warehouseid);
+		$this->assertIsArray($differences);
+		$this->assertCount(1, $differences, 'Stock different from the movements must be listed');
+		$this->assertEquals(3, $differences[0]['difference']);
+
+		$result = $movement->regularizeStockDifference($user, $productid, $warehouseid, 'Regularization for unit test', 'REGULPHPUNIT');
+		$this->assertGreaterThan(0, $result, 'Failed to regularize');
+		$this->assertCount(0, $movement->getStockDifferences($productid, $warehouseid), 'No difference after regularization');
+
+		$resql = $db->query("SELECT reel FROM ".$db->prefix()."product_stock WHERE fk_product = ".((int) $productid)." AND fk_entrepot = ".((int) $warehouseid));
+		$obj = $db->fetch_object($resql);
+		$this->assertEquals(8, (float) $obj->reel, 'The stock must not change');
+
+		$this->assertEquals(0, $movement->regularizeStockDifference($user, $productid, $warehouseid, 'Regularization for unit test', 'REGULPHPUNIT'), 'Nothing to do the second time');
+	}
 }
