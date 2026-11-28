@@ -773,3 +773,6 @@ ALTER TABLE llx_workstation_workstation ADD COLUMN last_main_doc varchar(255) AF
 --noqa:disable=PRS
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'AI_INTENT_PROMPT';
 --noqa:enable=PRS
+
+-- Add per entity default warehouse of products
+ALTER TABLE llx_product_perentity ADD COLUMN fk_default_warehouse integer DEFAULT NULL;
