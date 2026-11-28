@@ -114,13 +114,13 @@ class MultiCurrencies extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		$multicurrency = new MultiCurrency($this->db);
-		if (!$multicurrency->fetch($id)) {
-			throw new RestException(404, 'Currency not found');
-		}
-
 		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
 			throw new RestException(401, "Insufficient rights to read currency");
+		}
+
+		$multicurrency = new MultiCurrency($this->db);
+		if ($multicurrency->fetch($id) <= 0) {
+			throw new RestException(404, 'Currency not found');
 		}
 
 		return $this->_cleanObjectDatas($multicurrency);
@@ -139,13 +139,13 @@ class MultiCurrencies extends DolibarrApi
 	 */
 	public function getByCode($code)
 	{
-		$multicurrency = new MultiCurrency($this->db);
-		if (!$multicurrency->fetch('', $code)) {
-			throw new RestException(404, 'Currency not found');
-		}
-
 		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
 			throw new RestException(401, "Insufficient rights to read currency");
+		}
+
+		$multicurrency = new MultiCurrency($this->db);
+		if ($multicurrency->fetch('', $code) <= 0) {
+			throw new RestException(404, 'Currency not found');
 		}
 
 		return $this->_cleanObjectDatas($multicurrency);
@@ -164,13 +164,13 @@ class MultiCurrencies extends DolibarrApi
 	 */
 	public function getRates($id)
 	{
-		$multicurrency = new MultiCurrency($this->db);
-		if (!$multicurrency->fetch($id)) {
-			throw new RestException(404, 'Currency not found');
-		}
-
 		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
 			throw new RestException(401, "Insufficient rights to read currency rates");
+		}
+
+		$multicurrency = new MultiCurrency($this->db);
+		if ($multicurrency->fetch($id) <= 0) {
+			throw new RestException(404, 'Currency not found');
 		}
 
 		if ($multicurrency->fetchAllCurrencyRate() < 0) {
