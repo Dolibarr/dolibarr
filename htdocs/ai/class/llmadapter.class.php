@@ -578,7 +578,8 @@ class UniversalLLMAdapter
 		}
 		if ($this->lastTruncated) {
 			$maxTokensUsed = (int) ($data['max_tokens'] ?? ($data['generationConfig']['maxOutputTokens'] ?? 0));
-			dol_syslog("Answer truncated by the provider (stop reason = ".$stopReason.", max tokens = ".($maxTokensUsed > 0 ? $maxTokensUsed : 'default of provider').", model = ".$this->model.")", LOG_WARNING, 0, '_ai');
+			// A limit set by the caller (setMaxTokens()) is expected to cut the answer: no warning for it.
+			dol_syslog("Answer truncated by the provider (stop reason = ".$stopReason.", max tokens = ".($maxTokensUsed > 0 ? $maxTokensUsed : 'default of provider').", model = ".$this->model.")", $this->maxTokens > 0 ? LOG_DEBUG : LOG_WARNING, 0, '_ai');
 			return "Error: Answer truncated, the max number of tokens of the answer was reached (".($maxTokensUsed > 0 ? $maxTokensUsed : 'default of provider').")";
 		}
 

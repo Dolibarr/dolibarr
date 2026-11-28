@@ -3696,8 +3696,33 @@ function aiFollowupStepText(int $followupRound): string
 }
 
 /**
+ * Return the fixed turns that open every conversation when the catalog goes first: a user turn, then an assistant turn
+ *
+ * @return array<int,array{role:string,text:string}>
+ */
+function aiConversationOpening(): array
+{
+	return array(
+		array('role' => 'user', 'text' => 'Start of the conversation.'),
+		array('role' => 'assistant', 'text' => '{"tool":"respond_to_user","arguments":{"message":"Ready."}}'),
+	);
+}
+
+/**
+ * Return the messages of the warm-up request when the catalog goes first: the opening user turn alone (aiConversationOpening()).
+ * Its prompt is a prefix of the prompt of the first question of any conversation, so a local model (llama.cpp) can reuse its cache.
+ *
+ * @return array{history:array<int,array{role:string,text:string}>,user:string,attachments:array<int,array{mime:string,data:string}>}	Same shape as aiCatalogFirstMessages()
+ */
+function aiCatalogFirstWarmupMessages(): array
+{
+	return array('history' => array(), 'user' => aiConversationOpening()[0]['text'], 'attachments' => array());
+}
+
+/**
  * Return the messages of a round of the AI assistant when the catalog goes first. Each round only appends to the messages of the round before:
- * the question with its context, then the load_tools answer and the tools asked, then one result and one step instruction per followup round.
+ * the opening turns (aiConversationOpening()), the past turns, the question with its context, then the load_tools answer and the tools asked,
+ * then one result and one step instruction per followup round.
  * A local model with sliding window attention (llama.cpp) reuses its cache only for a prompt that extends the previous one.
  *
  * @param	array<int,array{role:string,text:string}>	$pastTurns			Turns before the question
@@ -3710,7 +3735,7 @@ function aiFollowupStepText(int $followupRound): string
  */
 function aiCatalogFirstMessages(array $pastTurns, string $question, string $loadToolsAnswer, string $toolsMessage, array $results, array $attachments = array()): array
 {
-	$turns = $pastTurns;
+	$turns = array_merge(aiConversationOpening(), $pastTurns);
 	$turns[] = array('role' => 'user', 'text' => $question, 'attachments' => $attachments);
 	if ($loadToolsAnswer !== '') {
 		$turns[] = array('role' => 'assistant', 'text' => $loadToolsAnswer);

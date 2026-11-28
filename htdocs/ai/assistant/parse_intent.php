@@ -120,6 +120,8 @@ try {
 	$raw_input = file_get_contents('php://input');
 	$data = json_decode($raw_input, true);
 	$query = isset($data['query']) ? trim($data['query']) : '';
+	// The warm-up must send the system prompt and the opening turn of a real first question, byte for byte (aiCatalogFirstWarmupMessages()).
+	$isWarmUp = !empty($data['warm_up']);
 	// Set by the chat when it calls back after running the read tool this
 	// endpoint flagged with needs_followup: the result is the last history turn.
 	// Value is the number of the followup round (1 or 2), 2 being the last one.
@@ -329,7 +331,13 @@ try {
 		$query = '/tools';
 	}
 
-	if (empty($query)) {
+	if ($isWarmUp && ($serviceKey !== 'custom' || !aiAssistantCatalogFirst())) {
+		ob_end_clean();
+		echo json_encode(array('status' => 'skipped'));
+		exit;
+	}
+
+	if (empty($query) && !$isWarmUp) {
 		ob_end_clean();
 		echo json_encode(["status" => "ok"]);
 		exit;
@@ -1058,6 +1066,21 @@ try {
 			// rule is only up there: repeat it last.
 			$systemPrompt .= "\n\nREMINDER: write all user-facing text (message, question, answer) in the SAME LANGUAGE as the user's message.";
 
+			if ($isWarmUp) {
+				$warmUpStatus = 'skipped';
+				// A cloud provider would bill the whole prompt on every chat opening: local OpenAI compatible service only.
+				if ($catalogFirst && $catalogPrompt !== '' && $serviceKey === 'custom' && $adapterType === 'openai') {
+					session_write_close();
+					$warmUpMessages = aiCatalogFirstWarmupMessages();
+					$adapter->setMaxTokens(1);
+					$adapter->generate($systemPrompt, $warmUpMessages['user'], 'text', $warmUpMessages['attachments'], $warmUpMessages['history']);
+					$warmUpStatus = 'warm_up';
+				}
+				ob_end_clean();
+				echo json_encode(array('status' => $warmUpStatus));
+				exit;
+			}
+
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog('parse_intent.php systemPrompt = '.$systemPrompt, LOG_DEBUG, 0, '_ai');
 				dol_syslog('parse_intent.php query = '.$query.$promptTail, LOG_DEBUG, 0, '_ai');
@@ -1404,6 +1427,12 @@ try {
 				}
 			}
 		}
+	}
+
+	if ($isWarmUp) {
+		ob_end_clean();
+		echo json_encode(array('status' => 'skipped'));
+		exit;
 	}
 
 	// Handle no AI Intent

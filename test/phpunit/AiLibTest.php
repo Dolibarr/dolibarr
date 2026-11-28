@@ -609,8 +609,14 @@ class AiLibTest extends CommonClassTest
 		$toolsMessage = aiCatalogFirstToolsMessage(array(array('name' => 'api_contacts_create', 'description' => 'Create a contact', 'parameters' => array())));
 		$this->assertStringStartsWith("## Tools:\n[{\"name\":\"api_contacts_create\"", $toolsMessage);
 
+		$opening = array(
+			array('role' => 'user', 'text' => 'Start of the conversation.'),
+			array('role' => 'assistant', 'text' => '{"tool":"respond_to_user","arguments":{"message":"Ready."}}'),
+		);
+		$this->assertSame($opening, aiConversationOpening());
 		$round1 = aiCatalogFirstMessages($past, $question, '', '', array());
-		$this->assertSame(array('history' => $past, 'user' => $question, 'attachments' => array()), $round1);
+		$this->assertSame(array('history' => array_merge($opening, $past), 'user' => $question, 'attachments' => array()), $round1, 'Every conversation starts with the same opening turns');
+		$this->assertSame(aiCatalogFirstMessages($past, $question, '', '', array()), $round1);
 		$round2 = aiCatalogFirstMessages($past, $question, $loadToolsAnswer, $toolsMessage, array());
 		$this->assertSame($flatten($round1), array_slice($flatten($round2), 0, count($flatten($round1))), 'Round 2 only appends to round 1: a model with sliding window attention reuses its cache only then');
 		$this->assertSame($toolsMessage, $round2['user']);
@@ -629,10 +635,31 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame($attachments, $round1WithFile['attachments'], 'Round 1: the files go with the question, the last message');
 		$round2WithFile = aiCatalogFirstMessages($past, $question, $loadToolsAnswer, $toolsMessage, array(), $attachments);
 		$this->assertSame(array(), $round2WithFile['attachments']);
-		$this->assertSame($attachments, $round2WithFile['history'][count($past)]['attachments'], 'Round 2: the files stay on the question turn, so round 2 extends round 1');
+		$this->assertSame($attachments, $round2WithFile['history'][count($opening) + count($past)]['attachments'], 'Round 2: the files stay on the question turn, so round 2 extends round 1');
 
-		$nextQuestion = aiCatalogFirstMessages(array_merge($flatten($step3), array(array('role' => 'assistant', 'text' => 'Done: api_contacts_create returned {"id":9}'))), 'et son téléphone ?', '', '', array());
+		$nextQuestion = aiCatalogFirstMessages(array_merge(array_slice($flatten($step3), count($opening)), array(array('role' => 'assistant', 'text' => 'Done: api_contacts_create returned {"id":9}'))), 'et son téléphone ?', '', '', array());
 		$this->assertSame($flatten($step3), array_slice($flatten($nextQuestion), 0, count($flatten($step3))), 'With the whole conversation as past turns, the next question appends too');
+	}
+
+	/**
+	 * testAiCatalogFirstWarmupMessages
+	 *
+	 * @return void
+	 */
+	public function testAiCatalogFirstWarmupMessages()
+	{
+		$flatten = static function (array $messages): array {
+			return array_merge($messages['history'], array(array('role' => 'user', 'text' => $messages['user'])));
+		};
+		$warmUpMessages = aiCatalogFirstWarmupMessages();
+		$this->assertSame(array('history' => array(), 'user' => 'Start of the conversation.', 'attachments' => array()), $warmUpMessages);
+		$this->assertSame($warmUpMessages, aiCatalogFirstWarmupMessages());
+
+		// The prompt of the warm-up must be an exact prefix of the prompt of the first question of any conversation.
+		$firstQuestion = aiCatalogFirstMessages(array(), "liste les tiers\n\n## Date\nCurrent date: 2026-11-28", '', '', array(), array(array('mime' => 'image/png', 'data' => 'iVBORw0KGgo=')));
+		$this->assertSame($flatten($warmUpMessages), array_slice($firstQuestion['history'], 0, count($flatten($warmUpMessages))));
+		$withPastTurns = aiCatalogFirstMessages(array(array('role' => 'user', 'text' => 'bonjour'), array('role' => 'assistant', 'text' => 'Bonjour !')), 'et ensuite ?', '', '', array());
+		$this->assertSame($flatten($warmUpMessages), array_slice($withPastTurns['history'], 0, count($flatten($warmUpMessages))));
 	}
 
 	/**

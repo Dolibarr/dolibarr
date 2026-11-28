@@ -392,6 +392,7 @@ export function initAiAssistant(container) {
         clearConversation();
         setConversationId(0);
         refreshContext();
+        warmUpConversation();
         input.focus();
     }
     // Non-destructive since the conversation stays in the history: no confirm.
@@ -2782,6 +2783,15 @@ export function initAiAssistant(container) {
     // Catalog first (local model), unless the context setting is 0: the whole conversation travels, the server keeps a window that does not slide turn by turn.
     const APPEND_ONLY_CONTEXT = parseInt(config.appendOnlyContext, 10) === 1;
 
+    function warmUpConversation() {
+        if (!APPEND_ONLY_CONTEXT || contextBubbles().length) return;
+        const chosenModel = resolveModel();
+        fetch(epUrl('parse_intent.php'), {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(chosenModel ? { warm_up: true, model: chosenModel } : { warm_up: true })
+        }).catch(() => {});
+    }
+
     // Bubbles that can be sent back as context (they carry a plain-text form).
     function contextBubbles() {
         return Array.from(chat.querySelectorAll('.msg')).filter((m) => m.dataset.aiRaw);
@@ -3463,6 +3473,7 @@ export function initAiAssistant(container) {
         loadConversation(openConv);
     } else {
         restoreChatHistory();
+        warmUpConversation();
     }
 }
 
