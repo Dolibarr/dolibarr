@@ -1668,6 +1668,7 @@ function dol_include_once($relpath, $classname = '')
  *  											1=Used for an URL path (output relative),
  *  											2=Used for an URL path (output full path using same host that current url),
  *  											3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file, for an access from internet)
+ *  											-1=Used for an URL path (output relative to DOL_URL_ROOT, so without the DOL_URL_ROOT part, whatever the file is into main or alternate root)
  *  @param	int		$returnemptyifnotfound		0:If $type==0 and if file was not found into alternate dir, return default path into main dir (no test on it)
  *  											1:If $type==0 and if file was not found into alternate dir, return empty string
  *  											2:If $type==0 and if file was not found into alternate dir, test into main dir, return default path if found, empty string if not found
@@ -1709,6 +1710,9 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 		// works only for some web server and some setup. This is bugged when
 		// using proxy, rewriting, virtual path, etc...
 		$res = '';
+		if ($type == -1) {
+			$res = '/' . $path; // Standard value without the DOL_URL_ROOT part (url is relative to it)
+		}
 		if ($type == 1) {
 			$res = DOL_URL_ROOT . '/' . $path; // Standard value
 		}
@@ -1739,8 +1743,8 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				//print $key.'-'.$dirroot.'/'.$path.'-'.$conf->file->dol_url_root[$type].'<br>'."\n";
 				//if (file_exists($dirroot.'/'.$regs[1])) {
 				if (@file_exists($dirroot . '/' . $regs[1])) {	// avoid [php:warn]
-					if ($type == 1) {
-						$res = (preg_match('/^http/i', $conf->file->dol_url_root[$key]) ? '' : DOL_URL_ROOT) . $conf->file->dol_url_root[$key] . '/' . $path;
+					if ($type == 1 || $type == -1) {
+						$res = (($type == -1 || preg_match('/^http/i', $conf->file->dol_url_root[$key])) ? '' : DOL_URL_ROOT) . $conf->file->dol_url_root[$key] . '/' . $path;
 					} elseif ($type == 2) {
 						$res = (preg_match('/^http/i', $conf->file->dol_url_root[$key]) ? '' : DOL_MAIN_URL_ROOT) . $conf->file->dol_url_root[$key] . '/' . $path;
 					} elseif ($type == 3) {
