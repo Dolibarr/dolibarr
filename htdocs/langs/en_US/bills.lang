@@ -250,6 +250,7 @@ AmountOfBillsHT=Amount of invoices (net of tax)
 AmountOfBillsByMonthHT=Amount of invoices by month (net of tax)
 UseSituationInvoices=Allow situation invoice
 UseSituationInvoicesCreditNote=Allow situation invoice credit note
+SituationDisplaySumNotCurrentProgress=Display the roll-up of a row’s progress instead of its current progress
 SituationInvoiceMode=Situation invoice mode
 SituationInvoiceModeCumulative=Cumulative mode (legacy)
 SituationInvoiceModeProgressive=Progressive mode (recommended)

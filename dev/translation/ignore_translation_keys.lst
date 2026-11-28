@@ -750,6 +750,7 @@ SignatureKO
 SignatureOK
 Siren
 Situation
+SITUATION_DISPLAY_SUM_ON_PDF
 SizeUnit
 SmsTestSubstitutionReplacedByGenericValues
 SomeShipmentExists
