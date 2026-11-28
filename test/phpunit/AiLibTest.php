@@ -18,7 +18,7 @@
 /**
  *      \file       test/phpunit/AiLibTest.php
  *      \ingroup    test
- *      \brief      PHPUnit test for ai/lib/ai.lib.php
+ *      \brief      PHPUnit test for ai/lib/ai.lib.php and the payload options of the Ai class
  */
 
 global $conf, $user, $langs, $db;
@@ -68,6 +68,68 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame("Done: api_a_list returned {}\nDone: api_b_list returned []", aiHistoryTurnForModel("[api_a_list result] {}\n[api_b_list result] []"), 'Each result of a followup is rewritten');
 		$this->assertSame('[earlier conversation] hello', aiHistoryTurnForModel('[earlier conversation] hello'));
 		$this->assertSame('Create the third party [api_thirdparties_create result]', aiHistoryTurnForModel('Create the third party [api_thirdparties_create result]'));
+	}
+
+	/**
+	 * testGetAiTemperature
+	 *
+	 * @return void
+	 */
+	public function testGetAiTemperature()
+	{
+		global $conf;
+
+		unset($conf->global->AI_API_CUSTOM_TEMPERATURE);
+		$this->assertNull(getAiTemperature('custom'));
+
+		$conf->global->AI_API_CUSTOM_TEMPERATURE = '0.2';
+		$this->assertSame(0.2, getAiTemperature('custom'));
+		$this->assertNull(getAiTemperature('chatgpt'), 'The value of a service must not apply to another one');
+
+		$conf->global->AI_API_CUSTOM_TEMPERATURE = '0,6';
+		$this->assertSame(0.6, getAiTemperature('custom'), 'A decimal comma is accepted');
+		$conf->global->AI_API_CUSTOM_TEMPERATURE = '0';
+		$this->assertSame(0.0, getAiTemperature('custom'));
+		$conf->global->AI_API_CUSTOM_TEMPERATURE = '2';
+		$this->assertSame(2.0, getAiTemperature('custom'));
+
+		foreach (array('2.0000001', '-0.5', 'low') as $invalid) {
+			$conf->global->AI_API_CUSTOM_TEMPERATURE = $invalid;
+			$this->assertNull(getAiTemperature('custom'), 'Invalid value '.$invalid);
+		}
+
+		unset($conf->global->AI_API_CUSTOM_TEMPERATURE);
+	}
+
+	/**
+	 * testBuildPayloadSendsServiceOptions
+	 *
+	 * @return void
+	 */
+	public function testBuildPayloadSendsServiceOptions()
+	{
+		global $conf, $db;
+
+		$previousService = getDolGlobalString('AI_API_SERVICE');
+		$conf->global->AI_API_SERVICE = 'custom';
+		unset($conf->global->AI_API_CUSTOM_TEMPERATURE, $conf->global->AI_API_CUSTOM_REASONING_EFFORT);
+		$ai = new Ai($db);
+		$result = $ai->buildPayload('Hello', 'model', 'textgenerationemail');
+		$this->assertArrayNotHasKey('temperature', $result['arrayforpayload']);
+		$this->assertArrayNotHasKey('reasoning_effort', $result['arrayforpayload']);
+
+		$conf->global->AI_API_CUSTOM_TEMPERATURE = '0.2';
+		$conf->global->AI_API_CUSTOM_REASONING_EFFORT = 'none';
+		$result = $ai->buildPayload('Hello', 'model', 'textgenerationemail');
+		$this->assertSame(0.2, $result['arrayforpayload']['temperature']);
+		$this->assertSame('none', $result['arrayforpayload']['reasoning_effort']);
+
+		if ($previousService === '') {
+			unset($conf->global->AI_API_SERVICE);
+		} else {
+			$conf->global->AI_API_SERVICE = $previousService;
+		}
+		unset($conf->global->AI_API_CUSTOM_TEMPERATURE, $conf->global->AI_API_CUSTOM_REASONING_EFFORT);
 	}
 
 	/**
