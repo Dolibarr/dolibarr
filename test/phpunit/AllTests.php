@@ -205,6 +205,8 @@ class AllTests
 		$suite->addTestSuite('ApiListCountTest');
 		require_once dirname(__FILE__).'/ApiSupplierOrderHeaderUpdateTest.php';
 		$suite->addTestSuite('ApiSupplierOrderHeaderUpdateTest');
+		require_once dirname(__FILE__).'/AiTaskUpdateTest.php';
+		$suite->addTestSuite('AiTaskUpdateTest');
 		//require_once dirname(__FILE__).'/AiMcpWireTest.php';
 		//$suite->addTestSuite('AiMcpWireTest');
 		//require_once dirname(__FILE__).'/AiWriteConfirmationTest.php';
