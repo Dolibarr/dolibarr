@@ -3188,7 +3188,7 @@ function filterToolsByObjects(array $tools, array $objects, array $categories): 
 		if (count(array_intersect($toolObjects, $objects)) > 0) {
 			$kept[] = $tool;
 			$nbForObjects++;
-		} elseif (count(array_intersect($toolObjects, $knownObjects)) === 0 && count(array_intersect((array) ($tool['categories'] ?? array('global')), $targetCategories)) > 0) {
+		} elseif (aiToolKeptByCategories($tool, $knownObjects, $targetCategories)) {
 			$kept[] = $tool;
 		}
 	}
@@ -3314,7 +3314,32 @@ function filterToolsProfessional(array $allTools, array $activeCategories)
  */
 function aiToolsSize(array $tools): int
 {
-	return strlen((string) json_encode(cleanToolSchemaForLLM($tools, count($tools) > 100), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+	return strlen((string) json_encode(cleanToolSchemaForLLM($tools, aiToolsAreLargeSchema($tools)), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+}
+
+/**
+ * Return whether so many tools are sent to the model of the AI assistant that their schema is compressed (cleanToolSchemaForLLM())
+ *
+ * @param	array<int,array<string,mixed>>	$tools	Tools
+ * @return	bool
+ */
+function aiToolsAreLargeSchema(array $tools): bool
+{
+	return count($tools) > 100;
+}
+
+/**
+ * Return whether a tool works on no object of the vocabulary, so is kept by its categories
+ *
+ * @param	array<string,mixed>	$tool				Tool
+ * @param	string[]			$knownObjects		Objects of the vocabulary (getAiToolsVocabulary())
+ * @param	string[]			$targetCategories	Categories kept, 'global' included
+ * @return	bool
+ */
+function aiToolKeptByCategories(array $tool, array $knownObjects, array $targetCategories): bool
+{
+	return count(array_intersect((array) ($tool['objects'] ?? array()), $knownObjects)) === 0
+		&& count(array_intersect((array) ($tool['categories'] ?? array('global')), $targetCategories)) > 0;
 }
 
 /**
@@ -3330,6 +3355,10 @@ function aiToolsSize(array $tools): int
  */
 function aiSelectTools(array $tools, array $signals, array $categories, int $maxSize, Translate $langs): array
 {
+	// No catalog can be offered without objects.
+	if (empty(getAiToolsVocabulary($tools))) {
+		$maxSize = 0;
+	}
 	$requested = (array) ($signals['requested'] ?? array());
 	if (!empty($requested)) {
 		$kept = filterToolsByObjects($tools, $requested, $categories);
@@ -3343,6 +3372,7 @@ function aiSelectTools(array $tools, array $signals, array $categories, int $max
 		$element = (string) ($signals['element'] ?? '');
 		$isLatin = (bool) ($signals['latin'] ?? true);
 		$turns = (array) ($signals['turns'] ?? array());
+		$baseObjects = null;
 		while (true) {
 			$objects = aiQueryObjects($query, $element, $turns, $langs, $tools, $isLatin);
 			$kept = filterToolsByObjects($tools, $objects, $categories);
@@ -3350,6 +3380,11 @@ function aiSelectTools(array $tools, array $signals, array $categories, int $max
 				return array('tools' => $kept, 'objects' => $objects, 'mode' => 'objects');
 			}
 			if (empty($turns)) {
+				break;
+			}
+			// Without the past turns the set is not smaller: dropping them cannot help.
+			$baseObjects = $baseObjects ?? aiQueryObjects($query, $element, array(), $langs, $tools, $isLatin);
+			if (empty(array_diff($objects, $baseObjects))) {
 				break;
 			}
 			// Over budget: the objects of the past turns go first, the oldest first.
@@ -3394,8 +3429,7 @@ function aiCatalogModeTools(array $tools, array $categories, int $maxSize): arra
 	$knownObjects = array_keys(getAiToolsVocabulary($tools));
 	$targetCategories = array_merge(array('global'), $categories);
 	$kept = array_values(array_filter($tools, static function (array $tool) use ($knownObjects, $targetCategories): bool {
-		return count(array_intersect((array) ($tool['objects'] ?? array()), $knownObjects)) === 0
-			&& count(array_intersect((array) ($tool['categories'] ?? array('global')), $targetCategories)) > 0;
+		return aiToolKeptByCategories($tool, $knownObjects, $targetCategories);
 	}));
 
 	return aiToolsSize($kept) > $maxSize ? array() : $kept;
@@ -3433,6 +3467,7 @@ function aiToolsCatalogPrompt(array $tools): string
 
 	$prompt = "## Objects\n";
 	$prompt .= "Only the tools of some objects are listed in ## Tools. When the request needs Dolibarr data or a Dolibarr action on objects whose tools are not listed, answer only {\"tool\": \"load_tools\", \"arguments\": {\"objects\": [\"key\", ...]}} with at most ".aiLoadToolsMaxObjects()." keys of this list: the question is then sent again with their tools. Do it at most once per question.\n";
+	$prompt .= "This comes before any rule above about a missing tool: a tool is missing only when no object of this list can do it.\n";
 	$prompt .= "When you hesitate between objects (is a name a contact, a user or a third party?), ask the user with {\"tool\": \"ask_for_clarification\", \"arguments\": {\"question\": \"...\"}}.\n";
 	$prompt .= $catalog."\n\n";
 

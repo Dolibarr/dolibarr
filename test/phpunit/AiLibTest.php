@@ -401,6 +401,14 @@ class AiLibTest extends CommonClassTest
 		$this->assertSame('catalog', $selection['mode'], 'More objects than load_tools may ask, over budget, give the catalog');
 		$this->assertSame(array('navigate_to_page'), array_column($selection['tools'], 'name'));
 
+		$selection = aiSelectTools($tools, array('query' => 'factures, commandes, propositions commerciales, produits et contacts', 'turns' => array(array('role' => 'assistant', 'text' => '[api_invoices_list result] []'))), array(), 1000, $langs);
+		$this->assertSame('catalog', $selection['mode'], 'Past turns that add no object are not dropped one by one');
+
+		$noVocabularyTools = array(array('name' => 'navigate_to_page', 'description' => 'Open a page', 'categories' => array('global')), array('name' => 'make_coffee', 'description' => 'Coffee', 'categories' => array('office')));
+		$selection = aiSelectTools($noVocabularyTools, array('query' => 'bonjour'), array(), 10, $langs);
+		$this->assertSame('categories', $selection['mode'], 'Without any object known, no catalog can be offered: the budget is skipped');
+		$this->assertSame(array_column($noVocabularyTools, 'name'), array_column($selection['tools'], 'name'));
+
 		$selection = aiSelectTools($tools, array('query' => 'bonjour'), array(), 10, $langs);
 		$this->assertSame(array('tools' => array(), 'objects' => array(), 'mode' => 'catalog'), $selection, 'Tools of no object over budget are not sent either');
 
@@ -461,6 +469,7 @@ class AiLibTest extends CommonClassTest
 		$prompt = aiToolsCatalogPrompt($thirdpartyTools);
 		$this->assertStringContainsString('load_tools', $prompt);
 		$this->assertStringContainsString('ask_for_clarification', $prompt, 'The model may ask the user which object a name is');
+		$this->assertStringContainsString('comes before any rule above about a missing tool', $prompt, 'A small model must ask for tools before saying one is missing');
 		$this->assertStringContainsString($catalog, $prompt);
 	}
 

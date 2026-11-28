@@ -697,7 +697,7 @@ try {
 		// default install (~30 tools), while still leaving a safety net for very large
 		// custom installs that register dozens of additional addMcpTools hooks.
 		$toolsSchema = sortAiToolsByObjectBlock($toolsSchema);
-		$isLargeSchema = count($toolsSchema) > 100;
+		$isLargeSchema = aiToolsAreLargeSchema($toolsSchema);
 		$toolsForLLM = cleanToolSchemaForLLM($toolsSchema, $isLargeSchema);
 
 
