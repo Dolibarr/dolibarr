@@ -353,10 +353,10 @@ if (empty($reshook)) {
 			$object->origin_type = $origin;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
-			$object->weight = GETPOSTINT('weight') == '' ? null : GETPOSTINT('weight');
-			$object->trueHeight = GETPOSTINT('trueHeight') == '' ? null : GETPOSTINT('trueHeight');
-			$object->trueWidth = GETPOSTINT('trueWidth') == '' ? null : GETPOSTINT('trueWidth');
-			$object->trueDepth = GETPOSTINT('trueDepth') == '' ? null : GETPOSTINT('trueDepth');
+			$object->weight = GETPOST('weight') == '' ? null : GETPOSTFLOAT('weight');
+			$object->trueHeight = GETPOST('trueHeight') == '' ? null : GETPOSTFLOAT('trueHeight');
+			$object->trueWidth = GETPOST('trueWidth') == '' ? null : GETPOSTFLOAT('trueWidth');
+			$object->trueDepth = GETPOST('trueDepth') == '' ? null : GETPOSTFLOAT('trueDepth');
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 			$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
@@ -394,10 +394,10 @@ if (empty($reshook)) {
 			$object->origin_type = $origin;
 			$object->origin_id = $origin_id;
 			$object->fk_project = GETPOSTINT('projectid');
-			$object->weight = GETPOST('weight') == '' ? null : GETPOSTINT('weight');
-			$object->trueHeight = GETPOST('trueHeight') == '' ? null : GETPOSTINT('trueHeight');
-			$object->trueWidth = GETPOST('trueWidth') == '' ? null : GETPOSTINT('trueWidth');
-			$object->trueDepth = GETPOST('trueDepth') == '' ? null : GETPOSTINT('trueDepth');
+			$object->weight = GETPOST('weight') == '' ? null : GETPOSTFLOAT('weight');
+			$object->trueHeight = GETPOST('trueHeight') == '' ? null : GETPOSTFLOAT('trueHeight');
+			$object->trueWidth = GETPOST('trueWidth') == '' ? null : GETPOSTFLOAT('trueWidth');
+			$object->trueDepth = GETPOST('trueDepth') == '' ? null : GETPOSTFLOAT('trueDepth');
 			$object->size_units = GETPOSTINT('size_units');
 			$object->weight_units = GETPOSTINT('weight_units');
 
