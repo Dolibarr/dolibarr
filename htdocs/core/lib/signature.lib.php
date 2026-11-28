@@ -20,6 +20,31 @@
  */
 
 /**
+ * Return the default seed for online signature links.
+ *
+ * @return string Default security seed
+ */
+function getOnlineSignatureDefaultSecuritySeed()
+{
+	global $dolibarr_main_instance_unique_id;
+
+	return substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);
+}
+
+/**
+ * Resolve the configured security seed, falling back to the instance seed.
+ *
+ * @param string $source Source code
+ * @return string Security seed
+ */
+function getOnlineSignatureSecuritySeed($source)
+{
+	$defaultsalt = getOnlineSignatureDefaultSecuritySeed();
+
+	return getDolGlobalString(dol_strtoupper($source).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
+}
+
+/**
  * Return string with full online Url to accept and sign a quote
  *
  * @param   string			$type		Type of URL ('proposal', ...)
@@ -83,6 +108,8 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 	// @phan-var-force CommonObject $obj - the deprecated global $object may be inferred as "static" by phan
 	'@phan-var-force \\CommonObject $obj';
 
+	/** @var CommonObject|stdClass $obj */
+	'@phan-var-force CommonObject|stdClass $obj';
 	$out = '';
 
 	// Define $urlwithroot
@@ -95,13 +122,10 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		$urltouse = $urlwithroot;
 	}
 
-	global $dolibarr_main_instance_unique_id;
-	$defaultsalt = substr(dol_hash('dolibarr'.$dolibarr_main_instance_unique_id, 'sha256'), 0, 32);		// Fallback if no specific salt was set
-
 	$securekeyseed = '';
 
 	if ($type == 'proposal') {
-		$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
+		$securekeyseed = getOnlineSignatureSecuritySeed($type);
 		if (strpos($securekeyseed, "\0") !== false) {
 			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
 			return 'Invalid parameter PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
@@ -145,7 +169,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			}
 		}*/
 	} elseif ($type == 'contract') {
-		$securekeyseed = getDolGlobalString('CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
+		$securekeyseed = getOnlineSignatureSecuritySeed($type);
 		if (strpos($securekeyseed, "\0") !== false) {
 			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
 			return 'Invalid parameter CONTRACT_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
@@ -165,7 +189,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), 'hash'));
 		}
 	} elseif ($type == 'fichinter') {
-		$securekeyseed = getDolGlobalString('FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
+		$securekeyseed = getOnlineSignatureSecuritySeed($type);
 		if (strpos($securekeyseed, "\0") !== false) {
 			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
 			return 'Invalid parameter FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
@@ -185,7 +209,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 			$out .= '&securekey='.urlencode(dol_hash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? (empty($obj->entity) ? '' : (int) $obj->entity) : ''), 'hash'));
 		}
 	} else {	// For example $type = 'societe_rib'
-		$securekeyseed = getDolGlobalString(dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN', $defaultsalt);
+		$securekeyseed = getOnlineSignatureSecuritySeed($type);
 		if (strpos($securekeyseed, "\0") !== false) {
 			// String contains a null character that can't be encoded. Return an error to avoid fatal error later.
 			return 'Invalid parameter '.dol_strtoupper($type).'_ONLINE_SIGNATURE_SECURITY_TOKEN. Contains a null character.';
