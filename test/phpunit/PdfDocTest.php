@@ -97,6 +97,40 @@ class PdfDocTest extends CommonClassTest
 	}
 
 	/**
+	 * Provide HTML produced by the WYSIWYG editor and the expected HTML once indent is converted
+	 *
+	 * @return array<string,array{0:string,1:string}>
+	 */
+	public static function indentToBlockquoteProvider()
+	{
+		return [
+			'no indent' => ['<div>Text</div>', '<div>Text</div>'],
+			'one level' => ['<div style="margin-left:40px">Indent 1</div>', '<blockquote>Indent 1</blockquote>'],
+			'two levels' => ['<p style="margin-left: 80px;">Level 2</p>', '<blockquote><blockquote>Level 2</blockquote></blockquote>'],
+			'other style kept' => ['<p style="margin-left:80px; text-align:center">Level 2</p>', '<blockquote style="text-align:center"><blockquote>Level 2</blockquote></blockquote>'],
+			'nested div without indent' => ['<div style="margin-left:40px"><div>A</div>B</div>', '<blockquote><div>A</div>B</blockquote>'],
+			'unbalanced closing tag' => ['A</div><div style="margin-left:40px">B</div>', 'A</div><blockquote>B</blockquote>'],
+			'tag other than div or p' => ['<pre style="margin-left:40px">A</pre>', '<pre style="margin-left:40px">A</pre>'],
+			'unit other than px' => ['<div style="margin-left:2em">A</div>', '<div style="margin-left:2em">A</div>'],
+			'under half a step' => ['<div style="margin-left:10px">A</div>', '<div style="margin-left:10px">A</div>'],
+		];
+	}
+
+	/**
+	 * testPdfConvertIndentToBlockquote
+	 *
+	 * @param	string	$html		HTML as produced by the WYSIWYG editor
+	 * @param	string	$expected	Expected HTML
+	 * @return	void
+	 *
+	 * @dataProvider indentToBlockquoteProvider
+	 */
+	public function testPdfConvertIndentToBlockquote($html, $expected)
+	{
+		$this->assertEquals($expected, pdfConvertIndentToBlockquote($html));
+	}
+
+	/**
 	* testPdfGetHeightForLogo
 	*
 	* @return void
