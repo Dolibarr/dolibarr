@@ -85,7 +85,4 @@ VendorFirstname=Vendor first name
 VendorEmail=Vendor email
 DOL_VALUE_CUSTOMER_POINTS=Customer points
 DOL_VALUE_OBJECT_POINTS=Object points
-PrinterIdEmpty=Printer ID is empty
-TemplateIdEmpty=Template ID is empty
-TemplateNameEmpty=Template name is empty
 TestPrinterTemplate=Test the template on the printer

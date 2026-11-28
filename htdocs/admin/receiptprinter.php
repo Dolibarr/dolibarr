@@ -119,6 +119,7 @@ if ($action == 'deleteprinter') {
 	$error = 0;
 	if (empty($printerid)) {
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
 	}
 
@@ -241,6 +242,7 @@ if ($action == 'updatetemplate') {
 	$error = 0;
 	if (empty($templateid)) {
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->trans("TemplateIdEmpty"), null, 'errors');
 	}
 
@@ -266,6 +268,7 @@ if ($action == 'addtemplate') {
 	$error = 0;
 	if (empty($templatename)) {
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->trans("TemplateNameEmpty"), null, 'errors');
 	}
 

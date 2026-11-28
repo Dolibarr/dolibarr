@@ -52,6 +52,7 @@ $error = 0;
 
 if (GETPOST('action', 'aZ09') == 'set_proxy') {
 	if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && !is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT"))) {
+		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
 		$error++;
 	}

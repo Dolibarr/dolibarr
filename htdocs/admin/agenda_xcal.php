@@ -87,6 +87,7 @@ if ($actionsave) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		$db->rollback();
+		$langs->load("errors");
 		setEventMessages($langs->trans("SaveFailed"), null, 'errors');
 	}
 }
