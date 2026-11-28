@@ -41,6 +41,25 @@ class ConfFileReuse
 	const ACTION_DB_PASS_EXPRESSION = 'DbPassExpressionUntouched';
 
 	/**
+	 * @var array<string,string> Variables no longer read by Dolibarr, mapped to the variable that replaces them ('' when removed).
+	 *                           Only variables that are read nowhere else belong here, except cookie_cryptkey: it is only read as
+	 *                           a fallback when instance_unique_id is empty.
+	 */
+	const DEPRECATION_MAP = [
+		'dolibarr_main_cookie_cryptkey' => 'dolibarr_main_instance_unique_id',
+		'dolibarr_lib_FPDFI_PATH' => 'dolibarr_lib_FPDI_PATH',
+		'dolibarr_allow_download_external_modules' => 'dolibarr_allow_download_app',
+		'dolibarr_lib_ADODB_PATH' => '',
+		'dolibarr_lib_PHPEXCEL_PATH' => '',
+		'dolibarr_js_JQUERY_FLOT' => '',
+		'dolibarr_smarty_cache' => '',
+		'dolibarr_smarty_compile' => '',
+		'dolibarr_smarty_libs_dir' => '',
+		'dolibarr_pdf_force_fpdf' => '',
+		'dolibarr_allow_overwritekernel' => '',
+	];
+
+	/**
 	 * @var ConfFileEditor
 	 */
 	private $editor;
@@ -62,7 +81,9 @@ class ConfFileReuse
 	 *															dolibarr_main_dolcrypt_key), to resolve expressions.
 	 *	@param	bool					$databaseHasTables		True when the target database already contains Dolibarr tables.
 	 *	@param	bool					$encryptClearPassword	True to encrypt a database password written in clear.
-	 *	@return	array{content:string,actions:string[]}		New content and the ACTION_* codes of what was done.
+	 *	@return	array{content:string,actions:string[],deprecated:array<string,string>}
+	 *			New content, the ACTION_* codes of what was done, and the deprecated variables commented out
+	 *			(mapped to the variable that received their value, '' when none).
 	 *	@throws	Exception									When the database password can not be decrypted or encrypted,
 	 *														or when the result is not valid PHP.
 	 */
@@ -95,13 +116,116 @@ class ConfFileReuse
 			}
 		}
 
+		$deprecated = [];
+		$content = $this->handleDeprecated($content, $deprecated);
+
 		try {
 			token_get_all($content, TOKEN_PARSE);
 		} catch (ParseError $e) {
 			throw new Exception('The updated conf.php is not valid PHP: '.$e->getMessage());
 		}
 
-		return ['content' => $content, 'actions' => $actions];
+		return ['content' => $content, 'actions' => $actions, 'deprecated' => $deprecated];
+	}
+
+	/**
+	 *	Analyse a conf.php in place before its reuse, to warn the administrator.
+	 *
+	 *	@param	string					$content	Raw content of the conf.php in place.
+	 *	@param	array<string,string>	$evaluated	Values of that conf.php once included, keyed by variable name.
+	 *	@return	array{deprecated:string[],unknown:string[],missing:string[],invalid:array<string,string>}
+	 *			Deprecated, unknown (not documented in conf.php.example) and missing variables, and the invalid values
+	 *			(variable name => translation key of the problem).
+	 */
+	public function analyse(string $content, array $evaluated): array
+	{
+		$assigned = array_keys($this->editor->parse($content));
+		$known = $this->getDocumentedKeys();
+
+		$deprecated = array_values(array_intersect($assigned, array_keys(self::DEPRECATION_MAP)));
+		$unknown = array_values(array_diff($assigned, $known, $deprecated));
+		$missing = array_values(array_diff($known, $assigned));
+
+		return ['deprecated' => $deprecated, 'unknown' => $unknown, 'missing' => $missing, 'invalid' => $this->checkValues($evaluated)];
+	}
+
+	/**
+	 *	Check the values the installer will use, as evaluated from conf.php.
+	 *
+	 *	@param	array<string,string>	$values		Values keyed by variable name.
+	 *	@return	array<string,string>				Invalid values: variable name => translation key of the problem.
+	 */
+	public function checkValues(array $values): array
+	{
+		$invalid = [];
+
+		$documentRoot = (string) ($values['dolibarr_main_document_root'] ?? '');
+		if ($documentRoot === '' || !is_file($documentRoot.'/main.inc.php')) {
+			$invalid['dolibarr_main_document_root'] = 'ConfReuseInvalidDocumentRoot';
+		}
+
+		$dataRoot = (string) ($values['dolibarr_main_data_root'] ?? '');
+		if ($dataRoot === '') {
+			$invalid['dolibarr_main_data_root'] = 'ConfReuseInvalidDataRoot';
+		} elseif (is_dir($dataRoot) ? !is_writable($dataRoot) : !is_writable(dirname($dataRoot))) {
+			$invalid['dolibarr_main_data_root'] = 'ConfReuseInvalidDataRootNotWritable';
+		}
+
+		$dbType = (string) ($values['dolibarr_main_db_type'] ?? '');
+		if (!preg_match('/^\w+$/', $dbType) || !is_file(DOL_DOCUMENT_ROOT.'/core/db/'.$dbType.'.class.php')) {
+			$invalid['dolibarr_main_db_type'] = 'ConfReuseInvalidDbType';
+		}
+
+		if (!preg_match('#^https?://#i', (string) ($values['dolibarr_main_url_root'] ?? ''))) {
+			$invalid['dolibarr_main_url_root'] = 'ConfReuseInvalidUrlRoot';
+		}
+
+		return $invalid;
+	}
+
+	/**
+	 *	Comment out the deprecated variables, after copying their value into the variable that replaces them when it is not set.
+	 *
+	 *	cookie_cryptkey is kept when instance_unique_id is an expression, since it may still be used as its fallback.
+	 *
+	 *	@param	string					$content	Raw content of the conf.php.
+	 *	@param	array<string,string>	$handled	Deprecated variables commented out, completed by this method.
+	 *	@return	string								New content.
+	 */
+	private function handleDeprecated(string $content, array &$handled): string
+	{
+		foreach (self::DEPRECATION_MAP as $old => $new) {
+			$parsed = $this->editor->parse($content);
+			if (!isset($parsed[$old])) {
+				continue;
+			}
+			if ($new === 'dolibarr_main_instance_unique_id' && isset($parsed[$new]) && $parsed[$new]['literal'] === null) {
+				continue;
+			}
+			$copied = '';
+			if ($new !== '' && !isset($parsed[$new]) && $parsed[$old]['literal'] !== null) {
+				$content = $this->editor->setValue($content, $new, $parsed[$old]['literal']);
+				$copied = $new;
+			}
+			$note = 'Deprecated, no longer used'.($new !== '' ? ', replaced by $'.$new : '');
+			$content = $this->editor->commentOut($content, $old, $note);
+			$handled[$old] = $copied;
+		}
+		return $content;
+	}
+
+	/**
+	 *	Return the variables documented in conf.php.example (active or commented examples).
+	 *
+	 *	@return	string[]
+	 */
+	private function getDocumentedKeys(): array
+	{
+		$example = @file_get_contents(DOL_DOCUMENT_ROOT.'/conf/conf.php.example');
+		if ($example === false || !preg_match_all('/^\s*(?:\/\/\s*)?\$(dolibarr_\w+)\s*=/m', $example, $matches)) {
+			return [];
+		}
+		return array_values(array_unique($matches[1]));
 	}
 
 	/**

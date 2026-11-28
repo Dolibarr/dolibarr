@@ -63,6 +63,12 @@ $force_install_databasepass = getenv('DOLI_DB_PASSWORD', true) ?: '';
 /** @var bool $force_install_createuser				Force database user creation */
 $force_install_createuser = false;
 
+/** @var bool $force_install_useconfinplace			Reuse the conf.php already in place (updated in place, the database must exist) */
+$force_install_useconfinplace = false;
+
+/** @var bool $force_install_encryptdbpass			When reusing the conf.php in place, encrypt a database password written in clear */
+$force_install_encryptdbpass = false;
+
 /** @var string $force_install_dolibarrlogin		Dolibarr administrator username */
 $force_install_dolibarrlogin = 'admin';
 

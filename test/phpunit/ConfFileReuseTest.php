@@ -219,4 +219,113 @@ class ConfFileReuseTest extends CommonClassTest
 		$this->expectException(Exception::class);
 		$reuse->apply($template, ['dolibarr_main_instance_unique_id' => self::OLD_ID], false, false);
 	}
+	/**
+	 * cookie_cryptkey is commented out once instance_unique_id is set.
+	 *
+	 * @return	void
+	 */
+	public function testCookieCryptkeyIsCommentedWhenInstanceIdIsSet()
+	{
+		$reuse = new ConfFileReuse();
+		$template = $this->template("'secret'", "\$dolibarr_main_cookie_cryptkey='legacy';\n");
+		$result = $reuse->apply($template, ['dolibarr_main_instance_unique_id' => self::OLD_ID], false, false);
+
+		$vars = $this->runConf($result['content']);
+		$this->assertArrayNotHasKey('dolibarr_main_cookie_cryptkey', $vars);
+		$this->assertNotSame(self::OLD_ID, $vars['dolibarr_main_instance_unique_id']);
+		$this->assertSame(['dolibarr_main_cookie_cryptkey' => ''], $result['deprecated']);
+	}
+
+	/**
+	 * Existing database and no instance_unique_id: the cookie_cryptkey value becomes the instance id, so the key does not change.
+	 *
+	 * @return	void
+	 */
+	public function testCookieCryptkeyBecomesInstanceIdOnExistingDatabase()
+	{
+		$reuse = new ConfFileReuse();
+		$template = "<?php\n\$dolibarr_main_db_pass='secret';\n\$dolibarr_main_cookie_cryptkey='legacy';\n";
+		$result = $reuse->apply($template, ['dolibarr_main_cookie_cryptkey' => 'legacy'], true, false);
+
+		$vars = $this->runConf($result['content']);
+		$this->assertSame('legacy', $vars['dolibarr_main_instance_unique_id']);
+		$this->assertArrayNotHasKey('dolibarr_main_cookie_cryptkey', $vars);
+		$this->assertSame(['dolibarr_main_cookie_cryptkey' => 'dolibarr_main_instance_unique_id'], $result['deprecated']);
+	}
+
+	/**
+	 * cookie_cryptkey stays when instance_unique_id is an expression, since it may still be its fallback.
+	 *
+	 * @return	void
+	 */
+	public function testCookieCryptkeyKeptWhenInstanceIdIsAnExpression()
+	{
+		$reuse = new ConfFileReuse();
+		$template = "<?php\n\$dolibarr_main_instance_unique_id=getenv('DOLI_ID');\n\$dolibarr_main_cookie_cryptkey='legacy';\n";
+		$result = $reuse->apply($template, ['dolibarr_main_cookie_cryptkey' => 'legacy'], false, false);
+
+		$this->assertSame($template, $result['content']);
+		$this->assertSame([], $result['deprecated']);
+	}
+
+	/**
+	 * A renamed variable gives its value to the new name, then is commented out; a removed one is just commented out.
+	 *
+	 * @return	void
+	 */
+	public function testRenamedAndRemovedVariablesAreCommented()
+	{
+		$reuse = new ConfFileReuse();
+		$template = $this->template("'secret'", "\$dolibarr_lib_FPDFI_PATH='/usr/share/php/fpdi';\n\$dolibarr_smarty_cache='/tmp';\n");
+		$result = $reuse->apply($template, ['dolibarr_main_instance_unique_id' => self::OLD_ID], true, false);
+
+		$vars = $this->runConf($result['content']);
+		$this->assertSame('/usr/share/php/fpdi', $vars['dolibarr_lib_FPDI_PATH']);
+		$this->assertArrayNotHasKey('dolibarr_lib_FPDFI_PATH', $vars);
+		$this->assertArrayNotHasKey('dolibarr_smarty_cache', $vars);
+		$this->assertSame(['dolibarr_lib_FPDFI_PATH' => 'dolibarr_lib_FPDI_PATH', 'dolibarr_smarty_cache' => ''], $result['deprecated']);
+	}
+
+	/**
+	 * The analysis lists deprecated, unknown and missing variables against conf.php.example.
+	 *
+	 * @return	void
+	 */
+	public function testAnalyseListsDeprecatedUnknownAndMissing()
+	{
+		$reuse = new ConfFileReuse();
+		$template = $this->template("'secret'", "\$dolibarr_main_cookie_cryptkey='legacy';\n\$dolibarr_custom_setting='x';\n");
+		$analysis = $reuse->analyse($template, []);
+
+		$this->assertSame(['dolibarr_main_cookie_cryptkey'], $analysis['deprecated']);
+		$this->assertSame(['dolibarr_custom_setting'], $analysis['unknown']);
+		$this->assertContains('dolibarr_main_url_root', $analysis['missing']);
+		$this->assertNotContains('dolibarr_main_db_name', $analysis['missing']);
+	}
+
+	/**
+	 * Values that would make the install fail are reported, valid ones are not.
+	 *
+	 * @return	void
+	 */
+	public function testCheckValuesReportsInvalidValues()
+	{
+		$reuse = new ConfFileReuse();
+
+		$invalid = $reuse->checkValues([
+			'dolibarr_main_document_root' => '/nonexistent/htdocs',
+			'dolibarr_main_data_root' => '/nonexistent/documents',
+			'dolibarr_main_db_type' => 'oracle',
+			'dolibarr_main_url_root' => 'erp.test',
+		]);
+		$this->assertSame(['dolibarr_main_document_root', 'dolibarr_main_data_root', 'dolibarr_main_db_type', 'dolibarr_main_url_root'], array_keys($invalid));
+
+		$valid = $reuse->checkValues([
+			'dolibarr_main_document_root' => DOL_DOCUMENT_ROOT,
+			'dolibarr_main_data_root' => sys_get_temp_dir(),
+			'dolibarr_main_db_type' => 'mysqli',
+			'dolibarr_main_url_root' => 'https://erp.test',
+		]);
+		$this->assertSame([], $valid);
+	}
 }

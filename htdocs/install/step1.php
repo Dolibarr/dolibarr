@@ -122,6 +122,8 @@ if (@file_exists($forcedfile)) {
 	 * @var string	$force_install_createuser
 	 * @var string	$force_install_mainforcehttps
 	 * @var string	$force_install_distrib
+	 * @var bool	$force_install_useconfinplace
+	 * @var bool	$force_install_encryptdbpass
 	 */
 	// If forced install is enabled, replace the post values. These are empty because form fields are disabled.
 	if (!empty($force_install_noedit)) {
@@ -959,6 +961,10 @@ function reuse_conf_file($conffile, $db, $dbname, $dbprefix, $encryptdbpass)
 	foreach ($result['actions'] as $action) {
 		$iswarning = in_array($action, [ConfFileReuse::ACTION_INSTANCE_ID_KEPT_DATABASE, ConfFileReuse::ACTION_INSTANCE_ID_KEPT_EXPRESSION, ConfFileReuse::ACTION_DB_PASS_EXPRESSION], true);
 		print '<tr><td>'.$langs->trans('ConfReuse'.$action).'</td><td>'.img_picto('', $iswarning ? 'warning' : 'tick').'</td></tr>';
+	}
+	foreach ($result['deprecated'] as $oldkey => $newkey) {
+		$message = ($newkey !== '') ? $langs->trans("ConfReuseDeprecatedReplaced", $oldkey, $newkey) : $langs->trans("ConfReuseDeprecatedCommented", $oldkey);
+		print '<tr><td>'.dol_escape_htmltag($message).'</td><td>'.img_picto('', 'warning').'</td></tr>';
 	}
 	print '<tr><td>'.$langs->trans("ConfReuseDone", '<strong>'.dol_escape_htmltag($conffile).'</strong>').'</td><td>'.img_picto('OK', 'tick').'</td></tr>';
 

@@ -179,9 +179,17 @@ if (!empty($force_install_message)) {
 // A conf.php that existed before the install can be reused and updated in place instead of being overwritten.
 $confreusepossible = (!empty($_SESSION['dol_install_conf_preexisted']) && is_readable($conffile) && filesize($conffile) > 8);
 if ($confreusepossible) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/conffileeditor.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/conffilereuse.class.php';
+	$confcontent = (string) file_get_contents($conffile);
 	$confeditor = new ConfFileEditor();
-	$confparsed = $confeditor->parse((string) file_get_contents($conffile));
+	$confparsed = $confeditor->parse($confcontent);
+	$confreuse = new ConfFileReuse();
+	$confanalysis = $confreuse->analyse($confcontent, [
+		'dolibarr_main_document_root' => (string) ($dolibarr_main_document_root ?? ''),
+		'dolibarr_main_data_root' => (string) ($dolibarr_main_data_root ?? ''),
+		'dolibarr_main_db_type' => (string) ($dolibarr_main_db_type ?? ''),
+		'dolibarr_main_url_root' => (string) ($dolibarr_main_url_root ?? ''),
+	]);
 	$confpassword = $confparsed['dolibarr_main_db_pass']['literal'] ?? null;
 	$confpasswordclear = ($confpassword !== null && $confpassword !== '' && !preg_match('/^(dolcrypt|crypted):/i', $confpassword));
 
@@ -193,6 +201,18 @@ if ($confreusepossible) {
 	print '</td><td class="comment" colspan="2">';
 	print '<span class="opacitymedium">'.$langs->trans("ConfReuseHelp").'</span>';
 	print '<br><span class="warning">'.$langs->trans("ConfReuseDatabaseMustExist").'</span>';
+	foreach ($confanalysis['invalid'] as $confkey => $confproblem) {
+		print '<br><span class="error">'.$langs->trans($confproblem, dol_escape_htmltag($confkey)).'</span>';
+	}
+	if (!empty($confanalysis['deprecated'])) {
+		print '<br><span class="warning">'.$langs->trans("ConfReuseDeprecatedVars", dol_escape_htmltag(implode(', ', $confanalysis['deprecated']))).'</span>';
+	}
+	if (!empty($confanalysis['unknown'])) {
+		print '<br><span class="opacitymedium">'.$langs->trans("ConfReuseUnknownVars", dol_escape_htmltag(implode(', ', $confanalysis['unknown']))).'</span>';
+	}
+	if (!empty($confanalysis['missing'])) {
+		print '<br><span class="opacitymedium">'.$langs->trans("ConfReuseMissingVars", count($confanalysis['missing'])).'</span>';
+	}
 	print '</td></tr>';
 	if ($confpasswordclear) {
 		print '<tr class="confreuseoption"><td class="label">';
