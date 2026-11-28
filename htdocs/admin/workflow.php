@@ -139,10 +139,10 @@ $workflowcodes = array(
 	), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
 
 	// Automatic classification supplier proposal
-	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL' => array(
+	'WORKFLOW_SUPPLIER_ORDER_CLOSE_SUPPLIER_PROPOSAL' => array(
 		'family' => 'classify_supplier_proposal',
 		'position' => 60,
-		'enabled' => (isModEnabled('supplier_proposal') && (isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+		'enabled' => (isModEnabled('supplier_proposal') && isModEnabled("supplier_order")),
 		'picto' => 'supplier_proposal',
 		'warning' => ''
 	),

@@ -29,6 +29,9 @@ require_once dirname(__FILE__).'/CommonClassTest.class.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
+require_once dirname(__FILE__).'/../../htdocs/fourn/class/fournisseur.commande.class.php';
+require_once dirname(__FILE__).'/../../htdocs/supplier_proposal/class/supplier_proposal.class.php';
+require_once dirname(__FILE__).'/../../htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -214,5 +217,49 @@ class WorkflowManagerTest extends CommonClassTest
 		$this->assertGreaterThan(0, $result, $shipment->errorsToString());
 		$this->validateInvoiceOfShipment($shipment);
 		$this->assertSame(0, $this->getBilled($shipment->id));
+	}
+
+	/**
+	 * Placing a purchase order closes the signed vendor proposal it was created from and keeps its private note.
+	 *
+	 * @return void
+	 */
+	public function testSignedSupplierProposalClosedWhenOrderIsPlaced()
+	{
+		global $conf, $db, $langs, $user;
+
+		$key = 'WORKFLOW_SUPPLIER_ORDER_CLOSE_SUPPLIER_PROPOSAL';
+		$this->savedconsts[$key] = isset($conf->global->$key) ? getDolGlobalString($key) : null;
+		$conf->global->$key = 1;
+		foreach (array('supplier_proposal', 'supplier_order', 'workflow') as $module) {
+			$conf->modules[$module] = $module;
+		}
+
+		$soc = new Societe($db);
+		$soc->name = 'Workflow vendor proposal phpunit';
+		$soc->fournisseur = 1;
+		$soc->code_fournisseur = '-1';
+		$socId = $soc->create($user);
+		$this->assertGreaterThan(0, $socId, $soc->errorsToString());
+
+		$proposal = new SupplierProposal($db);
+		$proposal->socid = $socId;
+		$proposal->note_private = 'Private note';
+		$this->assertGreaterThan(0, $proposal->create($user), $proposal->errorsToString());
+		$this->assertGreaterThan(0, $proposal->valid($user), $proposal->errorsToString());
+		$this->assertGreaterThan(0, $proposal->cloture($user, SupplierProposal::STATUS_SIGNED, 'Private note'), $proposal->errorsToString());
+
+		$order = new CommandeFournisseur($db);
+		$order->socid = $socId;
+		$this->assertGreaterThan(0, $order->create($user), $order->errorsToString());
+		$this->assertGreaterThan(0, $order->add_object_linked('supplier_proposal', $proposal->id), $order->errorsToString());
+
+		$trigger = new InterfaceWorkflowManager($db);
+		$this->assertSame(0, $trigger->runTrigger('ORDER_SUPPLIER_SUBMIT', $order, $user, $langs, $conf), $trigger->errorsToString());
+
+		$result = new SupplierProposal($db);
+		$this->assertGreaterThan(0, $result->fetch($proposal->id), $result->errorsToString());
+		$this->assertEquals(SupplierProposal::STATUS_CLOSE, $result->status);
+		$this->assertSame('Private note', $result->note_private);
 	}
 }
