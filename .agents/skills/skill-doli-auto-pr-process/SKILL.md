@@ -46,7 +46,7 @@ and uses `skill-doli-code-review` for the code review.
 3. Take the most recent PR not yet proposed in this session. Display its number, title, author,
    **link**, its **mergeable status** (mergeable / not mergeable, from `mergeable` and
    `mergeStateStatus`) and its **CI status** (OK / running / error, and if error, the name of each
-   failing check), using `gh pr view N -R Dolibarr/dolibarr --json baseRefName,createdAt,changedFiles,mergeable,mergeStateStatus,statusCheckRollup`
+   failing check), using `gh pr view N -R Dolibarr/dolibarr --json baseRefName,createdAt,changedFiles,labels,mergeable,mergeStateStatus,statusCheckRollup`
    (keep only the latest run of each check).
    This loop is mostly run from a **smartphone**: do NOT use the AskUserQuestion tool (its links
    are neither clickable nor copyable) and do not open a browser with `xdg-open`. Display the PR in
@@ -59,7 +59,9 @@ and uses `skill-doli-code-review` for the code review.
      `- Diff des fichiers (3) : [https://github.com/Dolibarr/dolibarr/pull/N/files](https://github.com/Dolibarr/dolibarr/pull/N/files)`
 
    Then, in this order: one line with the creation date of the PR (`createdAt`) and its author,
-   e.g. `- Création : 2026-11-10 - login`, then the mergeable status and the CI status.
+   e.g. `- Création : 2026-11-10 - login`, then one line with the labels of the PR (`labels`,
+   comma-separated), e.g. `- Tags : PHP 8, bug` (use `- Tags : -` when the PR has no label),
+   then the mergeable status and the CI status.
    When the PR is not mergeable, or the CI is in error,
    put the ❌ emoji at the start of the value of that line (e.g. `- CI : ❌ erreur`).
 
