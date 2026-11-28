@@ -244,12 +244,14 @@ $(document).ready(function () {
 <?php } ?>
 <?php if (isModEnabled('ai')) { ?>
 <script>
-/* Login page reached (logout, session expired...): clear the AI chat conversations kept in sessionStorage */
+/* Login page reached (logout, session expired...): clear the AI chat state kept in sessionStorage */
 try {
 	for (var i = sessionStorage.length - 1; i >= 0; i--) {
 		var key = sessionStorage.key(i);
 		if (key && key.indexOf('aiChatHistory_') === 0) { sessionStorage.removeItem(key); }
 	}
+	sessionStorage.removeItem('aiPopoverOpen');
+	sessionStorage.removeItem('aiPendingRequest');
 } catch (e) { /* storage not available */ }
 </script>
 <?php } ?>

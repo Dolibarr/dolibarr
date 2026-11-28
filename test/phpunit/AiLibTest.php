@@ -58,6 +58,40 @@ class AiLibTest extends CommonClassTest
 	}
 
 	/**
+	 * testAiPendingIntent
+	 *
+	 * @return void
+	 */
+	public function testAiPendingIntent()
+	{
+		$key = bin2hex(random_bytes(16));
+		$intent = array('tool' => 'respond_to_user', 'arguments' => array('message' => 'Hello'));
+
+		$this->assertTrue(aiPendingIntentSave(1, $key, $intent));
+		$path = aiPendingIntentPath(1, $key);
+		$this->assertFileExists($path);
+		$this->assertSame(array('status' => 'done', 'intent' => $intent), aiPendingIntentTake(1, $key));
+		$this->assertFileDoesNotExist($path);
+
+		$this->assertSame(array('status' => 'pending'), aiPendingIntentTake(1, bin2hex(random_bytes(16))));
+		$this->assertSame(array('status' => 'unknown'), aiPendingIntentTake(1, '../'.$key));
+		$this->assertSame('', aiPendingIntentPath(1, strtoupper($key)));
+
+		// A file renamed for another user must still be refused on its content.
+		aiPendingIntentSave(2, $key, $intent);
+		rename(aiPendingIntentPath(2, $key), $path);
+		$this->assertSame(array('status' => 'unknown'), aiPendingIntentTake(1, $key));
+		$this->assertFileDoesNotExist($path);
+
+		aiPendingIntentSave(1, $key, $intent);
+		$stored = json_decode((string) file_get_contents($path), true);
+		$stored['time'] = dol_now() - 31 * 60;
+		file_put_contents($path, json_encode($stored));
+		$this->assertSame(array('status' => 'unknown'), aiPendingIntentTake(1, $key));
+		$this->assertFileDoesNotExist($path);
+	}
+
+	/**
 	 * testAiHistoryTurnForModel
 	 *
 	 * @return void

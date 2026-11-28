@@ -2961,27 +2961,11 @@ function top_menu_ai()
 	$aijsver = @filemtime($aijsfile);
 	$aijsurl = DOL_URL_ROOT.'/ai/js/ai_assistant.js?v='.urlencode((string) ($aijsver ? $aijsver : DOL_VERSION));
 
-	$html .= '<script nonce="'.getNonce().'">
-        jQuery(document).ready(function() {
-	        jQuery(document).on("click", function(event) {
-				if (jQuery("#topmenu-ai-popover").hasClass("open")) {
-					// A click on a node removed from the DOM while the event was bubbling
-					// (e.g. a chat action button like "Yes, continue" that removes its own
-					// message bubble) must not be mistaken for a click outside the popover:
-					// .closest() cannot reach the popover from a detached node.
-					if (event.target instanceof Element && !event.target.isConnected) {
-						return;
-					}
-		    		if (!$(event.target).closest("#topmenu-ai-toggle").length && !$(event.target).closest("#topmenu-ai-popover").length) {
-						console.log("click close ai dropdown - we click outside");
-		                // Hide the dropdown.
-						jQuery("#topmenu-ai-popover").removeClass("open");
-		            }
-				}
-	        });
-		});
+	// The full assistant page runs its own chat: the popover must not open over it.
+	$onAssistantPage = (bool) preg_match('#/ai/assistant/index\.php$#', (string) ($_SERVER['PHP_SELF'] ?? ''));
 
-	// Clear the AI chat conversations kept in sessionStorage when the user logs out.
+	$html .= '<script nonce="'.getNonce().'">
+	// Clear the AI chat state kept in sessionStorage when the user logs out.
 	document.addEventListener("click", function (event) {
 		var link = event.target.closest("a[href*=\"/user/logout.php\"]");
 		if (!link) { return; }
@@ -2990,6 +2974,8 @@ function top_menu_ai()
 				var key = sessionStorage.key(i);
 				if (key && key.indexOf("aiChatHistory_") === 0) { sessionStorage.removeItem(key); }
 			}
+			sessionStorage.removeItem("aiPopoverOpen");
+			sessionStorage.removeItem("aiPendingRequest");
 		} catch (e) { /* storage not available */ }
 	});
 
@@ -3038,43 +3024,58 @@ function top_menu_ai()
 			if (input) { input.focus(); }
 		}
 
-		// The expand button always opens the standalone full page
-		// (/ai/assistant/index.php) in the current tab. There is no small mode:
-		// the popover opens and stays in the large ("expanded") state.
-		toggle.addEventListener("click", function (event) {
-			console.log("Click on #topmenu-ai-toggle");
-			event.preventDefault();
+		function rememberOpen(isOpen) {
+			try {
+				if (isOpen) { sessionStorage.setItem("aiPopoverOpen", "1"); } else { sessionStorage.removeItem("aiPopoverOpen"); }
+			} catch (e) { /* storage not available */ }
+		}
+
+		function aiOpenPopover() {
 			// position:fixed can be hijacked by a transformed ancestor: hosting the
 			// panel directly under <body> guarantees viewport coordinates.
 			if (popover.parentNode !== document.body) { document.body.appendChild(popover); }
 			positionPopover();
-			var isOpen = popover.classList.toggle("open");
-			if (isOpen) {
-				// Always open in the large ("expanded") state.
-				popover.classList.add("expanded");
-				loadChat();
-				if (loaded) { focusInput(); }
-			}
+			popover.classList.add("open");
+			// Always open in the large ("expanded") state.
+			popover.classList.add("expanded");
+			rememberOpen(true);
+			loadChat();
+			if (loaded) { focusInput(); }
+		}
+
+		function aiClosePopover() {
+			popover.classList.remove("open");
+			rememberOpen(false);
+		}
+
+		// The popover closes only through this button, its close button or Escape.
+		toggle.addEventListener("click", function (event) {
+			event.preventDefault();
+			if (popover.classList.contains("open")) { aiClosePopover(); } else { aiOpenPopover(); }
 		});
 
 		popover.addEventListener("click", function (event) {
-			console.log("Click on #topmenu-ai-popover");
-			var closeBtn = event.target.closest("#ai-close-btn");
-			var expandBtn = event.target.closest("#ai-expand-btn");
+			const closeBtn = event.target.closest("#ai-close-btn");
+			const expandBtn = event.target.closest("#ai-expand-btn");
 			if (closeBtn) {
-				popover.classList.remove("open");
+				aiClosePopover();
 			} else if (expandBtn) {
-				// Open the standalone full page in the current tab.
-				var url = expandBtn.dataset.fullscreenUrl;
-				if (url) { window.location.href = url; }
+				// The full page also renders this popover: it must not reopen on top of it.
+				const url = expandBtn.dataset.fullscreenUrl;
+				if (url) { aiClosePopover(); window.location.href = url; }
 			}
 		});
 
 		document.addEventListener("keydown", function (event) {
-			if (event.key === "Escape" && popover.classList.contains("open")) {
-				popover.classList.remove("open");
+			if (event.key === "Escape" && !event.defaultPrevented && popover.classList.contains("open")) {
+				aiClosePopover();
 			}
 		});
+
+		try {
+			const onAssistantPage = '.($onAssistantPage ? 'true' : 'false').';
+			if (sessionStorage.getItem("aiPopoverOpen") === "1" || (!onAssistantPage && sessionStorage.getItem("aiPendingRequest"))) { aiOpenPopover(); }
+		} catch (e) { /* storage not available */ }
 	})();
 	</script>';
 

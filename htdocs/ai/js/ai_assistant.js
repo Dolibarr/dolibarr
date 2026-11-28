@@ -389,6 +389,7 @@ export function initAiAssistant(container) {
     // The bubbles, the copy kept by this tab and the pending states go through
     // the shared reset; the server-side conversation simply stays in the list.
     function startNewConversation() {
+        dropPendingRequest();
         clearConversation();
         setConversationId(0);
         refreshContext();
@@ -1608,13 +1609,13 @@ export function initAiAssistant(container) {
         } catch (e) { /* private mode or quota exceeded: the chat just won't survive a page change */ }
     }
 
-    function restoreChatHistory() {
+    function restoreChatHistory(keepLastQuestion) {
         if (!HISTORY_KEY) return;
         let msgs = [];
         try { msgs = JSON.parse(sessionStorage.getItem(HISTORY_KEY) || '[]'); } catch (e) { msgs = []; }
         if (!Array.isArray(msgs)) return;
-        // A question left without answer (page changed while waiting) is dropped.
-        while (msgs.length && msgs[msgs.length - 1].type === 'user') msgs.pop();
+        // A question left without answer (page changed while waiting) is dropped, unless its answer is resumed.
+        while (!keepLastQuestion && msgs.length && msgs[msgs.length - 1].type === 'user') msgs.pop();
         if (!msgs.length) return;
         try { contextAllMode = (sessionStorage.getItem(HISTORY_KEY + '_all') === '1'); } catch (e) { contextAllMode = false; }
         if (welcome) welcome.style.display = 'none';
@@ -2584,7 +2585,7 @@ export function initAiAssistant(container) {
                         e2.stopPropagation();
                         chatHistoryApi({ action: 'delete', id: c.id }).then(() => { row.remove(); if (conversationId === c.id) setConversationId(0); });
                     };
-                    row.onclick = () => { panel.remove(); loadConversation(c.id); };
+                    row.onclick = () => { panel.remove(); dropPendingRequest(); loadConversation(c.id); };
                     attachConversationPreview(row, c);
                     panel.appendChild(row);
                 });
@@ -2651,7 +2652,7 @@ export function initAiAssistant(container) {
                 chatHistoryApi({ action: 'rename', id: c.id, title: v }).then((r) => { c.title = (r && r.title) || v; onDone(c.title); }).catch(() => onDone(null));
             } else { onDone(null); }
         };
-        inp.addEventListener('keydown', (ek) => { if (ek.key === 'Enter') { ek.preventDefault(); finish(true); } else if (ek.key === 'Escape') { finish(false); } });
+        inp.addEventListener('keydown', (ek) => { if (ek.key === 'Enter') { ek.preventDefault(); finish(true); } else if (ek.key === 'Escape') { ek.preventDefault(); finish(false); } });
         inp.addEventListener('blur', () => finish(true));
         inp.addEventListener('click', (ec) => ec.stopPropagation());
     }
@@ -2714,7 +2715,7 @@ export function initAiAssistant(container) {
                             if (conversationId === c.id) startNewConversation(); else renderSidebar();
                         }).catch(() => {});
                     };
-                    row.onclick = () => { if (c.id !== conversationId) loadConversation(c.id); };
+                    row.onclick = () => { if (c.id !== conversationId) { dropPendingRequest(); loadConversation(c.id); } };
                     attachConversationPreview(row, c);
                     list.appendChild(row);
                 });
@@ -2744,7 +2745,7 @@ export function initAiAssistant(container) {
     }
 
     function loadConversation(id) {
-        chatHistoryApi({ action: 'load', id: id }).then((res) => {
+        return chatHistoryApi({ action: 'load', id: id }).then((res) => {
             if (!res || !res.messages) return;
             chat.querySelectorAll('.msg').forEach((n) => n.remove());
             if (welcome) welcome.style.display = 'none';
@@ -2923,7 +2924,9 @@ export function initAiAssistant(container) {
             return JSON.parse(raw);
         } catch (e) {
             if (/<\s*(!doctype|html|form|body)[\s>]/i.test(raw)) {
-                throw new Error(t('AISessionExpiredReload'));
+                const expired = new Error(t('AISessionExpiredReload'));
+                expired.sessionExpired = true;
+                throw expired;
             }
             throw e;
         }
@@ -3045,128 +3048,282 @@ export function initAiAssistant(container) {
             appendMsg('user', displayHtml, null, (query === '/tools' && !readyDocs.length) ? null : (query || t('AIContextAttachmentOnly')));
             clearChip();
         }
-        lastSent = { sentQuery: sentQuery, query: query };
+        // A resend keeps the context of the page the question was asked from.
+        const pageContext = (isResend && resend.pageContext !== undefined) ? resend.pageContext : pageContextPayload();
+        lastSent = { sentQuery: sentQuery, query: query, pageContext: pageContext };
         input.value = '';
         input.style.height = '44px';
-        input.disabled = true;
         appendTyping();
-        let loadingMsg = chat.lastElementChild;
+        const state = {
+            round: 0, query: query, sentQuery: sentQuery, followupSnippets: [], followupResult: null,
+            sentChoices: Object.assign({}, thirdpartyChoices), // the third parties the user picked, for every round of this request
+            pageContext: pageContext, loadingMsg: chat.lastElementChild
+        };
+        await runRounds(0, state, null);
+    }
+
+    // Three rounds at most: the server never flags the last followup round itself.
+    async function runRounds(startRound, state, receivedIntent) {
+        input.disabled = true;
         try {
             const chosenModel = resolveModel();
             // Pinned exchanges only: context is opt-in, its cost visible in the bar.
             const pinned = pinnedContextPayload();
-            // Results of the reads flagged needs_followup, sent back on the next rounds.
-            let followupSnippets = [];
-            let followupResult = null;
-            // The third parties the user picked, for every round of this request.
-            const sentChoices = Object.assign({}, thirdpartyChoices);
-            // Three rounds at most: the server never flags the last followup round itself.
-            for (let round = 0; round < 3; round++) {
-                if (round > 0) { appendTyping(); loadingMsg = chat.lastElementChild; }
-                const intentRes = await fetch(epUrl('parse_intent.php'), {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    // Page context (set by the printCommonFooter hook on card pages)
-                    // lets the server resolve "this invoice" - it re-validates the
-                    // ids against the user's rights before trusting them.
-                    body: JSON.stringify(Object.assign(
-                        chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
-                        Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
-                        (function () {
-                            // followup_result: only to name the object in the confirmation, never sent to the model.
-                            // All the search results in one assistant turn, followup is the number of the round.
-                            if (followupSnippets.length) return { history: pinned.concat([{ role: 'assistant', text: followupSnippets.join('\n') }]), followup: round, followup_result: followupResult };
-                            return pinned.length ? { history: pinned } : {};
-                        })(),
-                        (function () {
-                            const ctx = window.aiPageContext;
-                            if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return {};
-                            // On list pages, the mass-action checkboxes carry the row
-                            // ids: checked ones are the user's live selection.
-                            if (ctx.list) {
-                                // The mass-action checkboxes carry rowids by core
-                                // convention on every list - a uniform source that
-                                // sidesteps the per-list SQL alias zoo server-side.
-                                const all = Array.from(document.querySelectorAll('.checkforselect'))
-                                    .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
-                                if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
-                                const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
-                                    .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
-                                if (sel.length) ctx.selected = sel;
-                            }
-                            return { context: ctx };
-                        })()
-                    ))
-                });
-                const intent = await aiJson(intentRes);
-                loadingMsg.remove();
-                // Choices answer this request only: once it went through, the next question asks again.
-                if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
-                if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); input.disabled = false; input.focus(); return; }
-                if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); input.disabled = false; input.focus(); return; }
-                if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); input.disabled = false; input.focus(); return; }
-                if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
-                    // Debug output of /tools, built and escaped server side: shown as is,
-                    // never sent back as context. Only for that query: an 'html' argument
-                    // coming from the model is never trusted.
-                    appendMsg('bot', intent.arguments.html); input.disabled = false; input.focus(); return;
-                }
-                if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); input.disabled = false; input.focus(); return; }
-                if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); input.disabled = false; input.focus(); return; }
-                if (intent.tool === 'generate_navigation_url') {
-                    appendMsg('system', t('GeneratingLink'));
-                    const loadingNav = chat.lastElementChild;
-                    const navRes = await fetch(epUrl('execute_tool.php'), {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(intent)
-                    });
-                    const nav = await aiJson(navRes);
-                    loadingNav.remove();
-                    if (nav.error) { appendMsg('error', nav.error); }
-                    else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
-                    input.disabled = false; input.focus(); return;
-                }
-
-                appendMsg('system', t('FetchingData'));
-                const loadingData = chat.lastElementChild;
-                const toolRes = await fetch(epUrl('execute_tool.php'), {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(intent)
-                });
-                const result = await aiJson(toolRes);
-                loadingData.remove();
-                // The read only fetched the ids the asked action needs: hand its result
-                // back to the model instead of showing it, and let it perform the action.
-                if (round < 2 && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
-                    appendMsg('system', t('AISearchDoneNowPreparingAction') + ' (' + escapeHtml(intent.tool || '') + ')...');
-                    followupSnippets.push(contextSnippetOf(result, intent.tool));
-                    followupResult = result;
-                    continue;
-                }
-                // A write tool does not write on its first call: it answers with the
-                // sentence to confirm and a requestState. Ask the user, the write runs
-                // when executePendingIntent() sends the state back.
-                if (result && result.resultType === 'input_required' && result.requestState) {
-                    const req = (Array.isArray(result.inputRequests) && result.inputRequests[0]) || {};
-                    const confirmed = Object.assign({}, intent, {
-                        arguments: Object.assign({}, intent.arguments || {}, { requestState: result.requestState })
-                    });
-                    delete confirmed.needs_followup;
-                    delete confirmed.resolved_label;
-                    // The id came from a search the user never saw: say which object it is.
-                    const action = (req.prompt || intent.tool) + (intent.resolved_label ? ' - ' + escapeHtml(intent.resolved_label) : '');
-                    handleConfirmation(action, '', { arguments: { original_intent: confirmed } });
-                    input.disabled = false; input.focus(); return;
-                }
-                lastResult = { data: result, tool: intent.tool, query: query };
-                const failedRequest = lastSent;
-                const retry = retryActionsFor(result, () => { if (failedRequest) handleQuery(failedRequest); });
-                appendMsg('bot', formatResult(result, false, intent.tool), retry, contextSnippetOf(result, intent.tool));
-                resolveThirdpartyNames(chat.lastElementChild);
-                break;
+            for (let round = startRound; round < 3; round++) {
+                if (round > startRound) { appendTyping(); state.loadingMsg = chat.lastElementChild; }
+                state.round = round;
+                const intent = (round === startRound && receivedIntent) ? receivedIntent : await fetchIntent(state, chosenModel, pinned);
+                if (await handleIntent(intent, state) !== 'continue') break;
             }
-        } catch (e) { if (loadingMsg.parentNode) loadingMsg.remove(); appendMsg('error', t('NetworkError') + ': ' + e.message); }
+        } catch (e) {
+            if (state.loadingMsg.parentNode) state.loadingMsg.remove();
+            if (!pageLeaving && !pageLeftOnce) appendMsg('error', t('NetworkError') + ': ' + e.message);
+        }
         input.disabled = false;
         input.focus();
+    }
+
+    function pageContextPayload() {
+        const ctx = window.aiPageContext;
+        if (!ctx || (!ctx.id && !ctx.list && !ctx.dashboard)) return null;
+        // On list pages, the mass-action checkboxes carry the row
+        // ids: checked ones are the user's live selection.
+        if (ctx.list) {
+            // The mass-action checkboxes carry rowids by core
+            // convention on every list - a uniform source that
+            // sidesteps the per-list SQL alias zoo server-side.
+            const all = Array.from(document.querySelectorAll('.checkforselect'))
+                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0);
+            if ((!ctx.ids || !ctx.ids.length) && all.length) ctx.ids = all.slice(0, 100);
+            const sel = Array.from(document.querySelectorAll('.checkforselect:checked'))
+                .map(cb => parseInt(cb.value, 10)).filter(n => n > 0).slice(0, 25);
+            if (sel.length) ctx.selected = sel;
+        }
+        return ctx;
+    }
+
+    async function fetchIntent(state, chosenModel, pinned) {
+        const { round, sentQuery, followupSnippets, followupResult, sentChoices, pageContext } = state;
+        const requestKey = newRequestKey();
+        pageLeftOnce = false;
+        pendingSave({
+            key: requestKey, query: state.query, sentQuery: sentQuery, round: round,
+            followupSnippets: followupSnippets, followupResult: followupResult, sentChoices: sentChoices,
+            pageContext: pageContext, conversationId: conversationId, startedAt: Date.now()
+        });
+        try {
+            const intentRes = await fetch(epUrl('parse_intent.php'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                // Page context (set by the printCommonFooter hook on card pages)
+                // lets the server resolve "this invoice" - it re-validates the
+                // ids against the user's rights before trusting them.
+                body: JSON.stringify(Object.assign(
+                    { request_key: requestKey },
+                    chosenModel ? { query: sentQuery, model: chosenModel } : { query: sentQuery },
+                    Object.keys(sentChoices).length ? { thirdparty_choices: sentChoices } : {},
+                    (function () {
+                        // followup_result: only to name the object in the confirmation, never sent to the model.
+                        // All the search results in one assistant turn, followup is the number of the round.
+                        if (followupSnippets.length) return { history: pinned.concat([{ role: 'assistant', text: followupSnippets.join('\n') }]), followup: round, followup_result: followupResult };
+                        return pinned.length ? { history: pinned } : {};
+                    })(),
+                    pageContext ? { context: pageContext } : {}
+                ))
+            });
+            const intent = await aiJson(intentRes);
+            pendingClear(requestKey);
+            return intent;
+        } catch (e) {
+            // Browsers may abort the fetch as soon as a link is followed, before pagehide: wait for the page to go.
+            if (!(e && e.sessionExpired) && Date.now() - navigationStartedAt < LEAVE_WAIT_MS) await pageGone(LEAVE_WAIT_MS);
+            // Leaving the page aborts the fetch: the next page fetches the answer instead.
+            if (!pageLeaving && !pageLeftOnce) pendingClear(requestKey);
+            throw e;
+        }
+    }
+
+    // --- Question still running when the user leaves the page (see pending_intent.php) ---
+    const PENDING_KEY = 'aiPendingRequest';
+    // Past the time limit of parse_intent.php (two model calls at most) plus a margin, no answer will come.
+    const PENDING_MAX_AGE_MS = Math.min(30 * 60, (parseInt(config.requestTimeLimit, 10) || 245) + 30) * 1000;
+    const PENDING_POLL_MS = 3000;
+    let pageLeaving = false;
+    // beforeunload also fires for downloads and mailto links that keep the page: it only opens a wait for pagehide.
+    let navigationStartedAt = 0;
+    const LEAVE_WAIT_MS = 15000;
+    window.addEventListener('beforeunload', () => { navigationStartedAt = Date.now(); });
+    let pageLeftOnce = false;
+    window.addEventListener('pagehide', () => { pageLeaving = true; pageLeftOnce = true; });
+    window.addEventListener('pageshow', () => { pageLeaving = false; });
+
+    function pageGone(maxMs) {
+        return new Promise((resolve) => {
+            const until = Date.now() + maxMs;
+            const check = () => { if (pageLeaving || pageLeftOnce || Date.now() > until) resolve(); else setTimeout(check, 100); };
+            check();
+        });
+    }
+
+    function newRequestKey() {
+        const bytes = new Uint8Array(16);
+        crypto.getRandomValues(bytes);
+        return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function pendingSave(record) {
+        try { sessionStorage.setItem(PENDING_KEY, JSON.stringify(record)); } catch (e) { /* no storage or quota: the answer cannot follow to the next page */ }
+    }
+
+    function pendingLoad() {
+        try {
+            const p = JSON.parse(sessionStorage.getItem(PENDING_KEY) || 'null');
+            if (p && typeof p.key === 'string' && /^[0-9a-f]{32}$/.test(p.key)) return p;
+        } catch (e) { /* unreadable: nothing to resume */ }
+        return null;
+    }
+
+    function dropPendingRequest() {
+        const p = pendingLoad();
+        if (p) pendingClear(p.key);
+    }
+
+    function pendingClear(key) {
+        try {
+            const p = pendingLoad();
+            if (!p || p.key === key) sessionStorage.removeItem(PENDING_KEY);
+        } catch (e) { /* no storage */ }
+    }
+
+    // Resolves to the intent, 'lost', or 'superseded' when a new question replaced the pending one.
+    async function pollPendingIntent(pending) {
+        const stillPending = () => { const p = pendingLoad(); return !!p && p.key === pending.key; };
+        for (;;) {
+            if (!stillPending()) return 'superseded';
+            let res = null;
+            try {
+                res = await aiJson(await fetch(epUrl('pending_intent.php'), {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ request_key: pending.key })
+                }));
+            } catch (e) {
+                if (pageLeaving || (e && e.sessionExpired)) throw e;
+                res = { status: 'pending' };   // network hiccup: ask again until the time limit
+            }
+            if (!stillPending()) return 'superseded';
+            if (res && res.status === 'done' && res.intent) return res.intent;
+            if (!res || res.status !== 'pending') return 'lost';
+            if (Date.now() - (Number(pending.startedAt) || 0) > PENDING_MAX_AGE_MS) return 'lost';
+            await new Promise((resolve) => setTimeout(resolve, PENDING_POLL_MS));
+        }
+    }
+
+    // The question bubble is already in the conversation: only its answer is awaited here.
+    // The input stays usable: a new question replaces the pending one and ends this wait.
+    async function resumePendingRequest(pending) {
+        // The popover and the full page may both run on one page: only one of them resumes.
+        if (document.documentElement.dataset.aiPendingResumed === pending.key) return;
+        document.documentElement.dataset.aiPendingResumed = pending.key;
+        if (welcome) welcome.style.display = 'none';
+        appendTyping();
+        const waiting = chat.lastElementChild;
+        let outcome = 'lost';
+        let failure = t('AIPendingAnswerLost');
+        try {
+            outcome = await pollPendingIntent(pending);
+        } catch (e) {
+            if (pageLeaving) return;
+            if (e && e.sessionExpired) failure = e.message;
+        }
+        if (outcome === 'superseded') { waiting.remove(); return; }
+        pendingClear(pending.key);
+        if (outcome === 'lost') {
+            waiting.remove();
+            appendMsg('error', escapeHtml(failure));
+            return;
+        }
+        lastSent = {
+            sentQuery: String(pending.sentQuery || ''), query: String(pending.query || ''),
+            pageContext: (pending.pageContext && typeof pending.pageContext === 'object') ? pending.pageContext : null
+        };
+        const state = {
+            round: 0, query: lastSent.query, sentQuery: lastSent.sentQuery,
+            followupSnippets: Array.isArray(pending.followupSnippets) ? pending.followupSnippets : [],
+            followupResult: pending.followupResult || null,
+            sentChoices: (pending.sentChoices && typeof pending.sentChoices === 'object') ? pending.sentChoices : {},
+            pageContext: lastSent.pageContext, loadingMsg: waiting
+        };
+        const round = Math.min(Math.max(parseInt(pending.round, 10) || 0, 0), 2);
+        await runRounds(round, state, outcome);
+    }
+
+    // Returns 'continue' to run one more round, 'done' otherwise.
+    async function handleIntent(intent, state) {
+        const { round, query, followupSnippets, loadingMsg } = state;
+        loadingMsg.remove();
+        // Choices answer this request only: once it went through, the next question asks again.
+        if (!(intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice)) thirdpartyChoices = {};
+        if (intent.error) { appendMsg('error', t('AIError') + ': ' + intent.error); return 'done'; }
+        if (intent.tool === 'ask_for_clarification' && intent.arguments && intent.arguments.thirdparty_choice) { handleThirdpartyChoice(intent.arguments.question || '', intent.arguments.thirdparty_choice); return 'done'; }
+        if (intent.tool === 'ask_for_clarification') { const a = intent.arguments || {}; handleClarification(a.question || a.reason || (a.missing_argument ? t('MissingInformation') + ': ' + a.missing_argument : t('CouldYouClarify')), query); return 'done'; }
+        if (query === '/tools' && intent.tool === 'respond_to_user' && intent.arguments && typeof intent.arguments.html === 'string') {
+            // Debug output of /tools, built and escaped server side: shown as is,
+            // never sent back as context. Only for that query: an 'html' argument
+            // coming from the model is never trusted.
+            appendMsg('bot', intent.arguments.html); return 'done';
+        }
+        if (intent.tool === 'respond_to_user' || intent.tool === 'reject_general_question') { const a = intent.arguments || {}; const msg = a.message || a.response || a.text || a.answer || a.content || a.reply || t('EmptyAIResponse'); handleResponse(msg, intent.status === 'error'); return 'done'; }
+        if (intent.tool === 'ask_for_confirmation') { handleConfirmation(intent.arguments.action, intent.arguments.details, intent); return 'done'; }
+        if (intent.tool === 'generate_navigation_url') {
+            appendMsg('system', t('GeneratingLink'));
+            const loadingNav = chat.lastElementChild;
+            const navRes = await fetch(epUrl('execute_tool.php'), {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(intent)
+            });
+            const nav = await aiJson(navRes);
+            loadingNav.remove();
+            if (nav.error) { appendMsg('error', nav.error); }
+            else { const html = `${t('Found')}: <a href="${nav.url}" target="_blank" class="msg-action-btn primary"><span class="fas fa-external-link-alt"></span> ${t('Open')} ${nav.description}</a>`; appendMsg('bot', html); }
+            return 'done';
+        }
+
+        appendMsg('system', t('FetchingData'));
+        const loadingData = chat.lastElementChild;
+        const toolRes = await fetch(epUrl('execute_tool.php'), {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(intent)
+        });
+        const result = await aiJson(toolRes);
+        loadingData.remove();
+        // The read only fetched the ids the asked action needs: hand its result
+        // back to the model instead of showing it, and let it perform the action.
+        if (round < 2 && intent.needs_followup && result && !result.error && result.success !== false && result.resultType !== 'input_required') {
+            appendMsg('system', t('AISearchDoneNowPreparingAction') + ' (' + escapeHtml(intent.tool || '') + ')...');
+            followupSnippets.push(contextSnippetOf(result, intent.tool));
+            state.followupResult = result;
+            return 'continue';
+        }
+        // A write tool does not write on its first call: it answers with the
+        // sentence to confirm and a requestState. Ask the user, the write runs
+        // when executePendingIntent() sends the state back.
+        if (result && result.resultType === 'input_required' && result.requestState) {
+            const req = (Array.isArray(result.inputRequests) && result.inputRequests[0]) || {};
+            const confirmed = Object.assign({}, intent, {
+                arguments: Object.assign({}, intent.arguments || {}, { requestState: result.requestState })
+            });
+            delete confirmed.needs_followup;
+            delete confirmed.resolved_label;
+            // The id came from a search the user never saw: say which object it is.
+            const action = (req.prompt || intent.tool) + (intent.resolved_label ? ' - ' + escapeHtml(intent.resolved_label) : '');
+            handleConfirmation(action, '', { arguments: { original_intent: confirmed } });
+            return 'done';
+        }
+        lastResult = { data: result, tool: intent.tool, query: query };
+        const failedRequest = lastSent;
+        const retry = retryActionsFor(result, () => { if (failedRequest) handleQuery(failedRequest); });
+        appendMsg('bot', formatResult(result, false, intent.tool), retry, contextSnippetOf(result, intent.tool));
+        resolveThirdpartyNames(chat.lastElementChild);
+        return 'done';
     }
 
     // =========================================================================
@@ -3442,10 +3599,18 @@ export function initAiAssistant(container) {
     // server-side conversation, the copy this tab kept across pages is restored.
     let openConv = parseInt(container.dataset.aiOpenConversation, 10) || 0;
     if (!openConv) { try { openConv = parseInt(localStorage.getItem('aiCurrentConversation'), 10) || 0; } catch (e) { openConv = 0; } }
+    const pending = pendingLoad();
+    // An answer for another conversation than the one shown is dropped.
+    const resumeOrDrop = () => {
+        if (!pending) return;
+        if (!pending.conversationId || pending.conversationId === conversationId) resumePendingRequest(pending);
+        else pendingClear(pending.key);
+    };
     if (openConv > 0) {
-        loadConversation(openConv);
+        loadConversation(openConv).then(resumeOrDrop);
     } else {
-        restoreChatHistory();
+        restoreChatHistory(!!(pending && !pending.conversationId));
+        resumeOrDrop();
     }
 }
 
