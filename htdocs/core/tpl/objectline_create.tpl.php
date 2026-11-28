@@ -14,7 +14,7 @@
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2025-2026	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Lenin Rivas			<lenin.rivas777@gmail.com>
- * Copyright (C) 2026		Jose MARTINEZ		<jose.martinez@pichinov.com>
+ * Copyright (C) 2026		Jose Martinez			<jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1545,7 +1545,8 @@ if (!empty($object->thirdparty)) {
 
 				var has_multicurrency_up = false;
 
-				if(jsConf.modules.multicurrency && jsConf.docObject.multicurrency_code !== jsConf.conf.currency) {
+				// Same test as the PHP one used for the currency columns: a document without currency (a reception for example) has no multicurrency price
+				if (jsConf.modules.multicurrency && jsConf.docObject.multicurrency_code && jsConf.docObject.multicurrency_code !== jsConf.conf.currency) {
 					var object_multicurrency_code = jsConf.docObject.multicurrency_code;
 
 					var multicurrency_code = $('option:selected', this).attr('data-multicurrency-code');                                			// When select is done from HTML select
