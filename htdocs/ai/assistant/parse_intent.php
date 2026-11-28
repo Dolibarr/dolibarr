@@ -690,8 +690,10 @@ try {
 			// Detect in which business family the query is using Hybrid (Translations + Synonyms)
 			$detectedCategories = classifyIntentUniversal($queryForIntent, $langs);
 
-			// Category filter applied to $llmToolsBase — system tools already excluded
-			$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
+			$toolsSchema = getDolGlobalString('AI_DISABLE_TOOLS_BY_OBJECT') ? array() : filterToolsByObjects($llmToolsBase, classifyQueryObjects($queryForIntent, $langs, $llmToolsBase), $detectedCategories);
+			if (empty($toolsSchema)) {
+				$toolsSchema = filterToolsProfessional($llmToolsBase, $detectedCategories);
+			}
 
 			if (getDolGlobalString("AI_DEBUG")) {
 				dol_syslog("AI Pro: Latin script. Detected: " . json_encode($detectedCategories) . ". Filtered to " . count($toolsSchema) . " tools.", LOG_DEBUG, 0, '_ai');
@@ -977,7 +979,7 @@ try {
 					if ($histBudget < 0) {
 						break;
 					}
-					$history[] = array('role' => ((($turn['role'] ?? '') === 'assistant') ? 'assistant' : 'user'), 'text' => $htext);
+					$history[] = (($turn['role'] ?? '') === 'assistant') ? array('role' => 'assistant', 'text' => aiHistoryTurnForModel($htext)) : array('role' => 'user', 'text' => $htext);
 				}
 				$history = array_reverse($history);
 
@@ -1024,7 +1026,7 @@ try {
 						if ($memBudget < 0) {
 							break;
 						}
-						$memHistory[] = array('role' => ((string) $mobj->role === 'assistant' ? 'assistant' : 'user'), 'text' => '[earlier conversation] '.$mtext);
+						$memHistory[] = ((string) $mobj->role === 'assistant') ? array('role' => 'assistant', 'text' => '[earlier conversation] '.aiHistoryTurnForModel($mtext)) : array('role' => 'user', 'text' => '[earlier conversation] '.$mtext);
 					}
 					// Older context goes first: cross-conversation turns before pinned.
 					$history = array_merge($memHistory, $history);
@@ -1076,6 +1078,8 @@ try {
 				$query .= $aiAttachmentsHiddenNote;
 			}
 			$attachments = $attachmentsForModel;	// Only what is sent, for the error messages below
+			// Releases the session lock during the long AI call: $_SESSION changes after this line are not saved unless the session is reopened.
+			$sessionReleased = session_write_close();
 			$rawResponse = $adapter->generate($systemPrompt, $query, 'text', $attachmentsForModel, $history);
 			// The provider rejected the attachments (e.g. "Image input is not enabled for this model"):
 			// remember it for the session and ask again without them, the model still has their references.
@@ -1083,7 +1087,13 @@ try {
 				&& !UniversalLLMAdapter::isModelUnavailableError($rawResponse)
 				&& preg_match('/\b(?:file|files|pdf|document|image_url|image|images|attachment|content.?type|mime|multimodal|vision)\b/i', $rawResponse)) {
 				dol_syslog("parse_intent.php attachments rejected by ".$serviceKey."/".$model.", ask again without them: ".dol_trunc($rawResponse, 200), LOG_WARNING);
+				if ($sessionReleased) {
+					dol_session_start();
+				}
 				ai_attachment_mark_rejected_by_model($attachmentsForModel, $serviceKey, $model);
+				if ($sessionReleased) {
+					session_write_close();
+				}
 				$attachments = array();
 				$query .= $aiAttachmentsHiddenNote;
 				$rawResponse = $adapter->generate($systemPrompt, $query, 'text', array(), $history);
@@ -1951,45 +1961,11 @@ function classifyIntentUniversal(string $query, Translate $langs)
 		]
 	];
 
-	// en_US reference translator (loaded once; Translate caches files)
-	static $langsEnUs = null;
-	if ($langsEnUs === null) {
-		global $conf;
-		$langsEnUs = new Translate('', $conf);
-		$langsEnUs->setDefaultLang('en_US');
-		$langsEnUs->loadLangs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions', 'website'));
-	}
+	$langsEnUs = getAiTranslatorEnUs(array('main', 'bills', 'companies', 'products', 'projects', 'orders', 'propal', 'stocks', 'other', 'ticket', 'members', 'agenda', 'interventions', 'website'));
 
 	$detectedCategories = [];
 	foreach ($intentMap as $category => $data) {
-		$keywords = [];
-		foreach ($data['keys'] as $key) {
-			// Matched in the user's language AND in the en_US reference: keys
-			// translate to the UI language only, but users routinely type
-			// English terms on non-English installs. One mechanism, no
-			// separate synonym lists to translate.
-			foreach (array($langs->transnoentities($key), $langsEnUs->transnoentities($key)) as $trans) {
-				if ($trans === '' || ($trans === $key && preg_match('/[A-Z]/', dol_substr($key, 1, 200)))) {
-					// Untranslated composite key (e.g. 'BillStatusUnpaid'):
-					// matching it would be noise. A plain word equal to its
-					// key ('Customer' in en_US) is a real keyword - keep it.
-					continue;
-				}
-				if ($isLatin) {
-					$trans = strtolower(dol_string_unaccent($trans));
-				}
-				$keywords[] = $trans;
-			}
-		}
-		$keywords = array_unique($keywords);
-
-		// Hardcoded English colloquialisms (words no UI key carries) - words no
-		// UI key carries; translated vocabulary already arrives through the
-		// dual-language keys above.
-		foreach ($data['synonyms'] as $syn) {
-			$keywords[] = $isLatin ? strtolower(dol_string_unaccent($syn)) : $syn;
-		}
-		$keywords = array_unique($keywords);
+		$keywords = getAiQueryKeywords($data['keys'], $data['synonyms'], $langs, $langsEnUs, $isLatin);
 
 		$normalizedQuery = aiNormalizeForMatch($searchQuery, false);
 		foreach ($keywords as $word) {

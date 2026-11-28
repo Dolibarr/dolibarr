@@ -2397,7 +2397,7 @@ class CMailFile
 	{
 		$ret = '';
 
-		$address = trim(str_replace(array("\r", "\n", "\0"), '', $address));
+		$address = trim(str_replace(array("\r", "\n", "\0"), '', (string) $address));
 		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
 
 		// Loop over every component of the address
