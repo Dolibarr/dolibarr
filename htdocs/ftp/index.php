@@ -54,9 +54,6 @@ $numero_ftp = GETPOST("numero_ftp");
 $file = GETPOST("file");
 $confirm = GETPOST('confirm');
 
-$upload_dir = $conf->ftp->dir_temp;
-$download_dir = $conf->ftp->dir_temp;
-
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -100,6 +97,9 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'ftp', '');
+
+$upload_dir = $conf->ftp->dir_temp;
+$download_dir = $conf->ftp->dir_temp;
 
 
 /*

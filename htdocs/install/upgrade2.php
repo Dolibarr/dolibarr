@@ -4431,6 +4431,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/asterisk/cidlookup.php',
 		'/categories/class/api_category.class.php',
 		'/categories/class/api_deprecated_category.class.php',
+		'/comm/prospect/index.php',
 		'/compta/facture/class/api_invoice.class.php',
 		'/commande/class/api_commande.class.php',
 		'/partnership/class/api_partnership.class.php',
