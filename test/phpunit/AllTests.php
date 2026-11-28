@@ -211,6 +211,10 @@ class AllTests
 		//$suite->addTestSuite('AiWriteConfirmationTest');
 		require_once dirname(__FILE__).'/CompanyLibTest.php';
 		$suite->addTestSuite('CompanyLibTest');
+		require_once dirname(__FILE__).'/ConfFileEditorTest.php';
+		$suite->addTestSuite('ConfFileEditorTest');
+		require_once dirname(__FILE__).'/ConfFileReuseTest.php';
+		$suite->addTestSuite('ConfFileReuseTest');
 		require_once dirname(__FILE__).'/CreditorRefLibTest.php';
 		$suite->addTestSuite('CreditorRefLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';

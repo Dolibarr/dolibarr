@@ -176,6 +176,67 @@ if (!empty($force_install_message)) {
 	*/
 }
 
+// A conf.php that existed before the install can be reused and updated in place instead of being overwritten.
+$confreusepossible = (!empty($_SESSION['dol_install_conf_preexisted']) && is_readable($conffile) && filesize($conffile) > 8);
+if ($confreusepossible) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/conffilereuse.class.php';
+	$confcontent = (string) file_get_contents($conffile);
+	$confeditor = new ConfFileEditor();
+	$confparsed = $confeditor->parse($confcontent);
+	$confreuse = new ConfFileReuse();
+	$confanalysis = $confreuse->analyse($confcontent, [
+		'dolibarr_main_document_root' => (string) ($dolibarr_main_document_root ?? ''),
+		'dolibarr_main_data_root' => (string) ($dolibarr_main_data_root ?? ''),
+		'dolibarr_main_db_type' => (string) ($dolibarr_main_db_type ?? ''),
+		'dolibarr_main_url_root' => (string) ($dolibarr_main_url_root ?? ''),
+	]);
+	$confpassword = $confparsed['dolibarr_main_db_pass']['literal'] ?? null;
+	$confpasswordclear = ($confpassword !== null && $confpassword !== '' && !preg_match('/^(dolcrypt|crypted):/i', $confpassword));
+
+	print '<table class="nobordernopadding centpercent">';
+	print '<tr><td colspan="3" class="label"><h3><img class="valignmiddle inline-block paddingright" src="../public/theme/common/gear.svg" width="20" alt=""> '.$langs->trans("ConfReuseTitle").'</h3></td></tr>';
+	print '<tr><td class="label">';
+	print '<input type="checkbox" id="use_conf_in_place" name="use_conf_in_place" value="1"'.(GETPOSTINT('use_conf_in_place') ? ' checked' : '').'>';
+	print ' <label for="use_conf_in_place"><b>'.$langs->trans("ConfReuseLabel").'</b></label>';
+	print '</td><td class="comment" colspan="2">';
+	print '<span class="opacitymedium">'.$langs->trans("ConfReuseHelp").'</span>';
+	print '<br><span class="warning">'.$langs->trans("ConfReuseDatabaseMustExist").'</span>';
+	foreach ($confanalysis['invalid'] as $confkey => $confproblem) {
+		print '<br><span class="error">'.$langs->trans($confproblem, dol_escape_htmltag($confkey)).'</span>';
+	}
+	if (!empty($confanalysis['deprecated'])) {
+		print '<br><span class="warning">'.$langs->trans("ConfReuseDeprecatedVars", dol_escape_htmltag(implode(', ', $confanalysis['deprecated']))).'</span>';
+	}
+	if (!empty($confanalysis['unknown'])) {
+		print '<br><span class="opacitymedium">'.$langs->trans("ConfReuseUnknownVars", dol_escape_htmltag(implode(', ', $confanalysis['unknown']))).'</span>';
+	}
+	if (!empty($confanalysis['missing'])) {
+		print '<br><span class="opacitymedium">'.$langs->trans("ConfReuseMissingVars", count($confanalysis['missing'])).'</span>';
+	}
+	print '</td></tr>';
+	if ($confpasswordclear) {
+		print '<tr class="confreuseoption"><td class="label">';
+		print '<input type="checkbox" id="encrypt_db_pass" name="encrypt_db_pass" value="1"'.(GETPOSTINT('encrypt_db_pass') ? ' checked' : '').'>';
+		print ' <label for="encrypt_db_pass">'.$langs->trans("ConfReuseEncryptPassword").'</label>';
+		print '</td><td class="comment" colspan="2"><span class="opacitymedium">'.$langs->trans("ConfReuseEncryptPasswordHelp").'</span></td></tr>';
+	}
+	print '</table>';
+	print '<div id="confreusebanner" class="info">'.$langs->trans("ConfReuseFormDisabled").'</div>';
+	?>
+<script>
+jQuery(document).ready(function() {
+	function confReuseToggle() {
+		var on = jQuery('#use_conf_in_place').is(':checked');
+		jQuery('#forminstall').find('input, select').not('#use_conf_in_place, #encrypt_db_pass, [type=hidden], [type=submit], [type=button]').prop('disabled', on);
+		jQuery('#confreusebanner, .confreuseoption').toggle(on);
+	}
+	jQuery('#use_conf_in_place').on('change', confReuseToggle);
+	confReuseToggle();
+});
+</script>
+	<?php
+}
+
 ?>
 <div>
 

@@ -122,6 +122,8 @@ if (@file_exists($forcedfile)) {
 	 * @var string	$force_install_createuser
 	 * @var string	$force_install_mainforcehttps
 	 * @var string	$force_install_distrib
+	 * @var bool	$force_install_useconfinplace
+	 * @var bool	$force_install_encryptdbpass
 	 */
 	// If forced install is enabled, replace the post values. These are empty because form fields are disabled.
 	if (!empty($force_install_noedit)) {
@@ -194,6 +196,24 @@ if (@file_exists($forcedfile)) {
 	if (!empty($force_install_distrib)) {
 		$dolibarr_main_distrib = $force_install_distrib;
 	}
+}
+
+// Reuse of the conf.php in place: the form fields are disabled, the values come from conf.php, already loaded by inc.php.
+$useconfinplace = ((GETPOSTINT('use_conf_in_place') || !empty($force_install_useconfinplace)) && is_readable($conffile) && filesize($conffile) > 8);
+$encryptdbpass = (GETPOSTINT('encrypt_db_pass') || !empty($force_install_encryptdbpass));
+if ($useconfinplace) {
+	$main_dir = (string) $dolibarr_main_document_root;
+	$main_data_dir = (string) $dolibarr_main_data_root;
+	$main_url = (string) $dolibarr_main_url_root;
+	$db_type = $conf->db->type;
+	$db_host = $conf->db->host;
+	$db_port = $conf->db->port;
+	$db_name = $conf->db->name;
+	$db_user = $conf->db->user;
+	$db_pass = $conf->db->pass;
+	$db_prefix = (empty($dolibarr_main_db_prefix) ? 'llx_' : (string) $dolibarr_main_db_prefix);
+	$db_create_database = '';
+	$db_create_user = '';
 }
 
 
@@ -569,7 +589,11 @@ if (!$error && $db !== null && $db->connected && $action == "set") {	// Test on 
 			@dol_copy($conffile, $conffile.'.old', '0400');
 		}
 
-		$error += write_conf_file($conffile);
+		if ($useconfinplace) {
+			$error += reuse_conf_file($conffile, $db, $db_name, $main_db_prefix, $encryptdbpass);
+		} else {
+			$error += write_conf_file($conffile);
+		}
 	}
 
 	// Create database and admin user database
@@ -883,6 +907,70 @@ function write_master_file($masterfile, $main_dir)
 	}
 }
 
+
+
+/**
+ *  Update the conf.php in place for this new instance, instead of writing a new one.
+ *
+ *  @param  string	$conffile		Path of conf.php
+ *  @param  DoliDB	$db				Connection to the target database
+ *  @param  string	$dbname			Name of the target database
+ *  @param  string	$dbprefix		Prefix of the Dolibarr tables
+ *  @param  bool	$encryptdbpass	True to encrypt a database password written in clear
+ *  @return int						0 if OK, 1 if KO
+ */
+function reuse_conf_file($conffile, $db, $dbname, $dbprefix, $encryptdbpass)
+{
+	global $langs;
+	global $dolibarr_main_document_root, $dolibarr_main_db_type, $dolibarr_main_db_host, $dolibarr_main_db_port;
+	global $dolibarr_main_db_name, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_character_set;
+	global $dolibarr_main_db_collation, $dolibarr_main_instance_unique_id, $dolibarr_main_cookie_cryptkey, $dolibarr_main_dolcrypt_key;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/conffilereuse.class.php';
+
+	$content = file_get_contents($conffile);
+	if ($content === false) {
+		dolibarr_install_syslog("step1: failed to read ".$conffile, LOG_ERR);
+		print '<tr><td>'.$langs->trans("ConfReuseError", dol_escape_htmltag($conffile)).'</td><td>'.img_picto('Error', 'warning', 'class="error"').'</td></tr>';
+		return 1;
+	}
+
+	$tables = $db->DDLListTables($dbname, $dbprefix.'const');
+	$evaluated = [
+		'dolibarr_main_instance_unique_id' => (string) $dolibarr_main_instance_unique_id,
+		'dolibarr_main_cookie_cryptkey' => (string) $dolibarr_main_cookie_cryptkey,
+		'dolibarr_main_dolcrypt_key' => (string) $dolibarr_main_dolcrypt_key,
+	];
+
+	try {
+		$confreuse = new ConfFileReuse();
+		$result = $confreuse->apply($content, $evaluated, !empty($tables), (bool) $encryptdbpass);
+	} catch (Exception $e) {
+		dolibarr_install_syslog("step1: ".$e->getMessage(), LOG_ERR);
+		print '<tr><td>'.$langs->trans("ConfReuseError", dol_escape_htmltag($conffile)).'<br>'.dol_escape_htmltag($e->getMessage()).'</td><td>'.img_picto('Error', 'warning', 'class="error"').'</td></tr>';
+		return 1;
+	}
+
+	if (file_put_contents($conffile, $result['content']) === false) {
+		dolibarr_install_syslog("step1: failed to write ".$conffile, LOG_ERR);
+		print '<tr><td>'.$langs->trans("ConfReuseError", dol_escape_htmltag($conffile)).'</td><td>'.img_picto('Error', 'warning', 'class="error"').'</td></tr>';
+		return 1;
+	}
+	clearstatcache();
+
+	foreach ($result['actions'] as $action) {
+		$iswarning = in_array($action, [ConfFileReuse::ACTION_INSTANCE_ID_KEPT_DATABASE, ConfFileReuse::ACTION_INSTANCE_ID_KEPT_EXPRESSION, ConfFileReuse::ACTION_DB_PASS_EXPRESSION], true);
+		print '<tr><td>'.$langs->trans('ConfReuse'.$action).'</td><td>'.img_picto('', $iswarning ? 'warning' : 'tick').'</td></tr>';
+	}
+	foreach ($result['deprecated'] as $oldkey => $newkey) {
+		$message = ($newkey !== '') ? $langs->trans("ConfReuseDeprecatedReplaced", $oldkey, $newkey) : $langs->trans("ConfReuseDeprecatedCommented", $oldkey);
+		print '<tr><td>'.dol_escape_htmltag($message).'</td><td>'.img_picto('', 'warning').'</td></tr>';
+	}
+	print '<tr><td>'.$langs->trans("ConfReuseDone", '<strong>'.dol_escape_htmltag($conffile).'</strong>').'</td><td>'.img_picto('OK', 'tick').'</td></tr>';
+
+	include $conffile; // reload the updated values into the globals used by conf()
+	return 0;
+}
 
 /**
  *  Save configuration file. No particular permissions are set by installer.
