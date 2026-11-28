@@ -288,13 +288,13 @@ $num = 0;
 
 $title = $langs->trans('StockAtDate');
 
-// With MultiCompany per-entity AWP, use the AWP of the current entity (llx_product_perentity), falling back on the global p.pmp
+// With MultiCompany per-entity PMP, use the PMP of the current entity (llx_product_perentity), falling back on the global p.pmp
 // when the product has no row yet for this entity (same convention as stock/list.php and Product::fetch()).
-// The AWP is inside an aggregate function, so no AWP column has to be added to the GROUP BY (at most one row per product and entity).
+// The PMP is inside an aggregate function, so no PMP column has to be added to the GROUP BY (at most one row per product and entity).
 $pmpperentity = (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED'));
 $sqlpmp = ($pmpperentity ? 'COALESCE(ppe.pmp, p.pmp)' : 'p.pmp');
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, '.($pmpperentity ? 'MAX('.$sqlpmp.') as pmp' : 'p.pmp').',';
+$sql = "SELECT p.rowid, p.ref, p.label, p.description, p.price, ".($pmpperentity ? "MAX(".$sqlpmp.") as pmp" : "p.pmp").",";
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if (!empty($search_fk_warehouse)) {
@@ -315,7 +315,7 @@ if (!empty($search_fk_warehouse)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot IN ('.$db->sanitize(implode(",", $search_fk_warehouse)).")";
 }
 if ($pmpperentity) {
-	$sql .= ' LEFT JOIN '.$db->prefix().'product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = '.((int) $conf->entity);
+	$sql .= " LEFT JOIN ".$db->prefix()."product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = ".((int) $conf->entity);
 }
 // Add fields from hooks
 $parameters = array();
