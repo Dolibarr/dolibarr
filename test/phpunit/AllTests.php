@@ -300,6 +300,8 @@ class AllTests
 		$suite->addTestSuite('PdfFiltersTest');
 		require_once dirname(__FILE__).'/BuildDocTest.php';
 		$suite->addTestSuite('BuildDocTest');
+		require_once dirname(__FILE__).'/CommonOdtGeneratorTest.php';
+		$suite->addTestSuite('CommonOdtGeneratorTest');
 		require_once dirname(__FILE__).'/CDavLibTest.php';
 		$suite->addTestSuite('CDavLibTest');
 		require_once dirname(__FILE__).'/DAVLibTest.php';
